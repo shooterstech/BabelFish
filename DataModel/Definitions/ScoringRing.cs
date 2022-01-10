@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BabelFish.DataModel.Definitions {
+    [Serializable]
+    public class ScoringRing : ScoringShape {
+
+        public ScoringRing() {
+            Shape = SHAPE_CIRCLE;
+        }
+
+        public ScoringRing(int value, float diameter) {
+            this.Value = value;
+            this.Dimension = diameter;
+            this.Shape = SHAPE_CIRCLE;
+        }
+
+        public int Value { get; set; }
+    }
+}
