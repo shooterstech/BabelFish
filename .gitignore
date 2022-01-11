@@ -1,52 +1,36 @@
-# Prerequisites
-*.d
-
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
-
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.su
-*.idb
-*.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+**/.svn
+**/bin/
+**/obj/
+**/publish/
+**/packages/
+**/*.DS_Store
+**/.vs/**
+**/Debug/**
+**/x64/**
+**/nogit/**
+**/._*.graffle
+Orion/src_csharp/.vs
+Orion/src_csharp/.vs/**
+Orion/helper_projects/Orion\ Installation/Setup\ Files
+Orion/helper_projects/Orion\ Installation/Orion\ Installation-cache
+Orion/helper_projects/Help\ File\ Builder/*.zip
+Orion/helper_projects/Help\ File\ Builder/Help/**
+Orion/www/OrionWebApp/MatchFiles/
+Orion/www/OrionWebApp/EmailOrionFiles/
+Orion/www/OrionWebApp/Log/
+Orion/www/OrionWebApp/MedeaFiles/
+Orion/www/OrionWebApp/TransformationFiles
+Orion/www/OrionWebApp/*.zip
+Orion/www/OrionWebApp/versions/*.exe
+Orion/www/OrionWebApp/images/
+Orion/docs/**/*.toc
+Orion/docs/**/*.aux
+Orion/docs/**/*.log
+Orion/docs/**/*.lof
+Orion/docs/**/*.lot
+Orion/docs/**/*.out
+Orion/src_csharp/quickstart.pdf
+Orion/src_csharp/user_manual.pdf
+Orion/docs/quickstart/quickstart.pdf
+Orion/docs/user_manual/user_manual.pdf
+VIS/target_design/*.pdf
