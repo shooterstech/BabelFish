@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.Match {
+namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Match {
 
@@ -86,8 +86,36 @@ namespace BabelFish.DataModel.Match {
 
         /// <summary>
         /// A list of Authorization roles participants in the match have.
+        /// This list is sent to the Cloud, but is never seen as part of the Rest API. Instead
+        /// the Rest API sends back a list of Authorizations the caller has in the match, with 
+        /// the Property 'Authorization'
         /// </summary>
         public List<MatchAuthorization> AuthorizationList { get; set; }
+
+        /// <summary>
+        /// A list of authorizations the caller has for this match. These values are 
+        /// returned by the Rest API, but are not sent to the cloud. Instead 'AuthorizationList'
+        /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
+        /// </summary>
+        /// TODO: The list of Authorization is finite. Convert this property to be a list of enum values.
+        /// The optional values are:
+        /// Read Incident Reports
+        /// Create Incident Reports
+        /// Update Incident Reports
+        /// Close Incident Reports
+        /// Create Target Images
+        /// Create Entries
+        /// Update Entries
+        /// Delete Entries
+        /// Read Scores
+        /// Read Results
+        /// Read Squadding
+        /// Read Personal Scores
+        /// Read Personal Results
+        /// Read Personal Squadding
+        /// Read Personal Incident Reports
+        /// 
+        public List<string> Authorization { get; set; }
 
         public List<MatchParticipantResult> MatchParticipantResults { get; set; }
 

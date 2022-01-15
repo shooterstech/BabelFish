@@ -58,12 +58,6 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 3)]
         public dynamic Children { get; set; }
 
-        public List<string> GetChildren() {
-            //TODO convert the dynamic Children into a List<string>
-
-            return new List<string>();
-        }
-
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM

@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace BabelFish.DataModel.Match {
+namespace BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
     /// </summary>

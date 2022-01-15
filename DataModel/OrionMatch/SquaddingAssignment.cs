@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.DataModel.Match {
+namespace BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Abstract class representing the complete squadding assignment for one participant (athlete or team).
     /// </summary>

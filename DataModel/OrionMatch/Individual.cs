@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Match {
+namespace BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Any Individual person who is participating in a match. These include atheltes, coaches, and match officials. Does not include Teams.
     /// </summary>

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.DataModel.Match {
+namespace BabelFish.DataModel.OrionMatch {
 
     /// <summary>
     /// A list of roles one Loged in user, identified by their OrionID, has in the match.

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.DataModel.Match {
+namespace BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Any Team, or group of Participants in a Match. The group of Participants can be athletes or other teams
     /// </summary>

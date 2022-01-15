@@ -50,13 +50,8 @@ namespace BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonProperty(Order = 4)]
         [DefaultValue(null)]
-        public dynamic Children { get; set; }
+        public List<AbbreviatedFormat> Children { get; set; }
 
-        public List<AbbreviatedFormat> GetChildren() {
-            //TODO convert Children into List<AbbreviatedFormat>
-
-            return new List<AbbreviatedFormat>();
-        }
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context) {
