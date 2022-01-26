@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BabelFish.Requests;
+using BabelFish.DataModel.OrionMatch;
 
 namespace BabelFish {
     public class OrionMatchAPIClient : APIClient {
 
+        private GetMatchResponse GetMatchResponse = new GetMatchResponse();
+
         public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
 
-        public GetMatchResponse GetMatch( GetMatchRequest requestParameters ) {
-
-            /*
-             * Magic happens here
-             */
-
-            return new GetMatchResponse();
+        public async Task<Match> GetMatchDetail( GetMatchRequest requestParameters ) 
+        {
+            return await GetMatchResponse.GetMatchDetailResponse( requestParameters, XApiKey, ApiStage.ToString() ).ConfigureAwait(false);
         }
 
         public object GetResultList( object requestParameters ) {
