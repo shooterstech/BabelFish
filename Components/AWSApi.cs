@@ -86,14 +86,14 @@ namespace BabelFish.Components
 				if (RequestObject.Subdomain == String.Empty)
 					ErrorList.Add("Invalid Subdomain");
 				else
-					FullURL.AppendLine(RequestObject.Subdomain);
+					FullURL.AppendLine($"{RequestObject.Subdomain}.");
 
-				FullURL.AppendLine(AWSUtility.DomainName);
+				FullURL.AppendLine($"{AWSUtility.DomainName}/");
 
 				if (String.IsNullOrEmpty(RequestObject.Environment))
 					ErrorList.Add("Invalid Environment");
 				else
-					FullURL.AppendLine(RequestObject.Environment);
+					FullURL.AppendLine($"{RequestObject.Environment}/");
 
 				FullURL.AppendLine(RequestObject.UrlQuery);
 			} 
@@ -112,6 +112,9 @@ namespace BabelFish.Components
 				{
 					httpClient.client.DefaultRequestHeaders.Add(kvp.Key, kvp.Value);
 				}
+				//specify json
+				//client.DefaultRequestHeaders.Accept.Clear();
+				//client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 			}
 			catch (Exception ex)
             {

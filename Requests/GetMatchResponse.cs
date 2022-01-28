@@ -20,7 +20,7 @@ namespace BabelFish.Requests {
             {
                 // Build specific API request object
                 AWSRequestObject apirequest = new AWSRequestObject(new Dictionary<string, string>() { { "x-api-key", xapikey } }, "GET",
-                                    environment, "match/" + requestParameters.MatchID);
+                                    environment, $"/match/{requestParameters.MatchID}");
 
                 AWSResponseObject awsresponse = await awsapi.GetAsync(apirequest).ConfigureAwait(false);
                 if (awsresponse.Errors.Count > 0)
