@@ -13,9 +13,15 @@ namespace BabelFish {
 
         public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
 
-        public async Task<Match> GetMatchDetail( GetMatchRequest requestParameters ) 
+        public GetMatchResponse GetMatchDetail( GetMatchRequest requestParameters ) 
         {
-            return await GetMatchResponse.GetMatchDetailResponse( requestParameters, XApiKey, ApiStage.ToString() ).ConfigureAwait(false);
+            //TODO Make this an async function
+
+            GetMatchResponse response = new GetMatchResponse();
+
+            this.CallAPI(requestParameters, response);
+
+            return response;
         }
 
         public object GetResultList( object requestParameters ) {

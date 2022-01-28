@@ -8,39 +8,14 @@ using BabelFish.Components;
 using BabelFish.Components.Objects;
 
 namespace BabelFish.Requests {
-    public class GetMatchResponse {
+    public class GetMatchResponse : Response<Match> {
 
-        private AWSApi awsapi = new AWSApi();
-
-        public async Task<Match> GetMatchDetailResponse(GetMatchRequest requestParameters, string xapikey, string environment) {
-
-            this.Match = new Match();
-
-            try
-            {
-                // Build specific API request object
-                AWSRequestObject apirequest = new AWSRequestObject(new Dictionary<string, string>() { { "x-api-key", xapikey } }, "GET",
-                                    environment, $"/match/{requestParameters.MatchID}");
-
-                AWSResponseObject awsresponse = await awsapi.GetAsync(apirequest).ConfigureAwait(false);
-                if (awsresponse.Errors.Count > 0)
-                {
-                    //Log something
-                    //DrA 20220125: Consider how to represent api error conditions to customer
-                }
-                else
-                {
-                    //deserialize into Match
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-
-            return Match;
-        }
-
-        public Match Match { get; set; }  
+        /// <summary>
+        /// Facade function that returns the same as this.Value
+        /// </summary>
+        public Match Match
+        {
+            get { return Value; }
+        }  
     }
 }
