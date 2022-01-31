@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BabelFish.DataModel.OrionMatch;
-using BabelFish.Components;
-using BabelFish.Components.Objects;
 
 namespace BabelFish.Requests {
     public class GetMatchResponse : Response<Match> {

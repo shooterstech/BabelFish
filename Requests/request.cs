@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,8 +50,11 @@ namespace BabelFish.Requests
         {
             get
             {
-                throw new NotImplementedException(
-                    "Convert the return value of QueryParameters into an escaped string that may be used in a Rest API call.");
+                //throw new NotImplementedException(
+                //    "Convert the return value of QueryParameters into an escaped string that may be used in a Rest API call.");
+                var keys = QueryParameters.Select(x => String.Format("{0}={1}", x.Key, x.Value));
+                var stringtoreturn = String.Join("&", keys);
+                return HttpUtility.UrlEncode(stringtoreturn);
             }
         }
 
