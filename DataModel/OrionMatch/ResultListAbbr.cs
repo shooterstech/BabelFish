@@ -12,16 +12,15 @@ namespace BabelFish.DataModel.OrionMatch {
 
         }
 
+        public string Status { get; set; }
+
         public string ResultName { get; set; }
-
-        public string ResultListID { get; set; }
-
-        public bool Primary { get; set; }
 
         public bool DefaultScoreboard { get; set; }
 
         public bool Team { get; set; }
 
-        public string Status { get; set; }
+        public bool Primary { get; set; }
+
     }
 }

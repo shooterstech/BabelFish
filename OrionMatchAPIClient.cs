@@ -13,10 +13,16 @@ namespace BabelFish {
 
         public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
 
+        /// <summary>
+        /// Toggle Developer Mode on - internally crafts uri appropriately
+        /// </summary>
+        public void SetDeveloperMode()
+        {
+            this.DeveloperMode = true;
+        }
+
         public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) 
         {
-            //TODO Make this an async function
-
             GetMatchResponse response = new GetMatchResponse();
 
             this.CallAPI(requestParameters, response);

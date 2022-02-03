@@ -11,23 +11,18 @@ namespace BabelFish.DataModel.OrionMatch {
             TargetStages = new List<OrionTargetStage>();
         }
 
-        public SquaddingEvent(string name, string description) {
+        public SquaddingEvent(string name) {
             this.Name = name;
-            this.Description = description;
             this.TargetStages = new List<OrionTargetStage>();
             this.ImageCaptureOrderByParticipant = false;
             this.EnableImageCapture = true;
         }
 
         /// <summary>
-        /// A unique name giving to the Event. 
+        /// If set to true, then the ImageCaptureList should be by Relay, then Firing Point, then OrionTargetStage.SortOrder (ignoring the RelayReset option)
+        /// Default is false. 
         /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// A Human readable description of the event.
-        /// </summary>
-        public string Description { get; set; }
+        public bool ImageCaptureOrderByParticipant { get; set; }
 
         /// <summary>
         /// An in order list of stages that targets have to be photographed. 
@@ -35,10 +30,9 @@ namespace BabelFish.DataModel.OrionMatch {
         public List<OrionTargetStage> TargetStages { get; set; }
 
         /// <summary>
-        /// If set to true, then the ImageCaptureList should be by Relay, then Firing Point, then OrionTargetStage.SortOrder (ignoring the RelayReset option)
-        /// Default is false. 
+        /// A unique name giving to the Event. 
         /// </summary>
-        public bool ImageCaptureOrderByParticipant { get; set; }
+        public string Name { get; set; }
 
         public bool EnableImageCapture { get; set; }
     }

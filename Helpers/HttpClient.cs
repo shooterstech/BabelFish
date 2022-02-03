@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace BabelFish.Components
+namespace BabelFish.Helpers
 {
 	static class httpClient
     {

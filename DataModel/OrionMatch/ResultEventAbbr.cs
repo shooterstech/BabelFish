@@ -12,10 +12,10 @@ namespace BabelFish.DataModel.OrionMatch {
             ResultLists = new List<ResultListAbbr>();
         }
 
-        public string EventName { get; set; }
-
         public string DisplayName { get; set; }
-
+        
         public List<ResultListAbbr> ResultLists { get; set; }
+
+        public string EventName { get; set; }
     }
 }
