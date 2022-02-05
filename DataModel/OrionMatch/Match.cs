@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class Match : MatchTemplate {
+    public class Match : ResponseTemplate {
 
         public Match() {
             SquaddingEvents = new List<SquaddingEvent>();

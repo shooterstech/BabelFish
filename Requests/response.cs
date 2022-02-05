@@ -34,5 +34,10 @@ namespace BabelFish.Requests
         /// Gets or Sets the raw body returned by the Rest API Call.
         /// </summary>
         public string Body { get; internal set; }
+
+        /// <summary>
+        /// Gets or Sets TimeSpan of API call
+        /// </summary>
+        public string TimeToRun { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Net;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.Json.Nodes;
 using Newtonsoft.Json;
@@ -14,6 +16,7 @@ namespace BabelFish {
         protected APIClient(string xapikey)
         {
             this.XApiKey = xapikey;
+            this.ApiStage = APIStage.PRODUCTION;
 
             logger.Info("BablFish API instantiated with x-api-key: {key}", XApiKey);
         }
@@ -43,30 +46,6 @@ namespace BabelFish {
         }
 
         /// <summary>
-        /// Control uri for Dev / Prod
-        /// </summary>
-        private bool _DeveloperMode = false;
-        protected bool DeveloperMode
-        {
-            get { return _DeveloperMode; }
-            set
-            {
-                _DeveloperMode = value;
-                if (value)
-                {
-                    SubDomain = "api-stage";
-                    ApiStage = APIStage.PRODUCTION;
-                }
-                else
-                {
-                    SubDomain = "api";
-                    ApiStage = APIStage.BLANK;
-                }
-
-            }
-        }
-
-        /// <summary>
         /// Users x-api-key for valid AWS access
         /// </summary>
         public string XApiKey { get; set; }
@@ -77,55 +56,52 @@ namespace BabelFish {
         public APIStage ApiStage { get; set; }
 
         /// <summary>
-        /// Subdomain - AWS Api subdomain identifier
+        /// SubDomain - AWS Api subdomain identifier
         /// </summary>
-        protected string SubDomain { get; set; } = "api";
+        protected string SubDomain { get; set; } = "api-stage";
         #endregion properties
 
         #region Methods
         protected async void CallAPI<T>(Request request, Response<T> response)
         {
-            //TODO make the hostname a variable
             string uri =
                 $"https://{SubDomain}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}";
 
             try
             {
+                DateTime startTime = DateTime.Now;
                 HttpResponseMessage responseMessage = 
                     await httpClient.GetAsyncWithHeaders(uri,
                     new Dictionary<string, string>() { { "x-api-key", XApiKey } });
                 //TODO: Future check if other calls require additional headers, threw Dict here to get basics running
 
-                //HttpResponseMessage responseMessage = httpClient.GetAsync(uri).Result; //make it err, no x-api-key header
+                //HttpResponseMessage responseMessage = httpClient.GetAsync(uri).Result; //TEST make it err, no x-api-key header
                 response.StatusCode = responseMessage.StatusCode;
+                
                 logger.Info("API Fetched status: {statuscode} || uri: {url}", responseMessage.StatusCode, uri);
 
                 //Convert the returned body to an object of type T
-                if (responseMessage.IsSuccessStatusCode)
-                {
-                    using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
-                    using (StreamReader sr = new StreamReader(s))
-                    using (JsonReader reader = new JsonTextReader(sr))
-                    {
-                        var returnedJson = JObject.ReadFrom(reader);
+                var returnedJson = await httpClient.GetResponseJsonToken(responseMessage);
 
-                        response.Value = returnedJson.ToObject<T>();
+                //message not a stringarray if Forbidden err causing ToObject to crash
+                //maybe something like this if ( returnedJson.Root.Value<string>("message") != null)
+                if ( responseMessage.StatusCode != HttpStatusCode.Forbidden )
+                    response.Value = returnedJson.ToObject<T>();
+                
+                response.Body = returnedJson.ToString();
+                
+                if (!responseMessage.IsSuccessStatusCode)
+                    logger.Error("API error with: {errorphrase}", responseMessage.ReasonPhrase);
 
-                        response.Body = returnedJson.ToString();
-                    }
-                }
-                else
-                {
-                    response.Body = StringHelper.ErrorTextExpanded(responseMessage.StatusCode); // or just responseMessage.ReasonPhrase;
-                    logger.Error(("API error with: {errorphrase}", responseMessage.ReasonPhrase));
-                }
+                TimeSpan ts = DateTime.Now - startTime;
+                response.TimeToRun = $"{ts.Minutes}:{ts.Seconds}:{ts.Milliseconds}";
             }
             catch (Exception ex)
             {
-                logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
                 response.Body = $"API Call failed: {ex.Message}";
+                logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
             }
-            //NLog.LogManager.Shutdown();
+            //TODO: Found this recommended but do not want to shut down ongoing instance...onUnload? NLog.LogManager.Shutdown();
         }
         #endregion Methods
     }

@@ -3,20 +3,15 @@ using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using BabelFish.Requests;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BabelFish.Helpers
 {
 	static class httpClient
     {
 		public static readonly HttpClient client = new HttpClient();
-
-        public static void AddHeaders(Dictionary<string, List<string>> headers)
-        {
-            foreach (KeyValuePair<string, List<string>> pair in headers)
-            {
-                client.DefaultRequestHeaders.Add(pair.Key, pair.Value);
-            }
-        }
 
         /// <summary>
         /// GetAsync with no headers
@@ -48,5 +43,15 @@ namespace BabelFish.Helpers
                 return httpClient.client.SendAsync(newRequestMessage).Result;
             }
 		}
+
+        public static async Task<Newtonsoft.Json.Linq.JToken> GetResponseJsonToken(HttpResponseMessage responseMessage)
+        {
+            using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
+            using (StreamReader sr = new StreamReader(s))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                return JObject.ReadFrom(reader);
+            }
+        }
 	}
 }
