@@ -38,6 +38,6 @@ namespace BabelFish.Requests
         /// <summary>
         /// Gets or Sets TimeSpan of API call
         /// </summary>
-        public string TimeToRun { get; set; } = string.Empty;
+        public string TimeToRun { get; internal set; } = string.Empty;
     }
 }
