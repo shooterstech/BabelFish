@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests
+namespace BabelFish.Responses
 {
     /// <summary>
     /// Abstract class representing all Rest API Responses.

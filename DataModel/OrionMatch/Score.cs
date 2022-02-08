@@ -18,25 +18,27 @@ namespace BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Integer Score
-        /// </summary>
-        public int I { get; set; }
-
-        /// <summary>
         /// Number of inner tens
         /// </summary>
         public int X { get; set; }
 
         /// <summary>
-        /// Decimal Score
+        /// Integer Score
         /// </summary>
-        public float D { get; set; }
+        public int I { get; set; }
 
         /// <summary>
         /// Rulebook specified Score
         /// </summary>
         public float S { get; set; }
 
+        /// <summary>
+        /// Decimal Score
+        /// </summary>
+        public float D { get; set; }
+
+
+        
         /// <summary>
         /// Average SHot Fired
         /// </summary>

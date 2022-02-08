@@ -5,6 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BabelFish.DataModel.OrionMatch {
+
+    public class ResultListWrapper : ResponseTemplate
+    {
+        public ResultList ResultList = new ResultList();
+
+        public override string ToString()
+        {
+            StringBuilder foo = new StringBuilder();
+            foo.Append("ResultList for ");
+            foo.Append(ResultList.ResultName);
+            return foo.ToString();
+        }
+    }
+
     [Serializable]
     public class ResultList : ResponseTemplate {
 

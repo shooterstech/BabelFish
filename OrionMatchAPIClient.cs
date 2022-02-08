@@ -3,31 +3,59 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.Requests;
 using BabelFish.DataModel.OrionMatch;
+using BabelFish.Requests.OrionMatchAPI;
+using BabelFish.Responses.OrionMatchAPI;
 
 namespace BabelFish {
     public class OrionMatchAPIClient : APIClient {
 
-        private GetMatchResponse GetMatchResponse = new GetMatchResponse();
-
         public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
 
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns></returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) 
         {
             GetMatchResponse response = new GetMatchResponse();
 
-            this.CallAPI(requestParameters, response);
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
             return response;
         }
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <returns></returns>
+        public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid)
+        {
+            return await GetMatchDetailAsync(new GetMatchRequest(matchid)).ConfigureAwait(false);
+        }
 
-        public async Task<GetResultListResponse> GetResultListAsync(GetResultListRequest requestParameters ) {
+        /// <summary>
+        /// Get Result List API
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns></returns>
+        public async Task<GetResultListResponse> GetResultListAsync( GetResultListRequest requestParameters ) {
             GetResultListResponse response = new GetResultListResponse();
 
-            this.CallAPI(requestParameters, response);
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
             return response;
+        }
+        /// <summary>
+        /// Get Result List API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="listname"></param>
+        /// <returns></returns>
+        public async Task<GetResultListResponse> GetResultListAsync(string matchid, string listname)
+        {
+            return await GetResultListAsync(new GetResultListRequest(matchid, listname)).ConfigureAwait(false);
         }
 
         public object GetSquaddingList( object requestParameters ) {

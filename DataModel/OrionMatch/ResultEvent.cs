@@ -15,22 +15,22 @@ namespace BabelFish.DataModel.OrionMatch {
             TeamMembers = null;
         }
 
-        public string ResultCOFID { get; set; }
-
         public string DisplayName { get; set; }
-
-        public string UserID { get; set; }
-
-        public Score Score { get; set; }
 
         [Obsolete("Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef")]
         public string ScoreFormat { get; set; }
+        
+        public string ResultCOFID { get; set; }
+
+        public Score Score { get; set; }
+
+        public int Rank { get; set; }
 
         public List<ResultEventChild> Children { get; set; }
 
-        public List<ResultEventTeamMember> TeamMembers { get; set; }
+        //????public string UserID { get; set; }
 
-        public int Rank { get; set; }
+        public List<ResultEventTeamMember> TeamMembers { get; set; }
 
     }
 
@@ -41,13 +41,16 @@ namespace BabelFish.DataModel.OrionMatch {
             Score = new Score();
             Children = new List<ResultEventChild>();
         }
+
+        public string ScoreFormat { get; set; }
+
+
+
         public string DisplayName { get; set; }
 
         public string UserID { get; set; }
 
         public Score Score { get; set; }
-
-        public string ScoreFormat { get; set; }
 
         public List<ResultEventChild> Children { get; set; }
 
@@ -61,10 +64,11 @@ namespace BabelFish.DataModel.OrionMatch {
             Score = new Score();
         }
 
-        public string EventName { get; set; }
+        public string ScoreFormat { get; set; }
 
         public Score Score { get; set; }
 
-        public string ScoreFormat { get; set; }
+        public string EventName { get; set; }
+
     }
 }

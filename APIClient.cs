@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using BabelFish.Requests;
+using BabelFish.Responses;
 using BabelFish.Helpers;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -62,7 +63,7 @@ namespace BabelFish {
         #endregion properties
 
         #region Methods
-        protected async void CallAPI<T>(Request request, Response<T> response)
+        protected async Task CallAPI<T>(Request request, Response<T> response)
         {
             string uri =
                 $"https://{SubDomain}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}";
@@ -72,7 +73,7 @@ namespace BabelFish {
                 DateTime startTime = DateTime.Now;
                 HttpResponseMessage responseMessage = 
                     await httpClient.GetAsyncWithHeaders(uri,
-                    new Dictionary<string, string>() { { "x-api-key", XApiKey } });
+                    new Dictionary<string, string>() { { "x-api-key", XApiKey } }).ConfigureAwait(false);
                 //TODO: Future check if other calls require additional headers, threw Dict here to get basics running
 
                 //HttpResponseMessage responseMessage = httpClient.GetAsync(uri).Result; //TEST make it err, no x-api-key header
@@ -81,13 +82,12 @@ namespace BabelFish {
                 logger.Info("API Fetched status: {statuscode} || uri: {url}", responseMessage.StatusCode, uri);
 
                 //Convert the returned body to an object of type T
-                var returnedJson = await httpClient.GetResponseJsonToken(responseMessage);
+                var returnedJson = responseMessage.Content.ReadAsStringAsync().Result;
 
                 //message not a stringarray if Forbidden err causing ToObject to crash
-                //maybe something like this if ( returnedJson.Root.Value<string>("message") != null)
-                if ( responseMessage.StatusCode != HttpStatusCode.Forbidden )
-                    response.Value = returnedJson.ToObject<T>();
-                
+                if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
+                    response.Value = JsonConvert.DeserializeObject<T>(returnedJson);
+
                 response.Body = returnedJson.ToString();
                 
                 if (!responseMessage.IsSuccessStatusCode)
