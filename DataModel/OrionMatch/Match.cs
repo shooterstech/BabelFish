@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -14,6 +15,35 @@ namespace BabelFish.DataModel.OrionMatch {
             Attributes = new List<Attribute>();
             ResultEvents = new List<ResultEventAbbr>();
             CommonIncidentReports = new List<IncidentReportRuleDefinition>();
+            Contact = new MatchContact();
+            ScoringSystems = new List<string>();
+        }
+
+        /// <summary>
+        /// After an object is deserialized form JSON, checks that the properties are
+        /// properly initialized, and not null.
+        /// </summary>
+        /// <param name="context"></param>
+        [OnDeserialized()]
+        public void OnDeserialized(StreamingContext context) {
+            if (SquaddingEvents == null)
+                SquaddingEvents = new List<SquaddingEvent>();
+
+            if (Attributes == null)
+                Attributes = new List<Attribute>();
+
+            if (ResultEvents == null)
+                ResultEvents = new List<ResultEventAbbr>();
+
+            if (CommonIncidentReports == null)
+                CommonIncidentReports = new List<IncidentReportRuleDefinition>();
+
+            if (Contact == null)
+                Contact = new MatchContact();
+
+            if (ScoringSystems == null)
+                ScoringSystems = new List<string>() { "Orion Scoring System" };
+
         }
 
         /// <summary>
@@ -109,10 +139,39 @@ namespace BabelFish.DataModel.OrionMatch {
         /// A list of Authorization roles participants in the match have.
         /// This list is sent to the Cloud, but is never seen as part of the Rest API. Instead
         /// the Rest API sends back a list of Authorizations the caller has in the match, with 
-        /// the Property 'Authorization'
+        /// the Property 'Authorization'.
+        ///
+        /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
+        /// sent back as part of an API request. 
         /// </summary>
-        //TODO: rm for not having match in Postman return data or leave for information? Maybe this is used with POST later?
-        //public List<MatchAuthorization> AuthorizationList { get; set; }
+        public List<MatchAuthorization> AuthorizationList { get; set; }
+
+
+        /// <summary>
+        /// A list of match participants, but only the athletes, not the teams. 
+        ///
+        /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
+        /// sent back as part of an API request.
+        /// </summary>
+        [Obsolete( "Will be replaced soon with a more proper participant list." )]
+        public List<MatchParticipantResult> MatchParticipantResults { get; set; }
+
+        /// <summary>
+        /// A list of Result COF that the logged in user owns for this match. Meaning, these are the
+        /// scores the logged in user shot. If a user is not logged in, or the logged in user is
+        /// not an athletes, then this will be an empty list.
+        /// </summary>
+        public List<ResultCOF> ParticipantResults { get; set; }
+
+        /// <summary>
+        /// Contact information for the match, i.e. person's name, phone, email.
+        /// </summary>
+        public MatchContact Contact { get; set; }
+
+        /// <summary>
+        /// A list of scoring systems used in this match.
+        /// </summary>
+        public List<string> ScoringSystems { get; set; }
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

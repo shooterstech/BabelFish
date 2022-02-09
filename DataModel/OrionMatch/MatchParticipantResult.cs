@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace BabelFish.DataModel.OrionMatch {
 
 
-    [Serializable]
+
+    [Obsolete( "Will be replaced soon with a more proper participant list." )]
     public class MatchParticipantResult {
 
         public MatchParticipantResult() {
