@@ -166,7 +166,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Contact information for the match, i.e. person's name, phone, email.
         /// </summary>
-        public MatchContact Contact { get; set; }
+        public MatchContact MatchContact { get; set; }
 
         /// <summary>
         /// A list of scoring systems used in this match.
