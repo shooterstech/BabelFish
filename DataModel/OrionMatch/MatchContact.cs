@@ -10,6 +10,7 @@ namespace BabelFish.DataModel.OrionMatch {
     /// Represents the name and contact information for the match directory.
     /// </summary>
     [Obsolete("To be replaced soon with a better method of tracking the match contact.")]
+    [Serializable]
     public class MatchContact {
 
         public MatchContact() { }
