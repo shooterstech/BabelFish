@@ -10,18 +10,12 @@ namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Individual : Participant {
 
-        public Individual() : base() {
-            GivenName = "";
-            MiddleName = "";
-            FamilyName = "";
-            LastName = "";
-            UserID = "";
-        }
+        public Individual() : base() { }
 
         /// <summary>
         /// Individual's Given or First Name
         /// </summary>
-        public string GivenName { get; set; }
+        public string GivenName { get; set; } = string.Empty;
 
         [JsonIgnore]
         public string FirstName {
@@ -32,20 +26,18 @@ namespace BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Individual's middle or secondary Given name
         /// </summary>
-        public string MiddleName { get; set;       }
+        public string MiddleName { get; set; } = string.Empty;
 
         /// <summary>
         /// Individual's Family or Last name
         /// </summary>
-        public string FamilyName { get; set; }
+        public string FamilyName { get; set; } = string.Empty;
 
         public string LastName {
             get { return this.FamilyName; }
             set { this.FamilyName = value; }
         }
 
-        public string UserID {
-            get; set;
-        }
+        public string UserID { get; set; } = string.Empty;
     }
 }

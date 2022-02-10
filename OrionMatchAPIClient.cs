@@ -62,8 +62,28 @@ namespace BabelFish {
             throw new NotImplementedException();
         }
 
-        public object GetResultCourseOfFireDetail( object requestParameters ) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Get Course Of Fire Detail API
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns></returns>
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters)
+        {
+            GetResultCOFDetailResponse response = new GetResultCOFDetailResponse();
+
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Course Of Fire Detail API
+        /// </summary>
+        /// <param name="resultCOFID"></param>
+        /// <returns></returns>
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(string resultCOFID)
+        {
+            return await GetResultCourseOfFireDetail(new GetResultCOFDetailRequest(resultCOFID)).ConfigureAwait(false);
         }
 
         public object GetMatchLocations( object requestParameters ) {

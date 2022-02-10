@@ -8,46 +8,37 @@ namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Score {
 
-        public Score() {
-            I = 0;
-            X = 0;
-            D = 0;
-            S = 0;
-            A = 0;
-            N = 0;
-        }
+        public Score() { }
 
         /// <summary>
         /// Number of inner tens
         /// </summary>
-        public int X { get; set; }
+        public int X { get; set; } = 0;
 
         /// <summary>
         /// Integer Score
         /// </summary>
-        public int I { get; set; }
+        public int I { get; set; } = 0;
 
         /// <summary>
         /// Rulebook specified Score
         /// </summary>
-        public float S { get; set; }
+        public float S { get; set; } = 0;
 
         /// <summary>
         /// Decimal Score
         /// </summary>
-        public float D { get; set; }
+        public float D { get; set; } = 0;
 
-
-        
         /// <summary>
         /// Average SHot Fired
         /// </summary>
-        public float A { get; set; }
+        public float A { get; set; } = 0;
 
         /// <summary>
         /// Number of shots fired
         /// </summary>
-        public int N { get; set; }
+        public int N { get; set; } = 0;
 
         //The definition of the target should be done within the definition of the event
     }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.OrionMatch
+namespace BabelFish.DataModel
 {
     public abstract class ResponseTemplate
     {

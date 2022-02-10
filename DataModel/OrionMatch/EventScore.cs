@@ -14,26 +14,10 @@ namespace BabelFish.DataModel.OrionMatch {
         public const string EVENTSTATUS_OFFICIAL = "OFFICIAL";
 
         public EventScore() {
-            Score = new Score();
-            EventName = "";
-            EventType = "";
             Average = null; //Purposefully setting to null so it won't get listed in JSON for ResultCOF and ResultList
-            Ammunition = null; 
-            Children = new List<EventScore>();
-            Coordinate = new Coordinate();
+            Ammunition = null;
             TargetDef = null;
         }
-
-        public string EventName { get; set; }
-
-        /// <summary>
-        /// EVENT
-        /// STAGE
-        /// SERIES
-        /// SHOT
-        /// etc
-        /// </summary>
-        public string EventType { get; set; }
 
         /// <summary>
         /// FUTURE
@@ -41,46 +25,57 @@ namespace BabelFish.DataModel.OrionMatch {
         /// UNOFFICIAL
         /// OFFICIAL
         /// </summary>
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
 
         /// <summary>
         /// If this Event matches with a defined EventStyle
         /// this is the SetName of that EventStyle
         /// </summary>
-        public string EventStyleDef { get; set; }
+        public string EventStyleDef { get; set; } = string.Empty;
+
+        public string ScoreFormat { get; set; } = string.Empty;
+
+        public Score Score { get; set; } = new Score();
+        
+        /// <summary>
+        /// EVENT
+        /// STAGE
+        /// SERIES
+        /// SHOT
+        /// etc
+        /// </summary>
+        public string EventType { get; set; } = string.Empty;
 
         /// <summary>
-        /// If this Event matches with a defined StageStyle
-        /// this is the SetName of that StageStyle
+        /// The date and time of the first shot, in this event. 
         /// </summary>
-        public string StageStyleDef { get; set; }
+        public DateTime EventTime { get; set; } = new DateTime();
 
-        /// <summary>
-        /// Set Name of the target definition
-        /// </summary>
-        public string TargetDef { get; set; }
+        public string EventName { get; set; } = string.Empty;
 
-        public Score Score { get; set; }
+        public List<EventScore> Children { get; set; } = new List<EventScore>();
 
         /// <summary>
         /// The number of shots the athletes has fired in this Event.
         /// NOTE that this is different from the number of shots in the event.
         /// </summary>
-        public int NumShotsFired { get; set; }
+        public int NumShotsFired { get; set; } = 0;
 
         /// <summary>
-        /// The date and time of the first shot, in this event. 
+        /// If this Event matches with a defined StageStyle
+        /// this is the SetName of that StageStyle
         /// </summary>
-        public DateTime EventTime { get; set; }
-
-        public string ScoreFormat { get; set; }
-
-        public Ammunition Ammunition { get; set; }
-
-        public ScoreAverage Average { get; set; }
+        public string StageStyleDef { get; set; } = string.Empty;
         
-        public List<EventScore> Children { get; set; }
+        /// <summary>
+        /// Set Name of the target definition
+        /// </summary>
+        public string? TargetDef { get; set; }
 
-        public Coordinate Coordinate {get; set;}
+        public Ammunition? Ammunition { get; set; }
+
+        public ScoreAverage? Average { get; set; }
+
+        public Coordinate Coordinate {get; set;} = new Coordinate();
     }
 }

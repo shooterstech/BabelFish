@@ -144,7 +144,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
         /// sent back as part of an API request. 
         /// </summary>
-        public List<MatchAuthorization> AuthorizationList { get; set; }
+        public List<MatchAuthorization> AuthorizationList { get; set; } = new List<MatchAuthorization>();
 
 
         /// <summary>

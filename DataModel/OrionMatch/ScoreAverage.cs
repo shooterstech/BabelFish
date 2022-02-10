@@ -8,16 +8,12 @@ namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ScoreAverage {
 
-        public ScoreAverage() {
-            Average = 0;
-            TieBreaker1 = 0;
-            TieBreaker2 = 0;
-        }
+        public ScoreAverage() { }
 
-        public float Average { get; set; }
+        public float Average { get; set; } = 0;
 
-        public float TieBreaker1 { get; set; }
+        public float TieBreaker1 { get; set; } = 0;
 
-        public float TieBreaker2 { get; set; }
+        public float TieBreaker2 { get; set; } = 0;
     }
 }

@@ -3,6 +3,10 @@ Dot Net Library that provides a façade for Shooter's Tech REST API interface.
 
 NOTE: Library is considered a WORK-IN-PROGRESS and is NOT intended for production environment at this time.
 
+v1.0.3.0
+Addition of GetResultCourseOfFireDetail()
+Moved ResponseTemplate.cs from /DataModel/OrionMatch to /DataModel
+
 v1.0.2.0
 Updated data structure
 Addition of GetResultList
