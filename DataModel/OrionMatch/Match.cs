@@ -10,40 +10,17 @@ namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Match : ResponseTemplate {
 
-        public Match() {
-            SquaddingEvents = new List<SquaddingEvent>();
-            Attributes = new List<Attribute>();
-            ResultEvents = new List<ResultEventAbbr>();
-            CommonIncidentReports = new List<IncidentReportRuleDefinition>();
-            Contact = new MatchContact();
-            ScoringSystems = new List<string>();
-        }
+        public Match() { }
 
         /// <summary>
-        /// After an object is deserialized form JSON, checks that the properties are
-        /// properly initialized, and not null.
+        /// After an object is deserialized form JSON,
+        /// adds defaults to empty properties
         /// </summary>
         /// <param name="context"></param>
         [OnDeserialized()]
         public void OnDeserialized(StreamingContext context) {
-            if (SquaddingEvents == null)
-                SquaddingEvents = new List<SquaddingEvent>();
-
-            if (Attributes == null)
-                Attributes = new List<Attribute>();
-
-            if (ResultEvents == null)
-                ResultEvents = new List<ResultEventAbbr>();
-
-            if (CommonIncidentReports == null)
-                CommonIncidentReports = new List<IncidentReportRuleDefinition>();
-
-            if (Contact == null)
-                Contact = new MatchContact();
-
-            if (ScoringSystems == null)
-                ScoringSystems = new List<string>() { "Orion Scoring System" };
-
+            if (ScoringSystems.Count == 0)
+                ScoringSystems.Add("Orion Scoring System");
         }
 
         /// <summary>
@@ -51,25 +28,25 @@ namespace BabelFish.DataModel.OrionMatch {
         /// 
         /// To pull the full squadding, use GetSquaddingListRequest()
         /// </summary>
-        public List<SquaddingEvent> SquaddingEvents { get; set; }
+        public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
-        public string ParentID { get; set; }
+        public string ParentID { get; set; } = string.Empty;
 
-        public List<ResultEventAbbr> ResultEvents { get; set; }
+        public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
         /// External Result URL
         /// </summary>
-        public string ResultURL { get; set; }
+        public string ResultURL { get; set; } = string.Empty;
 
-        public DateTime ResultEventsLastUpdate { get; set; }
+        public DateTime ResultEventsLastUpdate { get; set; } = new DateTime();
 
-        public List<Attribute> Attributes { get; set; }
+        public List<Attribute> Attributes { get; set; } = new List<Attribute>();
 
         /// <summary>
         /// Name of the Match
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Sets the public visibility for the match. Valid values are
@@ -78,37 +55,37 @@ namespace BabelFish.DataModel.OrionMatch {
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
-        public string Visibility { get; set; }
+        public string Visibility { get; set; } = string.Empty;
 
-        public string AccountNumber { get; set; }
+        public string AccountNumber { get; set; } = string.Empty;
 
         /// <summary>
         /// Start Date of the Match. Formatted as YYYY-MM-dd
         /// </summary>
-        public string StartDate { get; set; }
+        public string StartDate { get; set; } = string.Empty;
 
         /// <summary>
         /// Unique MatchID for the competition to get squadding for. Will match exactly (assuming no errors) of the MatchID in the GetMatchDetailRequest
         /// 
         /// This is a required field.
         /// </summary>
-        public string MatchID { get; set; }
+        public string MatchID { get; set; } = string.Empty;
 
-        public string JSONVersion { get; set; }
+        public string JSONVersion { get; set; } = string.Empty;
 
         /// <summary>
         /// End Date of the Match. Formatted as YYYY-MM-dd
         /// </summary>
-        public string EndDate { get; set; }
+        public string EndDate { get; set; } = string.Empty;
 
         /// <summary>
         /// A list of common Incident Reports that may occure during the competition.
         /// </summary>
-        public List<IncidentReportRuleDefinition> CommonIncidentReports { get; set; }
+        public List<IncidentReportRuleDefinition> CommonIncidentReports { get; set; } = new List<IncidentReportRuleDefinition>();
 
-        public string CourseOfFireDef { get; set; }
+        public string CourseOfFireDef { get; set; } = string.Empty;
 
-        public Location Location { get; set; }
+        public Location Location { get; set; } = new Location();
 
         /// <summary>
         /// A list of authorizations the caller has for this match. These values are 
@@ -133,7 +110,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// Read Personal Squadding
         /// Read Personal Incident Reports
         ///
-        public List<string> Authorization { get; set; }
+        public List<string> Authorization { get; set; } = new List<string>();
 
         /// <summary>
         /// A list of Authorization roles participants in the match have.
@@ -153,25 +130,25 @@ namespace BabelFish.DataModel.OrionMatch {
         /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
         /// sent back as part of an API request.
         /// </summary>
-        [Obsolete( "Will be replaced soon with a more proper participant list." )]
-        public List<MatchParticipantResult> MatchParticipantResults { get; set; }
+        [Obsolete("Will be replaced soon with a more proper participant list.")]
+        public List<MatchParticipantResult> MatchParticipantResults { get; set; } = new List<MatchParticipantResult>();
 
         /// <summary>
         /// A list of Result COF that the logged in user owns for this match. Meaning, these are the
         /// scores the logged in user shot. If a user is not logged in, or the logged in user is
         /// not an athletes, then this will be an empty list.
         /// </summary>
-        public List<ResultCOF> ParticipantResults { get; set; }
+        public List<ResultCOF> ParticipantResults { get; set; } = new List<ResultCOF>();
 
         /// <summary>
         /// Contact information for the match, i.e. person's name, phone, email.
         /// </summary>
-        public MatchContact MatchContact { get; set; }
+        public MatchContact MatchContact { get; set; } = new MatchContact();
 
         /// <summary>
         /// A list of scoring systems used in this match.
         /// </summary>
-        public List<string> ScoringSystems { get; set; }
+        public List<string> ScoringSystems { get; set; } = new List<string>();
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();
