@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class Match : ResponseTemplate {
+    public class Match {
 
         public Match() { }
 

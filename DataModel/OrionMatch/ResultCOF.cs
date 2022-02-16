@@ -6,9 +6,19 @@ using System.Threading.Tasks;
 
 namespace BabelFish.DataModel.OrionMatch {
 
-    public class CourseOfFireWrapper : ResponseTemplate
+    public class CourseOfFireWrapper
     {
         public ResultCOF ResultCOF = new ResultCOF();
+
+        public override string ToString()
+        {
+            StringBuilder foo = new StringBuilder();
+            foo.Append("ResultCOF for ");
+            foo.Append(ResultCOF.EventScore.EventName);
+            foo.Append(": ");
+            foo.Append(ResultCOF.Participant.DisplayName);
+            return foo.ToString();
+        }
     }
 
     [Serializable]

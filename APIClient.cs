@@ -76,7 +76,6 @@ namespace BabelFish {
                     new Dictionary<string, string>() { { "x-api-key", XApiKey } }).ConfigureAwait(false);
                 //TODO: Future check if other calls require additional headers, threw Dict here to get basics running
 
-                //HttpResponseMessage responseMessage = httpClient.GetAsync(uri).Result; //TEST make it err, no x-api-key header
                 response.StatusCode = responseMessage.StatusCode;
                 
                 logger.Info("API Fetched status: {statuscode} || uri: {url}", responseMessage.StatusCode, uri);
@@ -84,12 +83,14 @@ namespace BabelFish {
                 //Convert the returned body to an object of type T
                 var returnedJson = responseMessage.Content.ReadAsStringAsync().Result;
 
-                //message not a stringarray if Forbidden err causing ToObject to crash
-                if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
-                    response.Value = JsonConvert.DeserializeObject<T>(returnedJson);
-
+                response.Value = JsonConvert.DeserializeObject<T>(returnedJson);
                 response.Body = returnedJson.ToString();
-                
+
+                // Override message format for successful parse
+                if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                    returnedJson = returnedJson.Replace("\"Forbidden\"", "[\"Forbidden\"]");
+                response.MessageResponse = JsonConvert.DeserializeObject<MessageResponse>(returnedJson);
+
                 if (!responseMessage.IsSuccessStatusCode)
                     logger.Error("API error with: {errorphrase}", responseMessage.ReasonPhrase);
 
@@ -104,5 +105,5 @@ namespace BabelFish {
             //TODO: Found this recommended but do not want to shut down ongoing instance...onUnload? NLog.LogManager.Shutdown();
         }
         #endregion Methods
-    }
+        }
 }

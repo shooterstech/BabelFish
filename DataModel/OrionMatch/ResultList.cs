@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BabelFish.DataModel.OrionMatch {
 
-    public class ResultListWrapper : ResponseTemplate
+    public class ResultListWrapper
     {
         public ResultList ResultList = new ResultList();
 
@@ -20,7 +20,7 @@ namespace BabelFish.DataModel.OrionMatch {
     }
 
     [Serializable]
-    public class ResultList : ResponseTemplate {
+    public class ResultList {
 
         public const string STATUS_PRELIMINARY = "PRELIMINARY";
         public const string STATUS_UNOFFICIAL = "UNOFFICIAL";

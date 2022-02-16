@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using BabelFish.DataModel;
 
 namespace BabelFish.Responses
 {
@@ -17,7 +18,16 @@ namespace BabelFish.Responses
         //TODO Require T have a public constructor
 
         /// <summary>
-        /// Gets or sets the data object returned by the Rest API Call.
+        /// Gets or sets the status data object returned by the Rest API Call.
+        /// </summary>
+        public MessageResponse MessageResponse
+        {
+            get;
+            internal set;
+        } = new MessageResponse();
+
+        /// <summary>
+        /// Gets or sets the object data object returned by the Rest API Call.
         /// </summary>
         public T Value
         {
