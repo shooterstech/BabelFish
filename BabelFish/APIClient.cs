@@ -80,10 +80,18 @@ namespace BabelFish {
             try
             {
                 DateTime startTime = DateTime.Now;
-                HttpResponseMessage responseMessage = 
+                HttpResponseMessage responseMessage;
+                if (response is GetExternalResponse)
+                {
+                    responseMessage =await httpClient.GetAsync(uri);
+                }
+                else
+                {
+                    responseMessage = 
                     await httpClient.GetAsyncWithHeaders(uri,
                     new Dictionary<string, string>() { { "x-api-key", XApiKey } }).ConfigureAwait(false);
-                //TODO: Future check if other calls require additional headers, threw Dict here to get basics running
+                    //TODO: Future check if other calls require additional headers, threw Dict here to get basics running
+                }
 
                 response.StatusCode = responseMessage.StatusCode;
                 
