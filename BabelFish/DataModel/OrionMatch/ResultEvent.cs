@@ -26,11 +26,18 @@ namespace BabelFish.DataModel.OrionMatch {
 
         public int Rank { get; set; }
 
-        public List<ResultEventChild> Children { get; set; }
+        /// <summary>
+        /// Contains the participants scores for the child events directly under this event. This is not a complete tree, for a complete
+        /// tree look up the ResultCOF using the ResultCOFID.
+        /// </summary>
+        public List<ResultEventChild> Children { get; set; } = new List<ResultEventChild>();
 
-        //????public string UserID { get; set; }
+        /// <summary>
+        /// The Orion User ID of the athlete. Is blank (empty string) if it is not known or the participant is not a person (and thus likely is a team),
+        /// </summary>
+        public string UserID { get; set; } = "";
 
-        public List<ResultEventTeamMember> TeamMembers { get; set; }
+        public List<ResultEventTeamMember> TeamMembers { get; set; } = new List<ResultEventTeamMember>();
 
     }
 
