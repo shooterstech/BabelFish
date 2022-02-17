@@ -8,6 +8,7 @@ using Newtonsoft.Json.Converters;
 using BabelFish.Requests;
 using BabelFish.Responses;
 using BabelFish.Helpers;
+using BabelFish.External;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -65,8 +66,16 @@ namespace BabelFish {
         #region Methods
         protected async Task CallAPI<T>(Request request, Response<T> response)
         {
-            string uri =
-                $"https://{SubDomain}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}";
+            string uri = string.Empty;
+            if (response is GetExternalResponse)
+            {
+                uri = request.RelativePath;
+            }
+            else
+            {
+                uri =
+                    $"https://{SubDomain}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}";
+            }
 
             try
             {
@@ -105,5 +114,5 @@ namespace BabelFish {
             //TODO: Found this recommended but do not want to shut down ongoing instance...onUnload? NLog.LogManager.Shutdown();
         }
         #endregion Methods
-        }
+    }
 }
