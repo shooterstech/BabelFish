@@ -71,6 +71,13 @@ namespace BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string MatchID { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The SharedKey is a defacto password. Allowing systems on the outside to
+        /// make change requests to the match, such as add athletes or teams, insert
+        /// shot data, etc.
+        /// </summary>
+        public string SharedKey { get; set; } = String.Empty;
+
         public string JSONVersion { get; set; } = string.Empty;
 
         /// <summary>

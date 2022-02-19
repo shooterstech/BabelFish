@@ -40,6 +40,11 @@ namespace BabelFish.DataModel.OrionMatch {
         /// </summary>
         public int N { get; set; } = 0;
 
+        /// <summary>
+        /// Score variable. Meaning, we're not quite sure what value it is going to hold, if any.
+        /// </summary>
+        public float V { get; set; } = 0f;
+
         //The definition of the target should be done within the definition of the event
     }
 }
