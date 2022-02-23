@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	  <LangVersion>latest</LangVersion>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
 	<PackageId>BabelFish</PackageId>
 	<Version>1.0.4</Version>
@@ -18,6 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aws4RequestSigner" Version="1.0.3" />
+    <PackageReference Include="AwsSignatureVersion4" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.13" />
   </ItemGroup>

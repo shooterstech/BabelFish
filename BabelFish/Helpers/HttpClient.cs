@@ -44,6 +44,22 @@ namespace BabelFish.Helpers
             }
 		}
 
+        public static async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+
+            try
+            {
+                response = await client.SendAsync(request).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                string error = ex.ToString();
+            }
+
+            return response;
+        }
+
         public static async Task<Newtonsoft.Json.Linq.JToken> GetResponseJsonToken(HttpResponseMessage responseMessage)
         {
             // Call with: var returnedJson = await httpClient.GetResponseJsonToken(responseMessage);

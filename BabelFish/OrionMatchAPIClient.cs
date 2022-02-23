@@ -11,17 +11,18 @@ namespace BabelFish {
     public class OrionMatchAPIClient : APIClient {
 
         public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
+        public OrionMatchAPIClient(string xapikey, string userName = "", string passWord = "") : base(xapikey, userName, passWord) { }
 
         /// <summary>
         /// Get Match Detail API
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) 
+        public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters, bool withAuthentication = false ) 
         {
             GetMatchResponse response = new GetMatchResponse();
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI(requestParameters, response, withAuthentication).ConfigureAwait(false);
 
             return response;
         }
@@ -30,9 +31,9 @@ namespace BabelFish {
         /// </summary>
         /// <param name="matchid"></param>
         /// <returns></returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid)
+        public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false)
         {
-            return await GetMatchDetailAsync(new GetMatchRequest(matchid)).ConfigureAwait(false);
+            return await GetMatchDetailAsync(new GetMatchRequest(matchid), withAuthentication).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -4,11 +4,23 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+//using System.Text.Json; //COMMENT OUT FOR .NET Standard 2.0
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace BabelFish.DataModel.Definitions {
+
+    public class AttributeWrapper : Dictionary<string,Attribute>
+    {
+        //public Dictionary<string, Attribute> AttributeDictionary = new Dictionary<string, Attribute>();
+
+        public Attribute Attribute
+        {
+            get { return this.Values.FirstOrDefault(); }
+        }
+    }
+
     [Serializable]
     public class Attribute : Definition {
 

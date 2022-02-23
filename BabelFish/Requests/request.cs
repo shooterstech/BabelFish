@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic.CompilerServices;
+//using Microsoft.VisualBasic.CompilerServices; //COMMENT OUT FOR .NET Standard 2.0
 
 namespace BabelFish.Requests
 {
@@ -52,9 +52,10 @@ namespace BabelFish.Requests
             {
                 //throw new NotImplementedException(
                 //    "Convert the return value of QueryParameters into an escaped string that may be used in a Rest API call.");
-                var keys = QueryParameters.Select(x => String.Format("{0}={1}", x.Key, x.Value));
+                var keys = QueryParameters.Select(x => String.Format("{0}={1}", HttpUtility.UrlEncode(x.Key), HttpUtility.UrlEncode(x.Value.FirstOrDefault())));
                 var stringtoreturn = String.Join("&", keys);
-                return HttpUtility.UrlEncode(stringtoreturn);
+                //return HttpUtility.UrlEncode(stringtoreturn);
+                return stringtoreturn;
             }
         }
 

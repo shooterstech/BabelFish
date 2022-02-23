@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+//using System.ComponentModel.DataAnnotations; //COMMENT OUT FOR .NET Standard 2.0
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
