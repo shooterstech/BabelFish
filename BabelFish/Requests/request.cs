@@ -17,6 +17,7 @@ namespace BabelFish.Requests
 
         public Request() { }
 
+        public bool WithAuthentication{ get; set; }
 
         /// <summary>
         /// The relative path for this API Request call. For example, if the complete REST API call is

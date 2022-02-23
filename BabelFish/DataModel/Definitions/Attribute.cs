@@ -11,16 +11,6 @@ using Newtonsoft.Json.Converters;
 
 namespace BabelFish.DataModel.Definitions {
 
-    public class AttributeWrapper : Dictionary<string,Attribute>
-    {
-        //public Dictionary<string, Attribute> AttributeDictionary = new Dictionary<string, Attribute>();
-
-        public Attribute Attribute
-        {
-            get { return this.Values.FirstOrDefault(); }
-        }
-    }
-
     [Serializable]
     public class Attribute : Definition {
 

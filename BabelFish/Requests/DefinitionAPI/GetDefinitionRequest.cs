@@ -22,7 +22,7 @@ namespace BabelFish.Requests.DefinitionAPI
         /// <inheritdoc />
         public override string RelativePath
         {
-            get { return $"/definition/{AttributeDefinitionType}/{AttributeSetName.ToString()}"; }
+            get { return $"/definition/{AttributeDefinitionType}/{AttributeSetName}"; }
         }
     }
 }

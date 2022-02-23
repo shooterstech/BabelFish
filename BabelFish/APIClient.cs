@@ -113,11 +113,13 @@ namespace BabelFish {
         #endregion properties
 
         #region Methods
-        protected async Task CallAPI<T>(Request request, Response<T> response, bool WithAuthentication = false)
+        protected async Task CallAPI<T>(Request request, Response<T> response)
         {
+            //EKA NOTE: Made WithAuthentication part fo the Request object
+
             // Setup workflow conditions
             Dictionary<string, bool> FunctionOptions = new Dictionary<string, bool>();
-            FunctionOptions.Add("UseAuth", WithAuthentication);
+            FunctionOptions.Add("UseAuth", request.WithAuthentication);
             FunctionOptions.Add("UseShootersTechUri", (response is GetExternalResponse) ? false : true);
 
             // Get Uri for call
@@ -126,7 +128,7 @@ namespace BabelFish {
                 uri = request.RelativePath;
             else
             {
-                if (WithAuthentication)
+                if (request.WithAuthentication)
                     SubDomain = SubDomains.AUTHAPISTAGE;
                 else
                     SubDomain = SubDomains.APISTAGE;
@@ -134,18 +136,15 @@ namespace BabelFish {
                 uri = $"https://{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(SubDomain).Value}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
             }
 
-            try
-            {
+            try {
                 DateTime startTime = DateTime.Now;
                 HttpResponseMessage responseMessage = new HttpResponseMessage();
 
                 if (!FunctionOptions["UseShootersTechUri"])
                     responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
-                else
-                {
+                else {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
-                    if (FunctionOptions["UseAuth"])
-                    {
+                    if (FunctionOptions["UseAuth"]) {
                         //TESTING VALUES RETRIEVED FROM GetCredentials
                         //{
                         //    "Title": "",
@@ -159,22 +158,25 @@ namespace BabelFish {
                         //}
                         AuthAccessKey = "ASIA2HUPLTYWVNXWV7MM";
                         AuthSecretKey = "ps/x+8ZryaErLWO69qHio6EY/hhNwZ9ieeaHdyq9";
-                        AuthSessionToken = "IQoJb3JpZ2luX2VjEKv//////////wEaCXVzLWVhc3QtMSJHMEUCIGI1S7BGR2WYzH9DzodCDXATytHmdGQjYYYidJhJbSrjAiEAodoaM3qeIHGn9wazwzdhp00qHvbeCzhaLRZFgYYk+0oqzQQI9P//////////ARAAGgw3MDM2MDE1NDg4NDUiDMHw4eDqDjkpdwdRxiqhBBicZtQtKxbDWi2LXLYYU7NBlMhiejC3u7c6OJ9cGUYFQvITvez30j/pxUufT8qIWFMQQB9DMEqKoJrvGTh+BVqutzIR/mcxOGR9vVd0FDn7NyuKgVofiPfSPgZFVnu1MGSi3C3/KsWDMrStmKrHcw4pttFd3eM+mIgXfVK7YpZcy9BYYDdhrNe3OEk6tSYLlz0sHDFgmeXHVJ+bm3qCj4Om0MzR7nIRGETGJ07bfYyXDazTi5uMcnurW1kCdOqOgG7G9mn3o8PuouV+ueSruEG2yrGRY9sk0gwGZoYwClj7Mvtu/y+LFuFOfNsq+QEx7jq4zzD3v/Ehf2+l7YIwurL8b5lk/rwvSSoeaRfy06bUMOLfH67nuDlRgaEdeyMALqnqnmSY3wF/tq00r7u2brwh+5JpAs/TLcQ1puu7Hq67vW1qOxSMPI4xFyIQzdu6E++g50LrgHhcAOygAx05OK9JxMzkAeUIRfbfYGr41QbfF0CYZRlDLdtguhlUazRv33APGv1xszUNYA0TXmZcbzREmMBaS2GeXfzxlkoxhxiQaf6Y9GU3JOenTDjZq8n8wQQMZKsh56JuQewLfDsP3qkv3Oca17JnROLNloF5hWdqgdTnFJShmOYyV2aCUVW/wVtaLMHY+y72UrlttG5sndbkkqDRCYjdxV8b7fuN2d2IdymtM5e+rrwqFQbQr73xkDoHnFCo+NT142vf+5rmGpK6MIXRv5AGOoUCFHVxKs94gRinKvSZG5yIHDpfO4aPr0x4MKZnbVPNpvfpSyfMKp07vMo88yrcYC+vobkEh5hhYS9OVJLZPbSclz6ZiiLmSAz8rCJ6yF3iw60M+Y6AS3UOx1ydNebeNDqZAnnj5X2pGbO1iibTH7h3OFhJFKY3emHde22dCNPsZAphNQM6tUfIVka7FNkSNsJmfxkXJDa//MUF6Je+GAS+y3WrV31v2xEU161y2u9aFKqr1z8jaJ/LgiBhlKKW3YSqrmk+eZIPTVhCO/NsF2yKK/Gz8+fyuSXrzok1Y1xahZX7EEOv3jT0Ggg8CSnK3W9KLf3o8wlLvBrYm+ucuZrriUkuSDu5";
+                        AuthSessionToken =
+                            "IQoJb3JpZ2luX2VjEKv//////////wEaCXVzLWVhc3QtMSJHMEUCIGI1S7BGR2WYzH9DzodCDXATytHmdGQjYYYidJhJbSrjAiEAodoaM3qeIHGn9wazwzdhp00qHvbeCzhaLRZFgYYk+0oqzQQI9P//////////ARAAGgw3MDM2MDE1NDg4NDUiDMHw4eDqDjkpdwdRxiqhBBicZtQtKxbDWi2LXLYYU7NBlMhiejC3u7c6OJ9cGUYFQvITvez30j/pxUufT8qIWFMQQB9DMEqKoJrvGTh+BVqutzIR/mcxOGR9vVd0FDn7NyuKgVofiPfSPgZFVnu1MGSi3C3/KsWDMrStmKrHcw4pttFd3eM+mIgXfVK7YpZcy9BYYDdhrNe3OEk6tSYLlz0sHDFgmeXHVJ+bm3qCj4Om0MzR7nIRGETGJ07bfYyXDazTi5uMcnurW1kCdOqOgG7G9mn3o8PuouV+ueSruEG2yrGRY9sk0gwGZoYwClj7Mvtu/y+LFuFOfNsq+QEx7jq4zzD3v/Ehf2+l7YIwurL8b5lk/rwvSSoeaRfy06bUMOLfH67nuDlRgaEdeyMALqnqnmSY3wF/tq00r7u2brwh+5JpAs/TLcQ1puu7Hq67vW1qOxSMPI4xFyIQzdu6E++g50LrgHhcAOygAx05OK9JxMzkAeUIRfbfYGr41QbfF0CYZRlDLdtguhlUazRv33APGv1xszUNYA0TXmZcbzREmMBaS2GeXfzxlkoxhxiQaf6Y9GU3JOenTDjZq8n8wQQMZKsh56JuQewLfDsP3qkv3Oca17JnROLNloF5hWdqgdTnFJShmOYyV2aCUVW/wVtaLMHY+y72UrlttG5sndbkkqDRCYjdxV8b7fuN2d2IdymtM5e+rrwqFQbQr73xkDoHnFCo+NT142vf+5rmGpK6MIXRv5AGOoUCFHVxKs94gRinKvSZG5yIHDpfO4aPr0x4MKZnbVPNpvfpSyfMKp07vMo88yrcYC+vobkEh5hhYS9OVJLZPbSclz6ZiiLmSAz8rCJ6yF3iw60M+Y6AS3UOx1ydNebeNDqZAnnj5X2pGbO1iibTH7h3OFhJFKY3emHde22dCNPsZAphNQM6tUfIVka7FNkSNsJmfxkXJDa//MUF6Je+GAS+y3WrV31v2xEU161y2u9aFKqr1z8jaJ/LgiBhlKKW3YSqrmk+eZIPTVhCO/NsF2yKK/Gz8+fyuSXrzok1Y1xahZX7EEOv3jT0Ggg8CSnK3W9KLf3o8wlLvBrYm+ucuZrriUkuSDu5";
 
                         AwsSigner AwsSignature = new AwsSigner(AuthAccessKey, AuthSecretKey, uri, AuthSessionToken);
-                        responseMessage = await AwsSignature.GetAws4Signature("AwsSignatureVersion4").ConfigureAwait(false);
+                        responseMessage = await AwsSignature.GetAws4Signature("AwsSignatureVersion4")
+                            .ConfigureAwait(false);
                         //responseMessage = await httpClient.SendAsync(AuthRequest).ConfigureAwait(false);
-                    }
-                    else
-                    {
+                    } else {
                         AssembledHeaders.Add("x-api-key", XApiKey);
-                        responseMessage = await httpClient.GetAsyncWithHeaders(uri, AssembledHeaders).ConfigureAwait(false);
+                        responseMessage = await httpClient.GetAsyncWithHeaders(uri, AssembledHeaders)
+                            .ConfigureAwait(false);
                     }
                 }
+
                 response.StatusCode = responseMessage.StatusCode;
 
                 logger.Info("API Fetched status: {statuscode} || uri: {url}", responseMessage.StatusCode, uri);
 
+                /*
                 //Convert the returned body to an object of type T
                 var returnedJson = responseMessage.Content.ReadAsStringAsync().Result;
 
@@ -184,19 +186,36 @@ namespace BabelFish {
                 //else
                 //returnedJson = "{\"v1.0:ntparc:Three-Position Air Rifle Type\":{\"HierarchicalName\":\"ntparc:Three-Position Air Rifle Type\",\"Owner\":\"OrionAcct001001\",\"RequiredAttributes\":[],\"Version\":\"1.1\",\"Fields\":[{\"Values\":[{\"Value\":\"Sporter\",\"Name\":\"Sporter\"},{\"Value\":\"Precision\",\"Name\":\"Precision\"}],\"DefaultValue\":\"Sporter\",\"FieldName\":\"Three-Position Air Rifle Type\",\"ValueType\":\"STRING\",\"FieldType\":\"CLOSED\"}],\"Description\":\"Three-Position Air Rifle Type\",\"DisplayName\":\"Three-Position Air Rifle Type\",\"SetName\":\"v1.0:ntparc:Three-Position Air Rifle Type\",\"Type\":\"ATTRIBUTE\",\"Designation\":[\"ATHLETE\",\"CLUB\",\"MATCH OFFICIAL\",\"TEAM\",\"TEAM OFFICIAL\",\"USER\"]}}";
                 response.Value = JsonConvert.DeserializeObject<T>(returnedJson);
+                */
 
-                response.Body = returnedJson.ToString();
+                using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
+                using (StreamReader sr = new StreamReader(s))
+                using (JsonReader reader = new JsonTextReader(sr)) {
+                    var apiReturnJson = JObject.ReadFrom(reader);
 
-                // Override message format for successful parse
-                if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
-                    returnedJson = returnedJson.Replace("\"Forbidden\"", "[\"Forbidden\"]");
-                response.MessageResponse = JsonConvert.DeserializeObject<MessageResponse>(returnedJson);
+                    response.Body = apiReturnJson;
+
+                    //TODO: Wrap this in a try block just in case Title, Message, ResponseCodes is not part of the response. Would only happen if the lambda errored out ... in theory.
+                    response.MessageResponse = new MessageResponse() {
+                        Title = apiReturnJson["Title"].ToObject<string>(),
+                        Message = apiReturnJson["Message"].ToObject<List<string>>(),
+                        ResponseCodes = apiReturnJson["ResponseCodes"].ToObject<List<string>>()
+                    };
+
+                    // Override message format for successful parse
+                    /*
+                     * EKA NOTE: Note really sure what you are doing here
+                    if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
+                        returnedJson = returnedJson.Replace("\"Forbidden\"", "[\"Forbidden\"]");
+                    
+                     */
+                }
 
                 if (!responseMessage.IsSuccessStatusCode)
                     logger.Error("API error with: {errorphrase}", responseMessage.ReasonPhrase);
 
-                TimeSpan ts = DateTime.Now - startTime;
-                response.TimeToRun = $"{ts.Minutes}:{ts.Seconds}:{ts.Milliseconds}";
+                //EKA Note: Let's keep TimetoRun as a TimeSpan object, makes it easier to parse later if needed.
+                response.TimeToRun = DateTime.Now - startTime;
             }
             catch (Exception ex)
             {

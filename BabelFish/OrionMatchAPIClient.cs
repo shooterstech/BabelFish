@@ -18,11 +18,11 @@ namespace BabelFish {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters, bool withAuthentication = false ) 
+        public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) 
         {
             GetMatchResponse response = new GetMatchResponse();
 
-            await this.CallAPI(requestParameters, response, withAuthentication).ConfigureAwait(false);
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
             return response;
         }
@@ -31,9 +31,10 @@ namespace BabelFish {
         /// </summary>
         /// <param name="matchid"></param>
         /// <returns></returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false)
-        {
-            return await GetMatchDetailAsync(new GetMatchRequest(matchid), withAuthentication).ConfigureAwait(false);
+        public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false) {
+            var request = new GetMatchRequest(matchid);
+            request.WithAuthentication = withAuthentication;
+            return await GetMatchDetailAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>

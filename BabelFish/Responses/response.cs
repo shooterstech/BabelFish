@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using BabelFish.DataModel;
 
 namespace BabelFish.Responses
@@ -16,6 +18,8 @@ namespace BabelFish.Responses
     public abstract class Response<T>
     {
         //TODO Require T have a public constructor
+
+        JToken body;
 
         /// <summary>
         /// Gets or sets the status data object returned by the Rest API Call.
@@ -43,11 +47,25 @@ namespace BabelFish.Responses
         /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.
         /// </summary>
-        public string Body { get; internal set; }
+        public JToken Body {
+            get { return body; }
+            internal set {
+                body = value;
+                this.ConvertBodyToValue();
+            }
+        }
 
         /// <summary>
         /// Gets or Sets TimeSpan of API call
         /// </summary>
-        public string TimeToRun { get; internal set; } = string.Empty;
+        public TimeSpan TimeToRun { get; internal set; } = TimeSpan.Zero;
+
+        /// <summary>
+        /// Function responsible for each concrete implementation to convert the Body, which
+        /// is a JToken object, into the Value, which is of type T.
+        /// </summary>
+        protected virtual void ConvertBodyToValue() {
+            Value = Body.ToObject<T>();
+        }
     }
 }

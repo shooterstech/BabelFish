@@ -15,11 +15,6 @@ namespace BabelFish {
 
         public DefinitionAPIClient(string apiKey) : base(apiKey) { }
 
-        public Definition GetDefinition(Definition.DefinitionType type, SetName setName)
-        {
-            throw new NotImplementedException();
-        }
-
         //public async Task<T> GetDefinition<T>(Definition.DefinitionType type, SetName setName, Response<T> response)
         //{
         //    //throw new NotImplementedException();
@@ -30,43 +25,40 @@ namespace BabelFish {
         //    return response;
         //}
 
-        public async Task<GetAttributeResponse> GetAttributeDefinitionAsync(string version, string nameSpace, string properName)
-        {
-            //orig - return await (BabelFish.DataModel.Definitions.Attribute)GetDefinition( Definition.DefinitionType.ATTRIBUTE, setName ).ConfigureAwait(false);
-            //TODO: Get this working then fix error with Generics in GetDefinition()
+        public async Task<GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
-            GetAttributeResponse response = new GetAttributeResponse();
+            var definitionType = Definition.DefinitionType.ATTRIBUTE;
 
-            SetName setName = new SetName(nameSpace,properName,version);
-//            return await GetDefinition(Definition.DefinitionType.ATTRIBUTE, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute> response = new Responses.DefinitionAPI.GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>( setName, definitionType );
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType.Description() );
             
-            GetDefinitionRequest requestParameters = new GetDefinitionRequest(setName, EnumHelper.GetAttributeOfType<EnumMemberAttribute>(Definition.DefinitionType.ATTRIBUTE).Value);
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI(request, response).ConfigureAwait(false);
+
             return response;
         }
 
         public CourseOfFire GetCourseOfFireDefinition( SetName setName ) {
-            return (CourseOfFire)GetDefinition( Definition.DefinitionType.COURSEOFFIRE, setName );
+            throw new NotImplementedException();
         }
 
         public EventStyle GetEventStyleDefinition( SetName setName ) {
-            return (EventStyle)GetDefinition( Definition.DefinitionType.EVENTSTYLE, setName );
+            throw new NotImplementedException();
         }
 
         public RankingRule GetRankingRuleDefinition( SetName setName ) {
-            return (RankingRule)GetDefinition( Definition.DefinitionType.RANKINGRULES, setName );
+            throw new NotImplementedException();
         }
 
         public StageStyle GetStageStyleDefinition( SetName setName ) {
-            return (StageStyle)GetDefinition( Definition.DefinitionType.STAGESTYLE, setName );
+            throw new NotImplementedException();
         }
 
         public TargetCollection GetTargetCollectionDefinition( SetName setName ) {
-            return (TargetCollection)GetDefinition( Definition.DefinitionType.TARGETCOLLECTION, setName );
+            throw new NotImplementedException();
         }
 
         public Target GetTargetDefinition( SetName setName ) {
-            return (Target)GetDefinition( Definition.DefinitionType.TARGET, setName );
+            throw new NotImplementedException();
         }
     }
 }
