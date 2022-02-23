@@ -195,12 +195,8 @@ namespace BabelFish {
 
                     response.Body = apiReturnJson;
 
-                    //TODO: Wrap this in a try block just in case Title, Message, ResponseCodes is not part of the response. Would only happen if the lambda errored out ... in theory.
-                    response.MessageResponse = new MessageResponse() {
-                        Title = apiReturnJson["Title"].ToObject<string>(),
-                        Message = apiReturnJson["Message"].ToObject<List<string>>(),
-                        ResponseCodes = apiReturnJson["ResponseCodes"].ToObject<List<string>>()
-                    };
+                    //TODO: Wrap this in a try block just in case something goes wrong with the deserialization. Would only happen if the lambda errored out ... in theory.
+                    response.MessageResponse = apiReturnJson.ToObject<MessageResponse>();
 
                     // Override message format for successful parse
                     /*

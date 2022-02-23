@@ -25,11 +25,16 @@ namespace BabelFish.Tests {
 
             var taskResult = response.Result;
             var attribute = taskResult.Definition;
+            var msgResponse = taskResult.MessageResponse;
+
+            Assert.IsNotNull(attribute);
+            Assert.IsNotNull(msgResponse);
 
             Assert.AreEqual(attribute.SetName, setName.ToString());
             Assert.AreEqual(attribute.Type, taskResult.DefinitionType);
             Assert.AreEqual(attribute.Fields.Count, 1);
             Assert.AreEqual(attribute.Fields[0].FieldName, "Three-Position Air Rifle Type");
+
         }
     }
 }
