@@ -28,24 +28,31 @@ namespace BabelFish.DataModel.OrionMatch {
         /// 
         /// To pull the full squadding, use GetSquaddingListRequest()
         /// </summary>
+        [JsonProperty(Order = 1)]
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
+        [JsonProperty(Order = 2)]
         public string ParentID { get; set; } = string.Empty;
 
+        [JsonProperty(Order = 3)]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
         /// External Result URL
         /// </summary>
+        [JsonProperty(Order = 4)]
         public string ResultURL { get; set; } = string.Empty;
 
+        [JsonProperty(Order = 5)]
         public DateTime ResultEventsLastUpdate { get; set; } = new DateTime();
 
+        [JsonProperty(Order = 6)]
         public List<Attribute> Attributes { get; set; } = new List<Attribute>();
 
         /// <summary>
         /// Name of the Match
         /// </summary>
+        [JsonProperty(Order = 7)]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
@@ -55,13 +62,16 @@ namespace BabelFish.DataModel.OrionMatch {
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
+        [JsonProperty(Order = 8)]
         public string Visibility { get; set; } = string.Empty;
 
+        [JsonProperty(Order = 9)]
         public string AccountNumber { get; set; } = string.Empty;
 
         /// <summary>
         /// Start Date of the Match. Formatted as YYYY-MM-dd
         /// </summary>
+        [JsonProperty(Order = 10)]
         public string StartDate { get; set; } = string.Empty;
 
         /// <summary>
@@ -69,6 +79,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// 
         /// This is a required field.
         /// </summary>
+        [JsonProperty(Order = 11)]
         public string MatchID { get; set; } = string.Empty;
 
         /// <summary>
@@ -78,20 +89,25 @@ namespace BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string SharedKey { get; set; } = String.Empty;
 
+        [JsonProperty(Order = 12)]
         public string JSONVersion { get; set; } = string.Empty;
 
         /// <summary>
         /// End Date of the Match. Formatted as YYYY-MM-dd
         /// </summary>
+        [JsonProperty(Order = 13)]
         public string EndDate { get; set; } = string.Empty;
 
         /// <summary>
         /// A list of common Incident Reports that may occure during the competition.
         /// </summary>
+        [JsonProperty(Order = 14)]
         public List<IncidentReportRuleDefinition> CommonIncidentReports { get; set; } = new List<IncidentReportRuleDefinition>();
 
+        [JsonProperty(Order = 15)]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
+        [JsonProperty(Order = 16)]
         public Location Location { get; set; } = new Location();
 
         /// <summary>
@@ -117,6 +133,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// Read Personal Squadding
         /// Read Personal Incident Reports
         ///
+        [JsonProperty(Order = 17)]
         public List<string> Authorization { get; set; } = new List<string>();
 
         /// <summary>
@@ -145,6 +162,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// scores the logged in user shot. If a user is not logged in, or the logged in user is
         /// not an athletes, then this will be an empty list.
         /// </summary>
+        [JsonProperty(Order = 18)]
         public List<ResultCOF> ParticipantResults { get; set; } = new List<ResultCOF>();
 
         /// <summary>

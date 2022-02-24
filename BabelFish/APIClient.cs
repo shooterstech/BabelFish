@@ -22,7 +22,7 @@ namespace BabelFish {
             this.ApiStage = APIStage.PRODUCTION;
             this.SubDomain = SubDomains.APISTAGE;
 
-            logger.Info("BablFish API instantiated with x-api-key: {key}", XApiKey);
+            logger.Info("BablFish API instantiated");
         }
         protected APIClient(string xapikey, string userName, string passWord) : this(xapikey)
         {
@@ -128,7 +128,7 @@ namespace BabelFish {
                 uri = request.RelativePath;
             else
             {
-                if (request.WithAuthentication)
+                if (FunctionOptions["UseAuth"])
                     SubDomain = SubDomains.AUTHAPISTAGE;
                 else
                     SubDomain = SubDomains.APISTAGE;
