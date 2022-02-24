@@ -9,9 +9,9 @@ using Newtonsoft.Json;
 namespace BabelFish.DataModel.Definitions {
 
     [Serializable]
-    public class ScoreFormatCollectionDefinition : Definition {
+    public class ScoreFormatCollection : Definition {
         
-        public ScoreFormatCollectionDefinition() : base() {
+        public ScoreFormatCollection() : base() {
             Type = Definition.DefinitionType.SCOREFORMATCOLLECTION;
             ScoreConfigs = new List<ScoreConfig>();
         }
