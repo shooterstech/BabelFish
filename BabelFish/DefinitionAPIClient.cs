@@ -120,8 +120,13 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public ResultListFormat GetResultListFormatCollection( SetName setName ) {
-            throw new NotImplementedException();
+        public async Task<GetDefinitionResponse<ResultListFormat>> GetResultListFormatCollection( SetName setName ) {
+
+            var definitionType = Definition.DefinitionType.RESULTLISTFORMAT;
+
+            GetDefinitionResponse<ResultListFormat> response = new GetDefinitionResponse<ResultListFormat>( setName, definitionType );
+
+            return await GetDefinition( definitionType, setName, response ).ConfigureAwait( false );
         }
     }
 }
