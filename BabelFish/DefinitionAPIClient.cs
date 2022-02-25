@@ -60,5 +60,9 @@ namespace BabelFish {
         public Target GetTargetDefinition( SetName setName ) {
             throw new NotImplementedException();
         }
+
+        public ScoreFormatCollection GetScoreFormatCollection(SetName setName) {
+            throw new NotImplementedException();
+        }
     }
 }
