@@ -59,17 +59,5 @@ namespace BabelFish.Helpers
 
             return response;
         }
-
-        public static async Task<Newtonsoft.Json.Linq.JToken> GetResponseJsonToken(HttpResponseMessage responseMessage)
-        {
-            // Call with: var returnedJson = await httpClient.GetResponseJsonToken(responseMessage);
-            // Build with: response.Value = returnedJson.ToObject<T>();
-            using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
-            using (StreamReader sr = new StreamReader(s))
-            using (JsonReader reader = new JsonTextReader(sr))
-            {
-                return JObject.ReadFrom(reader);
-            }
-        }
-	}
+    }
 }
