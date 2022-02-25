@@ -9,7 +9,6 @@ using BabelFish.Requests;
 using BabelFish.Responses;
 using BabelFish.Helpers;
 using BabelFish.External;
-using BabelFish.Responses.DefinitionAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -115,8 +114,6 @@ namespace BabelFish {
         #region Methods
         protected async Task CallAPI<T>(Request request, Response<T> response)
         {
-            //EKA NOTE: Made WithAuthentication part fo the Request object
-
             // Setup workflow conditions
             Dictionary<string, bool> FunctionOptions = new Dictionary<string, bool>();
             FunctionOptions.Add("UseAuth", request.WithAuthentication);
@@ -176,35 +173,21 @@ namespace BabelFish {
 
                 logger.Info("API Fetched status: {statuscode} || uri: {url}", responseMessage.StatusCode, uri);
 
-                /*
-                //Convert the returned body to an object of type T
-                var returnedJson = responseMessage.Content.ReadAsStringAsync().Result;
-
-                Dictionary<string, Attribute> tmp;
-                //if (response is GetAttributeResponse)
-                //    tmp = JsonConvert.DeserializeObject<Dictionary<string, Attribute>>(returnedJson);
-                //else
-                //returnedJson = "{\"v1.0:ntparc:Three-Position Air Rifle Type\":{\"HierarchicalName\":\"ntparc:Three-Position Air Rifle Type\",\"Owner\":\"OrionAcct001001\",\"RequiredAttributes\":[],\"Version\":\"1.1\",\"Fields\":[{\"Values\":[{\"Value\":\"Sporter\",\"Name\":\"Sporter\"},{\"Value\":\"Precision\",\"Name\":\"Precision\"}],\"DefaultValue\":\"Sporter\",\"FieldName\":\"Three-Position Air Rifle Type\",\"ValueType\":\"STRING\",\"FieldType\":\"CLOSED\"}],\"Description\":\"Three-Position Air Rifle Type\",\"DisplayName\":\"Three-Position Air Rifle Type\",\"SetName\":\"v1.0:ntparc:Three-Position Air Rifle Type\",\"Type\":\"ATTRIBUTE\",\"Designation\":[\"ATHLETE\",\"CLUB\",\"MATCH OFFICIAL\",\"TEAM\",\"TEAM OFFICIAL\",\"USER\"]}}";
-                response.Value = JsonConvert.DeserializeObject<T>(returnedJson);
-                */
-
                 using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
                 using (StreamReader sr = new StreamReader(s))
                 using (JsonReader reader = new JsonTextReader(sr)) {
                     var apiReturnJson = JObject.ReadFrom(reader);
+                    try {
 
-                    response.Body = apiReturnJson;
+                        //TODO: Do something with invalid data format from Forbidden....
+                        if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
+                            response.MessageResponse = apiReturnJson.ToObject<MessageResponse>();
 
-                    //TODO: Wrap this in a try block just in case something goes wrong with the deserialization. Would only happen if the lambda errored out ... in theory.
-                    response.MessageResponse = apiReturnJson.ToObject<MessageResponse>();
-
-                    // Override message format for successful parse
-                    /*
-                     * EKA NOTE: Note really sure what you are doing here
-                    if (responseMessage.StatusCode == HttpStatusCode.Forbidden)
-                        returnedJson = returnedJson.Replace("\"Forbidden\"", "[\"Forbidden\"]");
-                    
-                     */
+                        if (responseMessage.IsSuccessStatusCode)
+                            response.Body = apiReturnJson;
+                    } catch (Exception ex) {
+                        throw new Exception($"Error parsing return json: {ex.ToString()}");
+                    }
                 }
 
                 if (!responseMessage.IsSuccessStatusCode)
