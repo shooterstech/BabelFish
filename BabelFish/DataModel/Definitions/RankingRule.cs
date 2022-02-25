@@ -13,7 +13,6 @@ namespace BabelFish.DataModel.Definitions {
 
         public RankingRule() : base() {
             Type = Definition.DefinitionType.RANKINGRULES;
-            RankingRules = new List<RankingRule>();
         }
 
         [OnDeserialized]
@@ -23,7 +22,7 @@ namespace BabelFish.DataModel.Definitions {
 
         [JsonProperty(Order = 10)]
         [DefaultValue(null)]
-        public List<RankingRule> RankingRules { get; set; }
+        public List<RankingRule> RankingRules { get; set; } = new List<RankingRule>();
 
     }
 }

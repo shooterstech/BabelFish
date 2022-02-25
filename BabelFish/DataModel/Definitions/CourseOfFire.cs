@@ -25,16 +25,6 @@ namespace BabelFish.DataModel.Definitions {
 
         public CourseOfFire() : base() {
             Type = Definition.DefinitionType.COURSEOFFIRE;
-
-            RangeScripts = new List<RangeScript>();
-
-            AbbreviatedFormats = new List<AbbreviatedFormat>();
-
-            RequiredAttributes = new List<string>();
-
-            Events = new List<Event>();
-
-            Singulars = new List<Singular>();
         }
 
 
@@ -51,13 +41,13 @@ namespace BabelFish.DataModel.Definitions {
         /// A human readable short name.
         /// </summary>
         [JsonProperty(Order = 10)]
-        public string CommonName { get; set; }
+        public string CommonName { get; set; } = string.Empty;
 
         /// <summary>
         /// A list of ATTRIBUTES that each competitor needs to have in order for the mapping to EVENT STYLE or STAGE STYLE to work. Used when a COURSE OF FIRE is defined for multiple equipment classes.
         /// </summary>
         [JsonProperty(Order = 11)]
-        public List<string> RequiredAttributes { get; set; }
+        public List<string> RequiredAttributes { get; set; } = new List<string>();
 
         /// <summary>
         /// Formatted as a SetName, the TargetCollectionDef to use to score shots. The specific TARGET definition to use is calculated with the 
@@ -65,57 +55,57 @@ namespace BabelFish.DataModel.Definitions {
         /// Required.
         /// </summary>
         [JsonProperty(Order = 12)]
-        public string TargetCollectionDef { get; set; }
+        public string TargetCollectionDef { get; set; } = string.Empty;
 
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
         /// </summary>
         [JsonProperty(Order = 13)]
         [DefaultValue(4.5)]
-        public float DefaultExpectedDiameter { get; set; }
+        public float DefaultExpectedDiameter { get; set; } = (float)4.5;
 
         /// <summary>
         /// The default bullet diameter to use for scoring, measured in mm.
         /// </summary>
-        [JsonProperty(Order=14)]
+        [JsonProperty(Order = 14)]
         [DefaultValue(4.5)]
-        public float DefaultScoringDiameter { get; set; }
+        public float DefaultScoringDiameter { get; set; } = (float) 4.5;
 
         /// <summary>
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
         [JsonProperty(Order = 15)]
-        public string ScoreFormatCollectionDef { get; set; }
+        public string ScoreFormatCollectionDef { get; set; } = string.Empty;
 
         /// <summary>
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
         /// </summary>
         [JsonProperty(Order = 16)]
-        public string ScoreConfigDefault { get; set; }
+        public string ScoreConfigDefault { get; set; } = string.Empty;
 
         /// <summary>
         /// Range command script with Paper Targets or EST Configuration. 
         /// </summary>
         [JsonProperty(Order = 20)]
-        public List<RangeScript> RangeScripts { get; set; }
+        public List<RangeScript> RangeScripts { get; set; } = new List<RangeScript>();
 
         /// <summary>
         /// A list of Events that make up this COURSE OF FIRE. These are the composite events, those that are made up of other child events.
         /// </summary>
         [JsonProperty(Order = 21)]
-        public List<Event> Events { get; set; }
+        public List<Event> Events { get; set; } = new List<Event>();
 
         /// <summary>
         /// A list of Singulars that make up this COURSE OF FIRE. These are the singular events, those that are not made up of other events. Almost always represents a singular shot.
         /// </summary>
         [JsonProperty(Order = 22)]
-        public List<Singular> Singulars { get; set; }
+        public List<Singular> Singulars { get; set; } = new List<Singular>();
 
         /// <summary>
         /// A list of AbbreviatedFormats.
         /// </summary>
         [JsonProperty(Order = 23)]
-        public List<AbbreviatedFormat> AbbreviatedFormats { get; set; }
+        public List<AbbreviatedFormat> AbbreviatedFormats { get; set; } = new List<AbbreviatedFormat>();
 
     }
 }

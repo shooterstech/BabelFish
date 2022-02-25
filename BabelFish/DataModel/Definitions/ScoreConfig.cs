@@ -9,12 +9,12 @@ namespace BabelFish.DataModel.Definitions {
 
         public ScoreConfig() { }
 
-        public string ScoreConfigName { get; set; }
+        public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <summary>
         /// The Keys to the dictionary should be set by the parent SCORE FORMAT COLLECTION's ScoreFormats list.
         /// Values are a Score Format, eg. "{i} - {x}"
         /// </summary>
-        public Dictionary<string, string> ScoreFormats { get; set; }
+        public Dictionary<string, string> ScoreFormats { get; set; } = new Dictionary<string, string>();
     }
 }

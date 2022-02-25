@@ -3,6 +3,10 @@ Dot Net Library that provides a façade for Shooter's Tech REST API interface.
 
 NOTE: Library is considered a WORK-IN-PROGRESS and is NOT intended for production environment at this time.
 
+v1.0.5.0
+Update Definitions logic
+Addition of Definitions
+
 v1.0.4.0
 Move Message Response out of returned object
 Add Unit Tests Project

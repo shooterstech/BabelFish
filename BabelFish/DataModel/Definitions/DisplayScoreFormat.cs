@@ -11,15 +11,12 @@ namespace BabelFish.DataModel.Definitions {
 
         List<string> errorList = new List<string>();
 
-        public DisplayScoreFormat() {
+        public DisplayScoreFormat() { }
 
-        }
+        public string Name { get; set; } = string.Empty;
 
-        public string Name { get; set; }
+        public string ScoreFormat { get; set; } = string.Empty;
 
-        public string ScoreFormat { get; set; }
-
-        public float MaxShotValue { get; set; }
-
+        public float MaxShotValue { get; set; } = 0;
     }
 }

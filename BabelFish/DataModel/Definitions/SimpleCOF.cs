@@ -14,20 +14,18 @@ namespace BabelFish.DataModel.Definitions {
     [Serializable]
     public class SimpleCOF {
 
-        public SimpleCOF() {
-            Components = new List<SimpleCOFComponent>();
-        }
+        public SimpleCOF() { }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        public List<SimpleCOFComponent> Components { get; set; }
+        public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
     }
 
     public class SimpleCOFComponent {
-        public string StageStyle { get; set; }
+        public string StageStyle { get; set; } = string.Empty;
 
-        public int Shots { get; set; }
+        public int Shots { get; set; } = 0;
 
-        public string ScoreFormat { get; set; }
+        public string ScoreFormat { get; set; } = string.Empty;
     }
 }

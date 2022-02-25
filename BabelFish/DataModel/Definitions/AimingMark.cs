@@ -14,10 +14,7 @@ namespace BabelFish.DataModel.Definitions {
         public const string COLOR_BLACK = "BLACK";
         public const string COLOR_WHITE = "WHITE";
 
-        public AimingMark() {
-            Color = COLOR_BLACK;
-            Shape = SHAPE_CIRCLE;
-        }
+        public AimingMark() { }
 
         public AimingMark(float dimension, string shape, string color) {
             this.Dimension = dimension;
@@ -25,6 +22,6 @@ namespace BabelFish.DataModel.Definitions {
             this.Color = color;
         }
 
-        public string Color { get; set; }
+        public string Color { get; set; } = COLOR_BLACK;
     }
 }

@@ -12,28 +12,23 @@ namespace BabelFish.DataModel.Definitions {
 
         public Target() : base() {
             Type = Definition.DefinitionType.TARGET;
-            ScoringRings = new List<ScoringRing>();
-            AimingMarks = new List<AimingMark>();
-            BackgroundColor = AimingMark.COLOR_WHITE;
         }
-
 
         [OnDeserialized]
         internal new void OnDeserializedMethod(StreamingContext context) {
             base.OnDeserializedMethod(context);
         }
 
-
         [JsonProperty(Order = 10)]
-        public List<ScoringRing> ScoringRings { get; set; }
+        public List<ScoringRing> ScoringRings { get; set; } = new List<ScoringRing>();
 
         [JsonProperty(Order = 11)]
-        public ScoringRing InnerTen { get; set; }
+        public ScoringRing InnerTen { get; set; } = new ScoringRing();
 
         [JsonProperty(Order = 12)]
-        public List<AimingMark> AimingMarks { get; set; }
+        public List<AimingMark> AimingMarks { get; set; } = new List<AimingMark>();
 
         [JsonProperty(Order = 13)]
-        public string BackgroundColor { get; set; }
+        public string BackgroundColor { get; set; } = AimingMark.COLOR_WHITE;
     }
 }

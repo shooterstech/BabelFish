@@ -14,9 +14,6 @@ namespace BabelFish.DataModel.Definitions {
             Type = Definition.DefinitionType.EVENTSTYLE;
 
             //Don't initialize EventStyles or StageStyles, since one of these values as to be null.
-
-            RelatedEventStyles = new List<string>();
-            SimpleCOFs = new List<SimpleCOF>();
         }
 
         [OnDeserialized]
@@ -24,21 +21,15 @@ namespace BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod(context);
 
             //Don't initialize EventStyles or StageStyles, since one of these values as to be null.
-
-            if (RelatedEventStyles == null)
-                RelatedEventStyles = new List<string>();
-
-            if (SimpleCOFs == null)
-                SimpleCOFs = new List<SimpleCOF>();
         }
 
-        public List<string> EventStyles { get; set; }
+        public List<string>? EventStyles { get; set; }
 
-        public List<string> StageStyles { get; set; }
+        public List<string>? StageStyles { get; set; }
 
-        public List<string> RelatedEventStyles { get; set; }
+        public List<string> RelatedEventStyles { get; set; } = new List<string>();
 
-        public List<SimpleCOF> SimpleCOFs { get; set; }
+        public List<SimpleCOF> SimpleCOFs { get; set; } = new List<SimpleCOF>();
 
     }
 }

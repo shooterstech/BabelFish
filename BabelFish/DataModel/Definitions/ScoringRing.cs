@@ -8,9 +8,7 @@ namespace BabelFish.DataModel.Definitions {
     [Serializable]
     public class ScoringRing : ScoringShape {
 
-        public ScoringRing() {
-            Shape = SHAPE_CIRCLE;
-        }
+        public ScoringRing() { }
 
         public ScoringRing(int value, float diameter) {
             this.Value = value;
@@ -18,6 +16,6 @@ namespace BabelFish.DataModel.Definitions {
             this.Shape = SHAPE_CIRCLE;
         }
 
-        public int Value { get; set; }
+        public int Value { get; set; } = 0;
     }
 }

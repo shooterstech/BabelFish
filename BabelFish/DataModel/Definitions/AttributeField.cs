@@ -30,25 +30,25 @@ namespace BabelFish.DataModel.Definitions {
             Key = false;
         }
 
-        public string FieldName { get; set; }
+        public string FieldName { get; set; } = string.Empty;
 
-        public string DisplayName { get; set; }
+        public string DisplayName { get; set; } = string.Empty;
 
-        public string FieldType { get; set; }
+        public string FieldType { get; set; } = string.Empty;
 
-        public dynamic DefaultValue { get; set; }
+        public dynamic DefaultValue { get; set; } = string.Empty;
 
-        public bool MultipleValues { get; set; }
+        public bool MultipleValues { get; set; } = false;
 
-        public bool Required { get; set; }
+        public bool Required { get; set; } = false;
 
-        public bool Key { get; set; }
+        public bool Key { get; set; } = false;
 
-        public AttributeValidation Validation { get; set; }
+        public AttributeValidation Validation { get; set; } = new AttributeValidation();
 
-        public List<AttributeValueOption> Values { get; set; }
+        public List<AttributeValueOption> Values { get; set; } = new List<AttributeValueOption>();
 
-        public string ValueType { get; set; }
+        public string ValueType { get; set; } = string.Empty;
 
     }
 }

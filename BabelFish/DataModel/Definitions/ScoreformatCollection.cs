@@ -13,7 +13,6 @@ namespace BabelFish.DataModel.Definitions {
         
         public ScoreFormatCollection() : base() {
             Type = Definition.DefinitionType.SCOREFORMATCOLLECTION;
-            ScoreConfigs = new List<ScoreConfig>();
         }
 
 
@@ -22,8 +21,8 @@ namespace BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod(context);
         }
 
-        public List<string> ScoreFormats { get; set; }
+        public List<string> ScoreFormats { get; set; } = new List<string>();
 
-        public List<ScoreConfig> ScoreConfigs { get; set; }
+        public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
     }
 }

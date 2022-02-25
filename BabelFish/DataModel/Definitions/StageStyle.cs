@@ -9,22 +9,20 @@ namespace BabelFish.DataModel.Definitions {
     [Serializable]
     public class StageStyle : Definition {
 
-
         public StageStyle() : base() {
             Type = Definition.DefinitionType.STAGESTYLE;
         }
-
 
         [OnDeserialized]
         internal new void OnDeserializedMethod(StreamingContext context) {
             base.OnDeserializedMethod(context);
         }
 
-        public List<string> RelatedStageStyles { get; set; }
+        public List<string> RelatedStageStyles { get; set; } = new List<string>();
 
-        public int ShotsInSeries { get; set; }
+        public int ShotsInSeries { get; set; } = 0;
 
-        public List<DisplayScoreFormat> DisplayScoreFormats { get; set; }
+        public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
     }
 }

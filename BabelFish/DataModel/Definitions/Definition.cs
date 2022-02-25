@@ -12,8 +12,6 @@ using Newtonsoft.Json.Converters;
 namespace BabelFish.DataModel.Definitions {
     [Serializable]
     public abstract class Definition {
-
-
         /// <summary>
         /// The Reconfigurable Rulebook Definition types.
         /// </summary>
@@ -131,34 +129,31 @@ namespace BabelFish.DataModel.Definitions {
         public Definition() {
             Discipline = DisciplineType.NA; //Not all definitions use Discipline. Setting it null so by default it does not get included on JSON
             Discontinued = false;
-            Tags = new List<string>();
         }
 
         internal void OnDeserializedMethod(StreamingContext context) {
             //Note, each subclass of Definition will have to call base.OnSerializedMethod
 
             //Assures that Tags won't be null and as a default will be an empty list.
-            if (Tags == null)
-                Tags = new List<string>();
         }
 
         /// <summary>
         /// HierarchicalName is namespace:properName
         /// </summary>
         [JsonProperty(Order = 1)]
-        public string HierarchicalName { get; set; }
+        public string HierarchicalName { get; set; } = string.Empty;
 
         /// <summary>
         /// A human readable description of this Definition. Can be verbose.
         /// </summary>
         [JsonProperty(Order = 2)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// A human readable short name for this Definition.
         /// </summary>
         [JsonProperty(Order = 2)]
-        public string CommonName { get; set; }
+        public string CommonName { get; set; } = string.Empty;
 
         /// <summary>
         /// Version number of the definiton. major and minor, e.g. 1.10
@@ -166,7 +161,7 @@ namespace BabelFish.DataModel.Definitions {
         /// Version "x.0" is reserved as a copy of the most up to date version within the major version
         /// </summary>
         [JsonProperty(Order = 3)]
-        public string Version { get; set; }
+        public string Version { get; set; } = string.Empty;
 
         /// <summary>
         /// The Definition Type
@@ -176,10 +171,10 @@ namespace BabelFish.DataModel.Definitions {
         public DefinitionType Type { get; set; }
 
         [JsonProperty(Order = 5)]
-        public string SetName { get; set; }
+        public string SetName { get; set; } = string.Empty;
 
         [JsonProperty(Order = 6)]
-        public string Owner { get; set; }
+        public string Owner { get; set; } = string.Empty;
 
         [JsonProperty(Order = 7)]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -187,17 +182,17 @@ namespace BabelFish.DataModel.Definitions {
 
         [JsonProperty(Order=8)]
         [DefaultValue("")]
-        public string Subdiscipline { get; set; }
-        
+        public string Subdiscipline { get; set; } = string.Empty;
+
         [JsonProperty(Order = 9)]
-        public List<string> Tags { get; set; }
+        public List<string> Tags { get; set; } = new List<string>();
 
         /// <summary>
         /// The Version string of the JSON document
         /// </summary>
         [JsonProperty(Order = 10)]
         [DefaultValue("2020-03-31")]
-        public string JSONVersion { get; set; }
+        public string JSONVersion { get; set; } = string.Empty;
 
         [JsonProperty(Order = 11)]
         [DefaultValue(false)]

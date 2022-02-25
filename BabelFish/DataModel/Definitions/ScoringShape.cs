@@ -11,16 +11,14 @@ namespace BabelFish.DataModel.Definitions {
         public const string SHAPE_SQUARE = "SQUARE";
         public const string SHAPE_CIRCLE = "CIRCLE";
 
-        public ScoringShape() {
-            Shape = SHAPE_CIRCLE;
-        }
+        public ScoringShape() { }
 
-        public string Shape { get; set; }
+        public string Shape { get; set; } = SHAPE_CIRCLE;
 
         /// <summary>
         /// CIRCLE -> Dimension is diameter
         /// SQUARE -> Dimension is length of a side
         /// </summary>
-        public float Dimension { get; set; }
+        public float Dimension { get; set; } = 0;
     }
 }

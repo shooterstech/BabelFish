@@ -16,9 +16,9 @@ namespace BabelFish.DataModel.Definitions {
 
         public dynamic MaxValue { get; set; }
 
-        public string Regex { get; set; }
+        public string Regex { get; set; } = string.Empty;
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
 
     }
 }
