@@ -41,11 +41,6 @@ namespace BabelFish.DataModel.Definitions {
             [Description("EVENT STYLE")] [EnumMember(Value = "EVENT STYLE")] EVENTSTYLE,
 
             /// <summary>
-            /// RANGE Definition
-            /// </summary>
-            [Description("RANGE")] [EnumMember(Value = "RANGE")] RANGE,
-
-            /// <summary>
             /// RANKING RULES Definition
             /// </summary>
             [Description("RANKING RULES")] [EnumMember(Value = "RANKING RULES")] RANKINGRULES,
@@ -53,7 +48,7 @@ namespace BabelFish.DataModel.Definitions {
             /// <summary>
             /// RESULT Definition
             /// </summary>
-            [Description("RESULT")] [EnumMember(Value = "RESULT")] RESULT,
+            [Description( "RESULT LIST FORMAT" )] [EnumMember( Value = "RESULT LIST FORMAT" )] RESULTLISTFORMAT,
 
             /// <summary>
             /// SCORE FORMAT COLLECTION Definition
