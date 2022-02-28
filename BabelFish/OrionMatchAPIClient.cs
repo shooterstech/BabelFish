@@ -18,8 +18,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) 
-        {
+        public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) {
             GetMatchResponse response = new GetMatchResponse();
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
@@ -55,13 +54,31 @@ namespace BabelFish {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns></returns>
-        public async Task<GetResultListResponse> GetResultListAsync(string matchid, string listname)
-        {
+        public async Task<GetResultListResponse> GetResultListAsync(string matchid, string listname) {
             return await GetResultListAsync(new GetResultListRequest(matchid, listname)).ConfigureAwait(false);
         }
 
-        public object GetSquaddingList( object requestParameters ) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Get Squadding List API
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns></returns>
+        public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
+            GetSquaddingListResponse response = new GetSquaddingListResponse();
+
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+        /// <summary>
+        /// Get Squadding List API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="squaddinglistname"></param>
+        /// <returns></returns>
+        public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname)
+        {
+            return await GetSquaddingListAsync(new GetSquaddingListRequest(matchid, squaddinglistname)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,8 +86,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters)
-        {
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters) {
             GetResultCOFDetailResponse response = new GetResultCOFDetailResponse();
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
@@ -83,8 +99,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="resultCOFID"></param>
         /// <returns></returns>
-        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(string resultCOFID)
-        {
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(string resultCOFID) {
             return await GetResultCourseOfFireDetail(new GetResultCOFDetailRequest(resultCOFID)).ConfigureAwait(false);
         }
 
