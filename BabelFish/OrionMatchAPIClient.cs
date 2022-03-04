@@ -25,6 +25,7 @@ namespace BabelFish {
 
             return response;
         }
+
         /// <summary>
         /// Get Match Detail API
         /// </summary>
@@ -32,7 +33,9 @@ namespace BabelFish {
         /// <returns></returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false) {
             var request = new GetMatchRequest(matchid);
+
             request.WithAuthentication = withAuthentication;
+            
             return await GetMatchDetailAsync(request).ConfigureAwait(false);
         }
 
@@ -48,6 +51,7 @@ namespace BabelFish {
 
             return response;
         }
+
         /// <summary>
         /// Get Result List API
         /// </summary>
@@ -64,12 +68,14 @@ namespace BabelFish {
         /// <param name="requestParameters"></param>
         /// <returns></returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
-            GetSquaddingListResponse response = new GetSquaddingListResponse();
+            throw new NotImplementedException();
+            //GetSquaddingListResponse response = new GetSquaddingListResponse();
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            //await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
-            return response;
+            //return response;
         }
+
         /// <summary>
         /// Get Squadding List API
         /// </summary>
@@ -78,7 +84,12 @@ namespace BabelFish {
         /// <returns></returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname)
         {
-            return await GetSquaddingListAsync(new GetSquaddingListRequest(matchid, squaddinglistname)).ConfigureAwait(false);
+            throw new NotImplementedException();
+            //var request = new GetSquaddingListRequest(matchid, squaddinglistname);
+
+            //request.WithAuthentication = withAuthentication;
+            
+            //return await GetSquaddingListAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -107,8 +118,21 @@ namespace BabelFish {
             throw new NotImplementedException();
         }
 
-        public object MatchSearch( object requestParameters ) {
-            throw new NotImplementedException();
+        public async Task<GetMatchSearchResponse> GetMatchSearchAsync(GetMatchSearchRequest requestParameters) {
+            GetMatchSearchResponse response = new GetMatchSearchResponse();
+
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+        public async Task<GetMatchSearchResponse> GetMatchSearchAsync(int DistanceSearch, string StartingDate, 
+            string EndingDate, string ShootingStyle, int NumberOfMatchesToReturn, double Longitude, double Latitude, bool withAuthentication = false)
+        {
+            var request = new GetMatchSearchRequest(DistanceSearch, StartingDate,
+                EndingDate, ShootingStyle, NumberOfMatchesToReturn, Longitude, Latitude);
+            request.WithAuthentication = withAuthentication;
+
+            return await GetMatchSearchAsync(request).ConfigureAwait(false);
         }
     }
 }

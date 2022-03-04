@@ -7,6 +7,12 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace BabelFish.DataModel.OrionMatch {
+
+    public class MatchSearch
+    {
+        public List<Match> SearchList = new List<Match>();
+    }
+
     [Serializable]
     public class Match {
 
