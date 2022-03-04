@@ -4,24 +4,6 @@ using System.Text;
 
 namespace BabelFish.DataModel.OrionMatch {
 
-    //Proposed Solution #1
-    public class SquaddingListFiringPointsList
-    {
-        public string SquaddingListID { get; set; }
-        public string MatchID { get; set; }
-        public string ParentID { get; set; }
-        public string EventName { get; set; }
-        public string AccountNumber { get; set; }
-        public string JSONVersion { get; set; }
-
-        public List<SquaddingAssignmentFiringPoint> SquaddingList = new List<SquaddingAssignmentFiringPoint>();
-    }
-
-    //Proposed Solution #2
-    public class SquaddingListWrapper : Squadding {
-        public List<SquaddingAssignmentFiringPoint> SquaddingList = new List<SquaddingAssignmentFiringPoint>();
-    }
-
     /// <summary>
     /// A SquaddingAssignmentFiringPoint represents the complete squadding of one participant (athlete or team) in a squadding Event, where the participant is firing on a single target.
     /// </summary>
