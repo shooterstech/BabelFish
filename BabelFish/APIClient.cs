@@ -198,6 +198,8 @@ namespace BabelFish {
             }
             catch (Exception ex)
             {
+                //TODO: Report any errors using the response.MessageResponse
+                //If response.BODY is used, setting the .Body value will call the ConvertBodyToValue function that could result in another Exception being raised.
                 response.Body = $"API Call failed: {ex.Message}";
                 logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
             }

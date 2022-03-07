@@ -14,17 +14,15 @@ namespace BabelFish.DataModel.OrionMatch {
     [JsonConverter( typeof( SquaddingAssignmentConverter ) )]
     public abstract class SquaddingAssignment: IDeserializableAbstractClass  {
 
-        public SquaddingAssignment() {
-            RangeSortOrder = 1;
-        }
+        public SquaddingAssignment() { }
 
-        public string Range { get; set; }
+        public string Range { get; set; } = string.Empty;
 
-        public int RangeSortOrder { get; set; }
+        public int RangeSortOrder { get; set; } = 1;
 
-        public int FiringOrder { get; set; }
+        public int FiringOrder { get; set; } = 0;
 
-        public Participant Participant { get; set; }
+        public Participant Participant { get; set; } = new Individual();
 
     }
     public class SquaddingAssignmentSpecifiedConcreteClassConverter : DefaultContractResolver {
