@@ -5,12 +5,17 @@ using Newtonsoft.Json;
 
 namespace BabelFish.DataModel.OrionMatch {
     /// <summary>
-    /// Any Individual person who is participating in a match. These include atheltes, coaches, and match officials. Does not include Teams.
+    /// Any Individual person who is participating in a match. These include athletes, coaches,
+    /// and match officials. Does not include Teams.
     /// </summary>
     [Serializable]
     public class Individual : Participant {
 
-        public Individual() : base() { }
+        public const int CONCRETE_CLASS_ID = 1;
+
+        public Individual() : base() {
+            ConcreteClassId = CONCRETE_CLASS_ID;
+        }
 
         /// <summary>
         /// Individual's Given or First Name

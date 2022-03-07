@@ -9,6 +9,12 @@ namespace BabelFish.DataModel.OrionMatch {
     /// </summary>
     public class SquaddingAssignmentSquad : SquaddingAssignment, IComparable<SquaddingAssignmentSquad> {
 
+        public const int CONCRETE_CLASS_ID = 3;
+
+        public SquaddingAssignmentSquad() : base() {
+            ConcreteClassId = CONCRETE_CLASS_ID;
+        }
+
         public string Squad {get; set; }
 
         public int CompareTo(SquaddingAssignmentSquad other) {

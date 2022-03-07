@@ -68,12 +68,12 @@ namespace BabelFish {
         /// <param name="requestParameters"></param>
         /// <returns></returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
-            throw new NotImplementedException();
-            //GetSquaddingListResponse response = new GetSquaddingListResponse();
+            
+            GetSquaddingListResponse response = new GetSquaddingListResponse();
 
-            //await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
-            //return response;
+            return response;
         }
 
         /// <summary>
@@ -82,14 +82,13 @@ namespace BabelFish {
         /// <param name="matchid"></param>
         /// <param name="squaddinglistname"></param>
         /// <returns></returns>
-        public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname)
+        public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname, bool withAuthentication = false )
         {
-            throw new NotImplementedException();
-            //var request = new GetSquaddingListRequest(matchid, squaddinglistname);
+            var request = new GetSquaddingListRequest(matchid, squaddinglistname);
 
-            //request.WithAuthentication = withAuthentication;
+            request.WithAuthentication = withAuthentication;
             
-            //return await GetSquaddingListAsync(request).ConfigureAwait(false);
+            return await GetSquaddingListAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>

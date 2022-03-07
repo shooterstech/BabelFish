@@ -4,6 +4,7 @@ using System.Text;
 
 namespace BabelFish.DataModel.OrionMatch {
 
+    /*
     //Proposed Solution #1
     public class SquaddingListFiringPointsList
     {
@@ -21,6 +22,7 @@ namespace BabelFish.DataModel.OrionMatch {
     public class SquaddingListWrapper : Squadding {
         public List<SquaddingAssignmentFiringPoint> SquaddingList = new List<SquaddingAssignmentFiringPoint>();
     }
+    */
 
     /// <summary>
     /// A SquaddingAssignmentFiringPoint represents the complete squadding of one participant (athlete or team) in a squadding Event, where the participant is firing on a single target.
@@ -28,7 +30,11 @@ namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class SquaddingAssignmentFiringPoint : SquaddingAssignment, IComparable<SquaddingAssignmentFiringPoint> {
 
+        public const int CONCRETE_CLASS_ID = 1;
+
         public SquaddingAssignmentFiringPoint() : base() {
+            ConcreteClassId = CONCRETE_CLASS_ID;
+
             RelaySortOrder = 1;
             FiringPointSortOrder = 1;
             ReentryTag = "";

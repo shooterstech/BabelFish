@@ -81,7 +81,7 @@ namespace BabelFish.Tests
             Assert.AreNotEqual(resultName, "");
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void OrionMatchAPI_GetASquaddingList()
         {
             string MatchID = "1.2899.1040248529.0";

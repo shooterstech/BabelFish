@@ -10,6 +10,11 @@ namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class SquaddingAssignmentBank : SquaddingAssignment, IComparable<SquaddingAssignmentBank> {
 
+        public const int CONCRETE_CLASS_ID = 2;
+
+        public SquaddingAssignmentBank() : base() {
+            ConcreteClassId = CONCRETE_CLASS_ID;
+        }
         public string Relay { get; set; }
 
         public string Bank { get; set; }
