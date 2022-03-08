@@ -198,9 +198,9 @@ namespace BabelFish {
             }
             catch (Exception ex)
             {
-                //TODO: Report any errors using the response.MessageResponse
-                //If response.BODY is used, setting the .Body value will call the ConvertBodyToValue function that could result in another Exception being raised.
-                response.Body = $"API Call failed: {ex.Message}";
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.MessageResponse.Message.Add($"API Call failed: {ex.Message}");
+                response.MessageResponse.ResponseCodes.Add(HttpStatusCode.InternalServerError.ToString());
                 logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
             }
             //TODO: Found this recommended but do not want to shut down ongoing instance...onUnload? NLog.LogManager.Shutdown();

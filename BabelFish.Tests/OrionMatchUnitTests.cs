@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BabelFish;
 
@@ -8,6 +9,21 @@ namespace BabelFish.Tests
     {
         private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
         private readonly OrionMatchAPIClient _client = new OrionMatchAPIClient(xApiKey);
+
+        [TestMethod]
+        public void OrionMatchExpectedFailuresUnitTests() {
+
+            var response = _client.GetMatchDetailAsync("1.2345.6789012345678901.0");
+
+            var MessageResponse = response.Result.MessageResponse;
+            Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.NotFound);
+            Assert.IsTrue(MessageResponse.Message.Count>0);
+            Assert.IsTrue(MessageResponse.ResponseCodes.Contains("NotFound"));
+
+            OrionMatchAPIClient _client2 = new OrionMatchAPIClient("abc123");
+            response = _client2.GetMatchDetailAsync("1.2899.1040248529.0");
+            Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.Forbidden);
+        }
 
         [TestMethod]
         public void OrionMatchAPI_Assigns_XApiKey()
