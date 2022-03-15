@@ -10,8 +10,20 @@ using BabelFish.Responses.OrionMatchAPI;
 namespace BabelFish {
     public class OrionMatchAPIClient : APIClient {
 
+        /// <summary>
+        /// Instantiate client
+        /// </summary>
+        /// <param name="xapikey"></param>
         public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
-        public OrionMatchAPIClient(string xapikey, string userName = "", string passWord = "") : base(xapikey, userName, passWord) { }
+
+        /// <summary>
+        /// Instantiate client
+        /// </summary>
+        /// <param name="xapikey">Your assigned XApiKey</param>
+        /// <param name="userName">Your username if Auth function</param>
+        /// <param name="passWord">Your password if Auth function</param>
+        /// <param name="sendinUserSettings">Dictionary<string,string> of Allowed User Settings</param>
+        public OrionMatchAPIClient(string xapikey, string userName = "", string passWord = "", Dictionary<string, string>? sendinUserSettings = null) : base(xapikey, userName, passWord, sendinUserSettings) { }
 
         /// <summary>
         /// Get Match Detail API

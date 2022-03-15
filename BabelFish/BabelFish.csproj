@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <AssemblyVersion>1.0.6.0</AssemblyVersion>
 	<PackageId>BabelFish</PackageId>
-	<Version>1.0.5</Version>
+	<Version>1.0.6</Version>
 	<Authors>Shooter's Technology</Authors>
 	<Company>Shooter's Technology</Company>
 	<PackageDescription>Dot Net Library that provides a façade for Shooter's Tech REST API interface.</PackageDescription>
@@ -17,14 +17,19 @@
   <ItemGroup>
     <PackageReference Include="Aws4RequestSigner" Version="1.0.3" />
     <PackageReference Include="AwsSignatureVersion4" Version="2.1.1" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NLog" Version="4.7.13" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <None Update="BabelFish_User_Settings.config">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+	<None Update="NLog.config">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+</ItemGroup>
 
 </Project>

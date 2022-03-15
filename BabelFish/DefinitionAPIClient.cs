@@ -13,12 +13,27 @@ using BabelFish.Responses.DefinitionAPI;
 namespace BabelFish {
     public class DefinitionAPIClient : APIClient {
 
+        /// <summary>
+        /// Instantiate client
+        /// </summary>
+        /// <param name="apiKey"></param>
         public DefinitionAPIClient(string apiKey) : base(apiKey) { }
+
+        /// <summary>
+        /// Instantiate client
+        /// </summary>
+        /// <param name="xapikey">Your assigned XApiKey</param>
+        /// <param name="userName">Your username if Auth function</param>
+        /// <param name="passWord">Your password if Auth function</param>
+        /// <param name="sendinUserSettings">Dictionary<string,string> of Allowed User Settings</param>
+        public DefinitionAPIClient(string xapikey, string userName = "", string passWord = "", Dictionary<string, string>? sendinUserSettings = null) : base(xapikey, userName, passWord, sendinUserSettings) { }
 
         public async Task<GetDefinitionResponse<T>> GetDefinition<T>(Definition.DefinitionType type, SetName setName, GetDefinitionResponse<T> response)
         {
             /////Logic checking for caching function
             /// Reference https://github.com/shooterstech/BabelFish/issues/9
+            // CHECK IF USER SETTINGS SAY TO ALWAYS GET DEFINITION FRESH'
+            //if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheAlwaysNew") && SettingsHelper.UserSettings["Definitions_CacheAlwaysNew"])
             //1. Check for object in mem
             //1a. if exists, check timestamp
             //1a1. Return if within acceptable timeframe (never check for new Version??)

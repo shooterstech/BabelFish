@@ -3,6 +3,14 @@ Dot Net Library that provides a façade for Shooter's Tech REST API interface.
 
 NOTE: Library is considered a WORK-IN-PROGRESS and is NOT intended for production environment at this time.
 
+v1.0.6.0
+Introduce User Settings: 
+ Add App.config that contains defaults and reads User Settings file BabelFish_User_Settings.config
+ Add incoming UserSettings Dictionary<string,string> as alternative to config files
+Combined .NETStandard2.0, .NET6.0 compatibility into single compilation
+Addition of GetMatchSearch()
+Addition of GetSquaddingList()
+
 v1.0.5.0
 Update Definitions logic
 Addition of Definitions

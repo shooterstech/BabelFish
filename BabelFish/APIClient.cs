@@ -23,10 +23,12 @@ namespace BabelFish {
 
             logger.Info("BablFish API instantiated");
         }
-        protected APIClient(string xapikey, string userName, string passWord) : this(xapikey)
+        protected APIClient(string xapikey, string userName = "", string passWord = "", Dictionary<string, string>? incomingUserSettings = null) : this(xapikey)
         {
             this.AuthUsername = userName;
             this.AuthPassword = passWord;
+            if ( incomingUserSettings != null )
+                SettingsHelper.IncomingUserSettings = incomingUserSettings;
         }
 
         #region properties
@@ -142,25 +144,14 @@ namespace BabelFish {
                 else {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
                     if (FunctionOptions["UseAuth"]) {
-                        //TESTING VALUES RETRIEVED FROM GetCredentials
-                        //{
-                        //    "Title": "",
-                        //    "Message": [],
-                        //    "ResponseCodes": [],
-                        //    "AccessKeyId": "ASIA2HUPLTYWVNXWV7MM",
-                        //    "SecretKey": "ps/x+8ZryaErLWO69qHio6EY/hhNwZ9ieeaHdyq9",
-                        //    "SessionToken": "IQoJb3JpZ2luX2VjEKv//////////wEaCXVzLWVhc3QtMSJHMEUCIGI1S7BGR2WYzH9DzodCDXATytHmdGQjYYYidJhJbSrjAiEAodoaM3qeIHGn9wazwzdhp00qHvbeCzhaLRZFgYYk+0oqzQQI9P//////////ARAAGgw3MDM2MDE1NDg4NDUiDMHw4eDqDjkpdwdRxiqhBBicZtQtKxbDWi2LXLYYU7NBlMhiejC3u7c6OJ9cGUYFQvITvez30j/pxUufT8qIWFMQQB9DMEqKoJrvGTh+BVqutzIR/mcxOGR9vVd0FDn7NyuKgVofiPfSPgZFVnu1MGSi3C3/KsWDMrStmKrHcw4pttFd3eM+mIgXfVK7YpZcy9BYYDdhrNe3OEk6tSYLlz0sHDFgmeXHVJ+bm3qCj4Om0MzR7nIRGETGJ07bfYyXDazTi5uMcnurW1kCdOqOgG7G9mn3o8PuouV+ueSruEG2yrGRY9sk0gwGZoYwClj7Mvtu/y+LFuFOfNsq+QEx7jq4zzD3v/Ehf2+l7YIwurL8b5lk/rwvSSoeaRfy06bUMOLfH67nuDlRgaEdeyMALqnqnmSY3wF/tq00r7u2brwh+5JpAs/TLcQ1puu7Hq67vW1qOxSMPI4xFyIQzdu6E++g50LrgHhcAOygAx05OK9JxMzkAeUIRfbfYGr41QbfF0CYZRlDLdtguhlUazRv33APGv1xszUNYA0TXmZcbzREmMBaS2GeXfzxlkoxhxiQaf6Y9GU3JOenTDjZq8n8wQQMZKsh56JuQewLfDsP3qkv3Oca17JnROLNloF5hWdqgdTnFJShmOYyV2aCUVW/wVtaLMHY+y72UrlttG5sndbkkqDRCYjdxV8b7fuN2d2IdymtM5e+rrwqFQbQr73xkDoHnFCo+NT142vf+5rmGpK6MIXRv5AGOoUCFHVxKs94gRinKvSZG5yIHDpfO4aPr0x4MKZnbVPNpvfpSyfMKp07vMo88yrcYC+vobkEh5hhYS9OVJLZPbSclz6ZiiLmSAz8rCJ6yF3iw60M+Y6AS3UOx1ydNebeNDqZAnnj5X2pGbO1iibTH7h3OFhJFKY3emHde22dCNPsZAphNQM6tUfIVka7FNkSNsJmfxkXJDa//MUF6Je+GAS+y3WrV31v2xEU161y2u9aFKqr1z8jaJ/LgiBhlKKW3YSqrmk+eZIPTVhCO/NsF2yKK/Gz8+fyuSXrzok1Y1xahZX7EEOv3jT0Ggg8CSnK3W9KLf3o8wlLvBrYm+ucuZrriUkuSDu5",
-                        //    "Username": "test_dev_7@shooterstech.net",
-                        //    "Password": "abcd1234"
-                        //}
-                        AuthAccessKey = "ASIA2HUPLTYWVNXWV7MM";
-                        AuthSecretKey = "ps/x+8ZryaErLWO69qHio6EY/hhNwZ9ieeaHdyq9";
+                        AuthAccessKey = "ASIA2HUPLTYW2GDAGZMK";
+                        AuthSecretKey = "Fg2OmZAkjYaIMcI/zbFRU8T3lTWWxO8fnhZh4bQm";
                         AuthSessionToken =
-                            "IQoJb3JpZ2luX2VjEKv//////////wEaCXVzLWVhc3QtMSJHMEUCIGI1S7BGR2WYzH9DzodCDXATytHmdGQjYYYidJhJbSrjAiEAodoaM3qeIHGn9wazwzdhp00qHvbeCzhaLRZFgYYk+0oqzQQI9P//////////ARAAGgw3MDM2MDE1NDg4NDUiDMHw4eDqDjkpdwdRxiqhBBicZtQtKxbDWi2LXLYYU7NBlMhiejC3u7c6OJ9cGUYFQvITvez30j/pxUufT8qIWFMQQB9DMEqKoJrvGTh+BVqutzIR/mcxOGR9vVd0FDn7NyuKgVofiPfSPgZFVnu1MGSi3C3/KsWDMrStmKrHcw4pttFd3eM+mIgXfVK7YpZcy9BYYDdhrNe3OEk6tSYLlz0sHDFgmeXHVJ+bm3qCj4Om0MzR7nIRGETGJ07bfYyXDazTi5uMcnurW1kCdOqOgG7G9mn3o8PuouV+ueSruEG2yrGRY9sk0gwGZoYwClj7Mvtu/y+LFuFOfNsq+QEx7jq4zzD3v/Ehf2+l7YIwurL8b5lk/rwvSSoeaRfy06bUMOLfH67nuDlRgaEdeyMALqnqnmSY3wF/tq00r7u2brwh+5JpAs/TLcQ1puu7Hq67vW1qOxSMPI4xFyIQzdu6E++g50LrgHhcAOygAx05OK9JxMzkAeUIRfbfYGr41QbfF0CYZRlDLdtguhlUazRv33APGv1xszUNYA0TXmZcbzREmMBaS2GeXfzxlkoxhxiQaf6Y9GU3JOenTDjZq8n8wQQMZKsh56JuQewLfDsP3qkv3Oca17JnROLNloF5hWdqgdTnFJShmOYyV2aCUVW/wVtaLMHY+y72UrlttG5sndbkkqDRCYjdxV8b7fuN2d2IdymtM5e+rrwqFQbQr73xkDoHnFCo+NT142vf+5rmGpK6MIXRv5AGOoUCFHVxKs94gRinKvSZG5yIHDpfO4aPr0x4MKZnbVPNpvfpSyfMKp07vMo88yrcYC+vobkEh5hhYS9OVJLZPbSclz6ZiiLmSAz8rCJ6yF3iw60M+Y6AS3UOx1ydNebeNDqZAnnj5X2pGbO1iibTH7h3OFhJFKY3emHde22dCNPsZAphNQM6tUfIVka7FNkSNsJmfxkXJDa//MUF6Je+GAS+y3WrV31v2xEU161y2u9aFKqr1z8jaJ/LgiBhlKKW3YSqrmk+eZIPTVhCO/NsF2yKK/Gz8+fyuSXrzok1Y1xahZX7EEOv3jT0Ggg8CSnK3W9KLf3o8wlLvBrYm+ucuZrriUkuSDu5";
+                            "IQoJb3JpZ2luX2VjEOz//////////wEaCXVzLWVhc3QtMSJHMEUCIGrrBLKgClqlako1SRuxByRC1lMafmgWuzeFHtKEjziRAiEA7sXHzpMpFYpKwFx45KKV1we6IAPCVMhCX89MM9MwgKQqxAQIZRAAGgw3MDM2MDE1NDg4NDUiDBeRVSyiuV+YmDtGHCqhBEz8RoWZo40ll1cxxJZvMAQ/fRUDnGzEYPoM0O+/f1fzqOn1k8a/9RlYN2zZsjNDno4Fx5gdByniK/v6H1ZL40IjfC0b24kpTky4lOd+Dhx+t8JjtPYCjTXWqy1ePGe8t2+ZZwBAxlMj0cXNBaFH2VUurNY92MfRLr1znpXndDtMNrdFryLsMxBehb0At5KQynYjho4N0UCYJtRQV/BH6ArmjVDLz3j1itF4eRUDerTZ/hLHSvUfxUGBdXl2HJEol+GP9ZNaGKSggKhrYzolZvTY1K0Ti5HmTr/mFDx52UQpxea6t/xvV96GgLze1muzCLG5zOoOIdTiQ+c+9jnrQl4AcvyPv38TvGx5+I8PtJpYB1B7Bt9+MntZJQjiJO0OnjowupHitbzZ2IWeJTaOo/1ajrXLnI2jX8Y1dwdjtkqB+NxCJgitJG26pCtvWBMcYYvcsK3u8sCmvcT8MV1ABGBrJ+PUNofAmIC2Y9hINLpGv6up5i56Ah3dfXmzdN3H714yqVByIktZtoNQKrltZovaioD0DJdD1WBbC+7ZVARlaGAMAUqo3iUnlUcGc8vEF+5bmyfPlQHAmxMkJa9StNjYuXt99o56VXiwOArT6oohytdbxNvNJbJKUA3Iy9xxHK5hSblttm66PmJPeXNNrFvAW9HqSNq6kQ4WkVkOzCY4o28yXjjTuD82Gp+GQhkfl73OCtJpqb7c/6kgD6U0H1VFMNqvvpEGOoUC4iXD5N/WkfYWVO1D7e6F411DU3esjkMrYmA7zbvSqaKzsPHkBMtrDRozaohrgmApM59h6m0MXDRw+QGkDG+NIonDtrLmf7XZwvRovGL+QyWJSr9PmVhuBEnCpKp7rgVcI+973yu+DU5yJqZfSf6scuicXljs+fqGBRgMD1KMN1JcryzS0UNATKTn3s4/0hk3waUC7exD+G9AUQxTxfZuhTJThg9U8LDKS1XLbVytPl75KKw0ox95nUzNHTbSvxc12uFum0UzcI7/Pu6Oakzokw0qCDsBnl3masRiuLIS7lJeRpKJyNHG7d1tvaUMXeaSnW72pF4Nl3g7EGqxNR5FSkiXxuGY";
 
                         AwsSigner AwsSignature = new AwsSigner(AuthAccessKey, AuthSecretKey, uri, AuthSessionToken);
-                        responseMessage = await AwsSignature.GetAws4Signature("AwsSignatureVersion4")
-                            .ConfigureAwait(false);
+                        responseMessage = await AwsSignature.GetAws4Signature("Aws4RequestSigner")
+                            .ConfigureAwait(false); // AwsSignatureVersion4  Aws4RequestSigner  AwsSignatureV4RichW
                         //responseMessage = await httpClient.SendAsync(AuthRequest).ConfigureAwait(false);
                     } else {
                         AssembledHeaders.Add("x-api-key", XApiKey);
