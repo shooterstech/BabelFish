@@ -23,10 +23,8 @@ namespace BabelFish {
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="userName">Your username if Auth function</param>
-        /// <param name="passWord">Your password if Auth function</param>
-        /// <param name="sendinUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public DefinitionAPIClient(string xapikey, string userName = "", string passWord = "", Dictionary<string, string>? sendinUserSettings = null) : base(xapikey, userName, passWord, sendinUserSettings) { }
+        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
+        public DefinitionAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
 
         public async Task<GetDefinitionResponse<T>> GetDefinition<T>(Definition.DefinitionType type, SetName setName, GetDefinitionResponse<T> response)
         {

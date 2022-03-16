@@ -16,8 +16,10 @@ namespace BabelFish.Helpers
         /// </summary>
         private static Dictionary<string, Type> AllowedSettings = new Dictionary<string, Type>()
         {
-            { "Logging_NLogConfig", typeof(string) },
-            { "Definitions_CacheAlwaysNew", typeof(bool) },
+            { "UserName", typeof(string) },                 // Users Name for valid AWS access
+            { "PassWord", typeof(string) },                 // Users Password for valid AWS access
+            { "Logging_NLogConfig", typeof(string) },       // Alt NLog path/filename
+            { "Definitions_CacheAlwaysNew", typeof(bool) }, // Defintions cache override to always fetch new
         };
 
         /// <summary>

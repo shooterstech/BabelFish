@@ -23,12 +23,10 @@ namespace BabelFish {
 
             logger.Info("BablFish API instantiated");
         }
-        protected APIClient(string xapikey, string userName = "", string passWord = "", Dictionary<string, string>? incomingUserSettings = null) : this(xapikey)
+        protected APIClient(string xapikey, Dictionary<string, string>? CustomUserSettings = null) : this(xapikey)
         {
-            this.AuthUsername = userName;
-            this.AuthPassword = passWord;
-            if ( incomingUserSettings != null )
-                SettingsHelper.IncomingUserSettings = incomingUserSettings;
+            if (CustomUserSettings != null)
+                SettingsHelper.IncomingUserSettings = CustomUserSettings;
         }
 
         #region properties
@@ -72,6 +70,23 @@ namespace BabelFish {
         }
 
         /// <summary>
+        /// UserSettings Enums
+        /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum AuthEnums
+        {
+            [Description("")]
+            [EnumMember(Value = "")]
+            BLANK,
+            [Description("User Name")]
+            [EnumMember(Value = "username")]
+            UserName,
+            [Description("Password")]
+            [EnumMember(Value = "password")]
+            PassWord
+        }
+
+        /// <summary>
         /// Users x-api-key for valid AWS access
         /// </summary>
         public string XApiKey { get; set; }
@@ -85,16 +100,6 @@ namespace BabelFish {
         /// SubDomain - AWS Api subdomain identifier
         /// </summary>
         private SubDomains SubDomain { get; set; }
-
-        /// <summary>
-        /// Users Name for valid AWS access
-        /// </summary>
-        private string AuthUsername { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Users Password for valid AWS access
-        /// </summary>
-        private string AuthPassword { get; set; } = string.Empty;
 
         /// <summary>
         /// Users Access Key for valid AWS access
@@ -144,13 +149,13 @@ namespace BabelFish {
                 else {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
                     if (FunctionOptions["UseAuth"]) {
-                        AuthAccessKey = "ASIA2HUPLTYW2GDAGZMK";
-                        AuthSecretKey = "Fg2OmZAkjYaIMcI/zbFRU8T3lTWWxO8fnhZh4bQm";
+                        AuthAccessKey = "ASIA2HUPLTYW5XSNZ2NK";
+                        AuthSecretKey = "N1HnfSOOG77i7faP48NbpqN2QrFcrZF8V2eh+Sef";
                         AuthSessionToken =
-                            "IQoJb3JpZ2luX2VjEOz//////////wEaCXVzLWVhc3QtMSJHMEUCIGrrBLKgClqlako1SRuxByRC1lMafmgWuzeFHtKEjziRAiEA7sXHzpMpFYpKwFx45KKV1we6IAPCVMhCX89MM9MwgKQqxAQIZRAAGgw3MDM2MDE1NDg4NDUiDBeRVSyiuV+YmDtGHCqhBEz8RoWZo40ll1cxxJZvMAQ/fRUDnGzEYPoM0O+/f1fzqOn1k8a/9RlYN2zZsjNDno4Fx5gdByniK/v6H1ZL40IjfC0b24kpTky4lOd+Dhx+t8JjtPYCjTXWqy1ePGe8t2+ZZwBAxlMj0cXNBaFH2VUurNY92MfRLr1znpXndDtMNrdFryLsMxBehb0At5KQynYjho4N0UCYJtRQV/BH6ArmjVDLz3j1itF4eRUDerTZ/hLHSvUfxUGBdXl2HJEol+GP9ZNaGKSggKhrYzolZvTY1K0Ti5HmTr/mFDx52UQpxea6t/xvV96GgLze1muzCLG5zOoOIdTiQ+c+9jnrQl4AcvyPv38TvGx5+I8PtJpYB1B7Bt9+MntZJQjiJO0OnjowupHitbzZ2IWeJTaOo/1ajrXLnI2jX8Y1dwdjtkqB+NxCJgitJG26pCtvWBMcYYvcsK3u8sCmvcT8MV1ABGBrJ+PUNofAmIC2Y9hINLpGv6up5i56Ah3dfXmzdN3H714yqVByIktZtoNQKrltZovaioD0DJdD1WBbC+7ZVARlaGAMAUqo3iUnlUcGc8vEF+5bmyfPlQHAmxMkJa9StNjYuXt99o56VXiwOArT6oohytdbxNvNJbJKUA3Iy9xxHK5hSblttm66PmJPeXNNrFvAW9HqSNq6kQ4WkVkOzCY4o28yXjjTuD82Gp+GQhkfl73OCtJpqb7c/6kgD6U0H1VFMNqvvpEGOoUC4iXD5N/WkfYWVO1D7e6F411DU3esjkMrYmA7zbvSqaKzsPHkBMtrDRozaohrgmApM59h6m0MXDRw+QGkDG+NIonDtrLmf7XZwvRovGL+QyWJSr9PmVhuBEnCpKp7rgVcI+973yu+DU5yJqZfSf6scuicXljs+fqGBRgMD1KMN1JcryzS0UNATKTn3s4/0hk3waUC7exD+G9AUQxTxfZuhTJThg9U8LDKS1XLbVytPl75KKw0ox95nUzNHTbSvxc12uFum0UzcI7/Pu6Oakzokw0qCDsBnl3masRiuLIS7lJeRpKJyNHG7d1tvaUMXeaSnW72pF4Nl3g7EGqxNR5FSkiXxuGY";
+                            "IQoJb3JpZ2luX2VjEAQaCXVzLWVhc3QtMSJHMEUCIFIeO6Jpc7zUaS/76c0bBdq+pV1qDiV2eQMY23n/vO2JAiEAorS9rHWHqii+nVk18qn8Kyxh0v/o2LVopmpaYS2zZO0qxAQIfBAAGgw3MDM2MDE1NDg4NDUiDMnv4ikqoiMc+InYciqhBAHToqtQlDVs/KvR5dnYpQIlP1/xSGNZOK74osDxYKUg6K1KAZyRF3wFiJ14V5LXK5GMx5Yc6lvGbwV+jh+O8QaeCxrWNohJgmz8Zo+ShSPDsxsZ7hMdjORwsTha3KKzUtIixN5k0u1WrWJ0L/3a0SAJk0GyY7ZVoDfTYNvy3fke7dEllWh1PGPk3JG9Li8LZQsGkh1xMMZUxyfFuFVr3SI2bj3Ry2fRpIfYNtgjpYMnkDXcL783n/5fNlUJTo0EY5YdQBMJHLXnXj7rhIb2SoeUklGIiH8pBrZHdDryysYZ4j/Ph/7ZJ+si+i8lfrlc7OgRiuctbNVP20yQOGIw3lta9mZBPV7uWTzc827tZwC+N4/m158c6ZQn1hao8tIUMhPKQyQnX9dFMWGxRGOqHtVNFDONdQ+7kzALpiMD5gwB/wBjvKP4VKaPcda6mrl0KJ6bs7WRK4BC8IzrYLn42UtxCk9UC86hZcpVOZGW6kJUnoVWRC8xp+pXdKUvlGrmvNIJA+zTS4/xLO1KClj4domi2nwI6OVcdtGtfgbDV2V8QYd1LTbySLhiD8Ubyw/Q8UrqVPUWVDYg8c1xb4/OBrI3F7KHRmFkfxRynKPS7NHzoJR+SimpjAWj9CjfntMxKl3Uj4k0RRu3HHtTY8WiXUq0f0jC+U4c1FdgWOOa8nj/UJXocU+42VxqsiQUPOVMjM/d4CWPzh6a6ZPCNUw+x7WaMKHLw5EGOoUCRfhSGfIvybsc7nKbKzdT8/ooc/Ytwn5AtVOPSEIREnC+OZNa0KvmN4qQhqxHrRF5rcPvwPFn0fM0cBDgWeQEfxOjRjGBNRmfj+fM7Stu4wzTulV0QcyzCpVhOhrNK3eYNGRB5dvkBpi1McWd8/1VnGQstV4jYeOXDaR2IaW1ZZzuXhlx1tcIyUsLMld7iK5uhezWKkqh0HrQ2u+DMyMbZB+VrCqbtSBSyZeAhM//FgzCT7tjHzOypOdDeDCJjxkLM8XViActEPPL5meyoEV1//i84X9G9iDbFymhJTN//QoOclUJMNtRkyoxytgdXUOdzg4/+mx6U3hlbYoq9myFdhLKIFPk";
 
                         AwsSigner AwsSignature = new AwsSigner(AuthAccessKey, AuthSecretKey, uri, AuthSessionToken);
-                        responseMessage = await AwsSignature.GetAws4Signature("Aws4RequestSigner")
+                        responseMessage = await AwsSignature.GetAws4Signature("AwsSignatureV4RichW")
                             .ConfigureAwait(false); // AwsSignatureVersion4  Aws4RequestSigner  AwsSignatureV4RichW
                         //responseMessage = await httpClient.SendAsync(AuthRequest).ConfigureAwait(false);
                     } else {
