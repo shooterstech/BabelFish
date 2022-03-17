@@ -8,6 +8,7 @@ namespace BabelFish.Helpers
 {
     static class SettingsHelper
     {
+        #region Properties
         /// <summary>
         /// Define what settings the user can pass in
         /// typeof for validation
@@ -16,10 +17,12 @@ namespace BabelFish.Helpers
         /// </summary>
         private static Dictionary<string, Type> AllowedSettings = new Dictionary<string, Type>()
         {
-            { "UserName", typeof(string) },                 // Users Name for valid AWS access
-            { "PassWord", typeof(string) },                 // Users Password for valid AWS access
-            { "Logging_NLogConfig", typeof(string) },       // Alt NLog path/filename
-            { "Definitions_CacheAlwaysNew", typeof(bool) }, // Defintions cache override to always fetch new
+            { "UserName", typeof(string) },                 // User Name to validate AWS access
+            { "PassWord", typeof(string) },                 // User Password to validate AWS access
+            { "AccessKey", typeof(string) },                // User AccessKey for valid AWS access
+            { "SecretKey", typeof(string) },                // User SecretKey for valid AWS access
+            { "Logging_NLogConfig", typeof(string) },       // Alternate NLog path/filename
+            { "Definitions_CacheAlwaysNew", typeof(bool) }, // Definitions cache override to always fetch new
         };
 
         /// <summary>
@@ -44,11 +47,13 @@ namespace BabelFish.Helpers
                 LoadApplicationSettings();
             }
         }
-
+        #endregion Properties
+        
         static SettingsHelper() {
             LoadApplicationSettings();
         }
 
+        #region Methods
         private static void LoadApplicationSettings()
         {
             try
@@ -60,7 +65,7 @@ namespace BabelFish.Helpers
                     // Primary check is app.config and User Settings file if they exist
                     if ( ConfigurationManager.AppSettings != null && ConfigurationManager.AppSettings.Count > 0 )
                         UserSettings[kvp.Key] = ConvertSettingsType(kvp.Value, ConfigurationManager.AppSettings[kvp.Key]);
-                    // Secondary is incoming User Settings Dict if it exists
+                    // Secondary is incoming User Settings Dictionary if it exists
                     if (IncomingUserSettings.ContainsKey(kvp.Key))
                         UserSettings[kvp.Key] = ConvertSettingsType(kvp.Value, IncomingUserSettings[kvp.Key]);
                 }
@@ -114,5 +119,6 @@ namespace BabelFish.Helpers
             else
                 return false;
         }
+        #endregion Methods
     }
 }

@@ -1,4 +1,5 @@
 using System.Net;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BabelFish;
 
@@ -113,5 +114,24 @@ namespace BabelFish.Tests
             Assert.AreNotEqual(resultName, "");
         }
 
+        [TestMethod]
+        public void OrionMatchAPI_AuthAWSSignaturev4()
+        {
+            Dictionary<string, string> clientParams = new Dictionary<string, string>()
+            {
+                {"AccessKey", "Enter Perm AccessKey"},
+                {"SecretKey", "Enter Perm SecretKey"},
+            };
+            OrionMatchAPIClient _client3 = new OrionMatchAPIClient(xApiKey, clientParams);
+            var response = _client3.GetMatchDetailAsync("1.2268.2022021516475240.0", true);
+            Assert.IsNotNull(response);
+
+            var match = response.Result.Match;
+            var matchName = match.Name;
+            // Auth specific return value?
+
+            Assert.IsNotNull(matchName);
+            Assert.AreNotEqual(matchName, "");
+        }
     }
 }

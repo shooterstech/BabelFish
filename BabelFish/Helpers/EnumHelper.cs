@@ -4,10 +4,35 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace BabelFish.Helpers
 {
+    /// <summary>
+    /// UserSettings named Auth Enums
+    /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AuthEnums
+    {
+        [Description("")]
+        [EnumMember(Value = "")]
+        BLANK,
+        [Description("User Name")]
+        [EnumMember(Value = "username")]
+        UserName,
+        [Description("Password")]
+        [EnumMember(Value = "password")]
+        PassWord,
+        [Description("AWS Access Key")]
+        [EnumMember(Value = "accesskey")]
+        AccessKey,
+        [Description("AWS Secret Key")]
+        [EnumMember(Value = "secretkey")]
+        SecretKey,
+    }
+
     public static class EnumHelper
     {
         /// <summary>
