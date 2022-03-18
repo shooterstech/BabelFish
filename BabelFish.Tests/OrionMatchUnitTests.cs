@@ -1,5 +1,6 @@
 using System.Net;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BabelFish;
 
@@ -112,6 +113,21 @@ namespace BabelFish.Tests
 
             Assert.IsNotNull(resultName);
             Assert.AreNotEqual(resultName, "");
+        }
+
+        [TestMethod]
+        public void OrionMatchAPI_GetAMatchLocations()
+        {
+
+            var response = _client.GetMatchLocationsAsync();
+            Assert.IsNotNull(response);
+
+            var locations = response.Result.MatchLocations;
+            Assert.IsTrue(locations.Count>0);
+            var locationName = locations.FirstOrDefault().City;
+
+            Assert.IsNotNull(locationName);
+            Assert.AreNotEqual(locationName, "");
         }
 
         [TestMethod]
