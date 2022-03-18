@@ -27,7 +27,7 @@ namespace BabelFish {
         /// Get Match Detail API
         /// </summary>
         /// <param name="requestParameters"></param>
-        /// <returns></returns>
+        /// <returns>Match Object</returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) {
             GetMatchResponse response = new GetMatchResponse();
 
@@ -40,7 +40,7 @@ namespace BabelFish {
         /// Get Match Detail API
         /// </summary>
         /// <param name="matchid"></param>
-        /// <returns></returns>
+        /// <returns>Match Object</returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false) {
             var request = new GetMatchRequest(matchid);
 
@@ -53,7 +53,7 @@ namespace BabelFish {
         /// Get Result List API
         /// </summary>
         /// <param name="requestParameters"></param>
-        /// <returns></returns>
+        /// <returns>ResultList Object</returns>
         public async Task<GetResultListResponse> GetResultListAsync( GetResultListRequest requestParameters ) {
             GetResultListResponse response = new GetResultListResponse();
 
@@ -67,7 +67,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
-        /// <returns></returns>
+        /// <returns>ResultList Object</returns>
         public async Task<GetResultListResponse> GetResultListAsync(string matchid, string listname) {
             return await GetResultListAsync(new GetResultListRequest(matchid, listname)).ConfigureAwait(false);
         }
@@ -76,7 +76,7 @@ namespace BabelFish {
         /// Get Squadding List API
         /// </summary>
         /// <param name="requestParameters"></param>
-        /// <returns></returns>
+        /// <returns>Squadding Object</returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
             
             GetSquaddingListResponse response = new GetSquaddingListResponse();
@@ -91,7 +91,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="matchid"></param>
         /// <param name="squaddinglistname"></param>
-        /// <returns></returns>
+        /// <returns>Squadding Object</returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname, bool withAuthentication = false )
         {
             var request = new GetSquaddingListRequest(matchid, squaddinglistname);
@@ -105,7 +105,7 @@ namespace BabelFish {
         /// Get Course Of Fire Detail API
         /// </summary>
         /// <param name="requestParameters"></param>
-        /// <returns></returns>
+        /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters) {
             GetResultCOFDetailResponse response = new GetResultCOFDetailResponse();
 
@@ -118,15 +118,30 @@ namespace BabelFish {
         /// Get Course Of Fire Detail API
         /// </summary>
         /// <param name="resultCOFID"></param>
-        /// <returns></returns>
+        /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(string resultCOFID) {
             return await GetResultCourseOfFireDetail(new GetResultCOFDetailRequest(resultCOFID)).ConfigureAwait(false);
         }
 
-        public object GetMatchLocations( object requestParameters ) {
-            throw new NotImplementedException();
+        /// <summary>
+        /// Get Match Locations API
+        /// </summary>
+        /// <returns>List<MatchLocation> Object</returns>
+        public async Task<GetMatchLocationsResponse> GetMatchLocationsAsync() {
+            GetMatchLocationsResponse response = new GetMatchLocationsResponse();
+
+            var request = new GetMatchLocationsRequest();
+            
+            await this.CallAPI(request, response).ConfigureAwait(false);
+
+            return response;
         }
 
+        /// <summary>
+        /// Get Match Search API
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns>List<Match> Object</returns>
         public async Task<GetMatchSearchResponse> GetMatchSearchAsync(GetMatchSearchRequest requestParameters) {
             GetMatchSearchResponse response = new GetMatchSearchResponse();
 
@@ -134,6 +149,19 @@ namespace BabelFish {
 
             return response;
         }
+
+        /// <summary>
+        /// Get Match Search API
+        /// </summary>
+        /// <param name="DistanceSearch"></param>
+        /// <param name="StartingDate"></param>
+        /// <param name="EndingDate"></param>
+        /// <param name="ShootingStyle"></param>
+        /// <param name="NumberOfMatchesToReturn"></param>
+        /// <param name="Longitude"></param>
+        /// <param name="Latitude"></param>
+        /// <param name="withAuthentication"></param>
+        /// <returns>List<Match> Object</returns>
         public async Task<GetMatchSearchResponse> GetMatchSearchAsync(int DistanceSearch, string StartingDate, 
             string EndingDate, string ShootingStyle, int NumberOfMatchesToReturn, double Longitude, double Latitude, bool withAuthentication = false)
         {
