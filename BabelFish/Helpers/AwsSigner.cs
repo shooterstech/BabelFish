@@ -10,6 +10,7 @@ using Amazon.Runtime;
 using Aws4RequestSigner;
 using AwsSignatureVersion4;
 using BabelFish.DataModel;
+using BabelFish.DataModel.Credentials;
 
 namespace BabelFish.Helpers
 {
@@ -18,47 +19,31 @@ namespace BabelFish.Helpers
         /////////////
         // https://docs.aws.amazon.com/general/latest/gr/signing_aws_api_requests.html
         // https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html
+        // https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
+        // You can use temporary security credentials provided by the AWS Security Token Service(AWS STS)
+        //  to sign a request.The process is the same as using long-term credentials, but when you add
+        //  signing information to the query string you must add an additional query parameter for the security token.
+        //  The parameter name is X-Amz-Security-Token, and the parameter's value is the URI-encoded session token
+        //  (the string you received from AWS STS when you obtained temporary security credentials).
         /////////////
 
         public AwsSigner(string uri) {
             URI = uri;
-            HandlePermTokens();
         }
 
         #region Properties
-        /// <summary>
-        /// AWS assigned or temporary Access Key
-        /// </summary>
-        private string AccessKey { get; set; } = string.Empty;
 
-        /// <summary>
-        /// AWS assigned or temporary Secret Key
-        /// </summary>
-        private string SecretKey { get; set; } = string.Empty;
-
-        /// <summary>
-        /// AWS temporary Session Token
-        /// </summary>
-        private string SessionToken { get; set; } = string.Empty; 
+        private DataModel.Credentials.Credential Credentials = new Credential();
 
         /// <summary>
         /// Endpoint URI for hashing algorithm
         /// </summary>
         private string URI { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Track last time the temporary tokens were generated
-        /// These are good for 15 minutes so re-generate if still being used after that
-        /// https://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.html
-        /// The signed portions (using AWS Signatures) of requests are valid within 15 minutes of the timestamp in the request. An unauthorized party who has access to a signed request can modify the unsigned portions of the request without affecting the request's validity in the 15 minute window.
-        /// Using null to ignore refresh because permanent tokens
-        /// </summary>
-        private DateTime? AuthTokensLastGenerated;
-        private double AWSExpirationLimit = 15;
-
+        
         #endregion Properties
 
         #region Methods
+
         /// <summary>
         /// Entry point to call different Signature generators
         /// </summary>
@@ -69,8 +54,7 @@ namespace BabelFish.Helpers
             string SignatureToRun = which;
             try
             {
-                if ( TokensExpired() )
-                    FunctionToFetchTemporaryTokens();
+                DeterminePermTempTokens();
 
                 switch (SignatureToRun)
                 {
@@ -100,7 +84,7 @@ namespace BabelFish.Helpers
             {
                 HttpResponseMessage response = new HttpResponseMessage();
                 HttpRequestMessage request = new HttpRequestMessage();
-                var signer = new AWS4RequestSigner(this.AccessKey, this.SecretKey);
+                var signer = new AWS4RequestSigner(Credentials.AccessKey, Credentials.SecretKey);
                 var content = new StringContent("", Encoding.UTF8, "application/json");
                 var signrequest = new HttpRequestMessage
                 {
@@ -123,8 +107,8 @@ namespace BabelFish.Helpers
         {
             try
             {
-                var credentials = new ImmutableCredentials(this.AccessKey, this.SecretKey, this.SessionToken);
-
+                var credentials = new ImmutableCredentials(Credentials.AccessKey, Credentials.SecretKey, Credentials.SessionToken);
+                //var credentials = new ImmutableCredentials(Credentials.AccessKey, Credentials.SecretKey, null);
                 var client = new HttpClient();
                 HttpResponseMessage response = await client.GetAsync(
                     this.URI,
@@ -151,7 +135,7 @@ namespace BabelFish.Helpers
 
                 string awsRegion = "us-east-1";
                 string awsServiceName = "execute-api";
-                string awsSecretKey = this.SecretKey;
+                string awsSecretKey = Credentials.SecretKey;
                 DateTimeOffset utcNowSaved = DateTimeOffset.UtcNow;
                 string amzLongDate = utcNowSaved.ToString("yyyyMMddTHHmmssZ");
                 string amzShortDate = utcNowSaved.ToString("yyyyMMdd");
@@ -161,6 +145,8 @@ namespace BabelFish.Helpers
                 msg.Headers.Host = msg.RequestUri.Host;
                 // Add to headers. 
                 msg.Headers.Add("x-amz-date", amzLongDate);
+                if ( !Credentials.IsPermToken())
+                    msg.Headers.Add("X-Amz-Security-Token",Credentials.SessionToken);
                 // Add Body Content
                 msg.Content = new StringContent("");
                 // Create Canonical Request
@@ -192,7 +178,7 @@ namespace BabelFish.Helpers
                 var signingKey = HmacSha256(dateRegionServiceKey, "aws4_request");
                 var signature = ToHexString(HmacSha256(signingKey, stringToSign));
                 var credentialScope = amzShortDate + "/" + awsRegion + "/" + awsServiceName + "/aws4_request";
-                msg.Headers.TryAddWithoutValidation("Authorization", "AWS4-HMAC-SHA256 Credential=" + this.AccessKey +
+                msg.Headers.TryAddWithoutValidation("Authorization", "AWS4-HMAC-SHA256 Credential=" + Credentials.AccessKey +
                     "/" + credentialScope + ", SignedHeaders=" + signedHeaders + ", Signature=" + signature);
                 response = httpClient.SendAsync(msg).Result;
 
@@ -239,43 +225,26 @@ namespace BabelFish.Helpers
             return new HMACSHA256(key).ComputeHash(Encoding.UTF8.GetBytes(data));
         }
 
-        private bool TokensExpired()
-        {
-            if (AuthTokensLastGenerated == null ||
-                (DateTime.Now - AuthTokensLastGenerated).Value < TimeSpan.FromMinutes(AWSExpirationLimit))
-                return false;
-            else
-                return true;
-        }
+        private async void DeterminePermTempTokens() {
+            
+            // Set Temporary Tokens if we don't receive perm
+            if (!Credentials.IsPermToken()) {
+                // swap null to default date so system knows to use temp tokens on first round
+                if (Credentials.ContinuationToken == null)
+                    Credentials.ContinuationToken = new DateTime();
 
-        /// <summary>
-        /// Set Permanent Tokens from UserSettings if present
-        /// or fetch Temporary Tokens
-        /// </summary>
-        private void HandlePermTokens()
-        {
-            if (SettingsHelper.SettingIsNullOrEmpty(AuthEnums.AccessKey.ToString()) ||
-                SettingsHelper.SettingIsNullOrEmpty(AuthEnums.SecretKey.ToString()))
-                FunctionToFetchTemporaryTokens();
-            else
-            {
-                AccessKey = SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
-                SecretKey = SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
-                AuthTokensLastGenerated = null;
+                Credentials.Username = SettingsHelper.UserSettings[AuthEnums.UserName.ToString()];
+                Credentials.Password = SettingsHelper.UserSettings[AuthEnums.PassWord.ToString()];
+                bool validTempCreds = await Credentials.GetTempCredentials();
+            }
+            else {
+                // Set Permanent Tokens (AccessKey,SecretKey) passed in from UserSettings
+                // Treating set AccessKey, SecretKey as permanent tokens
+                Credentials.AccessKey = SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
+                Credentials.SecretKey = SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
+                Credentials.ContinuationToken = null;
             }
         }
-
-        //TODO: Convert Py to C#
-        private void FunctionToFetchTemporaryTokens() {
-            //Check for valid UserSettings username/password
-            //Fetch and Set
-            // AccessKey
-            // SecretKey
-            // SessionToken
-            //If SUCCESS
-            AuthTokensLastGenerated = DateTime.Now;
-        }
-
         #endregion Methods
     }
 }

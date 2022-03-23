@@ -9,6 +9,7 @@ using BabelFish.Requests;
 using BabelFish.Responses;
 using BabelFish.Helpers;
 using BabelFish.External;
+using BabelFish.Responses.Credentials;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -66,7 +67,10 @@ namespace BabelFish {
             APISTAGE,
             [Description("authapi-stage")]
             [EnumMember(Value = "authapi-stage")]
-            AUTHAPISTAGE
+            AUTHAPISTAGE,
+            [Description("internalapi")]
+            [EnumMember(Value = "internalapi")]
+            APIINTERNAL,
         }
 
         /// <summary>
@@ -102,6 +106,11 @@ namespace BabelFish {
             {
                 if (FunctionOptions["UseAuth"])
                     SubDomain = SubDomains.AUTHAPISTAGE;
+                else if (response is GetCredentialsResponse)
+                {
+                    SubDomain = SubDomains.APIINTERNAL;
+                    ApiStage = APIStage.BLANK;
+                }
                 else
                     SubDomain = SubDomains.APISTAGE;
 
@@ -119,8 +128,8 @@ namespace BabelFish {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
                     if (FunctionOptions["UseAuth"]) {
                         AwsSigner AwsSignature = new AwsSigner(uri);
-                        responseMessage = await AwsSignature.GetAws4Signature("Aws4RequestSigner")
-                            .ConfigureAwait(false); // AwsSignatureVersion4  Aws4RequestSigner  AwsSignatureV4RichW
+                        responseMessage = await AwsSignature.GetAws4Signature("AwsSignatureV4RichW")
+                            .ConfigureAwait(false); // Aws4RequestSigner  AwsSignatureVersion4  AwsSignatureV4RichW
                     } else {
                         AssembledHeaders.Add("x-api-key", XApiKey);
                         responseMessage = await httpClient.GetAsyncWithHeaders(uri, AssembledHeaders)
