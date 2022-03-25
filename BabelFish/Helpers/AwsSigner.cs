@@ -190,17 +190,16 @@ namespace BabelFish.Helpers
         {
             var values = new SortedDictionary<string, string>();
 
+            //AKS-20220324 Refactor for multiple values per key
             var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
-            foreach (var key in querystring.AllKeys)
-            {
-                if (key == null) // Handles keys without values
-                {
+            foreach (var key in querystring.AllKeys) {
+                if (key == null) { // Handles keys without values
                     values.Add(Uri.EscapeDataString(querystring[key]), $"{Uri.EscapeDataString(querystring[key])}=");
-                }
-                else
-                {
-                    // Escape to upper case. Required.
-                    values.Add(Uri.EscapeDataString(key), $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(querystring[key])}");
+                } else {
+                    foreach (var value in querystring.GetValues(key)) {
+                        // Escape to upper case. Required.
+                        values.Add(Uri.EscapeDataString(key)+value.ToString(), $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value)}");
+                    }
                 }
             }
             // Put in order - this is important.
