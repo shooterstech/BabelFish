@@ -51,11 +51,13 @@ namespace BabelFish.Requests
         {
             get
             {
-                //throw new NotImplementedException(
                 //    "Convert the return value of QueryParameters into an escaped string that may be used in a Rest API call.");
-                var keys = QueryParameters.Select(x => String.Format("{0}={1}", HttpUtility.UrlEncode(x.Key), HttpUtility.UrlEncode(x.Value.FirstOrDefault())));
-                var stringtoreturn = String.Join("&", keys);
-                //return HttpUtility.UrlEncode(stringtoreturn);
+                List<string> paramList = new List<string>();
+                foreach (KeyValuePair<string, List<string>> kvp in QueryParameters) {
+                    foreach (string val in kvp.Value)
+                        paramList.Add(String.Format("{0}={1}", HttpUtility.UrlEncode(kvp.Key), HttpUtility.UrlEncode(val)));
+                }
+                var stringtoreturn = String.Join("&", paramList);
                 return stringtoreturn;
             }
         }
