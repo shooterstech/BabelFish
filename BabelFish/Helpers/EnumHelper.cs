@@ -10,6 +10,10 @@ using Newtonsoft.Json.Converters;
 
 namespace BabelFish.Helpers
 {
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum VisibilityOption { PRIVATE, PUBLIC, PROTECTED };
+
     /// <summary>
     /// UserSettings named Auth Enums
     /// </summary>
