@@ -63,7 +63,8 @@ namespace BabelFish.Responses.GetSetAttributeAPI
                                             foreach (var val in (List<object>)obj)
                                                 loopaKVP = (Dictionary<string, dynamic>)val;
                                         }
-                                        loopAttribute.attributeKVP.Add(loopaKVP);
+                                        foreach (KeyValuePair<string, dynamic> kvp in loopaKVP)
+                                            loopAttribute.Values.Add(kvp.Key, kvp.Value);
                                         break;
                                     case "attribute-definition":
                                         JObject o5 = JObject.Parse(property3.Value.ToString());

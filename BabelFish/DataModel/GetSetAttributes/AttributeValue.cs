@@ -20,7 +20,7 @@ namespace BabelFish.DataModel.GetSetAttributes {
         public string Name { get; set; } = string.Empty;
 
         [JsonProperty(Order = 3, PropertyName = "attribute-value")]
-        public List<Dictionary<string, dynamic>> attributeKVP = new List<Dictionary<string, dynamic>>();
+        public Dictionary<string, dynamic> Values = new Dictionary<string, dynamic>();
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Helpers.VisibilityOption Visibility { get; set; }
