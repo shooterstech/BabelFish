@@ -33,5 +33,16 @@ namespace BabelFish {
             return response;
         }
 
+        public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(string userID)
+        {
+            GetValidateUserIDResponse response = new GetValidateUserIDResponse();
+
+            GetValidateUserIDRequest requestParameters = new GetValidateUserIDRequest(userID);
+
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
     }
 }

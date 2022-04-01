@@ -12,7 +12,7 @@ namespace BabelFish.Tests {
     [TestClass]
     public class GetSetAttributeTests
     {
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
+        private static string xApiKey = "Your x-api-key Here";
         private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
         {
             {"UserName", "test_dev_9@shooterstech.net"},
@@ -20,7 +20,7 @@ namespace BabelFish.Tests {
         };
         private readonly GetSetAttributeAPIClient _client = new GetSetAttributeAPIClient(xApiKey, clientParams);
 
-        [TestMethod]
+        //[TestMethod]
         public void GetSingleAttribute() {
 
             List<string> MyAttributes = new List<string>()
@@ -90,6 +90,24 @@ namespace BabelFish.Tests {
             //Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
             //Assert.IsTrue(objResponse.RangeScripts.Count >= 1);
             //Assert.AreEqual(objResponse.Description, setName.ProperName);
+        }
+
+        [TestMethod]
+        public void GetValidateUserIDValid()
+        {
+            string userID = "28489692-0a61-470e-aed8-c71b9cfbfe6e";
+            var response = _client.GetValidateUserIDAsync(userID);
+            Assert.IsNotNull(response);
+
+            var taskResult = response.Result;
+            var objResponse = taskResult.ValidateUserID;
+            var msgResponse = taskResult.MessageResponse;
+
+            Assert.IsNotNull(objResponse);
+            Assert.IsNotNull(msgResponse);
+
+            Assert.AreEqual(objResponse.UserID, userID);
+            Assert.IsTrue(objResponse.Valid);
         }
     }
 }

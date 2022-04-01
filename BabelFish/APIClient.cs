@@ -10,6 +10,7 @@ using BabelFish.Responses;
 using BabelFish.Helpers;
 using BabelFish.External;
 using BabelFish.Responses.Credentials;
+using BabelFish.Responses.GetSetAttributeAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -105,7 +106,11 @@ namespace BabelFish {
             else
             {
                 if (FunctionOptions["UseAuth"])
+                {
                     SubDomain = SubDomains.AUTHAPISTAGE;
+                    if (response is GetValidateUserIDResponse)
+                        ApiStage = APIStage.BETA;
+                }
                 else if (response is GetCredentialsResponse)
                 {
                     SubDomain = SubDomains.APIINTERNAL;
