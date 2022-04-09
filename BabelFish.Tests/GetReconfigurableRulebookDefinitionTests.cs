@@ -10,7 +10,7 @@ using BabelFish.DataModel.Definitions;
 
 namespace BabelFish.Tests {
     [TestClass]
-    public class GetAttributeDefinitionTests
+    public class GetReconfigurableRulebookDefinitionTests
     {
         private SetName setName;
         private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";

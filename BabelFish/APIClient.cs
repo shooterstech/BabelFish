@@ -21,10 +21,11 @@ namespace BabelFish {
         {
             this.XApiKey = xapikey;
             this.ApiStage = APIStage.PRODUCTION;
-            this.SubDomain = SubDomains.APISTAGE;
+            this.SubDomain = SubDomains.API_STAGE;
 
             logger.Info("BablFish API instantiated");
         }
+
         protected APIClient(string xapikey, Dictionary<string, string>? CustomUserSettings = null) : this(xapikey)
         {
             if (CustomUserSettings != null)
@@ -54,24 +55,37 @@ namespace BabelFish {
             [EnumMember(Value = "/production")]
             PRODUCTION
         }
+
         [JsonConverter(typeof(StringEnumConverter))]
         private enum SubDomains
         {
             [Description("")]
             [EnumMember(Value = "")]
             BLANK,
+
             [Description("api")]
             [EnumMember(Value = "api")]
             API,
+
             [Description("api-stage")]
             [EnumMember(Value = "api-stage")]
-            APISTAGE,
+            API_STAGE,
+
+            [Description( "authapi" )]
+            [EnumMember( Value = "authapi" )]
+            AUTHAPI,
+
             [Description("authapi-stage")]
             [EnumMember(Value = "authapi-stage")]
-            AUTHAPISTAGE,
+            AUTHAPI_STAGE,
+
             [Description("internalapi")]
             [EnumMember(Value = "internalapi")]
-            APIINTERNAL,
+            INTERNAL,
+
+            [Description( "internalapi-stage" )]
+            [EnumMember( Value = "internalapi-stage" )]
+            INTERNAL_STAGE
         }
 
         /// <summary>
@@ -107,17 +121,17 @@ namespace BabelFish {
             {
                 if (FunctionOptions["UseAuth"])
                 {
-                    SubDomain = SubDomains.AUTHAPISTAGE;
+                    SubDomain = SubDomains.AUTHAPI_STAGE;
                     if (response is GetValidateUserIDResponse)
                         ApiStage = APIStage.BETA;
                 }
                 else if (response is GetCredentialsResponse)
                 {
-                    SubDomain = SubDomains.APIINTERNAL;
+                    SubDomain = SubDomains.INTERNAL;
                     ApiStage = APIStage.BLANK;
                 }
                 else
-                    SubDomain = SubDomains.APISTAGE;
+                    SubDomain = SubDomains.API_STAGE;
 
                 uri = $"https://{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(SubDomain).Value}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
             }
