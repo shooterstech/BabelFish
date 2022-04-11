@@ -44,6 +44,11 @@ namespace BabelFish.DataModel.Definitions {
 
         public bool Key { get; set; } = false;
 
+        /// <summary>
+        /// Human readable description of what this feild represents. 
+        /// </summary>
+        public string Description { get; set; } = string.Empty;
+
         public AttributeValidation Validation { get; set; } = new AttributeValidation();
 
         public List<AttributeValueOption> Values { get; set; } = new List<AttributeValueOption>();
