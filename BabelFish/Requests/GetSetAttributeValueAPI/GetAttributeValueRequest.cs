@@ -1,16 +1,16 @@
-﻿namespace BabelFish.Requests.GetSetAttributeAPI
+﻿namespace BabelFish.Requests.GetSetAttributeValueAPI
 {
-    public class GetAttributeRequest : Request
+    public class GetAttributeValueRequest : Request
     {
         private const string ParamName = "attribute-def";
         private Dictionary<string, List<string>> AttributeList = new Dictionary<string, List<string>>();
 
-        public GetAttributeRequest(List<string> attributeNames)
+        public GetAttributeValueRequest(List<string> attributeNames)
         {
             WithAuthentication = true;
             AttributeList.Add(ParamName,new List<string>());
             attributeNames.ForEach(x => AttributeList[ParamName].Add(x));
-            //AttributeList.Add("return-definition", new List<string>() {"true"});
+            AttributeList.Add("return-default", new List<string>() { "true" });
         }
 
         /// <inheritdoc />

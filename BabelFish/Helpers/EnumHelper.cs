@@ -10,6 +10,11 @@ using Newtonsoft.Json.Converters;
 
 namespace BabelFish.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum DefinitionFieldTypeEnums { OPEN, CLOSED, SUGGEST, DERIVED };
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum VisibilityOption { PRIVATE, PUBLIC, PROTECTED };

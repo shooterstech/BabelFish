@@ -18,9 +18,9 @@ namespace BabelFish.Tests {
             {"UserName", "test_dev_9@shooterstech.net"},
             {"PasssWord", "abcd1234"},
         };
-        private readonly GetSetAttributeAPIClient _client = new GetSetAttributeAPIClient(xApiKey, clientParams);
+        private readonly GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient(xApiKey, clientParams);
 
-        //[TestMethod]
+        [TestMethod]
         public void GetSingleAttribute() {
 
             List<string> MyAttributes = new List<string>()
@@ -31,13 +31,13 @@ namespace BabelFish.Tests {
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            var objResponse = taskResult.AttributeValues;
+            //var objResponse = taskResult.AttributeValues;
             var msgResponse = taskResult.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
+            //Assert.IsNotNull(objResponse);
             Assert.IsNotNull(msgResponse);
 
-//            Assert.AreEqual(objResponse.FirstOrDefault().Name, MyAttributes[0]);
+            //Assert.AreEqual(objResponse.FirstOrDefault().Name, MyAttributes[0]);
             //Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
             //Assert.AreEqual(objResponse.Fields.Count, 1);
             //Assert.AreEqual(objResponse.Fields[0].FieldName, "Three-Position Air Rifle Type");

@@ -23,9 +23,6 @@ namespace BabelFish.DataModel.Definitions {
         public const string DESIGNATION_USER = "USER";
         public const string DESIGNATION_HIDDEN = "HIDDEN";
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum VisibilityOption { PRIVATE, PUBLIC, PROTECTED };
-
         public Attribute() : base() {
             Type = DefinitionType.ATTRIBUTE;
         }
@@ -48,7 +45,7 @@ namespace BabelFish.DataModel.Definitions {
 
         [JsonProperty(Order = 12)]
         [JsonConverter(typeof(StringEnumConverter))]
-        public VisibilityOption MaxVisibility { get; set; }
+        public Helpers.VisibilityOption MaxVisibility { get; set; }
 
         [JsonProperty(Order = 13)]
         [DefaultValue(false)]

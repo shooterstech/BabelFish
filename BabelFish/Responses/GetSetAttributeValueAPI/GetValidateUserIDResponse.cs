@@ -1,6 +1,6 @@
-﻿using BabelFish.DataModel.GetSetAttributes;
+﻿using BabelFish.DataModel.GetSetAttributeValue;
 
-namespace BabelFish.Responses.GetSetAttributeAPI
+namespace BabelFish.Responses.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDResponse : Response<ValidateUserID>
     {

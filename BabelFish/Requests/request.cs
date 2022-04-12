@@ -74,5 +74,12 @@ namespace BabelFish.Requests
         }
 
         //TODO: Figure out how to return values to be posted. Noting that sometimes we post a JSON string, much more than name value pairs. 
+        public virtual StringContent PostParameters
+        {
+            get
+            {
+                return new StringContent("");
+            }
+        }
     }
 }

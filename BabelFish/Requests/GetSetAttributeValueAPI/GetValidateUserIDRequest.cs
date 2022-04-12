@@ -1,4 +1,4 @@
-﻿namespace BabelFish.Requests.GetSetAttributeAPI
+﻿namespace BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {

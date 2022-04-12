@@ -23,6 +23,7 @@ namespace BabelFish.Helpers
             { "SecretKey", typeof(string) },                // User SecretKey for valid AWS access
             { "Logging_NLogConfig", typeof(string) },       // Alternate NLog path/filename
             { "Definitions_CacheAlwaysNew", typeof(bool) }, // Definitions cache override to always fetch new
+            { "XApiKey", typeof(string) },                  // User XApiKey passed in
         };
 
         /// <summary>
@@ -120,5 +121,14 @@ namespace BabelFish.Helpers
                 return false;
         }
         #endregion Methods
+
+        public static Dictionary<string, string> RevertSettingsFormat()
+        {
+            Dictionary<string, string> revertSettings = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, dynamic> loopit in Helpers.SettingsHelper.UserSettings)
+                revertSettings[loopit.Key] = loopit.Value;
+
+            return revertSettings;
+        }
     }
 }

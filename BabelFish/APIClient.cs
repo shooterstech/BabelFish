@@ -10,7 +10,7 @@ using BabelFish.Responses;
 using BabelFish.Helpers;
 using BabelFish.External;
 using BabelFish.Responses.Credentials;
-using BabelFish.Responses.GetSetAttributeAPI;
+using BabelFish.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -30,6 +30,8 @@ namespace BabelFish {
         {
             if (CustomUserSettings != null)
                 SettingsHelper.IncomingUserSettings = CustomUserSettings;
+            if (SettingsHelper.SettingIsNullOrEmpty("XApiKey"))
+                SettingsHelper.UserSettings["XApiKey"] = xapikey;
         }
 
         #region properties
