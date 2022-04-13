@@ -135,16 +135,16 @@ namespace BabelFish.Tests
         {
             Dictionary<string, string> clientParams = new Dictionary<string, string>()
             {
-                {"AccessKey", "Enter Perm AccessKey"},
-                {"SecretKey", "Enter Perm SecretKey"},
+                {"UserName", "test_dev_7@shooterstech.net"},
+                {"PassWord", "abcd1234"},
             };
             OrionMatchAPIClient _client3 = new OrionMatchAPIClient(xApiKey, clientParams);
-            var response = _client3.GetMatchDetailAsync("1.2268.2022021516475240.0", true);
+            var response = _client3.GetMatchDetailAsync("1.2899.1040248529.0", true);
             Assert.IsNotNull(response);
 
             var match = response.Result.Match;
             var matchName = match.Name;
-            // Auth specific return value?
+            // Need to find an Auth specific combination that returns extra values
 
             Assert.IsNotNull(matchName);
             Assert.AreNotEqual(matchName, "");

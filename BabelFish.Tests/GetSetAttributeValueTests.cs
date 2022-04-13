@@ -10,18 +10,18 @@ using BabelFish.DataModel.Definitions;
 
 namespace BabelFish.Tests {
     [TestClass]
-    public class GetSetAttributeTests
+    public class GetSetAttributeValueTests
     {
-        private static string xApiKey = "Your x-api-key Here";
+        private static string xApiKey = "ga9HvqN7i14sbzM6WrIb0amzdyIYkej83b8aJaWz";
         private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
         {
             {"UserName", "test_dev_9@shooterstech.net"},
-            {"PasssWord", "abcd1234"},
+            {"PassWord", "abcd1234"},
         };
         private readonly GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient(xApiKey, clientParams);
 
         [TestMethod]
-        public void GetSingleAttribute() {
+        public void GetSingleAttributeValue() {
 
             List<string> MyAttributes = new List<string>()
             {
@@ -31,20 +31,15 @@ namespace BabelFish.Tests {
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            //var objResponse = taskResult.AttributeValues;
+            var objResponse = taskResult.AttributeValues;
+            Assert.IsTrue(objResponse.Count() == 1);
             var msgResponse = taskResult.MessageResponse;
-
-            //Assert.IsNotNull(objResponse);
             Assert.IsNotNull(msgResponse);
-
-            //Assert.AreEqual(objResponse.FirstOrDefault().Name, MyAttributes[0]);
-            //Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            //Assert.AreEqual(objResponse.Fields.Count, 1);
-            //Assert.AreEqual(objResponse.Fields[0].FieldName, "Three-Position Air Rifle Type");
+            Assert.IsTrue(msgResponse.Message.Count == 0);
         }
 
-        //[TestMethod]
-        public void GetMultipleAttribute()
+        [TestMethod]
+        public void GetMultipleAttributeValues()
         {
             List<string> MyAttributes = new List<string>()
             {
@@ -57,23 +52,20 @@ namespace BabelFish.Tests {
 
             var taskResult = response.Result;
             var objResponse = taskResult.AttributeValues;
+            Assert.IsTrue(objResponse.Count() == 2);
+            foreach ( var checkName in objResponse.ToArray())
+                Assert.IsTrue(MyAttributes.Contains(checkName.SetName));
             var msgResponse = taskResult.MessageResponse;
-
-            Assert.IsNotNull(objResponse);
             Assert.IsNotNull(msgResponse);
-
-            //Assert.AreEqual(objResponse.SetName, setName.ToString());
-            //Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            //Assert.IsTrue(objResponse.RangeScripts.Count>=1);
-            //Assert.AreEqual(objResponse.Description, setName.ProperName);
+            Assert.IsTrue(msgResponse.Message.Count == 0);
         }
 
-        //[TestMethod]
-        public void GetNotFoundAttribute()
+        [TestMethod]
+        public void GetNotFoundAttributeValue()
         {
             List<string> MyAttributes = new List<string>()
             {
-                "v1.0:orion:Collegiate Class",
+                "v1.0:orion:Invalid SetName",
             };
 
             var response = _client.GetAttributeValueAsync(MyAttributes);
@@ -81,15 +73,11 @@ namespace BabelFish.Tests {
 
             var taskResult = response.Result;
             var objResponse = taskResult.AttributeValues;
+            Assert.IsTrue(objResponse.Count() == 0);
             var msgResponse = taskResult.MessageResponse;
-
-            Assert.IsNotNull(objResponse);
             Assert.IsNotNull(msgResponse);
-
-            //Assert.AreEqual(objResponse.SetName, setName.ToString());
-            //Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            //Assert.IsTrue(objResponse.RangeScripts.Count >= 1);
-            //Assert.AreEqual(objResponse.Description, setName.ProperName);
+            Assert.IsTrue(msgResponse.Message.Count > 0);
+            Assert.IsTrue(msgResponse.Title == "GetAttributeValue API errors encountered");
         }
 
         [TestMethod]
@@ -108,6 +96,24 @@ namespace BabelFish.Tests {
 
             Assert.AreEqual(objResponse.UserID, userID);
             Assert.IsTrue(objResponse.Valid);
+        }
+
+        [TestMethod]
+        public void GetValidateUserIDInValid()
+        {
+            string userID = "ThoisIsAnInvalidUserId";
+            var response = _client.GetValidateUserIDAsync(userID);
+            Assert.IsNotNull(response);
+
+            var taskResult = response.Result;
+            var objResponse = taskResult.ValidateUserID;
+            var msgResponse = taskResult.MessageResponse;
+
+            Assert.IsNotNull(objResponse);
+            Assert.IsNotNull(msgResponse);
+
+            Assert.AreEqual(objResponse.UserID, userID);
+            Assert.IsFalse(objResponse.Valid);
         }
     }
 }
