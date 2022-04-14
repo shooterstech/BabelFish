@@ -22,7 +22,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="AttributeNames">List<string> of valid Attribute Names</string></param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> AttributeNames) //, GetAttributeResponse response)
+        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> AttributeNames)
         {
             GetAttributeValueResponse response = new GetAttributeValueResponse();
 
@@ -33,6 +33,11 @@ namespace BabelFish {
             return response;
         }
 
+        /// <summary>
+        /// Get UserId Validity
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns>ValidateUserId object</returns>
         public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(string userID)
         {
             GetValidateUserIDResponse response = new GetValidateUserIDResponse();
@@ -44,15 +49,18 @@ namespace BabelFish {
             return response;
         }
 
-        //public async Task<SetAttributeValueResponse> SetAttributeValueAsync(List<Dictionary<string, dynamic>> AttributeNamesValues)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attributeValue"></param>
+        /// <returns></returns>
+        //public async Task<GetAttributeValueResponse> SetAttributeValueAsync(DataModel.GetSetAttributeValue.AttributeValue attributeValue)
         //{
-        //    //Build in client call
-        //    List<Dictionary<string, dynamic>> requestParameters = new List<Dictionary<string, dynamic>>();
-        //    requestParameters.Add(new Dictionary<string, dynamic>() {
-        //        { "attribute-def", "v1.0:orion:Date of Birth" },
-        //        { "Visibilty", "PROTECTED" },
-        //        { "attribute-value", new Dictionary<string,string>(){ { "DateOfBirth", "2010-03-03" } } },
-        //    });
+        //    GetAttributeValueResponse response = new GetAttributeValueResponse();
+
+        //    //set request with attributeValue
+
+        //    //CallAPI 
         //}
     }
 }

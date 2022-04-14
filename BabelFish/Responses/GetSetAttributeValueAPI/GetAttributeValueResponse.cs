@@ -68,7 +68,7 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                                     case "attribute-value":
                                         if (buildAttribute.IsMultipleValue)
                                         {
-                                            string KeyFieldName = buildAttribute.GetAttributeFieldKey();
+                                            string KeyFieldName = buildAttribute.GetDefinitionKeyFieldName();
                                             var ObjectList = Helpers.JsonHelper.Deserialize(property3.Value.ToString());
                                             foreach (Dictionary<string, dynamic> EachObject in (List<object>)ObjectList)
                                             {
