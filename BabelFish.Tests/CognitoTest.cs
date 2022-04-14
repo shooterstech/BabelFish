@@ -17,9 +17,11 @@ namespace BabelFish.Tests {
     [TestClass]
     public class CognitoTest {
 
+        private static string accountID = "703601548845";
+        private static string awsRegion = "us-east-1";
         private static string clientID = "3mbaq4124a5emsap21krllrcrj";
-        private static string poolID = "us-east-1_ujMUC50fP";
-        private static string identityPoolID = "us-east-1:ecdb1323-5308-445f-845e-55871ebf14e2";
+        private static string poolID = $"{awsRegion}_ujMUC50fP";
+        private static string identityPoolID = $"{awsRegion}:ecdb1323-5308-445f-845e-55871ebf14e2";
         private static string username = "test_dev_7@shooterstech.net";
         private static string password = "abcd1234";
         private static string myRandomAssDevicePassword = "simple";
@@ -39,7 +41,7 @@ namespace BabelFish.Tests {
             CognitoUser user = new CognitoUser( username, clientID, userPool, provider );
             //This is the only time we need the user's password (assuming the soon to be obtained refresh token stays valid)
             InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest() {
-                Password = password                 
+                Password = password
             };
 
             //Send the request to Cognito for authentication
@@ -53,15 +55,17 @@ namespace BabelFish.Tests {
 
             //Both the AccessToken (good for 60 minutes by default) and RefreshToken (good for 30 days) need to be saved
             //DeviceKey also needs to be saved. See below, may also need to save DeviceGroupKey, and the device password.
+            //IdToken is needed to retrieive AWS Credentials, access key, secret access key, and session token
             var accessToken = authResponse.AuthenticationResult.AccessToken;
             var refreshToken = authResponse.AuthenticationResult.RefreshToken;
+            var idToken = authResponse.AuthenticationResult.IdToken;
             var deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
 
-            //Now we can get AWS Credentials for the user.
+            //Now we can get AWS Credentials for the user
             CognitoAWSCredentials credentials =
                 user.GetCognitoAWSCredentials( identityPoolID, RegionEndpoint.USEast1 );
-            //TODO Using the credentials, need to obtain the Key ID and SessionToken
-            //To do so, use the .get_id() and .get_credentials_for_identity() calls
+
+            var restAPICredntials = await GetRestAPICredentials( user.SessionTokens.IdToken );
 
             //Above, when we made the StartWithSrpAuthAsync Call, the call also generates a temporary 'Device'
             //Now need to tell Cognito to confirm this temporary device.
@@ -75,11 +79,11 @@ namespace BabelFish.Tests {
                 username );
 
             ConfirmDeviceResponse confirmDeviceResponse = await user.ConfirmDeviceAsync(
-                accessToken, 
+                accessToken,
                 deviceKey,
                 "Bob",
                 deviceVerifier.PasswordVerifier,
-                deviceVerifier.Salt);
+                deviceVerifier.Salt );
 
             //Now attach the newly attached Device to the user. We need this step to successfully complete the StartWithRefreshTokenAuthAsync() call
             //NOTE There may be a better way to do this, but method here is to first create a generic Device, with the known 
@@ -105,7 +109,7 @@ namespace BabelFish.Tests {
             InitiateRefreshTokenAuthRequest refreshRequest = new InitiateRefreshTokenAuthRequest() {
                 AuthFlowType = AuthFlowType.REFRESH_TOKEN_AUTH
             };
-                        
+
             //CAll Cognito to refresh the token
             AuthFlowResponse authResponse2 = await user.StartWithRefreshTokenAuthAsync( refreshRequest ).ConfigureAwait( false );
 
@@ -116,6 +120,49 @@ namespace BabelFish.Tests {
             //Again, we can get new credentials for signing API requests
             CognitoAWSCredentials credentials2 =
                 user.GetCognitoAWSCredentials( identityPoolID, RegionEndpoint.USEast1 );
+
+            var restAPICredntials2 = await GetRestAPICredentials( user.SessionTokens.IdToken );
         }
+
+        public async Task<RestAPICredentials> GetRestAPICredentials( string idToken ) {
+
+            AmazonCognitoIdentityClient identityClient =
+                new AmazonCognitoIdentityClient( new Amazon.Runtime.AnonymousAWSCredentials() );
+
+            //Using the idToken, obtain the access key, secret access key, and session token
+            //First step get the Id of the Cognito User
+            var logins = new Dictionary<string, string>() {
+                    { $"cognito-idp.{awsRegion}.amazonaws.com/{poolID}", idToken }
+                };
+            var getIDRequest = new Amazon.CognitoIdentity.Model.GetIdRequest() {
+                AccountId = accountID,
+                IdentityPoolId = identityPoolID,
+                Logins = logins
+            };
+            var getIDResponse = await identityClient.GetIdAsync( getIDRequest ).ConfigureAwait( false );
+
+            //Second step, get the Credentials for the Identity we just learned
+            var getCredentialsForIdentityRequest = new Amazon.CognitoIdentity.Model.GetCredentialsForIdentityRequest() {
+                IdentityId = getIDResponse.IdentityId,
+                Logins = logins
+            };
+            var getCredentialsForIdentityResponse = await identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest ).ConfigureAwait( false );
+
+            //YAY now we can make Rest API Calls
+            return new RestAPICredentials() {
+                AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId,
+                SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey,
+                SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken
+            };
+        }
+    }
+
+    public class RestAPICredentials {
+
+        public RestAPICredentials() { }
+
+        public string AccessKey { get; set; }
+        public string SecretKey { get; set; }
+        public string SessionToken { get; set; }
     }
 }
