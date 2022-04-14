@@ -174,6 +174,11 @@ namespace BabelFish {
 
                         if (responseMessage.IsSuccessStatusCode)
                             response.Body = apiReturnJson;
+                        
+                        //Log errors set in calls
+                        if ( response.MessageResponse.Message.Count > 0)
+                            logger.Error("Processing Call Error {processingerror}", string.Join("; ", response.MessageResponse.Message));
+
                     } catch (Exception ex) {
                         throw new Exception($"Error parsing return json: {ex.ToString()}");
                     }
