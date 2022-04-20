@@ -13,6 +13,14 @@ namespace BabelFish.DataModel.OrionMatch {
         public List<Match> SearchList = new List<Match>();
     }
 
+    public class MatchWrapper {
+        public Match Match = new Match();
+
+        public override string ToString() {
+            return $"Match {Match.Name}";
+        }
+    }
+
     [Serializable]
     public class Match {
 
@@ -53,7 +61,14 @@ namespace BabelFish.DataModel.OrionMatch {
         public DateTime ResultEventsLastUpdate { get; set; } = new DateTime();
 
         [JsonProperty(Order = 6)]
+        [Obsolete("Use AttributeNames instead.")]
         public List<Attribute> Attributes { get; set; } = new List<Attribute>();
+
+        /// <summary>
+        /// List of Attribute SetNames used in this match.
+        /// </summary>
+        [JsonProperty( Order = 6 )]
+        public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
         /// Name of the Match
@@ -95,6 +110,11 @@ namespace BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string SharedKey { get; set; } = String.Empty;
 
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// Version 2022-04-09 represents ResultCOF in a dictionary format
+        /// Version < 2022 represent ResultCOF in a tree format
+        /// </summary>
         [JsonProperty(Order = 12)]
         public string JSONVersion { get; set; } = string.Empty;
 
@@ -113,7 +133,20 @@ namespace BabelFish.DataModel.OrionMatch {
         [JsonProperty(Order = 15)]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
+        /// <summary>
+        /// SetName of the ScoreConfig used in this match.
+        /// NOTE: The name of the ScoreFormatCollection is specified in the Course of Fire 
+        /// </summary>
         [JsonProperty(Order = 16)]
+        public string ScoreConfigName { get; set; }
+
+        /// <summary>
+        /// Name of the TargetCollection used in this match.
+        /// </summary>
+        [JsonProperty(Order = 17)]
+        public string TargetCollectionName { get; set; }
+
+        [JsonProperty(Order = 18)]
         public Location Location { get; set; } = new Location();
 
         /// <summary>
@@ -139,7 +172,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// Read Personal Squadding
         /// Read Personal Incident Reports
         ///
-        [JsonProperty(Order = 17)]
+        [JsonProperty(Order = 19)]
         public List<string> Authorization { get; set; } = new List<string>();
 
         /// <summary>
@@ -168,7 +201,8 @@ namespace BabelFish.DataModel.OrionMatch {
         /// scores the logged in user shot. If a user is not logged in, or the logged in user is
         /// not an athletes, then this will be an empty list.
         /// </summary>
-        [JsonProperty(Order = 18)]
+        [JsonProperty(Order = 20)]
+        [Obsolete("Format of this data is in the old ResultCOF (pre 2022). Make a separate call using GetResultCOF() instead, which returns data in the 2022 format.")]
         public List<ResultCOF> ParticipantResults { get; set; } = new List<ResultCOF>();
 
         /// <summary>

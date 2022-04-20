@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BabelFish.DataModel.OrionMatch {
+
+    /// <summary>
+    /// EventScore format for (JSONVersion) "2022-04-09"
+    /// </summary>
     [Serializable]
     public class EventScore {
 
@@ -14,9 +18,6 @@ namespace BabelFish.DataModel.OrionMatch {
         public const string EVENTSTATUS_OFFICIAL = "OFFICIAL";
 
         public EventScore() {
-            Average = null; //Purposefully setting to null so it won't get listed in JSON for ResultCOF and ResultList
-            Ammunition = null;
-            TargetDef = null;
         }
 
         /// <summary>
@@ -33,9 +34,10 @@ namespace BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string EventStyleDef { get; set; } = string.Empty;
 
-        public string ScoreFormat { get; set; } = string.Empty;
+        //ScoreFormat is no longer used. Instead format is specified in the Course of Fire Definition
+        //public string ScoreFormat { get; set; } = string.Empty;
 
-        public Score Score { get; set; } = new Score();
+        public ShootersTech.DataModel.Athena.Score Score { get; set; } = new ShootersTech.DataModel.Athena.Score();
         
         /// <summary>
         /// EVENT
@@ -48,12 +50,13 @@ namespace BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// The date and time of the first shot, in this event. 
+        /// EKA: Field is not really used, removing it.
         /// </summary>
-        public DateTime EventTime { get; set; } = new DateTime();
+        //public DateTime EventTime { get; set; } = new DateTime();
 
         public string EventName { get; set; } = string.Empty;
 
-        public List<EventScore> Children { get; set; } = new List<EventScore>();
+        //public List<EventScore> Children { get; set; } = new List<EventScore>();
 
         /// <summary>
         /// The number of shots the athletes has fired in this Event.
@@ -69,13 +72,14 @@ namespace BabelFish.DataModel.OrionMatch {
         
         /// <summary>
         /// Set Name of the target definition
+        /// EKA: TargetDef no longer used. Is specified in Course of Fire Def
         /// </summary>
-        public string? TargetDef { get; set; }
+        //public string? TargetDef { get; set; }
 
-        public Ammunition? Ammunition { get; set; }
+        //public Ammunition? Ammunition { get; set; }
 
-        public ScoreAverage? Average { get; set; }
+        //public ScoreAverage? Average { get; set; }
 
-        public Coordinate Coordinate {get; set;} = new Coordinate();
+        //public Coordinate Coordinate {get; set;} = new Coordinate();
     }
 }

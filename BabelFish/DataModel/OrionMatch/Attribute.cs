@@ -11,6 +11,7 @@ namespace BabelFish.DataModel.OrionMatch {
     /// replaced with DataModel.Match.Attribute, which is the Reconfigurable Rulebook version.
     /// </summary>
     [Serializable]
+    [Obsolete( "Use the Reconfigurable Rulebook Attribute Definition instead." )]
     public class Attribute {
 
         public Attribute() {

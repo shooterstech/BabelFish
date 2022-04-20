@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BabelFish.DataModel.OrionMatch {
     [Serializable]
+    [Obsolete("Use ShootersTech.DataModel.Athena.Shot.Shot instead.")]
     public class Score {
 
         public Score() { }
