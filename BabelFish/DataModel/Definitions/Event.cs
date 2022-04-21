@@ -15,15 +15,19 @@ namespace BabelFish.DataModel.Definitions {
     /// </summary>
     public class Event  {
 
+        /// <summary>
+        /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
+        /// NOTE EventtType is purposefully misspelled.
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public enum Type { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
+        public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
         private List<string> validationErrorList = new List<string>();
 
         public Event() {
             //Children = new List<string>();
             ScoreFormat = "d";
             Calculation = "SUM";
-            EventType = Type.NONE;
+            EventType = EventtType.NONE;
         }
 
         /// <summary>
@@ -41,9 +45,9 @@ namespace BabelFish.DataModel.Definitions {
         /// * STRING
         /// * SINGULAR
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(Order = 2)]
-        public Type EventType { get; set; }
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonProperty( Order = 2 )]
+        public EventtType EventType { get; set; } = EventtType.NONE;
 
         /// <summary>
         /// The children of this event identified by the EventName. The score for this event is added together from the scores of the children.

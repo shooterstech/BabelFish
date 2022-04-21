@@ -169,6 +169,18 @@ namespace BabelFish.DataModel.OrionMatch {
         public Dictionary<float, ShootersTech.DataModel.Athena.Shot.Shot> Shots = new Dictionary<float, ShootersTech.DataModel.Athena.Shot.Shot>();
 
         /// <summary>
+        /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
+        /// </summary>
+        [JsonProperty( Order = 60 )]
+        public ShootersTech.DataModel.Athena.DataFormat.ShotGraphicShow LiveDisplay { get; set; }
+
+        /// <summary>
+        /// Describes how to display shot graphics and (text) scores to spectators, after an event is completed.
+        /// </summary>
+        [JsonProperty( Order = 61 )]
+        public List<ShootersTech.DataModel.Athena.DataFormat.ShotGraphicShow> PostDisplay { get; set; }
+
+        /// <summary>
         /// GUID returned from API
         /// EKA: This field is used for storage in Dynamo only. 
         /// </summary>
