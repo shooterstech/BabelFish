@@ -34,8 +34,6 @@ namespace BabelFish.DataModel.Definitions {
             [Description( "BOTH" )] [EnumMember( Value = "BOTH" )] BOTH
         }
 
-        private List<string> validationErrorList = new List<string>();
-
         public ShowInSegment() {
 
         }

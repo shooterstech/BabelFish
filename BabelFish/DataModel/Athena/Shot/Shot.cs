@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using ShootersTech.DataModel.Athena;
 using ShootersTech.DataModel.Athena.Interfaces;
-using Medea.Match;
 using Newtonsoft.Json;
 
 namespace ShootersTech.DataModel.Athena.Shot {
@@ -71,7 +70,7 @@ namespace ShootersTech.DataModel.Athena.Shot {
 
         public float ScoringDiameter { get; set; }
 
-        public Athena.DataModel.Score Score { get; set; }
+        public ShootersTech.DataModel.Athena.Score Score { get; set; }
 
         public string TargetSetName { get; set; }
 

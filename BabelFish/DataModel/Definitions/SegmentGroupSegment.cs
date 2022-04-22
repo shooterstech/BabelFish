@@ -210,7 +210,7 @@ namespace BabelFish.DataModel.Definitions {
 
             return new ShowInSegment() {
                 StageLabel = new List<string>(),
-                Competition = ShowInSegment.ShotType.BOTH
+                Competition = ShowInSegment.CompetitionType.BOTH
             };
         }
 

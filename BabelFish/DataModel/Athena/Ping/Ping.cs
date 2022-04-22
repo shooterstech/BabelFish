@@ -56,7 +56,7 @@ namespace ShootersTech.DataModel.Athena.Ping {
 
         public DateTime GetSentTime() {
             try {
-                var st = DateTime.ParseExact(SentTime, Medea.WebServices.Constants.DATETIME_FORMAT, cultureInfo);
+                var st = DateTime.ParseExact(SentTime, ShootersTech.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo);
                 return st.ToUniversalTime();
                 //return st;
             } catch (Exception ex) {
@@ -66,7 +66,7 @@ namespace ShootersTech.DataModel.Athena.Ping {
 
         public DateTime GetReceivedTime() {
             try {
-                var rt = DateTime.ParseExact(ReceivedTime, Medea.WebServices.Constants.DATETIME_FORMAT, cultureInfo);
+                var rt = DateTime.ParseExact(ReceivedTime, ShootersTech.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo);
                 return rt.ToUniversalTime();
             } catch (Exception ex) {
                 return DateTime.MinValue;
@@ -106,7 +106,7 @@ namespace ShootersTech.DataModel.Athena.Ping {
                 if (Unknown)
                     return true;
 
-                return (DateTime.UtcNow - GetReceivedTime()).TotalSeconds > RangeManager.TIME_BEWEEN_PINGS;
+                return (DateTime.UtcNow - GetReceivedTime()).TotalSeconds > 2.0D;
             }
         }
 
