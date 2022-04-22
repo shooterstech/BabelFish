@@ -163,10 +163,10 @@ namespace BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
-        /// The Key is the sequence number. The Value is the Shot
+        /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object
         /// </summary>
         [JsonProperty( Order = 50 )]
-        public Dictionary<float, ShootersTech.DataModel.Athena.Shot.Shot> Shots = new Dictionary<float, ShootersTech.DataModel.Athena.Shot.Shot>();
+        public Dictionary<string, ShootersTech.DataModel.Athena.Shot.Shot> Shots = new Dictionary<string, ShootersTech.DataModel.Athena.Shot.Shot>();
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
