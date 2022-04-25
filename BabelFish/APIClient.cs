@@ -149,8 +149,7 @@ namespace BabelFish {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
                     if (FunctionOptions["UseAuth"]) {
                         AwsSigner AwsSignature = new AwsSigner(uri);
-                        responseMessage = await AwsSignature.GetAws4Signature("AwsSignatureV4RichW")
-                            .ConfigureAwait(false); // Aws4RequestSigner  AwsSignatureVersion4  AwsSignatureV4RichW
+                        responseMessage = await AwsSignature.GetAws4Signature().ConfigureAwait(false);
                     } else {
                         AssembledHeaders.Add("x-api-key", XApiKey);
                         responseMessage = await httpClient.GetAsyncWithHeaders(uri, AssembledHeaders)

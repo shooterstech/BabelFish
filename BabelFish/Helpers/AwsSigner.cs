@@ -6,9 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Amazon.Runtime;
-using Aws4RequestSigner;
-using AwsSignatureVersion4;
 using BabelFish.DataModel;
 using BabelFish.DataModel.Credentials;
 
@@ -33,6 +30,8 @@ namespace BabelFish.Helpers
 
         #region Properties
 
+        private HttpResponseMessage responseError = new HttpResponseMessage();
+
         private DataModel.Credentials.Credential Credentials = new Credential();
 
         /// <summary>
@@ -52,74 +51,21 @@ namespace BabelFish.Helpers
         public async Task<HttpResponseMessage> GetAws4Signature(string which = "")
         {
             string SignatureToRun = which;
+            HttpResponseMessage response = new HttpResponseMessage();
+
             try
             {
-                DeterminePermTempTokens();
-
-                switch (SignatureToRun)
-                {
-                    case "Aws4RequestSigner":
-                        return await Aws4RequestSigner().ConfigureAwait(false);
-                    case "AwsSignatureVersion4":
-                        return await AwsSignatureVersion4().ConfigureAwait(false);
-                    case "AwsSignatureV4RichW":
-                        return await AwsSignatureV4RichW().ConfigureAwait(false);
-                }
-            }
-            finally { }
-
-            return new HttpResponseMessage();
-        }
-
-        /// <summary>
-        /// AWS4RequestSigner
-        /// Sign HttpRequestMessage using AWS Signature v4 using request information and credentials.
-        /// https://github.com/tsibelman/aws-signer-v4-dot-net
-        /// https://www.nuget.org/packages/Aws4RequestSigner/
-        /// </summary>
-        /// <returns>HttpResponseMessage object to parse</returns>
-        private async Task<HttpResponseMessage> Aws4RequestSigner()
-        {
-            try
+                bool checkTokens = await DeterminePermTempTokens().ConfigureAwait(false);
+                if (!checkTokens)
+                    response = responseError;
+                else
+                    response = await AwsSignatureV4RichW().ConfigureAwait(false);
+            }catch (Exception ex)
             {
-                HttpResponseMessage response = new HttpResponseMessage();
-                HttpRequestMessage request = new HttpRequestMessage();
-                var signer = new AWS4RequestSigner(Credentials.AccessKey, Credentials.SecretKey);
-                var content = new StringContent("", Encoding.UTF8, "application/json");
-                var signrequest = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(this.URI),
-                    Content = null
-                };
-                request = await signer.Sign(signrequest, "execute-api", "us-east-1").ConfigureAwait(false);
-
-                response = httpClient.SendAsync(request).Result;
-                
-                return response;
+                response = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Get Signature Error", ex.Message);
             }
-            finally { }
-        }
 
-        //second one Adam found with SessionToken
-        //https://github.com/FantasticFiasco/aws-signature-version-4
-        private async Task<HttpResponseMessage> AwsSignatureVersion4()
-        {
-            try
-            {
-                var credentials = new ImmutableCredentials(Credentials.AccessKey, Credentials.SecretKey, Credentials.SessionToken);
-                //var credentials = new ImmutableCredentials(Credentials.AccessKey, Credentials.SecretKey, null);
-                var client = new HttpClient();
-                HttpResponseMessage response = await client.GetAsync(
-                    this.URI,
-                    regionName: "us-east-1",
-                    serviceName: "execute-api",
-                    credentials: credentials).ConfigureAwait(false);
-
-                return response;
-                //var returnedJson = response.Content.ReadAsStringAsync().Result;
-            }
-            finally { }
+            return response;
         }
 
         /// <summary>
@@ -129,9 +75,9 @@ namespace BabelFish.Helpers
         /// <returns>HttpResponseMessage object to parse</returns>
         private async Task<HttpResponseMessage> AwsSignatureV4RichW()
         {
+            HttpResponseMessage response = new HttpResponseMessage();
             try
             {
-                HttpResponseMessage response = new HttpResponseMessage();
 
                 string awsRegion = "us-east-1";
                 string awsServiceName = "execute-api";
@@ -145,7 +91,7 @@ namespace BabelFish.Helpers
                 msg.Headers.Host = msg.RequestUri.Host;
                 // Add to headers. 
                 msg.Headers.Add("x-amz-date", amzLongDate);
-                if ( !Credentials.IsPermToken())
+                if ( ! Credentials.IsPermToken() )
                     msg.Headers.Add("X-Amz-Security-Token",Credentials.SessionToken);
                 // Add Body Content
                 msg.Content = new StringContent("");
@@ -181,10 +127,14 @@ namespace BabelFish.Helpers
                 msg.Headers.TryAddWithoutValidation("Authorization", "AWS4-HMAC-SHA256 Credential=" + Credentials.AccessKey +
                     "/" + credentialScope + ", SignedHeaders=" + signedHeaders + ", Signature=" + signature);
                 response = httpClient.SendAsync(msg).Result;
-
-                return response;
+                //var sendResponse = await httpClient.SendAsync(msg).ConfigureAwait(false);
+                //response = sendResponse;
             }
-            finally { }
+            catch (Exception ex)
+            {
+                response = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Get Signature Error", ex.Message);
+            }
+            return response;
         }
         private static string GetCanonicalQueryParams(HttpRequestMessage request)
         {
@@ -224,25 +174,35 @@ namespace BabelFish.Helpers
             return new HMACSHA256(key).ComputeHash(Encoding.UTF8.GetBytes(data));
         }
 
-        private async void DeterminePermTempTokens() {
+        private async Task<bool> DeterminePermTempTokens() {
             
             // Set Temporary Tokens if we don't receive perm
-            if (!Credentials.IsPermToken()) {
+            if ( !Credentials.IsPermToken() ) {
                 // swap null to default date so system knows to use temp tokens on first round
                 if (Credentials.ContinuationToken == null)
                     Credentials.ContinuationToken = new DateTime();
 
                 Credentials.Username = SettingsHelper.UserSettings[AuthEnums.UserName.ToString()];
                 Credentials.Password = SettingsHelper.UserSettings[AuthEnums.PassWord.ToString()];
-                bool validTempCreds = await Credentials.GetTempCredentials();
+                bool validTempCreds = await Credentials.GetTempCredentials().ConfigureAwait(false);
+                if (!validTempCreds)
+                {
+                    responseError = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Auth Err", Credentials.LastException);
+                    ////responseError.StatusCode = HttpStatusCode.OK; //override APIClient parse err
+                    ////responseError.ReasonPhrase = Credentials.LastException;
+                    ////responseError.Content = new StringContent("{\"Title\":\"Auth Err\", \"Message\":[\""+Credentials.LastException+ "\"], \"ResponseCodes\":[\"401\"]}");
+                    return false;
+                }
             }
             else {
                 // Set Permanent Tokens (AccessKey,SecretKey) passed in from UserSettings
                 // Treating set AccessKey, SecretKey as permanent tokens
                 Credentials.AccessKey = SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
                 Credentials.SecretKey = SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
+                Credentials.RefreshToken = SettingsHelper.UserSettings[AuthEnums.RefreshToken.ToString()];
                 Credentials.ContinuationToken = null;
             }
+            return true;
         }
         #endregion Methods
     }

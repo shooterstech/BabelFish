@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace BabelFish.Helpers
         /// <returns></returns>
         public static async Task<HttpResponseMessage> GetAsync(string uri)
         {
-			return httpClient.client.GetAsync(uri).Result;
+            return Task.Run(() => client.GetAsync(uri)).Result;
 		}
 
 		/// <summary>
@@ -40,7 +41,7 @@ namespace BabelFish.Helpers
 				foreach (KeyValuePair<string,string> kvp in headers)
 					newRequestMessage.Headers.Add(kvp.Key, kvp.Value);
 
-                return httpClient.client.SendAsync(newRequestMessage).Result;
+                return Task.Run(() => client.SendAsync(newRequestMessage)).Result;
             }
 		}
 
@@ -57,6 +58,15 @@ namespace BabelFish.Helpers
                 string error = ex.ToString();
             }
 
+            return response;
+        }
+
+        public static HttpResponseMessage GenerateHttpResponseError(HttpStatusCode StatusCode, string ResponseCode, string Title, string ReasonPhrase)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+            response.StatusCode = StatusCode;
+            response.ReasonPhrase = ReasonPhrase;
+            response.Content = new StringContent("{\"Title\":\"" + Title + "\", \"Message\":[\"" + ReasonPhrase + "\"], \"ResponseCodes\":[\"" + ResponseCode + "\"]}");
             return response;
         }
     }

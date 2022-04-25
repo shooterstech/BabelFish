@@ -14,11 +14,11 @@ namespace BabelFish.DataModel.Credentials
     /// AWS Credentials
     /// </summary>
     [Serializable]
-    public class Credential : APIClient
+    public class Credential //: APIClient
     {
-        private const string InternalXApiKey = "uONGn6tHGw14kreLdqbfJ9rwR2C55uS8a9rGnmIf";
+        AWSCognitoAuthentication CognitoAuthentication = new AWSCognitoAuthentication();
 
-        public Credential() : base(InternalXApiKey) { }
+        //public Credential() : base(InternalXApiKey) { }
 
         public string AccessKeyId { get; set; } = string.Empty;
 
@@ -36,9 +36,24 @@ namespace BabelFish.DataModel.Credentials
 
         public string SessionToken { get; set; } = string.Empty;
 
+        public string RefreshToken { get; set; } = string.Empty;
+
+        public string AccessToken { get; set; } = string.Empty;
+
+        public string IdToken { get; set; } = string.Empty;
+
+        public string DeviceID { get; set; } = string.Empty;
+
         public string Username { get; set; } = string.Empty;
 
         public string Password { get; set; } = string.Empty;
+
+        public string LastException { get; private set; } = string.Empty;
+
+        #region AWS4SigningToken
+        [Obsolete("XApiKey for deprecated GetCredentials()")]
+        private const string InternalXApiKey = "uONGn6tHGw14kreLdqbfJ9rwR2C55uS8a9rGnmIf";
+
 
         /// <summary>
         /// Track last time the temporary tokens were generated
@@ -50,11 +65,6 @@ namespace BabelFish.DataModel.Credentials
         public DateTime? ContinuationToken = null;
         private double AWSExpirationLimit { get; } = 15;
 
-        public override string ToString()
-        {
-            return this.Username;
-        }
-
         public bool TokensExpired()
         {
             if (ContinuationToken == null ||
@@ -63,38 +73,18 @@ namespace BabelFish.DataModel.Credentials
             else
                 return true;
         }
-
-        /// <summary>
-        /// Get temporary credentials based on username/password and populated AccessKey, SecretKey, and SessionToken
-        /// </summary>
-        /// <returns>True if Existing Tokens not expired or new Tokens retrieved successfully</returns>
-        public async Task<bool> GetTempCredentials()
-        {
-            try
-            {
-                // username/password required to calculate temp tokens
-                if (Username == string.Empty || Password == string.Empty)
-                    return false;
-                else {
-                    if (TokensExpired()) {
-                        return await GetCredentials();
-                    } else
-                        return true;
-                }
-            } finally { }
-        }
-
         /// <summary>
         /// Shooter's Tech GetCredentials API function 
         /// </summary>
         /// <returns></returns>
+        [Obsolete("Deprecated, use Cognito Authentication")]
         private async Task<bool> GetCredentials()
         {
             GetCredentialsResponse response = new GetCredentialsResponse();
             try
             {
                 GetCredentialsRequest requestParameters = new GetCredentialsRequest(Username, Password);
-                await this.CallAPI(requestParameters, response);
+//                await this.CallAPI(requestParameters, response);
 
                 if (response.Credential != null)
                 {
@@ -112,12 +102,59 @@ namespace BabelFish.DataModel.Credentials
 
                     return false;
                 }
-            } finally { }
+            }
+            finally { }
 
             return false;
         }
+        #endregion AWS4SigningToken
 
-        // Perm Tokens (AccessKey,SecretKey) in incoming settings
+        /// <summary>
+        /// Get temporary credentials based on username/password and populated AccessKey, SecretKey, and SessionToken
+        /// </summary>
+        /// <returns>True if Existing Tokens not expired or new Tokens retrieved successfully</returns>
+        public async Task<bool> GetTempCredentials()
+        {
+            try
+            {
+                if (await CognitoAuthentication.GetCognitoCredentialsAsync().ConfigureAwait(false))
+                {
+                    AccessKeyId = CognitoAuthentication.AccessKey;
+                    SecretKey = CognitoAuthentication.SecretKey;
+                    SessionToken = CognitoAuthentication.SessionToken;
+                    RefreshToken = CognitoAuthentication.RefreshToken;
+                    AccessToken = CognitoAuthentication.AccessToken;
+                    IdToken = CognitoAuthentication.IdToken;
+
+                    ////DeviceID = CognitoAuthentication.DeviceID;
+                    if ( RefreshToken != "")
+                    {
+                        Helpers.SettingsHelper.UserSettings["RefreshToken"] = RefreshToken;
+                        Helpers.SettingsHelper.UserSettings["DeviceID"] = DeviceID;
+                        Helpers.SettingsHelper.UserSettings["AccessToken"] = AccessToken;
+                        Helpers.SettingsHelper.UserSettings["IdToken"] = IdToken;
+                        Helpers.SettingsHelper.UserSettings["PassWord"] = null;
+                    }
+
+                    //???                    ContinuationToken = DateTime.Now;
+                    return true;
+                }
+                else
+                {
+                    LastException = CognitoAuthentication.LastException;
+                    return false;
+                }
+            }
+            catch (Exception ex) {
+                LastException = ex.ToString();
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Perm Tokens assumes (AccessKey,SecretKey) set in incoming settings
+        /// </summary>
+        /// <returns></returns>
         public bool IsPermToken()
         {
             if (SettingsHelper.SettingIsNullOrEmpty(AuthEnums.AccessKey.ToString()) ||
@@ -129,6 +166,10 @@ namespace BabelFish.DataModel.Credentials
             }
         }
 
-        //TODO: Create function that converts Py to C#
+        public override string ToString()
+        {
+            return $"Credentials for {this.Username}";
+        }
+
     }
 }
