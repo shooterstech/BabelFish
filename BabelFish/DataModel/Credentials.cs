@@ -125,6 +125,7 @@ namespace BabelFish.DataModel.Credentials
                     RefreshToken = CognitoAuthentication.RefreshToken;
                     AccessToken = CognitoAuthentication.AccessToken;
                     IdToken = CognitoAuthentication.IdToken;
+                    DeviceID = CognitoAuthentication.DeviceID;
 
                     ////DeviceID = CognitoAuthentication.DeviceID;
                     if ( RefreshToken != "")

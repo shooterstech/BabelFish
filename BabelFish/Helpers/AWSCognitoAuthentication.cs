@@ -22,9 +22,9 @@ namespace BabelFish.Helpers
         private static string awsRegion = "us-east-1";
         private static string poolID = $"{awsRegion}_ujMUC50fP";
         private static string identityPoolID = $"{awsRegion}:ecdb1323-5308-445f-845e-55871ebf14e2";
-        private static string clientID = "7nkt8c3i8o6uf2d627ut292gln"; //BabelFishTest
         private static string accountID = "703601548845";
-        //private static string clientID = "3mbaq4124a5emsap21krllrcrj"; //orionmobileapp
+        private static string clientID = "3mbaq4124a5emsap21krllrcrj"; //orionmobileapp
+        //private static string clientID = "7nkt8c3i8o6uf2d627ut292gln"; //BabelFishTest
         //private static string clientID = "3njrf7kqhib2j354hefpr04gkq"; //Magento
         //private static string clientSecret = "vifpfgbst6teh3gol6bget2emvvig3hloojri517bkn5clk6dlo"; //Magento
 
@@ -144,31 +144,6 @@ namespace BabelFish.Helpers
             }
         }
 
-        #region UserFunctions
-        /// <summary>
-        /// Instantiate a Cognito User object
-        /// </summary>
-        /// <returns>CognitoUser object (unauthenticated)</returns>
-        private CognitoUser InitializeCognitoUser()
-        {
-            CognitoUser user = null;
-
-            //Create anonymous credentials to create a Cognito Identify Provider
-            AmazonCognitoIdentityProviderClient provider =
-                new AmazonCognitoIdentityProviderClient(new Amazon.Runtime.AnonymousAWSCredentials());
-
-            //Set up the initial request when we don't have a refresh token. Obviously assumes an existing user.
-            CognitoUserPool userPool = new CognitoUserPool(poolID, clientID, provider);
-
-            if (IsLoggingIn())
-                return new CognitoUser(username, clientID, userPool, provider);
-            else {
-                GetUserResponse findSub = Task.Run(() => GetCognitoUserByAccessId(accessToken)).Result;
-                user = userPool.GetUser(findSub.UserAttributes.Where(x => x.Name == "email").FirstOrDefault().Value); // this is the sub
-                return user;
-            }
-        }
-
         /// <summary>
         /// Authenticate based on incoming parameters
         /// </summary>
@@ -192,58 +167,80 @@ namespace BabelFish.Helpers
                     //SAYS USER IS NOT AUTHENTICATED
 
                     // Should we call Refresh irregardless?
-                    // authResponse = await CredentialsRefreshAsync().ConfigureAwait(true);
-                    
+                    authResponse = await CredentialsRefreshAsync().ConfigureAwait(true);
+
                     // Run reload which calls refresh if idToken expired
-                    await CredentialsReloadAsync().ConfigureAwait(false);
+                    //                    await CredentialsReloadAsync().ConfigureAwait(false);
                 }
 
-                // Initial auth or steps on IdToken failed; Address reasons
-                if (idToken == string.Empty)
+                if (authResponse == null)
+                    LastException += " or Invalid Username or Password!"; //TODO: or expired RefreshToken??
+                else
                 {
-                    if (authResponse == null)
-                        LastException += " or Invalid Username or Password!"; //TODO: or expired RefreshToken??
-                    else
+                    //The returned authResponse may present a second set of challenges. 
+                    // authResponse is null and the ChallengeName property describes the next challenge
+                    // * New Passwword -> RespondToNewPasswordRequiredAsync()
+                    // * MFA Response -> RespondToSmsMfaAuthAsync() or RespondToMfaAuthAsyn (probable doesn't apply to us)
+                    //Challenge Name: https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_AdminInitiateAuth.html#API_AdminInitiateAuth_ResponseSyntax
+                    if (authResponse.AuthenticationResult == null)
                     {
-                        //The returned authResponse may present a second set of challenges. 
-                        // authResponse is null and the ChallengeName property describes the next challenge
-                        // * New Passwword -> RespondToNewPasswordRequiredAsync()
-                        // * MFA Response -> RespondToSmsMfaAuthAsync() or RespondToMfaAuthAsyn (probable doesn't apply to us)
-                        //Challenge Name: https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_AdminInitiateAuth.html#API_AdminInitiateAuth_ResponseSyntax
-                        if (authResponse.AuthenticationResult == null)
+                        if (authResponse.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED)
                         {
-                            if (authResponse.ChallengeName == ChallengeNameType.NEW_PASSWORD_REQUIRED)
-                            {
-                                LastException = "New Password Required";
-                            }
-                            else if (authResponse.ChallengeName == ChallengeNameType.SMS_MFA)
-                            {
-                                LastException = "MFA Code required";
-                            }
+                            LastException = "New Password Required";
                         }
-                        else
+                        else if (authResponse.ChallengeName == ChallengeNameType.SMS_MFA)
                         {
-                            //Both the AccessToken (good for 60 minutes by default) and RefreshToken (good for 30 days) need to be saved
-                            //DeviceKey also needs to be saved. See below, may also need to save DeviceGroupKey, and the device password.
-                            //IdToken is needed to retrieive AWS Credentials, access key, secret access key, and session token
-                            accessToken = authResponse.AuthenticationResult.AccessToken;
-                            refreshToken = authResponse.AuthenticationResult.RefreshToken;
-                            idToken = authResponse.AuthenticationResult.IdToken;
-                            deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
-
-                            await GetCognitoUserAWSCredentials().ConfigureAwait(false);
-
-                            await LoadUserDevice(authResponse).ConfigureAwait(false);
+                            LastException = "MFA Code required";
                         }
                     }
+                    else
+                    {
+                        //Both the AccessToken (good for 60 minutes by default) and RefreshToken (good for 30 days) need to be saved
+                        //DeviceKey also needs to be saved. See below, may also need to save DeviceGroupKey, and the device password.
+                        //IdToken is needed to retrieive AWS Credentials, access key, secret access key, and session token
+                        accessToken = authResponse.AuthenticationResult.AccessToken;
+                        refreshToken = authResponse.AuthenticationResult.RefreshToken;
+                        idToken = authResponse.AuthenticationResult.IdToken;
+                        if (IsLoggingIn())
+                        {
+                            deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+                            await LoadUserDevice(authResponse).ConfigureAwait(false);
+                        }
+                        else
+                            deviceKey = cognitoUser.Device.DeviceKey;
+                    }
+                    await GetCognitoUserAWSCredentials().ConfigureAwait(false);
                 }
-                else
-                    await GetCognitoUserAWSCredentials().ConfigureAwait(true);
             }
             catch (Exception ex)
             {
                 LastException = ex.Message;
             }
+        }
+
+        #region UserFunctions
+        /// <summary>
+        /// Instantiate a Cognito User object
+        /// </summary>
+        /// <returns>CognitoUser object (unauthenticated)</returns>
+        private CognitoUser InitializeCognitoUser()
+        {
+            CognitoUser user = null;
+
+            //Create anonymous credentials to create a Cognito Identify Provider
+            AmazonCognitoIdentityProviderClient provider =
+                new AmazonCognitoIdentityProviderClient(new Amazon.Runtime.AnonymousAWSCredentials());
+
+            //Set up the initial request when we don't have a refresh token. Obviously assumes an existing user.
+            CognitoUserPool userPool = new CognitoUserPool(poolID, clientID, provider);
+
+//            if (IsLoggingIn())
+                return new CognitoUser(username, clientID, userPool, provider);
+//            else {
+//                GetUserResponse findSub = Task.Run(() => GetCognitoUserByAccessId(accessToken)).Result;
+//                user = userPool.GetUser(findSub.UserAttributes.Where(x => x.Name == "email").FirstOrDefault().Value); // this is the sub
+//                return user;
+//            }
         }
 
         /// <summary>
@@ -403,6 +400,7 @@ namespace BabelFish.Helpers
 
         private async Task<AuthFlowResponse> CredentialsRefreshAsync()
         {
+            AuthFlowResponse returnResponse = null;
             try
             {
                 //Refresh AccesID, IdToken based on RefreshToken
@@ -410,8 +408,13 @@ namespace BabelFish.Helpers
 
                 //See: https://github.com/aws/aws-sdk-net-extensions-cognito#authenticating-using-a-refresh-token-from-a-previous-session
 
+//EXPIRED ONE FOR TESTING
+//idToken = "eyJraWQiOiJOOE1mT0tBYkowRU9ObERYTThBVk9TOU5MVWVueVVMV29mXC9JTUcyTE9ROD0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyNmYzMjIyNy1kNDI4LTQxZjYtYjIyNC1iZWVkN2I2ZTg4NTAiLCJjb2duaXRvOmdyb3VwcyI6WyJEZXZlbG9wbWVudCJdLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYmlydGhkYXRlIjoiMTk4MC0wMy0xMiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX3VqTVVDNTBmUCIsImNvZ25pdG86dXNlcm5hbWUiOiIyNmYzMjIyNy1kNDI4LTQxZjYtYjIyNC1iZWVkN2I2ZTg4NTAiLCJnaXZlbl9uYW1lIjoiQ2hyaXMiLCJhdWQiOiIzbWJhcTQxMjRhNWVtc2FwMjFrcmxscmNyaiIsImV2ZW50X2lkIjoiMDA0OTYwMDQtNDk1Yy00MzcxLTg4MDEtZDE2NzVkYmJiNTA3IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NTAzOTM0MDAsImV4cCI6MTY1MDM5NzAwMCwiaWF0IjoxNjUwMzkzNDAwLCJmYW1pbHlfbmFtZSI6IkpvbmVzIiwiZW1haWwiOiJ0ZXN0X2Rldl83QHNob290ZXJzdGVjaC5uZXQifQ.RSGf8RZD0ZTMgzgTP1O1qJrnNSkyztEMEoO0JcWTiSY9S5JfNW3LV-4gycxfewQ6Hj_jiBMmIDYzo_r4k5m5yC9DWGvUoAYpO0dnrsKBslC5wWrysgjKoptmJykKcLRGAudviqdszS7h1bXuzkXzPFzbr1gF9ftoKWWOAqrCks0OWlSASMHPm8DVfFeaHahmwDSLxXW7FwIIvsom9Y9Q6QAU7rWfg5eSDD4g9UezCG1Lvk4OVL9mQKsftfH8reUErHOMyL-__NSic8bbd5o2sK8b1uKZNkbDsGDf5rBQFC7wkhtm5flUT2Dr-1bgBNOciVGIEH-qWYmy1sW1oiFpAg";
+
                 //I'm actaully not sure what this step does ..
-                cognitoUser.SessionTokens = new CognitoUserSession(null, null, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours(1));
+                //cognitoUser.SessionTokens = new CognitoUserSession(null, null, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours(1));
+                cognitoUser.SessionTokens = new CognitoUserSession(idToken, accessToken, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours(1));
+                await LoadUserDevice().ConfigureAwait(false);
 
                 //Create the refresh request object
                 InitiateRefreshTokenAuthRequest refreshRequest = new InitiateRefreshTokenAuthRequest()
@@ -420,13 +423,13 @@ namespace BabelFish.Helpers
                 };
 
                 //Call Cognito to refresh the token
-                return await cognitoUser.StartWithRefreshTokenAuthAsync(refreshRequest).ConfigureAwait(false);
+                returnResponse = await cognitoUser.StartWithRefreshTokenAuthAsync(refreshRequest).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 LastException = ex.Message;
-                return null;
             }
+            return returnResponse;
         }
 
         private async Task CredentialsReloadAsync()
@@ -441,7 +444,7 @@ namespace BabelFish.Helpers
                 //idToken = "eyJraWQiOiJOOE1mT0tBYkowRU9ObERYTThBVk9TOU5MVWVueVVMV29mXC9JTUcyTE9ROD0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyNmYzMjIyNy1kNDI4LTQxZjYtYjIyNC1iZWVkN2I2ZTg4NTAiLCJjb2duaXRvOmdyb3VwcyI6WyJEZXZlbG9wbWVudCJdLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYmlydGhkYXRlIjoiMTk4MC0wMy0xMiIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX3VqTVVDNTBmUCIsImNvZ25pdG86dXNlcm5hbWUiOiIyNmYzMjIyNy1kNDI4LTQxZjYtYjIyNC1iZWVkN2I2ZTg4NTAiLCJnaXZlbl9uYW1lIjoiQ2hyaXMiLCJhdWQiOiIzbWJhcTQxMjRhNWVtc2FwMjFrcmxscmNyaiIsImV2ZW50X2lkIjoiMDA0OTYwMDQtNDk1Yy00MzcxLTg4MDEtZDE2NzVkYmJiNTA3IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NTAzOTM0MDAsImV4cCI6MTY1MDM5NzAwMCwiaWF0IjoxNjUwMzkzNDAwLCJmYW1pbHlfbmFtZSI6IkpvbmVzIiwiZW1haWwiOiJ0ZXN0X2Rldl83QHNob290ZXJzdGVjaC5uZXQifQ.RSGf8RZD0ZTMgzgTP1O1qJrnNSkyztEMEoO0JcWTiSY9S5JfNW3LV-4gycxfewQ6Hj_jiBMmIDYzo_r4k5m5yC9DWGvUoAYpO0dnrsKBslC5wWrysgjKoptmJykKcLRGAudviqdszS7h1bXuzkXzPFzbr1gF9ftoKWWOAqrCks0OWlSASMHPm8DVfFeaHahmwDSLxXW7FwIIvsom9Y9Q6QAU7rWfg5eSDD4g9UezCG1Lvk4OVL9mQKsftfH8reUErHOMyL-__NSic8bbd5o2sK8b1uKZNkbDsGDf5rBQFC7wkhtm5flUT2Dr-1bgBNOciVGIEH-qWYmy1sW1oiFpAg";
 
                 //Add our incoming IdToken for authentication
-                cognitoUser.SessionTokens = new CognitoUserSession(idToken, null, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours(1));
+                cognitoUser.SessionTokens = new CognitoUserSession(idToken, accessToken, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours(1));
 
                 //HERE WE NEED TO CONNECT TO AWS AND AUTHORIZE USER RATHER THAN CheckOrRenewIdToken THAT ERRORS ON EXPIRATION
                 await CheckOrRenewIdToken().ConfigureAwait(true);
