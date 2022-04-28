@@ -43,6 +43,15 @@ namespace BabelFish.Helpers
         [Description("AWS Refresh Token")]
         [EnumMember(Value = "refreshtoken")]
         RefreshToken,
+        [Description("AWS IdToken")]
+        [EnumMember(Value = "idtoken")]
+        IdToken,
+        [Description("AWS Access Token")]
+        [EnumMember(Value = "accesstoken")]
+        AccessToken,
+        [Description("AWS Device Token")]
+        [EnumMember(Value = "devicetoken")]
+        DeviceToken,
     }
 
     public static class EnumHelper

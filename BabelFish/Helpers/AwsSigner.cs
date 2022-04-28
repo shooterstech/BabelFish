@@ -182,15 +182,10 @@ namespace BabelFish.Helpers
                 if (Credentials.ContinuationToken == null)
                     Credentials.ContinuationToken = new DateTime();
 
-                Credentials.Username = SettingsHelper.UserSettings[AuthEnums.UserName.ToString()];
-                Credentials.Password = SettingsHelper.UserSettings[AuthEnums.PassWord.ToString()];
                 bool validTempCreds = await Credentials.GetTempCredentials().ConfigureAwait(false);
                 if (!validTempCreds)
                 {
                     responseError = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Auth Err", Credentials.LastException);
-                    ////responseError.StatusCode = HttpStatusCode.OK; //override APIClient parse err
-                    ////responseError.ReasonPhrase = Credentials.LastException;
-                    ////responseError.Content = new StringContent("{\"Title\":\"Auth Err\", \"Message\":[\""+Credentials.LastException+ "\"], \"ResponseCodes\":[\"401\"]}");
                     return false;
                 }
             }
@@ -199,7 +194,6 @@ namespace BabelFish.Helpers
                 // Treating set AccessKey, SecretKey as permanent tokens
                 Credentials.AccessKey = SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
                 Credentials.SecretKey = SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
-                Credentials.RefreshToken = SettingsHelper.UserSettings[AuthEnums.RefreshToken.ToString()];
                 Credentials.ContinuationToken = null;
             }
             return true;

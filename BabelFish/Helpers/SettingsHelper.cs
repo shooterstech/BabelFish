@@ -21,10 +21,12 @@ namespace BabelFish.Helpers
             { "PassWord", typeof(string) },                 // User Password to validate AWS access
             { "AccessKey", typeof(string) },                // User AccessKey for valid AWS access
             { "SecretKey", typeof(string) },                // User SecretKey for valid AWS access
+
             { "RefreshToken", typeof(string) },             // Cognito Refresh Token for valid AWS access
-            { "DeviceID", typeof(string) },                 // Cognito Device ID for valid AWS access
-            { "AccessToken", typeof(string) },              // Cognito Access Token for valid AWS access
             { "IdToken", typeof(string) },                 // Cognito ID Token for valid AWS access
+            { "AccessToken", typeof(string) },              // Cognito Access Token for valid AWS access
+            { "DeviceToken", typeof(string) },                 // Cognito Device ID for valid AWS access
+
             { "Logging_NLogConfig", typeof(string) },       // Alternate NLog path/filename
             { "Definitions_CacheAlwaysNew", typeof(bool) }, // Definitions cache override to always fetch new
             { "XApiKey", typeof(string) },                  // User XApiKey passed in
@@ -76,6 +78,19 @@ namespace BabelFish.Helpers
                 }
 
             } finally { }
+        }
+
+        public static void UpdateApplicationSettings(Dictionary<string,string> newSettings)
+        {
+            try
+            {
+                foreach (KeyValuePair<string, Type> kvp in AllowedSettings)
+                {
+                    if (newSettings.ContainsKey(kvp.Key))
+                        UserSettings[kvp.Key] = ConvertSettingsType(kvp.Value, newSettings[kvp.Key]);
+                }
+            }
+            finally { }
         }
 
         private static void ResetUserSettings()

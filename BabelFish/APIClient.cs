@@ -197,6 +197,32 @@ namespace BabelFish {
                 logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
             }
         }
+
+        public bool UpdateAuthTokens(Dictionary<string,string> newTokens)
+        {
+            try
+            {
+                SettingsHelper.UpdateApplicationSettings(newTokens);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public Dictionary<string, string> GetAuthTokens()
+        {
+            Dictionary<string, string> returnTokens = new Dictionary<string, string>();
+            try
+            {
+                List<string> AuthTokens = new List<string>() { "UserName", "PassWord", "RefreshToken", "IdToken", "AccessToken", "DeviceToken" };
+                foreach (string key in AuthTokens)
+                    returnTokens.Add(key, SettingsHelper.UserSettings[key]);
+            }finally { }
+
+            return returnTokens;
+        }
         #endregion Methods
     }
 }

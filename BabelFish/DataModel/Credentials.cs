@@ -14,14 +14,13 @@ namespace BabelFish.DataModel.Credentials
     /// AWS Credentials
     /// </summary>
     [Serializable]
-    public class Credential //: APIClient
+    public class Credential
     {
         AWSCognitoAuthentication CognitoAuthentication = new AWSCognitoAuthentication();
 
-        //public Credential() : base(InternalXApiKey) { }
-
         public string AccessKeyId { get; set; } = string.Empty;
 
+        #region AWSSigning
         public string AccessKey
         {
             get {
@@ -32,23 +31,27 @@ namespace BabelFish.DataModel.Credentials
                 AccessKeyId = value;
             }
         }
+
         public string SecretKey { get; set; } = string.Empty;
 
         public string SessionToken { get; set; } = string.Empty;
+        #endregion AWSSigning
 
+        public string Username { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty;
+
+        #region CognitoAuthenticationSpecific
         public string RefreshToken { get; set; } = string.Empty;
 
         public string AccessToken { get; set; } = string.Empty;
 
         public string IdToken { get; set; } = string.Empty;
 
-        public string DeviceID { get; set; } = string.Empty;
-
-        public string Username { get; set; } = string.Empty;
-
-        public string Password { get; set; } = string.Empty;
+        public string DeviceToken { get; set; } = string.Empty;
 
         public string LastException { get; private set; } = string.Empty;
+        #endregion CognitoAuthenticationSpecific
 
         #region AWS4SigningToken
         [Obsolete("XApiKey for deprecated GetCredentials()")]
@@ -117,34 +120,38 @@ namespace BabelFish.DataModel.Credentials
         {
             try
             {
-                if (await CognitoAuthentication.GetCognitoCredentialsAsync().ConfigureAwait(false))
+                if (TokensExpired())
                 {
-                    AccessKeyId = CognitoAuthentication.AccessKey;
-                    SecretKey = CognitoAuthentication.SecretKey;
-                    SessionToken = CognitoAuthentication.SessionToken;
-                    RefreshToken = CognitoAuthentication.RefreshToken;
-                    AccessToken = CognitoAuthentication.AccessToken;
-                    IdToken = CognitoAuthentication.IdToken;
-                    DeviceID = CognitoAuthentication.DeviceID;
-
-                    ////DeviceID = CognitoAuthentication.DeviceID;
-                    if ( RefreshToken != "")
+                    if (await CognitoAuthentication.GetCognitoCredentialsAsync().ConfigureAwait(false))
                     {
-                        Helpers.SettingsHelper.UserSettings["RefreshToken"] = RefreshToken;
-                        Helpers.SettingsHelper.UserSettings["DeviceID"] = DeviceID;
-                        Helpers.SettingsHelper.UserSettings["AccessToken"] = AccessToken;
-                        Helpers.SettingsHelper.UserSettings["IdToken"] = IdToken;
-                        Helpers.SettingsHelper.UserSettings["PassWord"] = null;
-                    }
+                        AccessKeyId = CognitoAuthentication.AccessKey;
+                        SecretKey = CognitoAuthentication.SecretKey;
+                        SessionToken = CognitoAuthentication.SessionToken;
+                        RefreshToken = CognitoAuthentication.RefreshToken;
+                        AccessToken = CognitoAuthentication.AccessToken;
+                        IdToken = CognitoAuthentication.IdToken;
+                        DeviceToken = CognitoAuthentication.DeviceToken;
 
-                    //???                    ContinuationToken = DateTime.Now;
-                    return true;
+                        if (RefreshToken != "")
+                        {
+                            Helpers.SettingsHelper.UserSettings[AuthEnums.RefreshToken.ToString()] = RefreshToken;
+                            Helpers.SettingsHelper.UserSettings[AuthEnums.DeviceToken.ToString()] = DeviceToken;
+                            Helpers.SettingsHelper.UserSettings[AuthEnums.AccessToken.ToString()] = AccessToken;
+                            Helpers.SettingsHelper.UserSettings[AuthEnums.IdToken.ToString()] = IdToken;
+                            Helpers.SettingsHelper.UserSettings[AuthEnums.PassWord.ToString()] = null;
+                        }
+
+                        ContinuationToken = DateTime.Now;
+                        return true;
+                    }
+                    else
+                    {
+                        LastException = CognitoAuthentication.LastException;
+                        return false;
+                    }
                 }
                 else
-                {
-                    LastException = CognitoAuthentication.LastException;
-                    return false;
-                }
+                    return true;
             }
             catch (Exception ex) {
                 LastException = ex.ToString();
