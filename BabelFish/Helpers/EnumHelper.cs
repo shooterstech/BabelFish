@@ -40,6 +40,9 @@ namespace BabelFish.Helpers
         [Description("AWS Secret Key")]
         [EnumMember(Value = "secretkey")]
         SecretKey,
+        [Description("AWS Session Token")]
+        [EnumMember(Value = "sessiontoken")]
+        SessionToken,
         [Description("AWS Refresh Token")]
         [EnumMember(Value = "refreshtoken")]
         RefreshToken,

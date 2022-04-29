@@ -24,8 +24,10 @@ namespace BabelFish.Helpers
         //  (the string you received from AWS STS when you obtained temporary security credentials).
         /////////////
 
-        public AwsSigner(string uri) {
+        public AwsSigner(string uri, DateTime? continuationToken = null) {
             URI = uri;
+            if ( continuationToken != null)
+                Credentials.ContinuationToken = continuationToken;
         }
 
         #region Properties
@@ -33,6 +35,8 @@ namespace BabelFish.Helpers
         private HttpResponseMessage responseError = new HttpResponseMessage();
 
         private DataModel.Credentials.Credential Credentials = new Credential();
+
+        public DateTime? ContinuationToken { get { return Credentials.ContinuationToken; } }
 
         /// <summary>
         /// Endpoint URI for hashing algorithm

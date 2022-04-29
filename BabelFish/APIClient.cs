@@ -37,6 +37,7 @@ namespace BabelFish {
         #region properties
         private JsonSerializer serializer = new JsonSerializer();
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private DateTime? ContinuationToken = null;
 
         /// <summary>
         /// Environment Enums
@@ -148,8 +149,9 @@ namespace BabelFish {
                 {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
                     if (FunctionOptions["UseAuth"]) {
-                        AwsSigner AwsSignature = new AwsSigner(uri);
+                        AwsSigner AwsSignature = new AwsSigner(uri, ContinuationToken);
                         responseMessage = await AwsSignature.GetAws4Signature().ConfigureAwait(false);
+                        ContinuationToken = AwsSignature.ContinuationToken;
                     } else {
                         AssembledHeaders.Add("x-api-key", XApiKey);
                         responseMessage = await httpClient.GetAsyncWithHeaders(uri, AssembledHeaders)

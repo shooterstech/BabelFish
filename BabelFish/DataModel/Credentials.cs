@@ -65,7 +65,7 @@ namespace BabelFish.DataModel.Credentials
         /// The signed portions (using AWS Signatures) of requests are valid within 15 minutes of the timestamp in the request. An unauthorized party who has access to a signed request can modify the unsigned portions of the request without affecting the request's validity in the 15 minute window.
         /// Using null to ignore refresh because permanent tokens
         /// </summary>
-        public DateTime? ContinuationToken = null;
+        public DateTime? ContinuationToken { get; set; } = null;
         private double AWSExpirationLimit { get; } = 15;
 
         public bool TokensExpired()
@@ -124,21 +124,29 @@ namespace BabelFish.DataModel.Credentials
                 {
                     if (await CognitoAuthentication.GetCognitoCredentialsAsync().ConfigureAwait(false))
                     {
+                        // Temp tokens for Signature
                         AccessKeyId = CognitoAuthentication.AccessKey;
                         SecretKey = CognitoAuthentication.SecretKey;
                         SessionToken = CognitoAuthentication.SessionToken;
+                        // Re-authenticate without password
                         RefreshToken = CognitoAuthentication.RefreshToken;
                         AccessToken = CognitoAuthentication.AccessToken;
                         IdToken = CognitoAuthentication.IdToken;
                         DeviceToken = CognitoAuthentication.DeviceToken;
 
+                        // Reset password and environment for subsequent refresh
                         if (RefreshToken != "")
                         {
-                            Helpers.SettingsHelper.UserSettings[AuthEnums.RefreshToken.ToString()] = RefreshToken;
-                            Helpers.SettingsHelper.UserSettings[AuthEnums.DeviceToken.ToString()] = DeviceToken;
-                            Helpers.SettingsHelper.UserSettings[AuthEnums.AccessToken.ToString()] = AccessToken;
-                            Helpers.SettingsHelper.UserSettings[AuthEnums.IdToken.ToString()] = IdToken;
-                            Helpers.SettingsHelper.UserSettings[AuthEnums.PassWord.ToString()] = null;
+                            // Populate Session Temp tokens for Signature
+                            SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()] = AccessKeyId;
+                            SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()] = SecretKey;
+                            SettingsHelper.UserSettings[AuthEnums.SessionToken.ToString()] = SessionToken;
+                            // Populate Session Cognito for re-authenticating
+                            SettingsHelper.UserSettings[AuthEnums.RefreshToken.ToString()] = RefreshToken;
+                            SettingsHelper.UserSettings[AuthEnums.DeviceToken.ToString()] = DeviceToken;
+                            SettingsHelper.UserSettings[AuthEnums.AccessToken.ToString()] = AccessToken;
+                            SettingsHelper.UserSettings[AuthEnums.IdToken.ToString()] = IdToken;
+                            SettingsHelper.UserSettings[AuthEnums.PassWord.ToString()] = null;
                         }
 
                         ContinuationToken = DateTime.Now;
@@ -151,7 +159,12 @@ namespace BabelFish.DataModel.Credentials
                     }
                 }
                 else
+                {
+                    AccessKeyId = Helpers.SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
+                    SecretKey = Helpers.SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
+                    SessionToken = Helpers.SettingsHelper.UserSettings[AuthEnums.SessionToken.ToString()];
                     return true;
+                }
             }
             catch (Exception ex) {
                 LastException = ex.ToString();
@@ -165,8 +178,16 @@ namespace BabelFish.DataModel.Credentials
         /// <returns></returns>
         public bool IsPermToken()
         {
-            if (SettingsHelper.SettingIsNullOrEmpty(AuthEnums.AccessKey.ToString()) ||
-                SettingsHelper.SettingIsNullOrEmpty(AuthEnums.SecretKey.ToString()))
+            if ((
+                (SettingsHelper.SettingIsNullOrEmpty(AuthEnums.AccessKey.ToString()) ||
+                SettingsHelper.SettingIsNullOrEmpty(AuthEnums.SecretKey.ToString())) &&
+                SettingsHelper.SettingIsNullOrEmpty(AuthEnums.SessionToken.ToString())
+                )
+                ||
+                (!SettingsHelper.SettingIsNullOrEmpty(AuthEnums.AccessKey.ToString()) &&
+                !SettingsHelper.SettingIsNullOrEmpty(AuthEnums.SecretKey.ToString()) &&
+                !SettingsHelper.SettingIsNullOrEmpty(AuthEnums.SessionToken.ToString()))
+               )
                 return false;
             else
             {

@@ -21,6 +21,7 @@ namespace BabelFish.Helpers
             { "PassWord", typeof(string) },                 // User Password to validate AWS access
             { "AccessKey", typeof(string) },                // User AccessKey for valid AWS access
             { "SecretKey", typeof(string) },                // User SecretKey for valid AWS access
+            { "SessionToken", typeof(string) },             // User SessionToken for valid AWS access
 
             { "RefreshToken", typeof(string) },             // Cognito Refresh Token for valid AWS access
             { "IdToken", typeof(string) },                 // Cognito ID Token for valid AWS access
