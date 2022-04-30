@@ -63,8 +63,16 @@ namespace BabelFish.Helpers
                 if (!checkTokens)
                     response = responseError;
                 else
-                    response = await AwsSignatureV4RichW().ConfigureAwait(false);
-            }catch (Exception ex)
+                {
+                    if ( this.URI != "" )
+                        response = await AwsSignatureV4RichW().ConfigureAwait(false);
+                    else
+                    {
+                        response = httpClient.GenerateHttpResponseMessage(HttpStatusCode.OK, $"\"RefreshToken\":\"" + Credentials.RefreshToken + "\", \"IdToken\":\"" + Credentials.IdToken + "\", \"AccessToken\":\"" + Credentials.AccessToken + "\", \"DeviceToken\":\"" + Credentials.DeviceToken + "\", }");
+                    }
+                }
+            }
+            catch (Exception ex)
             {
                 response = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Get Signature Error", ex.Message);
             }

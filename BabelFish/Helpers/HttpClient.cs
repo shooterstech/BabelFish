@@ -69,5 +69,11 @@ namespace BabelFish.Helpers
             response.Content = new StringContent("{\"Title\":\"" + Title + "\", \"Message\":[\"" + ReasonPhrase + "\"], \"ResponseCodes\":[\"" + ResponseCode + "\"]}");
             return response;
         }
+        public static HttpResponseMessage GenerateHttpResponseMessage(HttpStatusCode statusCode, string content)
+        {
+            HttpResponseMessage response = new HttpResponseMessage(statusCode);
+            response.Content = new StringContent("{\"Title\":\"\", \"Message\":[], \"ResponseCodes\":[], " + content + "}");
+            return response;
+        }
     }
 }

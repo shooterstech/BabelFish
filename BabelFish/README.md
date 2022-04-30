@@ -3,6 +3,11 @@ Dot Net Library that provides a façade for Shooter's Tech REST API interface.
 
 NOTE: Library is considered a WORK-IN-PROGRESS and is NOT intended for production environment at this time.
 
+v1.0.8.0
+Implement Cognito Authentication on the back end via username/password retrieving RefreshToken, IdToken, AccessToken, DeviceToken.
+Add ApiClient GetAuthTokens() and UpdateAuthTokens() to retrieve/reset authentication tokens in a single session.
+Add AuthAPIClient that authenticates user via Cognito and returns Tokens.
+
 v1.0.7.0
 Implement AWS Signer v4 functionality for Authenticated APIs
 Add Allowed UserSettings to support AWS Signing

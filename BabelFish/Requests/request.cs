@@ -17,7 +17,9 @@ namespace BabelFish.Requests
 
         public Request() { }
 
-        public bool WithAuthentication{ get; set; }
+        public bool WithAuthentication { get; set; } = false;
+
+        public bool IsShootersTechURI { get; set; } = true;
 
         /// <summary>
         /// The relative path for this API Request call. For example, if the complete REST API call is

@@ -16,7 +16,7 @@ namespace BabelFish.DataModel.Credentials
     [Serializable]
     public class Credential
     {
-        AWSCognitoAuthentication CognitoAuthentication = new AWSCognitoAuthentication();
+        private AWSCognitoAuthentication CognitoAuthentication = new AWSCognitoAuthentication();
 
         public string AccessKeyId { get; set; } = string.Empty;
 

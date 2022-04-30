@@ -34,6 +34,7 @@ namespace BabelFish.External
         {
             ApiKey = apikey;
             ZipCode= zipcode;
+            IsShootersTechURI = false;
         }
         public string ZipCode{ get; set; } = string.Empty;
 

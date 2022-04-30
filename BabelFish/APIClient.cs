@@ -114,7 +114,7 @@ namespace BabelFish {
             // Setup workflow conditions
             Dictionary<string, bool> FunctionOptions = new Dictionary<string, bool>();
             FunctionOptions.Add("UseAuth", request.WithAuthentication);
-            FunctionOptions.Add("UseShootersTechUri", (response is GetExternalResponse) ? false : true);
+            FunctionOptions.Add("UseShootersTechUri", request.IsShootersTechURI);
 
             // Get Uri for call
             string uri = string.Empty;
@@ -143,7 +143,7 @@ namespace BabelFish {
                 DateTime startTime = DateTime.Now;
                 HttpResponseMessage responseMessage = new HttpResponseMessage();
 
-                if (!FunctionOptions["UseShootersTechUri"])
+                if (!FunctionOptions["UseShootersTechUri"] && uri != "")
                     responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
                 else 
                 {

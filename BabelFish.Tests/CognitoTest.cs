@@ -12,6 +12,7 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
 using Amazon.CognitoIdentityProvider.Model;
+using BabelFish.Authentication;
 
 namespace BabelFish.Tests {
     [TestClass]
@@ -25,6 +26,31 @@ namespace BabelFish.Tests {
         private static string username = "test_dev_7@shooterstech.net";
         private static string password = "abcd1234";
         private static string myRandomAssDevicePassword = "simple";
+
+        [TestMethod]
+        public async Task CognitoLogin()
+        {
+            string xApiKey = "ga9HvqN7i14sbzM6WrIb0amzdyIYkej83b8aJaWz";
+            Dictionary<string, string> clientParams = new Dictionary<string, string>()
+            {
+                {"UserName", "test_dev_9@shooterstech.net"},
+                {"PassWord", "abcd1234"},
+            };
+            AuthAPIClient _client = new AuthAPIClient(xApiKey, clientParams);
+
+            var response = _client.CognitoLoginAsync();
+            Assert.IsNotNull(response);
+
+            var taskResult = response.Result;
+            var objResponse = taskResult.AuthTokens;
+
+            Assert.IsTrue(objResponse.RefreshToken != "");
+
+            var msgResponse = taskResult.MessageResponse;
+            Assert.IsNotNull(msgResponse);
+            Assert.IsTrue(msgResponse.Message.Count == 0);
+        }
+
 
         [TestMethod]
         public async Task LoginTest() {
