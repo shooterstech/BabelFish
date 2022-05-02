@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BabelFish.DataModel.Definitions {
-    public class SegmentGroupSegment {
+namespace BabelFish.DataModel.Definitions
+{
+    public class SegmentGroupSegment
+    {
 
         private const int DEFAULT_INT = -9999;
         private const string DEFAULT_STR = "";
@@ -17,7 +19,8 @@ namespace BabelFish.DataModel.Definitions {
 
         private List<string> defaultListString = new List<string>();
 
-        public SegmentGroupSegment() {
+        public SegmentGroupSegment()
+        {
         }
 
         [JsonIgnore]
@@ -32,7 +35,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 1)]
         public string SegmentName { get; set; }
 
-        public string GetSegmentName() {
+        public string GetSegmentName()
+        {
             return SegmentName;
         }
 
@@ -46,7 +50,8 @@ namespace BabelFish.DataModel.Definitions {
         [DefaultValue(-9999)]
         public int NumberOfShots { get; set; }
 
-        public int GetNumberOfShots() {
+        public int GetNumberOfShots()
+        {
             if (NumberOfShots != DEFAULT_INT)
                 return NumberOfShots;
 
@@ -66,7 +71,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 2)]
         public string StageLabel { get; set; }
 
-        public string GetStageLabel() {
+        public string GetStageLabel()
+        {
             if (StageLabel != DEFAULT_STR)
                 return StageLabel;
 
@@ -84,7 +90,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 4)]
         public int TargetCollectionIndex { get; set; }
 
-        public int GetTargetCollectionIndex() {
+        public int GetTargetCollectionIndex()
+        {
             if (TargetCollectionIndex != DEFAULT_INT)
                 return TargetCollectionIndex;
 
@@ -105,7 +112,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 5)]
         public int TargetHeight { get; set; }
 
-        public int GetTargetHeight() {
+        public int GetTargetHeight()
+        {
             if (TargetHeight != DEFAULT_INT)
                 return TargetHeight;
 
@@ -130,7 +138,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 5)]
         public List<string> AthleteHasControl { get; set; }
 
-        public List<string> GetAthleteHasControl() {
+        public List<string> GetAthleteHasControl()
+        {
             if (AthleteHasControl != null)
                 return AthleteHasControl;
 
@@ -149,7 +158,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 6)]
         public List<string> NextSegments { get; set; }
 
-        public List<string> GetNextSegments() {
+        public List<string> GetNextSegments()
+        {
             if (NextSegments != null)
                 return NextSegments;
 
@@ -171,7 +181,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 7)]
         public List<string> ShotAttributes { get; set; }
 
-        public List<string> GetShotAttributes() {
+        public List<string> GetShotAttributes()
+        {
             if (ShotAttributes != null)
                 return ShotAttributes;
 
@@ -181,11 +192,12 @@ namespace BabelFish.DataModel.Definitions {
             return Parent.Parent.ShotAttributes;
         }
 
-        [JsonProperty(Order =8)]
+        [JsonProperty(Order = 8)]
         [DefaultValue("")]
         public string AbbreviatedFormat { get; set; }
 
-        public string GetAbbreviatedFormat() {
+        public string GetAbbreviatedFormat()
+        {
             if (AbbreviatedFormat != "")
                 return AbbreviatedFormat;
 
@@ -198,7 +210,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 9)]
         public ShowInSegment Show { get; set; }
 
-        public ShowInSegment GetShow() {
+        public ShowInSegment GetShow()
+        {
             if (Show != null)
                 return Show;
 
@@ -208,9 +221,10 @@ namespace BabelFish.DataModel.Definitions {
             if (Parent.Parent.Show != null)
                 return Parent.Parent.Show;
 
-            return new ShowInSegment() {
+            return new ShowInSegment()
+            {
                 StageLabel = new List<string>(),
-                Competition = ShowInSegment.ShotType.BOTH
+                Competition = ShowInSegment.CompetitionType.BOTH
             };
         }
 
@@ -218,7 +232,8 @@ namespace BabelFish.DataModel.Definitions {
         [DefaultValue(-9999)]
         public int StringSize { get; set; }
 
-        public int GetStringSize() {
+        public int GetStringSize()
+        {
             if (StringSize != DEFAULT_INT)
                 return StringSize;
 
@@ -240,7 +255,8 @@ namespace BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 100)]
         public string Comment { get; set; }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return SegmentName;
         }
     }

@@ -7,23 +7,30 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BabelFish.DataModel.Definitions {
+namespace BabelFish.DataModel.Definitions
+{
     /// <summary>
     /// In the Reconfigurable Rulebook Events are defined using the well known Composite Pattern. 
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
-    public class Event  {
+    public class Event
+    {
 
+        /// <summary>
+        /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
+        /// NOTE EventtType is purposefully misspelled.
+        /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public enum Type { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
+        public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
         private List<string> validationErrorList = new List<string>();
 
-        public Event() {
+        public Event()
+        {
             //Children = new List<string>();
             ScoreFormat = "d";
             Calculation = "SUM";
-            EventType = Type.NONE;
+            EventType = EventtType.NONE;
         }
 
         /// <summary>
@@ -43,7 +50,7 @@ namespace BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(Order = 2)]
-        public Type EventType { get; set; }
+        public EventtType EventType { get; set; } = EventtType.NONE;
 
         /// <summary>
         /// The children of this event identified by the EventName. The score for this event is added together from the scores of the children.
