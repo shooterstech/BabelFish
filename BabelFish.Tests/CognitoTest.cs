@@ -30,6 +30,8 @@ namespace BabelFish.Tests {
         [TestMethod]
         public async Task CognitoLogin()
         {
+            // Login with username/password and get back tokens from Cognito
+            //  NOTE: BabelFish clears Password after successful authentication
             string xApiKey = "ga9HvqN7i14sbzM6WrIb0amzdyIYkej83b8aJaWz";
             Dictionary<string, string> clientParams = new Dictionary<string, string>()
             {
@@ -49,6 +51,36 @@ namespace BabelFish.Tests {
             var msgResponse = taskResult.MessageResponse;
             Assert.IsNotNull(msgResponse);
             Assert.IsTrue(msgResponse.Message.Count == 0);
+
+            // In addition to AuthTokens object returning new tokens after successful authenticaiton,
+            //  base client has GetAuthTokens() to save for future session
+            //  and UpdateAuthTokens() to authenticate in same session if alive > 60 minutes
+            Dictionary<string, string> newAuthTokens = _client.GetAuthTokens();
+            Assert.IsNull(newAuthTokens["PassWord"]);           // cleared after success
+            Assert.IsTrue(newAuthTokens["UserName"] != "");     // same as initial input
+            Assert.IsTrue(newAuthTokens["RefreshToken"] != ""); // returned Token (valid for 30 days)
+            Assert.IsTrue(newAuthTokens["IdToken"] != "");      // returned Token (valid for 60 minutes, renewed)
+            Assert.IsTrue(newAuthTokens["AccessToken"] != "");  // returned Token (valid for 60 minutes, renewed)
+            Assert.IsTrue(newAuthTokens["DeviceToken"] != "");  // returned Token
+
+            // Use New Tokens to Authenticate subsequent logins
+            clientParams.Clear();
+            foreach ( KeyValuePair<string,string> kvp in newAuthTokens)
+                clientParams.Add(kvp.Key, kvp.Value);
+            AuthAPIClient _client2 = new AuthAPIClient(xApiKey, clientParams);
+
+            var response2 = _client2.CognitoLoginAsync();
+            Assert.IsNotNull(response);
+
+            var taskResult2 = response2.Result;
+            var objResponse2 = taskResult2.AuthTokens;
+
+            Assert.IsTrue(objResponse2.RefreshToken != "");
+
+            var msgResponse2 = taskResult2.MessageResponse;
+            Assert.IsNotNull(msgResponse2);
+            Assert.IsTrue(msgResponse2.Message.Count == 0);
+
         }
 
 
