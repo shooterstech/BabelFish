@@ -149,5 +149,20 @@ namespace BabelFish.Tests
             Assert.IsNotNull(matchName);
             Assert.AreNotEqual(matchName, "");
         }
+
+        [TestMethod]
+        public void OrionMatchAPI_GetMatchParticipantList()
+        {
+            string MatchID = "1.3197.2022042721544126.0";
+
+            var response = _client.GetMatchParticipantListAsync(MatchID);
+            Assert.IsNotNull(response);
+
+            var result = response.Result.ParticipantList;
+            var resultName = result[0].Participant.DisplayName;
+
+            Assert.IsNotNull(resultName);
+            Assert.AreNotEqual(resultName, "");
+        }
     }
 }

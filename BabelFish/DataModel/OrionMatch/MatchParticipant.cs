@@ -5,6 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BabelFish.DataModel.OrionMatch {
+
+    public class MatchParticipantList
+    {
+        public List<MatchParticipant> ParticipantList = new List<MatchParticipant>();
+    }
+
     [Serializable]
     public class MatchParticipant {
 

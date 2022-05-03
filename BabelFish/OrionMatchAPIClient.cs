@@ -171,5 +171,22 @@ namespace BabelFish {
 
             return await GetMatchSearchAsync(request).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Get Participant List API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <returns>Match Object</returns>
+        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(string matchid)
+        {
+            var requestParameters = new GetParticipantListRequest(matchid);
+
+            GetParticipantListResponse response = new GetParticipantListResponse();
+
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
     }
 }
