@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BabelFish.Helpers;
 //using Microsoft.VisualBasic.CompilerServices; //COMMENT OUT FOR .NET Standard 2.0
 
 namespace BabelFish.Requests
@@ -20,6 +21,23 @@ namespace BabelFish.Requests
         public bool WithAuthentication { get; set; } = false;
 
         public bool IsShootersTechURI { get; set; } = true;
+
+        public virtual APIStage ApiStage { get; } = APIStage.PRODUCTION;
+
+        public virtual SubDomains SubDomain 
+        {
+            get
+            {
+                if (this.WithAuthentication)
+                {
+                    return SubDomains.AUTHAPI_STAGE;
+                }
+                else
+                {
+                    return SubDomains.API_STAGE;
+                }
+            }
+        }
 
         /// <summary>
         /// The relative path for this API Request call. For example, if the complete REST API call is

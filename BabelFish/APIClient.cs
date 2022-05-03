@@ -40,58 +40,6 @@ namespace BabelFish {
         private DateTime? ContinuationToken = null;
 
         /// <summary>
-        /// Environment Enums
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum APIStage
-        {
-            [Description("")]
-            [EnumMember(Value = "")]
-            BLANK,
-            [Description("alpha")]
-            [EnumMember(Value = "/alpha")]
-            ALPHA,
-            [Description("beta")]
-            [EnumMember(Value = "/beta")]
-            BETA,
-            [Description("production")]
-            [EnumMember(Value = "/production")]
-            PRODUCTION
-        }
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        private enum SubDomains
-        {
-            [Description("")]
-            [EnumMember(Value = "")]
-            BLANK,
-
-            [Description("api")]
-            [EnumMember(Value = "api")]
-            API,
-
-            [Description("api-stage")]
-            [EnumMember(Value = "api-stage")]
-            API_STAGE,
-
-            [Description( "authapi" )]
-            [EnumMember( Value = "authapi" )]
-            AUTHAPI,
-
-            [Description("authapi-stage")]
-            [EnumMember(Value = "authapi-stage")]
-            AUTHAPI_STAGE,
-
-            [Description("internalapi")]
-            [EnumMember(Value = "internalapi")]
-            INTERNAL,
-
-            [Description( "internalapi-stage" )]
-            [EnumMember( Value = "internalapi-stage" )]
-            INTERNAL_STAGE
-        }
-
-        /// <summary>
         /// Users x-api-key for valid AWS access
         /// </summary>
         public string XApiKey { get; set; }
@@ -118,26 +66,13 @@ namespace BabelFish {
 
             // Get Uri for call
             string uri = string.Empty;
+            this.ApiStage = request.ApiStage;
+            this.SubDomain = request.SubDomain;
             if (!FunctionOptions["UseShootersTechUri"])
                 uri = request.RelativePath;
             else
-            {
-                if (FunctionOptions["UseAuth"])
-                {
-                    SubDomain = SubDomains.AUTHAPI_STAGE;
-                    if (response is GetValidateUserIDResponse)
-                        ApiStage = APIStage.BETA;
-                }
-                else if (response is GetCredentialsResponse)
-                {
-                    SubDomain = SubDomains.INTERNAL;
-                    ApiStage = APIStage.BLANK;
-                }
-                else
-                    SubDomain = SubDomains.API_STAGE;
-
                 uri = $"https://{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(SubDomain).Value}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
-            }
+
 
             try {
                 DateTime startTime = DateTime.Now;

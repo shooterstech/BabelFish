@@ -57,6 +57,58 @@ namespace BabelFish.Helpers
         DeviceToken,
     }
 
+    /// <summary>
+    /// Environment Enums
+    /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum APIStage
+    {
+        [Description("")]
+        [EnumMember(Value = "")]
+        BLANK,
+        [Description("alpha")]
+        [EnumMember(Value = "/alpha")]
+        ALPHA,
+        [Description("beta")]
+        [EnumMember(Value = "/beta")]
+        BETA,
+        [Description("production")]
+        [EnumMember(Value = "/production")]
+        PRODUCTION
+    }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum SubDomains
+    {
+        [Description("")]
+        [EnumMember(Value = "")]
+        BLANK,
+
+        [Description("api")]
+        [EnumMember(Value = "api")]
+        API,
+
+        [Description("api-stage")]
+        [EnumMember(Value = "api-stage")]
+        API_STAGE,
+
+        [Description("authapi")]
+        [EnumMember(Value = "authapi")]
+        AUTHAPI,
+
+        [Description("authapi-stage")]
+        [EnumMember(Value = "authapi-stage")]
+        AUTHAPI_STAGE,
+
+        [Description("internalapi")]
+        [EnumMember(Value = "internalapi")]
+        INTERNAL,
+
+        [Description("internalapi-stage")]
+        [EnumMember(Value = "internalapi-stage")]
+        INTERNAL_STAGE
+    }
+
     public static class EnumHelper
     {
         /// <summary>

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BabelFish.Helpers;
 
 namespace BabelFish.Requests.Credentials
 {
+    [Obsolete("Use Helpers.AWSCognitoAuthentication")]
     public class GetCredentialsRequest : Request
     {
         public GetCredentialsRequest(string userName = "", string passWord = "")
@@ -28,6 +30,19 @@ namespace BabelFish.Requests.Credentials
             {
                 return new Dictionary<string, List<string>>()
                     {{"username", new List<string> {Username}}, {"password", new List<string> {Password}}};
+            }
+        }
+
+        public override APIStage ApiStage
+        {
+            get { return APIStage.BLANK; }
+        }
+
+        public override SubDomains SubDomain
+        {
+            get
+            {
+                return SubDomains.INTERNAL;
             }
         }
     }

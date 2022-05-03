@@ -1,4 +1,6 @@
-﻿namespace BabelFish.Requests.GetSetAttributeValueAPI
+﻿using BabelFish.Helpers;
+
+namespace BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {
@@ -14,6 +16,11 @@
         public override string RelativePath
         {
             get { return $"/users/{UserID}"; }
+        }
+
+        public override APIStage ApiStage
+        {  
+            get { return APIStage.BETA; } 
         }
     }
 }
