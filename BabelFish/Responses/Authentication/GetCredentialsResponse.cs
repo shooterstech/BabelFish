@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.DataModel.Credentials;
+using BabelFish.DataModel.Authentication.Credentials;
 
-namespace BabelFish.Responses.Credentials
+namespace BabelFish.Responses.Authentication.Credentials
 {
     public class GetCredentialsResponse : Response<Credential>
     {

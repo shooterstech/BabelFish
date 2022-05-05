@@ -7,7 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using BabelFish.DataModel;
-using BabelFish.DataModel.Credentials;
+using BabelFish.DataModel.Authentication.Credentials;
 
 namespace BabelFish.Helpers
 {
@@ -34,7 +34,7 @@ namespace BabelFish.Helpers
 
         private HttpResponseMessage responseError = new HttpResponseMessage();
 
-        private DataModel.Credentials.Credential Credentials = new Credential();
+        private Credential Credentials = new Credential();
 
         public DateTime? ContinuationToken { get { return Credentials.ContinuationToken; } }
 

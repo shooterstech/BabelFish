@@ -9,7 +9,7 @@ using BabelFish.Requests;
 using BabelFish.Responses;
 using BabelFish.Helpers;
 using BabelFish.External;
-using BabelFish.Responses.Credentials;
+using BabelFish.Responses.Authentication.Credentials;
 using BabelFish.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;

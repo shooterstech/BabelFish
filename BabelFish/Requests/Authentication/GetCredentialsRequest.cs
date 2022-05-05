@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BabelFish.Helpers;
 
-namespace BabelFish.Requests.Credentials
+namespace BabelFish.Requests.Authentication.Credentials
 {
     [Obsolete("Use Helpers.AWSCognitoAuthentication")]
     public class GetCredentialsRequest : Request
