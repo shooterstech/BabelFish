@@ -1,4 +1,5 @@
-﻿using BabelFish.Requests.GetSetAttributeValueAPI;
+﻿using BabelFish.DataModel.GetSetAttributeValue;
+using BabelFish.Requests.GetSetAttributeValueAPI;
 using BabelFish.Responses.GetSetAttributeValueAPI;
 
 namespace BabelFish {
@@ -50,17 +51,37 @@ namespace BabelFish {
         }
 
         /// <summary>
-        /// 
+        /// Assemble and Set 1 or more AttributeValue items
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        //public async Task<GetAttributeValueResponse> SetAttributeValueAsync(DataModel.GetSetAttributeValue.AttributeValue attributeValue)
-        //{
-        //    GetAttributeValueResponse response = new GetAttributeValueResponse();
+        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue)
+        {
+            SetAttributeValueResponse response = new SetAttributeValueResponse();
 
-        //    //set request with attributeValue
+            SetAttributeValueRequest requestParameters = new SetAttributeValueRequest(attributeValue);
 
-        //    //CallAPI 
-        //}
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Assemble and Set 1 AttributeValue
+        /// </summary>
+        /// <param name="attributeValue"></param>
+        /// <returns></returns>
+        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue)
+        {
+            SetAttributeValueResponse response = new SetAttributeValueResponse();
+            
+            AttributeValueList NewAttribute = new AttributeValueList();
+            NewAttribute.Attributes.Add(attributeValue);
+
+            response = await SetAttributeValueAsync(NewAttribute).ConfigureAwait(false);
+
+            return response;
+        }
+
     }
 }

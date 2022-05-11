@@ -24,10 +24,14 @@ namespace BabelFish.Helpers
         //  (the string you received from AWS STS when you obtained temporary security credentials).
         /////////////
 
-        public AwsSigner(string uri, DateTime? continuationToken = null) {
+        public AwsSigner(string uri, StringContent messageContent = null, DateTime? continuationToken = null) {
             URI = uri;
             if ( continuationToken != null)
                 Credentials.ContinuationToken = continuationToken;
+
+            // Request Content for msg.Content in signing
+            if ( messageContent != null )
+                MessageContent = messageContent;
         }
 
         #region Properties
@@ -42,7 +46,8 @@ namespace BabelFish.Helpers
         /// Endpoint URI for hashing algorithm
         /// </summary>
         private string URI { get; set; } = string.Empty;
-        
+
+        private StringContent MessageContent { get; set; } = new StringContent("");
         #endregion Properties
 
         #region Methods
@@ -101,12 +106,14 @@ namespace BabelFish.Helpers
                 // Prepare request message
                 HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, url);
                 msg.Headers.Host = msg.RequestUri.Host;
-                // Add to headers. 
                 msg.Headers.Add("x-amz-date", amzLongDate);
                 if ( ! Credentials.IsPermToken() )
                     msg.Headers.Add("X-Amz-Security-Token",Credentials.SessionToken);
                 // Add Body Content
-                msg.Content = new StringContent("");
+                msg.Content = MessageContent;
+                var payloadHash = Hash(msg.Content.ReadAsByteArrayAsync().Result);
+                msg.Headers.Add("x-amz-content-sha256", payloadHash);
+
                 // Create Canonical Request
                 var canonicalRequest = new StringBuilder();
                 canonicalRequest.Append(msg.Method + "\n");
@@ -124,7 +131,7 @@ namespace BabelFish.Helpers
                 canonicalRequest.Append("\n");
                 var signedHeaders = string.Join(";", headersToBeSigned);
                 canonicalRequest.Append(signedHeaders + "\n");
-                canonicalRequest.Append(Hash(msg.Content.ReadAsByteArrayAsync().Result));
+                canonicalRequest.Append(payloadHash);
                 // String to sign
                 string stringToSign = "AWS4-HMAC-SHA256" + "\n" + amzLongDate +
                                       "\n" + amzShortDate + "/" + awsRegion + "/" +
@@ -139,8 +146,6 @@ namespace BabelFish.Helpers
                 msg.Headers.TryAddWithoutValidation("Authorization", "AWS4-HMAC-SHA256 Credential=" + Credentials.AccessKey +
                     "/" + credentialScope + ", SignedHeaders=" + signedHeaders + ", Signature=" + signature);
                 response = httpClient.SendAsync(msg).Result;
-                //var sendResponse = await httpClient.SendAsync(msg).ConfigureAwait(false);
-                //response = sendResponse;
             }
             catch (Exception ex)
             {

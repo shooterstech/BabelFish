@@ -41,8 +41,12 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// httpStatus (leave this as string in case we get an unexpected status not in an enum?)
         /// </summary>
         [JsonProperty(Order = 1)] public string statusCode { get; set; } = string.Empty;
+
         [JsonConverter(typeof(StringEnumConverter))]
-        public Helpers.VisibilityOption Visibility { get; set; }
+        public Helpers.VisibilityOption Visibility { get; set; } = Helpers.VisibilityOption.PRIVATE;
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Helpers.AttributeValueActionEnums Action { get; set; } = Helpers.AttributeValueActionEnums.ADD;
 
         #region Definition
 
@@ -140,18 +144,16 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// </summary>
         /// <param name="FieldName">Valid FieldName as defined in AttributeDefintion</param>
         /// <returns>object to be type cast</returns>
-        /// <exception cref="Exception"></exception>
-        public object GetFieldValue(string FieldName)
+        public object GetFieldValue(string fieldName)
         {
+            var returnValue = new object();
             ClearLastException();
-            //not multi value
-            //if multi, throw exception
-            if (true)//if multi, throw exception
-                LastException = AttributeValueException.GetExceptionFieldValueError($"for {FieldName} in {SetName}");
+            if (this.IsMultipleValue)
+                LastException = AttributeValueException.GetExceptionFieldValueError($"querying multiple value for non multi-value {fieldName} in {SetName}");
             else
-                throw new NotImplementedException();
+                returnValue = (attributeValues["AttributeList"].ContainsKey(fieldName)) ? attributeValues["AttributeList"][fieldName] : new object();
 
-            return new object();
+            return returnValue;
         }
 
         /// <summary>
@@ -159,25 +161,24 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// </summary>
         /// <param name="FieldName">Valid FieldName from GetAttributeDefintionFields()</param>
         /// <param name="FieldKey">Valid FieldKey string from GetFieldKeys()</param>
-        /// <returns>object to be Type cast</returns>
-        /// <exception cref="Exception"></exception>
-        public object GetFieldValue(string fieldName, string fieldKey)
+        /// <returns>object to be Type cast; null object if not found</returns>
+        public object? GetFieldValue(string fieldName, string fieldKey)
         {
+            object? returnValue = null;
             ClearLastException();
-            //only if is multi value
-            //Get field from AttributeDefinition then check MultipleValues then error or return
-            if (false)//if !multi, throw exception
+            if (this.IsMultipleValue)
                 LastException = AttributeValueException.GetExceptionFieldValueError($"querying {fieldKey} on non multi-value field {fieldName}");
             else
-                throw new NotImplementedException();
+                returnValue = (attributeValues.ContainsKey(fieldKey) && attributeValues[fieldKey].ContainsKey(fieldName)) ? attributeValues[fieldKey][fieldName] : null;
+
+            return returnValue;
         }
 
         /// <summary>
-        /// Set Value for Field Name 
+        /// Set Attribute Value for Field Name
         /// </summary>
         /// <param name="fieldName">Field Name to set</param>
         /// <param name="fieldValue">Field Value to set</param>
-        /// <exception cref="Exception"></exception>
         public void SetFieldName(string fieldName, object fieldValue)
         {
             ClearLastException();
@@ -201,7 +202,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         }
 
         /// <summary>
-        /// Test Setting Field
+        /// Test Setting Attribute Value for Field Name
         /// </summary>
         /// <param name="fieldName"></param>
         /// <param name="fieldValue"></param>
@@ -212,7 +213,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         }
 
         /// <summary>
-        /// Set Value for Field Name with Field Key
+        /// Set Attribute Value for Field Name with Field Key
         /// </summary>
         /// <param name="fieldName">Field Name to set</param>
         /// <param name="fieldValue">Field value to set</param>
@@ -242,7 +243,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         }
 
         /// <summary>
-        /// Test Setting Field with key
+        /// Test Setting Attribute Value for Field with key
         /// </summary>
         /// <param name="fieldName"></param>
         /// <param name="fieldValue"></param>

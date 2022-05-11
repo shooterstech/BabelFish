@@ -84,7 +84,7 @@ namespace BabelFish {
                 {
                     Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
                     if (FunctionOptions["UseAuth"]) {
-                        AwsSigner AwsSignature = new AwsSigner(uri, ContinuationToken);
+                        AwsSigner AwsSignature = new AwsSigner(uri, request.PostParameters, ContinuationToken);
                         responseMessage = await AwsSignature.GetAws4Signature().ConfigureAwait(false);
                         ContinuationToken = AwsSignature.ContinuationToken;
                     } else {

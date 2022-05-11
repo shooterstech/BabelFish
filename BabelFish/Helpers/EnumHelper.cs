@@ -19,6 +19,17 @@ namespace BabelFish.Helpers
     [JsonConverter(typeof(StringEnumConverter))]
     public enum VisibilityOption { PRIVATE, PUBLIC, PROTECTED };
 
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AttributeValueActionEnums { ADD, UPDATE, DELETE }; //TODO: ADD or nothing assumes add????
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum AttributeValueKeyEnum
+    {
+        [Description("attribute-values")]
+        [EnumMember(Value = "attribute-values")]
+        ATTRIBUTEVALUEKEY
+    }
+
     /// <summary>
     /// UserSettings named Auth Enums
     /// </summary>

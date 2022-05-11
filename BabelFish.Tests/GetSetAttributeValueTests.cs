@@ -12,10 +12,10 @@ namespace BabelFish.Tests {
     [TestClass]
     public class GetSetAttributeValueTests
     {
-        private static string xApiKey = "ga9HvqN7i14sbzM6WrIb0amzdyIYkej83b8aJaWz";
+        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
         private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
         {
-            {"UserName", "test_dev_9@shooterstech.net"},
+            {"UserName", "test_dev_7@shooterstech.net"},
             {"PassWord", "abcd1234"},
         };
         private readonly GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient(xApiKey, clientParams);
@@ -101,7 +101,7 @@ namespace BabelFish.Tests {
         [TestMethod]
         public void GetValidateUserIDInValid()
         {
-            string userID = "ThoisIsAnInvalidUserId";
+            string userID = "ThisIsAnInvalidUserId";
             var response = _client.GetValidateUserIDAsync(userID);
             Assert.IsNotNull(response);
 
@@ -114,6 +114,28 @@ namespace BabelFish.Tests {
 
             Assert.AreEqual(objResponse.UserID, userID);
             Assert.IsFalse(objResponse.Valid);
+        }
+
+        [TestMethod]
+        public void SetAttributeValueDateOfBirth()
+        {
+            string attributeName = "v1.0:orion:Date of Birth";
+            DataModel.GetSetAttributeValue.AttributeValue NewAttributeValue = new DataModel.GetSetAttributeValue.AttributeValue(attributeName);
+            NewAttributeValue.Visibility = BabelFish.Helpers.VisibilityOption.PROTECTED;
+            NewAttributeValue.SetFieldName("DateOfBirth", "1970-01-01"); //orig=1980-03-12
+
+            var response = _client.SetAttributeValueAsync(NewAttributeValue);
+            Assert.IsNotNull(response);
+
+            var taskResult = response.Result;
+            var objResponse = taskResult.Value;
+            var msgResponse = taskResult.MessageResponse;
+
+            Assert.IsNotNull(objResponse);
+            Assert.IsNotNull(msgResponse);
+
+            Assert.AreEqual(objResponse.AttributeValue, attributeName);
+            Assert.AreEqual(objResponse.StatusCode, "200");
         }
     }
 }
