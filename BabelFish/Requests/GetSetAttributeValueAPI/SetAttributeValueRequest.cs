@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using BabelFish.DataModel.GetSetAttributeValue;
+using Newtonsoft.Json;
 
 namespace BabelFish.Requests.GetSetAttributeValueAPI
 {
@@ -83,7 +84,7 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
                 }
                 serializedJSON.Append("}}}");
 
-                return new StringContent(serializedJSON.ToString(), Encoding.UTF8, "application/json");
+                return new StringContent(JsonConvert.SerializeObject(serializedJSON), Encoding.UTF8, "application/json");
             }
         }
     }
