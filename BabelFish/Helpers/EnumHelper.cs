@@ -20,7 +20,7 @@ namespace BabelFish.Helpers
     public enum VisibilityOption { PRIVATE, PUBLIC, PROTECTED };
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum AttributeValueActionEnums { ADD, UPDATE, DELETE }; //TODO: ADD or nothing assumes add????
+    public enum AttributeValueActionEnums { EMPTY, UPDATE, DELETE };
 
     [JsonConverter(typeof(StringEnumConverter))]
     public enum AttributeValueKeyEnum

@@ -6,6 +6,20 @@ using Newtonsoft.Json.Serialization;
 namespace BabelFish.DataModel.GetSetAttributeValue {
 
     [Serializable]
+    public class SetAttributeValueWrapper
+    {
+        [JsonProperty(PropertyName = "attribute-value-responses")]
+        public List<SetAttributeValue> SetAttributeValues = new List<SetAttributeValue>();
+
+        public override string ToString()
+        {
+            StringBuilder foo = new StringBuilder();
+            foo.Append("SetAttributeValue Result");
+            return foo.ToString();
+        }
+    }
+
+    [Serializable]
     public class SetAttributeValue
     {
         public SetAttributeValue() { }

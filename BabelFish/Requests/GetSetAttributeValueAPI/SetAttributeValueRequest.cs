@@ -19,7 +19,7 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
             {
                 AttributesList.Add(attrVal.SetName, new Dictionary<string, string>());
                 AttributesList[attrVal.SetName].Add("attribute-def", attrVal.SetName);
-                AttributesList[attrVal.SetName].Add("action", attrVal.Action.ToString()); //TODO: defaults to ADD or rm?
+                AttributesList[attrVal.SetName].Add("action", attrVal.Action.ToString());
                 AttributesList[attrVal.SetName].Add("visibility", attrVal.Visibility.ToString());
                 Dictionary<string, dynamic> subcollection = new Dictionary<string, dynamic>();
                 foreach (KeyValuePair<string, Dictionary<string, dynamic>> kvp in attrVal.attributeValues)
@@ -59,7 +59,7 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
                     }
                     serializedJSON.Append($"\"{currentSetName}\": {{");
                     serializedJSON.Append($"\"attribute-def\" : \"{currentSetName}\",");
-                    if (attrList.Value["action"] != "ADD")
+                    if (attrList.Value["action"] != "EMPTY")
                         serializedJSON.Append($"\"action\" : \"{attrList.Value["action"]}\",");
                     serializedJSON.Append($"\"visibility\" : \"{attrList.Value["visibility"]}\",");
                     serializedJSON.Append($"\"attribute-value\": ");

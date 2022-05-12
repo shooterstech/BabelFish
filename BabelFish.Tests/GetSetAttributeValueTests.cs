@@ -134,8 +134,13 @@ namespace BabelFish.Tests {
             Assert.IsNotNull(objResponse);
             Assert.IsNotNull(msgResponse);
 
-            Assert.AreEqual(objResponse.AttributeValue, attributeName);
-            Assert.AreEqual(objResponse.StatusCode, "200");
+            string checkName = "";
+            foreach ( var checkResponseName in objResponse.SetAttributeValues)
+            {
+                if ( checkResponseName.AttributeValue == attributeName)
+                    checkName = checkResponseName.AttributeValue;
+            }
+            Assert.AreEqual(checkName, attributeName);
         }
     }
 }

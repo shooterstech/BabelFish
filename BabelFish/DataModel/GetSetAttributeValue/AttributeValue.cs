@@ -46,7 +46,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         public Helpers.VisibilityOption Visibility { get; set; } = Helpers.VisibilityOption.PRIVATE;
 
         [JsonConverter(typeof(StringEnumConverter))]
-        public Helpers.AttributeValueActionEnums Action { get; set; } = Helpers.AttributeValueActionEnums.ADD;
+        public Helpers.AttributeValueActionEnums Action { get; set; } = Helpers.AttributeValueActionEnums.EMPTY;
 
         #region Definition
 
