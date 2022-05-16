@@ -13,28 +13,8 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
 
         public SetAttributeValueRequest(AttributeValueList attributeToUpdate) //List<Dictionary<string,dynamic>> postParameters, List<string> queryParameters = null)
         {
-            WithAuthentication = true;
-            AttributeToUpdate = attributeToUpdate;
-
-            foreach (AttributeValue attrVal in AttributeToUpdate.Attributes)
-            {
-                AttributesList.Add(attrVal.SetName, new Dictionary<string, string>());
-                AttributesList[attrVal.SetName].Add("attribute-def", attrVal.SetName);
-                AttributesList[attrVal.SetName].Add("action", attrVal.Action.ToString());
-                AttributesList[attrVal.SetName].Add("visibility", attrVal.Visibility.ToString());
-                Dictionary<string, dynamic> subcollection = new Dictionary<string, dynamic>();
-                foreach (KeyValuePair<string, Dictionary<string, dynamic>> kvp in attrVal.attributeValues)
-                {
-                    // identify multi and non-multi attributes
-                    if (kvp.Key != Helpers.AttributeValueKeyEnum.ATTRIBUTEVALUEKEY.ToString())
-                        subcollection.Clear();
-
-                    foreach (KeyValuePair<string, dynamic> kvp2 in kvp.Value)
-                        subcollection.Add(kvp.Key, kvp.Value);
-
-                    AttributeValues.Add(subcollection);
-                }
-            }
+                WithAuthentication = true;
+                AttributeToUpdate = attributeToUpdate;
         }
 
         /// <inheritdoc />
@@ -48,43 +28,46 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
             get
             {
                 StringBuilder serializedJSON = new StringBuilder();
-
-                serializedJSON.Append("{\"attribute-values\": {");
-                string currentSetName = "";
-                foreach (KeyValuePair<string, Dictionary<string, string>> attrList in AttributesList)
+                try
                 {
-                    if (currentSetName != attrList.Key)
+                    serializedJSON.Append("{\"attribute-values\": {");
+                    bool firstrun = true;
+                    foreach (AttributeValue attributeValue in AttributeToUpdate.Attributes)
                     {
-                        currentSetName = attrList.Key;
-                        //reset anything??
-                    }
-                    serializedJSON.Append($"\"{currentSetName}\": {{");
-                    serializedJSON.Append($"\"attribute-def\" : \"{currentSetName}\",");
-                    if (attrList.Value["action"] != "EMPTY")
-                        serializedJSON.Append($"\"action\" : \"{attrList.Value["action"]}\",");
-                    serializedJSON.Append($"\"visibility\" : \"{attrList.Value["visibility"]}\",");
-                    serializedJSON.Append($"\"attribute-value\": ");
-                    if (AttributeValues.Count > 1)
-                        serializedJSON.Append("[");
-                    foreach (var attrLoop in AttributeValues)
-                    {
-                        serializedJSON.Append("{");
-                        foreach (KeyValuePair<string, dynamic> attrValues in attrLoop)
+                        if (!firstrun)
+                            serializedJSON.Append(",");
+                        serializedJSON.Append($"\"{attributeValue.SetName}\": {{");
+                        serializedJSON.Append($"\"attribute-def\" : \"{attributeValue.SetName}\",");
+                        if (attributeValue.Action != Helpers.AttributeValueActionEnums.EMPTY)
+                            serializedJSON.Append($"\"action\" : \"{attributeValue.Action.ToString()}\",");
+                        else
+                            serializedJSON.Append($"\"action\" : \"\",");
+                        serializedJSON.Append($"\"visibility\" : \"{attributeValue.Visibility.ToString()}\",");
+                        serializedJSON.Append($"\"attribute-value\": ");
+                        if (attributeValue.attributeValues.Count > 1)
+                            serializedJSON.Append("[");
+                        bool firstrun2 = true;
+                        foreach (var attributeVal in attributeValue.attributeValues)
                         {
-                            foreach (KeyValuePair<string, dynamic> attrValue in attrValues.Value)
-                            {
-                                serializedJSON.Append($"\"{attrValue.Key}\" : \"{attrValue.Value}\",");
-                            }
+                            if (!firstrun2)
+                                serializedJSON.Append(",");
+                            serializedJSON.Append(JsonConvert.SerializeObject(attributeVal.Value));
+                            firstrun2 = false;
                         }
-                        serializedJSON.Append("},");
+                        if (attributeValue.attributeValues.Count > 1)
+                            serializedJSON.Append("]");
+                        serializedJSON.Append("}");
+                        firstrun = false;
                     }
-                    if (AttributeValues.Count > 1)
-                        serializedJSON.Append("]");
-
+                    serializedJSON.Append("}}");
+                    
+                    string check = serializedJSON.ToString();
+                    return new StringContent(serializedJSON.ToString(), Encoding.UTF8, "application/json");
                 }
-                serializedJSON.Append("}}}");
-
-                return new StringContent(JsonConvert.SerializeObject(serializedJSON), Encoding.UTF8, "application/json");
+                catch(Exception ex)
+                {
+                    return new StringContent("");
+                }
             }
         }
     }

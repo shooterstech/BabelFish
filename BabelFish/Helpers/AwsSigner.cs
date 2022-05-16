@@ -104,7 +104,11 @@ namespace BabelFish.Helpers
                 string amzShortDate = utcNowSaved.ToString("yyyyMMdd");
                 string url = this.URI;
                 // Prepare request message
-                HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, url);
+                HttpRequestMessage msg;
+                if (MessageContent.Headers.ContentLength > 0)
+                    msg = new HttpRequestMessage(HttpMethod.Post, url);
+                else
+                    msg = new HttpRequestMessage(HttpMethod.Get, url);
                 msg.Headers.Host = msg.RequestUri.Host;
                 msg.Headers.Add("x-amz-date", amzLongDate);
                 if ( ! Credentials.IsPermToken() )
