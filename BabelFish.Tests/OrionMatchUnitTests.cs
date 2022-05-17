@@ -20,7 +20,7 @@ namespace BabelFish.Tests
             var MessageResponse = response.Result.MessageResponse;
             Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.NotFound);
             Assert.IsTrue(MessageResponse.Message.Count>0);
-            Assert.IsTrue(MessageResponse.ResponseCodes.Contains("NotFound"));
+            Assert.IsTrue(MessageResponse.Message.Any(x => x.Contains("could not be found")));
 
             OrionMatchAPIClient _client2 = new OrionMatchAPIClient("abc123");
             response = _client2.GetMatchDetailAsync("1.2899.1040248529.0");
@@ -65,7 +65,7 @@ namespace BabelFish.Tests
         [TestMethod]
         public void OrionMatchAPI_GetACourseOfFire()
         {
-            string COFID = "03b0a667-f184-404b-8ba7-751599b7fd0b";
+            string COFID = "29b3b450-e796-4329-9ebb-cd841c6eab3e";
             var response = _client.GetResultCourseOfFireDetail(COFID);
             Assert.IsNotNull(response);
 
@@ -74,6 +74,19 @@ namespace BabelFish.Tests
 
             Assert.IsNotNull(resultName);
             Assert.AreNotEqual(resultName, "");
+        }
+
+        [TestMethod]
+        public void OrionMatchAPI_GetACourseOfFireOldFormat500error()
+        {
+            string COFID = "03b0a667-f184-404b-8ba7-751599b7fd0b";
+            var response = _client.GetResultCourseOfFireDetail(COFID);
+            Assert.IsNotNull(response);
+
+
+            var result = response.Result;
+            Assert.IsTrue(result.MessageResponse.Message.Any(x => x.Contains("Unable to Convert Result COF to 2022-04-09 format.")));
+            Assert.AreEqual(result.StatusCode, HttpStatusCode.InternalServerError);
         }
 
         [TestMethod]
