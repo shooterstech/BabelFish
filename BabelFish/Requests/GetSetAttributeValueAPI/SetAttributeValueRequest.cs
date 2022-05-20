@@ -13,8 +13,11 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
 
         public SetAttributeValueRequest(AttributeValueList attributeToUpdate) //List<Dictionary<string,dynamic>> postParameters, List<string> queryParameters = null)
         {
-                WithAuthentication = true;
-                AttributeToUpdate = attributeToUpdate;
+            WithAuthentication = true;
+            AttributeToUpdate = attributeToUpdate;
+            // Validate Attributes were fuly generated correctly before submitting
+            foreach ( AttributeValue checkAttribute in attributeToUpdate.Attributes)
+                checkAttribute.ValidateForSubmit();
         }
 
         /// <inheritdoc />
@@ -34,30 +37,33 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
                     bool firstrun = true;
                     foreach (AttributeValue attributeValue in AttributeToUpdate.Attributes)
                     {
-                        if (!firstrun)
-                            serializedJSON.Append(",");
-                        serializedJSON.Append($"\"{attributeValue.SetName}\": {{");
-                        serializedJSON.Append($"\"attribute-def\" : \"{attributeValue.SetName}\",");
-                        if (attributeValue.Action != Helpers.AttributeValueActionEnums.EMPTY)
-                            serializedJSON.Append($"\"action\" : \"{attributeValue.Action.ToString()}\",");
-                        else
-                            serializedJSON.Append($"\"action\" : \"\",");
-                        serializedJSON.Append($"\"visibility\" : \"{attributeValue.Visibility.ToString()}\",");
-                        serializedJSON.Append($"\"attribute-value\": ");
-                        if (attributeValue.attributeValues.Count > 1)
-                            serializedJSON.Append("[");
-                        bool firstrun2 = true;
-                        foreach (var attributeVal in attributeValue.attributeValues)
+                        if ( attributeValue.LastException == "")
                         {
-                            if (!firstrun2)
+                            if (!firstrun)
                                 serializedJSON.Append(",");
-                            serializedJSON.Append(JsonConvert.SerializeObject(attributeVal.Value));
-                            firstrun2 = false;
+                            serializedJSON.Append($"\"{attributeValue.SetName}\": {{");
+                            serializedJSON.Append($"\"attribute-def\" : \"{attributeValue.SetName}\",");
+                            if (attributeValue.Action != Helpers.AttributeValueActionEnums.EMPTY)
+                                serializedJSON.Append($"\"action\" : \"{attributeValue.Action.ToString()}\",");
+                            else
+                                serializedJSON.Append($"\"action\" : \"\",");
+                            serializedJSON.Append($"\"visibility\" : \"{attributeValue.Visibility.ToString()}\",");
+                            serializedJSON.Append($"\"attribute-value\": ");
+                            if (attributeValue.attributeValues.Count > 1)
+                                serializedJSON.Append("[");
+                            bool firstrun2 = true;
+                            foreach (var attributeVal in attributeValue.attributeValues)
+                            {
+                                if (!firstrun2)
+                                    serializedJSON.Append(",");
+                                serializedJSON.Append(JsonConvert.SerializeObject(attributeVal.Value));
+                                firstrun2 = false;
+                            }
+                            if (attributeValue.attributeValues.Count > 1)
+                                serializedJSON.Append("]");
+                            serializedJSON.Append("}");
+                            firstrun = false;
                         }
-                        if (attributeValue.attributeValues.Count > 1)
-                            serializedJSON.Append("]");
-                        serializedJSON.Append("}");
-                        firstrun = false;
                     }
                     serializedJSON.Append("}}");
                     

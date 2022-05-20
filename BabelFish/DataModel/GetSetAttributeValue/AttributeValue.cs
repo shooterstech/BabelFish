@@ -12,7 +12,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
 
         internal AttributeValueDefinition attributeDef = new AttributeValueDefinition();
 
-        AttributeValueValidation AttributeValueValidation = new AttributeValueValidation();
+        AttributeValueValidation attributeValueValidation = new AttributeValueValidation();
 
         /// <summary>
         /// Instantiate a new AttributeValue to modify
@@ -40,7 +40,8 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <summary>
         /// httpStatus (leave this as string in case we get an unexpected status not in an enum?)
         /// </summary>
-        [JsonProperty(Order = 1)] public string statusCode { get; set; } = string.Empty;
+        [JsonProperty(Order = 1)]
+        public string StatusCode { get; set; } = string.Empty;
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Helpers.VisibilityOption Visibility { get; set; } = Helpers.VisibilityOption.PRIVATE;
@@ -123,20 +124,15 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         public List<string> GetAttributeFieldKeys()
         {
             ClearLastException();
-            //TODO: is this supposed to be Definition.Fields.FieldName.Where(Key=true) or actual field values?
-            List<string> FieldKeys = new List<string>(); //could be empty
-
             try
             {
-                foreach (string loopKey in attributeValues.Keys)
-                    FieldKeys.Add(loopKey);
+                return attributeValues.Keys.ToList();
             }
             catch (Exception ex)
             {
                 LastException = AttributeValueException.GetExceptionKeyFieldNameError($": {ex.ToString()}");
+                return new List<string>();
             }
-
-            return FieldKeys;
         }
 
         /// <summary>
@@ -182,11 +178,11 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         public void SetFieldName(string fieldName, object fieldValue)
         {
             ClearLastException();
-            if (GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault().MultipleValues == true)
-                LastException = AttributeValueException.GetExceptionFieldValueError($"Field being set is designated MultipleValue needing Key. Use SetFieldName(string fieldName, object fieldValue, string fieldKey)");
+            if (this.IsMultipleValue)
+                throw new Exception($"Field being set is designated MultipleValue needing Key. Use overload SetFieldName(string fieldName, object fieldValue, string fieldKey)");
 
-            if (!AttributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue))
-                LastException = AttributeValueException.GetExceptionFieldValueError($"Invalid Set Field Value {fieldValue} for {fieldName}");
+            if (!attributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue))
+                throw new Exception(AttributeValueException.GetExceptionFieldValueError($"Invalid Set Field Value {fieldValue} for {fieldName}: {attributeValueValidation.lastException}"));
             else 
             { 
                 if ( !attributeValues.ContainsKey("AttributeList") )
@@ -209,7 +205,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <returns>true if no errors, false if fails</returns>
         public bool TrySetFieldName(string fieldName, object fieldValue)
         {
-            return AttributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue);
+            return attributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue);
         }
 
         /// <summary>
@@ -222,11 +218,11 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         public void SetFieldName(string fieldName, object fieldValue, string fieldKey)
         {
             ClearLastException();
-            if ( !this.IsMultipleValue )
-                LastException = AttributeValueException.GetExceptionFieldValueError($"Field being set is designated Single Value. Use SetFieldName(string fieldName, object fieldValue)");
+            if (!this.IsMultipleValue)
+                throw new Exception($"Field being set is designated SingleValue not accepting a Key. Use overload SetFieldName(string fieldName, object fieldValue)");
 
-            if (!AttributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue))
-                LastException = AttributeValueException.GetExceptionFieldValueError($"Invalid Set Field Value {fieldValue} for {fieldName}");
+            if (!attributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue))
+                throw new Exception(AttributeValueException.GetExceptionFieldValueError($"Invalid Set Field Value {fieldValue} for {fieldName}: {attributeValueValidation.lastException}"));
             else
             {
                 if (!attributeValues.ContainsKey(fieldKey))
@@ -250,14 +246,13 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <returns>true if no errors, false if fails</returns>
         public bool TrySetFieldName(string fieldName, object fieldValue, string fieldKey)
         {
-            return AttributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue, fieldKey);
+            return attributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue, fieldKey);
         }
 
         /// <summary>
         /// Add Field Key for multiple = true
         /// </summary>
         /// <param name="fieldKey">Field Key to add</param>
-        /// <exception cref="Exception"></exception>
         public void AddFieldKey(string fieldKeyValue)
         {
             ClearLastException();
@@ -266,8 +261,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                 if (GetDefinitionKeyFieldName() != String.Empty)
                 {
                     attributeValues[fieldKeyValue] = new Dictionary<string, dynamic>();
-
-                    // TODO: loop in all default values
+                    SetDefaultFieldValues(fieldKeyValue);
                 }
                 else
                     LastException = AttributeValueException.GetExceptionKeyFieldNameError($"no Key expected with {fieldKeyValue}");
@@ -283,13 +277,25 @@ namespace BabelFish.DataModel.GetSetAttributeValue
             throw new NotImplementedException();
         }
 
-        private void SetDefaultFieldValues()
+        private void SetDefaultFieldValues(string keyField = "")
         {
-            foreach (AttributeField fieldDefaults in GetDefinitionFieldsDefaultValues())
-                if ( attributeDef.MultipleValues==false && 
-                    fieldDefaults.MultipleValues == false &&
-                    fieldDefaults.Required == true)
-                    SetFieldName(fieldDefaults.FieldName, fieldDefaults.DefaultValue);
+            try
+            {
+                foreach (AttributeField fieldDefaults in GetDefinitionFieldsDefaultValues())
+                {
+                    if (fieldDefaults.Required == true)
+                    {
+                        if (keyField == string.Empty)
+                            SetFieldName(fieldDefaults.FieldName, fieldDefaults.DefaultValue);
+                        else if (keyField != string.Empty)
+                            SetFieldName(fieldDefaults.FieldName, fieldDefaults.DefaultValue, keyField);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LastException = AttributeValueException.GetExceptionKeyFieldNameError($"Error setting Default Values: {ex.Message}");
+            }
         }
         #endregion Attribute
 
@@ -297,6 +303,29 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         {
             LastException = string.Empty;
         }
+
+        public bool ValidateForSubmit()
+        {
+            // All Required Fields populated
+            foreach ( AttributeField checkRequiredFields in GetDefinitionRequiredFields())
+            {
+                if (attributeValues.Values.Select(x => x.ContainsKey(checkRequiredFields.FieldName)).Count() == 0)
+                    throw new Exception($"Submission Validation Failed: missing required field {checkRequiredFields.FieldName}");
+            }
+
+            //Loop AttributeValues running against validation one more time.
+            foreach (KeyValuePair<string, Dictionary<string, dynamic>> checkAttr in this.attributeValues)
+            {
+                foreach (KeyValuePair<string, dynamic> checkValue in checkAttr.Value)
+                {
+                    if (!this.TrySetFieldName(checkValue.Key, checkValue.Value))
+                        throw new Exception($"Submission Validation Failed: field validation failed for {checkValue.Key}:{checkValue.Value}");
+                }
+            }
+
+            return true;
+        }
+
 
         public override string ToString()
         {

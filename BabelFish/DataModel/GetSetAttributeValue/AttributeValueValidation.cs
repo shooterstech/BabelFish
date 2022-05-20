@@ -6,74 +6,105 @@ namespace BabelFish.DataModel.GetSetAttributeValue
     internal class AttributeValueValidation
     {
 
+        public string lastException { get; private set; } = string.Empty;
         /// <summary>
         /// Helper function to validate setting Field Data
+        /// https://support.orionscoringsystem.com/index.html?definition-attribute.html
         /// </summary>
         /// <returns>true or false</returns>
-        public bool ValidateSetFieldData(AttributeField DefinitionToValidate, string fieldName, object fieldValue, string fieldKey = "")
+        public bool ValidateSetFieldData(AttributeField definitionToValidate, string fieldName, object fieldValue, string fieldKey = "")
         {
-            // TODO: Make sure fieldKey things
-            //validate fieldName
-            //validate fieldValue match definition type
-            //validate value based on attribute validation 
-            //  https://support.orionscoringsystem.com/index.html?definition-attribute.html
-            // make sure things like if "CLOSED" type then must be from listsetting
-
-            //all required fields - before update???
-
-            if (DefinitionToValidate != null)
+            if (definitionToValidate != null)
             {
-                // FieldName exists in Definition
-                if (DefinitionToValidate.FieldName != fieldName)
-                    return false;
-
-                // Match Field Name Value format to regex match
-                if (DefinitionToValidate.Validation != null)
+                // fieldName exists in Definition
+                if (definitionToValidate.FieldName != fieldName)
                 {
-                    Definitions.AttributeValidation FieldNameValidation = DefinitionToValidate.Validation;
-                    if (!string.IsNullOrEmpty(FieldNameValidation.Regex))
-                    {
-                        Regex regex = new Regex(FieldNameValidation.Regex);
-                        Match match = regex.Match(fieldValue.ToString());
-                        if (!match.Success)
-                            return false;
-                    }
+                    lastException = "Validation Field Name mismatch";
+                    return false;
                 }
-            }
-            else
-                return false;
 
-            // FieldValue is valid Type
-            // TODO: figure this out and finish
-            Type validType = GetDefinitionFieldValueType(DefinitionToValidate, fieldName);
-            if (!this.ValidFieldValueType(validType, fieldValue))
-                return false;
+                // fieldValue matches Definition Type
+                Type checkType = GetDefinitionFieldValueType(definitionToValidate, fieldName);
+                if (!this.ValidFieldValueType(checkType, fieldValue))
+                {
+                    lastException = $"Field Value cannot be cast to Definition Field Type of {checkType.ToString()}";
+                    return false;
+                }
 
-            // Validate fieldValue based on attribute validation
-            //  https://support.orionscoringsystem.com/definition-attributefield.html
-            if (validType.GetType() == typeof(bool))
-            {
-                //FieldType should not exist in definition
-            }
-
-            // FieldType required when string
-            if (validType.GetType() == typeof(string))
-            {
-                // FieldType in valid list
+                // Required values when FieldType = CLOSED
                 if (Enum.TryParse<Helpers.DefinitionFieldTypeEnums>(
-                    DefinitionToValidate.FieldType
+                    definitionToValidate.FieldType
                     , out Helpers.DefinitionFieldTypeEnums enumMatch))
                 {
                     if (enumMatch == Helpers.DefinitionFieldTypeEnums.CLOSED)
                     {
-                        //TODO: maybe add a func GetSuggestionList() for user to get values from SUGGEST and CLOSED list?
-                        List<AttributeValueOption> checkOptions = DefinitionToValidate.Values;
-                        if (!checkOptions.Select(x => x.Value == fieldValue).FirstOrDefault())
+                        var allowedValues = definitionToValidate.Values.Select(x => x.Value);
+                        if (!allowedValues.Contains(fieldValue))
+                        {
+                            lastException = $"Value {fieldValue} not in allowed list of values: {String.Join(", ", allowedValues.ToList())}";
                             return false;
+                        }
                     }
                 }
-                else
+                else if ( checkType != typeof(Boolean))
                     return false;
+
+                // fieldValue Validation
+                if (definitionToValidate.Validation != null)
+                {
+                    Definitions.AttributeValidation fieldNameValidation = definitionToValidate.Validation;
+
+                    // MIN value
+                    if (fieldNameValidation.MinValue != null)
+                    {
+                        switch (definitionToValidate.ValueType)
+                        {
+                            case "DATE":
+                                if ( DateTime.Parse((string)fieldValue).Date < DateTime.Parse((string)fieldNameValidation.MinValue))
+                                {
+                                    lastException = definitionToValidate.Validation.ErrorMessage;
+                                    return false;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    
+                    // MAX value
+                    if (fieldNameValidation.MaxValue != null)
+                    {
+                        switch (definitionToValidate.ValueType)
+                        {
+                            case "DATE":
+                                if (DateTime.Parse((string)fieldValue).Date > DateTime.Parse((string)fieldNameValidation.MaxValue))
+                                {
+                                    lastException = definitionToValidate.Validation.ErrorMessage;
+                                    return false;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    // REGEX
+                    if (!string.IsNullOrEmpty(fieldNameValidation.Regex))
+                    {
+                        Regex regex = new Regex(fieldNameValidation.Regex);
+                        Match match = regex.Match(fieldValue.ToString());
+                        if (!match.Success)
+                        {
+                            lastException = definitionToValidate.Validation.ErrorMessage;
+                            return false;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                lastException = "Definition not found.";
+                return false;
             }
 
             // Made it through the gauntlet unscathed!!
@@ -88,28 +119,21 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <returns></returns>
         public bool ValidFieldValueType(Type castType, object fieldValue)
         {
-            // TODO: build this out
-            return true;
-            //            switch (castType.ToString())
-            //            {
-            //                case typeof(string):
-            //                    break;
-            //            }
+            if (Helpers.SettingsHelper.ConvertSettingsType(castType, fieldValue.ToString()) != null)
+                return true;
+            else
+                return false;
         }
 
         /// <summary>
         /// typeof(Type) for Field from AttributeDefinition
         /// </summary>
         /// <param name="fieldName">Field Name string from GetDefintionFields()</param>
-        /// <returns>???Type or List<Type>??? from AttributeDefinition</returns>
+        /// <returns>Type from AttributeDefinition</returns>
         public Type GetDefinitionFieldValueType(AttributeField fieldDefinition, string fieldName)
         {
             string typeToCheck = fieldDefinition.ValueType;
-
             return ConvertValueTypeToType(typeToCheck);
-
-            //TODO: if field marked multi, return is List<>  ??????
-            //throw new NotImplementedException();
         }
 
         /// <summary>
@@ -125,18 +149,13 @@ namespace BabelFish.DataModel.GetSetAttributeValue
             {
                 case "STRING":
                     return typeof(string);
-                case "DATE":
-                    //Is there a JUST DATE or need to parse and validate later?
-                    // -OR-
-                    //Is this the string that needs regex "yyyy-mm-dd"
-                    return typeof(DateTime);
                 case "BOOLEAN":
                     return typeof(Boolean);
+                case "DATE":
+                    return typeof(DateTime);
                 case "DATE TIME":
-                    //need sample to confirm with/without space???
                     return typeof(DateTime);
                 case "TIME":
-                    //Is there just a Time type???
                     return typeof(DateTime);
                 case "INTEGER":
                     return typeof(Int32);
@@ -148,6 +167,5 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                     return null;
             }
         }
-
     }
 }

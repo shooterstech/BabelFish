@@ -34,7 +34,7 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
         {
             AttributeValueList returnList = new AttributeValueList();
             List<AttributeValue> returnAttributes = new List<AttributeValue>();
-            List<string> CaptureErrors = new List<string>();
+            List<string> captureErrors = new List<string>();
 
             try
             {
@@ -47,7 +47,7 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                         JObject o2 = JObject.Parse(property.Value.ToString());
                         foreach (JProperty property2 in o2.Properties())
                         {
-                            CaptureErrors.Clear();
+                            captureErrors.Clear();
                             AttributeValue buildAttribute = new AttributeValue(property2.Name);
 
                             JObject o3 = JObject.Parse(property2.Value.ToString());
@@ -63,25 +63,25 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                                         this.MessageResponse.ResponseCodes.Add(property3.Value.ToString());
                                         break;
                                     case "statusCode":
-                                        buildAttribute.statusCode = property3.Value.ToString();
+                                        buildAttribute.StatusCode = property3.Value.ToString();
                                         break;
                                     case "attribute-value":
                                         if (buildAttribute.IsMultipleValue)
                                         {
-                                            string KeyFieldName = buildAttribute.GetDefinitionKeyFieldName();
-                                            var ObjectList = Helpers.JsonHelper.Deserialize(property3.Value.ToString());
-                                            foreach (Dictionary<string, dynamic> EachObject in (List<object>)ObjectList)
+                                            string keyFieldName = buildAttribute.GetDefinitionKeyFieldName();
+                                            var objectList = Helpers.JsonHelper.Deserialize(property3.Value.ToString());
+                                            foreach (Dictionary<string, dynamic> eachObject in (List<object>)objectList)
                                             {
-                                                if (EachObject.ContainsKey(KeyFieldName))
+                                                if (eachObject.ContainsKey(keyFieldName))
                                                 {
-                                                    foreach (KeyValuePair<string, dynamic> item in EachObject)
+                                                    foreach (KeyValuePair<string, dynamic> item in eachObject)
                                                         buildAttribute.SetFieldName(item.Key,
                                                                                 item.Value,
-                                                                                EachObject[KeyFieldName]);
+                                                                                eachObject[keyFieldName]);
                                                 }
                                                 else
                                                 {
-                                                    CaptureErrors.Add(AttributeValueException.GetExceptionKeyFieldNameError($"{KeyFieldName} not found for MultipleValues Field in {property2.Name}"));
+                                                    captureErrors.Add(AttributeValueException.GetExceptionKeyFieldNameError($"{keyFieldName} not found for MultipleValues Field in {property2.Name}"));
                                                 }
                                             }
                                         }
@@ -105,8 +105,8 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                                         break;
                                 }
                             }
-                            if (buildAttribute.LastException != "" || CaptureErrors.Count>0)
-                                CaptureErrors.Add(buildAttribute.LastException);
+                            if (buildAttribute.LastException != "" || captureErrors.Count>0)
+                                captureErrors.Add(buildAttribute.LastException);
                             else if (this.MessageResponse.Message.Count == 0)
                                 returnAttributes.Add(buildAttribute);
                         }
@@ -116,12 +116,12 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
             } 
             catch(Exception ex)
             {
-                CaptureErrors.Add(AttributeValueException.GetExceptionJSONParseError($": {ex.ToString()}"));
+                captureErrors.Add(AttributeValueException.GetExceptionJSONParseError($": {ex.ToString()}"));
             }
 
             Value = returnList;
-            if ( CaptureErrors.Count > 0 )
-                CaptureErrors.ForEach(x => this.MessageResponse.Message.Add(x.ToString()));
+            if ( captureErrors.Count > 0 )
+                captureErrors.ForEach(x => this.MessageResponse.Message.Add(x.ToString()));
 
         }
     }

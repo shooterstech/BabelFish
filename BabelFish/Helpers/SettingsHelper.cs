@@ -111,7 +111,7 @@ namespace BabelFish.Helpers
         /// <param name="newType"></param>
         /// <param name="setting"></param>
         /// <returns>Type value or null if cannot find/convert</returns>
-        private static dynamic ConvertSettingsType(Type newType, string setting)
+        public static dynamic ConvertSettingsType(Type newType, string setting)
         {
             dynamic r = null;
             try
@@ -127,6 +127,9 @@ namespace BabelFish.Helpers
                 } else if (newType == typeof(float)) {
                     if (float.TryParse(setting, out float tryFloat))
                         r = tryFloat;
+                } else if ( newType == typeof(DateTime)) {
+                    if (DateTime.TryParse(setting, out DateTime tryDateTime))
+                        r = tryDateTime;
                 }
             } finally { }
 
