@@ -177,5 +177,26 @@ namespace BabelFish.Tests
             Assert.IsNotNull(resultName);
             Assert.AreNotEqual(resultName, "");
         }
+
+        [TestMethod]
+        public void OrionMatchAPI_GetMatchParticipantListAuth()
+        {
+            Dictionary<string, string> clientParams = new Dictionary<string, string>()
+            {
+                {"UserName", "test_dev_7@shooterstech.net"},
+                {"PassWord", "abcd1234"},
+            };
+
+            OrionMatchAPIClient _client4 = new OrionMatchAPIClient(xApiKey, clientParams);
+
+            var response = _client4.GetMatchParticipantListAsync("1.3197.2022042721544126.0", true);
+            Assert.IsNotNull(response);
+
+            var result = response.Result.ParticipantList;
+            var resultName = result[0].Participant.DisplayName;
+
+            Assert.IsNotNull(resultName);
+            Assert.AreNotEqual(resultName, "");
+        }
     }
 }

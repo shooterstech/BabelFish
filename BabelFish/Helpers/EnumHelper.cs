@@ -83,6 +83,9 @@ namespace BabelFish.Helpers
         [Description("beta")]
         [EnumMember(Value = "/beta")]
         BETA,
+        [Description("prodtest")]
+        [EnumMember(Value = "/prodtest")]
+        PRODTEST,
         [Description("production")]
         [EnumMember(Value = "/production")]
         PRODUCTION

@@ -22,7 +22,7 @@ namespace BabelFish.Requests
 
         public bool IsShootersTechURI { get; set; } = true;
 
-        public virtual APIStage ApiStage { get; } = APIStage.PRODUCTION;
+        public virtual APIStage ApiStage { get; set; } = APIStage.PRODUCTION;
 
         public virtual SubDomains SubDomain 
         {

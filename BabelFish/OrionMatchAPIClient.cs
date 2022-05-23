@@ -175,17 +175,29 @@ namespace BabelFish {
         /// <summary>
         /// Get Participant List API
         /// </summary>
-        /// <param name="matchid"></param>
-        /// <returns>Match Object</returns>
-        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(string matchid)
+        /// <param name="requestParameters"></param>
+        /// <returns>Match Participant List Object</returns>
+        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(GetParticipantListRequest requestParameters)
         {
-            var requestParameters = new GetParticipantListRequest(matchid);
-
             GetParticipantListResponse response = new GetParticipantListResponse();
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
             return response;
+        }
+
+        /// <summary>
+        /// Get Participant List API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <returns>Match Participant List Object</returns>
+        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(string matchid, bool withAuthentication = false)
+        {
+            var request = new GetParticipantListRequest(matchid);
+
+            request.WithAuthentication = withAuthentication;
+
+            return await GetMatchParticipantListAsync(request).ConfigureAwait(false);
         }
 
     }
