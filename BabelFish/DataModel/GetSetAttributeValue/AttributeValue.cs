@@ -175,7 +175,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// </summary>
         /// <param name="fieldName">Field Name to set</param>
         /// <param name="fieldValue">Field Value to set</param>
-        public void SetFieldName(string fieldName, object fieldValue)
+        public void SetFieldValue(string fieldName, object fieldValue)
         {
             ClearLastException();
             if (this.IsMultipleValue)
@@ -203,7 +203,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <param name="fieldName"></param>
         /// <param name="fieldValue"></param>
         /// <returns>true if no errors, false if fails</returns>
-        public bool TrySetFieldName(string fieldName, object fieldValue)
+        public bool TrySetFieldValue(string fieldName, object fieldValue)
         {
             return attributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue);
         }
@@ -215,7 +215,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <param name="fieldValue">Field value to set</param>
         /// <param name="fieldKey">Field Key to set</param>
         /// <exception cref="Exception"></exception>
-        public void SetFieldName(string fieldName, object fieldValue, string fieldKey)
+        public void SetFieldValue(string fieldName, object fieldValue, string fieldKey)
         {
             ClearLastException();
             if (!this.IsMultipleValue)
@@ -244,7 +244,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
         /// <param name="fieldName"></param>
         /// <param name="fieldValue"></param>
         /// <returns>true if no errors, false if fails</returns>
-        public bool TrySetFieldName(string fieldName, object fieldValue, string fieldKey)
+        public bool TrySetFieldValue(string fieldName, object fieldValue, string fieldKey)
         {
             return attributeValueValidation.ValidateSetFieldData(GetDefintionFields().Where(x => x.FieldName == fieldName).FirstOrDefault(), fieldName, fieldValue, fieldKey);
         }
@@ -286,9 +286,9 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                     if (fieldDefaults.Required == true)
                     {
                         if (keyField == string.Empty)
-                            SetFieldName(fieldDefaults.FieldName, fieldDefaults.DefaultValue);
+                            SetFieldValue(fieldDefaults.FieldName, fieldDefaults.DefaultValue);
                         else if (keyField != string.Empty)
-                            SetFieldName(fieldDefaults.FieldName, fieldDefaults.DefaultValue, keyField);
+                            SetFieldValue(fieldDefaults.FieldName, fieldDefaults.DefaultValue, keyField);
                     }
                 }
             }
@@ -318,7 +318,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
             {
                 foreach (KeyValuePair<string, dynamic> checkValue in checkAttr.Value)
                 {
-                    if (!this.TrySetFieldName(checkValue.Key, checkValue.Value))
+                    if (!this.TrySetFieldValue(checkValue.Key, checkValue.Value))
                         throw new Exception($"Submission Validation Failed: field validation failed for {checkValue.Key}:{checkValue.Value}");
                 }
             }

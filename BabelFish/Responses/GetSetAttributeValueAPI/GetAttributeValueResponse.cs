@@ -75,7 +75,7 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                                                 if (eachObject.ContainsKey(keyFieldName))
                                                 {
                                                     foreach (KeyValuePair<string, dynamic> item in eachObject)
-                                                        buildAttribute.SetFieldName(item.Key,
+                                                        buildAttribute.SetFieldValue(item.Key,
                                                                                 item.Value,
                                                                                 eachObject[keyFieldName]);
                                                 }
@@ -92,7 +92,7 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                                                 JObject o4 = JObject.Parse(property3.Value.ToString());
                                                 foreach (JProperty property4 in o4.Properties())
                                                 {
-                                                    buildAttribute.SetFieldName(property4.Name, property4.Value.ToString());
+                                                    buildAttribute.SetFieldValue(property4.Name, property4.Value.ToString());
                                                 }
                                             }
                                         }
