@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BabelFish;
 using BabelFish.Helpers;
 using BabelFish.DataModel.Definitions;
+using ShootersTech.DataModel.Athena;
 
 namespace BabelFish.Tests {
     [TestClass]
@@ -164,7 +165,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error as no key is passed to a MultipleValues AttributeValue
-                newAttributeValue.SetFieldName("DeviceType", "ios");
+                newAttributeValue.SetFieldValue("DeviceType", "ios");
             }
             catch(Exception ex)
             {
@@ -183,7 +184,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error as no key is passed to a MultipleValues AttributeValue
-                newAttributeValue.SetFieldName("dateOfBirthMispelled", "1970-01-01");
+                newAttributeValue.SetFieldValue("dateOfBirthMispelled", "1970-01-01");
             }
             catch (Exception ex)
             {
@@ -200,7 +201,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error for EvalToBoolFail should fail convert to bool
-                newAttributeValue.SetFieldName("StageScoresUnofficial", "EvalToBoolFail", "abcd");
+                newAttributeValue.SetFieldValue("StageScoresUnofficial", "EvalToBoolFail", "abcd");
             }
             catch (Exception ex)
             {
@@ -217,7 +218,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error for deviceType not in predefined list
-                newAttributeValue.SetFieldName("DeviceType", "ThisIsNotValid", "abcd");
+                newAttributeValue.SetFieldValue("DeviceType", "ThisIsNotValid", "abcd");
             }
             catch (Exception ex)
             {
@@ -234,7 +235,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error for < min value
-                newAttributeValue.SetFieldName("DateOfBirth", "1899-12-31");
+                newAttributeValue.SetFieldValue("DateOfBirth", "1899-12-31");
             }
             catch (Exception ex)
             {
@@ -251,7 +252,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error for > max value
-                newAttributeValue.SetFieldName("DateOfBirth", "2018-01-02");
+                newAttributeValue.SetFieldValue("DateOfBirth", "2018-01-02");
             }
             catch (Exception ex)
             {
@@ -268,7 +269,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error for regex evaluation failure
-                newAttributeValue.SetFieldName("Country", "USofA");
+                newAttributeValue.SetFieldValue("Country", "USofA");
             }
             catch (Exception ex)
             {
@@ -287,7 +288,7 @@ namespace BabelFish.Tests {
             try
             {
                 //This should throw an error as key is passed to a !MultipleValues AttributeValue
-                newAttributeValue.SetFieldName("DateOfBirth", "1970-01-01", "RandomKeyValue");
+                newAttributeValue.SetFieldValue("DateOfBirth", "1970-01-01", "RandomKeyValue");
             }
             catch (Exception ex)
             {
@@ -330,7 +331,7 @@ namespace BabelFish.Tests {
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Date of Birth");
             newAttributeValue.Visibility = BabelFish.Helpers.VisibilityOption.PROTECTED;
-            newAttributeValue.SetFieldName("DateOfBirth", "1970-01-01");
+            newAttributeValue.SetFieldValue("DateOfBirth", "1970-01-01");
 
             DataModel.GetSetAttributeValue.AttributeValueList newAttributeValueList = new DataModel.GetSetAttributeValue.AttributeValueList();
             newAttributeValueList.Attributes.Add(newAttributeValue);
@@ -354,19 +355,19 @@ namespace BabelFish.Tests {
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Date of Birth");
             newAttributeValue.Visibility = BabelFish.Helpers.VisibilityOption.PROTECTED;
-            newAttributeValue.SetFieldName("DateOfBirth", "1970-01-01"); //orig=1980-03-12
+            newAttributeValue.SetFieldValue("DateOfBirth", "1970-01-01"); //orig=1980-03-12
 
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue2 = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Device Token");
             newAttributeValue2.Visibility = BabelFish.Helpers.VisibilityOption.PRIVATE;
             newAttributeValue2.Action = BabelFish.Helpers.AttributeValueActionEnums.UPDATE;
             newAttributeValue2.Visibility = BabelFish.Helpers.VisibilityOption.PRIVATE;
-            newAttributeValue2.SetFieldName("deviceToken", "abcd", "abcd");
-            newAttributeValue2.SetFieldName("DeviceType", "ios", "abcd");
-            newAttributeValue2.SetFieldName("DeviceName", "Erik's ios device", "abcd");
-            newAttributeValue2.SetFieldName("LastLoginDate", "2021-08-10", "abcd");
-            newAttributeValue2.SetFieldName("StageScoresUnofficial", true, "abcd");
-            newAttributeValue2.SetFieldName("EventScoresUnofficial", false, "abcd");
-            newAttributeValue2.SetFieldName("EventScoresOfficial", true, "abcd");
+            newAttributeValue2.SetFieldValue("deviceToken", "abcd", "abcd");
+            newAttributeValue2.SetFieldValue("DeviceType", "ios", "abcd");
+            newAttributeValue2.SetFieldValue("DeviceName", "Erik's ios device", "abcd");
+            newAttributeValue2.SetFieldValue("LastLoginDate", "2021-08-10", "abcd");
+            newAttributeValue2.SetFieldValue("StageScoresUnofficial", true, "abcd");
+            newAttributeValue2.SetFieldValue("EventScoresUnofficial", false, "abcd");
+            newAttributeValue2.SetFieldValue("EventScoresOfficial", true, "abcd");
 
 
             DataModel.GetSetAttributeValue.AttributeValueList newAttributeValueList = new DataModel.GetSetAttributeValue.AttributeValueList();
@@ -393,22 +394,22 @@ namespace BabelFish.Tests {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue =
                 new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Device Token");
             newAttributeValue.Visibility = BabelFish.Helpers.VisibilityOption.PRIVATE;
-            newAttributeValue.SetFieldName("DeviceType", "ios", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("EventScoresUnofficial", false, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("LastLoginDate", "2021-05-09", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("StageScoresUnofficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("EventScoresOfficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("AthenaAtHome", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("deviceToken", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("DeviceName", "A fake ios device", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("DeviceType", "android", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("EventScoresUnofficial", false, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("LastLoginDate", "2021-07-19", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("StageScoresUnofficial", true, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("EventScoresOfficial", true, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("AthenaAtHome", true, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("deviceToken", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
-            newAttributeValue.SetFieldName("DeviceName", "Erik's android device", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("DeviceType", "ios", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("EventScoresUnofficial", false, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("LastLoginDate", "2021-05-09", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("StageScoresUnofficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("EventScoresOfficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("AthenaAtHome", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("deviceToken", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("DeviceName", "A fake ios device", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("DeviceType", "android", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("EventScoresUnofficial", false, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("LastLoginDate", "2021-07-19", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("StageScoresUnofficial", true, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("EventScoresOfficial", true, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("AthenaAtHome", true, "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("deviceToken", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
+            newAttributeValue.SetFieldValue("DeviceName", "Erik's android device", "aksuyveaikufgyaksghvausyrgfkasuvygasgauyrgvkauygvraku");
 
             DataModel.GetSetAttributeValue.AttributeValueList newAttributeValueList = new DataModel.GetSetAttributeValue.AttributeValueList();
             newAttributeValueList.Attributes.Add(newAttributeValue);
@@ -434,14 +435,14 @@ namespace BabelFish.Tests {
                 new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Device Token");
             newAttributeValue.Visibility = BabelFish.Helpers.VisibilityOption.PRIVATE;
             newAttributeValue.Action = BabelFish.Helpers.AttributeValueActionEnums.DELETE;
-            newAttributeValue.SetFieldName("DeviceType", "ios", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("EventScoresUnofficial", false, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("LastLoginDate", "2021-05-09", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("StageScoresUnofficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("EventScoresOfficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("AthenaAtHome", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("deviceToken", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
-            newAttributeValue.SetFieldName("DeviceName", "A fake ios device", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("DeviceType", "ios", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("EventScoresUnofficial", false, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("LastLoginDate", "2021-05-09", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("StageScoresUnofficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("EventScoresOfficial", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("AthenaAtHome", true, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("deviceToken", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
+            newAttributeValue.SetFieldValue("DeviceName", "A fake ios device", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
 
             DataModel.GetSetAttributeValue.AttributeValueList newAttributeValueList = new DataModel.GetSetAttributeValue.AttributeValueList();
             newAttributeValueList.Attributes.Add(newAttributeValue);
@@ -458,6 +459,64 @@ namespace BabelFish.Tests {
 
             foreach (var checkResponseName in objResponse.SetAttributeValues)
                 Assert.AreEqual(checkResponseName.StatusCode, "200");
+        }
+
+        [TestMethod]
+        public void GetThenSetAttributeValue() {
+
+            var dateTimeString = DateTime.UtcNow.ToString( DateTimeFormats.DATETIME_FORMAT );
+
+            List<string> myAttributes = new List<string>()
+            {
+                "v1.0:orion:Test Attribute",
+            };
+            var initGetResponse = _client.GetAttributeValueAsync( myAttributes );
+            Assert.IsNotNull( initGetResponse );
+
+            var attrValueList = initGetResponse.Result.AttributeValues;
+            Assert.IsTrue( attrValueList.Count() == 1 );
+
+            var attrValue = attrValueList[0];
+
+            //Learn the current values
+            var currentStringValue = (string) attrValue.GetFieldValue( "AString" );
+            var currentStringAsIntValue = int.Parse(currentStringValue);
+            var currentIntegerValue = (int) attrValue.GetFieldValue( "AnInteger" );
+
+            //Increment the values
+            var newStringAsIntValue = currentStringAsIntValue + 1;
+            var newStringValue = newStringAsIntValue.ToString();
+            var newIntegerValue = currentIntegerValue + 1;
+
+            //Set them on the attribute value
+            attrValue.SetFieldValue( "AString", currentStringValue );
+            attrValue.SetFieldValue( "AnInteger", currentIntegerValue );
+
+            //Send the Set request to the API
+            var setResponse = _client.SetAttributeValueAsync( attrValue );
+
+            //Check that it got submitted OK.
+            var setAttrValueResponse = setResponse.Result.Value.SetAttributeValues[0];
+            Assert.AreEqual( setAttrValueResponse.StatusCode, "200" );
+
+            //Do a second get, to see if the returned values are what we just set them to.
+            var secondGetResponse = _client.GetAttributeValueAsync( myAttributes );
+            Assert.IsNotNull( secondGetResponse );
+
+            var secondAttrValueList = secondGetResponse.Result.AttributeValues;
+            Assert.IsTrue( secondAttrValueList.Count() == 1 );
+
+            var secondAttrValue = secondAttrValueList[0];
+
+            //Learn the current values
+            var retreivedStringValue = (string)secondAttrValue.GetFieldValue( "AString" );
+            var retreivedStringAsIntValue = int.Parse( retreivedStringValue );
+            var retreivedIntegerValue = (int)secondAttrValue.GetFieldValue( "AnInteger" );
+
+            //Check that the set values equal the get values
+            Assert.AreEqual( retreivedStringValue, newStringValue );
+            Assert.AreEqual( retreivedIntegerValue, newIntegerValue );
+
         }
 
         [TestMethod]
