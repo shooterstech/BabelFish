@@ -66,6 +66,9 @@ namespace BabelFish.Helpers
         [Description("AWS Device Token")]
         [EnumMember(Value = "devicetoken")]
         DeviceToken,
+        [Description("XAPIKey")]
+        [EnumMember(Value = "xapikey")]
+        XApiKey,
     }
 
     /// <summary>
