@@ -87,7 +87,7 @@ namespace BabelFish.Helpers
 
         /// <summary>
         /// RichW's custom code (URL requires privs to Shooter's Tech GitHub)
-        /// https://github.com/shooterstech/Genesis/blob/36be2492dc137d03b1e74c06c14ddbdcf71ce6b7/Genesis.Prime/Services/MatchSearchService.cs0
+        /// https://github.com/shooterstech/Genesis/blob/36be2492dc137d03b1e74c06c14ddbdcf71ce6b7/Genesis.Prime/Services/MatchSearchService.cs
         /// </summary>
         /// <returns>HttpResponseMessage object to parse</returns>
         private async Task<HttpResponseMessage> AwsSignatureV4RichW()
@@ -111,7 +111,7 @@ namespace BabelFish.Helpers
                     msg = new HttpRequestMessage(HttpMethod.Get, url);
                 msg.Headers.Host = msg.RequestUri.Host;
                 msg.Headers.Add("x-amz-date", amzLongDate);
-                msg.Headers.Add("x-api-key", "thekey"); // SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()]);
+                msg.Headers.Add("x-api-key", SettingsHelper.UserSettings[AuthEnums.XApiKey.ToString()]);
                 if ( ! Credentials.IsPermToken() )
                     msg.Headers.Add("X-Amz-Security-Token",Credentials.SessionToken);
                 // Add Body Content
