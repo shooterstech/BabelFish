@@ -489,8 +489,8 @@ namespace BabelFish.Tests {
             var newIntegerValue = currentIntegerValue + 1;
 
             //Set them on the attribute value
-            attrValue.SetFieldValue( "AString", currentStringValue );
-            attrValue.SetFieldValue( "AnInteger", currentIntegerValue );
+            attrValue.SetFieldValue( "AString", newStringValue );
+            attrValue.SetFieldValue( "AnInteger", newIntegerValue );
 
             //Send the Set request to the API
             var setResponse = _client.SetAttributeValueAsync( attrValue );
