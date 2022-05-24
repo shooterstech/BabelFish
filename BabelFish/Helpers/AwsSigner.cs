@@ -111,6 +111,7 @@ namespace BabelFish.Helpers
                     msg = new HttpRequestMessage(HttpMethod.Get, url);
                 msg.Headers.Host = msg.RequestUri.Host;
                 msg.Headers.Add("x-amz-date", amzLongDate);
+                msg.Headers.Add("x-api-key", "thekey"); // SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()]);
                 if ( ! Credentials.IsPermToken() )
                     msg.Headers.Add("X-Amz-Security-Token",Credentials.SessionToken);
                 // Add Body Content
