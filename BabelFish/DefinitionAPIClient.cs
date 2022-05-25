@@ -31,25 +31,32 @@ namespace BabelFish {
             /////Logic checking for caching function
             /// Reference https://github.com/shooterstech/BabelFish/issues/9
             // CHECK IF USER SETTINGS SAY TO ALWAYS GET DEFINITION FRESH'
-            //if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheAlwaysNew") && SettingsHelper.UserSettings["Definitions_CacheAlwaysNew"])
-            //1. Check for object in mem
-            //1a. if exists, check timestamp
-            //1a1. Return if within acceptable timeframe (never check for new Version??)
-            //1a2. Step2 if outside timeframe
-            //1b. if !exists, continue Step2
-            //2. Check for local file
-            //2a. Continue API retrieval if user pref is to always pull new API
-            //2b. If !exists local file, continue API retrieval
-            //2b. If exists local file, check local file timestamp
-            //2b1. Return if within acceptable timeframe (never check for new Version??)
-            //2b2. Step3 if outside timeframe
-            //3. Exists local file + Outside Timeframe
-            //3a. API call for Version
-            //3a1. No Version returned, (ERROR instance: Return local file or continue API retrieval??)
-            //3a2. Version matches local file, return local file
-            //3a3. Version returned ! match local file, continue API retrieval
-            //if (CheckForLocalFile(setName))
-            //    response = GetLocalFileObject();
+            if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheAlwaysNew") && SettingsHelper.UserSettings["Definitions_CacheAlwaysNew"])
+            {
+                //1. Check for object in mem
+                //1a. if exists, check timestamp
+                //1a1. Return if within acceptable timeframe (never check for new Version??)
+                //1a2. Step2 if outside timeframe
+                //1b. if !exists, continue Step2
+                //2. Check for local file
+                //  (Allow user to specify local storage location)
+                //  But follow naming convetion below
+                //  User:    C:\Users\adams\Documents\My Matches\DATABASE\
+                //  System:        DEFINITIONS/[attribute type name]
+                //  System:         filename - v2.0 ntparc Three-Position Air Rifle 3x10.json (colon(:)=space)
+                //2a. Continue API retrieval if user pref is to always pull new API
+                //2b. If !exists local file, continue API retrieval
+                //2b. If exists local file, check local file timestamp
+                //2b1. Return if within acceptable timeframe (never check for new Version??)
+                //2b2. Step3 if outside timeframe
+                //3. Exists local file + Outside Timeframe
+                //3a. API call for Version
+                //3a1. No Version returned, (ERROR instance: Return local file or continue API retrieval??)
+                //3a2. Version matches local file, return local file
+                //3a3. Version returned ! match local file, continue API retrieval
+                //if (CheckForLocalFile(setName))
+                //    response = GetLocalFileObject();
+            }
 
             GetDefinitionRequest requestParameters = new GetDefinitionRequest(setName, type.Description());
 
