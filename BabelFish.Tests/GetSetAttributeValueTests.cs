@@ -465,6 +465,7 @@ namespace BabelFish.Tests {
         public void GetThenSetAttributeValue() {
 
             var dateTimeString = DateTime.UtcNow.ToString( DateTimeFormats.DATETIME_FORMAT );
+            var dateString = DateTime.UtcNow.ToString(DateTimeFormats.DATE_FORMAT);
 
             List<string> myAttributes = new List<string>()
             {
@@ -479,18 +480,33 @@ namespace BabelFish.Tests {
             var attrValue = attrValueList[0];
 
             //Learn the current values
-            var currentStringValue = (string) attrValue.GetFieldValue( "AString" );
+            var currentStringValue = attrValue.GetFieldValue( "AString" ).ToString();
             var currentStringAsIntValue = int.Parse(currentStringValue);
-            var currentIntegerValue = (int) attrValue.GetFieldValue( "AnInteger" );
+            var currentIntegerValue = Convert.ToInt32(attrValue.GetFieldValue( "AnInteger" ));
+            var currentFloatValue = float.Parse(attrValue.GetFieldValue( "AFloat" ).ToString());
+            var currentBoolean = bool.Parse(attrValue.GetFieldValue("ABoolean").ToString());
+            var currentListStrings = attrValue.GetFieldValue( "AListOfStrings" ).ToString();
+            var currentDateTime = attrValue.GetFieldValue( "ADateTime" );
+            var currentDate = attrValue.GetFieldValue("ADate");
 
             //Increment the values
             var newStringAsIntValue = currentStringAsIntValue + 1;
             var newStringValue = newStringAsIntValue.ToString();
             var newIntegerValue = currentIntegerValue + 1;
+            var newFloatValue = currentFloatValue + 1;
+            var newBooleanValue = (currentBoolean) ? false : true;
+            var newListStringsValue = new string[] { "1", "2" };
+            var newDateTimeValue = dateTimeString;
+            var newDateValue = dateString;
 
             //Set them on the attribute value
             attrValue.SetFieldValue( "AString", newStringValue );
             attrValue.SetFieldValue( "AnInteger", newIntegerValue );
+            //float val: attrValue.SetFieldValue( "AFloat", newFloatValue);
+            attrValue.SetFieldValue( "ABoolean", newBooleanValue);
+            attrValue.SetFieldValue( "AListOfStrings", newListStringsValue);
+            attrValue.SetFieldValue( "ADateTime", newDateTimeValue);
+            attrValue.SetFieldValue( "ADate", newDateValue);
 
             //Send the Set request to the API
             var setResponse = _client.SetAttributeValueAsync( attrValue );
@@ -509,14 +525,23 @@ namespace BabelFish.Tests {
             var secondAttrValue = secondAttrValueList[0];
 
             //Learn the current values
-            var retreivedStringValue = (string)secondAttrValue.GetFieldValue( "AString" );
+            var retreivedStringValue = secondAttrValue.GetFieldValue( "AString" ).ToString();
             var retreivedStringAsIntValue = int.Parse( retreivedStringValue );
-            var retreivedIntegerValue = (int)secondAttrValue.GetFieldValue( "AnInteger" );
+            var retreivedIntegerValue = Convert.ToInt32(secondAttrValue.GetFieldValue( "AnInteger" ));
+            var retreivedFloatValue = float.Parse(secondAttrValue.GetFieldValue("AFloat").ToString());
+            var retreivedBoolean = bool.Parse(secondAttrValue.GetFieldValue("ABoolean").ToString());
+            var retreivedListStrings = secondAttrValue.GetFieldValue("AListOfStrings").ToString();
+            var retreivedDateTime = secondAttrValue.GetFieldValue("ADateTime");
+            var retreivedDate = secondAttrValue.GetFieldValue("ADate");
 
             //Check that the set values equal the get values
             Assert.AreEqual( retreivedStringValue, newStringValue );
             Assert.AreEqual( retreivedIntegerValue, newIntegerValue );
-
+            //float val: Assert.AreEqual(retreivedFloatValue, newFloatValue);
+            Assert.AreEqual(retreivedBoolean, newBooleanValue);
+            //list array: Assert.AreEqual(retreivedListStrings, newListStringsValue);
+            //formatting: Assert.AreEqual(retreivedDateTime, newDateTimeValue);
+            Assert.AreEqual(retreivedDate.ToString(), newDateValue);
         }
 
         [TestMethod]
