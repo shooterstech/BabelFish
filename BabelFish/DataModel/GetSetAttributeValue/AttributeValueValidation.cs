@@ -38,15 +38,21 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                 {
                     if (enumMatch == Helpers.DefinitionFieldTypeEnums.CLOSED)
                     {
-                        var allowedValues = definitionToValidate.Values.Select(x => x.Value);
-                        if (!allowedValues.Contains(fieldValue))
+                        var allowedValues = definitionToValidate.Values.Select(x => x.Value).ToList();
+                        bool found = false;
+                        foreach (var val in allowedValues)
+                        {
+                            if (val.ToString() == fieldValue.ToString())
+                                found = true;
+                        }
+                        if ( !found )
                         {
                             lastException = $"Value {fieldValue} not in allowed list of values: {String.Join(", ", allowedValues.ToList())}";
                             return false;
                         }
                     }
                 }
-                else if ( checkType != typeof(Boolean))
+                else if ( checkType == typeof(String) )
                     return false;
 
                 // fieldValue Validation
@@ -60,7 +66,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                         switch (definitionToValidate.ValueType)
                         {
                             case "DATE":
-                                if ( DateTime.Parse((string)fieldValue).Date < DateTime.Parse((string)fieldNameValidation.MinValue))
+                                if ( DateTime.Parse(fieldValue.ToString()).Date < DateTime.Parse(fieldNameValidation.MinValue.ToString()))
                                 {
                                     lastException = definitionToValidate.Validation.ErrorMessage;
                                     return false;
@@ -77,7 +83,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                         switch (definitionToValidate.ValueType)
                         {
                             case "DATE":
-                                if (DateTime.Parse((string)fieldValue).Date > DateTime.Parse((string)fieldNameValidation.MaxValue))
+                                if (DateTime.Parse(fieldValue.ToString()).Date > DateTime.Parse((string)fieldNameValidation.MaxValue.ToString()))
                                 {
                                     lastException = definitionToValidate.Validation.ErrorMessage;
                                     return false;

@@ -465,6 +465,7 @@ namespace BabelFish.Tests {
         public void GetThenSetAttributeValue() {
 
             var dateTimeString = DateTime.UtcNow.ToString( DateTimeFormats.DATETIME_FORMAT );
+            var dateString = DateTime.UtcNow.ToString(DateTimeFormats.DATE_FORMAT);
 
             List<string> myAttributes = new List<string>()
             {
@@ -479,18 +480,34 @@ namespace BabelFish.Tests {
             var attrValue = attrValueList[0];
 
             //Learn the current values
-            var currentStringValue = (string) attrValue.GetFieldValue( "AString" );
+            var currentStringValue = attrValue.GetFieldValue( "AString" ).ToString();
             var currentStringAsIntValue = int.Parse(currentStringValue);
-            var currentIntegerValue = (int) attrValue.GetFieldValue( "AnInteger" );
+            var currentIntegerValue = Convert.ToInt32(attrValue.GetFieldValue( "AnInteger" ));
+            var currentFloatValue = float.Parse(attrValue.GetFieldValue( "AFloat" ).ToString());
+            var currentBoolean = bool.Parse(attrValue.GetFieldValue("ABoolean").ToString());
+            var currentListStrings = attrValue.GetFieldValue( "AListOfStrings" );
+            var currentDateTime = attrValue.GetFieldValue( "ADateTime" );
+            var currentDate = attrValue.GetFieldValue("ADate");
 
             //Increment the values
             var newStringAsIntValue = currentStringAsIntValue + 1;
             var newStringValue = newStringAsIntValue.ToString();
             var newIntegerValue = currentIntegerValue + 1;
+            var newFloatValue = currentFloatValue + 1.2f;
+            var newBooleanValue = (currentBoolean) ? false : true;
+            var newListStringsValue = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(currentListStrings.ToString());
+            newListStringsValue.Add((Convert.ToInt32(newListStringsValue.Last()) + 1).ToString());
+            var newDateTimeValue = dateTimeString;
+            var newDateValue = dateString;
 
             //Set them on the attribute value
             attrValue.SetFieldValue( "AString", newStringValue );
             attrValue.SetFieldValue( "AnInteger", newIntegerValue );
+            attrValue.SetFieldValue( "AFloat", newFloatValue);
+            attrValue.SetFieldValue( "ABoolean", newBooleanValue);
+            attrValue.SetFieldValue( "AListOfStrings", newListStringsValue);
+            attrValue.SetFieldValue( "ADateTime", newDateTimeValue);
+            attrValue.SetFieldValue( "ADate", newDateValue);
 
             //Send the Set request to the API
             var setResponse = _client.SetAttributeValueAsync( attrValue );
@@ -509,14 +526,24 @@ namespace BabelFish.Tests {
             var secondAttrValue = secondAttrValueList[0];
 
             //Learn the current values
-            var retreivedStringValue = (string)secondAttrValue.GetFieldValue( "AString" );
-            var retreivedStringAsIntValue = int.Parse( retreivedStringValue );
-            var retreivedIntegerValue = (int)secondAttrValue.GetFieldValue( "AnInteger" );
+            var retrievedStringValue = secondAttrValue.GetFieldValue( "AString" ).ToString();
+            var retrievedStringAsIntValue = int.Parse( retrievedStringValue );
+            var retrievedIntegerValue = Convert.ToInt32(secondAttrValue.GetFieldValue( "AnInteger" ));
+            var retrievedFloatValue = float.Parse(secondAttrValue.GetFieldValue("AFloat").ToString());
+            var retrievedBoolean = bool.Parse(secondAttrValue.GetFieldValue("ABoolean").ToString());
+            var retrievedListStrings = secondAttrValue.GetFieldValue("AListOfStrings");
+            var retrievedDateTime = secondAttrValue.GetFieldValue("ADateTime");
+            var retrievedDate = secondAttrValue.GetFieldValue("ADate");
 
             //Check that the set values equal the get values
-            Assert.AreEqual( retreivedStringValue, newStringValue );
-            Assert.AreEqual( retreivedIntegerValue, newIntegerValue );
-
+            Assert.AreEqual( retrievedStringValue, newStringValue );
+            Assert.AreEqual( retrievedIntegerValue, newIntegerValue );
+            Assert.AreEqual(retrievedFloatValue, newFloatValue);
+            Assert.AreEqual(retrievedBoolean, newBooleanValue);
+            var retrievedListStringsArray = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(retrievedListStrings.ToString());
+            Assert.AreEqual(retrievedListStringsArray.Intersect(newListStringsValue).Count(), newListStringsValue.Count());
+            Assert.AreEqual(retrievedDateTime.ToString(), DateTimeOffset.Parse(newDateTimeValue.ToString()).UtcDateTime.ToString());
+            Assert.AreEqual(retrievedDate.ToString(), newDateValue);
         }
 
         [TestMethod]
