@@ -493,7 +493,7 @@ namespace BabelFish.Tests {
             var newStringAsIntValue = currentStringAsIntValue + 1;
             var newStringValue = newStringAsIntValue.ToString();
             var newIntegerValue = currentIntegerValue + 1;
-            var newFloatValue = currentFloatValue + 1.2;
+            var newFloatValue = currentFloatValue + 1.2f;
             var newBooleanValue = (currentBoolean) ? false : true;
             var newListStringsValue = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(currentListStrings.ToString());
             newListStringsValue.Add((Convert.ToInt32(newListStringsValue.Last()) + 1).ToString());
