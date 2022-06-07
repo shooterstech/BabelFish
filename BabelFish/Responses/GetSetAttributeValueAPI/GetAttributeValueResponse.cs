@@ -92,7 +92,7 @@ namespace BabelFish.Responses.GetSetAttributeValueAPI
                                                 JObject o4 = JObject.Parse(property3.Value.ToString());
                                                 foreach (JProperty property4 in o4.Properties())
                                                 {
-                                                    buildAttribute.SetFieldValue(property4.Name, property4.Value.ToString());
+                                                    buildAttribute.SetFieldValue(property4.Name, property4.Value);
                                                 }
                                             }
                                         }
