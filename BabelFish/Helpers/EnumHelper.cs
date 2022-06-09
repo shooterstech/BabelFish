@@ -181,5 +181,30 @@ namespace BabelFish.Helpers
 
             return JsonConvert.DeserializeObject<T>( JsonConvert.SerializeObject( source ), deserializeSettings );
         }
+
+        /// <summary>
+        /// Retrieve <T>Enum matching Description text
+        /// https://stackoverflow.com/questions/10955517/get-enum-value-by-description
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static T ParseEnumByDescription<T>(this string value) 
+        {
+            T returnEnum = default(T);
+            foreach (var field in typeof(T).GetFields())
+            {
+                var attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if ( attr != null)
+                {
+                    if ( attr.Description == value)
+                    {
+                        returnEnum = (T)field.GetValue(null);
+                        break;
+                    }
+                }
+            }
+            return returnEnum;
+        }
     }
 }

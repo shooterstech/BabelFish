@@ -4,81 +4,86 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Newtonsoft.Json.Linq;
 using BabelFish.Helpers;
 using BabelFish.Responses;
 using BabelFish.DataModel.Definitions;
 using BabelFish.Requests.DefinitionAPI;
 using BabelFish.Responses.DefinitionAPI;
 
-namespace BabelFish {
-    public class DefinitionAPIClient : APIClient {
+namespace BabelFish
+{
+    public class DefinitionAPIClient : APIClient
+    {
+        DefinitionCacheHelper definitionCacheHelper;
+        private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public DefinitionAPIClient(string apiKey) : base(apiKey) { }
+        public DefinitionAPIClient(string apiKey) : base(apiKey) 
+        {
+            definitionCacheHelper = new DefinitionCacheHelper();
+        }
 
         /// <summary>
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey">Your assigned XApiKey</param>
         /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public DefinitionAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
+        public DefinitionAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) 
+        {
+            definitionCacheHelper = new DefinitionCacheHelper();
+        }
 
         public async Task<GetDefinitionResponse<T>> GetDefinition<T>(Definition.DefinitionType type, SetName setName, GetDefinitionResponse<T> response)
         {
-            /////Logic checking for caching function
-            /// Reference https://github.com/shooterstech/BabelFish/issues/9
-            // CHECK IF USER SETTINGS SAY TO ALWAYS GET DEFINITION FRESH'
-            if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheAlwaysNew") && SettingsHelper.UserSettings["Definitions_CacheAlwaysNew"])
-            {
-                //1. Check for object in mem
-                //1a. if exists, check timestamp
-                //1a1. Return if within acceptable timeframe (never check for new Version??)
-                //1a2. Step2 if outside timeframe
-                //1b. if !exists, continue Step2
-                //2. Check for local file
-                //  (Allow user to specify local storage location)
-                //  But follow naming convetion below
-                //  User:    C:\Users\adams\Documents\My Matches\DATABASE\
-                //  System:        DEFINITIONS/[attribute type name]
-                //  System:         filename - v2.0 ntparc Three-Position Air Rifle 3x10.json (colon(:)=space)
-                //2a. Continue API retrieval if user pref is to always pull new API
-                //2b. If !exists local file, continue API retrieval
-                //2b. If exists local file, check local file timestamp
-                //2b1. Return if within acceptable timeframe (never check for new Version??)
-                //2b2. Step3 if outside timeframe
-                //3. Exists local file + Outside Timeframe
-                //3a. API call for Version
-                //3a1. No Version returned, (ERROR instance: Return local file or continue API retrieval??)
-                //3a2. Version matches local file, return local file
-                //3a3. Version returned ! match local file, continue API retrieval
-                //if (CheckForLocalFile(setName))
-                //    response = GetLocalFileObject();
+            try{
+                // TimeToRun if we use cache
+                DateTime startTime = DateTime.Now;
+
+                // Check cache (memory then file system) for existing, non-expired Definition
+                DefinitionCache? cachedDefinition = definitionCacheHelper.GetCachedDefinition(type, setName);
+
+                if (cachedDefinition != null)
+                {
+                    if (definitionCacheHelper.LastException != "")
+                    {
+                        logger.Error($"Definition Cache Error: {definitionCacheHelper.LastException}");
+                        response.MessageResponse.Message.Add($"Definition Cache Error: {definitionCacheHelper.LastException}");
+                        response.MessageResponse.ResponseCodes.Add("Definition Cache Error");
+                    }
+
+                    //Craft response object
+                    response.Body = JToken.Parse(cachedDefinition.DefinitionJSON);
+                    response.StatusCode = System.Net.HttpStatusCode.OK;
+                    response.TimeToRun = DateTime.Now - startTime;
+                }
+                else
+                {
+                    GetDefinitionRequest requestParameters = new GetDefinitionRequest(setName, type.Description());
+
+                    await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+                    // Save returned definition to cache
+                    if ( response.Body != null )
+                        definitionCacheHelper.SaveDefinitionToCache(response.Body.ToString(), type, setName);
+                }
             }
-
-            GetDefinitionRequest requestParameters = new GetDefinitionRequest(setName, type.Description());
-
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
-
-            //Preloading: set-and-forget async thread for objects => written file -> add to mem
-            //  maybe check if user has AlwaysFetchDefinition=true and don't waste write/mem???
+            catch (Exception ex)
+            {
+                logger.Error($"GetDefinition Error: {ex.Message}");
+                response.MessageResponse.Message.Add($"GetDefinition Error: {ex.Message}");
+                response.MessageResponse.ResponseCodes.Add("GetDefinition Error");
+                response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+            }
 
             return response;
         }
 
-        public async Task<GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
-
-            //OLD METHOD FOR COMPARISON
-            //var definitionType = Definition.DefinitionType.ATTRIBUTE;
-
-            //GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute> response = new Responses.DefinitionAPI.GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>( setName, definitionType );
-            //GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType.Description() );
-
-            //await this.CallAPI(request, response).ConfigureAwait(false);
-
-            //return response;
+        public async Task<GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync(SetName setName)
+        {
             var definitionType = Definition.DefinitionType.ATTRIBUTE;
 
             GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>(setName, definitionType);
@@ -86,7 +91,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<CourseOfFire>> GetCourseOfFireDefinition( SetName setName ) {
+        public async Task<GetDefinitionResponse<CourseOfFire>> GetCourseOfFireDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.COURSEOFFIRE;
 
@@ -95,7 +101,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<EventStyle>> GetEventStyleDefinition( SetName setName ) {
+        public async Task<GetDefinitionResponse<EventStyle>> GetEventStyleDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.EVENTSTYLE;
 
@@ -104,7 +111,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<RankingRule>> GetRankingRuleDefinition( SetName setName ) {
+        public async Task<GetDefinitionResponse<RankingRule>> GetRankingRuleDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.RANKINGRULES;
 
@@ -113,7 +121,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<StageStyle>> GetStageStyleDefinition( SetName setName ) {
+        public async Task<GetDefinitionResponse<StageStyle>> GetStageStyleDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.STAGESTYLE;
 
@@ -122,7 +131,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<TargetCollection>> GetTargetCollectionDefinition( SetName setName ) {
+        public async Task<GetDefinitionResponse<TargetCollection>> GetTargetCollectionDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.TARGETCOLLECTION;
 
@@ -131,7 +141,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<Target>> GetTargetDefinition( SetName setName ) {
+        public async Task<GetDefinitionResponse<Target>> GetTargetDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.TARGET;
 
@@ -140,7 +151,8 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinition (SetName setName) {
+        public async Task<GetDefinitionResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinition(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.SCOREFORMATCOLLECTION;
 
@@ -149,13 +161,14 @@ namespace BabelFish {
             return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
 
-        public async Task<GetDefinitionResponse<ResultListFormat>> GetResultListFormatCollection( SetName setName ) {
+        public async Task<GetDefinitionResponse<ResultListFormat>> GetResultListFormatCollection(SetName setName)
+        {
 
             var definitionType = Definition.DefinitionType.RESULTLISTFORMAT;
 
-            GetDefinitionResponse<ResultListFormat> response = new GetDefinitionResponse<ResultListFormat>( setName, definitionType );
+            GetDefinitionResponse<ResultListFormat> response = new GetDefinitionResponse<ResultListFormat>(setName, definitionType);
 
-            return await GetDefinition( definitionType, setName, response ).ConfigureAwait( false );
+            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
         }
     }
 }

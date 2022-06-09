@@ -81,6 +81,13 @@ MessageResponse.Message holds error Message returned from API List
 
 
 =============================== BabelFish Versioning
+v1.0.10.0
+Implement Definition Caching in local memory/file system
+Add UserSettings values to control cache functionality
+
+v1.0.9.0
+Add Get and Set Attribute Value functionality
+
 v1.0.8.0
 Implement Cognito Authentication on the back end via username/password retrieving RefreshToken, IdToken, AccessToken, DeviceToken.
 Add ApiClient GetAuthTokens() and UpdateAuthTokens() to retrieve/reset authentication tokens in a single session.
