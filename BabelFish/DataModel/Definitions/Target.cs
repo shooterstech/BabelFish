@@ -30,5 +30,12 @@ namespace BabelFish.DataModel.Definitions {
 
         [JsonProperty(Order = 13)]
         public string BackgroundColor { get; set; } = AimingMark.COLOR_WHITE;
+
+        /// <summary>
+        /// The expected distance that this target is shot at. Measured in mm.
+        /// </summary>
+        [JsonProperty( Order = 14 )]
+        [DefaultValue( 10000 )]
+        public int Distance { get; set; } = 10000;
     }
 }
