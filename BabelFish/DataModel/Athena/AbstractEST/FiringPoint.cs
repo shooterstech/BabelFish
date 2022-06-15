@@ -45,13 +45,8 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         public string MonitorStateAddress { get; set; }
 
         /// <summary>
-        /// The expected distance and unit of measure between the target and firing line. For example "10m" or "50ft".
-        /// </summary>
-        public string RangeDistance { get; set; }
-
-        /// <summary>
         /// The actual distance and unit of measure between the target and firing line. For example "10m" or "50ft".
         /// </summary>
-        public string ActualDistance { get; set; }
+        public string RangeDistance { get; set; }
     }
 }
