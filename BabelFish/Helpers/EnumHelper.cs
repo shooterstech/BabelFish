@@ -126,6 +126,12 @@ namespace BabelFish.Helpers
         INTERNAL_STAGE
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum VersionService { none, orion, athena }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public enum VersionLevel { none, alpha, beta, production }
+
     public static class EnumHelper
     {
         /// <summary>
