@@ -81,6 +81,9 @@ MessageResponse.Message holds error Message returned from API List
 
 
 =============================== BabelFish Versioning
+v1.0.11.0
+Add GetVersionAPI -> GetVersion() with VersionService, VersionLevel Enum helpers
+
 v1.0.8.0
 Implement Cognito Authentication on the back end via username/password retrieving RefreshToken, IdToken, AccessToken, DeviceToken.
 Add ApiClient GetAuthTokens() and UpdateAuthTokens() to retrieve/reset authentication tokens in a single session.
