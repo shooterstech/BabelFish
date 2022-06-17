@@ -1,4 +1,5 @@
-﻿using BabelFish.DataModel.Definitions;
+﻿using System.Reflection;
+using BabelFish.DataModel.Definitions;
 
 namespace BabelFish.Helpers
 {
@@ -29,17 +30,20 @@ namespace BabelFish.Helpers
             if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheExpireTime"))
                 prefCacheExpireTime = TimeSpan.FromDays(SettingsHelper.UserSettings["Definitions_CacheExpireTime"]);
 
+            //Default directory to UserSettings
             if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheStorageDirctory"))
                 currentFilePath = $"{SettingsHelper.UserSettings["Definitions_CacheStorageDirctory"].TrimEnd('\\')}\\{DEFINITION_DIR}\\";
             else
             {
                 string userDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
                 string subDir = "\\Documents\\My Matches";
+                // 1st default to Orion user directory, 2nd iuser temp directory, fail over to installation directory
                 if (FileHelper.DirectoryExists($"{userDir}{subDir}"))
                     currentFilePath = $"{userDir}{subDir}\\{DEFINITION_DIR}";
-                else
+                else if (FileHelper.DirectoryExists($"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\appdata\\local\\temp") )
                     currentFilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)}\\appdata\\local\\temp\\{DEFINITION_DIR}";
-                //currentFilePath = $"{System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\{DEFINITION_DIR}";
+                else
+                    currentFilePath = $"{System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\\{DEFINITION_DIR}";
             }
 
             // Load exisitng file system Definitions into memory
