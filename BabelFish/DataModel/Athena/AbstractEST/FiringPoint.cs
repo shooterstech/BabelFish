@@ -43,5 +43,10 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         /// The IOT ThingName and address for the ESTMonitor assigned to this firing point
         /// </summary>
         public string MonitorStateAddress { get; set; }
+
+        /// <summary>
+        /// The actual distance and unit of measure between the target and firing line. For example "10m" or "50ft".
+        /// </summary>
+        public string RangeDistance { get; set; }
     }
 }
