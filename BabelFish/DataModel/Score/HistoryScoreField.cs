@@ -7,15 +7,5 @@ namespace BabelFish.DataModel.Score
 {
     public class HistoryScoreField
     {
-        //public Guid ScoreHistory { get; set; }
-        public string UserId { get; set; }
-
-        public override string ToString()
-        {
-            StringBuilder foo = new StringBuilder();
-            foo.Append("Score for ");
-            foo.Append(UserId);
-            return foo.ToString();
-        }
     }
 }

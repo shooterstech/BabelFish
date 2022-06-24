@@ -33,7 +33,7 @@ namespace BabelFish {
         /// <param name="style"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        public async Task<GetScoreResponse<T>> GetScoreAsync<T>(ScoreStyle scoreStyle, Dictionary<string, List<string>> incomingParameters, bool authenticate, GetScoreResponse<T> response)
+        private async Task<GetScoreResponse<T>> GetScoreAsync<T>(ScoreStyle scoreStyle, Dictionary<string, List<string>> incomingParameters, bool authenticate, GetScoreResponse<T> response)
         {
             GetScoreRequest requestParameters = new GetScoreRequest(scoreStyle, incomingParameters, authenticate);
 

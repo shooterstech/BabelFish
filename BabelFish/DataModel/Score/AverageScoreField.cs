@@ -7,15 +7,19 @@ namespace BabelFish.DataModel.Score
 {
     public class AverageScoreField
     {
-        //public Guid ScoreAverage { get; set; }
-        public string UserId { get; set; }
+        /// <summary>
+        /// Decimal Score
+        /// </summary>
+        public float D { get; set; } = 0;
 
-        public override string ToString()
-        {
-            StringBuilder foo = new StringBuilder();
-            foo.Append("Score for ");
-            foo.Append(UserId);
-            return foo.ToString();
-        }
+        /// <summary>
+        /// Integer Score
+        /// </summary>
+        public float I { get; set; } = 0;
+
+        /// <summary>
+        /// Number of inner tens
+        /// </summary>
+        public float X { get; set; } = 0;
     }
 }

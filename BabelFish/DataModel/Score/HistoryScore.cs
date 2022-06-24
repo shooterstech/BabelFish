@@ -7,6 +7,6 @@ namespace BabelFish.DataModel.Score
 {
     public abstract class HistoryScore
     {
-        public HistoryScoreField ScoreHistory { get; set; }
+        public Dictionary<string, HistoryScoreField> ScoreHistory { get; set; }
     }
 }

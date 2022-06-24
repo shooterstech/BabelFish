@@ -7,6 +7,6 @@ namespace BabelFish.DataModel.Score
 {
     public abstract class AverageScore
     {
-        public AverageScoreField ScoreAverage { get; set; }
+        public Dictionary<string, Dictionary<string,Dictionary<string,AverageScoreField>>> ScoreAverage { get; set; }
     }
 }
