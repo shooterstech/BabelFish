@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BabelFish.Helpers
 {
@@ -25,6 +26,39 @@ namespace BabelFish.Helpers
                 default:
                     return ((JValue)token).Value;
             }
+        }
+
+        public static string ToJsonString(HttpResponseMessage response) 
+        {
+            using (Stream s = response.Content.ReadAsStreamAsync().Result)
+            using (StreamReader sr = new StreamReader(s))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                return JObject.ReadFrom(reader).ToString();
+            }
+        }
+
+        public static string FieldValueFromJson(string stringJson, string fieldName)
+        {
+            string returnValue = string.Empty;
+            List<string> ignoreNames = new List<string>() { "Title", "Message", "ResponseCodes" };
+
+            JObject o = JObject.Parse(stringJson);
+            string otype = o.Type.ToString();
+            foreach (JProperty property in o.Properties())
+            {
+                if (!ignoreNames.Contains(property.Name))
+                {
+                    JObject o2 = JObject.Parse(property.Value.ToString());
+                    foreach (JProperty property2 in o2.Properties())
+                    {
+                        if ( property2.Name == fieldName)
+                            returnValue = property2.Value.ToString();
+                    }
+                }
+            }
+
+            return returnValue;
         }
     }
 }
