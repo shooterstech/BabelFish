@@ -1,6 +1,6 @@
-﻿using BabelFish.DataModel.Definitions;
+﻿using ShootersTech.DataModel.Definitions;
 
-namespace BabelFish.Responses.DefinitionAPI
+namespace ShootersTech.Responses.DefinitionAPI
 {
     public class GetDefinitionResponse<T> : Response<T>
     {

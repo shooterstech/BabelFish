@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.Helpers;
-//using Microsoft.VisualBasic.CompilerServices; //COMMENT OUT FOR .NET Standard 2.0
+using ShootersTech.Helpers;
 
-namespace BabelFish.Requests
+namespace ShootersTech.Requests
 {
     /// <summary>
     /// Abstract base class for all Request Objects

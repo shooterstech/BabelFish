@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using BabelFish.DataModel;
+using ShootersTech.DataModel;
 
-namespace BabelFish.Responses
+namespace ShootersTech.Responses
 {
     /// <summary>
     /// Abstract class representing all Rest API Responses.

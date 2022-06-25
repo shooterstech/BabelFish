@@ -33,9 +33,9 @@ namespace BabelFish {
         /// <param name="style"></param>
         /// <param name="response"></param>
         /// <returns></returns>
-        private async Task<GetScoreResponse<T>> GetScoreAsync<T>(ScoreStyle scoreStyle, Dictionary<string, List<string>> incomingParameters, bool authenticate, GetScoreResponse<T> response)
+        private async Task<GetScoreHistoryResponse<T>> GetScoreAsync<T>(ScoreStyle scoreStyle, Dictionary<string, List<string>> incomingParameters, bool authenticate, GetScoreHistoryResponse<T> response)
         {
-            GetScoreRequest requestParameters = new GetScoreRequest(scoreStyle, incomingParameters, authenticate);
+            GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest(scoreStyle, incomingParameters, authenticate);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -49,14 +49,14 @@ namespace BabelFish {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetScoreResponse<DataModel.Score.EventStyleHistory>> GetEventStyleScoreHistoryAsync(Dictionary<string, List<string>> requestParameters)
+        public async Task<GetScoreHistoryResponse<DataModel.Score.EventStyleHistory>> GetEventStyleScoreHistoryAsync(Dictionary<string, List<string>> requestParameters)
         {
             //FOR NOW.....
             bool withAutnetication = false;
 
             var scoreType = ScoreStyle.EventStyleHistory;
 
-            GetScoreResponse<DataModel.Score.EventStyleHistory> response = new GetScoreResponse<DataModel.Score.EventStyleHistory>(scoreType);
+            GetScoreHistoryResponse<DataModel.Score.EventStyleHistory> response = new GetScoreResponse<DataModel.Score.EventStyleHistory>(scoreType);
 
             return await GetScoreAsync(scoreType, requestParameters, withAutnetication, response).ConfigureAwait(false);
         }
@@ -68,14 +68,14 @@ namespace BabelFish {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetScoreResponse<DataModel.Score.StageStyleHistory>> GetStageStyleScoreHistoryAsync(Dictionary<string, List<string>> requestParameters)
+        public async Task<GetScoreHistoryResponse<DataModel.Score.StageStyleHistory>> GetStageStyleScoreHistoryAsync(Dictionary<string, List<string>> requestParameters)
         {
             //FOR NOW.....
             bool withAutnetication = false;
 
             var scoreType = ScoreStyle.StageStyleHistory;
 
-            GetScoreResponse<DataModel.Score.StageStyleHistory> response = new GetScoreResponse<DataModel.Score.StageStyleHistory>(scoreType);
+            GetScoreHistoryResponse<DataModel.Score.StageStyleHistory> response = new GetScoreResponse<DataModel.Score.StageStyleHistory>(scoreType);
 
             return await GetScoreAsync(scoreType, requestParameters, withAutnetication, response).ConfigureAwait(false);
         }
@@ -87,14 +87,14 @@ namespace BabelFish {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetScoreResponse<DataModel.Score.EventStyleAverage>> GetEventStyleScoreAverageAsync(Dictionary<string, List<string>> requestParameters)
+        public async Task<GetScoreHistoryResponse<DataModel.Score.EventStyleAverage>> GetEventStyleScoreAverageAsync(Dictionary<string, List<string>> requestParameters)
         {
             //FOR NOW.....
             bool withAutnetication = false;
 
             var scoreType = ScoreStyle.EventStyleAverage;
 
-            GetScoreResponse<DataModel.Score.EventStyleAverage> response = new GetScoreResponse<DataModel.Score.EventStyleAverage>(scoreType);
+            GetScoreHistoryResponse<DataModel.Score.EventStyleAverage> response = new GetScoreResponse<DataModel.Score.EventStyleAverage>(scoreType);
 
             return await GetScoreAsync(scoreType, requestParameters, withAutnetication, response).ConfigureAwait(false);
         }

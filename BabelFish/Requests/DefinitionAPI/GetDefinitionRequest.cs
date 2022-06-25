@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.Helpers;
-using BabelFish.DataModel.Definitions;
+using ShootersTech.Helpers;
+using ShootersTech.DataModel.Definitions;
 
-namespace BabelFish.Requests.DefinitionAPI
+namespace ShootersTech.Requests.DefinitionAPI
 {
     public class GetDefinitionRequest : Request
     {

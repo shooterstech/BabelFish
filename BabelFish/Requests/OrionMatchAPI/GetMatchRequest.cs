@@ -12,6 +12,7 @@ namespace BabelFish.Requests.OrionMatchAPI
         {
             MatchID = matchid;
         }
+
         public string MatchID { get; set; } = string.Empty;
 
         /// <inheritdoc />

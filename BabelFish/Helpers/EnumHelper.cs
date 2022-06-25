@@ -126,32 +126,6 @@ namespace BabelFish.Helpers
         INTERNAL_STAGE
     }
 
-    public enum ScoreFormat { DAY }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum ScoreStyle
-    {
-        [Description("")]
-        [EnumMember(Value = "")]
-        BLANK,
-
-        [Description("history")]
-        [EnumMember(Value = "EventStyleHistory")]
-        EventStyleHistory,
-
-        [Description("history")]
-        [EnumMember(Value = "StageSyleHistory")]
-        StageStyleHistory,
-
-        [Description("average")]
-        [EnumMember(Value = "EventStyleAverage")]
-        EventStyleAverage,
-
-        [Description("average")]
-        [EnumMember(Value = "StageSyleAverage")]
-        StageStyleAverage,
-    }
-
     public static class EnumHelper
     {
         /// <summary>
