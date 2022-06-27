@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests.OrionMatchAPI 
+namespace ShootersTech.Requests.OrionMatchAPI 
 {
     public class GetResultCOFDetailRequest : Request
     {
@@ -12,6 +12,7 @@ namespace BabelFish.Requests.OrionMatchAPI
         {
             ResultCOFID = resultCOFId;
         }
+
         public string ResultCOFID { get; set; } = string.Empty;
 
         /// <inheritdoc />

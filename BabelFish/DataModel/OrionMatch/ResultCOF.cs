@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.OrionMatch
+namespace ShootersTech.DataModel.OrionMatch
 {
 
     public class CourseOfFireWrapper
@@ -93,21 +93,10 @@ namespace BabelFish.DataModel.OrionMatch
         [JsonProperty(Order = 12)]
         public string ParentID { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Should be one of the following:
-        /// "Training"
-        /// "Postal Match";
-        /// "Local Match";
-        /// "League Game";
-        /// "League Championship";
-        /// "Regional Match";
-        /// "Regional Championship";
-        /// "National Match";
-        /// "National Championship";
-        /// TODO: Turn this into a enum
-        /// </summary>
+
         [JsonProperty(Order = 13)]
-        public string MatchType { get; set; } = string.Empty;
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public MatchTypeOptions MatchType { get; set; } = string.Empty;
 
         /// <summary>
         /// The Local Date that this score was shot. 

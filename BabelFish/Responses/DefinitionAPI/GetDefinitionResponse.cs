@@ -2,6 +2,10 @@
 
 namespace ShootersTech.Responses.DefinitionAPI
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T">Should be a concrete implementation of abstract class .DataModel.Definitions.Definition</typeparam>
     public class GetDefinitionResponse<T> : Response<T>
     {
 
