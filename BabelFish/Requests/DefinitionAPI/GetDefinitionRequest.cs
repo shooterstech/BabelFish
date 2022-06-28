@@ -10,19 +10,20 @@ namespace ShootersTech.Requests.DefinitionAPI
 {
     public class GetDefinitionRequest : Request
     {
-        public GetDefinitionRequest(SetName? setName = null, string definitionType = "")
+        public GetDefinitionRequest(SetName? setName = null, DefinitionType definitionType = DefinitionType.ATTRIBUTE )
         {
-            AttributeSetName = setName;
-            AttributeDefinitionType = definitionType;
+            SetName = setName;
+            DefinitionType = definitionType;
         }
-        public SetName? AttributeSetName { get; set; } = null;
 
-        public string AttributeDefinitionType { get; set; } = string.Empty;
+        public SetName? SetName { get; set; } = null;
+
+        public DefinitionType DefinitionType { get; set; } = DefinitionType.ATTRIBUTE;
 
         /// <inheritdoc />
         public override string RelativePath
         {
-            get { return $"/definition/{AttributeDefinitionType}/{AttributeSetName}"; }
+            get { return $"/definition/{DefinitionType}/{SetName}"; }
         }
     }
 }

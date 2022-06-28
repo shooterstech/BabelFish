@@ -1,6 +1,6 @@
-﻿using BabelFish.DataModel.Definitions;
+﻿using ShootersTech.DataModel.Definitions;
 
-namespace BabelFish.DataModel.GetSetAttributeValue
+namespace ShootersTech.DataModel.GetSetAttributeValue
 {
     internal class AttributeValueDefinition
     {

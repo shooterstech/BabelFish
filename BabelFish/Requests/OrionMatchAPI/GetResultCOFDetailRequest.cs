@@ -8,6 +8,7 @@ namespace ShootersTech.Requests.OrionMatchAPI
 {
     public class GetResultCOFDetailRequest : Request
     {
+
         public GetResultCOFDetailRequest(string resultCOFId = "")
         {
             ResultCOFID = resultCOFId;

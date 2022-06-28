@@ -5,16 +5,16 @@ using System.Runtime.Serialization;
 //using System.Text.Json.Nodes; //COMMENT OUT FOR .NET Standard 2.0
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using BabelFish.Requests;
-using BabelFish.Responses;
-using BabelFish.Helpers;
-using BabelFish.External;
-using BabelFish.Responses.Authentication.Credentials;
-using BabelFish.Responses.GetSetAttributeValueAPI;
+using ShootersTech.Requests;
+using ShootersTech.Responses;
+using ShootersTech.Helpers;
+using ShootersTech.External;
+using ShootersTech.Responses.Authentication.Credentials;
+using ShootersTech.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 
-namespace BabelFish {
+namespace ShootersTech {
     public abstract class APIClient {
 
         protected APIClient(string xapikey)

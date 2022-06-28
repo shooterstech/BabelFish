@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.DataModel.OrionMatch {
     /// <summary>
     /// Abstract class representing the complete squadding assignment for one participant (athlete or team).
     /// </summary>

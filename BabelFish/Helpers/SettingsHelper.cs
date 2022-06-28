@@ -4,7 +4,7 @@ using BabelFish.DataModel;
 using BabelFish.DataModel.Definitions;
 using System.Collections.Specialized;
 
-namespace BabelFish.Helpers
+namespace ShootersTech.Helpers
 {
     static class SettingsHelper
     {

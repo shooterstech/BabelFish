@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.DataModel.OrionMatch {
 
     /// <summary>
     /// Represents the name and contact information for the match directory.

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ShootersTech.Runtime;
 
-namespace BabelFish.DataModel.GetSetAttributeValue
+namespace ShootersTech.DataModel.GetSetAttributeValue
 {
     [Serializable]
-    public class InvalidBabelFishException : Exception
-    {
+    public class InvalidBabelFishException : ShootersTechException {
         // https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
         public InvalidBabelFishException() : base() { }
         public InvalidBabelFishException(string message) : base(message) { }

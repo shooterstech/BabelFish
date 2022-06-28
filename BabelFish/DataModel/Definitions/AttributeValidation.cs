@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.DataModel.Definitions {
     public class AttributeValidation {
 
         private List<string> errorList = new List<string>();

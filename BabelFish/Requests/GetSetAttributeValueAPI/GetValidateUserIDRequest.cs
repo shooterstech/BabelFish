@@ -1,6 +1,6 @@
-﻿using BabelFish.Helpers;
+﻿using ShootersTech.Helpers;
 
-namespace BabelFish.Requests.GetSetAttributeValueAPI
+namespace ShootersTech.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.DataModel.Definitions {
     [Serializable]
     public class StageStyle : Definition {
 

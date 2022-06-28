@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.DataModel.OrionMatch;
+using ShootersTech.DataModel.OrionMatch;
+using ShootersTech.Requests.OrionMatchAPI;
 
-namespace BabelFish.Responses.OrionMatchAPI
+namespace ShootersTech.Responses.OrionMatchAPI
 {
     public class GetResultCOFDetailResponse : Response<CourseOfFireWrapper> {
+
+        public GetResultCOFDetailResponse( GetResultCOFDetailRequest request ) : base() {
+            this.Request = request;
+        }
 
         /// <summary>
         /// Facade function that returns the same as this.Value
