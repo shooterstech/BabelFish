@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.Requests.ScoreHistory {
+namespace ShootersTech.Requests.ScoreHistoryAPI {
 
     /// <summary>
     /// Time span format options when requestion Score History or Score Average.

@@ -8,6 +8,8 @@ namespace ShootersTech.DataModel.ScoreHistory {
     /// Represents the data returned by a Get score History API Call
     /// Key is the athlete's User ID, which is UUID formatted.
     /// Value is a ScoreHistoryOnDate object.
+    /// 
+    /// T is going to be a concrete implementation of SchreHistoryBase. 
     /// </summary>
     public class ScoreHistory<T> : Dictionary<string, ScoreHistoryOnDate<T>> {
 

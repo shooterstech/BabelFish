@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.Requests.ScoreHistory {
-    internal class GetScoreAverageRequest : GetScoreHistoryAbstractRequest {
+namespace ShootersTech.Requests.ScoreHistoryAPI {
+    public class GetScoreAverageRequest : GetScoreHistoryAbstractRequest {
 
 
         /// <inheritdoc />

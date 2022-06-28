@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ShootersTech.Requests;
 
-namespace ShootersTech.Requests.ScoreHistory {
+namespace ShootersTech.Requests.ScoreHistoryAPI {
     public class GetScoreHistoryRequestException : RequestException {
         public GetScoreHistoryRequestException()
             : base( "Something bad happened!" ) {

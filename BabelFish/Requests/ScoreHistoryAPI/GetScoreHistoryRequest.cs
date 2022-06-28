@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.Requests.ScoreHistory {
+namespace ShootersTech.Requests.ScoreHistoryAPI {
     public class GetScoreHistoryRequest : GetScoreHistoryAbstractRequest {
 
         /// <inheritdoc />

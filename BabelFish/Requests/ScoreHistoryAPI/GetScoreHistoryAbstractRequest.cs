@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.Helpers;
 using ShootersTech.DataModel.Definitions;
 
-namespace ShootersTech.Requests.ScoreHistory
+namespace ShootersTech.Requests.ScoreHistoryAPI
 {
     public class GetScoreHistoryAbstractRequest : Request
     {

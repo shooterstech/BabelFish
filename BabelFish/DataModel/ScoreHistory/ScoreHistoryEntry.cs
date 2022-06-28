@@ -12,7 +12,7 @@ using ShootersTech.DataModel.OrionMatch;
 namespace ShootersTech.DataModel.ScoreHistory {
 
 
-    public abstract class ScoreHistoryEntry {
+    public abstract class ScoreHistoryEntry : ScoreHistoryBase {
 
         /// <summary>
         /// Public constructor

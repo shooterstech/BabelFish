@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using BabelFish.Helpers;
-using BabelFish.Responses;
-using BabelFish.DataModel.Definitions;
-using BabelFish.Requests.DefinitionAPI;
-using BabelFish.Responses.DefinitionAPI;
+using ShootersTech.Helpers;
+using ShootersTech.Responses;
+using ShootersTech.DataModel.Definitions;
+using ShootersTech.Requests.DefinitionAPI;
+using ShootersTech.Responses.DefinitionAPI;
 
 namespace BabelFish {
     public class DefinitionAPIClient : APIClient {
