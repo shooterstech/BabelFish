@@ -12,12 +12,12 @@ using ShootersTech.DataModel.OrionMatch;
 namespace ShootersTech.DataModel.ScoreHistory {
 
 
-    public abstract class ScoreHistoryEntry : IDeserializableAbstractClass {
+    public abstract class ScoreHistoryEntry : ScoreHistoryBase {
 
         /// <summary>
         /// Public constructor
         /// </summary>
-        public ScoreHistoryEntry() { }
+        public ScoreHistoryEntry() : base() { }
 
         /// <summary>
         /// The UUID formatted result cof id for this ScoreHistoryEntry.
@@ -40,8 +40,8 @@ namespace ShootersTech.DataModel.ScoreHistory {
         public string ScoreFormatted { get; set; } = "";
 
         /// <summary>
-        /// The number of shots fired within this ScoreHistoryEntry
+        /// The Local Date that this score was shot.
         /// </summary>
-        public int NumberOfShots { get; set; } = 0;
+        public string Date { get; set; }
     }
 }

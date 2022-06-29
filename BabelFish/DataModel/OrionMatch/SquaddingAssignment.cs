@@ -47,7 +47,7 @@ namespace ShootersTech.DataModel.OrionMatch {
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new SquaddingAssignmentSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( Participant ));
+            return (objectType == typeof( SquaddingAssignment ));
         }
 
         public override object ReadJson( JsonReader reader, Type objectType, object existingValue,

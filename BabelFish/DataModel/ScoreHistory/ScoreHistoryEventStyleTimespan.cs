@@ -5,7 +5,12 @@ using System.Text;
 namespace ShootersTech.DataModel.ScoreHistory {
     public class ScoreHistoryEventStyleTimespan : ScoreHistoryTimespan {
 
-        public ScoreHistoryEventStyleTimespan() { }
+
+        public const int CONCRETE_CLASS_ID = 3;
+
+        public ScoreHistoryEventStyleTimespan() : base() {
+            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        }
 
 
 

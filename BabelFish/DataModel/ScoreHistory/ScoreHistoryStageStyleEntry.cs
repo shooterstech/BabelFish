@@ -9,7 +9,11 @@ namespace ShootersTech.DataModel.ScoreHistory {
     /// </summary>
     public class ScoreHistoryStageStyleEntry : ScoreHistoryEntry {
 
-        public ScoreHistoryStageStyleEntry() { }
+        public const int CONCRETE_CLASS_ID = 2;
+
+        public ScoreHistoryStageStyleEntry() : base() {
+            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        }
 
 
 

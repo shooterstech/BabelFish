@@ -9,10 +9,14 @@ namespace ShootersTech.DataModel.ScoreHistory {
     /// </summary>
     public class ScoreHistoryEventStyleEntry : ScoreHistoryEntry {
 
+        public const int CONCRETE_CLASS_ID = 1;
+
         /// <summary>
         /// Pulic Constructor
         /// </summary>
-        public ScoreHistoryEventStyleEntry() { }
+        public ScoreHistoryEventStyleEntry()  : base() {
+            ConcreteClassId = CONCRETE_CLASS_ID;
+        }
 
 
 
@@ -20,7 +24,5 @@ namespace ShootersTech.DataModel.ScoreHistory {
         /// String, formatted as a SetName, representing the Event Style this ScoreHistryEntry represents
         /// </summary>
         public string EventStyle { get; set; }
-
-        public List<ScoreHistoryEventStyleEntry> StyleScores { get; set; } = new List<ScoreHistoryEventStyleEntry>();
     }
 }

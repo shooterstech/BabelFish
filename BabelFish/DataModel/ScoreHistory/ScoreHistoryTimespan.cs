@@ -6,11 +6,13 @@ using ShootersTech.DataModel.Athena;
 namespace ShootersTech.DataModel.ScoreHistory {
     public abstract class ScoreHistoryTimespan : ScoreHistoryBase {
 
-        public ScoreHistoryTimespan() { }
-
-        public int NumberOfShots { get; set; }
+        public ScoreHistoryTimespan() : base() { }
 
         public Score SumScore { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
 
     }
 }

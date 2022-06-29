@@ -12,7 +12,7 @@ namespace ShootersTech.DataModel.ScoreHistory {
 
         public ScoreAverage() { }
 
-        public List<ScoreAverageEntry> ScoreAverages { get; set; } = new List<ScoreAverageEntry>();
+        public List<ScoreAverageBase> ScoreAverages { get; set; } = new List<ScoreAverageBase>();
 
     }
 }

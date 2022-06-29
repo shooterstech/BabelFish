@@ -8,22 +8,10 @@ using Newtonsoft.Json.Serialization;
 
 namespace ShootersTech.DataModel.ScoreHistory {
 
-    /// <summary>
-    /// Base class for a Score History Response object .... needed so the compiler doesn't scream at us.
-    /// </summary>
     [Serializable]
     [JsonConverter( typeof( ScoreAverageBaseConverter ) )]
-    public abstract class ScoreHistoryBase : IDeserializableAbstractClass {
+    public abstract class ScoreAverageBase : IDeserializableAbstractClass {
 
-        /// <summary>
-        /// The number of shots fired within this ScoreHistoryEntry
-        /// </summary>
-        public int NumberOfShots { get; set; } = 0;
-
-        /// <summary>
-        /// GUID formatted User ID of the athlete who shot this score.
-        /// </summary>
-        public string UserId { get; set; } = string.Empty;
 
         /// <summary>
         /// The value of ConcreteClassId should be set in the Constructor of the
@@ -32,11 +20,12 @@ namespace ShootersTech.DataModel.ScoreHistory {
         /// uncontrolled behavior. 
         /// </summary>
         public int ConcreteClassId { get; set; }
+
     }
 
-    public class ScoreHistoryBaseSpecifiedConcreteClassConverter : DefaultContractResolver {
+    public class ScoreAverageBaseSpecifiedConcreteClassConverter : DefaultContractResolver {
         protected override JsonConverter ResolveContractConverter( Type objectType ) {
-            if (typeof( ScoreHistoryBase ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
+            if (typeof( ScoreAverageBase ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
                 return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
             return base.ResolveContractConverter( objectType );
         }
@@ -52,11 +41,11 @@ namespace ShootersTech.DataModel.ScoreHistory {
     ///
     /// Recipe comes from https://stackoverflow.com/questions/20995865/deserializing-json-to-abstract-class
     /// </summary>
-    public class ScoreHistoryBaseConverter : JsonConverter {
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ScoreHistoryBaseSpecifiedConcreteClassConverter() };
+    public class ScoreAverageBaseConverter : JsonConverter {
+        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ScoreAverageBaseSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( ScoreHistoryBase ));
+            return (objectType == typeof( ScoreAverageBase ));
         }
 
         public override object ReadJson( JsonReader reader, Type objectType, object existingValue,
@@ -67,14 +56,8 @@ namespace ShootersTech.DataModel.ScoreHistory {
             var id = jo["ConcreteClassId"]?.Value<int>();
 
             switch (id) {
-                case ScoreHistoryEventStyleEntry.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<ScoreHistoryEventStyleEntry>( jo.ToString(), SpecifiedSubclassConversion );
-                case ScoreHistoryStageStyleEntry.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<ScoreHistoryStageStyleEntry>( jo.ToString(), SpecifiedSubclassConversion );
-                case ScoreHistoryEventStyleTimespan.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<ScoreHistoryEventStyleTimespan>( jo.ToString(), SpecifiedSubclassConversion );
-                case ScoreHistoryStageStyleTimespan.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<ScoreHistoryStageStyleTimespan>( jo.ToString(), SpecifiedSubclassConversion );
+                case ScoreAverageStageStyleEntry.CONCRETE_CLASS_ID:
+                    return JsonConvert.DeserializeObject<ScoreAverageStageStyleEntry>( jo.ToString(), SpecifiedSubclassConversion );
                 default:
                     break;
             }
