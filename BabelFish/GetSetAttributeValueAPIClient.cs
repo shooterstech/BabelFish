@@ -1,8 +1,8 @@
-﻿using BabelFish.DataModel.GetSetAttributeValue;
-using BabelFish.Requests.GetSetAttributeValueAPI;
-using BabelFish.Responses.GetSetAttributeValueAPI;
+﻿using ShootersTech.DataModel.GetSetAttributeValue;
+using ShootersTech.Requests.GetSetAttributeValueAPI;
+using ShootersTech.Responses.GetSetAttributeValueAPI;
 
-namespace BabelFish {
+namespace ShootersTech {
     public class GetSetAttributeValueAPIClient : APIClient {
 
         /// <summary>
@@ -25,9 +25,10 @@ namespace BabelFish {
         /// <returns>List of Attribute objects</returns>
         public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames)
         {
-            GetAttributeValueResponse response = new GetAttributeValueResponse();
 
             GetAttributeValueRequest requestParameters = new GetAttributeValueRequest(attributeNames);
+
+            GetAttributeValueResponse response = new GetAttributeValueResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -41,9 +42,10 @@ namespace BabelFish {
         /// <returns>ValidateUserId object</returns>
         public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(string userID)
         {
-            GetValidateUserIDResponse response = new GetValidateUserIDResponse();
 
-            GetValidateUserIDRequest requestParameters = new GetValidateUserIDRequest(userID);
+            GetValidateUserIDRequest requestParameters = new GetValidateUserIDRequest( userID );
+
+            GetValidateUserIDResponse response = new GetValidateUserIDResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -57,9 +59,10 @@ namespace BabelFish {
         /// <returns></returns>
         public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue)
         {
-            SetAttributeValueResponse response = new SetAttributeValueResponse();
 
             SetAttributeValueRequest requestParameters = new SetAttributeValueRequest(attributeValue);
+
+            SetAttributeValueResponse response = new SetAttributeValueResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -73,12 +76,11 @@ namespace BabelFish {
         /// <returns></returns>
         public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue)
         {
-            SetAttributeValueResponse response = new SetAttributeValueResponse();
             
-            AttributeValueList NewAttribute = new AttributeValueList();
-            NewAttribute.Attributes.Add(attributeValue);
+            AttributeValueList newAttribute = new AttributeValueList();
+            newAttribute.Attributes.Add(attributeValue);
 
-            response = await SetAttributeValueAsync(NewAttribute).ConfigureAwait(false);
+            var response = await SetAttributeValueAsync(newAttribute).ConfigureAwait(false);
 
             return response;
         }

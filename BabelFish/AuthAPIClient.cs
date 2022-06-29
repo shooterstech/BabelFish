@@ -1,7 +1,7 @@
-﻿using BabelFish.Requests.Authentication;
-using BabelFish.Responses.Authentication;
+﻿using ShootersTech.Requests.Authentication;
+using ShootersTech.Responses.Authentication;
 
-namespace BabelFish.Authentication {
+namespace ShootersTech.Authentication {
     public class AuthAPIClient : APIClient {
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace BabelFish.Authentication {
 
             GetCognitoLoginResponse response = new GetCognitoLoginResponse();
 
-            CognitoLoginRequest requestParameters = new CognitoLoginRequest();
+            GetCognitoLoginRequest requestParameters = new GetCognitoLoginRequest();
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 

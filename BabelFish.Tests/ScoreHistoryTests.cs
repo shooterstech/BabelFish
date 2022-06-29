@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BabelFish;
-using BabelFish.Helpers;
-using BabelFish.DataModel.Definitions;
+using ShootersTech;
+using ShootersTech.Helpers;
+using ShootersTech.DataModel.Definitions;
 using ShootersTech.DataModel.Athena;
+using ShootersTech.Requests.ScoreHistoryAPI;
 
-namespace BabelFish.Tests {
+namespace ShootersTech.Tests {
     [TestClass]
-    public class ScoreTests
+    public class ScoreHistoryTests
     {
         private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
         private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
@@ -19,20 +20,21 @@ namespace BabelFish.Tests {
             {"UserName", "test_dev_7@shooterstech.net"},
             {"PassWord", "abcd1234"},
         };
-        private readonly ScoreAPIClient _client = new ScoreAPIClient(xApiKey);
+        private readonly ScoreHistoryAPIClient _client = new ScoreHistoryAPIClient(xApiKey);
         //private readonly ScoreAPIClient _client = new ScoreAPIClient(xApiKey, clientParams);
 
         [TestMethod]
         public void EventStyleHistorySingle() {
 
-            Dictionary<string, List<string>> requestParameters = new Dictionary<string, List<string>>();
-            requestParameters.Add("user-id", new List<string>() { { "28489692-0a61-470e-aed8-c71b9cfbfe6e" } });
-            requestParameters.Add("start-date", new List<string>() { { "2022-06-19" } });
-            requestParameters.Add("end-date", new List<string>() { { "2022-06-25" } });
-            requestParameters.Add("event-style-def", new List<string>() { { "v1.0:ntparc:Three-Position Precision Air Rifle" } });
-            requestParameters.Add("include-related", new List<string>() { { "true" } });
+            GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest() {
+                UserIds = new List<string>() { "28489692-0a61-470e-aed8-c71b9cfbfe6e" },
+                StartDate = DateTime.Today.AddDays( -7 ),
+                EndDate = DateTime.Today,
+                EventStyle = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" ),
+                IncludeRelated = true
+            };
 
-            var response = _client.GetEventStyleScoreHistoryAsync(requestParameters);
+            var response = _client.GetScoreHistoryAsync(requestParameters);
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
@@ -47,14 +49,17 @@ namespace BabelFish.Tests {
         public void EventStyleHistoryMultiple()
         {
 
-            Dictionary<string, List<string>> requestParameters = new Dictionary<string, List<string>>();
-            requestParameters.Add("user-id", new List<string>() { { "26f32227-d428-41f6-b224-beed7b6e8850" }, { "28489692-0a61-470e-aed8-c71b9cfbfe6e" }, { "6cd811f8-b6be-4adb-998b-acb8caa86035" } });
-            requestParameters.Add("start-date", new List<string>() { { "2022-06-19" } });
-            requestParameters.Add("end-date", new List<string>() { { "2022-06-25" } });
-            requestParameters.Add("event-style-def", new List<string>() { { "v1.0:ntparc:Three-Position Precision Air Rifle" } });
-            requestParameters.Add("include-related", new List<string>() { { "true" } });
+            GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest() {
+                UserIds = new List<string>() { "28489692-0a61-470e-aed8-c71b9cfbfe6e",
+                    "26f32227-d428-41f6-b224-beed7b6e8850",
+                    "6cd811f8-b6be-4adb-998b-acb8caa86035"},
+                StartDate = DateTime.Today.AddDays( -7 ),
+                EndDate = DateTime.Today,
+                EventStyle = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" ),
+                IncludeRelated = true
+            };
 
-            var response = _client.GetEventStyleScoreHistoryAsync(requestParameters);
+            var response = _client.GetScoreHistoryAsync( requestParameters );
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
@@ -69,14 +74,15 @@ namespace BabelFish.Tests {
         public void StageStyleHistorySingle()
         {
 
-            Dictionary<string, List<string>> requestParameters = new Dictionary<string, List<string>>();
-            requestParameters.Add("user-id", new List<string>() { { "28489692-0a61-470e-aed8-c71b9cfbfe6e" } });
-            requestParameters.Add("start-date", new List<string>() { { "2022-06-19" } });
-            requestParameters.Add("end-date", new List<string>() { { "2022-06-25" } });
-            requestParameters.Add("stage-style-def", new List<string>() { { "v1.0:ntparc:Precision Air Rifle Standing" } });
-            requestParameters.Add("include-related", new List<string>() { { "true" } });
+            GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest() {
+                UserIds = new List<string>() { "28489692-0a61-470e-aed8-c71b9cfbfe6e" },
+                StartDate = DateTime.Today.AddDays( -7 ),
+                EndDate = DateTime.Today,
+                StageStyles = new List<SetName>() { SetName.Parse( "v1.0:ntparc:Precision Air Rifle Standing" ) },
+                IncludeRelated = true
+            };
 
-            var response = _client.GetStageStyleScoreHistoryAsync(requestParameters);
+            var response = _client.GetScoreHistoryAsync( requestParameters );
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
@@ -91,14 +97,17 @@ namespace BabelFish.Tests {
         public void StageStyleHistoryMultiple()
         {
 
-            Dictionary<string, List<string>> requestParameters = new Dictionary<string, List<string>>();
-            requestParameters.Add("user-id", new List<string>() { { "28489692-0a61-470e-aed8-c71b9cfbfe6e" } });
-            requestParameters.Add("start-date", new List<string>() { { "2022-06-19" } });
-            requestParameters.Add("end-date", new List<string>() { { "2022-06-25" } });
-            requestParameters.Add("stage-style-def", new List<string>() { { "v1.0:ntparc:Precision Air Rifle Standing" }, { "v1.0:ntparc:Precision Air Rifle Prone" } });
-            requestParameters.Add("include-related", new List<string>() { { "true" } });
+            GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest() {
+                UserIds = new List<string>() { "28489692-0a61-470e-aed8-c71b9cfbfe6e" },
+                StartDate = DateTime.Today.AddDays( -7 ),
+                EndDate = DateTime.Today,
+                StageStyles = new List<SetName>() { SetName.Parse( "v1.0:ntparc:Precision Air Rifle Standing" ),
+                    SetName.Parse( "v1.0:ntparc:Precision Air Rifle Prone" ),
+                    SetName.Parse( "v1.0:ntparc:Precision Air Rifle Kneeling" )},
+                IncludeRelated = true
+            };
 
-            var response = _client.GetStageStyleScoreHistoryAsync(requestParameters);
+            var response = _client.GetScoreHistoryAsync( requestParameters );
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;

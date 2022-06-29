@@ -10,26 +10,35 @@ using ShootersTech.Requests.ScoreHistoryAPI;
 using ShootersTech.Responses.ScoreHistoryAPI;
 
 namespace ShootersTech {
-    public class ScoreAPIClient : APIClient {
+    public class ScoreHistoryAPIClient : APIClient {
 
         /// <summary>
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public ScoreAPIClient(string apiKey) : base(apiKey) { }
+        public ScoreHistoryAPIClient( string apiKey) : base(apiKey) { }
 
         /// <summary>
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey">Your assigned XApiKey</param>
         /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public ScoreAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
+        public ScoreHistoryAPIClient( string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
 
 
-        private async Task<GetScoreHistoryResponse> GetScoreHistoryAsync(GetScoreHistoryRequest requestParameters)
+        public async Task<GetScoreHistoryResponse> GetScoreHistoryAsync(GetScoreHistoryRequest requestParameters)
         {
+            var response = new GetScoreHistoryResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<GetScoreAverageResponse> GetScoreAverageAsync( GetScoreAverageRequest requestParameters ) {
+            var response = new GetScoreAverageResponse( requestParameters );
+
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }

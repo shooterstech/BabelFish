@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Configuration;
-using BabelFish.DataModel;
-using BabelFish.DataModel.Definitions;
+using ShootersTech.DataModel;
+using ShootersTech.DataModel.Definitions;
 using System.Collections.Specialized;
 
 namespace ShootersTech.Helpers

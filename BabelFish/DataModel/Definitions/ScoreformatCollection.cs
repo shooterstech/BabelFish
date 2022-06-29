@@ -12,7 +12,7 @@ namespace ShootersTech.DataModel.Definitions {
     public class ScoreFormatCollection : Definition {
         
         public ScoreFormatCollection() : base() {
-            Type = Definition.DefinitionType.SCOREFORMATCOLLECTION;
+            Type = DefinitionType.SCOREFORMATCOLLECTION;
         }
 
 

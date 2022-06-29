@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ShootersTech.Requests;
-using BabelFish.Requests;
-using BabelFish.Responses;
 
 namespace ShootersTech.Responses
 {

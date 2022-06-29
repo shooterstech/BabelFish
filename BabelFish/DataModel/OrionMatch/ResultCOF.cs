@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ShootersTech.DataModel.OrionMatch
 {
@@ -94,9 +95,9 @@ namespace ShootersTech.DataModel.OrionMatch
         public string ParentID { get; set; } = string.Empty;
 
 
-        [JsonProperty(Order = 13)]
+        [JsonProperty( Order = 13 )]
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public MatchTypeOptions MatchType { get; set; } = string.Empty;
+        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         /// <summary>
         /// The Local Date that this score was shot. 

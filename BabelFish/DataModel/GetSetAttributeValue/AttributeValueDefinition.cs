@@ -56,7 +56,7 @@ namespace ShootersTech.DataModel.GetSetAttributeValue
                 clientDefinition = new DefinitionAPIClient(Helpers.SettingsHelper.UserSettings["XApiKey"], Helpers.SettingsHelper.RevertSettingsFormat());
 
                 Responses.DefinitionAPI.GetDefinitionResponse<Definitions.Attribute> DefinitionResponse =
-                    await clientDefinition.GetAttributeDefinitionAsync(Definitions.SetName.Parse(SetName)).ConfigureAwait(false);
+                    await clientDefinition.GetAttributeDefinitionAsync( Definitions.SetName.Parse( SetName ) ).ConfigureAwait(false);
                 if (DefinitionResponse.Definition != null)
                     AttributeDefinition = DefinitionResponse.Definition;
             }

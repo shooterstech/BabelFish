@@ -59,27 +59,18 @@ namespace ShootersTech {
             return response;
         }
 
-        /*
+        
         public async Task<GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
-            //OLD METHOD FOR COMPARISON
-            //var definitionType = Definition.DefinitionType.ATTRIBUTE;
-
-            //GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute> response = new Responses.DefinitionAPI.GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>( setName, definitionType );
-            //GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType.Description() );
-
-            //await this.CallAPI(request, response).ConfigureAwait(false);
-
-            //return response;
             var definitionType = DefinitionType.ATTRIBUTE;
 
             GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute>(setName, definitionType);
+            GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute>(request);
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            return await GetDefinition(request, response).ConfigureAwait(false);
         }
-        */
+        
 
         public async Task<GetDefinitionResponse<CourseOfFire>> GetCourseOfFireDefinition( SetName setName ) {
 

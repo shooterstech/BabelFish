@@ -8,7 +8,7 @@ using Newtonsoft.Json.Converters;
 using ShootersTech.Requests;
 using ShootersTech.Responses;
 using ShootersTech.Helpers;
-using ShootersTech.External;
+//using ShootersTech.External;
 using ShootersTech.Responses.Authentication.Credentials;
 using ShootersTech.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
@@ -57,7 +57,7 @@ namespace ShootersTech {
         #endregion properties
 
         #region Methods
-        protected async Task CallAPI<T>(Request request, Response<T> response)
+        protected async Task CallAPI<T>(Request request, Response<T> response) where T : new()
         {
             // Setup workflow conditions
             Dictionary<string, bool> FunctionOptions = new Dictionary<string, bool>();

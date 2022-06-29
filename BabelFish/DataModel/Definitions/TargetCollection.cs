@@ -12,7 +12,7 @@ namespace ShootersTech.DataModel.Definitions {
     public class TargetCollection : Definition {
         
         public TargetCollection() : base() {
-            Type = Definition.DefinitionType.TARGETCOLLECTION;
+            Type = DefinitionType.TARGETCOLLECTION;
         }
 
         [OnDeserialized]
