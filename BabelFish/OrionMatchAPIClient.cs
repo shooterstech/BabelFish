@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.DataModel.OrionMatch;
-using BabelFish.Requests.OrionMatchAPI;
-using BabelFish.Responses.OrionMatchAPI;
+using ShootersTech.DataModel.OrionMatch;
+using ShootersTech.Requests.OrionMatchAPI;
+using ShootersTech.Responses.OrionMatchAPI;
 
-namespace BabelFish {
+namespace ShootersTech {
     public class OrionMatchAPIClient : APIClient {
 
         /// <summary>
@@ -29,7 +29,8 @@ namespace BabelFish {
         /// <param name="requestParameters"></param>
         /// <returns>Match Object</returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) {
-            GetMatchResponse response = new GetMatchResponse();
+
+            GetMatchResponse response = new GetMatchResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -55,7 +56,7 @@ namespace BabelFish {
         /// <param name="requestParameters"></param>
         /// <returns>ResultList Object</returns>
         public async Task<GetResultListResponse> GetResultListAsync( GetResultListRequest requestParameters ) {
-            GetResultListResponse response = new GetResultListResponse();
+            GetResultListResponse response = new GetResultListResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -79,7 +80,7 @@ namespace BabelFish {
         /// <returns>Squadding Object</returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
             
-            GetSquaddingListResponse response = new GetSquaddingListResponse();
+            GetSquaddingListResponse response = new GetSquaddingListResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -107,7 +108,7 @@ namespace BabelFish {
         /// <param name="requestParameters"></param>
         /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters) {
-            GetResultCOFDetailResponse response = new GetResultCOFDetailResponse();
+            GetResultCOFDetailResponse response = new GetResultCOFDetailResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -143,7 +144,7 @@ namespace BabelFish {
         /// <param name="requestParameters"></param>
         /// <returns>List<Match> Object</returns>
         public async Task<GetMatchSearchResponse> GetMatchSearchAsync(GetMatchSearchRequest requestParameters) {
-            GetMatchSearchResponse response = new GetMatchSearchResponse();
+            GetMatchSearchResponse response = new GetMatchSearchResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -179,7 +180,7 @@ namespace BabelFish {
         /// <returns>Match Participant List Object</returns>
         public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(GetParticipantListRequest requestParameters)
         {
-            GetParticipantListResponse response = new GetParticipantListResponse();
+            GetParticipantListResponse response = new GetParticipantListResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 

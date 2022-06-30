@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests.OrionMatchAPI 
+namespace ShootersTech.Requests.OrionMatchAPI 
 {
     public class GetResultListRequest : Request
     {
-        public GetResultListRequest(string matchid = "", string listname = "")
-        {
+        public GetResultListRequest(string matchid = "", string listname = "" ) : base() {
             MatchID = matchid;
             ResultListName = listname;
         }

@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests.OrionMatchAPI 
+namespace ShootersTech.Requests.OrionMatchAPI 
 {
     public class GetResultCOFDetailRequest : Request
     {
+
         public GetResultCOFDetailRequest(string resultCOFId = "")
         {
             ResultCOFID = resultCOFId;
         }
+
         public string ResultCOFID { get; set; } = string.Empty;
 
         /// <inheritdoc />

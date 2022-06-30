@@ -22,7 +22,7 @@ namespace ShootersTech.DataModel.Athena.DataFormat
         /// Show Competition shots or sighter shots.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType Competition { get; set; } = BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType.COMPETITION;
+        public ShootersTech.DataModel.Definitions.ShowInSegment.CompetitionType Competition { get; set; } = ShootersTech.DataModel.Definitions.ShowInSegment.CompetitionType.COMPETITION;
 
         /// <summary>
         /// If Competition == SIGHTER, then show all sighters that have a StageLabel equal to, well, this property.
@@ -46,7 +46,7 @@ namespace ShootersTech.DataModel.Athena.DataFormat
         /// When ShotPresentation == "CURRENT", this property holds the EventTyhpe to show. The current EventType is listed under LiveDispaly.CurrentEvents.
         /// NOTE, only relavent during a live display of shots.
         /// </summary>
-        public BabelFish.DataModel.Definitions.Event.EventtType EventType { get; set; } = BabelFish.DataModel.Definitions.Event.EventtType.NONE;
+        public ShootersTech.DataModel.Definitions.Event.EventtType EventType { get; set; } = ShootersTech.DataModel.Definitions.Event.EventtType.NONE;
 
         public override string ToString()
         {

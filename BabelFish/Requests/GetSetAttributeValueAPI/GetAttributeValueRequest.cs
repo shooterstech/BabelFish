@@ -1,4 +1,4 @@
-﻿namespace BabelFish.Requests.GetSetAttributeValueAPI
+﻿namespace ShootersTech.Requests.GetSetAttributeValueAPI
 {
     public class GetAttributeValueRequest : Request
     {

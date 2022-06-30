@@ -33,6 +33,6 @@ namespace ShootersTech.DataModel.Athena.DataFormat
         /// <summary>
         /// Describites what (text) scores should be displayed along witgh the target image graphics.
         /// </summary>
-        public BabelFish.DataModel.Definitions.AbbreviatedFormat AbbreviatedFormat { get; set; } = new BabelFish.DataModel.Definitions.AbbreviatedFormat();
+        public ShootersTech.DataModel.Definitions.AbbreviatedFormat AbbreviatedFormat { get; set; } = new ShootersTech.DataModel.Definitions.AbbreviatedFormat();
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.OrionMatch
+namespace ShootersTech.DataModel.OrionMatch
 {
 
     public class MatchSearch

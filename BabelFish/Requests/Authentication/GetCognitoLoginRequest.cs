@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.Requests.Authentication
+namespace ShootersTech.Requests.Authentication
 {
-    public class CognitoLoginRequest : Request
+    public class GetCognitoLoginRequest : Request
     {
-        public CognitoLoginRequest()
+        public GetCognitoLoginRequest()
         {
             WithAuthentication = true;
             IsShootersTechURI = false;

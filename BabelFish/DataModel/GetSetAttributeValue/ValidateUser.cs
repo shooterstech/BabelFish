@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace BabelFish.DataModel.GetSetAttributeValue {
+namespace ShootersTech.DataModel.GetSetAttributeValue {
 
     [Serializable]
     public class ValidateUserID

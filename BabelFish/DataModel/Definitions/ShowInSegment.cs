@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BabelFish.DataModel.Definitions
+namespace ShootersTech.DataModel.Definitions
 {
     public class ShowInSegment
     {

@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BabelFish.Helpers
+namespace ShootersTech.Helpers
 {
     /// <summary>
     /// 
@@ -124,32 +124,6 @@ namespace BabelFish.Helpers
         [Description("internalapi-stage")]
         [EnumMember(Value = "internalapi-stage")]
         INTERNAL_STAGE
-    }
-
-    public enum ScoreFormat { DAY }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum ScoreStyle
-    {
-        [Description("")]
-        [EnumMember(Value = "")]
-        BLANK,
-
-        [Description("history")]
-        [EnumMember(Value = "EventStyleHistory")]
-        EventStyleHistory,
-
-        [Description("history")]
-        [EnumMember(Value = "StageSyleHistory")]
-        StageStyleHistory,
-
-        [Description("average")]
-        [EnumMember(Value = "EventStyleAverage")]
-        EventStyleAverage,
-
-        [Description("average")]
-        [EnumMember(Value = "StageSyleAverage")]
-        StageStyleAverage,
     }
 
     public static class EnumHelper

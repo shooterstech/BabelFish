@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests.OrionMatchAPI 
+namespace ShootersTech.Requests.OrionMatchAPI 
 {
     public class GetMatchRequest : Request
     {
@@ -12,6 +12,7 @@ namespace BabelFish.Requests.OrionMatchAPI
         {
             MatchID = matchid;
         }
+
         public string MatchID { get; set; } = string.Empty;
 
         /// <inheritdoc />

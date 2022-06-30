@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.DataModel.OrionMatch {
     /// <summary>
     /// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
     /// </summary>

@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.DataModel.Definitions {
     public class ResultListFormat {
 
         public enum LinkToOption {

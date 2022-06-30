@@ -12,9 +12,9 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
 using Amazon.CognitoIdentityProvider.Model;
-using BabelFish.Authentication;
+using ShootersTech.Authentication;
 
-namespace BabelFish.Tests {
+namespace ShootersTech.Tests {
     [TestClass]
     public class CognitoTest {
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.DataModel.OrionMatch {
     [Serializable]
     /// <summary>
     /// A SquaddingAssignmentFiringPoint represents the complete squadding of one participant (athlete or team) in a squadding Event, where the participant is firing on a single target.

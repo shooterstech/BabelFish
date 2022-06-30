@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.DataModel.Definitions {
     /// <summary>
     /// A SegmentGroup is a series of Segments and Commands for one portion of a COURSE OF FIRE. A Segment 
     /// defines the controls the athlete and target have. Commands define the Range Officer script and the controls over the targets.
