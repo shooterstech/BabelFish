@@ -25,6 +25,10 @@ namespace ShootersTech.DataModel.ScoreHistory {
         /// </summary>
         public string UserId { get; set; } = string.Empty;
 
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
+
         /// <summary>
         /// The value of ConcreteClassId should be set in the Constructor of the
         /// Concrete class. Users

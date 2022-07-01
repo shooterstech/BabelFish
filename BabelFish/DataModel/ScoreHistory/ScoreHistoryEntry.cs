@@ -38,10 +38,5 @@ namespace ShootersTech.DataModel.ScoreHistory {
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         public string ScoreFormatted { get; set; } = "";
-
-        /// <summary>
-        /// The Local Date that this score was shot.
-        /// </summary>
-        public string Date { get; set; }
     }
 }
