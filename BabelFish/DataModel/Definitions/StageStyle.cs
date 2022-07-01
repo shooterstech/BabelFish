@@ -10,7 +10,7 @@ namespace ShootersTech.DataModel.Definitions {
     public class StageStyle : Definition {
 
         public StageStyle() : base() {
-            Type = Definition.DefinitionType.STAGESTYLE;
+            Type = DefinitionType.STAGESTYLE;
         }
 
         [OnDeserialized]

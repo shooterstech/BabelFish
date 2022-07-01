@@ -2,9 +2,9 @@ using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BabelFish;
+using ShootersTech;
 
-namespace BabelFish.Tests
+namespace ShootersTech.Tests
 {
     [TestClass]
     public class OrionMatchUnitTests

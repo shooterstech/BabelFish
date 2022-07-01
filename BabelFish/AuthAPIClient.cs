@@ -19,7 +19,7 @@ namespace ShootersTech.Authentication {
 
         public async Task<GetCognitoLoginResponse> CognitoLoginAsync() {
 
-            GetCognitoLoginResponse response = new GetCognitoLoginResponse();
+            GetCognitoLoginResponse response = new GetCognitoLoginResponse(new GetCognitoLoginRequest());
 
             GetCognitoLoginRequest requestParameters = new GetCognitoLoginRequest();
 

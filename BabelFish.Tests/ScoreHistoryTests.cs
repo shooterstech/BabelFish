@@ -38,7 +38,7 @@ namespace ShootersTech.Tests {
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            var objResponse = taskResult.Score;
+            var objResponse = taskResult.ScoreHistory;
             Assert.IsNotNull(objResponse);
             var msgResponse = taskResult.MessageResponse;
             Assert.IsNotNull(msgResponse);
@@ -63,7 +63,7 @@ namespace ShootersTech.Tests {
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            var objResponse = taskResult.Score;
+            var objResponse = taskResult.ScoreHistory;
             Assert.IsNotNull(objResponse);
             var msgResponse = taskResult.MessageResponse;
             Assert.IsNotNull(msgResponse);
@@ -86,7 +86,7 @@ namespace ShootersTech.Tests {
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            var objResponse = taskResult.Score;
+            var objResponse = taskResult.ScoreHistory;
             Assert.IsNotNull(objResponse);
             var msgResponse = taskResult.MessageResponse;
             Assert.IsNotNull(msgResponse);
@@ -111,7 +111,7 @@ namespace ShootersTech.Tests {
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            var objResponse = taskResult.Score;
+            var objResponse = taskResult.ScoreHistory;
             Assert.IsNotNull(objResponse);
             var msgResponse = taskResult.MessageResponse;
             Assert.IsNotNull(msgResponse);
@@ -127,11 +127,13 @@ namespace ShootersTech.Tests {
             requestParameters.Add("end-date", new List<string>() { { "2022-06-25" } });
             requestParameters.Add("event-style-def", new List<string>() { { "v1.0:ntparc:Three-Position Precision Air Rifle" } });
 
-            var response = _client.GetEventStyleScoreAverageAsync(requestParameters);
+            GetScoreAverageRequest requestObject = new GetScoreAverageRequest();
+
+            var response = _client.GetScoreAverageAsync(requestObject);
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;
-            var objResponse = taskResult.Score;
+            var objResponse = taskResult.ScoreAverage;
             Assert.IsNotNull(objResponse);
             var msgResponse = taskResult.MessageResponse;
             Assert.IsNotNull(msgResponse);
