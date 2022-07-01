@@ -11,7 +11,7 @@ namespace ShootersTech.DataModel.Definitions {
     public class Target : Definition {
 
         public Target() : base() {
-            Type = Definition.DefinitionType.TARGET;
+            Type = DefinitionType.TARGET;
         }
 
         [OnDeserialized]

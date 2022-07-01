@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ShootersTech.Helpers;
 using ShootersTech.DataModel.Definitions;
+using System.Runtime.Serialization;
 
 namespace ShootersTech.Requests.DefinitionAPI
 {
@@ -23,7 +24,7 @@ namespace ShootersTech.Requests.DefinitionAPI
         /// <inheritdoc />
         public override string RelativePath
         {
-            get { return $"/definition/{DefinitionType}/{SetName}"; }
+            get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(DefinitionType).Value}/{SetName}"; }
         }
     }
 }

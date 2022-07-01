@@ -129,7 +129,7 @@ namespace ShootersTech {
         /// </summary>
         /// <returns>List<MatchLocation> Object</returns>
         public async Task<GetMatchLocationsResponse> GetMatchLocationsAsync() {
-            GetMatchLocationsResponse response = new GetMatchLocationsResponse();
+            GetMatchLocationsResponse response = new GetMatchLocationsResponse(new GetMatchLocationsRequest());
 
             var request = new GetMatchLocationsRequest();
             
