@@ -4,7 +4,7 @@ using ShootersTech.DataModel.ScoreHistory;
 using ShootersTech.Requests.ScoreHistoryAPI;
 
 namespace ShootersTech.Responses.ScoreHistoryAPI {
-    public class GetScoreHistoryResponse : Response<ScoreHistory>
+    public class GetScoreHistoryResponse : Response<ScoreHistoryWrapper>
     {
 
         public GetScoreHistoryResponse( GetScoreHistoryRequest request) {
@@ -13,7 +13,7 @@ namespace ShootersTech.Responses.ScoreHistoryAPI {
 
         public ScoreHistory ScoreHistory
         {
-            get { return Value; }
+            get { return Value.ScoreHistory; }
         }
     }
 }

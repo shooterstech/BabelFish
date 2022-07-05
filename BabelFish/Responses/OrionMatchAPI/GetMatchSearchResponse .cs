@@ -8,7 +8,7 @@ using ShootersTech.Requests.OrionMatchAPI;
 
 namespace ShootersTech.Responses.OrionMatchAPI
 {
-    public class GetMatchSearchResponse : Response<MatchSearch>
+    public class GetMatchSearchResponse : Response<MatchSearchWrapper>
     {
 
         public GetMatchSearchResponse( GetMatchSearchRequest request ) : base() {

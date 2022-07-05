@@ -8,14 +8,14 @@ using ShootersTech.Requests.ScoreHistoryAPI;
 
 namespace ShootersTech.Responses.ScoreHistoryAPI {
 
-    public class GetScoreAverageResponse : Response<ScoreAverage> {
+    public class GetScoreAverageResponse : Response<ScoreAverageWrapper> {
 
         public GetScoreAverageResponse( GetScoreAverageRequest request) {
             this.Request = request;
         }
 
         public ScoreAverage ScoreAverage {
-            get { return Value; }
+            get { return Value.ScoreAverage; }
         }
     }
 }
