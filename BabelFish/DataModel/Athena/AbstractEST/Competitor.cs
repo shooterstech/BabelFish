@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace ShootersTech.DataModel.Athena.AbstractEST
 {
@@ -29,5 +31,8 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         public string MatchID { get; set; }
 
         public string Relay { get; set; }
+
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public ShootersTech.DataModel.OrionMatch.VisibilityOption Privacy { get; set; }
     }
 }

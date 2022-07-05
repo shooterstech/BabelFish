@@ -30,7 +30,7 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         }
 
 
-        [JsonProperty(Order = 2)]
+        [JsonProperty( Order = 2 )]
         public Marquee Marquee { get; set; }
 
         public ActiveViewValues ActiveViewValues { get; set; }
@@ -38,16 +38,16 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         /// <summary>
         /// Formatted as a SetName
         /// </summary>
-        [JsonProperty(Order = 8)]
+        [JsonProperty( Order = 8 )]
         public CourseOfFire CourseOfFire { get; set; }
 
-        [JsonProperty(Order = 9)]
+        [JsonProperty( Order = 9 )]
         public RangeTimer RangeTimer { get; set; }
 
-        [JsonProperty(Order = 10)]
+        [JsonProperty( Order = 10 )]
         public Logging Logging { get; set; }
 
-        [JsonProperty(Order = 11)]
-        public List<string> AssignedFiringPoints { get; set; }
+        [JsonProperty( Order = 11 )]
+        public List<AssignedTarget> AssignedTargets { get; set; }
     }
 }
