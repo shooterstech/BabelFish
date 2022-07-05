@@ -31,4 +31,8 @@
 	</None>
 </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DataModel\Athena\ESTUnitCommands\" />
+  </ItemGroup>
+
 </Project>
