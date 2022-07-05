@@ -27,11 +27,13 @@ namespace ShootersTech.Tests {
         public void EventStyleHistorySingle() {
 
             GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest() {
-                UserIds = new List<string>() { "28489692-0a61-470e-aed8-c71b9cfbfe6e" },
-                StartDate = DateTime.Today.AddDays( -7 ),
+                //UserIds = new List<string>() { "28489692-0a61-470e-aed8-c71b9cfbfe6e" },
+                UserIds = new List<string>() { "26f32227-d428-41f6-b224-beed7b6e8850" },
+                StartDate = DateTime.Today.AddDays( -14 ),
                 EndDate = DateTime.Today,
                 EventStyle = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" ),
-                IncludeRelated = true
+                IncludeRelated = true,
+                Limit = 100,
             };
 
             var response = _client.GetScoreHistoryAsync(requestParameters);
@@ -121,15 +123,42 @@ namespace ShootersTech.Tests {
         [TestMethod]
         public void EventStyleAverageSingle()
         {
-            Dictionary<string, List<string>> requestParameters = new Dictionary<string, List<string>>();
-            requestParameters.Add("user-id", new List<string>() { { "28489692-0a61-470e-aed8-c71b9cfbfe6e" } });
-            requestParameters.Add("start-date", new List<string>() { { "2022-06-19" } });
-            requestParameters.Add("end-date", new List<string>() { { "2022-06-25" } });
-            requestParameters.Add("event-style-def", new List<string>() { { "v1.0:ntparc:Three-Position Precision Air Rifle" } });
+            GetScoreAverageRequest requestParameters = new GetScoreAverageRequest()
+            {
+                UserIds = new List<string>() { "26f32227-d428-41f6-b224-beed7b6e8850" },
+                StartDate = DateTime.Today.AddDays(-7),
+                EndDate = DateTime.Today,
+                EventStyle = SetName.Parse("v1.0:ntparc:Three-Position Precision Air Rifle"),
+                IncludeRelated = true,
+            };
 
-            GetScoreAverageRequest requestObject = new GetScoreAverageRequest();
+            var response = _client.GetScoreAverageAsync(requestParameters);
+            Assert.IsNotNull(response);
 
-            var response = _client.GetScoreAverageAsync(requestObject);
+            var taskResult = response.Result;
+            var objResponse = taskResult.ScoreAverage;
+            Assert.IsNotNull(objResponse);
+            var msgResponse = taskResult.MessageResponse;
+            Assert.IsNotNull(msgResponse);
+            Assert.IsTrue(msgResponse.Message.Count == 0);
+        }
+
+        [TestMethod]
+        public void StageStyleAverageSingle()
+        {
+            GetScoreAverageRequest requestParameters = new GetScoreAverageRequest()
+            {
+                UserIds = new List<string>() { "26f32227-d428-41f6-b224-beed7b6e8850" },
+                StartDate = DateTime.Today.AddDays(-7),
+                EndDate = DateTime.Today,
+                StageStyles = new List<SetName>() { SetName.Parse( "v1.0:ntparc:Precision Air Rifle Standing" ),
+//                    SetName.Parse( "v1.0:ntparc:Precision Air Rifle Prone" ),
+//                    SetName.Parse( "v1.0:ntparc:Precision Air Rifle Kneeling" )
+                },
+                //IncludeRelated = true,
+            };
+
+            var response = _client.GetScoreAverageAsync(requestParameters);
             Assert.IsNotNull(response);
 
             var taskResult = response.Result;

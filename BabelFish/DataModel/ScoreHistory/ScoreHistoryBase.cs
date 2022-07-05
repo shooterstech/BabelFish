@@ -12,7 +12,7 @@ namespace ShootersTech.DataModel.ScoreHistory {
     /// Base class for a Score History Response object .... needed so the compiler doesn't scream at us.
     /// </summary>
     [Serializable]
-    [JsonConverter( typeof( ScoreAverageBaseConverter ) )]
+    [JsonConverter( typeof( ScoreHistoryBaseConverter ) )]
     public abstract class ScoreHistoryBase : IDeserializableAbstractClass {
 
         /// <summary>

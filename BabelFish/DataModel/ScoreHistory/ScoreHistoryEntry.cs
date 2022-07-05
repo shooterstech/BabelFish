@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using ShootersTech.DataModel.OrionMatch;
+using ShootersTech.DataModel.Athena;
 
 namespace ShootersTech.DataModel.ScoreHistory {
 
@@ -38,5 +39,7 @@ namespace ShootersTech.DataModel.ScoreHistory {
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         public string ScoreFormatted { get; set; } = "";
+
+        public Athena.Score Score { get; set; }
     }
 }

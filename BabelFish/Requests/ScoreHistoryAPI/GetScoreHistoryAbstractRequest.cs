@@ -108,10 +108,34 @@ namespace ShootersTech.Requests.ScoreHistoryAPI
                 if (! WithAuthentication)
                     PublicOnly = true;
 
-                var parameterList = new Dictionary<string, List<string>>();
-                //TODO construct the parameter list
+                if (PublicOnly && (UserIds == null || UserIds.Count == 0))
+                    throw new GetScoreHistoryRequestException("UserIds required for Non-Authenticated request.");
 
-                throw new NotImplementedException();
+                //TODO: ScoreHistory Private Test in Postman retrieved UserId parameter without error,
+                // remove to retrieve authenticated user, or throw error?
+                //  or possibly re-word UserIds Summary to explain functionality?
+                //    Reads like Authenticated Id included whether list is populated or not but Postman only returning submitted UserId, not both
+                //Asked in gMeet 20220705, DrA will confirm desired functionality
+                ////if (!PublicOnly && (UserIds != null && UserIds.Count > 0))
+                ////    UserIds.Clear();
+                ////    throw new GetScoreHistoryRequestException("Can not set UserIds with Authenticated request.");
+
+                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+
+                if (eventStyle != null)
+                    parameterList.Add("event-style-def", new List<string>() { eventStyle.ToString() });
+
+                if (stageStyles.Count > 0)
+                    parameterList.Add("stage-style-def", stageStyles.Select(s => s.ToString()).ToList());
+
+                if (UserIds != null && UserIds.Count > 0)
+                    parameterList.Add("user-id", UserIds);
+
+                parameterList.Add("limit", new List<string>() { Limit.ToString() });
+                parameterList.Add("start-date", new List<string>() { StartDate.ToString(ShootersTech.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("end-date", new List<string>() { EndDate.ToString(ShootersTech.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("include-related", new List<string>() { IncludeRelated.ToString() });
+                parameterList.Add("format", new List<string>() { Format.ToString() });
 
                 return parameterList;
             }
