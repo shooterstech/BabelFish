@@ -61,6 +61,11 @@ namespace ShootersTech.Requests.ScoreHistoryAPI
         public uint Limit { get; set; } = 100;
 
         /// <summary>
+        /// Submit ContinuationToken from Response when using Limit parameter
+        /// </summary>
+        public override string ContinuationToken { get => base.ContinuationToken; set => base.ContinuationToken = value; }
+
+        /// <summary>
         /// The start date of the range of dates to return.
         /// The default value is 7 days prior to Today.
         /// </summary>
@@ -93,32 +98,14 @@ namespace ShootersTech.Requests.ScoreHistoryAPI
         /// </summary>
         public ScoreHistoryFormatOptions Format { get; set; } = ScoreHistoryFormatOptions.DAY;
 
-        /// <summary>
-        /// Gets or Sets if the response should only return Publicly avaliable scores. 
-        /// If .WithAuthentication is set to false, PublicOnly will always be sent as true.
-        /// </summary>
-        public bool PublicOnly { get; set; } = true;
-
         /// <inheritdoc />
+        /// <exception cref="GetScoreHistoryRequestException">Thrown if call WithAuthentication=false and no UserIds set.</exception>
         public override Dictionary<string, List<string>> QueryParameters
         {
             get
             {
-                //If .WithAuthentication is false, always send .PublicOnly as true
-                if (! WithAuthentication)
-                    PublicOnly = true;
-
-                if (PublicOnly && (UserIds == null || UserIds.Count == 0))
+                if (!WithAuthentication && (UserIds == null || UserIds.Count == 0))
                     throw new GetScoreHistoryRequestException("UserIds required for Non-Authenticated request.");
-
-                //TODO: ScoreHistory Private Test in Postman retrieved UserId parameter without error,
-                // remove to retrieve authenticated user, or throw error?
-                //  or possibly re-word UserIds Summary to explain functionality?
-                //    Reads like Authenticated Id included whether list is populated or not but Postman only returning submitted UserId, not both
-                //Asked in gMeet 20220705, DrA will confirm desired functionality
-                ////if (!PublicOnly && (UserIds != null && UserIds.Count > 0))
-                ////    UserIds.Clear();
-                ////    throw new GetScoreHistoryRequestException("Can not set UserIds with Authenticated request.");
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
 
@@ -130,6 +117,9 @@ namespace ShootersTech.Requests.ScoreHistoryAPI
 
                 if (UserIds != null && UserIds.Count > 0)
                     parameterList.Add("user-id", UserIds);
+
+                if (ContinuationToken != null && ContinuationToken != string.Empty)
+                    parameterList.Add("continuation-token", new List<string>() { ContinuationToken });
 
                 parameterList.Add("limit", new List<string>() { Limit.ToString() });
                 parameterList.Add("start-date", new List<string>() { StartDate.ToString(ShootersTech.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });

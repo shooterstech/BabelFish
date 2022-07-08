@@ -36,6 +36,7 @@ namespace ShootersTech {
         }
 
         public async Task<GetScoreAverageResponse> GetScoreAverageAsync( GetScoreAverageRequest requestParameters ) {
+
             var response = new GetScoreAverageResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );

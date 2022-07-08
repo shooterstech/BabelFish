@@ -8,6 +8,6 @@ namespace ShootersTech.DataModel.ScoreHistory {
         public ScoreAverageEntry() : base() {
         }
 
-        public AveragedScore Score { get; set; }
+        public AveragedScore ScoreAverage { get; set; }
     }
 }

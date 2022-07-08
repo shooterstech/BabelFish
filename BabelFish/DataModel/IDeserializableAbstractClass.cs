@@ -23,6 +23,6 @@ namespace ShootersTech.DataModel {
         /// should not change this value ... unless they want really bizarre and
         /// uncontrolled behavior. 
         /// </summary>
-        public int ConcreteClassId{ get; set; }
+        public virtual int ConcreteClassId{ get; set; }
     }
 }

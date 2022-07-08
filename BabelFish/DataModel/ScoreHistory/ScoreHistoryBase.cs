@@ -35,7 +35,7 @@ namespace ShootersTech.DataModel.ScoreHistory {
         /// should not change this value ... unless they want really bizarre and
         /// uncontrolled behavior. 
         /// </summary>
-        public int ConcreteClassId { get; set; }
+        public override int ConcreteClassId { get; set; }
     }
 
     public class ScoreHistoryBaseSpecifiedConcreteClassConverter : DefaultContractResolver {

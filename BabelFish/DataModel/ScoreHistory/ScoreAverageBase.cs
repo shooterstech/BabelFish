@@ -12,6 +12,14 @@ namespace ShootersTech.DataModel.ScoreHistory {
     [JsonConverter( typeof( ScoreAverageBaseConverter ) )]
     public abstract class ScoreAverageBase : IDeserializableAbstractClass {
 
+        /// <summary>
+        /// GUID formatted User ID of the athlete who shot this score.
+        /// </summary>
+        public string UserId { get; set; } = string.Empty;
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
 
         /// <summary>
         /// The value of ConcreteClassId should be set in the Constructor of the
@@ -19,7 +27,7 @@ namespace ShootersTech.DataModel.ScoreHistory {
         /// should not change this value ... unless they want really bizarre and
         /// uncontrolled behavior. 
         /// </summary>
-        public int ConcreteClassId { get; set; }
+        public override int ConcreteClassId { get; set; }
 
     }
 

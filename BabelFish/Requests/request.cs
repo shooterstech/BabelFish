@@ -21,6 +21,11 @@ namespace ShootersTech.Requests
 
         public bool IsShootersTechURI { get; set; } = true;
 
+        /// <summary>
+        /// Assigned from Response value, for some APIs where Limit is used
+        /// </summary>
+        public virtual string ContinuationToken { get; set; } = string.Empty;
+
         public virtual APIStage ApiStage { get; set; } = APIStage.PRODUCTION;
 
         public virtual SubDomains SubDomain 

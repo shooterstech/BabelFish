@@ -14,7 +14,7 @@ namespace ShootersTech.DataModel.ScoreHistory {
         /// </summary>
         public ScoreHistory() { }
 
-        public List<ScoreHistoryEntry> ScoreHistoryList { get; set; } = new List<ScoreHistoryEntry>();
+        public List<ScoreHistoryBase> ScoreHistoryList { get; set; } = new List<ScoreHistoryBase>();
 
     }
 }

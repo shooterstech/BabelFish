@@ -108,6 +108,9 @@ namespace ShootersTech {
                         if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
                             response.MessageResponse = apiReturnJson.ToObject<MessageResponse>();
 
+                        // Assign ContinuationToken - empty string if absent from json
+                        response.ContinuationToken = apiReturnJson.ToObject<ContinuationTokenResponse>().ContinuationToken;
+
                         if (responseMessage.IsSuccessStatusCode)
                             response.Body = apiReturnJson;
                         
