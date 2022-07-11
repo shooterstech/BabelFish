@@ -85,5 +85,11 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         /// </summary>
         [DefaultValue(false)]
         public bool LowVoltage { get; set; }
+
+        [DefaultValue( false )]
+        public bool InternetConnection { get; set; }
+
+        [DefaultValue( false )]
+        public bool IoTConnection { get; set; }
     }
 }

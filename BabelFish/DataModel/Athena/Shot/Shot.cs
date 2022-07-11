@@ -29,8 +29,7 @@ namespace ShootersTech.DataModel.Athena.Shot
         /// <summary>
         /// Public constructor
         /// </summary>
-        public Shot()
-        {
+        public Shot() {
             UpdateLog = new List<ShotLog>();
             Attributes = new List<string>();
             Score = new Score();

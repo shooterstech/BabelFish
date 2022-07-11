@@ -5,15 +5,15 @@ NOTE: Library is considered a WORK-IN-PROGRESS and is NOT intended for productio
 
 
 =============================== BabelFish Use Quick Start
-using BabelFish;
-using BabelFish.Responses;
+using ShootersTech;
+using ShootersTech.Responses;
 
 
 =============================== Available APIs Quick Reference
 ORION MATCH API
-using BabelFish.Requests.OrionMatchAPI; // (Optional if using parameters instead of Request object)
-using BabelFish.Responses.OrionMatchAPI;
-using BabelFish.DataModel.OrionMatch;
+using ShootersTech.Requests.OrionMatchAPI; // (Optional if using parameters instead of Request object)
+using ShootersTech.Responses.OrionMatchAPI;
+using ShootersTech.DataModel.OrionMatch;
 
 OrionMatchAPIClient.GetMatchDetailAsync(GetMatchRequest MatchRequest)		// MatchRequest.MatchID="1.2899.1040248529.0"
 OrionMatchAPIClient.GetMatchDetailAsync(string MatchID)				// "1.2899.1040248529.0"
@@ -22,28 +22,28 @@ OrionMatchAPIClient.GetResultListAsync(GetResultListRequest ResultListRequest)	/
 OrionMatchAPIClient.GetResultListAsync(string MatchID, string ResultListName)	// "1.2899.1040248529.0", "Individual - All"
 
 DEFINITIONS
-using BabelFish.DataModel.Definitions;
-using BabelFish.Responses.DefinitionAPI;
-using Attribute = BabelFish.DataModel.Definitions.Attribute;
+using ShootersTech.DataModel.Definitions;
+using ShootersTech.Responses.DefinitionAPI;
+using Attribute = ShootersTech.DataModel.Definitions.Attribute;
 
 GetDefinitionResponse<Attribute> AttributeResponse = await DefinitionAPIClient.GetAttributeDefinitionAsync(setName).ConfigureAwait(false);
 
 
 =============================== Example API instantiation and call
 // Namespaces
-using BabelFish;
+using ShootersTech;
 
 // API client using
-BabelFish.DataModel.OrionMatch;
+ShootersTech.DataModel.OrionMatch;
 
 // DataModel Objects
-using BabelFish.Requests.OrionMatchAPI;
+using ShootersTech.Requests.OrionMatchAPI;
 
 // Request Objects - (Now optional if using parameters)
-using BabelFish.Requests.OrionMatchAPI;
+using ShootersTech.Requests.OrionMatchAPI;
 
 // Response Objects hold status + object returned
-using BabelFish.Responses.OrionMatchAPI;
+using ShootersTech.Responses.OrionMatchAPI;
 
 // Declare x-api-key for use
 string XApiKey = "[enter key here]";
@@ -81,7 +81,17 @@ MessageResponse.Message holds error Message returned from API List
 
 
 =============================== BabelFish Versioning
-v1.0.8.0
+v1.0.11.0
+Add GetVersionAPI -> GetVersion() with VersionService, VersionLevel Enum helpers
+
+v1.0.10.0
+Implement Definition Caching in local memory/file system
+Add UserSettings values to control cache functionality
+
+v1.0.9.0
+Add Get and Set Attribute Value functionality
+
+  v1.0.8.0
 Implement Cognito Authentication on the back end via username/password retrieving RefreshToken, IdToken, AccessToken, DeviceToken.
 Add ApiClient GetAuthTokens() and UpdateAuthTokens() to retrieve/reset authentication tokens in a single session.
 Add AuthAPIClient that authenticates user via Cognito and returns Tokens.

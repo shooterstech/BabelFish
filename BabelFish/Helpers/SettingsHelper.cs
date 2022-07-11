@@ -17,20 +17,22 @@ namespace ShootersTech.Helpers
         /// </summary>
         private static Dictionary<string, Type> AllowedSettings = new Dictionary<string, Type>()
         {
-            { "UserName", typeof(string) },                 // User Name to validate AWS access
-            { "PassWord", typeof(string) },                 // User Password to validate AWS access
-            { "AccessKey", typeof(string) },                // User AccessKey for valid AWS access
-            { "SecretKey", typeof(string) },                // User SecretKey for valid AWS access
-            { "SessionToken", typeof(string) },             // User SessionToken for valid AWS access
+            { "UserName", typeof(string) },                             // User Name to validate AWS access
+            { "PassWord", typeof(string) },                             // User Password to validate AWS access
+            { "AccessKey", typeof(string) },                            // User AccessKey for valid AWS access
+            { "SecretKey", typeof(string) },                            // User SecretKey for valid AWS access
+            { "SessionToken", typeof(string) },                         // User SessionToken for valid AWS access
 
-            { "RefreshToken", typeof(string) },             // Cognito Refresh Token for valid AWS access
-            { "IdToken", typeof(string) },                 // Cognito ID Token for valid AWS access
-            { "AccessToken", typeof(string) },              // Cognito Access Token for valid AWS access
-            { "DeviceToken", typeof(string) },                 // Cognito Device ID for valid AWS access
+            { "RefreshToken", typeof(string) },                         // Cognito Refresh Token for valid AWS access
+            { "IdToken", typeof(string) },                              // Cognito ID Token for valid AWS access
+            { "AccessToken", typeof(string) },                          // Cognito Access Token for valid AWS access
+            { "DeviceToken", typeof(string) },                          // Cognito Device ID for valid AWS access
 
-            { "Logging_NLogConfig", typeof(string) },       // Alternate NLog path/filename
-            { "Definitions_CacheAlwaysNew", typeof(bool) }, // Definitions cache override to always fetch new
-            { "XApiKey", typeof(string) },                  // User XApiKey passed in
+            { "Logging_NLogConfig", typeof(string) },                   // Alternate NLog path/filename
+            { "Definitions_CacheIgnore", typeof(bool) },                // Definitions cache override to always fetch new
+            { "Definitions_CacheExpireTime", typeof(int) },             // Definitions cache expire time in days
+            { "Definitions_CacheStorageDirctory", typeof(string) },     // Definitions cache storage directory
+            { "XApiKey", typeof(string) },                              // User XApiKey passed in
         };
 
         /// <summary>
@@ -138,7 +140,7 @@ namespace ShootersTech.Helpers
 
         public static bool SettingIsNullOrEmpty(string settingName)
         {
-            if ((UserSettings.ContainsKey(settingName)) && UserSettings[settingName] == null || UserSettings[settingName] == string.Empty)
+            if ((UserSettings.ContainsKey(settingName)) && UserSettings[settingName] == null || UserSettings[settingName].ToString() == string.Empty)
                 return true;
             else
                 return false;

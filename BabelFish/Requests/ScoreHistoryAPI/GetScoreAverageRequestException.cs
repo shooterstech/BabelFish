@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ShootersTech.Requests;
 
-namespace BabelFish.Requests.ScoreHistory {
+namespace ShootersTech.Requests.ScoreHistory {
     public class GetScoreAverageRequestException : RequestException {
         public GetScoreAverageRequestException()
             : base( "Something bad happened!" ) {

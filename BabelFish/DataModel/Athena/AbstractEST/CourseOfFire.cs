@@ -30,5 +30,15 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         public int CommandIndex { get; set; }
 
         public int SegmentIndex { get; set; }
+
+        public string Override { get; set; }
+
+        public string CourseOfFireID { get; set; }
+
+        public string ScoreConfigName { get; set; }
+
+        public string TargetCollectionName { get; set; }
+
+        public bool Reset { get; set; }
     }
 }
