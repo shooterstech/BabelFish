@@ -1,21 +1,25 @@
 ﻿using ShootersTech.Helpers;
+using ShootersTech.Requests.OrionMatchAPI;
 
 namespace ShootersTech.Requests.Misc
 {
     public class GetVersionRequest : Request
     {
-        private const string ParamName = "services";
-        private Dictionary<string, List<string>> queryParameters = new Dictionary<string, List<string>>();
+        /// <summary>
+        /// Public constructor. 
+        /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
+        /// </summary>
+        public GetVersionRequest() { }
 
-        public GetVersionRequest(List<VersionService> services, VersionLevel level)
-        {
+        /// <summary>
+        /// List of VersionService enum value(s)
+        /// </summary>
+        public List<VersionService> services = new List<VersionService>();
 
-            queryParameters.Add(ParamName, new List<string>());
-            services.ForEach(x => queryParameters[ParamName].Add(x.ToString()));
-
-            queryParameters.Add("level", new List<string>());
-            queryParameters["level"].Add(level.ToString());
-        }
+        /// <summary>
+        /// VersionLevel enum value
+        /// </summary>
+        public VersionLevel level = VersionLevel.none;
 
         /// <inheritdoc />
         public override string RelativePath
@@ -27,7 +31,14 @@ namespace ShootersTech.Requests.Misc
         {
             get
             {
-                return queryParameters;
+                if (services.Count() == 0)
+                    throw new GetOrionMatchRequestException("Must have at least one VersionService.");
+
+                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+                parameterList.Add("services", services.Select(s => s.ToString()).ToList() );
+                parameterList.Add("level", new List<string>() { level.ToString() });
+
+                return parameterList;
             }
         }
 

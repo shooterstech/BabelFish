@@ -5,21 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.DataModel.OrionMatch {
-
-    public class ResultListWrapper
-    {
-        public ResultList ResultList = new ResultList();
-
-        public override string ToString()
-        {
-            StringBuilder foo = new StringBuilder();
-            foo.Append("ResultList for ");
-            foo.Append(ResultList.ResultName);
-            return foo.ToString();
-        }
-    }
-
+namespace ShootersTech.DataModel.OrionMatch
+{
     [Serializable]
     public class ResultList {
 

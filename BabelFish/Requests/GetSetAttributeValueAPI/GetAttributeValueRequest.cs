@@ -1,17 +1,23 @@
-﻿namespace ShootersTech.Requests.GetSetAttributeValueAPI
+﻿using ShootersTech.Requests.OrionMatchAPI;
+
+namespace ShootersTech.Requests.GetSetAttributeValueAPI
 {
     public class GetAttributeValueRequest : Request
     {
-        private const string ParamName = "attribute-def";
-        private Dictionary<string, List<string>> AttributeList = new Dictionary<string, List<string>>();
 
-        public GetAttributeValueRequest(List<string> attributeNames)
-        {
+        /// <summary>
+        /// Public constructor. 
+        /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
+        /// </summary>
+        public GetAttributeValueRequest() {
+            // Internally always set authentication required
             WithAuthentication = true;
-            AttributeList.Add(ParamName,new List<string>());
-            attributeNames.ForEach(x => AttributeList[ParamName].Add(x));
-            AttributeList.Add("return-default", new List<string>() { "true" });
         }
+
+    /// <summary>
+    /// Attribute Names
+    /// </summary>
+    public List<string> AttributeNames = new List<string>();
 
         /// <inheritdoc />
         public override string RelativePath
@@ -23,7 +29,13 @@
         {
             get
             {
-                return AttributeList;
+                if (AttributeNames.Count() == 0)
+                    throw new GetOrionMatchRequestException("Must have at least one Attribute Name.");
+
+                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+                parameterList.Add("attribute-def", AttributeNames);
+
+                return parameterList;
             }
         }
     }

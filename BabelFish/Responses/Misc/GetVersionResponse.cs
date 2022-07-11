@@ -1,10 +1,15 @@
 ﻿using ShootersTech.DataModel.Misc;
-using Newtonsoft.Json.Linq;
+using ShootersTech.Requests.Misc;
 
 namespace ShootersTech.Responses.Misc
 {
     public class GetVersionResponse : Response<VersionsList>
     {
+        public GetVersionResponse(GetVersionRequest request)
+        {
+            this.Request = request;
+        }
+
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>

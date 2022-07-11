@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShootersTech.GetVersionAPI;
 using ShootersTech.Helpers;
+using ShootersTech.Requests.Misc;
 
 namespace ShootersTech.Tests {
     [TestClass]
@@ -48,9 +49,13 @@ namespace ShootersTech.Tests {
         [TestMethod]
         public void GetMultipleServicesProductionLevel()
         {
-            List<VersionService> services = new List<VersionService>() { VersionService.orion, VersionService.athena };
-            VersionLevel level = VersionLevel.production;
-            var response = _client.GetVersionAsync(services, level);
+            GetVersionRequest request = new GetVersionRequest()
+            {
+                services = new List<VersionService>() { VersionService.orion, VersionService.athena },
+                level = VersionLevel.production
+            };
+    
+            var response = _client.GetVersionAsync(request);
 
             var result = response.Result;
             Assert.IsNotNull(result);

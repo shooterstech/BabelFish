@@ -4,13 +4,15 @@ namespace ShootersTech.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {
-        public GetValidateUserIDRequest(string userID)
+        public GetValidateUserIDRequest() 
         {
             WithAuthentication = true;
-            UserID = userID;
         }
 
-        private string UserID { get; set; } = string.Empty;
+        /// <summary>
+        /// UserId to lookup
+        /// </summary>
+        public string UserID { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public override string RelativePath

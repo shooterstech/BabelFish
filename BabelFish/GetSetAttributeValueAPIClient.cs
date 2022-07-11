@@ -21,14 +21,40 @@ namespace ShootersTech {
         /// <summary>
         /// Get Attribute Value API
         /// </summary>
-        /// <param name="AttributeNames">List<string> of valid Attribute Names</string>. Each attribute name must be formatted as a Set Name. </param>
+        /// <param name="requestParameters">GetAttributeValueRequest</param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames)
-        {
-
-            GetAttributeValueRequest requestParameters = new GetAttributeValueRequest(attributeNames);
+        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(GetAttributeValueRequest requestParameters) {
 
             GetAttributeValueResponse response = new GetAttributeValueResponse(requestParameters);
+
+            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Attribute Value API
+        /// </summary>
+        /// <param name="AttributeNames">List<string> of valid Attribute Names</string>. Each attribute name must be formatted as a Set Name. </param>
+        /// <returns>List of Attribute objects</returns>
+        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames) {
+            
+            GetAttributeValueRequest requestParameters = new GetAttributeValueRequest()
+            {
+                AttributeNames = attributeNames
+            };
+
+            return await GetAttributeValueAsync(requestParameters);
+        }
+
+        /// <summary>
+        /// Get UserId Validity
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns>ValidateUserId object</returns>
+        public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(GetValidateUserIDRequest requestParameters) {
+
+            GetValidateUserIDResponse response = new GetValidateUserIDResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -40,16 +66,14 @@ namespace ShootersTech {
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>ValidateUserId object</returns>
-        public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(string userID)
-        {
+        public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(string userID) {
 
-            GetValidateUserIDRequest requestParameters = new GetValidateUserIDRequest( userID );
+            GetValidateUserIDRequest requestParameters = new GetValidateUserIDRequest()
+            {
+                UserID = userID
+            };
 
-            GetValidateUserIDResponse response = new GetValidateUserIDResponse( requestParameters );
-
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
-
-            return response;
+            return await GetValidateUserIDAsync(requestParameters);
         }
 
         /// <summary>

@@ -8,22 +8,6 @@ using Newtonsoft.Json.Converters;
 
 namespace ShootersTech.DataModel.OrionMatch
 {
-
-    public class CourseOfFireWrapper
-    {
-        public ResultCOF ResultCOF = new ResultCOF();
-
-        public override string ToString()
-        {
-            StringBuilder foo = new StringBuilder();
-            foo.Append("ResultCOF for ");
-            foo.Append(ResultCOF.Participant.DisplayName);
-            foo.Append(": ");
-            foo.Append(ResultCOF.MatchName);
-            return foo.ToString();
-        }
-    }
-
     /// <summary>
     /// Result COF format for (JSONVersion) "2022-04-09"
     /// </summary>

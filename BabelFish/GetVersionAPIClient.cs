@@ -22,14 +22,11 @@ namespace ShootersTech.GetVersionAPI
         /// <summary>
         /// GetVersion API for multiple services
         /// </summary>
-        /// <param name="services"></param>
-        /// <param name="level"></param>
-        /// <returns>VersionList object</returns>
-        public async Task<GetVersionResponse> GetVersionAsync(List<VersionService> services, VersionLevel level) {
+        /// <param name="requestParameters">GetVersionRequest object</param>
+        /// <returns>List<VersionInfo> object</returns>
+        public async Task<GetVersionResponse> GetVersionAsync(GetVersionRequest requestParameters) {
 
-            GetVersionResponse response = new GetVersionResponse();
-
-            GetVersionRequest requestParameters = new GetVersionRequest(services, level);
+            GetVersionResponse response = new GetVersionResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -39,16 +36,17 @@ namespace ShootersTech.GetVersionAPI
         /// <summary>
         /// GetVersion API for one service
         /// </summary>
-        /// <param name="service"></param>
-        /// <param name="level"></param>
-        /// <returns>VersionList object</returns>
-        public async Task<GetVersionResponse> GetVersionAsync(VersionService service, VersionLevel level)
-        {
-            GetVersionResponse response = new GetVersionResponse();
+        /// <param name="service">VersionService enum</param>
+        /// <param name="level">VersionLevel enum</param>
+        /// <returns>List<VersionInfo> object</returns>
+        public async Task<GetVersionResponse> GetVersionAsync(VersionService service, VersionLevel level) {
+            GetVersionRequest requestParameters = new GetVersionRequest()
+            {
+                services = new List<VersionService>() { service },
+                level = level
+            };
 
-            response = await GetVersionAsync(new List<VersionService>() { service }, level).ConfigureAwait(false);
-
-            return response;
+            return await GetVersionAsync(requestParameters).ConfigureAwait(false);
         }
 
     }
