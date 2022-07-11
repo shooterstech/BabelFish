@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using ShootersTech.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace ShootersTech.DataModel.GetSetAttributeValue
+namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue
 {
     internal class AttributeValueValidation
     {

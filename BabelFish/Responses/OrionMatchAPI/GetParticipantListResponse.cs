@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.DataModel.OrionMatch;
-using ShootersTech.Requests.OrionMatchAPI;
+using ShootersTech.BabelFish.DataModel.OrionMatch;
+using ShootersTech.BabelFish.Requests.OrionMatchAPI;
 
-namespace ShootersTech.Responses.OrionMatchAPI
+namespace ShootersTech.BabelFish.Responses.OrionMatchAPI
 {
     public class GetParticipantListResponse : Response<MatchParticipantList>
     {

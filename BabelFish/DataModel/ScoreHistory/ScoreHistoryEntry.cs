@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ShootersTech.DataModel.OrionMatch;
-using ShootersTech.DataModel.Athena;
+using ShootersTech.BabelFish.DataModel.OrionMatch;
+using ShootersTech.BabelFish.DataModel.Athena;
 
-namespace ShootersTech.DataModel.ScoreHistory {
+namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
 
 
     public abstract class ScoreHistoryEntry : ScoreHistoryBase {

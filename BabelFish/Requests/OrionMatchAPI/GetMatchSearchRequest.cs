@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.Requests.OrionMatchAPI
+namespace ShootersTech.BabelFish.Requests.OrionMatchAPI
 {
     public class GetMatchSearchRequest : Request
     {
@@ -67,8 +67,8 @@ namespace ShootersTech.Requests.OrionMatchAPI
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
                 parameterList.Add("distanceSearch", new List<string>() { DistanceSearch.ToString() });
-                parameterList.Add("startingDate", new List<string>() { StartDate.ToString(ShootersTech.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
-                parameterList.Add("endingDate", new List<string>() { EndDate.ToString(ShootersTech.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("startingDate", new List<string>() { StartDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("endingDate", new List<string>() { EndDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
                 parameterList.Add("numberOfMatchesToReturn", new List<string>() { NumberOfMatchesToReturn.ToString() });
                 parameterList.Add("shootingStyle", new List<string>() { ShootingStyle });
                 parameterList.Add("Longitude", new List<string>() { Longitude.ToString() });

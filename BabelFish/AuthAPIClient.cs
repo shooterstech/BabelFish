@@ -1,7 +1,7 @@
-﻿using ShootersTech.Requests.Authentication;
-using ShootersTech.Responses.Authentication;
+﻿using ShootersTech.BabelFish.Requests.Authentication;
+using ShootersTech.BabelFish.Responses.Authentication;
 
-namespace ShootersTech.Authentication {
+namespace ShootersTech.BabelFish.Authentication {
     public class AuthAPIClient : APIClient {
 
         /// <summary>

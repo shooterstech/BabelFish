@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
 
     /// <summary>
     /// A "SimpleCOF" defines the type of StageStyles that make it up and the number of 

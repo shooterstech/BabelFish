@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace ShootersTech.DataModel.OrionMatch {
+namespace ShootersTech.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Any Individual person who is participating in a match. These include athletes, coaches,
     /// and match officials. Does not include Teams.

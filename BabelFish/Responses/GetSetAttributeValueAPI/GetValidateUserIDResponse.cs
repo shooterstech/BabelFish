@@ -1,7 +1,7 @@
-﻿using ShootersTech.DataModel.GetSetAttributeValue;
-using ShootersTech.Requests.GetSetAttributeValueAPI;
+﻿using ShootersTech.BabelFish.DataModel.GetSetAttributeValue;
+using ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI;
 
-namespace ShootersTech.Responses.GetSetAttributeValueAPI
+namespace ShootersTech.BabelFish.Responses.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDResponse : Response<ValidateUserID>
     {

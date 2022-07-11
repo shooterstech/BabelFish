@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
 
     [Serializable]
     public class ScoreFormatCollection : Definition {

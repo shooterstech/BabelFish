@@ -1,8 +1,8 @@
-﻿using ShootersTech.Requests.Misc;
-using ShootersTech.Responses.Misc;
-using ShootersTech.Helpers;
+﻿using ShootersTech.BabelFish.Requests.Misc;
+using ShootersTech.BabelFish.Responses.Misc;
+using ShootersTech.BabelFish.Helpers;
 
-namespace ShootersTech.GetVersionAPI
+namespace ShootersTech.BabelFish.GetVersionAPI
 {
     public class GetVersionAPIClient : APIClient {
 

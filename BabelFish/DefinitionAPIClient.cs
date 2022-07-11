@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
-using ShootersTech.Helpers;
-using ShootersTech.Responses;
-using ShootersTech.DataModel.Definitions;
-using ShootersTech.Requests.DefinitionAPI;
-using ShootersTech.Responses.DefinitionAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.Responses;
+using ShootersTech.BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.Requests.DefinitionAPI;
+using ShootersTech.BabelFish.Responses.DefinitionAPI;
 
-namespace ShootersTech {
+namespace ShootersTech.BabelFish.DefinitionAPI {
     public class DefinitionAPIClient : APIClient {
 
         DefinitionCacheHelper definitionCacheHelper;
@@ -82,13 +82,13 @@ namespace ShootersTech {
         }
 
         
-        public async Task<GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
+        public async Task<GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.ATTRIBUTE;
 
             GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<ShootersTech.DataModel.Definitions.Attribute>(request);
+            GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute>(request);
 
             return await GetDefinition(request, response).ConfigureAwait(false);
         }

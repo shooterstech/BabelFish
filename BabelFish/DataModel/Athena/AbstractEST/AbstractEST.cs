@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.DataModel.Athena.AbstractEST
+namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
 {
     public abstract class AbstractEST
     {

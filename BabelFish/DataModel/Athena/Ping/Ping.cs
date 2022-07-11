@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.DataModel.Athena.Ping
+namespace ShootersTech.BabelFish.DataModel.Athena.Ping
 {
     public class Ping {
 
@@ -57,7 +57,7 @@ namespace ShootersTech.DataModel.Athena.Ping
 
         public DateTime GetSentTime() {
             try {
-                var st = DateTime.ParseExact( SentTime, ShootersTech.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
+                var st = DateTime.ParseExact( SentTime, ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
                 return st.ToUniversalTime();
                 //return st;
             } catch (Exception ex) {
@@ -67,7 +67,7 @@ namespace ShootersTech.DataModel.Athena.Ping
 
         public DateTime GetReceivedTime() {
             try {
-                var rt = DateTime.ParseExact( ReceivedTime, ShootersTech.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
+                var rt = DateTime.ParseExact( ReceivedTime, ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
                 return rt.ToUniversalTime();
             } catch (Exception ex) {
                 return DateTime.MinValue;

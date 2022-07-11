@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.Runtime {
+namespace ShootersTech.BabelFish.Runtime {
     public class ShootersTechException : Exception {
 
         public ShootersTechException()

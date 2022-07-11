@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech;
-using ShootersTech.Helpers;
-using ShootersTech.DataModel.Definitions;
-using ShootersTech.DataModel.Athena;
+using ShootersTech.BabelFish.GetSetAttributeValueAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Athena;
 
-namespace ShootersTech.Tests {
+namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class GetSetAttributeValueTests
     {
@@ -121,7 +121,7 @@ namespace ShootersTech.Tests {
         [TestMethod]
         public void GetValidateUserID_ValidID()
         {
-            string userID = "28489692-0a61-470e-aed8-c71b9cfbfe6e";
+            string userID = "26f32227-d428-41f6-b224-beed7b6e8850";// "28489692 -0a61-470e-aed8-c71b9cfbfe6e";
             var response = _client.GetValidateUserIDAsync(userID);
             Assert.IsNotNull(response);
 
@@ -330,7 +330,7 @@ namespace ShootersTech.Tests {
         public void SetAttributeValue_OneAttributeOverride()
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Date of Birth");
-            newAttributeValue.Visibility = ShootersTech.Helpers.VisibilityOption.PROTECTED;
+            newAttributeValue.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PROTECTED;
             newAttributeValue.SetFieldValue("DateOfBirth", "1970-01-01");
 
             DataModel.GetSetAttributeValue.AttributeValueList newAttributeValueList = new DataModel.GetSetAttributeValue.AttributeValueList();
@@ -354,13 +354,13 @@ namespace ShootersTech.Tests {
         public void SetAttributeValue_TwoAttributesOverride()
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Date of Birth");
-            newAttributeValue.Visibility = ShootersTech.Helpers.VisibilityOption.PROTECTED;
+            newAttributeValue.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PROTECTED;
             newAttributeValue.SetFieldValue("DateOfBirth", "1970-01-01"); //orig=1980-03-12
 
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue2 = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Device Token");
-            newAttributeValue2.Visibility = ShootersTech.Helpers.VisibilityOption.PRIVATE;
-            newAttributeValue2.Action = ShootersTech.Helpers.AttributeValueActionEnums.UPDATE;
-            newAttributeValue2.Visibility = ShootersTech.Helpers.VisibilityOption.PRIVATE;
+            newAttributeValue2.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PRIVATE;
+            newAttributeValue2.Action = ShootersTech.BabelFish.Helpers.AttributeValueActionEnums.UPDATE;
+            newAttributeValue2.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PRIVATE;
             newAttributeValue2.SetFieldValue("deviceToken", "abcd", "abcd");
             newAttributeValue2.SetFieldValue("DeviceType", "ios", "abcd");
             newAttributeValue2.SetFieldValue("DeviceName", "Erik's ios device", "abcd");
@@ -393,7 +393,7 @@ namespace ShootersTech.Tests {
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue =
                 new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Device Token");
-            newAttributeValue.Visibility = ShootersTech.Helpers.VisibilityOption.PRIVATE;
+            newAttributeValue.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PRIVATE;
             newAttributeValue.SetFieldValue("DeviceType", "ios", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
             newAttributeValue.SetFieldValue("EventScoresUnofficial", false, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
             newAttributeValue.SetFieldValue("LastLoginDate", "2021-05-09", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
@@ -433,8 +433,8 @@ namespace ShootersTech.Tests {
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue =
                 new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Device Token");
-            newAttributeValue.Visibility = ShootersTech.Helpers.VisibilityOption.PRIVATE;
-            newAttributeValue.Action = ShootersTech.Helpers.AttributeValueActionEnums.DELETE;
+            newAttributeValue.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PRIVATE;
+            newAttributeValue.Action = ShootersTech.BabelFish.Helpers.AttributeValueActionEnums.DELETE;
             newAttributeValue.SetFieldValue("DeviceType", "ios", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
             newAttributeValue.SetFieldValue("EventScoresUnofficial", false, "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");
             newAttributeValue.SetFieldValue("LastLoginDate", "2021-05-09", "abcdalahgaihgaiohvahiaugvkuawygaiusgdfiauyfgesf");

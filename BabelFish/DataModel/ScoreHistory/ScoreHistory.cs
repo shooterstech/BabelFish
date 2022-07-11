@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.DataModel.ScoreHistory {
+namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
 
     /// <summary>
     /// Represents the data returned by a Get score History API Call

@@ -1,7 +1,7 @@
-﻿using ShootersTech.DataModel.Misc;
-using ShootersTech.Requests.Misc;
+﻿using ShootersTech.BabelFish.DataModel.Misc;
+using ShootersTech.BabelFish.Requests.Misc;
 
-namespace ShootersTech.Responses.Misc
+namespace ShootersTech.BabelFish.Responses.Misc
 {
     public class GetVersionResponse : Response<VersionsList>
     {

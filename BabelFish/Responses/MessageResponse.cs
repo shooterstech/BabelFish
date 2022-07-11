@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.Responses
+namespace ShootersTech.BabelFish.Responses
 {
     public class MessageResponse : IResponse
     {

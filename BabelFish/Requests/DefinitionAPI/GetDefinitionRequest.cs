@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.Helpers;
-using ShootersTech.DataModel.Definitions;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.DataModel.Definitions;
 using System.Runtime.Serialization;
 
-namespace ShootersTech.Requests.DefinitionAPI
+namespace ShootersTech.BabelFish.Requests.DefinitionAPI
 {
     public class GetDefinitionRequest : Request
     {

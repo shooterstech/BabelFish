@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.DataModel.Athena
+namespace ShootersTech.BabelFish.DataModel.Athena
 {
     /// <summary>
     /// Describes a Penalty that is applied to a shot, athlete, team, etc

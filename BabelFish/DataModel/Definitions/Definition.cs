@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     [Serializable]
     public abstract class Definition {
 
@@ -146,9 +146,9 @@ namespace ShootersTech.DataModel.Definitions {
         public SetName GetSetName(bool originalSetName = false) {
             SetName sn;
             if (originalSetName)
-                ShootersTech.DataModel.Definitions.SetName.TryParse(SetName, out sn);
+                ShootersTech.BabelFish.DataModel.Definitions.SetName.TryParse(SetName, out sn);
             else
-                ShootersTech.DataModel.Definitions.SetName.TryParse(Version, HierarchicalName, out sn);
+                ShootersTech.BabelFish.DataModel.Definitions.SetName.TryParse(Version, HierarchicalName, out sn);
             return sn;
         }
 

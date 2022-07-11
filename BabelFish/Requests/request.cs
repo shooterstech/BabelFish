@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.Helpers;
+using ShootersTech.BabelFish.Helpers;
 
-namespace ShootersTech.Requests
+namespace ShootersTech.BabelFish.Requests
 {
     /// <summary>
     /// Abstract base class for all Request Objects

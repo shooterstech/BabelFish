@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using ShootersTech.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Definitions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.DataModel.GetSetAttributeValue
+namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue
 {
     public class AttributeValue
     {

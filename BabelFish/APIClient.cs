@@ -5,12 +5,12 @@ using System.Runtime.Serialization;
 //using System.Text.Json.Nodes; //COMMENT OUT FOR .NET Standard 2.0
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ShootersTech.Requests;
-using ShootersTech.Responses;
-using ShootersTech.Helpers;
-//using ShootersTech.External;
-using ShootersTech.Responses.Authentication.Credentials;
-using ShootersTech.Responses.GetSetAttributeValueAPI;
+using ShootersTech.BabelFish.Requests;
+using ShootersTech.BabelFish.Responses;
+using ShootersTech.BabelFish.Helpers;
+//using ShootersTech.BabelFish.External;
+using ShootersTech.BabelFish.Responses.Authentication.Credentials;
+using ShootersTech.BabelFish.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 

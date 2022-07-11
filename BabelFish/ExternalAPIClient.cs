@@ -1,6 +1,6 @@
-﻿using ShootersTech.Requests;
+﻿using ShootersTech.BabelFish.Requests;
 
-namespace ShootersTech.External {
+namespace ShootersTech.BabelFish.External {
     public class ExternalAPIClient : APIClient {
 
         public ExternalAPIClient( string zipcodeapikey ) : base( zipcodeapikey ) { }
@@ -41,7 +41,7 @@ namespace ShootersTech.External {
             get { return $"https://zipcodeapi.com/rest/{ApiKey}/info.json/{ZipCode}/degrees"; }
         }
     }
-    public class GetExternalResponse : ShootersTech.Responses.Response<ZipCodeApi> {
+    public class GetExternalResponse : ShootersTech.BabelFish.Responses.Response<ZipCodeApi> {
 
         public GetExternalResponse( GetExternalRequest request ) :base() {
             this.Request = request;

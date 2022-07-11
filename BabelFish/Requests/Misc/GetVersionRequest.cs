@@ -1,7 +1,7 @@
-﻿using ShootersTech.Helpers;
-using ShootersTech.Requests.OrionMatchAPI;
+﻿using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.Requests.OrionMatchAPI;
 
-namespace ShootersTech.Requests.Misc
+namespace ShootersTech.BabelFish.Requests.Misc
 {
     public class GetVersionRequest : Request
     {

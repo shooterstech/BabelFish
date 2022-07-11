@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace ShootersTech.DataModel.ScoreHistory {
+namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
 
     /// <summary>
     /// Represents the data returned by a GetScoreAverage API call.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.Requests.ScoreHistoryAPI {
+namespace ShootersTech.BabelFish.Requests.ScoreHistoryAPI {
     public class GetScoreAverageRequest : GetScoreHistoryAbstractRequest {
 
 

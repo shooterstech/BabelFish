@@ -3,9 +3,10 @@ using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech;
+using ShootersTech.BabelFish.OrionMatchAPI;
+using ShootersTech.BabelFish.Requests;
 
-namespace ShootersTech.Tests
+namespace ShootersTech.BabelFish.Tests
 {
     [TestClass]
     public class OrionMatchUnitTests
@@ -93,7 +94,7 @@ namespace ShootersTech.Tests
         [TestMethod]
         public void OrionMatchAPI_GetAMatchSearch()
         {
-            ShootersTech.Requests.OrionMatchAPI.GetMatchSearchRequest requestParameters = new Requests.OrionMatchAPI.GetMatchSearchRequest()
+            ShootersTech.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest requestParameters = new ShootersTech.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest()
             {
                 DistanceSearch = 5,
                 StartDate = new DateTime(DateTime.Now.Year, 6, 1),

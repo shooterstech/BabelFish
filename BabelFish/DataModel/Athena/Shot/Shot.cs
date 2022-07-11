@@ -4,11 +4,11 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.DataModel.Athena;
-using ShootersTech.DataModel.Athena.Interfaces;
+using ShootersTech.BabelFish.DataModel.Athena;
+using ShootersTech.BabelFish.DataModel.Athena.Interfaces;
 using Newtonsoft.Json;
 
-namespace ShootersTech.DataModel.Athena.Shot
+namespace ShootersTech.BabelFish.DataModel.Athena.Shot
 {
     public class Shot : IEquatable<Shot>, IPenalty
     {
@@ -77,7 +77,7 @@ namespace ShootersTech.DataModel.Athena.Shot
 
         public float ScoringDiameter { get; set; }
 
-        public ShootersTech.DataModel.Athena.Score Score { get; set; }
+        public ShootersTech.BabelFish.DataModel.Athena.Score Score { get; set; }
 
         public string TargetSetName { get; set; }
 

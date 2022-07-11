@@ -1,6 +1,6 @@
-﻿using ShootersTech.Helpers;
+﻿using ShootersTech.BabelFish.Helpers;
 
-namespace ShootersTech.Requests.GetSetAttributeValueAPI
+namespace ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {
@@ -22,7 +22,7 @@ namespace ShootersTech.Requests.GetSetAttributeValueAPI
 
         public override APIStage ApiStage
         {  
-            get { return APIStage.BETA; } 
+            get { return APIStage.PRODUCTION; } 
         }
     }
 }

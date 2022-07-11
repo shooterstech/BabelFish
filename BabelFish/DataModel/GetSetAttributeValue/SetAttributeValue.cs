@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace ShootersTech.DataModel.GetSetAttributeValue {
+namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue {
 
     [Serializable]
     public class SetAttributeValueList

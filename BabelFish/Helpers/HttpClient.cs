@@ -4,11 +4,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using ShootersTech.Requests;
+using ShootersTech.BabelFish.Requests;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ShootersTech.Helpers
+namespace ShootersTech.BabelFish.Helpers
 {
 	static class httpClient
     {

@@ -1,8 +1,8 @@
-﻿using ShootersTech.DataModel.GetSetAttributeValue;
-using ShootersTech.Requests.GetSetAttributeValueAPI;
-using ShootersTech.Responses.GetSetAttributeValueAPI;
+﻿using ShootersTech.BabelFish.DataModel.GetSetAttributeValue;
+using ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI;
+using ShootersTech.BabelFish.Responses.GetSetAttributeValueAPI;
 
-namespace ShootersTech {
+namespace ShootersTech.BabelFish.GetSetAttributeValueAPI {
     public class GetSetAttributeValueAPIClient : APIClient {
 
         /// <summary>

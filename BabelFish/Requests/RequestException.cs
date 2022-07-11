@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.Runtime;
+using ShootersTech.BabelFish.Runtime;
 
-namespace ShootersTech.Requests {
+namespace ShootersTech.BabelFish.Requests {
     public class RequestException : ShootersTechException {
         public RequestException()
             : base( "Something bad happened!" ) {

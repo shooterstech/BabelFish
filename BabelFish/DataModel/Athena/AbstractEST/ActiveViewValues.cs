@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.Runtime.Internal;
 
-namespace ShootersTech.DataModel.Athena.AbstractEST
+namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
 {
     public class ActiveViewValues
     {

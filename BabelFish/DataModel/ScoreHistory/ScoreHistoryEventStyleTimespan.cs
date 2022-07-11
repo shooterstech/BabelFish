@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.DataModel.ScoreHistory {
+namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
     public class ScoreHistoryEventStyleTimespan : ScoreHistoryTimespan {
 
         public const int CONCRETE_CLASS_ID = 3;

@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using ShootersTech.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace ShootersTech.Helpers
+namespace ShootersTech.BabelFish.Helpers
 {
     public class DefinitionCacheHelper
     {

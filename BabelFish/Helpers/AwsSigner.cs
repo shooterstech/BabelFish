@@ -6,10 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.DataModel;
-using ShootersTech.DataModel.Authentication.Credentials;
+using ShootersTech.BabelFish.DataModel;
+using ShootersTech.BabelFish.DataModel.Authentication.Credentials;
 
-namespace ShootersTech.Helpers
+namespace ShootersTech.BabelFish.Helpers
 {
     public class AwsSigner
     {

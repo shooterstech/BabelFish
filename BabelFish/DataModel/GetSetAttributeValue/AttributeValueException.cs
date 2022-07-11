@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.Runtime;
+using ShootersTech.BabelFish.Runtime;
 
-namespace ShootersTech.DataModel.GetSetAttributeValue
+namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue
 {
     [Serializable]
     public class InvalidBabelFishException : ShootersTechException {

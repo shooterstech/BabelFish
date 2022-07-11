@@ -4,9 +4,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.DataModel.Athena.Shot;
+using ShootersTech.BabelFish.DataModel.Athena.Shot;
 
-namespace ShootersTech.DataModel.Athena.AbstractEST
+namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
 {
     public class ShotDetection
     {
@@ -28,13 +28,13 @@ namespace ShootersTech.DataModel.Athena.AbstractEST
         public bool Paused { get; set; }
 
         [Obsolete("Replaced with RecentShotUpdates")]
-        public ShootersTech.DataModel.Athena.Shot.Shot LastShotDetected { get; set; }
+        public ShootersTech.BabelFish.DataModel.Athena.Shot.Shot LastShotDetected { get; set; }
 
         /// <summary>
         /// List of the last few shots that were scored or edited from the target.
         /// Almost always a list of 1.
         /// </summary>
-        public List<ShootersTech.DataModel.Athena.Shot.Shot> RecentShotUpdates { get; set; }
+        public List<ShootersTech.BabelFish.DataModel.Athena.Shot.Shot> RecentShotUpdates { get; set; }
 
         /// <summary>
         /// Shot Attributes that are appended on to each Shot, in the Shot.Attributes field

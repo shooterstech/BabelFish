@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech.GetVersionAPI;
-using ShootersTech.Helpers;
-using ShootersTech.Requests.Misc;
+using ShootersTech.BabelFish.GetVersionAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.Requests.Misc;
 
-namespace ShootersTech.Tests {
+namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class MiscTests {
         private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";

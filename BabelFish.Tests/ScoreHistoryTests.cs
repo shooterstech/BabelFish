@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech;
-using ShootersTech.Helpers;
-using ShootersTech.DataModel.Definitions;
-using ShootersTech.DataModel.Athena;
-using ShootersTech.Requests.ScoreHistoryAPI;
+using ShootersTech.BabelFish.ScoreHistoryAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Athena;
+using ShootersTech.BabelFish.Requests.ScoreHistoryAPI;
 
-namespace ShootersTech.Tests {
+namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class ScoreHistoryTests
     {
@@ -281,7 +281,7 @@ namespace ShootersTech.Tests {
             Assert.IsNotNull(objResponse);
             Assert.IsTrue(objResponse.ScoreHistoryList.Count == 2);
             Assert.AreEqual("v1.0:ntparc:Three-Position Precision Air Rifle", 
-                ((DataModel.ScoreHistory.ScoreHistoryEventStyleEntry)objResponse.ScoreHistoryList[0]).EventStyle);
+                ((ShootersTech.BabelFish.DataModel.ScoreHistory.ScoreHistoryEventStyleEntry)objResponse.ScoreHistoryList[0]).EventStyle);
 
             // Assign Response.ContinuationToken for next set of data
             requestParameters.ContinuationToken = taskResult.ContinuationToken;
@@ -294,7 +294,7 @@ namespace ShootersTech.Tests {
             Assert.IsNotNull(objResponse);
             Assert.IsTrue(objResponse.ScoreHistoryList.Count == 2);
             Assert.AreEqual("v1.0:ntparc:Precision Air Rifle Prone", 
-                ((DataModel.ScoreHistory.ScoreHistoryStageStyleEntry)objResponse.ScoreHistoryList[0]).StageStyle);
+                ((ShootersTech.BabelFish.DataModel.ScoreHistory.ScoreHistoryStageStyleEntry)objResponse.ScoreHistoryList[0]).StageStyle);
         }
         #endregion HISTORY
 

@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech;
-using ShootersTech.Helpers;
-using ShootersTech.DataModel.Definitions;
+using ShootersTech.BabelFish.DefinitionAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace ShootersTech.Tests {
+namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class DefinitionCacheTests
     {

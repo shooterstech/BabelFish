@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.DataModel;
+using ShootersTech.BabelFish.DataModel;
 
 namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
 

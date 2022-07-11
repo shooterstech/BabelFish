@@ -9,7 +9,7 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
 
-namespace ShootersTech.Helpers
+namespace ShootersTech.BabelFish.Helpers
 {
     public class AWSCognitoAuthentication
     {

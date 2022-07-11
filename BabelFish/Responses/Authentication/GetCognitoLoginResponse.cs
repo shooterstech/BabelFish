@@ -1,7 +1,7 @@
-﻿using ShootersTech.DataModel.Authentication;
-using ShootersTech.Requests.Authentication;
+﻿using ShootersTech.BabelFish.DataModel.Authentication;
+using ShootersTech.BabelFish.Requests.Authentication;
 
-namespace ShootersTech.Responses.Authentication
+namespace ShootersTech.BabelFish.Responses.Authentication
 {
     public class GetCognitoLoginResponse : Response<AuthTokens>
     {

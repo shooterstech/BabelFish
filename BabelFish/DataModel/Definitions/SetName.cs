@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     public class SetName {
 
         private int majorVersion = 0;

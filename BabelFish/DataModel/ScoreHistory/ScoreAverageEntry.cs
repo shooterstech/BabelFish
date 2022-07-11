@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.DataModel.ScoreHistory {
+namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
     public class ScoreAverageEntry : ScoreAverageBase {
 
         public ScoreAverageEntry() : base() {
