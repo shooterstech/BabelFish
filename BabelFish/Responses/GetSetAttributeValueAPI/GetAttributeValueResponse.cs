@@ -1,14 +1,17 @@
-﻿using BabelFish.DataModel.GetSetAttributeValue;
+﻿using ShootersTech.BabelFish.DataModel.GetSetAttributeValue;
+using ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace BabelFish.Responses.GetSetAttributeValueAPI
+namespace ShootersTech.BabelFish.Responses.GetSetAttributeValueAPI
 {
     public class GetAttributeValueResponse : Response<AttributeValueList>
     {
         private const string OBJECT_LIST_NAME = "attribute-values";
 
-        public GetAttributeValueResponse() { }
+        public GetAttributeValueResponse( GetAttributeValueRequest request) : base() {
+            this.Request = request;
+        }
 
         /// <summary>
         /// Facade function that returns the same as this.Value

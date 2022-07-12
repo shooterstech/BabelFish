@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
-using BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace BabelFish.Helpers
+namespace ShootersTech.BabelFish.Helpers
 {
     public class DefinitionCacheHelper
     {
@@ -19,7 +19,7 @@ namespace BabelFish.Helpers
 
         private SetName? currentSetName = null;
 
-        private Definition.DefinitionType? currentType { get; set; } = null;
+        private DefinitionType? currentType { get; set; } = null;
 
         public DefinitionCacheHelper()
         {
@@ -58,7 +58,7 @@ namespace BabelFish.Helpers
 
         public SetName? CurrentSetName { get { return currentSetName; } }
 
-        public Definition.DefinitionType? CurrentType { get { return currentType; } }
+        public DefinitionType? CurrentType { get { return currentType; } }
         #endregion Properties
 
         #region Methods
@@ -68,7 +68,7 @@ namespace BabelFish.Helpers
         /// <param name="definitionType"></param>
         /// <param name="setName"></param>
         /// <returns>DefinitionCache object or null if not available</returns>
-        public DefinitionCache? GetCachedDefinition(Definition.DefinitionType definitionType, SetName setName)
+        public DefinitionCache? GetCachedDefinition(DefinitionType definitionType, SetName setName)
         {
             LastException = string.Empty;
             SetCurrent(definitionType, setName);
@@ -93,7 +93,7 @@ namespace BabelFish.Helpers
         /// <param name="definitionType"></param>
         /// <param name="setName"></param>
         /// <returns>INTEGER (0+ days); -1 denotes error in LastException</returns>
-        public int DefinitionCacheAgeInDays(Definition.DefinitionType definitionType, SetName setName)
+        public int DefinitionCacheAgeInDays(DefinitionType definitionType, SetName setName)
         {
             LastException = string.Empty;
             SetCurrent(definitionType, setName);
@@ -113,7 +113,7 @@ namespace BabelFish.Helpers
         /// </summary>
         /// <param name="setDefinition"></param>
         /// <returns>true or false with exception</returns>
-        public bool SaveDefinitionToCache(string saveDefinition, Definition.DefinitionType definitionType, SetName setName)
+        public bool SaveDefinitionToCache(string saveDefinition, DefinitionType definitionType, SetName setName)
         {
             LastException = string.Empty;
             SetCurrent(definitionType, setName);
@@ -276,7 +276,7 @@ namespace BabelFish.Helpers
         /// <param name="definitionType"></param>
         /// <param name="setName"></param>
         /// <returns>Local Definition Age of type Timespan. Convert with .TotalDays</returns>
-        private TimeSpan DefinitionCacheAge(Definition.DefinitionType? definitionType = null, SetName? setName = null)
+        private TimeSpan DefinitionCacheAge(DefinitionType? definitionType = null, SetName? setName = null)
         {
             SetCurrent(definitionType, setName);
             LastException = string.Empty;
@@ -299,7 +299,7 @@ namespace BabelFish.Helpers
         /// LastUpdated date for Current Type/SetName
         /// </summary>
         /// <returns>DateTime</returns>
-        private DateTime DefinitionCacheLastUpdated(Definition.DefinitionType? definitionType = null, SetName? setName = null)
+        private DateTime DefinitionCacheLastUpdated(DefinitionType? definitionType = null, SetName? setName = null)
         {
             SetCurrent(definitionType, setName);
             LastException = string.Empty;
@@ -378,7 +378,7 @@ namespace BabelFish.Helpers
                     returnDefinitionCache.SetName = SetName.Parse(JsonHelper.FieldValueFromJson(returnDefinitionCache.DefinitionJSON, "SetName"));
 
                     // Need to match Enum.Description returned in json
-                    returnDefinitionCache.DefinitionType = EnumHelper.ParseEnumByDescription<Definition.DefinitionType>(JsonHelper.FieldValueFromJson(returnDefinitionCache.DefinitionJSON, "Type"));
+                    returnDefinitionCache.DefinitionType = EnumHelper.ParseEnumByDescription<DefinitionType>(JsonHelper.FieldValueFromJson(returnDefinitionCache.DefinitionJSON, "Type"));
                 }
             }
             catch (Exception ex)
@@ -388,7 +388,7 @@ namespace BabelFish.Helpers
             return returnDefinitionCache;
         }
 
-        private float GetDefinitionVersionFromServer(Definition.DefinitionType? definitionType, SetName? setName)
+        private float GetDefinitionVersionFromServer(DefinitionType? definitionType, SetName? setName)
         {
             float returnVersion = -1;
 
@@ -425,7 +425,7 @@ namespace BabelFish.Helpers
         /// </summary>
         /// <param name="setType"></param>
         /// <param name="setSetName"></param>
-        private void SetCurrent(Definition.DefinitionType? setType, SetName? setSetName)
+        private void SetCurrent(DefinitionType? setType, SetName? setSetName)
         {
             if ( setType != null )
                 currentType = setType;

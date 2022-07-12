@@ -5,12 +5,12 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     [Serializable]
     public class StageStyle : Definition {
 
         public StageStyle() : base() {
-            Type = Definition.DefinitionType.STAGESTYLE;
+            Type = DefinitionType.STAGESTYLE;
         }
 
         [OnDeserialized]

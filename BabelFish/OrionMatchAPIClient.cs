@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.DataModel.OrionMatch;
-using BabelFish.Requests.OrionMatchAPI;
-using BabelFish.Responses.OrionMatchAPI;
+using ShootersTech.BabelFish.DataModel.OrionMatch;
+using ShootersTech.BabelFish.Requests.OrionMatchAPI;
+using ShootersTech.BabelFish.Responses.OrionMatchAPI;
 
-namespace BabelFish {
+namespace ShootersTech.BabelFish.OrionMatchAPI {
     public class OrionMatchAPIClient : APIClient {
 
         /// <summary>
@@ -26,10 +26,11 @@ namespace BabelFish {
         /// <summary>
         /// Get Match Detail API
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) {
-            GetMatchResponse response = new GetMatchResponse();
+
+            GetMatchResponse response = new GetMatchResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -40,6 +41,7 @@ namespace BabelFish {
         /// Get Match Detail API
         /// </summary>
         /// <param name="matchid"></param>
+        /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false) {
             var request = new GetMatchRequest(matchid);
@@ -52,10 +54,10 @@ namespace BabelFish {
         /// <summary>
         /// Get Result List API
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="requestParameters">GetResultListRequest object</param>
         /// <returns>ResultList Object</returns>
         public async Task<GetResultListResponse> GetResultListAsync( GetResultListRequest requestParameters ) {
-            GetResultListResponse response = new GetResultListResponse();
+            GetResultListResponse response = new GetResultListResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -75,11 +77,11 @@ namespace BabelFish {
         /// <summary>
         /// Get Squadding List API
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="requestParameters">GetSquaddingListRequest object</param>
         /// <returns>Squadding Object</returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
             
-            GetSquaddingListResponse response = new GetSquaddingListResponse();
+            GetSquaddingListResponse response = new GetSquaddingListResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -91,6 +93,7 @@ namespace BabelFish {
         /// </summary>
         /// <param name="matchid"></param>
         /// <param name="squaddinglistname"></param>
+        /// <param name="withAuthentication">default false</param>
         /// <returns>Squadding Object</returns>
         public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname, bool withAuthentication = false )
         {
@@ -104,10 +107,10 @@ namespace BabelFish {
         /// <summary>
         /// Get Course Of Fire Detail API
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="requestParameters">GetResultCOFDetailRequest object</param>
         /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters) {
-            GetResultCOFDetailResponse response = new GetResultCOFDetailResponse();
+            GetResultCOFDetailResponse response = new GetResultCOFDetailResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -128,7 +131,7 @@ namespace BabelFish {
         /// </summary>
         /// <returns>List<MatchLocation> Object</returns>
         public async Task<GetMatchLocationsResponse> GetMatchLocationsAsync() {
-            GetMatchLocationsResponse response = new GetMatchLocationsResponse();
+            GetMatchLocationsResponse response = new GetMatchLocationsResponse(new GetMatchLocationsRequest());
 
             var request = new GetMatchLocationsRequest();
             
@@ -140,10 +143,10 @@ namespace BabelFish {
         /// <summary>
         /// Get Match Search API
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
         public async Task<GetMatchSearchResponse> GetMatchSearchAsync(GetMatchSearchRequest requestParameters) {
-            GetMatchSearchResponse response = new GetMatchSearchResponse();
+            GetMatchSearchResponse response = new GetMatchSearchResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -151,35 +154,13 @@ namespace BabelFish {
         }
 
         /// <summary>
-        /// Get Match Search API
-        /// </summary>
-        /// <param name="DistanceSearch"></param>
-        /// <param name="StartingDate"></param>
-        /// <param name="EndingDate"></param>
-        /// <param name="ShootingStyle"></param>
-        /// <param name="NumberOfMatchesToReturn"></param>
-        /// <param name="Longitude"></param>
-        /// <param name="Latitude"></param>
-        /// <param name="withAuthentication"></param>
-        /// <returns>List<Match> Object</returns>
-        public async Task<GetMatchSearchResponse> GetMatchSearchAsync(int DistanceSearch, string StartingDate, 
-            string EndingDate, string ShootingStyle, int NumberOfMatchesToReturn, double Longitude, double Latitude, bool withAuthentication = false)
-        {
-            var request = new GetMatchSearchRequest(DistanceSearch, StartingDate,
-                EndingDate, ShootingStyle, NumberOfMatchesToReturn, Longitude, Latitude);
-            request.WithAuthentication = withAuthentication;
-
-            return await GetMatchSearchAsync(request).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Get Participant List API
         /// </summary>
-        /// <param name="requestParameters"></param>
+        /// <param name="requestParameters">GetParticipantListRequest object</param>
         /// <returns>Match Participant List Object</returns>
         public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(GetParticipantListRequest requestParameters)
         {
-            GetParticipantListResponse response = new GetParticipantListResponse();
+            GetParticipantListResponse response = new GetParticipantListResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -190,6 +171,7 @@ namespace BabelFish {
         /// Get Participant List API
         /// </summary>
         /// <param name="matchid"></param>
+        /// <param name="withAuthentication"></param>
         /// <returns>Match Participant List Object</returns>
         public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(string matchid, bool withAuthentication = false)
         {

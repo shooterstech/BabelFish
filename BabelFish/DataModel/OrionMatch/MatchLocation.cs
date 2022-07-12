@@ -6,13 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.OrionMatch {
-
-    public class MatchLocationWrapper
-    {
-        public List<MatchLocation> MatchLocations = new List<MatchLocation>();
-    }
-
+namespace ShootersTech.BabelFish.DataModel.OrionMatch
+{
     [Serializable]
     public class MatchLocation : Location {
 

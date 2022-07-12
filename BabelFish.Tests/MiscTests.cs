@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BabelFish.GetVersionAPI;
-using BabelFish.Helpers;
+using ShootersTech.BabelFish.GetVersionAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.Requests.Misc;
 
-namespace BabelFish.Tests {
+namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class MiscTests {
         private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
@@ -48,9 +49,13 @@ namespace BabelFish.Tests {
         [TestMethod]
         public void GetMultipleServicesProductionLevel()
         {
-            List<VersionService> services = new List<VersionService>() { VersionService.orion, VersionService.athena };
-            VersionLevel level = VersionLevel.production;
-            var response = _client.GetVersionAsync(services, level);
+            GetVersionRequest request = new GetVersionRequest()
+            {
+                services = new List<VersionService>() { VersionService.orion, VersionService.athena },
+                level = VersionLevel.production
+            };
+    
+            var response = _client.GetVersionAsync(request);
 
             var result = response.Result;
             Assert.IsNotNull(result);

@@ -1,6 +1,7 @@
-﻿using BabelFish.DataModel.Definitions;
+﻿using ShootersTech.BabelFish.DefinitionAPI;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace BabelFish.DataModel.GetSetAttributeValue
+namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue
 {
     internal class AttributeValueDefinition
     {
@@ -56,7 +57,7 @@ namespace BabelFish.DataModel.GetSetAttributeValue
                 clientDefinition = new DefinitionAPIClient(Helpers.SettingsHelper.UserSettings["XApiKey"], Helpers.SettingsHelper.RevertSettingsFormat());
 
                 Responses.DefinitionAPI.GetDefinitionResponse<Definitions.Attribute> DefinitionResponse =
-                    await clientDefinition.GetAttributeDefinitionAsync(Definitions.SetName.Parse(SetName)).ConfigureAwait(false);
+                    await clientDefinition.GetAttributeDefinitionAsync( Definitions.SetName.Parse( SetName ) ).ConfigureAwait(false);
                 if (DefinitionResponse.Definition != null)
                     AttributeDefinition = DefinitionResponse.Definition;
             }

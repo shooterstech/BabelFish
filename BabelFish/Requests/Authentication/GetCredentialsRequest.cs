@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.Helpers;
+using ShootersTech.BabelFish.Helpers;
 
-namespace BabelFish.Requests.Authentication.Credentials
+namespace ShootersTech.BabelFish.Requests.Authentication.Credentials
 {
     [Obsolete("Use Helpers.AWSCognitoAuthentication")]
     public class GetCredentialsRequest : Request

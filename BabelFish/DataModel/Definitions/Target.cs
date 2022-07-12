@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     [Serializable]
     public class Target : Definition {
 
         public Target() : base() {
-            Type = Definition.DefinitionType.TARGET;
+            Type = DefinitionType.TARGET;
         }
 
         [OnDeserialized]

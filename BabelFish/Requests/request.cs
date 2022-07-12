@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BabelFish.Helpers;
-//using Microsoft.VisualBasic.CompilerServices; //COMMENT OUT FOR .NET Standard 2.0
+using ShootersTech.BabelFish.Helpers;
 
-namespace BabelFish.Requests
+namespace ShootersTech.BabelFish.Requests
 {
     /// <summary>
     /// Abstract base class for all Request Objects
@@ -21,6 +20,11 @@ namespace BabelFish.Requests
         public bool WithAuthentication { get; set; } = false;
 
         public bool IsShootersTechURI { get; set; } = true;
+
+        /// <summary>
+        /// Assigned from Response value, for some APIs where Limit is used
+        /// </summary>
+        public virtual string ContinuationToken { get; set; } = string.Empty;
 
         public virtual APIStage ApiStage { get; set; } = APIStage.PRODUCTION;
 

@@ -5,15 +5,15 @@ NOTE: Library is considered a WORK-IN-PROGRESS and is NOT intended for productio
 
 
 =============================== BabelFish Use Quick Start
-using BabelFish;
-using BabelFish.Responses;
+using ShootersTech.BabelFish.;
+using ShootersTech.BabelFish.Responses;
 
 
 =============================== Available APIs Quick Reference
 ORION MATCH API
-using BabelFish.Requests.OrionMatchAPI; // (Optional if using parameters instead of Request object)
-using BabelFish.Responses.OrionMatchAPI;
-using BabelFish.DataModel.OrionMatch;
+using ShootersTech.BabelFish.Requests.OrionMatchAPI; // (Optional if using parameters instead of Request object)
+using ShootersTech.BabelFish.Responses.OrionMatchAPI;
+using ShootersTech.BabelFish.DataModel.OrionMatch;
 
 OrionMatchAPIClient.GetMatchDetailAsync(GetMatchRequest MatchRequest)		// MatchRequest.MatchID="1.2899.1040248529.0"
 OrionMatchAPIClient.GetMatchDetailAsync(string MatchID)				// "1.2899.1040248529.0"
@@ -22,28 +22,28 @@ OrionMatchAPIClient.GetResultListAsync(GetResultListRequest ResultListRequest)	/
 OrionMatchAPIClient.GetResultListAsync(string MatchID, string ResultListName)	// "1.2899.1040248529.0", "Individual - All"
 
 DEFINITIONS
-using BabelFish.DataModel.Definitions;
-using BabelFish.Responses.DefinitionAPI;
-using Attribute = BabelFish.DataModel.Definitions.Attribute;
+using ShootersTech.BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.Responses.DefinitionAPI;
+using Attribute = ShootersTech.BabelFish.DataModel.Definitions.Attribute;
 
 GetDefinitionResponse<Attribute> AttributeResponse = await DefinitionAPIClient.GetAttributeDefinitionAsync(setName).ConfigureAwait(false);
 
 
 =============================== Example API instantiation and call
 // Namespaces
-using BabelFish;
+using ShootersTech;
 
 // API client using
-BabelFish.DataModel.OrionMatch;
+ShootersTech.BabelFish.DataModel.OrionMatch;
 
 // DataModel Objects
-using BabelFish.Requests.OrionMatchAPI;
+using ShootersTech.BabelFish.Requests.OrionMatchAPI;
 
 // Request Objects - (Now optional if using parameters)
-using BabelFish.Requests.OrionMatchAPI;
+using ShootersTech.BabelFish.Requests.OrionMatchAPI;
 
 // Response Objects hold status + object returned
-using BabelFish.Responses.OrionMatchAPI;
+using ShootersTech.BabelFish.Responses.OrionMatchAPI;
 
 // Declare x-api-key for use
 string XApiKey = "[enter key here]";
@@ -81,6 +81,11 @@ MessageResponse.Message holds error Message returned from API List
 
 
 =============================== BabelFish Versioning
+v1.0.12.0
+Add ScoreHistoryAPI
+Update namespace to ShootersTech.BabelFish
+Updated Orion MatchSearch function
+
 v1.0.11.0
 Add GetVersionAPI -> GetVersion() with VersionService, VersionLevel Enum helpers
 

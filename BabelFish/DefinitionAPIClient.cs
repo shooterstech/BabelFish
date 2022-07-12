@@ -5,16 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
-using BabelFish.Helpers;
-using BabelFish.Responses;
-using BabelFish.DataModel.Definitions;
-using BabelFish.Requests.DefinitionAPI;
-using BabelFish.Responses.DefinitionAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.Responses;
+using ShootersTech.BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.Requests.DefinitionAPI;
+using ShootersTech.BabelFish.Responses.DefinitionAPI;
 
-namespace BabelFish
-{
-    public class DefinitionAPIClient : APIClient
-    {
+namespace ShootersTech.BabelFish.DefinitionAPI {
+    public class DefinitionAPIClient : APIClient {
+
         DefinitionCacheHelper definitionCacheHelper;
         private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -37,14 +36,14 @@ namespace BabelFish
             definitionCacheHelper = new DefinitionCacheHelper();
         }
 
-        public async Task<GetDefinitionResponse<T>> GetDefinition<T>(Definition.DefinitionType type, SetName setName, GetDefinitionResponse<T> response)
+        public async Task<GetDefinitionResponse<T>> GetDefinition<T>(GetDefinitionRequest request, GetDefinitionResponse<T> response) where T : new() 
         {
             try{
                 // TimeToRun if we use cache
                 DateTime startTime = DateTime.Now;
 
                 // Check cache (memory then file system) for existing, non-expired Definition
-                DefinitionCache? cachedDefinition = definitionCacheHelper.GetCachedDefinition(type, setName);
+                DefinitionCache? cachedDefinition = definitionCacheHelper.GetCachedDefinition(request.DefinitionType, request.SetName);
 
                 if (cachedDefinition != null)
                 {
@@ -62,13 +61,13 @@ namespace BabelFish
                 }
                 else
                 {
-                    GetDefinitionRequest requestParameters = new GetDefinitionRequest(setName, type.Description());
+                    GetDefinitionRequest requestParameters = new GetDefinitionRequest(request.SetName, request.DefinitionType);
 
-                    await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+                    await this.CallAPI(request, response).ConfigureAwait(false);
 
                     // Save returned definition to cache
                     if ( response.Body != null )
-                        definitionCacheHelper.SaveDefinitionToCache(response.Body.ToString(), type, setName);
+                        definitionCacheHelper.SaveDefinitionToCache(response.Body.ToString(), request.DefinitionType, request.SetName);
                 }
             }
             catch (Exception ex)
@@ -82,93 +81,112 @@ namespace BabelFish
             return response;
         }
 
-        public async Task<GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync(SetName setName)
-        {
-            var definitionType = Definition.DefinitionType.ATTRIBUTE;
+        
+        public async Task<GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
-            GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<BabelFish.DataModel.Definitions.Attribute>(setName, definitionType);
+            var definitionType = DefinitionType.ATTRIBUTE;
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
+
+            GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute>(request);
+
+            return await GetDefinition(request, response).ConfigureAwait(false);
         }
+        
 
-        public async Task<GetDefinitionResponse<CourseOfFire>> GetCourseOfFireDefinition(SetName setName)
-        {
+        public async Task<GetDefinitionResponse<CourseOfFire>> GetCourseOfFireDefinition( SetName setName ) {
 
-            var definitionType = Definition.DefinitionType.COURSEOFFIRE;
+            var definitionType = DefinitionType.COURSEOFFIRE;
 
-            GetDefinitionResponse<CourseOfFire> response = new GetDefinitionResponse<CourseOfFire>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<CourseOfFire> response = new GetDefinitionResponse<CourseOfFire>( request );
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<EventStyle>> GetEventStyleDefinition(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.EVENTSTYLE;
+            var definitionType = DefinitionType.EVENTSTYLE;
 
-            GetDefinitionResponse<EventStyle> response = new GetDefinitionResponse<EventStyle>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<EventStyle> response = new GetDefinitionResponse<EventStyle>( request );
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<RankingRule>> GetRankingRuleDefinition(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.RANKINGRULES;
+            var definitionType = DefinitionType.RANKINGRULES;
 
-            GetDefinitionResponse<RankingRule> response = new GetDefinitionResponse<RankingRule>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<RankingRule> response = new GetDefinitionResponse<RankingRule>( request );
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<StageStyle>> GetStageStyleDefinition(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.STAGESTYLE;
+            var definitionType = DefinitionType.STAGESTYLE;
 
-            GetDefinitionResponse<StageStyle> response = new GetDefinitionResponse<StageStyle>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<StageStyle> response = new GetDefinitionResponse<StageStyle>( request );
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<TargetCollection>> GetTargetCollectionDefinition(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.TARGETCOLLECTION;
+            var definitionType = DefinitionType.TARGETCOLLECTION;
 
-            GetDefinitionResponse<TargetCollection> response = new GetDefinitionResponse<TargetCollection>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<TargetCollection> response = new GetDefinitionResponse<TargetCollection>( request );
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<Target>> GetTargetDefinition(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.TARGET;
+            var definitionType = DefinitionType.TARGET;
 
-            GetDefinitionResponse<Target> response = new GetDefinitionResponse<Target>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<Target> response = new GetDefinitionResponse<Target>( request );
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinition(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.SCOREFORMATCOLLECTION;
+            var definitionType = DefinitionType.SCOREFORMATCOLLECTION;
 
-            GetDefinitionResponse<ScoreFormatCollection> response = new GetDefinitionResponse<ScoreFormatCollection>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<ScoreFormatCollection> response = new GetDefinitionResponse<ScoreFormatCollection>(request);
+
+            return await GetDefinition( request, response).ConfigureAwait(false);
         }
 
         public async Task<GetDefinitionResponse<ResultListFormat>> GetResultListFormatCollection(SetName setName)
         {
 
-            var definitionType = Definition.DefinitionType.RESULTLISTFORMAT;
+            var definitionType = DefinitionType.RESULTLISTFORMAT;
 
-            GetDefinitionResponse<ResultListFormat> response = new GetDefinitionResponse<ResultListFormat>(setName, definitionType);
+            GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            return await GetDefinition(definitionType, setName, response).ConfigureAwait(false);
+            GetDefinitionResponse<ResultListFormat> response = new GetDefinitionResponse<ResultListFormat>( request );
+
+            return await GetDefinition( request, response ).ConfigureAwait( false );
         }
     }
 }

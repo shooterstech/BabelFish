@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace BabelFish.DataModel.Definitions
+namespace ShootersTech.BabelFish.DataModel.Definitions
 {
     [Serializable]
     public class DefinitionCache
@@ -14,7 +14,7 @@ namespace BabelFish.DataModel.Definitions
 
         [JsonProperty(Order = 13)]
         [DefaultValue(null)]
-        public Definition.DefinitionType? DefinitionType { get; set; } = null;
+        public DefinitionType? DefinitionType { get; set; } = null;
 
         [JsonProperty(Order = 14)]
         [DefaultValue("")]

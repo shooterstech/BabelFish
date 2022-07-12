@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BabelFish;
-using BabelFish.Helpers;
-using BabelFish.DataModel.Definitions;
+using ShootersTech.BabelFish.DefinitionAPI;
+using ShootersTech.BabelFish.Helpers;
+using ShootersTech.BabelFish.DataModel.Definitions;
 
-namespace BabelFish.Tests {
+namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class DefinitionCacheTests
     {
@@ -91,7 +91,7 @@ namespace BabelFish.Tests {
             DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey, clientParams);
 
             DefinitionCacheHelper definitionCacheHelperDays = new DefinitionCacheHelper();
-            Assert.AreEqual(definitionCacheHelperDays.DefinitionCacheAgeInDays(Definition.DefinitionType.ATTRIBUTE, SetName.Parse("v1.0:orion:Date of Birth")),5);
+            Assert.AreEqual(definitionCacheHelperDays.DefinitionCacheAgeInDays(DefinitionType.ATTRIBUTE, SetName.Parse("v1.0:orion:Date of Birth")),5);
 
             System.IO.File.Delete($"{defaultDir}{definitionDir}{mockDirFile}");
         }

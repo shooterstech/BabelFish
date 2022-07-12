@@ -23,6 +23,6 @@ namespace ShootersTech.BabelFish.DataModel {
         /// should not change this value ... unless they want really bizarre and
         /// uncontrolled behavior. 
         /// </summary>
-        public int ConcreteClassId{ get; set; }
+        int ConcreteClassId{ get; set; }
     }
 }

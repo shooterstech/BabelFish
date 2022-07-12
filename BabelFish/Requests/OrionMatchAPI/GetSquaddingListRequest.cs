@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests.OrionMatchAPI 
+namespace ShootersTech.BabelFish.Requests.OrionMatchAPI 
 {
     public class GetSquaddingListRequest : Request
     {
-        public GetSquaddingListRequest(string matchid = "", string squaddinglistname = "")
+        public GetSquaddingListRequest(string matchid = "", string squaddinglistname = "") : base()
         {
             MatchID = matchid;
             SquaddingListName = squaddinglistname;

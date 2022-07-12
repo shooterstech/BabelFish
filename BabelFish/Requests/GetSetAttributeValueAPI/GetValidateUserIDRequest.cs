@@ -1,16 +1,18 @@
-﻿using BabelFish.Helpers;
+﻿using ShootersTech.BabelFish.Helpers;
 
-namespace BabelFish.Requests.GetSetAttributeValueAPI
+namespace ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {
-        public GetValidateUserIDRequest(string userID)
+        public GetValidateUserIDRequest() 
         {
             WithAuthentication = true;
-            UserID = userID;
         }
 
-        private string UserID { get; set; } = string.Empty;
+        /// <summary>
+        /// UserId to lookup
+        /// </summary>
+        public string UserID { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public override string RelativePath
@@ -20,7 +22,7 @@ namespace BabelFish.Requests.GetSetAttributeValueAPI
 
         public override APIStage ApiStage
         {  
-            get { return APIStage.BETA; } 
+            get { return APIStage.PRODUCTION; } 
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// An OrionTarget is a brief definition of a type of target. It contains enough information for a handheld 
     /// device to take an image of the target. For a complete definition use the TargetScheme with the 

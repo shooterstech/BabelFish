@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BabelFish.Helpers
+namespace ShootersTech.BabelFish.Helpers
 {
     /// <summary>
     /// 

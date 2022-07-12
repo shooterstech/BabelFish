@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     /// <summary>
     /// An event within a COURSE OF FIRE that does not have any children. Almost always refers to a single shot. 
     /// Singulars are not defined individually, but as a group.As an example, in a three position match, 

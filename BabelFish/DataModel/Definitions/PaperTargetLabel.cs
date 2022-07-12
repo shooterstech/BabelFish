@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     /// <summary>
     /// A PaperTargetLabel details how paper targets should be labeled for the COURSE OF FIRE. Each 
     /// PaperTargetLabel is an option for a different type of target and shots per bull.

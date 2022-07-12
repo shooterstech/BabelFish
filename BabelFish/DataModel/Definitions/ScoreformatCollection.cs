@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
 
     [Serializable]
     public class ScoreFormatCollection : Definition {
         
         public ScoreFormatCollection() : base() {
-            Type = Definition.DefinitionType.SCOREFORMATCOLLECTION;
+            Type = DefinitionType.SCOREFORMATCOLLECTION;
         }
 
 

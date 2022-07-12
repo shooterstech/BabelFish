@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.DataModel.Athena.DataFormat
+namespace ShootersTech.BabelFish.DataModel.Athena.DataFormat
 {
     /// <summary>
     /// A ShotGraphicDisplay describes how both the target image graphic should be displayed, what shots
@@ -33,6 +33,6 @@ namespace ShootersTech.DataModel.Athena.DataFormat
         /// <summary>
         /// Describites what (text) scores should be displayed along witgh the target image graphics.
         /// </summary>
-        public BabelFish.DataModel.Definitions.AbbreviatedFormat AbbreviatedFormat { get; set; } = new BabelFish.DataModel.Definitions.AbbreviatedFormat();
+        public ShootersTech.BabelFish.DataModel.Definitions.AbbreviatedFormat AbbreviatedFormat { get; set; } = new ShootersTech.BabelFish.DataModel.Definitions.AbbreviatedFormat();
     }
 }

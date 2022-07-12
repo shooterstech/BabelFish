@@ -6,23 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.OrionMatch
+namespace ShootersTech.BabelFish.DataModel.OrionMatch
 {
-
-    public class MatchSearch
-    {
-        public List<Match> SearchList = new List<Match>();
-    }
-
-    public class MatchWrapper
-    {
-        public Match Match = new Match();
-
-        public override string ToString()
-        {
-            return $"Match {Match.Name}";
-        }
-    }
 
     [Serializable]
     public class Match

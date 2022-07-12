@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     /// <summary>
     /// An AbbreviatedFormat describes the format of a AbbreviatedResultCOF. These are used to display 
     /// event scores to the athlete within his or her Athena compliant EST Monitor and to spectators through EST Displays.

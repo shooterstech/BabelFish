@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.DataModel.Athena.DataFormat
+namespace ShootersTech.BabelFish.DataModel.Athena.DataFormat
 {
     /// <summary>
     /// Object that holds the EventNames of a specific shot, for each of the EventTypes.

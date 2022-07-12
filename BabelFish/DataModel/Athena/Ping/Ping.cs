@@ -5,9 +5,8 @@ using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.DataModel.Athena.Ping
+namespace ShootersTech.BabelFish.DataModel.Athena.Ping
 {
-    public class Ping
     public class Ping {
 
         //When a Ping object is created, it is created after a response from a thing
@@ -58,7 +57,7 @@ namespace ShootersTech.DataModel.Athena.Ping
 
         public DateTime GetSentTime() {
             try {
-                var st = DateTime.ParseExact( SentTime, Medea.WebServices.Constants.DATETIME_FORMAT, cultureInfo );
+                var st = DateTime.ParseExact( SentTime, ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
                 return st.ToUniversalTime();
                 //return st;
             } catch (Exception ex) {
@@ -68,7 +67,7 @@ namespace ShootersTech.DataModel.Athena.Ping
 
         public DateTime GetReceivedTime() {
             try {
-                var rt = DateTime.ParseExact( ReceivedTime, Medea.WebServices.Constants.DATETIME_FORMAT, cultureInfo );
+                var rt = DateTime.ParseExact( ReceivedTime, ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
                 return rt.ToUniversalTime();
             } catch (Exception ex) {
                 return DateTime.MinValue;
@@ -97,25 +96,6 @@ namespace ShootersTech.DataModel.Athena.Ping
             var receivedDiff = GetReceivedTime() - GetSentTime();
             var responseDiff = responseTime - GetReceivedTime();
             return (Math.Abs( receivedDiff.TotalSeconds ) < 4 && Math.Abs( responseDiff.TotalSeconds ) < 4);
-        }
-
-        /// <summary>
-        /// Return a boolean indicating if the ping's received time is larger than the time inbetween pings. If it is
-        /// and this is the "last" received ping from the EST Unit, then the EST Unite is likely offline.
-        /// </summary>
-        public bool OutOfDate {
-            get {
-                if (Unknown)
-                    return true;
-
-                var rt = GetReceivedTime();
-                var diffTime = DateTime.UtcNow - rt;
-                if (diffTime.TotalMilliseconds > RangeManager.TIME_BEWEEN_PINGS) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
         }
 
         /// <summary>

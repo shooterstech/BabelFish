@@ -4,25 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
-namespace BabelFish.DataModel.OrionMatch
+namespace ShootersTech.BabelFish.DataModel.OrionMatch
 {
-
-    public class CourseOfFireWrapper
-    {
-        public ResultCOF ResultCOF = new ResultCOF();
-
-        public override string ToString()
-        {
-            StringBuilder foo = new StringBuilder();
-            foo.Append("ResultCOF for ");
-            foo.Append(ResultCOF.Participant.DisplayName);
-            foo.Append(": ");
-            foo.Append(ResultCOF.MatchName);
-            return foo.ToString();
-        }
-    }
-
     /// <summary>
     /// Result COF format for (JSONVersion) "2022-04-09"
     /// </summary>
@@ -93,21 +78,10 @@ namespace BabelFish.DataModel.OrionMatch
         [JsonProperty(Order = 12)]
         public string ParentID { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Should be one of the following:
-        /// "Training"
-        /// "Postal Match";
-        /// "Local Match";
-        /// "League Game";
-        /// "League Championship";
-        /// "Regional Match";
-        /// "Regional Championship";
-        /// "National Match";
-        /// "National Championship";
-        /// TODO: Turn this into a enum
-        /// </summary>
-        [JsonProperty(Order = 13)]
-        public string MatchType { get; set; } = string.Empty;
+
+        [JsonProperty( Order = 13 )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         /// <summary>
         /// The Local Date that this score was shot. 
@@ -167,19 +141,19 @@ namespace BabelFish.DataModel.OrionMatch
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object
         /// </summary>
         [JsonProperty(Order = 50)]
-        public Dictionary<string, ShootersTech.DataModel.Athena.Shot.Shot> Shots = new Dictionary<string, ShootersTech.DataModel.Athena.Shot.Shot>();
+        public Dictionary<string, ShootersTech.BabelFish.DataModel.Athena.Shot.Shot> Shots = new Dictionary<string, ShootersTech.BabelFish.DataModel.Athena.Shot.Shot>();
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
         /// </summary>
         [JsonProperty(Order = 60)]
-        public ShootersTech.DataModel.Athena.DataFormat.ShotGraphicShow LiveDisplay { get; set; }
+        public ShootersTech.BabelFish.DataModel.Athena.DataFormat.ShotGraphicShow LiveDisplay { get; set; }
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, after an event is completed.
         /// </summary>
         [JsonProperty(Order = 61)]
-        public List<ShootersTech.DataModel.Athena.DataFormat.ShotGraphicShow> PostDisplay { get; set; }
+        public List<ShootersTech.BabelFish.DataModel.Athena.DataFormat.ShotGraphicShow> PostDisplay { get; set; }
 
         /// <summary>
         /// GUID returned from API

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.OrionMatch
+namespace ShootersTech.BabelFish.DataModel.OrionMatch
 {
     [Serializable]
-    [Obsolete("Use ShootersTech.DataModel.Athena.Shot.Shot instead.")]
+    [Obsolete("Use ShootersTech.BabelFish.DataModel.Athena.Shot.Shot instead.")]
     public class Score
     {
 

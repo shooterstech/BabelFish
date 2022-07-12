@@ -1,63 +1,60 @@
-﻿using BabelFish.Requests;
+﻿using ShootersTech.BabelFish.Requests;
 
-namespace BabelFish.External {
+namespace ShootersTech.BabelFish.External {
     public class ExternalAPIClient : APIClient {
 
-        public ExternalAPIClient(string zipcodeapikey) : base(zipcodeapikey) { }
+        public ExternalAPIClient( string zipcodeapikey ) : base( zipcodeapikey ) { }
 
         /// <summary>
         /// Get location data from US zip code
         /// </summary>
         /// <param name="zipcode"></param>
         /// <returns></returns>
-        public async Task<GetExternalResponse> GetLocationDataFromZip( string zipcode )
-        {
-            GetExternalResponse response = new GetExternalResponse();
+        public async Task<GetExternalResponse> GetLocationDataFromZip( string zipcode ) {
 
-            if (int.TryParse(zipcode, out int verifyzip)) //break this out into a helper function
+            if (int.TryParse( zipcode, out int verifyzip )) //break this out into a helper function
             {
-                GetExternalRequest requestParameters = new GetExternalRequest(XApiKey, zipcode);
+                GetExternalRequest requestParameters = new GetExternalRequest( XApiKey, zipcode );
 
-                await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+                GetExternalResponse response = new GetExternalResponse( requestParameters );
+
+                await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
+
+                return response;
+            } else {
+                throw new RequestException( $"Zipcode in unexpected format. Received '{zipcode}'." );
             }
-
-            return response;
         }
     }
-}
 
-namespace BabelFish.External
-{
-    public class GetExternalRequest : Request
-    {
-        public GetExternalRequest(string apikey = "", string zipcode = "")
-        {
+    public class GetExternalRequest : Request {
+        public GetExternalRequest( string apikey = "", string zipcode = "" ) {
             ApiKey = apikey;
-            ZipCode= zipcode;
+            ZipCode = zipcode;
             IsShootersTechURI = false;
         }
-        public string ZipCode{ get; set; } = string.Empty;
+        public string ZipCode { get; set; } = string.Empty;
 
         public string ApiKey { get; set; } = string.Empty;
 
-        public override string RelativePath
-        {
+        public override string RelativePath {
             get { return $"https://zipcodeapi.com/rest/{ApiKey}/info.json/{ZipCode}/degrees"; }
         }
     }
-    public class GetExternalResponse : BabelFish.Responses.Response<ZipCodeApi>
-    {
+    public class GetExternalResponse : ShootersTech.BabelFish.Responses.Response<ZipCodeApi> {
+
+        public GetExternalResponse( GetExternalRequest request ) :base() {
+            this.Request = request;
+        }
 
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        public ZipCodeApi ZipCodeApi
-        {
+        public ZipCodeApi ZipCodeApi {
             get { return Value; }
         }
     }
-    public class ZipCodeApi
-    {
+    public class ZipCodeApi {
         public string zip_code { get; set; } = string.Empty;
         public double lat { get; set; } = 0;
         public double lng { get; set; } = 0;
@@ -67,8 +64,7 @@ namespace BabelFish.External
         public List<string> acceptable_city_names { get; set; } = new List<string>();
         public List<int> area_codes { get; set; } = new List<int>();
     }
-    public class TimeZoneObject
-    {
+    public class TimeZoneObject {
         public string timezone_identifier { get; set; } = string.Empty;
         public string timezone_abbr { get; set; } = string.Empty;
         public string utc_offset_sec { get; set; } = string.Empty;

@@ -19,6 +19,6 @@ namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
         /// <summary>
         /// The Shot to update
         /// </summary>
-        public ShootersTech.BabelFish.DataModel.Athena.Shot Shot { get; set; }
+        public ShootersTech.BabelFish.DataModel.Athena.Shot.Shot Shot { get; set; }
     }
 }

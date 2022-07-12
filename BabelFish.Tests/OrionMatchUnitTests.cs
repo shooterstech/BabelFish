@@ -1,10 +1,12 @@
+using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using BabelFish;
+using ShootersTech.BabelFish.OrionMatchAPI;
+using ShootersTech.BabelFish.Requests;
 
-namespace BabelFish.Tests
+namespace ShootersTech.BabelFish.Tests
 {
     [TestClass]
     public class OrionMatchUnitTests
@@ -92,17 +94,18 @@ namespace BabelFish.Tests
         [TestMethod]
         public void OrionMatchAPI_GetAMatchSearch()
         {
-            System.DateTime now = System.DateTime.Now;
-            int DistanceSearch = 250;
-            string StartingDate = new System.DateTime(now.Year, now.Month, 1).ToString("yyyy-MM-dd");
-            string EndingDate = new System.DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd");
-            string ShootingStyle = "Air Rifle";
-            int NumberOfMatchesToReturn = 100;
-            double Longitude = -77.555569;
-            double Latitude = 38.739453;
+            ShootersTech.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest requestParameters = new ShootersTech.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest()
+            {
+                DistanceSearch = 5,
+                StartDate = new DateTime(DateTime.Now.Year, 6, 1),
+                EndDate = DateTime.Today,
+                ShootingStyle = "Air Rifle",
+                NumberOfMatchesToReturn = 100,
+                Longitude = -77.555569,
+                Latitude = 38.739453,
+            };
 
-            var response = _client.GetMatchSearchAsync(
-                DistanceSearch, StartingDate, EndingDate, ShootingStyle, NumberOfMatchesToReturn, Longitude, Latitude);
+            var response = _client.GetMatchSearchAsync(requestParameters);
             Assert.IsNotNull(response);
 
             var result = response.Result.SearchList;
@@ -111,6 +114,7 @@ namespace BabelFish.Tests
             Assert.IsNotNull(resultName);
             Assert.AreNotEqual(resultName, "");
         }
+
 
         [TestMethod]
         public void OrionMatchAPI_GetASquaddingList()

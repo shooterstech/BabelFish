@@ -5,13 +5,13 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     [Serializable]
     public class EventStyle : Definition {
 
 
         public EventStyle() : base() {
-            Type = Definition.DefinitionType.EVENTSTYLE;
+            Type = DefinitionType.EVENTSTYLE;
 
             //Don't initialize EventStyles or StageStyles, since one of these values as to be null.
         }

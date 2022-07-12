@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Location {
 

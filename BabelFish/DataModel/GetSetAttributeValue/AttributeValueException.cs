@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ShootersTech.BabelFish.Runtime;
 
-namespace BabelFish.DataModel.GetSetAttributeValue
+namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue
 {
     [Serializable]
-    public class InvalidBabelFishException : Exception
-    {
+    public class InvalidBabelFishException : ShootersTechException {
         // https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
         public InvalidBabelFishException() : base() { }
         public InvalidBabelFishException(string message) : base(message) { }
         public InvalidBabelFishException(string message, Exception inner) : base(message, inner) { }
-
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
-        protected InvalidBabelFishException(System.Runtime.Serialization.SerializationInfo info,
-            System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 
     internal static class AttributeValueException

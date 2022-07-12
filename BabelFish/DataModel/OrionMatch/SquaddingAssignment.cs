@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace ShootersTech.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Abstract class representing the complete squadding assignment for one participant (athlete or team).
     /// </summary>
@@ -23,6 +23,14 @@ namespace BabelFish.DataModel.OrionMatch {
         public int FiringOrder { get; set; } = 0;
 
         public Participant Participant { get; set; } = new Individual();
+
+        /// <summary>
+        /// Implementation of the IDeserializableAbstractClass interface.
+        /// To have added control over the Deserialization of abstract classes, in to
+        /// Concrete classes, the JSON should include a ConcreteClassId that specifies
+        /// the Concrete class.
+        /// </summary>
+        public int ConcreteClassId { get; set; }
 
     }
     public class SquaddingAssignmentSpecifiedConcreteClassConverter : DefaultContractResolver {
@@ -47,7 +55,7 @@ namespace BabelFish.DataModel.OrionMatch {
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new SquaddingAssignmentSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( Participant ));
+            return (objectType == typeof( SquaddingAssignment ));
         }
 
         public override object ReadJson( JsonReader reader, Type objectType, object existingValue,

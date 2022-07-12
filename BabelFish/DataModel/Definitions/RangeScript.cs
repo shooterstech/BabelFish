@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     /// <summary>
     /// A RangeScript details the range command script for the chief range officer to give 
     /// during the course of fire, the set up and configuration of Athena compliant ESTs, 

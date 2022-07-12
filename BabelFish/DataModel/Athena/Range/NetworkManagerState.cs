@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.DataModel.Athena.Range
+namespace ShootersTech.BabelFish.DataModel.Athena.Range
 {
     public class NetworkManagerState
     {

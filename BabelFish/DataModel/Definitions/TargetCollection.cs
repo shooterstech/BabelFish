@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
 
     [Serializable]
     public class TargetCollection : Definition {
         
         public TargetCollection() : base() {
-            Type = Definition.DefinitionType.TARGETCOLLECTION;
+            Type = DefinitionType.TARGETCOLLECTION;
         }
 
         [OnDeserialized]

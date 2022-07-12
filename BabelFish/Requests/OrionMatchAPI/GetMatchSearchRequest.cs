@@ -4,51 +4,77 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BabelFish.Requests.OrionMatchAPI 
+namespace ShootersTech.BabelFish.Requests.OrionMatchAPI
 {
     public class GetMatchSearchRequest : Request
     {
+        /// <summary>
+        /// Public constructor. 
+        /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
+        /// </summary>
         public GetMatchSearchRequest() { }
 
-        public GetMatchSearchRequest(int distanceSerch, string startingDate, string endingDate, string shootingStyle,
-            int numberOfMatchesToReturn, double longitude, double latitude)
-        {
-            DistanceSearch = distanceSerch;
-            StartingDate = startingDate;
-            EndingDate = endingDate;
-            ShootingStyle = shootingStyle;
-            NumberOfMatchesToReturn = numberOfMatchesToReturn;
-            Longitude = longitude;
-            Latitude = latitude;
-        }
+        /// <summary>
+        /// Distance in miles to search.
+        /// The default is 10 miles.
+        /// </summary>
+        public int DistanceSearch { get; set; } = 10;
 
-        public int DistanceSearch { get; set; } = 0;
-        
-        public string StartingDate { get; set; } = string.Empty;
-        
-        public string EndingDate { get; set; } = string.Empty;
-        
-        public string ShootingStyle { get; set; } = string.Empty;
-        
+        /// <summary>
+        /// The start date of the match dates to search.
+        /// The default value is the first day of the current month.
+        /// </summary>
+        public DateTime StartDate { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+        /// <summary>
+        /// The end date of the match dates to search.
+        /// The default value is the last day of the current month.
+        /// </summary>
+        public DateTime EndDate { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+
+        /// <summary>
+        /// The shooting style to search or unassigned for all.
+        /// The default value is Air Rifle.
+        /// </summary>
+        public string ShootingStyle { get; set; } = "Air Rifle";
+
+        /// <summary>
+        /// The number of matches to return.
+        /// The default is 100.
+        /// </summary>
         public int NumberOfMatchesToReturn { get; set; } = 100;
-        
+
+        /// <summary>
+        /// The Logitude of an area to search.
+        /// If > default of 0, Latitude must also be > 0.
+        /// </summary>
         public double Longitude { get; set; } = 0;
-        
+
+        /// <summary>
+        /// The Latitude of an area to search.
+        /// If > default of 0, Longitude must also be > 0.
+        /// </summary>
         public double Latitude { get; set; } = 0;
 
-        public override Dictionary<string, List<string>> QueryParameters {
+        public override Dictionary<string, List<string>> QueryParameters
+        {
             get
             {
-                return new Dictionary<string, List<string>>()
-                {
-                    { "distanceSearch", new List<string> { DistanceSearch.ToString() } },
-                    { "startingDate", new List<string> { StartingDate } },
-                    { "endingDate", new List<string> { EndingDate } },
-                    { "shootingStyle", new List<string> { ShootingStyle } },
-                    { "numberOfMatchesToReturn", new List<string> { NumberOfMatchesToReturn.ToString() } },
-                    { "Longitude", new List<string> { Longitude.ToString() } },
-                    { "Latitude", new List<string> { Latitude.ToString() } },
-                };
+                if (Latitude == 0 || Longitude == 0)
+                    throw new GetOrionMatchRequestException("Longitude and Latitude are required and must be > 0.");
+                if (ShootingStyle == null || ShootingStyle == "")
+                    throw new GetOrionMatchRequestException("Shooting Style is required for search.");
+
+                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+                parameterList.Add("distanceSearch", new List<string>() { DistanceSearch.ToString() });
+                parameterList.Add("startingDate", new List<string>() { StartDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("endingDate", new List<string>() { EndDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("numberOfMatchesToReturn", new List<string>() { NumberOfMatchesToReturn.ToString() });
+                parameterList.Add("shootingStyle", new List<string>() { ShootingStyle });
+                parameterList.Add("Longitude", new List<string>() { Longitude.ToString() });
+                parameterList.Add("Latitude", new List<string>() { Latitude.ToString() });
+
+                return parameterList;
             }
         }
 

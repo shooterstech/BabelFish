@@ -7,12 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace BabelFish.DataModel.Definitions {
+namespace ShootersTech.BabelFish.DataModel.Definitions {
     [Serializable]
     public class RankingRule : Definition {
 
         public RankingRule() : base() {
-            Type = Definition.DefinitionType.RANKINGRULES;
+            Type = DefinitionType.RANKINGRULES;
         }
 
         [OnDeserialized]
