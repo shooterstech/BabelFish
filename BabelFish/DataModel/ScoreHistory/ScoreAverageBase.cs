@@ -22,12 +22,12 @@ namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
         public DateTime EndDate { get; set; }
 
         /// <summary>
-        /// The value of ConcreteClassId should be set in the Constructor of the
-        /// Concrete class. Users
-        /// should not change this value ... unless they want really bizarre and
-        /// uncontrolled behavior. 
+        /// Implementation of the IDeserializableAbstractClass interface.
+        /// To have added control over the Deserialization of abstract classes, in to
+        /// Concrete classes, the JSON should include a ConcreteClassId that specifies
+        /// the Concrete class.
         /// </summary>
-        public override int ConcreteClassId { get; set; }
+        public int ConcreteClassId { get; set; }
 
     }
 

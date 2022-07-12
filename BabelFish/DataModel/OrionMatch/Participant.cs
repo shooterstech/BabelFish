@@ -67,6 +67,13 @@ namespace ShootersTech.BabelFish.DataModel.OrionMatch {
             return this.DisplayName;
         }
 
+        /// <summary>
+        /// Implementation of the IDeserializableAbstractClass interface.
+        /// To have added control over the Deserialization of abstract classes, in to
+        /// Concrete classes, the JSON should include a ConcreteClassId that specifies
+        /// the Concrete class.
+        /// </summary>
+        public int ConcreteClassId { get; set; }
     }
 
 
