@@ -81,6 +81,9 @@ MessageResponse.Message holds error Message returned from API List
 
 
 =============================== BabelFish Versioning
+v1.0.13.0
+Changed GetMatchSearchRequest.ShootingStyle from string to List<string>
+
 v1.0.12.0
 Add ScoreHistoryAPI
 Update namespace to ShootersTech.BabelFish

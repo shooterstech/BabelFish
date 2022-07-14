@@ -36,7 +36,7 @@ namespace ShootersTech.BabelFish.Requests.OrionMatchAPI
         /// The shooting style to search or unassigned for all.
         /// The default value is Air Rifle.
         /// </summary>
-        public string ShootingStyle { get; set; } = "Air Rifle";
+        public List<string> ShootingStyle { get; set; } = new List<string>() { "Air Rifle" };
 
         /// <summary>
         /// The number of matches to return.
@@ -62,7 +62,7 @@ namespace ShootersTech.BabelFish.Requests.OrionMatchAPI
             {
                 if (Latitude == 0 || Longitude == 0)
                     throw new GetOrionMatchRequestException("Longitude and Latitude are required and must be > 0.");
-                if (ShootingStyle == null || ShootingStyle == "")
+                if (ShootingStyle == null || ShootingStyle.Count == 0)
                     throw new GetOrionMatchRequestException("Shooting Style is required for search.");
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
@@ -70,7 +70,7 @@ namespace ShootersTech.BabelFish.Requests.OrionMatchAPI
                 parameterList.Add("startingDate", new List<string>() { StartDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
                 parameterList.Add("endingDate", new List<string>() { EndDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
                 parameterList.Add("numberOfMatchesToReturn", new List<string>() { NumberOfMatchesToReturn.ToString() });
-                parameterList.Add("shootingStyle", new List<string>() { ShootingStyle });
+                parameterList.Add("shootingStyle", ShootingStyle);
                 parameterList.Add("Longitude", new List<string>() { Longitude.ToString() });
                 parameterList.Add("Latitude", new List<string>() { Latitude.ToString() });
 

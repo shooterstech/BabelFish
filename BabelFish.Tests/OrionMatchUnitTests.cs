@@ -99,7 +99,7 @@ namespace ShootersTech.BabelFish.Tests
                 DistanceSearch = 5,
                 StartDate = new DateTime(DateTime.Now.Year, 6, 1),
                 EndDate = DateTime.Today,
-                ShootingStyle = "Air Rifle",
+                ShootingStyle = new List<string>() { "Air Rifle", "Smallbore Rifle" },
                 NumberOfMatchesToReturn = 100,
                 Longitude = -77.555569,
                 Latitude = 38.739453,
