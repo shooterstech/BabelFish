@@ -21,7 +21,14 @@ namespace ShootersTech.BabelFish.DataModel.Definitions {
             /// </summary>
             [Description( "ResultCOF" )]
             [EnumMember( Value = "ResultCOF" )]
-            ResultCOF
+            ResultCOF,
+
+            /// <summary>
+            /// Indicates that the Cell should not link to any other page. Which is the default option. 
+            /// </summary>
+            [Description( "None" )]
+            [EnumMember( Value = "None" )]
+            None
         }
         //TODO Define the ResultListFormat definition.
     }
