@@ -93,11 +93,15 @@ GetDefinitionResponse<Attribute> AttributeResponse = await DefinitionAPIClient.G
 > MessageResponse.Message holds error Message returned from API List
 
 # BabelFish Versioning
+*__v1.0.14.0__*
+
+Added None as option to ResultListFormat.LinkTo
+
+Updated README.md with markdown code
+
 *__v1.0.13.0__*
 
 Changed GetMatchSearchRequest.ShootingStyle from string to List<string>
-
-Added None as option to ResultListFormat.LinkTo
 
 *__v1.0.12.0__*
 
