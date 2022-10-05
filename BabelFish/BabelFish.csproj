@@ -6,7 +6,7 @@
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
     <AssemblyVersion>1.0.14.0</AssemblyVersion>
-	<PackageId>BabelFish</PackageId>
+	<PackageId>ShootersTech.BabelFish</PackageId>
 	<Version>1.0.15</Version>
 	<Authors>Shooter's Technology</Authors>
 	<Company>Shooter's Technology</Company>
