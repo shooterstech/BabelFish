@@ -47,7 +47,7 @@ namespace ShootersTech {
         /// <summary>
         /// Environment - AWS Api {stage}
         /// </summary>
-        public APIStage ApiStage { get; set; }
+        public APIStage ApiStage { get; private set; }
 
         /// <summary>
         /// SubDomain - AWS Api subdomain identifier

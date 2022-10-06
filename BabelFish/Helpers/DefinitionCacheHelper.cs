@@ -336,8 +336,15 @@ namespace ShootersTech.BabelFish.Helpers
         /// </summary>
         private void LoadDefinitionsInMemory()
         {
-            foreach (string definitionFile in ListDefinitionFileNames())
-                definitionsCached.Add(GetDefinitionCacheFile(definitionFile));
+            foreach (string definitionFile in ListDefinitionFileNames()) {
+                var definition = GetDefinitionCacheFile( definitionFile );
+                
+                //This next line is a quick work around for when the definition file is read from disk, it had an invalid set name
+                if (definition.SetName == null)
+                    continue; 
+
+                definitionsCached.Add(definition);
+            }
         }
 
         /// <summary>

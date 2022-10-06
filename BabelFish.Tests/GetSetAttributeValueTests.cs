@@ -19,7 +19,8 @@ namespace ShootersTech.BabelFish.Tests {
             {"UserName", "test_dev_7@shooterstech.net"},
             {"PassWord", "abcd1234"},
         };
-        private readonly GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient(xApiKey, clientParams);
+        private GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient( xApiKey, clientParams );
+       
 
         [TestMethod]
         public void GetAttributeValue_SingleValue() {
@@ -348,6 +349,36 @@ namespace ShootersTech.BabelFish.Tests {
 
             foreach ( var checkResponseName in objResponse.SetAttributeValues)
                 Assert.AreEqual(checkResponseName.StatusCode, "200");
+        }
+
+        [TestMethod]
+        public void SetAttributeValue_PhoneNumber() {
+
+            DataModel.GetSetAttributeValue.AttributeValue phoneNumberAttrValue = new DataModel.GetSetAttributeValue.AttributeValue( "v2.0:orion:Phone Number" );
+            
+            phoneNumberAttrValue.Visibility = ShootersTech.BabelFish.Helpers.VisibilityOption.PROTECTED;
+            phoneNumberAttrValue.Action = AttributeValueActionEnums.EMPTY;
+            
+            var phoneOneKey = "MyMobileNumber";
+            //The next line of code current does not do anything (it's a bug). But please include it as when the bug is fixed, it will be needed.
+            phoneNumberAttrValue.AddFieldKey( phoneOneKey );
+            //The next line of code is only needed because the above mentioned fixed.
+            phoneNumberAttrValue.SetFieldValue( "PhoneNumberName", phoneOneKey, phoneOneKey );
+            phoneNumberAttrValue.SetFieldValue( "PhoneNumber", "703-867-5309", phoneOneKey );
+            phoneNumberAttrValue.SetFieldValue( "Type", new List<string>() { "Mobile" }, phoneOneKey );
+;
+            var phoneTwoKey = "MyWorkNumber";
+            phoneNumberAttrValue.AddFieldKey( phoneTwoKey );
+            phoneNumberAttrValue.SetFieldValue( "PhoneNumberName", phoneTwoKey, phoneTwoKey );
+            phoneNumberAttrValue.SetFieldValue( "PhoneNumber", "913-867-5309", phoneTwoKey );
+            phoneNumberAttrValue.SetFieldValue( "Type", new List<string>() { "Work" }, phoneTwoKey );
+
+            var response = _client.SetAttributeValueAsync( phoneNumberAttrValue );
+
+            var result = response.Result;
+
+            foreach (var checkResponseName in result.SetAttributeValues)
+                Assert.AreEqual( checkResponseName.StatusCode, "200" );
         }
 
         [TestMethod]
