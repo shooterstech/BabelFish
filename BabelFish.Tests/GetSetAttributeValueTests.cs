@@ -382,6 +382,30 @@ namespace ShootersTech.BabelFish.Tests {
         }
 
         [TestMethod]
+        public void GetAttributeValue_PhoneNumber() {
+
+            //These keys uniquely identify the user's phone number. We use the same keys when setting the values.
+            var phoneOneKey = "MyMobileNumber";
+            var phoneTwoKey = "MyWorkNumber";
+
+            //We can reteieve multiple attribute values at once. In this example, we are only reteiveing Phone Number
+            var attributesToRetreive = new List<string>() { "v2.0:orion:Phone Number" };
+            var response = _client.GetAttributeValueAsync( attributesToRetreive );
+            var result = response.Result;
+            
+            //phoneNumberattrValue contains all the phone numbers for this user.
+            var phoneNumberAttrValue = result.GetAttributeValue( "v2.0:orion:Phone Number" );
+
+            //To get a specific phone number, use the key
+            var mobilePhoneNumber = phoneNumberAttrValue.GetFieldValue( "PhoneNumber", phoneOneKey );
+
+            var workPhoneNumber = phoneNumberAttrValue.GetFieldValue( "PhoneNumber", phoneTwoKey );
+
+            Assert.AreNotEqual( mobilePhoneNumber, workPhoneNumber );
+
+        }
+
+        [TestMethod]
         public void SetAttributeValue_TwoAttributesOverride()
         {
             DataModel.GetSetAttributeValue.AttributeValue newAttributeValue = new DataModel.GetSetAttributeValue.AttributeValue("v1.0:orion:Date of Birth");

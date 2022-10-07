@@ -162,7 +162,7 @@ namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue
         {
             object? returnValue = null;
             ClearLastException();
-            if (this.IsMultipleValue)
+            if (! this.IsMultipleValue)
                 LastException = AttributeValueException.GetExceptionFieldValueError($"querying {fieldKey} on non multi-value field {fieldName}");
             else
                 returnValue = (attributeValues.ContainsKey(fieldKey) && attributeValues[fieldKey].ContainsKey(fieldName)) ? attributeValues[fieldKey][fieldName] : null;

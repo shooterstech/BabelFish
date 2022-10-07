@@ -7,7 +7,7 @@
 	  <Nullable>enable</Nullable>
     <AssemblyVersion>1.0.14.0</AssemblyVersion>
 	<PackageId>ShootersTech.BabelFish</PackageId>
-	<Version>1.0.15</Version>
+	<Version>1.0.16</Version>
 	<Authors>Shooter's Technology</Authors>
 	<Company>Shooter's Technology</Company>
 	<PackageDescription>Dot Net Library that provides a façade for Shooter's Tech REST API interface.</PackageDescription>
