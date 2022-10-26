@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShootersTech.BabelFish.GetVersionAPI;
 using ShootersTech.BabelFish.DataModel.ShootersTechData;
@@ -10,7 +11,7 @@ namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class ShootersTechDataTests {
         private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
-        private readonly GetVersionAPIClient _client = new GetVersionAPIClient( xApiKey );
+        private readonly GetShootersTechDataClient _client = new GetShootersTechDataClient( xApiKey );
 
         [TestMethod]
         public void GetOrionServiceProductionLevel() {
@@ -61,6 +62,31 @@ namespace ShootersTech.BabelFish.Tests {
 
             var MessageResponse = response.Result.MessageResponse;
             Assert.IsTrue( MessageResponse.Message.Count == 0 );
+        }
+
+        [TestMethod]
+        public async Task GetCupsOfCoffeeConsumedWithParams() {
+            GetCupsOfCoffeeRequest request = new GetCupsOfCoffeeRequest();
+
+            var response = _client.GetCuposOfCoffeeAsync( request );
+            var result = response.Result;
+
+            Assert.IsNotNull( result );
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.IsTrue( result.CupsOfCoffeeConsumed > 1000, $"Expecting the number of coffee cups consumed to be greater than 1000, instead received {result.CupsOfCoffeeConsumed}." );
+            Assert.AreEqual( result.CupsOfCoffeeConsumed, result.Value.CupsOfCoffeeConsumed );
+        }
+
+        [TestMethod]
+        public async Task GetCupsOfCoffeeConsumedWithoutParams() {
+
+            var response = _client.GetCuposOfCoffeeAsync( );
+            var result = response.Result;
+
+            Assert.IsNotNull( result );
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.IsTrue( result.CupsOfCoffeeConsumed > 1000, $"Expecting the number of coffee cups consumed to be greater than 1000, instead received {result.CupsOfCoffeeConsumed}." );
+            Assert.AreEqual( result.CupsOfCoffeeConsumed, result.Value.CupsOfCoffeeConsumed );
         }
 
     }
