@@ -397,9 +397,9 @@ namespace ShootersTech.BabelFish.Tests {
             var phoneNumberAttrValue = result.GetAttributeValue( "v2.0:orion:Phone Number" );
 
             //To get a specific phone number, use the key
-            var mobilePhoneNumber = phoneNumberAttrValue.GetFieldValue( "PhoneNumber", phoneOneKey );
+            var mobilePhoneNumber = (string) phoneNumberAttrValue.GetFieldValue( "PhoneNumber", phoneOneKey );
 
-            var workPhoneNumber = phoneNumberAttrValue.GetFieldValue( "PhoneNumber", phoneTwoKey );
+            var workPhoneNumber = (string) phoneNumberAttrValue.GetFieldValue( "PhoneNumber", phoneTwoKey );
 
             Assert.AreNotEqual( mobilePhoneNumber, workPhoneNumber );
 
