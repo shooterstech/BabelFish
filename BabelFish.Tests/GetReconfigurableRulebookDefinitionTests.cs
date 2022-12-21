@@ -13,8 +13,7 @@ namespace ShootersTech.BabelFish.Tests {
     public class GetReconfigurableRulebookDefinitionTests
     {
         private SetName setName;
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
-        private readonly DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey);
+        private readonly DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY );
 
         [TestMethod]
         public void GetAttributeAirRifleType() {

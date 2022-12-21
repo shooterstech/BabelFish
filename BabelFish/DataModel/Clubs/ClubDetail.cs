@@ -98,5 +98,9 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// The list of Orion Licenses this Club has. Most Clubs will have exactly one license. 
         /// </summary>
         public List<ClubLicense> LicenseList { get; set; } = new List<ClubLicense>();
+
+        public override string ToString() {
+            return $"{Name} {OwnerId}";
+        }
     }
 }

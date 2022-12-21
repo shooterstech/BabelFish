@@ -65,5 +65,9 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// </summary>
         [DefaultValue( "" )]
         public string Phone { get; set; } = String.Empty;
+
+        public override string ToString() {
+            return DisplayName;
+        }
     }
 }

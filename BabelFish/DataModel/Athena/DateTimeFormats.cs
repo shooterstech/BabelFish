@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShootersTech.BabelFish.DataModel.Athena
 {
+    [Obsolete( "Use ShootersTech.BabelFish.Helpers.DateTimeFormats instead.")]
     public static class DateTimeFormats
     {
 

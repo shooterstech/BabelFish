@@ -72,5 +72,9 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// <example>northeast</example>
         [DefaultValue( "" )]
         public string URLPath { get; set; } = String.Empty;
+
+        public override string ToString() {
+            return $"{Name} {OwnerId}";
+        }
     }
 }

@@ -6,20 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShootersTech.BabelFish.GetSetAttributeValueAPI;
 using ShootersTech.BabelFish.Helpers;
-using ShootersTech.BabelFish.DataModel.Definitions;
-using ShootersTech.BabelFish.DataModel.Athena;
 
 namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class GetSetAttributeValueTests
     {
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
         private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
         {
             {"UserName", "test_dev_7@shooterstech.net"},
             {"PassWord", "abcd1234"},
         };
-        private GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient( xApiKey, clientParams );
+        private GetSetAttributeValueAPIClient _client = new GetSetAttributeValueAPIClient( Constants.X_API_KEY, clientParams );
        
 
         [TestMethod]

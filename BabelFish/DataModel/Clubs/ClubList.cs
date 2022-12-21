@@ -8,7 +8,7 @@ namespace  ShootersTech.BabelFish.DataModel.Clubs {
     /// <summary>
     /// A list of Orion Club accounts. Only abbreviated data about the club is returned.
     /// </summary>
-    public class ClubList {
+    public class ClubList : ITokenItems<ClubAbbr> {
 
         public ClubList() {
             Items = new List<ClubAbbr>();
@@ -21,10 +21,12 @@ namespace  ShootersTech.BabelFish.DataModel.Clubs {
         }
 
         /// <summary>
-        /// Returned, when the list of Clubs is too long. Use this value on the next call to return more of the complete list.An empty string means there are no more items.
-        /// </summary>
-        public string NextToken { get; set; }
-
+        /// A list of ClubAbbr data objects.
+        /// </summary>        
         public List<ClubAbbr> Items { get; set; }
+
+        public override string ToString() {
+            return $"ClubList with {Items.Count} items";
+        }
     }
 }

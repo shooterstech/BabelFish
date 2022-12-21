@@ -66,6 +66,10 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// The list of capabilities this license includes.
         /// </summary>
         public List<ClubLicenseCapability> Capabilities { get; set; } = new List<ClubLicenseCapability>();
+
+        public override string ToString() {
+            return $"Sublicense {SubLicense}";
+        }
     }
 
     [JsonConverter( typeof( StringEnumConverter ) )]
