@@ -14,7 +14,6 @@ namespace ShootersTech.BabelFish.Tests {
     public class DefinitionCacheTests
     {
 
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
 
         // DefinitionCacheHelper defaults to Orion dir if exists, then fails over to user's temp dir
         private static string definitionDir = "\\DEFINITIONS";
@@ -88,7 +87,7 @@ namespace ShootersTech.BabelFish.Tests {
                 {"Definitions_CacheIgnore", "false"},
                 {"Definitions_CacheStorageDirctory", defaultDir },
             };
-            DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey, clientParams);
+            DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY, clientParams);
 
             DefinitionCacheHelper definitionCacheHelperDays = new DefinitionCacheHelper();
             Assert.AreEqual(definitionCacheHelperDays.DefinitionCacheAgeInDays(DefinitionType.ATTRIBUTE, SetName.Parse("v1.0:orion:Date of Birth")),5);
@@ -109,7 +108,7 @@ namespace ShootersTech.BabelFish.Tests {
                 {"Definitions_CacheIgnore", "false"},
                 {"Definitions_CacheStorageDirctory", defaultDir },
             };
-            DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey, clientParams);
+            DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY, clientParams);
 
             var setName = SetName.Parse("v1.0:orion:Date of Birth");
             string filename = setName.FileName;
@@ -149,7 +148,7 @@ namespace ShootersTech.BabelFish.Tests {
                 {"Definitions_CacheExpireTime", "10"},
                 {"Definitions_CacheStorageDirctory", defaultDir },
             };
-            DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey, clientParams);
+            DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY, clientParams);
 
             var response = _client.GetAttributeDefinitionAsync(setName);
             Assert.IsNotNull(response);
@@ -163,7 +162,7 @@ namespace ShootersTech.BabelFish.Tests {
             defaultDir = determineDefaultDir();
 
             var setName = SetName.Parse("v2.0:ntparc:Three-Position Air Rifle 3x10");
-            DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey);
+            DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY );
 
             var response = _client.GetCourseOfFireDefinition(setName);
             Assert.IsNotNull(response);
@@ -198,7 +197,7 @@ namespace ShootersTech.BabelFish.Tests {
                 {"Definitions_CacheIgnore", "false"},
                 {"Definitions_CacheStorageDirctory", defaultDir },
             };
-            DefinitionAPIClient _client = new DefinitionAPIClient(xApiKey, clientParams);
+            DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY, clientParams);
 
             var setName = SetName.Parse("v1.0:orion:Date of Birth");
             var response = _client.GetAttributeDefinitionAsync(setName);
@@ -210,7 +209,7 @@ namespace ShootersTech.BabelFish.Tests {
             System.Threading.Thread.Sleep(1000);
 
             // Run server pull second
-            DefinitionAPIClient _client2 = new DefinitionAPIClient(xApiKey, clientParams);
+            DefinitionAPIClient _client2 = new DefinitionAPIClient( Constants.X_API_KEY, clientParams);
             var setName2 = SetName.Parse("v1.0:orion:Date of Birth");
             var response2 = _client2.GetAttributeDefinitionAsync(setName2);
             Assert.IsNotNull(response2);

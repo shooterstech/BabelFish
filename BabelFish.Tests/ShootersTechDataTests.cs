@@ -10,8 +10,7 @@ using ShootersTech.BabelFish.Requests.ShootersTechData;
 namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class ShootersTechDataTests {
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
-        private readonly GetShootersTechDataClient _client = new GetShootersTechDataClient( xApiKey );
+        private readonly GetShootersTechDataClient _client = new GetShootersTechDataClient( Constants.X_API_KEY );
 
         [TestMethod]
         public void GetOrionServiceProductionLevel() {

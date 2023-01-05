@@ -14,14 +14,13 @@ namespace ShootersTech.BabelFish.Tests {
     [TestClass]
     public class ScoreHistoryTests
     {
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
         private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
         {
             {"UserName", "test_dev_7@shooterstech.net"},
             {"PassWord", "abcd1234"},
         };
-        private readonly ScoreHistoryAPIClient _client = new ScoreHistoryAPIClient(xApiKey);
-        private readonly ScoreHistoryAPIClient _clientAuthenticated = new ScoreHistoryAPIClient(xApiKey, clientParams);
+        private readonly ScoreHistoryAPIClient _client = new ScoreHistoryAPIClient( Constants.X_API_KEY );
+        private readonly ScoreHistoryAPIClient _clientAuthenticated = new ScoreHistoryAPIClient( Constants.X_API_KEY, clientParams);
 
         // Test users and valid date ranges containing data
         private static string TestUser7 = "26f32227-d428-41f6-b224-beed7b6e8850";
@@ -275,7 +274,7 @@ namespace ShootersTech.BabelFish.Tests {
 
             var taskResult = _client.GetScoreHistoryAsync(requestParameters).Result;
             Assert.IsNotNull(taskResult);
-            Assert.IsTrue(taskResult.ContinuationToken != "");
+            Assert.IsTrue(taskResult.NextToken != "");
 
             var objResponse = taskResult.ScoreHistory;
             Assert.IsNotNull(objResponse);
@@ -284,11 +283,11 @@ namespace ShootersTech.BabelFish.Tests {
                 ((ShootersTech.BabelFish.DataModel.ScoreHistory.ScoreHistoryEventStyleEntry)objResponse.ScoreHistoryList[0]).EventStyle);
 
             // Assign Response.ContinuationToken for next set of data
-            requestParameters.ContinuationToken = taskResult.ContinuationToken;
+            requestParameters.ContinuationToken = taskResult.NextToken;
 
             taskResult = _client.GetScoreHistoryAsync(requestParameters).Result;
             Assert.IsNotNull(taskResult);
-            Assert.IsTrue(taskResult.ContinuationToken == ""); // All data pulled
+            Assert.IsTrue(taskResult.NextToken == ""); // All data pulled
 
             objResponse = taskResult.ScoreHistory;
             Assert.IsNotNull(objResponse);

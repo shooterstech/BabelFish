@@ -32,13 +32,12 @@ namespace ShootersTech.BabelFish.Tests {
         {
             // Login with username/password and get back tokens from Cognito
             //  NOTE: BabelFish clears Password after successful authentication
-            string xApiKey = "ga9HvqN7i14sbzM6WrIb0amzdyIYkej83b8aJaWz";
             Dictionary<string, string> clientParams = new Dictionary<string, string>()
             {
                 {"UserName", "test_dev_9@shooterstech.net"},
                 {"PassWord", "abcd1234"},
             };
-            AuthAPIClient _client = new AuthAPIClient(xApiKey, clientParams);
+            AuthAPIClient _client = new AuthAPIClient(Constants.X_API_KEY, clientParams);
 
             var response = _client.CognitoLoginAsync();
             Assert.IsNotNull(response);
@@ -67,7 +66,7 @@ namespace ShootersTech.BabelFish.Tests {
             clientParams.Clear();
             foreach ( KeyValuePair<string,string> kvp in newAuthTokens)
                 clientParams.Add(kvp.Key, kvp.Value);
-            AuthAPIClient _client2 = new AuthAPIClient(xApiKey, clientParams);
+            AuthAPIClient _client2 = new AuthAPIClient( Constants.X_API_KEY, clientParams);
 
             var response2 = _client2.CognitoLoginAsync();
             Assert.IsNotNull(response);

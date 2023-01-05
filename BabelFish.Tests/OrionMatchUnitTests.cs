@@ -11,8 +11,7 @@ namespace ShootersTech.BabelFish.Tests
     [TestClass]
     public class OrionMatchUnitTests
     {
-        private static string xApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1";
-        private readonly OrionMatchAPIClient _client = new OrionMatchAPIClient(xApiKey);
+        private readonly OrionMatchAPIClient _client = new OrionMatchAPIClient( Constants.X_API_KEY );
 
         [TestMethod]
         public void OrionMatchExpectedFailuresUnitTests() {
@@ -155,7 +154,7 @@ namespace ShootersTech.BabelFish.Tests
                 {"UserName", "test_dev_7@shooterstech.net"},
                 {"PassWord", "abcd1234"},
             };
-            OrionMatchAPIClient _client3 = new OrionMatchAPIClient(xApiKey, clientParams);
+            OrionMatchAPIClient _client3 = new OrionMatchAPIClient( Constants.X_API_KEY, clientParams);
             var response = _client3.GetMatchDetailAsync("1.2899.1040248529.0", true);
             Assert.IsNotNull(response);
 
@@ -191,7 +190,7 @@ namespace ShootersTech.BabelFish.Tests
                 {"PassWord", "abcd1234"},
             };
 
-            OrionMatchAPIClient _client4 = new OrionMatchAPIClient(xApiKey, clientParams);
+            OrionMatchAPIClient _client4 = new OrionMatchAPIClient( Constants.X_API_KEY, clientParams);
 
             var response = _client4.GetMatchParticipantListAsync("1.3197.2022042721544126.0", true);
             Assert.IsNotNull(response);
