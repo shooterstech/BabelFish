@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NLog;
 using ShootersTech.BabelFish.Helpers;
 
 namespace ShootersTech.BabelFish.DataModel.Clubs {
@@ -12,6 +14,10 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
     /// Describes an Orion license an Orion user may have.
     /// </summary>
     public class ClubLicense {
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+        private DateTime expirationDate = DateTime.Today;
+        private DateTime downloadDate = DateTime.Today;
 
         public ClubLicense() { }
 
@@ -30,10 +36,34 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         public string SubLicense { get; set; } = "A";
 
         /// <summary>
-        /// The date this license expires. Formatted as yyyy-MM-dd
+        /// The date this license expires. Formatted as yyyy-MM-dd. 
+        /// To Get/Set ExpriationDate as a DateTime object use GetExpirationDate() or SetExpriationDate()
         /// </summary>
         /// <example>2001-01-01</example>
-        public string ExpirationDate { get; set; } = DateTime.Today.ToString( DateTimeFormats.DATE_FORMAT );
+        public string ExpirationDate {
+            get {
+                return expirationDate.ToString( DateTimeFormats.DATE_FORMAT );
+            }
+            set {
+                try {
+                    //Test if we can parse the input without throwing an error.
+                    var parsedDate = DateTime.ParseExact( value, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+                    //If the input can be parsed, we can go ahead and set the value.
+                    expirationDate = parsedDate;
+                } catch (Exception ex) {
+                    var msg = $"Unable to parse the input Date {value}.";
+                    logger.Error( msg, ex );
+                }
+            }
+        }
+
+        public DateTime GetExpirationDate() {
+            return expirationDate;
+        }
+
+        public void SetExpirationDate( DateTime expirationDate ) {
+            this.expirationDate = expirationDate;
+        }
 
         /// <summary>
         /// The type of license this is.
@@ -60,7 +90,30 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// The date that the DownloadCode is valid until. Formatted as yyyy-MM-dd
         /// </summary>
         /// <example>2001-01-01</example>
-        public string DownloadDate { get; set; } = DateTime.Today.ToString( DateTimeFormats.DATE_FORMAT );
+        public string DownloadDate {
+            get {
+                return downloadDate.ToString( DateTimeFormats.DATE_FORMAT );
+            }
+            set {
+                try {
+                    //Test if we can parse the input without throwing an error.
+                    var parsedDate = DateTime.ParseExact( value, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+                    //If the input can be parsed, we can go ahead and set the value.
+                    downloadDate = parsedDate;
+                } catch (Exception ex) {
+                    var msg = $"Unable to parse the input Date {value}.";
+                    logger.Error( msg, ex );
+                }
+            }
+        } 
+
+        public DateTime GetDownloadDate() {
+            return downloadDate;
+        }
+
+        public void SetDownloadDate( DateTime downloadDate ) {
+            this.downloadDate = downloadDate;
+        }
 
         /// <summary>
         /// The list of capabilities this license includes.

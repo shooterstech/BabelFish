@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
+using NLog;
 using ShootersTech.BabelFish.Helpers;
 
 namespace ShootersTech.BabelFish.DataModel.Clubs {
@@ -9,6 +11,9 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
     /// Abbreviated data about an Orion club account.
     /// </summary>
     public class ClubAbbr {
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+        private DateTime memberSince = DateTime.Today;
 
         public ClubAbbr() { }
 
@@ -31,7 +36,11 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>OrionAcct001234</example>
         [DefaultValue( "" )]
-        public string OwnerId { get; set; } = String.Empty;
+        public string OwnerId { 
+            get {
+                return $"OrionAcct{AccountNumber:D6}";
+            }
+        }
 
         /// <summary>
         /// The primary point of contact (first and last name) for this Orion account.
@@ -60,11 +69,42 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         public string Hometown { get; set; } = String.Empty;
 
         /// <summary>
-        /// The date the orion account was created. Formatted as yyyy-MM-dd
+        /// The date the orion account was created. Formatted as a string yyyy-MM-dd.
+        /// To get/set MemberSince date as a DateTime object use GetMemberSince() or SetMemberSince().
         /// </summary>
         /// <example>2001-01-01</example>
-        [DefaultValue( "" )]
-        public string MemberSince { get; set; } = DateTime.Today.ToString( DateTimeFormats.DATE_FORMAT );
+        public string MemberSince { 
+            get {
+                return memberSince.ToString( DateTimeFormats.DATE_FORMAT );
+            }
+            set {
+                try {
+                    //Test if we can parse the input without throwing an error.
+                    var parsedDate = DateTime.ParseExact( value, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+                    //If the input can be parsed, we can go ahead and set the value.
+                    memberSince = parsedDate;
+                } catch (Exception ex) {
+                    var msg = $"Unable to parse the input Date {value}.";
+                    logger.Error( msg, ex );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the date that this Club held an Orion License
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetMemberSince() {
+            return memberSince;
+        }
+
+        /// <summary>
+        /// Sets the date that this Club has helf an Orion License
+        /// </summary>
+        /// <param name="memberSince"></param>
+        public void SetMemberSince(DateTime memberSince) {
+            this.memberSince = memberSince;
+        }
 
         /// <summary>
         /// The URL path in www.shooterstech.net/clubs/{path} linking to their team page.
@@ -76,5 +116,6 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         public override string ToString() {
             return $"{Name} {OwnerId}";
         }
+
     }
 }

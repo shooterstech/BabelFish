@@ -107,11 +107,11 @@ namespace ShootersTech.BabelFish.Tests
             var response = _client.GetMatchSearchAsync(requestParameters);
             Assert.IsNotNull(response);
 
-            var result = response.Result.SearchList;
-            var resultName = result[0].MatchContact;
+            var listOfMatches = response.Result.SearchList;
+            var matchName = listOfMatches[0].Name;
 
-            Assert.IsNotNull(resultName);
-            Assert.AreNotEqual(resultName, "");
+            Assert.IsNotNull( listOfMatches );
+            Assert.AreNotEqual(matchName, "");
         }
 
 
