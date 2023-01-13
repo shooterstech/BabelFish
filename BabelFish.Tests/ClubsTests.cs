@@ -76,13 +76,15 @@ namespace ShootersTech.BabelFish.Tests {
 
             var response = await client.GetClubDetailAsync( request );
 
-            Assert.AreEqual( response.StatusCode, System.Net.HttpStatusCode.OK );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
 
             var clubDetail = response.ClubDetail;
 
-            Assert.AreEqual( clubDetail.OwnerId, ownerId, "Expecting the OwnerId to match, what was sent." );
+            Assert.AreEqual( ownerId, clubDetail.OwnerId, "Expecting the OwnerId to match, what was sent." );
 
             Assert.IsTrue( clubDetail.LicenseList.Count > 0, "Expecting the length of the license list is greather than zero." );
+
+            Assert.IsTrue( clubDetail.Options.Count > 0, "Expecting at least one ClubOption." );
         }
     }
 }

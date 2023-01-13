@@ -4,7 +4,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
-using Newtonsoft.Json.Serialization;
+using BabelFish.DataModel;
+using BabelFish.DataModel.Clubs;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using NLog;
 using ShootersTech.BabelFish.Helpers;
 
@@ -12,21 +15,26 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
-    public class ClubDetail {
+    public class ClubDetail : IObjectRelationalMapper {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
         private DateTime memberSince = DateTime.Today;
 
-        public ClubDetail() { }
+        public ClubDetail() {
+            NewRecord = true;
+        }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
+            NewRecord = false; //If this object is being deserialized, we can assume it is an existing club.
             if (AdministratorList == null)
                 AdministratorList = new List<Person>();
             if (Notes == null)
                 Notes = new List<string>();
             if (LicenseList == null)
                 LicenseList = new List<ClubLicense>();
+            if (Options == null)
+                Options = new List<ClubOptions>();
         }
 
         /// <summary>
@@ -63,12 +71,14 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// The email address of the club. May in fact be the email address of the administrator.
         /// </summary>
         [DefaultValue( "" )]
+        [Obsolete( "Soon to be replaced with v1.0:orion:Email Address" )]
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// The phone number of the club. May in fact be the phone number of the club's administrator.
         /// </summary>
         [DefaultValue( "" )]
+        [Obsolete("Soon to be replaced with v1.0:orion:Phone Number")]
         public string Phone { get; set; } = string.Empty;
 
         /// <summary>
@@ -77,6 +87,25 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// <example>Axtell, NE</example>
         [DefaultValue( "" )]
         public string Hometown { get; set; } = string.Empty;
+
+        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        public string Street1 { get; set; }
+
+        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        public string Street2 { get; set; }
+
+        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        public string City { get; set; } = string.Empty;
+
+        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        public string State { get; set; } = string.Empty;
+
+        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        public string PostalCode { get; set; } = string.Empty;
+
+        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        public string Country { get; set; } = string.Empty;
+
         /// <summary>
         /// The date the orion account was created. Formatted as a string yyyy-MM-dd.
         /// To get/set MemberSince date as a DateTime object use GetMemberSince() or SetMemberSince().
@@ -127,6 +156,14 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// </summary>
         public string ApiKey { get; set; } = string.Empty;
 
+        public string ApiKeyId { get; set; } = string.Empty;
+
+        public string AWSAccessKeyId { get; set; } = string.Empty;
+
+        public string AWSSecretAccessKey { get; set; } = string.Empty;
+
+        public string AWSRegion { get; set; } = string.Empty;
+
         /// <summary>
         /// A list of notes, written by the Shooter's Tech support team pertaining to this Orion Club.
         /// </summary>
@@ -136,6 +173,15 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// The list of Orion Licenses this Club has. Most Clubs will have exactly one license. 
         /// </summary>
         public List<ClubLicense> LicenseList { get; set; } = new List<ClubLicense>();
+
+        /// <summary>
+        /// A list of optional services this club has subscribed to.
+        /// </summary>
+        public List<ClubOptions> Options { get; set; } = new List<ClubOptions> { };
+
+        /// <inheritdoc />
+        [JsonIgnore]
+        public bool NewRecord { get; set; }
 
         public override string ToString() {
             return $"{Name} {OwnerId}";

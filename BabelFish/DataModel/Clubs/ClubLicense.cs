@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
+using BabelFish.DataModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
@@ -13,16 +14,19 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Describes an Orion license an Orion user may have.
     /// </summary>
-    public class ClubLicense {
+    public class ClubLicense : IObjectRelationalMapper {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
         private DateTime expirationDate = DateTime.Today;
         private DateTime downloadDate = DateTime.Today;
 
-        public ClubLicense() { }
+        public ClubLicense() {
+            NewRecord = true;
+        }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
+            NewRecord = false; //If this object is being deserialized, we can assume it is an existing record.
             if (Notes == null)
                 Notes = new List<string>();
             if (Capabilities == null)
@@ -119,6 +123,10 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         /// The list of capabilities this license includes.
         /// </summary>
         public List<ClubLicenseCapability> Capabilities { get; set; } = new List<ClubLicenseCapability>();
+
+        /// <inheritdoc />
+        [JsonIgnore]
+        public bool NewRecord { get; set; }
 
         public override string ToString() {
             return $"Sublicense {SubLicense}";
