@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
 
     /// <summary>
     /// Class representing the data structure of a response to a command to an EST Unit

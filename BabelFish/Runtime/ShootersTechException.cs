@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NLog;
 
-namespace ShootersTech.BabelFish.Runtime {
+namespace Scopos.BabelFish.Runtime {
     public class ShootersTechException : Exception {
 
         public ShootersTechException()

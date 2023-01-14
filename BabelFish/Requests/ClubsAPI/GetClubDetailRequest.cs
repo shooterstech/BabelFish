@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.Requests.ClubsAPI {
+namespace Scopos.BabelFish.Requests.ClubsAPI {
 
     public class GetClubDetailRequest : Request {
 

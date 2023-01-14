@@ -1,4 +1,4 @@
-﻿namespace ShootersTech.BabelFish.DataModel.Authentication
+﻿namespace Scopos.BabelFish.DataModel.Authentication
 {
     /// <summary>
     /// AWS Auth Tokens Returned

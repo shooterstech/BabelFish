@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
+namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     public class ViewConfiguration
     {

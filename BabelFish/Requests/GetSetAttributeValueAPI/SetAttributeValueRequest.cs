@@ -1,8 +1,8 @@
 ﻿using System.Text;
-using ShootersTech.BabelFish.DataModel.GetSetAttributeValue;
+using Scopos.BabelFish.DataModel.GetSetAttributeValue;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI
+namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class SetAttributeValueRequest : Request
     {

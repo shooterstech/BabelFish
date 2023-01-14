@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
+namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
     /// <summary>
     /// Data model that represents one athlete's score shot for one Course of Fire. 

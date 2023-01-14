@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class AttributeValueOption {
 

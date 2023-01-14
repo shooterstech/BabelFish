@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
     public  class ItemResponse {
 
         /// <summary>

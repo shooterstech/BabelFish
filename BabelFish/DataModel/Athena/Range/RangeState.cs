@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.Range {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
     public class RangeState {
 
         public RangeState() {

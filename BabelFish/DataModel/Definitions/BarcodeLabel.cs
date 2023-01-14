@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.BabelFish.DataModel.Definitions {
+namespace Scopos.BabelFish.DataModel.Definitions {
     public class BarcodeLabel {
         [JsonConverter(typeof(StringEnumConverter))]
         public enum BarcodeLabelSize { OL385, OL161 }

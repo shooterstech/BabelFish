@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.Requests.OrionMatchAPI 
+namespace Scopos.BabelFish.Requests.OrionMatchAPI 
 {
     public class GetMatchRequest : Request
     {

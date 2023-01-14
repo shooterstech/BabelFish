@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.Clubs {
+namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Abbreviated information about a person
     /// </summary>
     public class Person {
         /*
          * DEVELOPERS NOTE: EKA 2022-12-20
-         * A 'Person' is a fairly abstract data type. I'm incluidng it as part of the ShootersTech.BabelFish.DataModel.Clubs 
+         * A 'Person' is a fairly abstract data type. I'm incluidng it as part of the Scopos.BabelFish.DataModel.Clubs 
          * namespace as this matches the API Model. It is possible, and perhaps wise, that a more abstract data model is 
          * used in the future, one that is not specifically tied to .Clubs.
          */

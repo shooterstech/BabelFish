@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace ShootersTech.BabelFish.DataModel.Definitions
+namespace Scopos.BabelFish.DataModel.Definitions
 {
     [Serializable]
     public class DefinitionCache

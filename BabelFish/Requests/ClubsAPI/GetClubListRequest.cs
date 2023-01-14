@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.Requests;
+using Scopos.BabelFish.Requests;
 
-namespace ShootersTech.BabelFish.Requests.ClubsAPI {
+namespace Scopos.BabelFish.Requests.ClubsAPI {
     public class GetClubListRequest : Request, IToken {
 
         public GetClubListRequest() { }

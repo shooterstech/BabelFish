@@ -1,7 +1,7 @@
-﻿using ShootersTech.BabelFish.DataModel.ShootersTechData;
-using ShootersTech.BabelFish.Requests.ShootersTechData;
+﻿using Scopos.BabelFish.DataModel.ShootersTechData;
+using Scopos.BabelFish.Requests.ShootersTechData;
 
-namespace ShootersTech.BabelFish.Responses.ShootersTechData {
+namespace Scopos.BabelFish.Responses.ShootersTechData {
     public class GetVersionResponse : Response<VersionsList> {
         public GetVersionResponse( GetVersionRequest request ) {
             this.Request = request;

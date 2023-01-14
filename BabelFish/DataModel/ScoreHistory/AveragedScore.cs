@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
+namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
     /// <summary>
     /// Represents an athletes averaged score over a given time span.

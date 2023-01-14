@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.OrionMatch
+namespace Scopos.BabelFish.DataModel.OrionMatch
 {
 
     /// <summary>
@@ -40,7 +40,7 @@ namespace ShootersTech.BabelFish.DataModel.OrionMatch
         //ScoreFormat is no longer used. Instead format is specified in the Course of Fire Definition
         //public string ScoreFormat { get; set; } = string.Empty;
 
-        public ShootersTech.BabelFish.DataModel.Athena.Score Score { get; set; } = new ShootersTech.BabelFish.DataModel.Athena.Score();
+        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; } = new Scopos.BabelFish.DataModel.Athena.Score();
 
         /// <summary>
         /// EVENT

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech.BabelFish.DefinitionAPI;
-using ShootersTech.BabelFish.Helpers;
-using ShootersTech.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish;
+using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.Definitions;
 
-namespace ShootersTech.BabelFish.Tests {
+namespace Scopos.BabelFish.Tests {
     [TestClass]
     public class GetReconfigurableRulebookDefinitionTests
     {

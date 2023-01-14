@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.DataModel.Athena;
+using Scopos.BabelFish.DataModel.Athena;
 
-namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
+namespace Scopos.BabelFish.DataModel.ScoreHistory {
     public abstract class ScoreHistoryTimespan : ScoreHistoryBase {
 
         public ScoreHistoryTimespan() : base() { }

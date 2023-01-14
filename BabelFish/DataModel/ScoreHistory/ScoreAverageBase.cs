@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace ShootersTech.BabelFish.DataModel.ScoreHistory {
+namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
     [Serializable]
     [JsonConverter( typeof( ScoreAverageBaseConverter ) )]

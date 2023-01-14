@@ -5,13 +5,12 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using BabelFish.DataModel;
-using BabelFish.DataModel.Clubs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
-using ShootersTech.BabelFish.Helpers;
+using Scopos.BabelFish.Helpers;
 
-namespace ShootersTech.BabelFish.DataModel.Clubs {
+namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
@@ -145,7 +144,7 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         }
 
         /// <summary>
-        /// The URL path in www.shooterstech.net/clubs/{path} linking to their team page.
+        /// The URL path in www.Scopos.net/clubs/{path} linking to their team page.
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]

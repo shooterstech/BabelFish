@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class SquaddingEvent {
 

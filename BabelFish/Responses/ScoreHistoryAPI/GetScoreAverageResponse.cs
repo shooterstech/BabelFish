@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.Responses;
-using ShootersTech.BabelFish.DataModel.ScoreHistory;
-using ShootersTech.BabelFish.Requests;
-using ShootersTech.BabelFish.Requests.ScoreHistoryAPI;
+using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.Requests;
+using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
-namespace ShootersTech.BabelFish.Responses.ScoreHistoryAPI {
+namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 
     public class GetScoreAverageResponse : Response<ScoreAverageWrapper> {
 

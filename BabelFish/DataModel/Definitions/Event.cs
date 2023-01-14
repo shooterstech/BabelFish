@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.BabelFish.DataModel.Definitions
+namespace Scopos.BabelFish.DataModel.Definitions
 {
     /// <summary>
     /// In the Reconfigurable Rulebook Events are defined using the well known Composite Pattern. 

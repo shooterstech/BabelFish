@@ -1,7 +1,7 @@
-﻿using ShootersTech.BabelFish.DataModel.Definitions;
-using ShootersTech.BabelFish.Requests.DefinitionAPI;
+﻿using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Requests.DefinitionAPI;
 
-namespace ShootersTech.BabelFish.Responses.DefinitionAPI
+namespace Scopos.BabelFish.Responses.DefinitionAPI
 {
     /// <summary>
     /// 

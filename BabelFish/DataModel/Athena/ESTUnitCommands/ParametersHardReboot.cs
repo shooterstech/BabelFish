@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
 
     /// <summary>
     /// Parameters for a hard reboot command.

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel {
+namespace Scopos.BabelFish.DataModel {
     /// <summary>
     /// To have added control over the Deserialization of abstract classes, in to
     /// Concrete classes, the JSON should include a ConcreteClassId that specifies

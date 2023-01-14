@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
-using ShootersTech.BabelFish.Helpers;
-using ShootersTech.BabelFish.Responses;
-using ShootersTech.BabelFish.DataModel.Definitions;
-using ShootersTech.BabelFish.Requests.DefinitionAPI;
-using ShootersTech.BabelFish.Responses.DefinitionAPI;
+using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Requests.DefinitionAPI;
+using Scopos.BabelFish.Responses.DefinitionAPI;
 
-namespace ShootersTech.BabelFish.DefinitionAPI {
+namespace Scopos.BabelFish {
     public class DefinitionAPIClient : APIClient {
 
         DefinitionCacheHelper definitionCacheHelper;
@@ -82,13 +82,13 @@ namespace ShootersTech.BabelFish.DefinitionAPI {
         }
 
         
-        public async Task<GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
+        public async Task<GetDefinitionResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.ATTRIBUTE;
 
             GetDefinitionRequest request = new GetDefinitionRequest( setName, definitionType );
 
-            GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<ShootersTech.BabelFish.DataModel.Definitions.Attribute>(request);
+            GetDefinitionResponse<Scopos.BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>(request);
 
             return await GetDefinition(request, response).ConfigureAwait(false);
         }

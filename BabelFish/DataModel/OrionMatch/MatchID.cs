@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class MatchID : IEquatable<MatchID> {
 
         public const int SUBMATCHID_LOCAL = 0;

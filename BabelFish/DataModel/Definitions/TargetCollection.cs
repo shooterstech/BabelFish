@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.DataModel.Definitions {
+namespace Scopos.BabelFish.DataModel.Definitions {
 
     [Serializable]
     public class TargetCollection : Definition {

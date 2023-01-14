@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.Requests {
+namespace Scopos.BabelFish.Requests {
 
     /// <summary>
     /// An IToken interface is for Request objects that follow

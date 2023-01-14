@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ShootersTech.BabelFish.Requests;
+using Scopos.BabelFish.Requests;
 
-namespace ShootersTech.BabelFish.Responses
+namespace Scopos.BabelFish.Responses
 {
     /// <summary>
     /// Abstract class representing all Rest API Responses.

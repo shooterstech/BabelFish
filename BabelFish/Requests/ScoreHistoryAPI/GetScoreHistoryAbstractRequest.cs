@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Definitions;
 
-namespace ShootersTech.BabelFish.Requests.ScoreHistoryAPI
+namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
 {
     public class GetScoreHistoryAbstractRequest : Request
     {
@@ -122,8 +122,8 @@ namespace ShootersTech.BabelFish.Requests.ScoreHistoryAPI
                     parameterList.Add("continuation-token", new List<string>() { ContinuationToken });
 
                 parameterList.Add("limit", new List<string>() { Limit.ToString() });
-                parameterList.Add("start-date", new List<string>() { StartDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
-                parameterList.Add("end-date", new List<string>() { EndDate.ToString(ShootersTech.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("start-date", new List<string>() { StartDate.ToString(Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
+                parameterList.Add("end-date", new List<string>() { EndDate.ToString(Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
                 parameterList.Add("include-related", new List<string>() { IncludeRelated.ToString() });
                 parameterList.Add("format", new List<string>() { Format.ToString() });
 

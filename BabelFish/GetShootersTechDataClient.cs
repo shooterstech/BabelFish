@@ -1,9 +1,9 @@
-﻿using ShootersTech.BabelFish.Requests.ShootersTechData;
-using ShootersTech.BabelFish.Responses.ShootersTechData;
-using ShootersTech.BabelFish.DataModel.ShootersTechData;
+﻿using Scopos.BabelFish.Requests.ShootersTechData;
+using Scopos.BabelFish.Responses.ShootersTechData;
+using Scopos.BabelFish.DataModel.ShootersTechData;
 using Amazon.Runtime;
 
-namespace ShootersTech.BabelFish.GetVersionAPI {
+namespace Scopos.BabelFish.GetVersionAPI {
     public class GetShootersTechDataClient : APIClient {
 
         /// <summary>

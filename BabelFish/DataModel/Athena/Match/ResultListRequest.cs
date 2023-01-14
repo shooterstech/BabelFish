@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.Match
+namespace Scopos.BabelFish.DataModel.Athena.Match
 {
     /// <summary>
     /// Represents a request, probable from a EST Display module, asking for one or more

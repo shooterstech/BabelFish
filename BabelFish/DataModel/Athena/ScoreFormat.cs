@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.Athena
+namespace Scopos.BabelFish.DataModel.Athena
 {
     /// <summary>
-    /// Depricated in favor of ShootersTech.BabelFish.DataModel.Athena.ScoreFormat, which doesn't use the rulebook specifics or obfuscated values.
+    /// Depricated in favor of Scopos.BabelFish.DataModel.Athena.ScoreFormat, which doesn't use the rulebook specifics or obfuscated values.
     ///  * i => Display the Integer Score(I).
     ///  * d => Display the Decimal Score(D).
     ///  * x => Display the Inner Ten ring score(X).

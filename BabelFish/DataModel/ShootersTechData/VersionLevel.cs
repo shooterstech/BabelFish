@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace ShootersTech.BabelFish.DataModel.ShootersTechData {
+namespace Scopos.BabelFish.DataModel.ShootersTechData {
 
 
     [JsonConverter( typeof( StringEnumConverter ) )]

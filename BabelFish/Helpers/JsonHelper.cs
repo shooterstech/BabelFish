@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ShootersTech.BabelFish.Helpers
+namespace Scopos.BabelFish.Helpers
 {
     //https://stackoverflow.com/questions/5546142/how-do-i-use-json-net-to-deserialize-into-nested-recursive-dictionary-and-list/19140420#19140420
     public static class JsonHelper

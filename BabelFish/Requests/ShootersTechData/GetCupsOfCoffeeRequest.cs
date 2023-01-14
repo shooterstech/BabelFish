@@ -1,9 +1,9 @@
-﻿using ShootersTech.BabelFish.Requests.OrionMatchAPI;
+﻿using Scopos.BabelFish.Requests.OrionMatchAPI;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.Requests.ShootersTechData {
+namespace Scopos.BabelFish.Requests.ShootersTechData {
     public class GetCupsOfCoffeeRequest : Request {
 
 

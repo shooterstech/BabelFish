@@ -1,6 +1,6 @@
-﻿using ShootersTech.BabelFish.Helpers;
+﻿using Scopos.BabelFish.Helpers;
 
-namespace ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI
+namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class GetValidateUserIDRequest : Request
     {

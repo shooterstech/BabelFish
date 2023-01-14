@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
+namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     /// <summary>
     /// Represents that data is part of all EST Units, and is part of the state of ESTMonitor, ESTTarget, and ESTDisplay

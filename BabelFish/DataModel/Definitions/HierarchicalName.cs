@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.DataModel.Definitions {
+namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// HierarchicalNames are the full names to Events, Stages, Rulebooks, Attributes, etc. They are separated into two parts
     /// Namespace and ProperName. Namespace represents the organization who came up with the entity its named after. For example

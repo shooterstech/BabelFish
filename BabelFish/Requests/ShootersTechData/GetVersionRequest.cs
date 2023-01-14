@@ -1,8 +1,8 @@
-﻿using ShootersTech.BabelFish.DataModel.ShootersTechData;
-using ShootersTech.BabelFish.Requests.OrionMatchAPI;
-using ShootersTech.BabelFish.Helpers;
+﻿using Scopos.BabelFish.DataModel.ShootersTechData;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Helpers;
 
-namespace ShootersTech.BabelFish.Requests.ShootersTechData {
+namespace Scopos.BabelFish.Requests.ShootersTechData {
     public class GetVersionRequest : Request {
         /// <summary>
         /// Public constructor. 

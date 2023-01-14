@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena
+namespace Scopos.BabelFish.DataModel.Athena
 {
-    [Obsolete( "Use ShootersTech.BabelFish.Helpers.DateTimeFormats instead.")]
+    [Obsolete( "Use Scopos.BabelFish.Helpers.DateTimeFormats instead.")]
     public static class DateTimeFormats
     {
 

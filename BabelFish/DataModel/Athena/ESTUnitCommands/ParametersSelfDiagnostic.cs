@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
     public class ParametersSelfDiagnostic : CommandParameters {
 
         public const int CONCRETE_CLASS_ID = 5;

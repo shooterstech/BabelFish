@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NLog;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
 
     /// <summary>
     /// Helper class to log the commands / messages sent to EST Units.

@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
-using ShootersTech.BabelFish.Responses;
-using ShootersTech.BabelFish.DataModel.ScoreHistory;
-using ShootersTech.BabelFish.Requests.ScoreHistoryAPI;
+using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
-namespace ShootersTech.BabelFish.Responses.ScoreHistoryAPI {
+namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
     public class GetScoreHistoryResponse : Response<ScoreHistoryWrapper>
     {
 

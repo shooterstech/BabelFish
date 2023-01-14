@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ShootersTech.BabelFish.Helpers;
+using Scopos.BabelFish.Helpers;
 
-namespace BabelFish.DataModel.Clubs {
+namespace Scopos.BabelFish.DataModel.Clubs {
 
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ClubOptions {

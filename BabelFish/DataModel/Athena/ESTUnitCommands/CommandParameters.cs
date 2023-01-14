@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
 
     /// <summary>
     /// Abstract class representing the parameters to send to an EST Unit Command message.

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.Requests;
+using Scopos.BabelFish.Requests;
 
-namespace ShootersTech.BabelFish.Requests.ScoreHistory {
+namespace Scopos.BabelFish.Requests.ScoreHistory {
     public class GetScoreAverageRequestException : RequestException {
         public GetScoreAverageRequestException()
             : base( "Something bad happened!" ) {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.Tests {
+namespace Scopos.BabelFish.Tests {
     public static class Constants {
 
         /// <summary>

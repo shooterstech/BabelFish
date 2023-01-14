@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
+namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     public class TapeFeed
     {

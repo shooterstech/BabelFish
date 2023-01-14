@@ -9,7 +9,7 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Extensions.CognitoAuthentication;
 using Amazon.Runtime;
 
-namespace ShootersTech.BabelFish.Helpers
+namespace Scopos.BabelFish.Helpers
 {
     public class AWSCognitoAuthentication
     {
@@ -31,7 +31,7 @@ namespace ShootersTech.BabelFish.Helpers
         private string myRandomAssDevicePassword = "simple";
 
         // Incoming variables for user-specific queries
-        private string username = string.Empty; //"test_dev_7@shooterstech.net";
+        private string username = string.Empty; //"test_dev_7@Scopos.net";
         private string password = string.Empty; //"abcd1234";
         private string refreshToken = string.Empty;
 

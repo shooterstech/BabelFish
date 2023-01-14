@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel {
+namespace Scopos.BabelFish.DataModel {
 
     /// <summary>
     /// An ITokenItems interface is for DataModels that are returned as a Response objects primary data model, and then follow

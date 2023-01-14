@@ -1,6 +1,6 @@
-﻿using ShootersTech.BabelFish.Requests.OrionMatchAPI;
+﻿using Scopos.BabelFish.Requests.OrionMatchAPI;
 
-namespace ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI
+namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI
 {
     public class GetAttributeValueRequest : Request
     {

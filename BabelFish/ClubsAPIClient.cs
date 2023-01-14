@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.DataModel.OrionMatch;
-using ShootersTech.BabelFish.Requests.ClubsAPI;
-using ShootersTech.BabelFish.Requests.OrionMatchAPI;
-using ShootersTech.BabelFish.Responses.ClubsAPI;
-using ShootersTech.BabelFish.Responses.OrionMatchAPI;
+using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.Responses.ClubsAPI;
 
-namespace ShootersTech.BabelFish.ClubsAPI {
+namespace Scopos.BabelFish {
 
     /// <summary>
     /// API Client to access information about an Orion Acct, club ownership, and club teams.

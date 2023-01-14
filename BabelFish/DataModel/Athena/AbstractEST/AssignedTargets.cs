@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST {
+namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
 
     /// <summary>
     /// Class represenging the assinged firing point and EST Target for an EST Display.

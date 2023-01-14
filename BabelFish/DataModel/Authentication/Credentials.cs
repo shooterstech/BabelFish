@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using ShootersTech.BabelFish.Helpers;
-using ShootersTech.BabelFish.Requests.Authentication.Credentials;
-using ShootersTech.BabelFish.Responses.Authentication.Credentials;
+using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Requests.Authentication.Credentials;
+using Scopos.BabelFish.Responses.Authentication.Credentials;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.DataModel.Authentication.Credentials
+namespace Scopos.BabelFish.DataModel.Authentication.Credentials
 {
     /// <summary>
     /// AWS Credentials

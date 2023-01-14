@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ShootersTech.BabelFish.Helpers;
+using Scopos.BabelFish.Helpers;
 
-namespace ShootersTech.BabelFish.DataModel.ShootersTechData {
+namespace Scopos.BabelFish.DataModel.ShootersTechData {
     public class VersionsList {
         public List<VersionInfo> Versions = new List<VersionInfo>();
     }

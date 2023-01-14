@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.DataModel.OrionMatch;
-using ShootersTech.BabelFish.Requests.OrionMatchAPI;
-using ShootersTech.BabelFish.Responses.OrionMatchAPI;
+using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Responses.OrionMatchAPI;
 
-namespace ShootersTech.BabelFish.OrionMatchAPI {
+namespace Scopos.BabelFish.OrionMatchAPI {
     public class OrionMatchAPIClient : APIClient {
 
         /// <summary>

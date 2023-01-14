@@ -1,7 +1,7 @@
-﻿using ShootersTech.BabelFish.Requests.Authentication;
-using ShootersTech.BabelFish.Responses.Authentication;
+﻿using Scopos.BabelFish.Requests.Authentication;
+using Scopos.BabelFish.Responses.Authentication;
 
-namespace ShootersTech.BabelFish.Authentication {
+namespace Scopos.BabelFish.Authentication {
 
     [Obsolete("Let EKA know if anyone is using this class.")]
     public class AuthAPIClient : APIClient {

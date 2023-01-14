@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.ClubsAPI;
-using ShootersTech.BabelFish.DataModel.Clubs;
-using ShootersTech.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.DataModel.Clubs;
+using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.Responses.ClubsAPI;
 
-namespace ShootersTech.BabelFish.Responses.ClubsAPI {
+namespace Scopos.BabelFish.Responses.ClubsAPI {
     public class GetClubListResponse : Response<ClubListWrapper> {
 
         public GetClubListResponse( GetClubListRequest request ) : base(  ) {

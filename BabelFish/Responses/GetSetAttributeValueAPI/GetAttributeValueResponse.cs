@@ -1,9 +1,9 @@
-﻿using ShootersTech.BabelFish.DataModel.GetSetAttributeValue;
-using ShootersTech.BabelFish.Requests.GetSetAttributeValueAPI;
+﻿using Scopos.BabelFish.DataModel.GetSetAttributeValue;
+using Scopos.BabelFish.Requests.GetSetAttributeValueAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ShootersTech.BabelFish.Responses.GetSetAttributeValueAPI
+namespace Scopos.BabelFish.Responses.GetSetAttributeValueAPI
 {
     public class GetAttributeValueResponse : Response<AttributeValueList>
     {

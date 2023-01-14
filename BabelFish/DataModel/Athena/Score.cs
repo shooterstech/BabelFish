@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena
+namespace Scopos.BabelFish.DataModel.Athena
 {
     public class Score
     {

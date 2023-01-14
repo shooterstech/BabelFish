@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
+namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     public class Competitor
     {
@@ -33,6 +33,6 @@ namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
         public string Relay { get; set; }
 
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public ShootersTech.BabelFish.DataModel.OrionMatch.VisibilityOption Privacy { get; set; }
+        public Scopos.BabelFish.DataModel.OrionMatch.VisibilityOption Privacy { get; set; }
     }
 }

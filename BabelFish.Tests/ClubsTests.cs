@@ -4,11 +4,12 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.ClubsAPI;
-using ShootersTech.BabelFish.Tests;
-using ShootersTech.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish;
+using Scopos.BabelFish.Tests;
+using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.DataModel.Clubs;
 
-namespace ShootersTech.BabelFish.Tests {
+namespace Scopos.BabelFish.Tests {
 
     [TestClass]
     public class ClubsTests {
@@ -20,7 +21,7 @@ namespace ShootersTech.BabelFish.Tests {
             var client = new ClubsAPIClient( Constants.X_API_KEY, Constants.clientParamsTestDev7 );
 
             var request = new GetClubListRequest();
-            request.ApiStage = ShootersTech.BabelFish.Helpers.APIStage.BETA;
+            request.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
 
             var response = await client.GetClubListAsync( request );
 
@@ -42,7 +43,7 @@ namespace ShootersTech.BabelFish.Tests {
 
             //Perform the initial request. The default consgruction sets Token to an empty string.
             var request1 = new GetClubListRequest();
-            request1.ApiStage = ShootersTech.BabelFish.Helpers.APIStage.BETA;
+            request1.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
 
             var response1 = await client.GetClubListAsync( request1 );
 
@@ -56,7 +57,7 @@ namespace ShootersTech.BabelFish.Tests {
             //Perform the follow up request, with the toekn value
             var request2 = new GetClubListRequest();
             request2.Token = response1.NextToken;
-            request2.ApiStage = ShootersTech.BabelFish.Helpers.APIStage.BETA;
+            request2.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
 
             var response2 = await client.GetClubListAsync( request2 );
             Assert.AreEqual( response2.StatusCode, System.Net.HttpStatusCode.OK );
@@ -65,14 +66,14 @@ namespace ShootersTech.BabelFish.Tests {
         }
 
         [TestMethod]
-        public async Task GetclubDetail() {
+        public async Task GetClubDetail() {
 
 
             var client = new ClubsAPIClient( Constants.X_API_KEY, Constants.clientParamsTestDev7 );
 
             var ownerId = "OrionAcct002001";
             var request = new GetClubDetailRequest( ownerId );
-            request.ApiStage = ShootersTech.BabelFish.Helpers.APIStage.BETA;
+            request.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
 
             var response = await client.GetClubDetailAsync( request );
 

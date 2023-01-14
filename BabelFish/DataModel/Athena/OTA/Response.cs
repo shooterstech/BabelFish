@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.OTA
+namespace Scopos.BabelFish.DataModel.Athena.OTA
 {
     /// <summary>
     /// The OTA.Resonse class is used for two different Orion/Atehan IoT protocols. 

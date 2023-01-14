@@ -8,9 +8,9 @@ using BabelFish.DataModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
-using ShootersTech.BabelFish.Helpers;
+using Scopos.BabelFish.Helpers;
 
-namespace ShootersTech.BabelFish.DataModel.Clubs {
+namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Describes an Orion license an Orion user may have.
     /// </summary>
@@ -133,10 +133,5 @@ namespace ShootersTech.BabelFish.DataModel.Clubs {
         }
     }
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum ClubLicenseCapability { VISSCANNER, SCORECARD, CMPUPLOAD, PRIVILEGED };
 
-
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum ClubLicenseType { INDIVIDUAL, HOME, SITE, TEMPORARY };
 }

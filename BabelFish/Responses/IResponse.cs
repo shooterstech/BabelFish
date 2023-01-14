@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace ShootersTech.BabelFish.Responses
+namespace Scopos.BabelFish.Responses
 {
     interface IResponse
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.Helpers {
+namespace Scopos.BabelFish.Helpers {
     public static class DateTimeFormats {
 
         public const string DATE_FORMAT = "yyyy-MM-dd";

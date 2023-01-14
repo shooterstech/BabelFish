@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.DataFormat
+namespace Scopos.BabelFish.DataModel.Athena.DataFormat
 {
 
 
@@ -22,7 +22,7 @@ namespace ShootersTech.BabelFish.DataModel.Athena.DataFormat
         /// Show Competition shots or sighter shots.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public ShootersTech.BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType Competition { get; set; } = ShootersTech.BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType.COMPETITION;
+        public Scopos.BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType Competition { get; set; } = Scopos.BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType.COMPETITION;
 
         /// <summary>
         /// If Competition == SIGHTER, then show all sighters that have a StageLabel equal to, well, this property.
@@ -46,7 +46,7 @@ namespace ShootersTech.BabelFish.DataModel.Athena.DataFormat
         /// When ShotPresentation == "CURRENT", this property holds the EventTyhpe to show. The current EventType is listed under LiveDispaly.CurrentEvents.
         /// NOTE, only relavent during a live display of shots.
         /// </summary>
-        public ShootersTech.BabelFish.DataModel.Definitions.Event.EventtType EventType { get; set; } = ShootersTech.BabelFish.DataModel.Definitions.Event.EventtType.NONE;
+        public Scopos.BabelFish.DataModel.Definitions.Event.EventtType EventType { get; set; } = Scopos.BabelFish.DataModel.Definitions.Event.EventtType.NONE;
 
         public override string ToString()
         {

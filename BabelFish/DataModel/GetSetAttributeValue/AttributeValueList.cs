@@ -1,7 +1,7 @@
 ﻿using System.Text;
 //using System.Text.Json; //COMMENT OUT FOR .NET Standard 2.0
 
-namespace ShootersTech.BabelFish.DataModel.GetSetAttributeValue {
+namespace Scopos.BabelFish.DataModel.GetSetAttributeValue {
 
     [Serializable]
     public class AttributeValueList

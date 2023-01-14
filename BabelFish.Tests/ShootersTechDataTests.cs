@@ -3,11 +3,11 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ShootersTech.BabelFish.GetVersionAPI;
-using ShootersTech.BabelFish.DataModel.ShootersTechData;
-using ShootersTech.BabelFish.Requests.ShootersTechData;
+using Scopos.BabelFish.GetVersionAPI;
+using Scopos.BabelFish.DataModel.ShootersTechData;
+using Scopos.BabelFish.Requests.ShootersTechData;
 
-namespace ShootersTech.BabelFish.Tests {
+namespace Scopos.BabelFish.Tests {
     [TestClass]
     public class ShootersTechDataTests {
         private readonly GetShootersTechDataClient _client = new GetShootersTechDataClient( Constants.X_API_KEY );

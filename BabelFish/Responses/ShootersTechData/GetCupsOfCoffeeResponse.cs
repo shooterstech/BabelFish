@@ -1,11 +1,11 @@
-﻿using ShootersTech.BabelFish.DataModel.ShootersTechData;
-using ShootersTech.BabelFish.Requests.ShootersTechData;
-using ShootersTech.BabelFish.Responses;
+﻿using Scopos.BabelFish.DataModel.ShootersTechData;
+using Scopos.BabelFish.Requests.ShootersTechData;
+using Scopos.BabelFish.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.Responses.ShootersTechData {
+namespace Scopos.BabelFish.Responses.ShootersTechData {
     public class GetCupsOfCoffeeResponse :Response<CupsOfCoffee> {
 
         public GetCupsOfCoffeeResponse( GetCupsOfCoffeeRequest request ) {

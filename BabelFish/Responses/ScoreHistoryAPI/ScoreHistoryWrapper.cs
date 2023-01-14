@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.DataModel.ScoreHistory;
 
-namespace ShootersTech.BabelFish.Responses.ScoreHistoryAPI {
+namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 
     /// <summary>
     /// Helper class that creates the added structure in the data model needed for Deserialzing a Match object from json.

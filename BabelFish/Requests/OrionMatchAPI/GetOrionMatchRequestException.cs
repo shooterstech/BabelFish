@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ShootersTech.BabelFish.Requests;
+using Scopos.BabelFish.Requests;
 
-namespace ShootersTech.BabelFish.Requests.OrionMatchAPI {
+namespace Scopos.BabelFish.Requests.OrionMatchAPI {
     public class GetOrionMatchRequestException : RequestException {
         public GetOrionMatchRequestException()
             : base("Something bad happened!") {

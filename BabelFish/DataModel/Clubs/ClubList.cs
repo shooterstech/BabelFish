@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json.Serialization;
 
-namespace  ShootersTech.BabelFish.DataModel.Clubs {
+namespace  Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// A list of Orion Club accounts. Only abbreviated data about the club is returned.
     /// </summary>

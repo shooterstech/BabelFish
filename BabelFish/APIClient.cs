@@ -2,19 +2,17 @@
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
-//using System.Text.Json.Nodes; //COMMENT OUT FOR .NET Standard 2.0
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using ShootersTech.BabelFish.Requests;
-using ShootersTech.BabelFish.Responses;
-using ShootersTech.BabelFish.Helpers;
-//using ShootersTech.BabelFish.External;
-using ShootersTech.BabelFish.Responses.Authentication.Credentials;
-using ShootersTech.BabelFish.Responses.GetSetAttributeValueAPI;
+using Scopos.BabelFish.Requests;
+using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Responses.Authentication.Credentials;
+using Scopos.BabelFish.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 
-namespace ShootersTech {
+namespace Scopos.BabelFish {
     public abstract class APIClient {
 
         protected APIClient(string xapikey)

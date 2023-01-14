@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.Interfaces
+namespace Scopos.BabelFish.DataModel.Athena.Interfaces
 {
     /// <summary>
     /// Interface describing classes that can have a penalty applied. 

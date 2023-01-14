@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
     /// A SquaddingAssignmentBank represents the complete squadding of one participant (athlete or team) in a squadding Event, where the participant is firing on a multiple targets.

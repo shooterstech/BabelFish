@@ -7,7 +7,7 @@ using NLog;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.AbstractEST
+namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     /// <summary>
     /// Represents a string of an Athena Version number.

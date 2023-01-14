@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.DataModel.ShootersTechData {
+namespace Scopos.BabelFish.DataModel.ShootersTechData {
     public class CupsOfCoffee {
 
         public CupsOfCoffee() { }

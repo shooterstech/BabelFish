@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.Shot
+namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
 
     /// <summary>

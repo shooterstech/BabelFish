@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShootersTech.BabelFish.Requests.Authentication
+namespace Scopos.BabelFish.Requests.Authentication
 {
     public class GetCognitoLoginRequest : Request
     {

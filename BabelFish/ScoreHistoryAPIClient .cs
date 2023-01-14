@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using ShootersTech.BabelFish.Responses;
-using ShootersTech.BabelFish.DataModel.ScoreHistory;
-using ShootersTech.BabelFish.Requests.ScoreHistoryAPI;
-using ShootersTech.BabelFish.Responses.ScoreHistoryAPI;
+using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.Requests.ScoreHistoryAPI;
+using Scopos.BabelFish.Responses.ScoreHistoryAPI;
 
-namespace ShootersTech.BabelFish.ScoreHistoryAPI {
+namespace Scopos.BabelFish.ScoreHistoryAPI {
     public class ScoreHistoryAPIClient : APIClient {
 
         /// <summary>

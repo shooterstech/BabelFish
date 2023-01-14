@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
+namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
     public class ParametersUpdateShots : CommandParameters {
 
         public const int CONCRETE_CLASS_ID = 9;
@@ -19,6 +19,6 @@ namespace ShootersTech.BabelFish.DataModel.Athena.ESTUnitCommands {
         /// <summary>
         /// The Shot to update
         /// </summary>
-        public ShootersTech.BabelFish.DataModel.Athena.Shot.Shot Shot { get; set; }
+        public Scopos.BabelFish.DataModel.Athena.Shot.Shot Shot { get; set; }
     }
 }

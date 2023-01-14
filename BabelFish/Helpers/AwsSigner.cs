@@ -6,10 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.DataModel;
-using ShootersTech.BabelFish.DataModel.Authentication.Credentials;
+using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Authentication.Credentials;
 
-namespace ShootersTech.BabelFish.Helpers
+namespace Scopos.BabelFish.Helpers
 {
     public class AwsSigner
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using ShootersTech.BabelFish.DataModel.Athena.AbstractEST;
+using Scopos.BabelFish.DataModel.Athena.AbstractEST;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.Range
+namespace Scopos.BabelFish.DataModel.Athena.Range
 {
     public class FiringPointState
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.Runtime.Internal;
 
-namespace ShootersTech.BabelFish.DataModel.Athena.Ping
+namespace Scopos.BabelFish.DataModel.Athena.Ping
 {
     public class Heartbeat
     {

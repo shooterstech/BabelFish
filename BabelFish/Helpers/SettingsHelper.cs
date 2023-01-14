@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using System.Configuration;
-using ShootersTech.BabelFish.DataModel;
-using ShootersTech.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Definitions;
 using System.Collections.Specialized;
 
-namespace ShootersTech.BabelFish.Helpers
+namespace Scopos.BabelFish.Helpers
 {
     static class SettingsHelper
     {

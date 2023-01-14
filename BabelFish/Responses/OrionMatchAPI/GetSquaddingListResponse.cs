@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ShootersTech.BabelFish.DataModel.OrionMatch;
-using ShootersTech.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
 
-namespace ShootersTech.BabelFish.Responses.OrionMatchAPI
+namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
     public class GetSquaddingListResponse : Response<Squadding>
     {
