@@ -34,13 +34,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         }
 
         /// <summary>
-        /// Human name of the admin in charge of this license.
-        /// </summary>
-        public string User { get; set; } = string.Empty;
-
-        public int LicenseNumber { get; set; } = 0;
-
-        /// <summary>
         /// Typically a single character, uniquely identifying a single license an Orion Club owns.
         /// </summary>
         /// <example>A</example>

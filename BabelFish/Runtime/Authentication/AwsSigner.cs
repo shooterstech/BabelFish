@@ -5,11 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.DataModel.Authentication.Credentials;
+using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.Helpers
+namespace Scopos.BabelFish.Runtime.Authentication
 {
     public class AwsSigner
     {
@@ -24,23 +22,24 @@ namespace Scopos.BabelFish.Helpers
         //  (the string you received from AWS STS when you obtained temporary security credentials).
         /////////////
 
-        public AwsSigner(string uri, StringContent messageContent = null, DateTime? continuationToken = null) {
-            URI = uri;
-            if ( continuationToken != null)
-                Credentials.ContinuationToken = continuationToken;
+
+        private HttpResponseMessage responseError = new HttpResponseMessage();
+
+        private UserCredentials credentials;
+
+        public AwsSigner(string uri, StringContent messageContent, UserCredentials credentials )
+        {
+            this.credentials = credentials;
+            this.URI = uri;
 
             // Request Content for msg.Content in signing
-            if ( messageContent != null )
+            if (messageContent != null)
                 MessageContent = messageContent;
         }
 
         #region Properties
 
-        private HttpResponseMessage responseError = new HttpResponseMessage();
-
-        private Credential Credentials = new Credential();
-
-        public DateTime? ContinuationToken { get { return Credentials.ContinuationToken; } }
+        public DateTime? ContinuationToken { get { return credentials.ContinuationToken; } }
 
         /// <summary>
         /// Endpoint URI for hashing algorithm
@@ -69,11 +68,11 @@ namespace Scopos.BabelFish.Helpers
                     response = responseError;
                 else
                 {
-                    if ( this.URI != "" )
+                    if (URI != "")
                         response = await AwsSignatureV4RichW().ConfigureAwait(false);
                     else
                     {
-                        response = httpClient.GenerateHttpResponseMessage(HttpStatusCode.OK, $"\"RefreshToken\":\"" + Credentials.RefreshToken + "\", \"IdToken\":\"" + Credentials.IdToken + "\", \"AccessToken\":\"" + Credentials.AccessToken + "\", \"DeviceToken\":\"" + Credentials.DeviceToken + "\", }");
+                        response = httpClient.GenerateHttpResponseMessage(HttpStatusCode.OK, $"\"RefreshToken\":\"" + credentials.RefreshToken + "\", \"IdToken\":\"" + credentials.IdToken + "\", \"AccessToken\":\"" + credentials.AccessToken + "\", \"DeviceToken\":\"" + credentials.DeviceId + "\", }");
                     }
                 }
             }
@@ -98,11 +97,11 @@ namespace Scopos.BabelFish.Helpers
 
                 string awsRegion = "us-east-1";
                 string awsServiceName = "execute-api";
-                string awsSecretKey = Credentials.SecretKey;
+                string awsSecretKey = credentials.SecretKey;
                 DateTimeOffset utcNowSaved = DateTimeOffset.UtcNow;
                 string amzLongDate = utcNowSaved.ToString("yyyyMMddTHHmmssZ");
                 string amzShortDate = utcNowSaved.ToString("yyyyMMdd");
-                string url = this.URI;
+                string url = URI;
                 // Prepare request message
                 HttpRequestMessage msg;
                 if (MessageContent.Headers.ContentLength > 0)
@@ -112,8 +111,8 @@ namespace Scopos.BabelFish.Helpers
                 msg.Headers.Host = msg.RequestUri.Host;
                 msg.Headers.Add("x-amz-date", amzLongDate);
                 msg.Headers.Add("x-api-key", SettingsHelper.UserSettings[AuthEnums.XApiKey.ToString()]);
-                if ( ! Credentials.IsPermToken() )
-                    msg.Headers.Add("X-Amz-Security-Token",Credentials.SessionToken);
+                if (!credentials.IsPermToken())
+                    msg.Headers.Add("X-Amz-Security-Token", credentials.SessionToken);
                 // Add Body Content
                 msg.Content = MessageContent;
                 var payloadHash = Hash(msg.Content.ReadAsByteArrayAsync().Result);
@@ -148,7 +147,7 @@ namespace Scopos.BabelFish.Helpers
                 var signingKey = HmacSha256(dateRegionServiceKey, "aws4_request");
                 var signature = ToHexString(HmacSha256(signingKey, stringToSign));
                 var credentialScope = amzShortDate + "/" + awsRegion + "/" + awsServiceName + "/aws4_request";
-                msg.Headers.TryAddWithoutValidation("Authorization", "AWS4-HMAC-SHA256 Credential=" + Credentials.AccessKey +
+                msg.Headers.TryAddWithoutValidation("Authorization", "AWS4-HMAC-SHA256 Credential=" + credentials.AccessKey +
                     "/" + credentialScope + ", SignedHeaders=" + signedHeaders + ", Signature=" + signature);
                 response = httpClient.SendAsync(msg).Result;
             }
@@ -164,13 +163,18 @@ namespace Scopos.BabelFish.Helpers
 
             //AKS-20220324 Refactor for multiple values per key
             var querystring = HttpUtility.ParseQueryString(request.RequestUri.Query);
-            foreach (var key in querystring.AllKeys) {
-                if (key == null) { // Handles keys without values
+            foreach (var key in querystring.AllKeys)
+            {
+                if (key == null)
+                { // Handles keys without values
                     values.Add(Uri.EscapeDataString(querystring[key]), $"{Uri.EscapeDataString(querystring[key])}=");
-                } else {
-                    foreach (var value in querystring.GetValues(key)) {
+                }
+                else
+                {
+                    foreach (var value in querystring.GetValues(key))
+                    {
                         // Escape to upper case. Required.
-                        values.Add(Uri.EscapeDataString(key)+value.ToString(), $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value)}");
+                        values.Add(Uri.EscapeDataString(key) + value.ToString(), $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value)}");
                     }
                 }
             }
@@ -196,27 +200,30 @@ namespace Scopos.BabelFish.Helpers
             return new HMACSHA256(key).ComputeHash(Encoding.UTF8.GetBytes(data));
         }
 
-        private async Task<bool> DeterminePermTempTokens() {
-            
-            // Set Temporary Tokens if we don't receive perm
-            if ( !Credentials.IsPermToken() ) {
-                // swap null to default date so system knows to use temp tokens on first round
-                if (Credentials.ContinuationToken == null)
-                    Credentials.ContinuationToken = new DateTime();
+        private async Task<bool> DeterminePermTempTokens()
+        {
 
-                bool validTempCreds = await Credentials.GetTempCredentials().ConfigureAwait(false);
+            // Set Temporary Tokens if we don't receive perm
+            if (!credentials.IsPermToken())
+            {
+                // swap null to default date so system knows to use temp tokens on first round
+                if (credentials.ContinuationToken == null)
+                    credentials.ContinuationToken = new DateTime();
+
+                bool validTempCreds = await credentials.GetTempCredentials().ConfigureAwait(false);
                 if (!validTempCreds)
                 {
-                    responseError = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Auth Err", Credentials.LastException);
+                    responseError = httpClient.GenerateHttpResponseError(HttpStatusCode.OK, "401", "Auth Err", credentials.LastException);
                     return false;
                 }
             }
-            else {
+            else
+            {
                 // Set Permanent Tokens (AccessKey,SecretKey) passed in from UserSettings
                 // Treating set AccessKey, SecretKey as permanent tokens
-                Credentials.AccessKey = SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
-                Credentials.SecretKey = SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
-                Credentials.ContinuationToken = null;
+                credentials.AccessKey = SettingsHelper.UserSettings[AuthEnums.AccessKey.ToString()];
+                credentials.SecretKey = SettingsHelper.UserSettings[AuthEnums.SecretKey.ToString()];
+                credentials.ContinuationToken = null;
             }
             return true;
         }

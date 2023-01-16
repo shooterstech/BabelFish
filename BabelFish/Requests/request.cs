@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests
 {
@@ -20,6 +21,8 @@ namespace Scopos.BabelFish.Requests
         public bool WithAuthentication { get; set; } = false;
 
         public bool IsShootersTechURI { get; set; } = true;
+
+        public UserCredentials Credentials { get; set; }
 
         /// <summary>
         /// Assigned from Response value, for some APIs where Limit is used

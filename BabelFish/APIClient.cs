@@ -11,8 +11,10 @@ using Scopos.BabelFish.Responses.Authentication.Credentials;
 using Scopos.BabelFish.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish {
+namespace Scopos.BabelFish
+{
     public abstract class APIClient {
 
         protected APIClient(string xapikey)
