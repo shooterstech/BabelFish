@@ -14,19 +14,31 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ClubLicenseCapability {
 
-        [Description( "Allows customers to scan and score paper targets with Orion." )]
+        /// <summary>
+        /// Allows customers to scan and score paper targets with Orion.
+        /// </summary>
+        [Description( "VIS Scanner" )]
         [EnumMember( Value = "VIS_SCANNER" )]
         VIS_SCANNER,
 
-        [Description( "Allows customer to access the online Scorecard app (which is now deprecated)." )]
+        /// <summary>
+        /// Allows customer to access the online Scorecard app (which is now deprecated).
+        /// </summary>
+        [Description( "Scorecard" )]
         [EnumMember( Value = "SCORECARD" )]
         SCORECARD,
 
-        [Description( "Allows customer to use the password protected CMP upload feature." )]
+        /// <summary>
+        /// Allows customer to use the password protected CMP upload feature.
+        /// </summary>
+        [Description( "CMP Internal Competition Tracker Upload" )]
         [EnumMember( Value = "CMP_CT_UPLOAD" )]
         CMP_CT_UPLOAD,
 
-        [Description( "Allows customer to access Scopos protected functionality." )]
+        /// <summary>
+        /// Allows customer to access Scopos protected functionality.
+        /// </summary>
+        [Description( "Privileged" )]
         [EnumMember( Value = "PRIVILEGED" )]
         PRIVILEGED
     };

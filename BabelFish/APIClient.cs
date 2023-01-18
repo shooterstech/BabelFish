@@ -12,31 +12,42 @@ using Scopos.BabelFish.Responses.GetSetAttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish
 {
     public abstract class APIClient {
 
-        protected APIClient(string xapikey)
-        {
-            this.XApiKey = xapikey;
-            this.ApiStage = APIStage.PRODUCTION;
-            this.SubDomain = SubDomains.API_STAGE;
+        /// <summary>
+        /// The name (key value) to use in http requests for the x api -key
+        /// </summary>
+        public const string X_API_KEY_NAME = "x-api-key";
 
-            logger.Info("BablFish API instantiated");
-        }
-
-        protected APIClient(string xapikey, Dictionary<string, string>? CustomUserSettings = null) : this(xapikey)
-        {
-            if (CustomUserSettings != null)
-                SettingsHelper.IncomingUserSettings = CustomUserSettings;
-            if (SettingsHelper.SettingIsNullOrEmpty("XApiKey"))
-                SettingsHelper.UserSettings["XApiKey"] = xapikey;
-        }
-
-        #region properties
         private JsonSerializer serializer = new JsonSerializer();
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public HttpClient httpClient = new HttpClient();
+
+        protected APIClient( string xapikey ) {
+            this.XApiKey = xapikey;
+            this.ApiStage = APIStage.PRODUCTION;
+            this.SubDomain = APISubDomain.API;
+
+            logger.Info( "BablFish API instantiated" );
+        }
+
+        protected APIClient( string xapikey, APISubDomain apiSubDomain ) {
+            this.XApiKey = xapikey;
+            this.ApiStage = APIStage.PRODUCTION;
+            this.SubDomain = apiSubDomain;
+
+            logger.Info( "BablFish API instantiated" );
+        }
+
+
+
+        #region properties
+
+        [Obsolete("What is this used for?")]
         private DateTime? ContinuationToken = null;
 
         /// <summary>
@@ -45,58 +56,52 @@ namespace Scopos.BabelFish
         public string XApiKey { get; set; }
 
         /// <summary>
-        /// Environment - AWS Api {stage}
+        /// ApiStage may be used to test in different development stages, e.g. production, beta, alpha.
         /// </summary>
-        public APIStage ApiStage { get; private set; }
+        public APIStage ApiStage { get; protected set; }
 
         /// <summary>
         /// SubDomain - AWS Api subdomain identifier
         /// </summary>
-        private SubDomains SubDomain { get; set; }
+        public APISubDomain SubDomain { get; protected set; }
 
         #endregion properties
 
         #region Methods
         protected async Task CallAPI<T>(Request request, Response<T> response) where T : new()
         {
-            // Setup workflow conditions
-            Dictionary<string, bool> FunctionOptions = new Dictionary<string, bool>();
-            FunctionOptions.Add("UseAuth", request.WithAuthentication);
-            FunctionOptions.Add("UseShootersTechUri", request.IsShootersTechURI);
-
             // Get Uri for call
-            string uri = string.Empty;
-            this.ApiStage = request.ApiStage;
-            this.SubDomain = request.SubDomain;
-            if (!FunctionOptions["UseShootersTechUri"])
-                uri = request.RelativePath;
-            else
-                uri = $"https://{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(SubDomain).Value}.orionscoringsystem.com{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(ApiStage).Value}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
-
+            string uri = $"https://{SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
 
             try {
-                DateTime startTime = DateTime.Now;
+                
                 HttpResponseMessage responseMessage = new HttpResponseMessage();
 
-                if (!FunctionOptions["UseShootersTechUri"] && uri != "")
-                    responseMessage = await httpClient.GetAsync(uri).ConfigureAwait(false);
-                else 
-                {
-                    Dictionary<string, string> AssembledHeaders = new Dictionary<string, string>();
-                    if (FunctionOptions["UseAuth"]) {
-                        AwsSigner AwsSignature = new AwsSigner(uri, request.PostParameters, ContinuationToken);
-                        responseMessage = await AwsSignature.GetAws4Signature().ConfigureAwait(false);
-                        ContinuationToken = AwsSignature.ContinuationToken;
-                    } else {
-                        AssembledHeaders.Add("x-api-key", XApiKey);
-                        responseMessage = await httpClient.GetAsyncWithHeaders(uri, AssembledHeaders)
-                            .ConfigureAwait(false);
+                HttpRequestMessage requestMessage;
+                using (requestMessage = new HttpRequestMessage( request.HttpMethod, uri )) {
+                    //Add in the x-api-key. Note that the request object *could* override it's value
+                    if (!string.IsNullOrEmpty( this.XApiKey ))
+                        requestMessage.Headers.Add( "x-api-key", XApiKey );
+
+                    //Add in the headers to the request
+                    if (request.HeaderKeyValuePairs != null)
+                        foreach (var keyValuePair in request.HeaderKeyValuePairs)
+                            requestMessage.Headers.Add( keyValuePair.Key, keyValuePair.Value );
+
+                    if (request.WithAuthentication) {
+                        throw new NotImplementedException( "Authenticated calls are not implemented yet." );
                     }
+
+                    //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
+                    logger.Info( $"Calling {request} on {uri}.");
+                    DateTime startTime = DateTime.Now;
+                    responseMessage = await httpClient.SendAsync( requestMessage );
+
+                    response.TimeToRun = DateTime.Now - startTime;
+                    logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );
                 }
 
                 response.StatusCode = responseMessage.StatusCode;
-
-                logger.Info("API Fetched status: {statuscode} || uri: {url}", responseMessage.StatusCode, uri);
 
                 using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
                 using (StreamReader sr = new StreamReader(s))
@@ -123,8 +128,6 @@ namespace Scopos.BabelFish
                 if (!responseMessage.IsSuccessStatusCode)
                     logger.Error("API error with: {errorphrase}", responseMessage.ReasonPhrase);
 
-                //EKA Note: Let's keep TimetoRun as a TimeSpan object, makes it easier to parse later if needed.
-                response.TimeToRun = DateTime.Now - startTime;
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Runtime.Authentication
 {
+    /*
     public class AwsSigner
     {
         /////////////
@@ -39,6 +40,7 @@ namespace Scopos.BabelFish.Runtime.Authentication
 
         #region Properties
 
+        [Obsolete("Really, what the fuck is this used form?")]
         public DateTime? ContinuationToken { get { return credentials.ContinuationToken; } }
 
         /// <summary>
@@ -229,4 +231,5 @@ namespace Scopos.BabelFish.Runtime.Authentication
         }
         #endregion Methods
     }
+    */
 }

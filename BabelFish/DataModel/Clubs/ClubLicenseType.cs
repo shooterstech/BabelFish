@@ -11,22 +11,31 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ClubLicenseType {
 
-        [Description( "Standard Orion for Clubs license." )]
+        /// <summary>
+        /// Standard Orion for Clubs license.
+        /// </summary>
+        [Description( "Individual" )]
         [EnumMember( Value = "INDIVIDUAL" )] 
         INDIVIDUAL,
 
-
-        [Description( "Limited functionality Orion for Clubs Home license." )]
+        /// <summary>
+        /// Limited functionality Orion for Clubs Home license.
+        /// </summary>
+        [Description( "Home" )]
         [EnumMember( Value = "HOME" )] 
         HOME,
 
-
-        [Description( "Site license for Orion for Clubs." )]
+        /// <summary>
+        /// Site license for Orion for Clubs.
+        /// </summary>
+        [Description( "Site" )]
         [EnumMember( Value = "SITE" )] 
         SITE,
 
-
-        [Description( "Temporary Orion for Clubs license." )]
+        /// <summary>
+        /// Temporary Orion for Clubs license.
+        /// </summary>
+        [Description( "Temporary" )]
         [EnumMember( Value = "TEMPORARY" )] 
         TEMPORARY 
     };
