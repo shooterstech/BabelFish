@@ -30,20 +30,9 @@ namespace Scopos.BabelFish
         protected APIClient( string xapikey ) {
             this.XApiKey = xapikey;
             this.ApiStage = APIStage.PRODUCTION;
-            this.SubDomain = APISubDomain.API;
 
             logger.Info( "BablFish API instantiated" );
         }
-
-        protected APIClient( string xapikey, APISubDomain apiSubDomain ) {
-            this.XApiKey = xapikey;
-            this.ApiStage = APIStage.PRODUCTION;
-            this.SubDomain = apiSubDomain;
-
-            logger.Info( "BablFish API instantiated" );
-        }
-
-
 
         #region properties
 
@@ -60,18 +49,13 @@ namespace Scopos.BabelFish
         /// </summary>
         public APIStage ApiStage { get; protected set; }
 
-        /// <summary>
-        /// SubDomain - AWS Api subdomain identifier
-        /// </summary>
-        public APISubDomain SubDomain { get; protected set; }
-
         #endregion properties
 
         #region Methods
         protected async Task CallAPI<T>(Request request, Response<T> response) where T : new()
         {
             // Get Uri for call
-            string uri = $"https://{SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
+            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
 
             try {
                 
@@ -88,7 +72,7 @@ namespace Scopos.BabelFish
                         foreach (var keyValuePair in request.HeaderKeyValuePairs)
                             requestMessage.Headers.Add( keyValuePair.Key, keyValuePair.Value );
 
-                    if (request.WithAuthentication) {
+                    if (request.RequiresCredentials) {
                         throw new NotImplementedException( "Authenticated calls are not implemented yet." );
                     }
 
@@ -136,32 +120,6 @@ namespace Scopos.BabelFish
                 response.MessageResponse.ResponseCodes.Add(HttpStatusCode.InternalServerError.ToString());
                 logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
             }
-        }
-
-        public bool UpdateAuthTokens(Dictionary<string,string> newTokens)
-        {
-            try
-            {
-                SettingsHelper.UpdateApplicationSettings(newTokens);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public Dictionary<string, string> GetAuthTokens()
-        {
-            Dictionary<string, string> returnTokens = new Dictionary<string, string>();
-            try
-            {
-                List<string> AuthTokens = new List<string>() { "UserName", "PassWord", "RefreshToken", "IdToken", "AccessToken", "DeviceToken" };
-                foreach (string key in AuthTokens)
-                    returnTokens.Add(key, SettingsHelper.UserSettings[key]);
-            }finally { }
-
-            return returnTokens;
         }
         #endregion Methods
     }

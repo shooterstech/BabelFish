@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
     public class GetResultCOFDetailRequest : Request
     {
 
-        public GetResultCOFDetailRequest(string resultCOFId = "")
+        public GetResultCOFDetailRequest(string resultCOFId = "") : base( "GetResultCourseOfFire" )
         {
             ResultCOFID = resultCOFId;
         }

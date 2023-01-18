@@ -23,6 +23,10 @@ namespace Scopos.BabelFish.Helpers
 
         public DefinitionCacheHelper()
         {
+
+            throw new NotImplementedException();
+
+            /*Uncomment to try and immplement
             // Populate user defaults
             if (!SettingsHelper.SettingIsNullOrEmpty("Definitions_CacheIgnore"))
                 prefDefintionsCacheIgnore = SettingsHelper.UserSettings["Definitions_CacheIgnore"];
@@ -49,6 +53,8 @@ namespace Scopos.BabelFish.Helpers
             // Load exisitng file system Definitions into memory
             if ( !prefDefintionsCacheIgnore)
                 LoadDefinitionsInMemory();
+
+            */
         }
 
         #region Properties
@@ -397,6 +403,9 @@ namespace Scopos.BabelFish.Helpers
 
         private float GetDefinitionVersionFromServer(DefinitionType? definitionType, SetName? setName)
         {
+            throw new NotImplementedException();
+
+            /*uncomment to attempt to implement
             float returnVersion = -1;
 
             if ( definitionType!=null && setName != null)
@@ -425,6 +434,7 @@ namespace Scopos.BabelFish.Helpers
             }
 
             return returnVersion;
+            */
         }
 
         /// <summary>

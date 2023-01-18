@@ -13,13 +13,6 @@ namespace Scopos.BabelFish.GetVersionAPI {
         public GetShootersTechDataClient( string apiKey ) : base( apiKey ) { }
 
         /// <summary>
-        /// Instantiate client
-        /// </summary>
-        /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public GetShootersTechDataClient( string xapikey, Dictionary<string, string> CustomUserSettings ) : base( xapikey, CustomUserSettings ) { }
-
-        /// <summary>
         /// GetVersion API for multiple services
         /// </summary>
         /// <param name="requestParameters">GetVersionRequest object</param>

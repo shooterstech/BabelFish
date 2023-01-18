@@ -1,27 +1,21 @@
 ﻿using Scopos.BabelFish;
 using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.DataModel.GetSetAttributeValue
-{
-    internal class AttributeValueDefinition
-    {
+namespace Scopos.BabelFish.DataModel.GetSetAttributeValue {
+    internal class AttributeValueDefinition {
         DefinitionAPIClient? clientDefinition;
-        
+
         public Definitions.Attribute AttributeDefinition = new Definitions.Attribute();
 
-        public List<AttributeField> Fields
-        {
-            get
-            {
+        public List<AttributeField> Fields {
+            get {
                 return AttributeDefinition.Fields;
             }
         }
 
-        public bool MultipleValues
-        {
-            get 
-            { 
-                return AttributeDefinition.MultipleValues; 
+        public bool MultipleValues {
+            get {
+                return AttributeDefinition.MultipleValues;
             }
         }
 
@@ -30,41 +24,17 @@ namespace Scopos.BabelFish.DataModel.GetSetAttributeValue
         /// </summary>
         /// <param name="fieldName">Field Name string from GetDefintionFields()</param>
         /// <returns>true or false</returns>
-        public bool? IsFieldNameRequired(string fieldName)
-        {
-            try
-            {
-                AttributeField attrField = AttributeDefinition.Fields.Where(x => x.FieldName == fieldName).FirstOrDefault();
-//                if (string.IsNullOrEmpty(attrField.FieldName))
-//                    LastException = AttributeValueException.GetExceptionFieldNameError($"check Required for {fieldName} not found in {SetName}");
-//                else
-                    return attrField.Required;
-            }
-            catch (Exception ex)
-            {
-//              LastException = AttributeValueException.GetExceptionFieldNameError($"check Required for {fieldName} not found in {SetName}: {ex.ToString}");
+        public bool? IsFieldNameRequired( string fieldName ) {
+            try {
+                AttributeField attrField = AttributeDefinition.Fields.Where( x => x.FieldName == fieldName ).FirstOrDefault();
+                //                if (string.IsNullOrEmpty(attrField.FieldName))
+                //                    LastException = AttributeValueException.GetExceptionFieldNameError($"check Required for {fieldName} not found in {SetName}");
+                //                else
+                return attrField.Required;
+            } catch (Exception ex) {
+                //              LastException = AttributeValueException.GetExceptionFieldNameError($"check Required for {fieldName} not found in {SetName}: {ex.ToString}");
             }
             return null;
-        }
-
-        /// <summary>
-        /// Load Definition file for reference
-        /// </summary>
-        public async void LoadDefinition(string SetName)
-        {
-            try
-            {
-                clientDefinition = new DefinitionAPIClient(Helpers.SettingsHelper.UserSettings["XApiKey"], Helpers.SettingsHelper.RevertSettingsFormat());
-
-                Responses.DefinitionAPI.GetDefinitionResponse<Definitions.Attribute> DefinitionResponse =
-                    await clientDefinition.GetAttributeDefinitionAsync( Definitions.SetName.Parse( SetName ) ).ConfigureAwait(false);
-                if (DefinitionResponse.Definition != null)
-                    AttributeDefinition = DefinitionResponse.Definition;
-            }
-            catch (Exception ex)
-            {
-//                AttributeDefinition = AttributeValueException.GetExceptionDefinitionError($"Not Found for {SetName}");
-            }
         }
 
     }

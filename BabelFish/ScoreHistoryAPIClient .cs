@@ -18,13 +18,6 @@ namespace Scopos.BabelFish.ScoreHistoryAPI {
         /// <param name="apiKey"></param>
         public ScoreHistoryAPIClient( string apiKey) : base(apiKey) { }
 
-        /// <summary>
-        /// Instantiate client
-        /// </summary>
-        /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public ScoreHistoryAPIClient( string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
-
 
         public async Task<GetScoreHistoryResponse> GetScoreHistoryAsync(GetScoreHistoryRequest requestParameters)
         {

@@ -14,14 +14,7 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey"></param>
-        public OrionMatchAPIClient(string xapikey) : base(xapikey) { }
-
-        /// <summary>
-        /// Instantiate client
-        /// </summary>
-        /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public OrionMatchAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
+        public OrionMatchAPIClient( string xapikey ) : base( xapikey ) { }
 
         /// <summary>
         /// Get Match Detail API
@@ -30,9 +23,9 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// <returns>Match Object</returns>
         public async Task<GetMatchResponse> GetMatchDetailAsync( GetMatchRequest requestParameters ) {
 
-            GetMatchResponse response = new GetMatchResponse(requestParameters);
+            GetMatchResponse response = new GetMatchResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -43,12 +36,10 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// <param name="matchid"></param>
         /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync(string matchid, bool withAuthentication = false) {
-            var request = new GetMatchRequest(matchid);
+        public async Task<GetMatchResponse> GetMatchDetailAsync( string matchid, bool withAuthentication = false ) {
+            var request = new GetMatchRequest( matchid );
 
-            request.WithAuthentication = withAuthentication;
-            
-            return await GetMatchDetailAsync(request).ConfigureAwait(false);
+            return await GetMatchDetailAsync( request ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -59,7 +50,7 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         public async Task<GetResultListResponse> GetResultListAsync( GetResultListRequest requestParameters ) {
             GetResultListResponse response = new GetResultListResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -70,8 +61,8 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns>ResultList Object</returns>
-        public async Task<GetResultListResponse> GetResultListAsync(string matchid, string listname) {
-            return await GetResultListAsync(new GetResultListRequest(matchid, listname)).ConfigureAwait(false);
+        public async Task<GetResultListResponse> GetResultListAsync( string matchid, string listname ) {
+            return await GetResultListAsync( new GetResultListRequest( matchid, listname ) ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -79,11 +70,11 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <param name="requestParameters">GetSquaddingListRequest object</param>
         /// <returns>Squadding Object</returns>
-        public async Task<GetSquaddingListResponse> GetSquaddingListAsync(GetSquaddingListRequest requestParameters) {
-            
+        public async Task<GetSquaddingListResponse> GetSquaddingListAsync( GetSquaddingListRequest requestParameters ) {
+
             GetSquaddingListResponse response = new GetSquaddingListResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -95,13 +86,10 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// <param name="squaddinglistname"></param>
         /// <param name="withAuthentication">default false</param>
         /// <returns>Squadding Object</returns>
-        public async Task<GetSquaddingListResponse> GetSquaddingListAsync(string matchid, string squaddinglistname, bool withAuthentication = false )
-        {
-            var request = new GetSquaddingListRequest(matchid, squaddinglistname);
+        public async Task<GetSquaddingListResponse> GetSquaddingListAsync( string matchid, string squaddinglistname, bool withAuthentication = false ) {
+            var request = new GetSquaddingListRequest( matchid, squaddinglistname );
 
-            request.WithAuthentication = withAuthentication;
-            
-            return await GetSquaddingListAsync(request).ConfigureAwait(false);
+            return await GetSquaddingListAsync( request ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -109,10 +97,10 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <param name="requestParameters">GetResultCOFDetailRequest object</param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(GetResultCOFDetailRequest requestParameters) {
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail( GetResultCOFDetailRequest requestParameters ) {
             GetResultCOFDetailResponse response = new GetResultCOFDetailResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -122,8 +110,8 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <param name="resultCOFID"></param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail(string resultCOFID) {
-            return await GetResultCourseOfFireDetail(new GetResultCOFDetailRequest(resultCOFID)).ConfigureAwait(false);
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetail( string resultCOFID ) {
+            return await GetResultCourseOfFireDetail( new GetResultCOFDetailRequest( resultCOFID ) ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -131,11 +119,11 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <returns>List<MatchLocation> Object</returns>
         public async Task<GetMatchLocationsResponse> GetMatchLocationsAsync() {
-            GetMatchLocationsResponse response = new GetMatchLocationsResponse(new GetMatchLocationsRequest());
+            GetMatchLocationsResponse response = new GetMatchLocationsResponse( new GetMatchLocationsRequest() );
 
             var request = new GetMatchLocationsRequest();
-            
-            await this.CallAPI(request, response).ConfigureAwait(false);
+
+            await this.CallAPI( request, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -145,10 +133,10 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
-        public async Task<GetMatchSearchResponse> GetMatchSearchAsync(GetMatchSearchRequest requestParameters) {
-            GetMatchSearchResponse response = new GetMatchSearchResponse(requestParameters);
+        public async Task<GetMatchSearchResponse> GetMatchSearchAsync( GetMatchSearchRequest requestParameters ) {
+            GetMatchSearchResponse response = new GetMatchSearchResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -158,11 +146,10 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <param name="requestParameters">GetParticipantListRequest object</param>
         /// <returns>Match Participant List Object</returns>
-        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(GetParticipantListRequest requestParameters)
-        {
-            GetParticipantListResponse response = new GetParticipantListResponse(requestParameters);
+        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync( GetParticipantListRequest requestParameters ) {
+            GetParticipantListResponse response = new GetParticipantListResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -171,15 +158,11 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// Get Participant List API
         /// </summary>
         /// <param name="matchid"></param>
-        /// <param name="withAuthentication"></param>
         /// <returns>Match Participant List Object</returns>
-        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync(string matchid, bool withAuthentication = false)
-        {
-            var request = new GetParticipantListRequest(matchid);
+        public async Task<GetParticipantListResponse> GetMatchParticipantListAsync( string matchid ) {
+            var request = new GetParticipantListRequest( matchid );
 
-            request.WithAuthentication = withAuthentication;
-
-            return await GetMatchParticipantListAsync(request).ConfigureAwait(false);
+            return await GetMatchParticipantListAsync( request ).ConfigureAwait( false );
         }
 
     }

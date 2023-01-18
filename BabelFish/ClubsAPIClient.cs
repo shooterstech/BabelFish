@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Responses.ClubsAPI;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish {
 
@@ -21,19 +22,12 @@ namespace Scopos.BabelFish {
         public ClubsAPIClient( string xapikey) : base(xapikey) { }
 
         /// <summary>
-        /// Instantiate client
-        /// </summary>
-        /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public ClubsAPIClient( string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
-
-        /// <summary>
         /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
         /// Generally this ia a parameterless call.
         /// </summary>
-        public async Task<GetClubListResponse> GetClubListAsync() {
+        public async Task<GetClubListResponse> GetClubListAsync( UserCredentials credentials) {
 
-            var request = new GetClubListRequest();
+            var request = new GetClubListRequest( credentials );
 
             return await GetClubListAsync(request);
         }
@@ -45,9 +39,6 @@ namespace Scopos.BabelFish {
         /// </summary>
         /// <param name="request"></param>
         public async Task<GetClubListResponse> GetClubListAsync( GetClubListRequest request ) {
-
-            //GetClubList requires authentication
-            request.WithAuthentication = true;
 
             var response = new GetClubListResponse( request );
 
@@ -63,9 +54,6 @@ namespace Scopos.BabelFish {
         /// <returns></returns>
         public async Task<GetClubDetailResponse> GetClubDetailAsync( GetClubDetailRequest request ) {
 
-            //GetClubDetail requires authentication
-            request.WithAuthentication = true;
-
             var response = new GetClubDetailResponse( request );
 
             await this.CallAPI( request, response ).ConfigureAwait( false );
@@ -79,10 +67,10 @@ namespace Scopos.BabelFish {
         /// </summary>
         /// <param name="orionLicenseNumber"></param>
         /// <returns></returns>
-        public async Task<GetClubDetailResponse> GetClubDetailAsync( int orionLicenseNumber ) {
+        public async Task<GetClubDetailResponse> GetClubDetailAsync( int orionLicenseNumber, UserCredentials credentials ) {
 
             var ownerId = $"OrionAcct{orionLicenseNumber:06d}";
-            return await GetClubDetailAsync( ownerId );
+            return await GetClubDetailAsync( ownerId, credentials );
         }
 
         /// <summary>
@@ -91,9 +79,9 @@ namespace Scopos.BabelFish {
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
-        public async Task<GetClubDetailResponse> GetClubDetailAsync( string ownerId ) {
+        public async Task<GetClubDetailResponse> GetClubDetailAsync( string ownerId, UserCredentials credentials ) {
 
-            var request = new GetClubDetailRequest( ownerId );
+            var request = new GetClubDetailRequest( ownerId, credentials );
 
             return await GetClubDetailAsync( request );
         }

@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.Requests.ShootersTechData {
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetVersionRequest() { }
+        public GetVersionRequest() : base( "GetVersion" ) { }
 
         /// <summary>
         /// List of VersionService enum value(s)

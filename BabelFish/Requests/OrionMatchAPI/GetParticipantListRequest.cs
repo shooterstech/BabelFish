@@ -8,10 +8,11 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
 {
     public class GetParticipantListRequest : Request
     {
-        public GetParticipantListRequest(string matchid = "")
+        public GetParticipantListRequest(string matchid = "") : base( "GetMatchParticipantList" )
         {
             MatchID = matchid;
         }
+
         public string MatchID { get; set; } = string.Empty;
 
         /// <inheritdoc />

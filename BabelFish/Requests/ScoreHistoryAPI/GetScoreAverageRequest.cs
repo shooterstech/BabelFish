@@ -7,7 +7,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
 
 
         /// <inheritdoc />
-        public GetScoreAverageRequest() { }
+        public GetScoreAverageRequest() : base( "GetScoreHistory" ) { }
 
         /// <inheritdoc />
         public override string RelativePath {

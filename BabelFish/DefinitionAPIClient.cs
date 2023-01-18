@@ -26,16 +26,6 @@ namespace Scopos.BabelFish {
             definitionCacheHelper = new DefinitionCacheHelper();
         }
 
-        /// <summary>
-        /// Instantiate client
-        /// </summary>
-        /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public DefinitionAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) 
-        {
-            definitionCacheHelper = new DefinitionCacheHelper();
-        }
-
         public async Task<GetDefinitionResponse<T>> GetDefinition<T>(GetDefinitionRequest request, GetDefinitionResponse<T> response) where T : new() 
         {
             try{

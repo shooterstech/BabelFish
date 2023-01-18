@@ -1,6 +1,7 @@
 ﻿using Scopos.BabelFish.DataModel.GetSetAttributeValue;
 using Scopos.BabelFish.Requests.GetSetAttributeValueAPI;
 using Scopos.BabelFish.Responses.GetSetAttributeValueAPI;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.GetSetAttributeValueAPI {
     public class GetSetAttributeValueAPIClient : APIClient {
@@ -10,13 +11,6 @@ namespace Scopos.BabelFish.GetSetAttributeValueAPI {
         /// </summary>
         /// <param name="apiKey"></param>
         private GetSetAttributeValueAPIClient(string apiKey) : base(apiKey) { }
-
-        /// <summary>
-        /// Instantiate client
-        /// </summary>
-        /// <param name="xapikey">Your assigned XApiKey</param>
-        /// <param name="CustomUserSettings">Dictionary<string,string> of Allowed User Settings</param>
-        public GetSetAttributeValueAPIClient(string xapikey, Dictionary<string, string> CustomUserSettings) : base(xapikey, CustomUserSettings) { }
 
         /// <summary>
         /// Get Attribute Value API
@@ -37,9 +31,9 @@ namespace Scopos.BabelFish.GetSetAttributeValueAPI {
         /// </summary>
         /// <param name="AttributeNames">List<string> of valid Attribute Names</string>. Each attribute name must be formatted as a Set Name. </param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames) {
+        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames, UserCredentials credentials) {
             
-            GetAttributeValueRequest requestParameters = new GetAttributeValueRequest()
+            GetAttributeValueRequest requestParameters = new GetAttributeValueRequest(credentials)
             {
                 AttributeNames = attributeNames
             };
@@ -81,10 +75,10 @@ namespace Scopos.BabelFish.GetSetAttributeValueAPI {
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue)
+        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue, UserCredentials credentials )
         {
 
-            SetAttributeValueRequest requestParameters = new SetAttributeValueRequest(attributeValue);
+            SetAttributeValueRequest requestParameters = new SetAttributeValueRequest(attributeValue, credentials);
 
             SetAttributeValueResponse response = new SetAttributeValueResponse( requestParameters );
 
@@ -98,13 +92,13 @@ namespace Scopos.BabelFish.GetSetAttributeValueAPI {
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue)
+        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue, UserCredentials credentials )
         {
             
             AttributeValueList newAttribute = new AttributeValueList();
             newAttribute.Attributes.Add(attributeValue);
 
-            var response = await SetAttributeValueAsync(newAttribute).ConfigureAwait(false);
+            var response = await SetAttributeValueAsync(newAttribute, credentials).ConfigureAwait(false);
 
             return response;
         }

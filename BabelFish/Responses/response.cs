@@ -12,6 +12,7 @@ namespace Scopos.BabelFish.Responses
 {
     /// <summary>
     /// Abstract class representing all Rest API Responses.
+    /// A concret implementation of a Response class should coorespond to exactly one REST API method call.
     /// T is the type of data object expected returned by the REST API call.
     /// </summary>
     /// <typeparam name="T"></typeparam>

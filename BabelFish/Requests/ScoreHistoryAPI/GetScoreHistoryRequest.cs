@@ -6,7 +6,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
     public class GetScoreHistoryRequest : GetScoreHistoryAbstractRequest {
 
         /// <inheritdoc />
-        public GetScoreHistoryRequest() { }
+        public GetScoreHistoryRequest() : base( "GetScoreHistory" ) { }
 
         /// <inheritdoc />
         public override string RelativePath {

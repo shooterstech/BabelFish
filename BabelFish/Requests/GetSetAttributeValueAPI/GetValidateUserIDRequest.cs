@@ -1,12 +1,9 @@
 ﻿using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI
-{
-    public class GetValidateUserIDRequest : Request
-    {
-        public GetValidateUserIDRequest() 
-        {
-            WithAuthentication = true;
+namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI {
+    public class GetValidateUserIDRequest : Request {
+        public GetValidateUserIDRequest() : base( "ValidateUserID" ) {
+            RequiresCredentials = true;
         }
 
         /// <summary>
@@ -15,14 +12,8 @@ namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI
         public string UserID { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        public override string RelativePath
-        {
+        public override string RelativePath {
             get { return $"/users/{UserID}"; }
-        }
-
-        public override APIStage ApiStage
-        {  
-            get { return APIStage.PRODUCTION; } 
         }
     }
 }

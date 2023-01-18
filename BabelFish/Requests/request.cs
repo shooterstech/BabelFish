@@ -12,7 +12,8 @@ using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.Requests {
     /// <summary>
-    /// Abstract base class for all Request Objects
+    /// Abstract base class for all Request Objects.
+    /// A concret implementation of a Request class should coorespond to exactly one REST API method call.
     /// </summary>
     public abstract class Request {
 
@@ -29,11 +30,17 @@ namespace Scopos.BabelFish.Requests {
             this.Credentials = credentials;
         }
 
-        public bool WithAuthentication { get; set; } = false;
-
-        public bool IsShootersTechURI { get; set; } = true;
+        /// <summary>
+        /// Indicates if this request requires user credentials.
+        /// </summary>
+        public bool RequiresCredentials { get; protected set; } = false;
 
         public UserCredentials Credentials { get; set; }
+
+        /// <summary>
+        /// The REST API subdomain used in this request. 
+        /// </summary>
+        public APISubDomain SubDomain { get; protected set; } = APISubDomain.API;
 
         /// <summary>
         /// An unique string used to identify an operation. 

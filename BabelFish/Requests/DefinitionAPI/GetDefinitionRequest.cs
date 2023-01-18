@@ -6,13 +6,22 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Requests.DefinitionAPI
-{
-    public class GetDefinitionRequest : Request
-    {
-        public GetDefinitionRequest(SetName? setName = null, DefinitionType definitionType = DefinitionType.ATTRIBUTE )
-        {
+namespace Scopos.BabelFish.Requests.DefinitionAPI {
+    public class GetDefinitionRequest : Request {
+        public GetDefinitionRequest( SetName setName, DefinitionType definitionType ) : base( "GetDefinition" ) {
+            if (setName == null)
+                throw new ArgumentNullException( nameof( setName ) );
+
+            SetName = setName;
+            DefinitionType = definitionType;
+        }
+
+        public GetDefinitionRequest( SetName setName, DefinitionType definitionType, UserCredentials credentials ) : base( "GetDefinition", credentials ) {
+            if (setName == null)
+                throw new ArgumentNullException( nameof( setName ) );
+
             SetName = setName;
             DefinitionType = definitionType;
         }
@@ -22,9 +31,8 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI
         public DefinitionType DefinitionType { get; set; } = DefinitionType.ATTRIBUTE;
 
         /// <inheritdoc />
-        public override string RelativePath
-        {
-            get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>(DefinitionType).Value}/{SetName}"; }
+        public override string RelativePath {
+            get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>( DefinitionType ).Value}/{SetName}"; }
         }
     }
 }

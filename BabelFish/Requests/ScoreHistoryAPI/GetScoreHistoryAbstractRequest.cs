@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetScoreHistoryAbstractRequest() { }
+        public GetScoreHistoryAbstractRequest(string operationId) : base( operationId ) { }
 
         /// <summary>
         /// Gets or Sets the SetName of the Event Style for the Score History request.
@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
         {
             get
             {
-                if (!WithAuthentication && (UserIds == null || UserIds.Count == 0))
+                if (!RequiresCredentials && (UserIds == null || UserIds.Count == 0))
                     throw new GetScoreHistoryRequestException("UserIds required for Non-Authenticated request.");
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();

@@ -125,10 +125,13 @@ namespace Scopos.BabelFish.DataModel.GetSetAttributeValue
         /// <returns></returns>
         public bool ValidFieldValueType(Type castType, object fieldValue)
         {
+            throw new NotImplementedException();
+            /* uncomment this code to implement
             if (Helpers.SettingsHelper.ConvertSettingsType(castType, fieldValue.ToString()) != null)
                 return true;
             else
                 return false;
+            */
         }
 
         /// <summary>

@@ -2,11 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.Requests;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.ClubsAPI {
     public class GetClubListRequest : Request, IToken {
 
-        public GetClubListRequest() { }
+
+        public GetClubListRequest(UserCredentials credentials) : base( "GetClubList", credentials ) {
+            //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
+            this.RequiresCredentials = true;
+            this.SubDomain = Runtime.APISubDomain.AUTHAPI;
+        }
 
         /// <inheritdoc />
         public string Token { get; set; }

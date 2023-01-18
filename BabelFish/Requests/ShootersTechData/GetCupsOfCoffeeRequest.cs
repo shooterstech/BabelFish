@@ -6,9 +6,10 @@ using System.Text;
 namespace Scopos.BabelFish.Requests.ShootersTechData {
     public class GetCupsOfCoffeeRequest : Request {
 
+        public GetCupsOfCoffeeRequest() : base( "GetCoffee" ) { }
 
         /// <inheritdoc />
-        public override string RelativePath {
+        public override string RelativePath  {
             get { return $"/coffee"; }
         }
     }

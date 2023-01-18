@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetMatchSearchRequest() { }
+        public GetMatchSearchRequest() : base( "MatchSearch")  { }
 
         /// <summary>
         /// Distance in miles to search.
