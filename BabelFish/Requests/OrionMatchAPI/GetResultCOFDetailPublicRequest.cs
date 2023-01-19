@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI 
 {
-    public class GetResultCOFDetailRequest : Request
+    public class GetResultCOFDetailPublicRequest : Request
     {
 
-        public GetResultCOFDetailRequest(string resultCOFId = "") : base( "GetResultCourseOfFire" )
+        public GetResultCOFDetailPublicRequest(string resultCOFId = "") : base( "GetResultCourseOfFire" )
         {
             ResultCOFID = resultCOFId;
         }

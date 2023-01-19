@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
             VersionService service = VersionService.ORION;
             VersionLevel level = VersionLevel.PRODUCTION;
-            var response = client.GetVersionAsync( service, level );
+            var response = client.GetVersionPublicAsync( service, level );
 
             var result = response.Result;
             Assert.IsNotNull( result );
@@ -48,7 +48,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
             VersionService service = VersionService.ATHENA;
             VersionLevel level = VersionLevel.ALPHA;
-            var response = client.GetVersionAsync( service, level );
+            var response = client.GetVersionPublicAsync( service, level );
 
             var result = response.Result;
             Assert.IsNotNull( result );
@@ -61,12 +61,12 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         public void GetMultipleServicesProductionLevel() {
             var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
 
-            GetVersionRequest request = new GetVersionRequest() {
+            GetVersionPublicRequest request = new GetVersionPublicRequest() {
                 Services = new List<VersionService>() { VersionService.ORION, VersionService.ATHENA },
                 Level = VersionLevel.PRODUCTION
             };
 
-            var response = client.GetVersionAsync( request );
+            var response = client.GetVersionPublicAsync( request );
 
             var result = response.Result;
             Assert.IsNotNull( result );
@@ -79,11 +79,11 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         public async Task GetCupsOfCoffeeConsumedWithRequestObject() {
             var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
 
-            GetCupsOfCoffeeRequest request = new GetCupsOfCoffeeRequest();
+            GetCupsOfCoffeePublicRequest request = new GetCupsOfCoffeePublicRequest();
 
             Assert.AreEqual( request.OperationId, "GetCoffee" );
 
-            var response = client.GetCuposOfCoffeeAsync( request );
+            var response = client.GetCuposOfCoffeePublicAsync( request );
             var result = response.Result;
 
             Assert.IsNotNull( result );
@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         public async Task GetCupsOfCoffeeConsumedWithoutRequestObject() {
             var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
 
-            var response = client.GetCuposOfCoffeeAsync();
+            var response = client.GetCuposOfCoffeePublicAsync();
             var result = response.Result;
 
             Assert.IsNotNull( result );

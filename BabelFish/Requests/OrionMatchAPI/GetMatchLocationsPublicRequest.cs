@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetMatchLocationsRequest : Request {
-        public GetMatchLocationsRequest() : base( "GetMatchLocations" ) { }
+    public class GetMatchLocationsPublicRequest : Request {
+        public GetMatchLocationsPublicRequest() : base( "GetMatchLocations" ) { }
 
         /// <inheritdoc />
         public override string RelativePath {

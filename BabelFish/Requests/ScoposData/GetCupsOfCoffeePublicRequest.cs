@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.Requests.ScoposData {
-    public class GetCupsOfCoffeeRequest : Request {
+    public class GetCupsOfCoffeePublicRequest : Request {
 
-        public GetCupsOfCoffeeRequest() : base( "GetCoffee" ) { }
+        public GetCupsOfCoffeePublicRequest() : base( "GetCoffee" ) { }
 
         /// <inheritdoc />
         public override string RelativePath  {

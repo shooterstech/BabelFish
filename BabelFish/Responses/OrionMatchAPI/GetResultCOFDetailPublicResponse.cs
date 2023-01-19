@@ -8,19 +8,18 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetSquaddingListResponse : Response<Squadding>
-    {
+    public class GetResultCOFDetailPublicResponse : Response<CourseOfFireWrapper> {
 
-        public GetSquaddingListResponse( GetSquaddingListRequest request ) : base() {
+        public GetResultCOFDetailPublicResponse( GetResultCOFDetailPublicRequest request ) : base() {
             this.Request = request;
         }
 
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        /// 
-        public Squadding Squadding {
-            get { return Value; }
-        }
+        public ResultCOF ResultCOF
+        {
+            get { return Value.ResultCOF; }
+        }  
     }
 }

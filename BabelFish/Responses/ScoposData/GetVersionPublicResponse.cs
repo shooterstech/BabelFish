@@ -2,8 +2,8 @@
 using Scopos.BabelFish.Requests.ScoposData;
 
 namespace Scopos.BabelFish.Responses.ScoposData {
-    public class GetVersionResponse : Response<VersionsList> {
-        public GetVersionResponse( GetVersionRequest request ) {
+    public class GetVersionPublicResponse : Response<VersionsList> {
+        public GetVersionPublicResponse( GetVersionPublicRequest request ) {
             this.Request = request;
         }
 

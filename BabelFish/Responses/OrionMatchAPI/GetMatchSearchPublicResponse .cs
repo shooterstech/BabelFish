@@ -8,19 +8,19 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetResultListResponse : Response<ResultListWrapper>
+    public class GetMatchSearchResponse : Response<MatchSearchWrapper>
     {
 
-        public GetResultListResponse( GetResultListRequest request ) : base() {
-            this.Request = request;
+        public GetMatchSearchResponse( GetMatchSearchPublicRequest request ) : base() {
+            Request = request;
         }
 
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        public ResultList ResultList
+        public List<Match> SearchList
         {
-            get { return Value.ResultList; }
+            get { return Value.SearchList; }
         }
     }
 }

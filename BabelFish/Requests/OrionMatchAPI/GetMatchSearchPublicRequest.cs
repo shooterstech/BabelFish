@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI
 {
-    public class GetMatchSearchRequest : Request
+    public class GetMatchSearchPublicRequest : Request
     {
         /// <summary>
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetMatchSearchRequest() : base( "MatchSearch")  { }
+        public GetMatchSearchPublicRequest() : base( "MatchSearch")  { }
 
         /// <summary>
         /// Distance in miles to search.

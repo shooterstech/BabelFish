@@ -3,12 +3,12 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Requests.ScoposData {
-    public class GetVersionRequest : Request {
+    public class GetVersionPublicRequest : Request {
         /// <summary>
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetVersionRequest() : base( "GetVersion" ) { }
+        public GetVersionPublicRequest() : base( "GetVersion" ) { }
 
         /// <summary>
         /// List of VersionService enum value(s)

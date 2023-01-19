@@ -18,9 +18,9 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetVersionRequest object</param>
         /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetVersionResponse> GetVersionAsync( GetVersionRequest requestParameters ) {
+        public async Task<GetVersionPublicResponse> GetVersionPublicAsync( GetVersionPublicRequest requestParameters ) {
 
-            GetVersionResponse response = new GetVersionResponse( requestParameters );
+            GetVersionPublicResponse response = new GetVersionPublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
@@ -33,13 +33,13 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="service">VersionService enum</param>
         /// <param name="level">VersionLevel enum</param>
         /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetVersionResponse> GetVersionAsync( VersionService service, VersionLevel level ) {
-            GetVersionRequest requestParameters = new GetVersionRequest() {
+        public async Task<GetVersionPublicResponse> GetVersionPublicAsync( VersionService service, VersionLevel level ) {
+            GetVersionPublicRequest requestParameters = new GetVersionPublicRequest() {
                 Services = new List<VersionService>() { service },
                 Level = level
             };
 
-            return await GetVersionAsync( requestParameters ).ConfigureAwait( false );
+            return await GetVersionPublicAsync( requestParameters ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -47,9 +47,9 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns></returns>
-        public async Task<GetCupsOfCoffeeResponse> GetCuposOfCoffeeAsync( GetCupsOfCoffeeRequest requestParameters ) {
+        public async Task<GetCupsOfCoffeePublicResponse> GetCuposOfCoffeePublicAsync( GetCupsOfCoffeePublicRequest requestParameters ) {
 
-            GetCupsOfCoffeeResponse response = new GetCupsOfCoffeeResponse( requestParameters );
+            GetCupsOfCoffeePublicResponse response = new GetCupsOfCoffeePublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response );
 
@@ -60,11 +60,11 @@ namespace Scopos.BabelFish.APIClients {
         /// Calls the https://api.orionscoringsystem.com/coffee api request
         /// </summary>
         /// <returns></returns>
-        public async Task<GetCupsOfCoffeeResponse> GetCuposOfCoffeeAsync(  ) {
+        public async Task<GetCupsOfCoffeePublicResponse> GetCuposOfCoffeePublicAsync(  ) {
 
-            GetCupsOfCoffeeRequest requestParameters = new GetCupsOfCoffeeRequest();
+            GetCupsOfCoffeePublicRequest requestParameters = new GetCupsOfCoffeePublicRequest();
 
-            GetCupsOfCoffeeResponse response = new GetCupsOfCoffeeResponse( requestParameters );
+            GetCupsOfCoffeePublicResponse response = new GetCupsOfCoffeePublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response );
 

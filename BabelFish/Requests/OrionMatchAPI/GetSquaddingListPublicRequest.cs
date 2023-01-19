@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetSquaddingListRequest : Request {
-        public GetSquaddingListRequest( string matchid = "", string squaddinglistname = "" ) : base( "GetSquaddingList" ) {
+    public class GetSquaddingListPublicRequest : Request {
+        public GetSquaddingListPublicRequest( string matchid = "", string squaddinglistname = "" ) : base( "GetSquaddingList" ) {
             MatchID = matchid;
             SquaddingListName = squaddinglistname;
         }

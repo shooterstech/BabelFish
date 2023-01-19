@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.Responses.ScoposData {
-    public class GetCupsOfCoffeeResponse :Response<CupsOfCoffee> {
+    public class GetCupsOfCoffeePublicResponse :Response<CupsOfCoffee> {
 
-        public GetCupsOfCoffeeResponse( GetCupsOfCoffeeRequest request ) {
+        public GetCupsOfCoffeePublicResponse( GetCupsOfCoffeePublicRequest request ) {
             this.Request = request;
         }
 

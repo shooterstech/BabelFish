@@ -5,19 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetResultListRequest : Request {
-        public GetResultListRequest( string matchid = "", string listname = "" ) : base( "GetResultList" ) {
+    public class GetParticipantListPublicRequest : Request {
+        public GetParticipantListPublicRequest( string matchid = "" ) : base( "GetMatchParticipantList" ) {
             MatchID = matchid;
-            ResultListName = listname;
         }
 
         public string MatchID { get; set; } = string.Empty;
 
-        public string ResultListName { get; set; } = string.Empty;
-
         /// <inheritdoc />
         public override string RelativePath {
-            get { return $"/match/{MatchID}/result-list/{ResultListName}"; }
+            get { return $"/match/{MatchID}/participant"; }
         }
     }
 }

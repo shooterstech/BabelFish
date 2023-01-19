@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
 {
     [TestClass]
-    public class OrionMatchUnitTests {
+    public class OrionMatchPublicUnitTests {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            var response = client.GetMatchDetailAsync("1.2345.6789012345678901.0");
+            var response = client.GetMatchDetailPublicAsync("1.2345.6789012345678901.0");
 
             var MessageResponse = response.Result.MessageResponse;
             Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.NotFound);
@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
             Assert.IsTrue(MessageResponse.Message.Any(x => x.Contains("could not be found")));
 
             OrionMatchAPIClient _client2 = new OrionMatchAPIClient("abc123");
-            response = _client2.GetMatchDetailAsync("1.2899.1040248529.0");
+            response = _client2.GetMatchDetailPublicAsync("1.2899.1040248529.0");
             Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.Forbidden);
         }
 
@@ -49,7 +49,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
         public void OrionMatchAPI_GetAMatch() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            var response = client.GetMatchDetailAsync("1.2268.2022021516475240.0");
+            var response = client.GetMatchDetailPublicAsync("1.2268.2022021516475240.0");
             Assert.IsNotNull(response);
 
             var match = response.Result.Match;
@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
             string MatchID = "1.2899.1040248529.0";
             string ResultListName = "Individual - All";
-            var response = client.GetResultListAsync(MatchID, ResultListName);
+            var response = client.GetResultListPublicAsync(MatchID, ResultListName);
             Assert.IsNotNull(response);
 
             var result = response.Result.ResultList;
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             string COFID = "29b3b450-e796-4329-9ebb-cd841c6eab3e";
-            var response = client.GetResultCourseOfFireDetail(COFID);
+            var response = client.GetResultCourseOfFireDetailPublicAsync(COFID);
             Assert.IsNotNull(response);
 
             var result = response.Result.ResultCOF;
@@ -98,7 +98,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             string COFID = "03b0a667-f184-404b-8ba7-751599b7fd0b";
-            var response = client.GetResultCourseOfFireDetail(COFID);
+            var response = client.GetResultCourseOfFireDetailPublicAsync(COFID);
             Assert.IsNotNull(response);
 
 
@@ -113,7 +113,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
-            Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest requestParameters = new Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest()
+            Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchPublicRequest requestParameters = new Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchPublicRequest()
             {
                 DistanceSearch = 5,
                 StartDate = new DateTime(DateTime.Now.Year, 6, 1),
@@ -124,7 +124,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
                 Latitude = 38.739453,
             };
 
-            var response = client.GetMatchSearchAsync(requestParameters);
+            var response = client.GetMatchSearchPublicAsync(requestParameters);
             Assert.IsNotNull(response);
 
             var listOfMatches = response.Result.SearchList;
@@ -144,7 +144,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
             string MatchID = "1.2899.1040248529.0";
             string SquaddingListName = "Individual";
 
-            var response = client.GetSquaddingListAsync(MatchID,SquaddingListName);
+            var response = client.GetSquaddingListPublicAsync(MatchID,SquaddingListName);
             Assert.IsNotNull(response);
 
             var result = response.Result.Squadding;
@@ -160,7 +160,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
-            var response = client.GetMatchLocationsAsync();
+            var response = client.GetMatchLocationsPublicAsync();
             Assert.IsNotNull(response);
 
             var locations = response.Result.MatchLocations;
@@ -178,7 +178,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             string MatchID = "1.3197.2022042721544126.0";
 
-            var response = client.GetMatchParticipantListAsync(MatchID);
+            var response = client.GetMatchParticipantListPublicAsync(MatchID);
             Assert.IsNotNull(response);
 
             var result = response.Result.ParticipantList;
