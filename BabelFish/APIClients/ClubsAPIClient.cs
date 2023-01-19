@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Responses.ClubsAPI;
+using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish {
+namespace Scopos.BabelFish.APIClients {
 
     /// <summary>
     /// API Client to access information about an Orion Acct, club ownership, and club teams.
@@ -20,6 +21,8 @@ namespace Scopos.BabelFish {
         /// </summary>
         /// <param name="xapikey"></param>
         public ClubsAPIClient( string xapikey) : base(xapikey) { }
+
+        public ClubsAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
 
         /// <summary>
         /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.

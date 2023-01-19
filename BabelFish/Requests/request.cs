@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using NLog;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Requests {
     /// <summary>

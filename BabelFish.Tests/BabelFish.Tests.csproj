@@ -22,4 +22,8 @@
     <ProjectReference Include="..\BabelFish\BabelFish.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="OrionMatchTests\" />
+  </ItemGroup>
+
 </Project>

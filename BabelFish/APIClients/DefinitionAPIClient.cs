@@ -11,7 +11,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
 
-namespace Scopos.BabelFish {
+namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient {
 
         DefinitionCacheHelper definitionCacheHelper;

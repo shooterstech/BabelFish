@@ -21,9 +21,13 @@ namespace Scopos.BabelFish.DataModel.GetSetAttributeValue
         /// <exception cref="Exception"></exception>
         public AttributeValue(string setName)
         {
+            throw new NotImplementedException();
+
+            /*Comment out to implement
             SetName = setName;
             attributeDef.LoadDefinition(SetName);
             SetDefaultFieldValues();
+            */
         }
 
         /// <summary>

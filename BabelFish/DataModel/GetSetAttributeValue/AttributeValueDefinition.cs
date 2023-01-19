@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish;
+﻿using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.GetSetAttributeValue {

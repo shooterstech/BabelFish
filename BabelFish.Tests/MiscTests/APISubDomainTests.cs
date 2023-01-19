@@ -5,14 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Tests.RuntimeTests
+namespace Scopos.BabelFish.Tests.MiscTests
 {
 
     [TestClass]
     public class APISubDomainTests
     {
 
+        [TestMethod]
+        public void DumbTest() {
+            Assert.AreEqual( 1, 1 );
+        }
+
+        /// <summary>
+        /// Tests that the Exstention method .SubDomainName() works as expected.
+        /// </summary>
         [TestMethod]
         public void SubDomainNameExstentionTest() {
 
@@ -25,6 +34,9 @@ namespace Scopos.BabelFish.Tests.RuntimeTests
             Assert.AreEqual( "internalapi", internalapi.SubDomainName() );
         }
 
+        /// <summary>
+        /// Tests that the Exstention method .SubDomainNameWithState works as expected.
+        /// </summary>
         [TestMethod]
         public void SubDomainNameWithStageExstentionTest() {
 

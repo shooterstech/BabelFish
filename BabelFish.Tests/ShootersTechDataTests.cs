@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.GetVersionAPI;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.ShootersTechData;
 using Scopos.BabelFish.Requests.ShootersTechData;
 

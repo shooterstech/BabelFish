@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
+using Scopos.BabelFish.Runtime;
 
-namespace Scopos.BabelFish.OrionMatchAPI {
+namespace Scopos.BabelFish.APIClients {
     public class OrionMatchAPIClient : APIClient {
 
         /// <summary>
@@ -15,6 +16,8 @@ namespace Scopos.BabelFish.OrionMatchAPI {
         /// </summary>
         /// <param name="xapikey"></param>
         public OrionMatchAPIClient( string xapikey ) : base( xapikey ) { }
+
+        public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
 
         /// <summary>
         /// Get Match Detail API

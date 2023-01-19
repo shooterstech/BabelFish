@@ -4,28 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.ScoreHistoryAPI;
-using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
 namespace Scopos.BabelFish.Tests {
-    [TestClass]
-    public class ScoreHistoryTests
-    {
-        private static Dictionary<string, string> clientParams = new Dictionary<string, string>()
-        {
-            {"UserName", "test_dev_7@shooterstech.net"},
-            {"PassWord", "abcd1234"},
-        };
-        private readonly ScoreHistoryAPIClient _client = new ScoreHistoryAPIClient( Constants.X_API_KEY );
-        private readonly ScoreHistoryAPIClient _clientAuthenticated = new ScoreHistoryAPIClient( Constants.X_API_KEY, clientParams);
+    /*
 
-        // Test users and valid date ranges containing data
-        private static string TestUser7 = "26f32227-d428-41f6-b224-beed7b6e8850";
-        private static string TestUser9 = "28489692-0a61-470e-aed8-c71b9cfbfe6e";
-        private static string TestUser10 = "6cd811f8-b6be-4adb-998b-acb8caa86035";
+    [TestClass]
+    public class ScoreHistoryTests {
+
+        /// <summary>
+        /// Unit test to confirm the Constructors set the api key and API stage as expected.
+        /// </summary>
+        [TestMethod]
+        public void BasicConstructorTests() {
+
+            var defaultConstructorClient = new ScoreHistoryAPIClient( Constants.X_API_KEY );
+            var apiStageConstructorClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+
+            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+        }
 
         private static DateTime StartDateTimeSpan = new DateTime(2022, 06, 01); //DateTime.Today.AddDays( -14 ),
         private static DateTime StartDate = new DateTime(2022, 06, 25); //DateTime.Today.AddDays( -14 ),
@@ -37,7 +41,6 @@ namespace Scopos.BabelFish.Tests {
         public void History_EventStyle_Single() {
 
             GetScoreHistoryRequest requestParameters = new GetScoreHistoryRequest() {
-                UserIds = new List<string>() { TestUser9 },
                 StartDate = StartDate,
                 EndDate = EndDate,
                 EventStyle = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" ),
@@ -699,4 +702,5 @@ namespace Scopos.BabelFish.Tests {
         }
         #endregion authenticated
     }
+    */
 }

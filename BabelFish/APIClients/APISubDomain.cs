@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.Runtime {
+namespace Scopos.BabelFish.APIClients {
 
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum APISubDomain {
@@ -45,7 +46,7 @@ namespace Scopos.BabelFish.Runtime {
         /// <returns></returns>
         public static string SubDomainNameWithStage(this APISubDomain subDomain) {
 
-            return $"{subDomain}-stage";
+            return $"{subDomain.Description()}-stage";
 
         }
 
@@ -57,7 +58,7 @@ namespace Scopos.BabelFish.Runtime {
         /// <returns></returns>
         public static string SubDomainName( this APISubDomain subDomain ) {
 
-            return subDomain.ToString();
+            return subDomain.Description();
 
         }
     }

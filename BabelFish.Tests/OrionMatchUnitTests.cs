@@ -3,20 +3,36 @@ using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.OrionMatchAPI;
-using Scopos.BabelFish.Requests;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.Tests
 {
     [TestClass]
-    public class OrionMatchUnitTests
-    {
-        private readonly OrionMatchAPIClient _client = new OrionMatchAPIClient( Constants.X_API_KEY );
+    public class OrionMatchUnitTests {
+
+        /// <summary>
+        /// Unit test to confirm the Constructors set the api key and API stage as expected.
+        /// </summary>
+        [TestMethod]
+        public void BasicConstructorTests() {
+
+            var defaultConstructorClient = new OrionMatchAPIClient( Constants.X_API_KEY );
+            var apiStageConstructorClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+
+            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+        }
 
         [TestMethod]
         public void OrionMatchExpectedFailuresUnitTests() {
 
-            var response = _client.GetMatchDetailAsync("1.2345.6789012345678901.0");
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var response = client.GetMatchDetailAsync("1.2345.6789012345678901.0");
 
             var MessageResponse = response.Result.MessageResponse;
             Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.NotFound);
@@ -29,16 +45,10 @@ namespace Scopos.BabelFish.Tests
         }
 
         [TestMethod]
-        public void OrionMatchAPI_Assigns_XApiKey()
-        {
-            string TestXApiKey = "mock_api_key_value";
-            Assert.IsTrue(_client.XApiKey.Length > 0);
-        }
-
-        [TestMethod]
         public void OrionMatchAPI_GetAMatch() {
 
-            var response = _client.GetMatchDetailAsync("1.2268.2022021516475240.0");
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var response = client.GetMatchDetailAsync("1.2268.2022021516475240.0");
             Assert.IsNotNull(response);
 
             var match = response.Result.Match;
@@ -51,9 +61,12 @@ namespace Scopos.BabelFish.Tests
         [TestMethod]
         public void OrionMatchAPI_GetAResultList()
         {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
             string MatchID = "1.2899.1040248529.0";
             string ResultListName = "Individual - All";
-            var response = _client.GetResultListAsync(MatchID, ResultListName);
+            var response = client.GetResultListAsync(MatchID, ResultListName);
             Assert.IsNotNull(response);
 
             var result = response.Result.ResultList;
@@ -66,8 +79,10 @@ namespace Scopos.BabelFish.Tests
         [TestMethod]
         public void OrionMatchAPI_GetACourseOfFire()
         {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             string COFID = "29b3b450-e796-4329-9ebb-cd841c6eab3e";
-            var response = _client.GetResultCourseOfFireDetail(COFID);
+            var response = client.GetResultCourseOfFireDetail(COFID);
             Assert.IsNotNull(response);
 
             var result = response.Result.ResultCOF;
@@ -78,10 +93,11 @@ namespace Scopos.BabelFish.Tests
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetACourseOfFireOldFormat500error()
-        {
+        public void OrionMatchAPI_GetACourseOfFireOldFormat500error() {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             string COFID = "03b0a667-f184-404b-8ba7-751599b7fd0b";
-            var response = _client.GetResultCourseOfFireDetail(COFID);
+            var response = client.GetResultCourseOfFireDetail(COFID);
             Assert.IsNotNull(response);
 
 
@@ -93,6 +109,9 @@ namespace Scopos.BabelFish.Tests
         [TestMethod]
         public void OrionMatchAPI_GetAMatchSearch()
         {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
             Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest requestParameters = new Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchRequest()
             {
                 DistanceSearch = 5,
@@ -104,7 +123,7 @@ namespace Scopos.BabelFish.Tests
                 Latitude = 38.739453,
             };
 
-            var response = _client.GetMatchSearchAsync(requestParameters);
+            var response = client.GetMatchSearchAsync(requestParameters);
             Assert.IsNotNull(response);
 
             var listOfMatches = response.Result.SearchList;
@@ -118,10 +137,13 @@ namespace Scopos.BabelFish.Tests
         [TestMethod]
         public void OrionMatchAPI_GetASquaddingList()
         {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
             string MatchID = "1.2899.1040248529.0";
             string SquaddingListName = "Individual";
 
-            var response = _client.GetSquaddingListAsync(MatchID,SquaddingListName);
+            var response = client.GetSquaddingListAsync(MatchID,SquaddingListName);
             Assert.IsNotNull(response);
 
             var result = response.Result.Squadding;
@@ -135,7 +157,9 @@ namespace Scopos.BabelFish.Tests
         public void OrionMatchAPI_GetAMatchLocations()
         {
 
-            var response = _client.GetMatchLocationsAsync();
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            var response = client.GetMatchLocationsAsync();
             Assert.IsNotNull(response);
 
             var locations = response.Result.MatchLocations;
@@ -147,52 +171,13 @@ namespace Scopos.BabelFish.Tests
         }
 
         [TestMethod]
-        public void OrionMatchAPI_AuthAWSSignaturev4()
-        {
-            Dictionary<string, string> clientParams = new Dictionary<string, string>()
-            {
-                {"UserName", "test_dev_7@shooterstech.net"},
-                {"PassWord", "abcd1234"},
-            };
-            OrionMatchAPIClient _client3 = new OrionMatchAPIClient( Constants.X_API_KEY, clientParams);
-            var response = _client3.GetMatchDetailAsync("1.2899.1040248529.0", true);
-            Assert.IsNotNull(response);
-
-            var match = response.Result.Match;
-            var matchName = match.Name;
-            // Need to find an Auth specific combination that returns extra values
-
-            Assert.IsNotNull(matchName);
-            Assert.AreNotEqual(matchName, "");
-        }
-
-        [TestMethod]
         public void OrionMatchAPI_GetMatchParticipantList()
         {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             string MatchID = "1.3197.2022042721544126.0";
 
-            var response = _client.GetMatchParticipantListAsync(MatchID);
-            Assert.IsNotNull(response);
-
-            var result = response.Result.ParticipantList;
-            var resultName = result[0].Participant.DisplayName;
-
-            Assert.IsNotNull(resultName);
-            Assert.AreNotEqual(resultName, "");
-        }
-
-        [TestMethod]
-        public void OrionMatchAPI_GetMatchParticipantListAuth()
-        {
-            Dictionary<string, string> clientParams = new Dictionary<string, string>()
-            {
-                {"UserName", "test_dev_7@shooterstech.net"},
-                {"PassWord", "abcd1234"},
-            };
-
-            OrionMatchAPIClient _client4 = new OrionMatchAPIClient( Constants.X_API_KEY, clientParams);
-
-            var response = _client4.GetMatchParticipantListAsync("1.3197.2022042721544126.0", true);
+            var response = client.GetMatchParticipantListAsync(MatchID);
             Assert.IsNotNull(response);
 
             var result = response.Result.ParticipantList;

@@ -1,5 +1,6 @@
 ﻿using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI {
     public class GetAttributeValueRequest : Request {
@@ -7,7 +8,7 @@ namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI {
         public GetAttributeValueRequest(UserCredentials credentials) : base( "GetAttributeValue", credentials ) {
             //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
             this.RequiresCredentials = true;
-            this.SubDomain = Runtime.APISubDomain.AUTHAPI;
+            this.SubDomain = APISubDomain.AUTHAPI;
         }
 
         /// <summary>

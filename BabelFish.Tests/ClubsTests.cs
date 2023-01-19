@@ -4,24 +4,40 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using System.Threading.Tasks;
-using Scopos.BabelFish;
+using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Tests;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.DataModel.Clubs;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests {
 
     [TestClass]
     public class ClubsTests {
 
+        /// <summary>
+        /// Unit test to confirm the Constructors set the api key and API stage as expected.
+        /// </summary>
+        [TestMethod]
+        public void BasicConstructorTests() {
+          
+            var defaultConstructorClient = new ClubsAPIClient( Constants.X_API_KEY );
+            var apiStageConstructorClient = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+
+            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+        }
+
         [TestMethod]
         public async Task GetClubListSmallList() {
-            
-            //Test Dev 7 is associated with two clubs.
-            var client = new ClubsAPIClient( Constants.X_API_KEY, Constants.clientParamsTestDev7 );
 
-            var request = new GetClubListRequest();
-            request.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            //Test Dev 7 is associated with two clubs.
+            var request = new GetClubListRequest( Constants.TestDev7Credentials );
 
             var response = await client.GetClubListAsync( request );
 
@@ -39,11 +55,10 @@ namespace Scopos.BabelFish.Tests {
         public async Task GetClubListLargeList() {
 
             //Test Dev 1 is associated with a whole lot of clubs.
-            var client = new ClubsAPIClient( Constants.X_API_KEY, Constants.clientParamsTestDev1 );
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //Perform the initial request. The default consgruction sets Token to an empty string.
-            var request1 = new GetClubListRequest();
-            request1.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
+            var request1 = new GetClubListRequest( Constants.TestDev1Credentials);
 
             var response1 = await client.GetClubListAsync( request1 );
 
@@ -55,9 +70,8 @@ namespace Scopos.BabelFish.Tests {
             Assert.AreNotEqual( response1.MessageResponse.NextToken, "", "Expecting NextToken to be an non empty string with user test_dev_1." );
 
             //Perform the follow up request, with the toekn value
-            var request2 = new GetClubListRequest();
+            var request2 = new GetClubListRequest( Constants.TestDev1Credentials);
             request2.Token = response1.NextToken;
-            request2.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
 
             var response2 = await client.GetClubListAsync( request2 );
             Assert.AreEqual( response2.StatusCode, System.Net.HttpStatusCode.OK );
@@ -69,11 +83,10 @@ namespace Scopos.BabelFish.Tests {
         public async Task GetClubDetail() {
 
 
-            var client = new ClubsAPIClient( Constants.X_API_KEY, Constants.clientParamsTestDev7 );
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             var ownerId = "OrionAcct002001";
-            var request = new GetClubDetailRequest( ownerId );
-            request.ApiStage = Scopos.BabelFish.Helpers.APIStage.BETA;
+            var request = new GetClubDetailRequest( ownerId, Constants.TestDev1Credentials );
 
             var response = await client.GetClubDetailAsync( request );
 

@@ -3,7 +3,7 @@ using Scopos.BabelFish.Requests.GetSetAttributeValueAPI;
 using Scopos.BabelFish.Responses.GetSetAttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.GetSetAttributeValueAPI {
+namespace Scopos.BabelFish.APIClients {
     public class GetSetAttributeValueAPIClient : APIClient {
 
         /// <summary>

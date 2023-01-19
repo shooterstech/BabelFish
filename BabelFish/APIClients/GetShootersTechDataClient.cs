@@ -1,9 +1,8 @@
 ﻿using Scopos.BabelFish.Requests.ShootersTechData;
 using Scopos.BabelFish.Responses.ShootersTechData;
 using Scopos.BabelFish.DataModel.ShootersTechData;
-using Amazon.Runtime;
 
-namespace Scopos.BabelFish.GetVersionAPI {
+namespace Scopos.BabelFish.APIClients {
     public class GetShootersTechDataClient : APIClient {
 
         /// <summary>
@@ -11,6 +10,8 @@ namespace Scopos.BabelFish.GetVersionAPI {
         /// </summary>
         /// <param name="apiKey"></param>
         public GetShootersTechDataClient( string apiKey ) : base( apiKey ) { }
+
+        public GetShootersTechDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
 
         /// <summary>
         /// GetVersion API for multiple services

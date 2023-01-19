@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests {
     [TestClass]

@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Scopos.BabelFish.Runtime {
+namespace Scopos.BabelFish.APIClients {
 
     /// <summary>
     /// Different REST API environments that may be callsed.

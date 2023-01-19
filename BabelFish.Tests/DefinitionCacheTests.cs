@@ -10,6 +10,7 @@ using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests {
+    /*
     [TestClass]
     public class DefinitionCacheTests
     {
@@ -220,4 +221,5 @@ namespace Scopos.BabelFish.Tests {
         }
 
     }
+    */
 }

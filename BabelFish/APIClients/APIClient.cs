@@ -14,8 +14,7 @@ using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Runtime;
 
-namespace Scopos.BabelFish
-{
+namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient {
 
         /// <summary>
@@ -31,7 +30,14 @@ namespace Scopos.BabelFish
             this.XApiKey = xapikey;
             this.ApiStage = APIStage.PRODUCTION;
 
-            logger.Info( "BablFish API instantiated" );
+            logger.Info( $"BablFish API instantiated for {ApiStage}." );
+        }
+
+        protected APIClient( string xapikey, APIStage apiStage ) {
+            this.XApiKey = xapikey;
+            this.ApiStage = apiStage;
+
+            logger.Info( $"BablFish API instantiated for {ApiStage}." );
         }
 
         #region properties

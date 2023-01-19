@@ -2,6 +2,7 @@
 using Scopos.BabelFish.DataModel.GetSetAttributeValue;
 using Newtonsoft.Json;
 using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI {
     public class SetAttributeValueRequest : Request {
@@ -14,7 +15,7 @@ namespace Scopos.BabelFish.Requests.GetSetAttributeValueAPI {
         public SetAttributeValueRequest( AttributeValueList attributeToUpdate, UserCredentials credentials ) : base( "SetAttributeValue", credentials ) {
             //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
             this.RequiresCredentials = true;
-            this.SubDomain = Runtime.APISubDomain.AUTHAPI;
+            this.SubDomain = APISubDomain.AUTHAPI;
             HttpMethod = HttpMethod.Post;
 
             AttributeToUpdate = attributeToUpdate;

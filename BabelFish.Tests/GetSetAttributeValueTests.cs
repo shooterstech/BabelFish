@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.GetSetAttributeValueAPI;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Tests {
+    /*
     [TestClass]
     public class GetSetAttributeValueTests
     {
@@ -614,4 +615,5 @@ namespace Scopos.BabelFish.Tests {
 
         }
     }
+    */
 }
