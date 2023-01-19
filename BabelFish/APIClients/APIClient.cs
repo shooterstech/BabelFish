@@ -8,7 +8,7 @@ using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Responses.Authentication.Credentials;
-using Scopos.BabelFish.Responses.GetSetAttributeValueAPI;
+using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.APIClients {
         protected async Task CallAPI<T>(Request request, Response<T> response) where T : new()
         {
             // Get Uri for call
-            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
+            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
 
             try {
                 
