@@ -101,7 +101,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultCOFDetailRequest object</param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFirePublicDetailAsync( GetResultCOFDetailPublicRequest requestParameters ) {
+        public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( GetResultCOFDetailPublicRequest requestParameters ) {
             GetResultCOFDetailPublicResponse response = new GetResultCOFDetailPublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
@@ -115,7 +115,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="resultCOFID"></param>
         /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( string resultCOFID ) {
-            return await GetResultCourseOfFirePublicDetailAsync( new GetResultCOFDetailPublicRequest( resultCOFID ) ).ConfigureAwait( false );
+            return await GetResultCourseOfFireDetailPublicAsync( new GetResultCOFDetailPublicRequest( resultCOFID ) ).ConfigureAwait( false );
         }
 
         /// <summary>

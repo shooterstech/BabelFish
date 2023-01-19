@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.Tests.OrionMatch
-
-{
+namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class OrionMatchPublicUnitTests {
 
@@ -28,164 +27,191 @@ namespace Scopos.BabelFish.Tests.OrionMatch
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
+        /// <summary>
+        /// Pass in a fake match id and check that a NotFound is returned. Then a match with PROTECTED visibility, to check Unauthroized is retrun.
+        /// </summary>
         [TestMethod]
         public void OrionMatchExpectedFailuresUnitTests() {
 
-
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            var response = client.GetMatchDetailPublicAsync("1.2345.6789012345678901.0");
+            //Pass in a fake match id
+            var taskNotFound = client.GetMatchDetailPublicAsync( "1.2345.6789012345678901.0" );
 
-            var MessageResponse = response.Result.MessageResponse;
-            Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.NotFound);
-            Assert.IsTrue(MessageResponse.Message.Count>0);
-            Assert.IsTrue(MessageResponse.Message.Any(x => x.Contains("could not be found")));
+            var matchNotFoundResponse = taskNotFound.Result;
+            Assert.AreEqual( HttpStatusCode.NotFound, matchNotFoundResponse.StatusCode );
+            Assert.IsTrue( matchNotFoundResponse.MessageResponse.Message.Count > 0 );
+            Assert.IsTrue( matchNotFoundResponse.MessageResponse.Message.Any( x => x.Contains( "could not be found" ) ) );
 
-            OrionMatchAPIClient _client2 = new OrionMatchAPIClient("abc123");
-            response = _client2.GetMatchDetailPublicAsync("1.2899.1040248529.0");
-            Assert.AreEqual(response.Result.StatusCode, HttpStatusCode.Forbidden);
+            //Match id with visibility set to PROTECTED, which can not be viewed from the public api call
+            var taskUnauthorized = client.GetMatchDetailPublicAsync( "1.1.2021031511174545.0" );
+
+            var matchUnauthorizedResponse = taskUnauthorized.Result;
+            Assert.AreEqual( HttpStatusCode.Unauthorized, matchUnauthorizedResponse.StatusCode );
+            Assert.IsTrue( matchUnauthorizedResponse.MessageResponse.Message.Count > 0 );
+            Assert.IsTrue( matchUnauthorizedResponse.MessageResponse.Message.Any( x => x.Contains( "does not have permission" ) ) );
         }
 
         [TestMethod]
         public void OrionMatchAPI_GetAMatch() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            var response = client.GetMatchDetailPublicAsync("1.2268.2022021516475240.0");
-            Assert.IsNotNull(response);
+            var matchId = "1.1.2023011915575119.0";
+            var taskResponse = client.GetMatchDetailPublicAsync( matchId );
 
-            var match = response.Result.Match;
-            var matchName = match.Name;
+            var response = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-            Assert.IsNotNull(matchName);
-            Assert.AreNotEqual(matchName, "");
+            var match = response.Match;
+
+            //Perform some simple tests on the returned data.
+            Assert.AreEqual( matchId, match.MatchID );
+            Assert.AreEqual( "Unit Test Match", match.Name );
+            Assert.AreEqual( "Public", match.Visibility );
+            Assert.AreEqual( "2023-01-19", match.StartDate );
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetAResultList()
-        {
+        public void OrionMatchAPI_GetAResultList() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
-            string MatchID = "1.2899.1040248529.0";
-            string ResultListName = "Individual - All";
-            var response = client.GetResultListPublicAsync(MatchID, ResultListName);
-            Assert.IsNotNull(response);
+            var matchId = "1.1.2023011915575119.0";
+            var resultListName = "Individual - All";
+            var taskResponse = client.GetResultListPublicAsync( matchId, resultListName );
 
-            var result = response.Result.ResultList;
-            var resultName = result.ResultName;
+            var response = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
-            Assert.IsNotNull(resultName);
-            Assert.AreNotEqual(resultName, "");
+            var resultList = response.ResultList;
+
+            Assert.AreEqual( resultListName, resultList.ResultName );
+            Assert.AreEqual( "Qualification", resultList.EventName );
+            Assert.IsTrue( resultList.Results.Count > 0 );
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetACourseOfFire()
-        {
-
+        public void OrionMatchAPI_GetACourseOfFire() {
+            //The first part of this tess retreives the Result List. Which we use to get the first ResultCOFID
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            string COFID = "29b3b450-e796-4329-9ebb-cd841c6eab3e";
-            var response = client.GetResultCourseOfFireDetailPublicAsync(COFID);
-            Assert.IsNotNull(response);
 
-            var result = response.Result.ResultCOF;
-            var resultName = result.MatchName;
+            var matchId = "1.1.2023011915575119.0";
+            var resultListName = "Individual - All";
+            var taskResultListResponse = client.GetResultListPublicAsync( matchId, resultListName );
 
-            Assert.IsNotNull(resultName);
-            Assert.AreNotEqual(resultName, "");
+            var resultListResponse = taskResultListResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, resultListResponse.StatusCode );
+            var resultList = resultListResponse.ResultList;
+            Assert.IsTrue( resultList.Results.Count > 0 );
+
+            //Now read the resultCofId and some other values from the ResultList
+            var resultCofId = resultList.Results[0].ResultCOFID;
+            var userId = resultList.Results[0].UserID;
+            var displayName = resultList.Results[0].DisplayName;
+            var score = resultList.Results[0].Score;
+
+            //Now we can retreive the ResultCOF Detail
+            var taskResultCofIdResponse = client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
+
+            var resultCofResponse = taskResultCofIdResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, resultCofResponse.StatusCode );
+            var resultCof = resultCofResponse.ResultCOF;
+
+            //Test basic return data
+            Assert.AreEqual( matchId, resultCof.MatchID );
+            Assert.AreEqual( resultCofId, resultCof.ResultCOFID );
+            Assert.AreEqual( displayName, resultCof.Participant.DisplayName );
+
+            //This next few tests makes sure the abstract conversion of .Participant worked as expected.
+            Assert.AreEqual( Individual.CONCRETE_CLASS_ID, resultCof.Participant.ConcreteClassId );
+            Assert.IsTrue( resultCof.Participant is Individual );
+            var individual = (Individual)resultCof.Participant;
+            Assert.AreEqual( userId, individual.UserID );
+
+            Assert.IsTrue( resultCof.EventScores.Count > 0 );
+            Assert.IsTrue( resultCof.Shots.Count > 0 );
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetACourseOfFireOldFormat500error() {
-
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            string COFID = "03b0a667-f184-404b-8ba7-751599b7fd0b";
-            var response = client.GetResultCourseOfFireDetailPublicAsync(COFID);
-            Assert.IsNotNull(response);
-
-
-            var result = response.Result;
-            Assert.IsTrue(result.MessageResponse.Message.Any(x => x.Contains("Unable to Convert Result COF to 2022-04-09 format.")));
-            Assert.AreEqual(result.StatusCode, HttpStatusCode.InternalServerError);
-        }
-
-        [TestMethod]
-        public void OrionMatchAPI_GetAMatchSearch()
-        {
+        public void OrionMatchAPI_GetAMatchSearch() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
-            Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchPublicRequest requestParameters = new Scopos.BabelFish.Requests.OrionMatchAPI.GetMatchSearchPublicRequest()
-            {
+            GetMatchSearchPublicRequest requestParameters = new GetMatchSearchPublicRequest() {
                 DistanceSearch = 5,
-                StartDate = new DateTime(DateTime.Now.Year, 6, 1),
-                EndDate = DateTime.Today,
+                StartDate = new DateTime( 2023, 1, 1 ),
+                EndDate = new DateTime( 2023, 1, 31 ),
                 ShootingStyle = new List<string>() { "Air Rifle", "Smallbore Rifle" },
                 NumberOfMatchesToReturn = 100,
                 Longitude = -77.555569,
                 Latitude = 38.739453,
             };
+            Assert.AreEqual( "MatchSearch", requestParameters.OperationId );
 
-            var response = client.GetMatchSearchPublicAsync(requestParameters);
-            Assert.IsNotNull(response);
+            var taskMatchSearchResponse = client.GetMatchSearchPublicAsync( requestParameters );
+            var matchSearchResponse = taskMatchSearchResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
 
-            var listOfMatches = response.Result.SearchList;
-            var matchName = listOfMatches[0].Name;
-
-            Assert.IsNotNull( listOfMatches );
-            Assert.AreNotEqual(matchName, "");
+            var listOfMatches = matchSearchResponse.SearchList;
+            Assert.IsTrue( listOfMatches.Count > 0 );
         }
 
 
         [TestMethod]
-        public void OrionMatchAPI_GetASquaddingList()
-        {
+        public void OrionMatchAPI_GetASquaddingList() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
-            string MatchID = "1.2899.1040248529.0";
-            string SquaddingListName = "Individual";
+            var matchId = "1.1.2023011915575119.0";
+            var squaddingListName = "Individual";
 
-            var response = client.GetSquaddingListPublicAsync(MatchID,SquaddingListName);
-            Assert.IsNotNull(response);
+            var taskSquaddingListResponse = client.GetSquaddingListPublicAsync( matchId, squaddingListName );
+            var squaddingListResponse = taskSquaddingListResponse.Result;
 
-            var result = response.Result.Squadding;
-            var resultName = result.SquaddingList[0].Participant.DisplayName;
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
+            var squaddingList = squaddingListResponse.Squadding;
 
-            Assert.IsNotNull(resultName);
-            Assert.AreNotEqual(resultName, "");
+            Assert.AreEqual( matchId, squaddingList.MatchID );
+            Assert.AreEqual( squaddingListName, squaddingList.EventName );
+
+            Assert.IsTrue( squaddingList.SquaddingList.Count > 0 );
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetAMatchLocations()
-        {
+        public void OrionMatchAPI_GetMatchParticipantList() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var matchId = "1.1.2023011915575119.0";
+
+            var taskParticipantListResponse = client.GetMatchParticipantListPublicAsync( matchId );
+            var participantListResponse = taskParticipantListResponse.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, participantListResponse.StatusCode );
+            var participantList = participantListResponse.ParticipantList;
+
+            Assert.IsTrue( participantList.Count > 0 );
+
+            //Check that the abstract data conversion works.
+            var matchParticipant = participantList[0];
+
+            Assert.AreEqual( Individual.CONCRETE_CLASS_ID, matchParticipant.Participant.ConcreteClassId );
+            Assert.IsTrue( matchParticipant.Participant is Individual );
+        }
+
+        [TestMethod]
+        public void OrionMatchAPI_GetAMatchLocations() {
+
+            //NOTE: This is one of the few occasions where it is appropriate to run this test in PRODUCTION, as the GetMatchLocations call relies on fresh (not stale) data.
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
 
             var response = client.GetMatchLocationsPublicAsync();
-            Assert.IsNotNull(response);
+            Assert.IsNotNull( response );
 
             var locations = response.Result.MatchLocations;
-            Assert.IsTrue(locations.Count>0);
+            Assert.IsTrue( locations.Count > 0 );
             var locationName = locations.FirstOrDefault().City;
 
-            Assert.IsNotNull(locationName);
-            Assert.AreNotEqual(locationName, "");
-        }
-
-        [TestMethod]
-        public void OrionMatchAPI_GetMatchParticipantList()
-        {
-
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            string MatchID = "1.3197.2022042721544126.0";
-
-            var response = client.GetMatchParticipantListPublicAsync(MatchID);
-            Assert.IsNotNull(response);
-
-            var result = response.Result.ParticipantList;
-            var resultName = result[0].Participant.DisplayName;
-
-            Assert.IsNotNull(resultName);
-            Assert.AreNotEqual(resultName, "");
+            Assert.IsNotNull( locationName );
+            Assert.AreNotEqual( locationName, "" );
         }
     }
 }

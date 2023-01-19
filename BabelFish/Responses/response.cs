@@ -54,7 +54,7 @@ namespace Scopos.BabelFish.Responses
 
 
         /// <summary>
-        /// Gets or sets the status data object returned by the Rest API Call.
+        /// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
         /// </summary>
         public MessageResponse MessageResponse
         {
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Responses
         } = new MessageResponse();
 
         /// <summary>
-        /// Gets or sets the object data object returned by the Rest API Call.
+        /// Gets or sets the data object returned by the Rest API Call.
         /// </summary>
         public T Value
         {
