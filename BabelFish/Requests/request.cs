@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.Requests {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
         }
-        public Request( string operationId, UserCredentials credentials ) {
+        public Request( string operationId, UserAuthentication credentials ) {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
 
@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.Requests {
         /// </summary>
         public bool RequiresCredentials { get; protected set; } = false;
 
-        public UserCredentials Credentials { get; set; }
+        public UserAuthentication Credentials { get; set; }
 
         /// <summary>
         /// The REST API subdomain used in this request. 

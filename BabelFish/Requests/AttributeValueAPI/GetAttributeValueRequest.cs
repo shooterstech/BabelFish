@@ -5,7 +5,7 @@ using Scopos.BabelFish.APIClients;
 namespace Scopos.BabelFish.Requests.AttributeValueAPI {
     public class GetAttributeValueRequest : Request {
 
-        public GetAttributeValueRequest(UserCredentials credentials) : base( "GetAttributeValue", credentials ) {
+        public GetAttributeValueRequest( UserAuthentication credentials ) : base( "GetAttributeValue", credentials ) {
             //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;

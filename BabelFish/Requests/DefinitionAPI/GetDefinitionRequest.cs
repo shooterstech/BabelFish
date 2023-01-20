@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
             DefinitionType = definitionType;
         }
 
-        public GetDefinitionRequest( SetName setName, DefinitionType definitionType, UserCredentials credentials ) : base( "GetDefinition", credentials ) {
+        public GetDefinitionRequest( SetName setName, DefinitionType definitionType, UserAuthentication credentials ) : base( "GetDefinition", credentials ) {
             if (setName == null)
                 throw new ArgumentNullException( nameof( setName ) );
 

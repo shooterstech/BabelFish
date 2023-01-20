@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
         private AttributeValueList AttributeToUpdate = new AttributeValueList();
 
 
-        public SetAttributeValueRequest( AttributeValueList attributeToUpdate, UserCredentials credentials ) : base( "SetAttributeValue", credentials ) {
+        public SetAttributeValueRequest( AttributeValueList attributeToUpdate, UserAuthentication credentials ) : base( "SetAttributeValue", credentials ) {
             //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;

@@ -6,10 +6,10 @@ using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Requests.ClubsAPI {
-    public class GetClubListRequest : Request, IToken {
+    public class GetClubListAuthenticatedRequest : Request, IToken {
 
 
-        public GetClubListRequest(UserCredentials credentials) : base( "GetClubList", credentials ) {
+        public GetClubListAuthenticatedRequest( UserAuthentication credentials ) : base( "GetClubList", credentials ) {
             //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;

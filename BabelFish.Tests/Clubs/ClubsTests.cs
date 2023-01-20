@@ -9,6 +9,7 @@ using Scopos.BabelFish.Tests;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.Clubs {
 
@@ -37,7 +38,10 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //Test Dev 7 is associated with two clubs.
-            var request = new GetClubListRequest( Constants.TestDev7Credentials );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            var request = new GetClubListAuthenticatedRequest( userAuthentication );
 
             var response = await client.GetClubListAsync( request );
 
@@ -58,7 +62,10 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //Perform the initial request. The default consgruction sets Token to an empty string.
-            var request1 = new GetClubListRequest( Constants.TestDev1Credentials);
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev1Credentials.Username,
+                Constants.TestDev1Credentials.Password );
+            var request1 = new GetClubListAuthenticatedRequest( userAuthentication );
 
             var response1 = await client.GetClubListAsync( request1 );
 
@@ -70,7 +77,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             Assert.AreNotEqual( response1.MessageResponse.NextToken, "", "Expecting NextToken to be an non empty string with user test_dev_1." );
 
             //Perform the follow up request, with the toekn value
-            var request2 = new GetClubListRequest( Constants.TestDev1Credentials);
+            var request2 = new GetClubListAuthenticatedRequest( userAuthentication );
             request2.Token = response1.NextToken;
 
             var response2 = await client.GetClubListAsync( request2 );
@@ -86,7 +93,10 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             var ownerId = "OrionAcct002001";
-            var request = new GetClubDetailRequest( ownerId, Constants.TestDev1Credentials );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev1Credentials.Username,
+                Constants.TestDev1Credentials.Password );
+            var request = new GetClubDetailAuthenticatedRequest( ownerId, userAuthentication );
 
             var response = await client.GetClubDetailAsync( request );
 

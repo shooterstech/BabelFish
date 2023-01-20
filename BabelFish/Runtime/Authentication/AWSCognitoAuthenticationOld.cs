@@ -11,7 +11,7 @@ using Amazon.Runtime;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
-    public class AWSCognitoAuthentication {
+    public class AWSCognitoAuthenticationOld {
         /* Documentation
          * See:https://docs.aws.amazon.com/sdk-for-net/v3/developer-guide/cognito-authentication-extension.html
          * See: https://github.com/aws/aws-sdk-net-extensions-cognito#authenticating-with-secure-remote-protocol-srp
@@ -42,12 +42,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         private static string deviceKey = string.Empty;
         */
 
-        private UserCredentials credentials;
+        private UserCredentialsOld credentials;
 
         /// <summary>
         /// Public constructor
         /// </summary>
-        public AWSCognitoAuthentication( UserCredentials credentials ) {
+        public AWSCognitoAuthenticationOld( UserCredentialsOld credentials ) {
             this.credentials = credentials;
         }
 

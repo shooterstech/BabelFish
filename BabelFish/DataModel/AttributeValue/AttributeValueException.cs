@@ -6,6 +6,7 @@ using Scopos.BabelFish.Runtime;
 namespace Scopos.BabelFish.DataModel.AttributeValue
 {
     [Serializable]
+    [Obsolete("Really what the fuck is this?")]
     public class InvalidBabelFishException : ShootersTechException {
         // https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
         public InvalidBabelFishException() : base() { }

@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="AttributeNames">List<string> of valid Attribute Names</string>. Each attribute name must be formatted as a Set Name. </param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames, UserCredentials credentials) {
+        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames, UserAuthentication credentials) {
             
             GetAttributeValueRequest requestParameters = new GetAttributeValueRequest(credentials)
             {
@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue, UserCredentials credentials )
+        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue, UserAuthentication credentials )
         {
 
             SetAttributeValueRequest requestParameters = new SetAttributeValueRequest(attributeValue, credentials);
@@ -92,7 +92,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue, UserCredentials credentials )
+        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue, UserAuthentication credentials )
         {
             
             AttributeValueList newAttribute = new AttributeValueList();

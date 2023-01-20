@@ -6,9 +6,9 @@ using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Responses.ClubsAPI;
 
 namespace Scopos.BabelFish.Responses.ClubsAPI {
-    public class GetClubListResponse : Response<ClubListWrapper> {
+    public class GetClubListAuthenticatedResponse : Response<ClubListWrapper> {
 
-        public GetClubListResponse( GetClubListRequest request ) : base(  ) {
+        public GetClubListAuthenticatedResponse( GetClubListAuthenticatedRequest request ) : base(  ) {
             this.Request = request;
         }
 

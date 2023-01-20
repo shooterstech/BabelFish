@@ -20,20 +20,20 @@ namespace Scopos.BabelFish.Runtime.Authentication
     /// AWS Credentials
     /// </summary>
     [Serializable]
-    public class UserCredentials
+    public class UserCredentialsOld
     {
-        private AWSCognitoAuthentication CognitoAuthentication;
+        private AWSCognitoAuthenticationOld CognitoAuthentication;
 
-        public UserCredentials() {
-            CognitoAuthentication = new AWSCognitoAuthentication( this );
+        public UserCredentialsOld() {
+            CognitoAuthentication = new AWSCognitoAuthenticationOld( this );
         }
 
-        public UserCredentials(string username, string password)
+        public UserCredentialsOld(string username, string password)
         {
             Username = username;
             Password = password;
 
-            CognitoAuthentication = new AWSCognitoAuthentication( this );
+            CognitoAuthentication = new AWSCognitoAuthenticationOld( this );
         }
 
         public string Username { get; set; } = string.Empty;

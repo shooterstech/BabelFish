@@ -110,6 +110,8 @@ namespace Scopos.BabelFish.Tests.Authentication {
             // * New Passwword -> RespondToNewPasswordRequiredAsync()
             // * MFA Response -> RespondToSmsMfaAuthAsync() or RespondToMfaAuthAsyn (probable doesn't apply to us)
 
+            //When authResponse.AuthenticationResult != null, the user is considered logged in.
+
             //Both the AccessToken (good for 60 minutes by default) and RefreshToken (good for 30 days) need to be saved
             //DeviceKey also needs to be saved. See below, may also need to save DeviceGroupKey, and the device password.
             //IdToken is needed to retrieive AWS Credentials, access key, secret access key, and session token
