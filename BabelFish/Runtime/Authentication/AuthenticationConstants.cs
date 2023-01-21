@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.Runtime.Authentication {
+namespace Scopos.BabelFish.Runtime.Authentication {
     internal static class AuthenticationConstants {
 
         internal const string AWSRegion = "us-east-1";

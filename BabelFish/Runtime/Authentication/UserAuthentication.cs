@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using Amazon.Runtime;
+using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
-using BabelFish.Runtime.Authentication;
 using Amazon.CognitoIdentityProvider.Model;
+using Amazon.CognitoIdentity.Model;
 using NLog;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
@@ -36,9 +37,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         public EventHandler<EventArgs> UserAuthenticationFailed;
 
         //Create a Cognito Identify Provider using anonymous credentials
-        private static AmazonCognitoIdentityProviderClient cognitoProvider = new AmazonCognitoIdentityProviderClient( new Amazon.Runtime.AnonymousAWSCredentials() );
+        private static AmazonCognitoIdentityProviderClient cognitoProvider = new AmazonCognitoIdentityProviderClient( new AnonymousAWSCredentials() );
 
         private static CognitoUserPool cognitoUserPool = new CognitoUserPool( AuthenticationConstants.AWSPoolID, AuthenticationConstants.AWSClientID, cognitoProvider );
+
+        private static AmazonCognitoIdentityClient identityClient =
+            new AmazonCognitoIdentityClient( new AnonymousAWSCredentials() );
 
         private DeviceSecretVerifierConfigType deviceVerifier = null;
 
@@ -279,6 +283,10 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 return $"{Email}-{DeviceKey}";
             }
         }
+        public DateTime IamCredentialsExpiration { get; private set; } = DateTime.MaxValue;
+        public string AccessKey { get; private set; }
+        public string SecretKey { get; private set; }
+        public string SessionToken { get; private set; }  
 
         public CognitoUser CognitoUser { get; private set; }
 
@@ -303,6 +311,48 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             }
 
             return deviceVerifier;
+        }
+
+        /// <summary>
+        /// Generates the temporary IAM credentials for the logged in user. These would be 
+        /// AccessKey, SecretKey, and SessionToken
+        /// </summary>
+        public void GenerateIAMCredentials() {
+
+            //Only generate if the IAM credentials are empty or its been over an hour, which is when they expire.
+            if (IamCredentialsExpiration < DateTime.UtcNow)
+                return;
+
+            //Using the idToken, obtain the access key, secret access key, and session token
+            //First step get the Id of the Cognito User
+            var logins = new Dictionary<string, string>() {
+                    { $"cognito-idp.{AuthenticationConstants.AWSRegion}.amazonaws.com/{AuthenticationConstants.AWSPoolID}", this.IdToken }
+                };
+
+            var getIDRequest = new Amazon.CognitoIdentity.Model.GetIdRequest() {
+                AccountId = AuthenticationConstants.AWSAccountID,
+                IdentityPoolId = AuthenticationConstants.AWSIdentityPoolID,
+                Logins = logins
+            };
+
+            var taskGetIDResponse = identityClient.GetIdAsync( getIDRequest );
+            var getIdResponse = taskGetIDResponse.Result;
+
+            //Second step, get the Credentials for the Identity we just learned
+            var getCredentialsForIdentityRequest = new GetCredentialsForIdentityRequest() {
+                IdentityId = getIdResponse.IdentityId,
+                Logins = logins
+            };
+
+            var taskGetCredentialsForIdentityResponse = identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
+            var getCredentialsForIdentityResponse = taskGetCredentialsForIdentityResponse.Result;
+
+            IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration;
+            AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId;
+            SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey;
+            SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
+
+
         }
     }
 }
