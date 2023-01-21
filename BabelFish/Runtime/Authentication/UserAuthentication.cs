@@ -129,11 +129,14 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             this.DeviceGroupKey= deviceGroupKey;
             this.CognitoUser = new CognitoUser( this.Email, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
 
+            //NOTE: Adding the Device to the user before calling .StartWithSrpAuthAsync will result in a bad password error.
+            //this.CognitoUser.Device = new CognitoDevice( new DeviceType() { DeviceKey = deviceKey }, this.CognitoUser );
+
+            //NOTE: This mehtod, with passing the DeviceGroupKey and DevicePass seems to work, in that is passes authentication, however, it generates a new device
             InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest() {
                 Password = password,
-                DeviceGroupKey = deviceGroupKey,
-                DevicePass = AuthenticationConstants.DevicePassword,
-                DeviceVerifier = GetDeviceVerifier().PasswordVerifier
+                DeviceGroupKey= deviceGroupKey,
+                DevicePass = AuthenticationConstants.DevicePassword
             };
 
             //Try and authenticate with cognito
@@ -169,7 +172,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             }
 
             //Oddly, the flow above allows the user to authenticate even when the device is not associated with te user. Howerver, the code below which tries and associates the device with the user will throw an exception if it is not known.
-
+            
             try {
                 CognitoDevice device = new CognitoDevice(
                     this.DeviceKey,
@@ -195,18 +198,20 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             }
         }
 
-        public UserAuthentication(string email, string refreshToken, string accessToken, string iDToken, string deviceKey, string deviceGroupKey) {
+        public UserAuthentication(string email, string refreshToken, string accessToken, string idToken, string deviceKey, string deviceGroupKey) {
 
 
-            logger.Info( $"About to try and authenticate user with email {email} with an existing device {deviceKey}." );
+            logger.Info( $"About to try and re-authenticate user with email {email} with an existing device {deviceKey}." );
             this.Email = email;
             this.RefreshToken = refreshToken;
             this.AccessToken = accessToken;
-            this.IdToken= iDToken;
+            this.IdToken= idToken;
             this.DeviceKey = deviceKey;
             this.DeviceGroupKey = deviceGroupKey;
             this.CognitoUser = new CognitoUser( this.Email, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
 
+            this.CognitoUser.SessionTokens = new CognitoUserSession( idToken, accessToken, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours( 1 ) );
+
             try {
                 CognitoDevice device = new CognitoDevice(
                     this.DeviceKey,
@@ -230,8 +235,33 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     }
                 } );
             }
+
+            this.RefreshTokens();
         }
 
+        public void RefreshTokens() {
+
+            //We dont' know the actual experation date of the token, so setting it to 1 hour and then will re-fresh them regardless.
+            this.CognitoUser.SessionTokens = new CognitoUserSession( null, null, this.RefreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours( 1 ) );
+
+            //Create the refresh request object
+            InitiateRefreshTokenAuthRequest refreshRequest = new InitiateRefreshTokenAuthRequest() {
+                AuthFlowType = AuthFlowType.REFRESH_TOKEN_AUTH
+            };
+
+            //CAll Cognito to refresh the token
+            var taskAuthFlowResponse = this.CognitoUser.StartWithRefreshTokenAuthAsync( refreshRequest );
+            var authFlowResponse = taskAuthFlowResponse.Result;
+
+            //Now we have a new accessToken and a new refreshToken, both of which need to be re-saved
+            if (authFlowResponse.AuthenticationResult != null) {
+                this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
+                this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
+            } else {
+                //We would get here if the re-authentication failed. Need to determine how to handle this case.
+                throw new NotImplementedException();
+            }
+        }
         /// <summary>
         /// Emailaddress the user uses to log in with. It is the same as the user's username
         /// </summary>

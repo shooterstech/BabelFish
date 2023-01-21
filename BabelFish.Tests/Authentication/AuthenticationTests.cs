@@ -87,15 +87,22 @@ namespace Scopos.BabelFish.Tests.Authentication {
         [TestMethod]
         public void HappyPathAuthenticationWithExistingTokens() {
 
+            //Log in using email and password. Which will get us a valid set of aws tokens
+            var userAuthenticationInit = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+
+            //Use the above token to generate a new UserAuthentication and log in with them.
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
-                "RefreshTokenValue",
-                "AccessTokenValue",
-                "IdTokenValue",
-                Constants.TestDev7Credentials.DeviceKey,
-                Constants.TestDev7Credentials.DeviceGroupKey ) {
+                userAuthenticationInit.RefreshToken,
+                userAuthenticationInit.AccessToken,
+                userAuthenticationInit.IdToken,
+                userAuthenticationInit.DeviceKey,
+                userAuthenticationInit.DeviceGroupKey ) {
 
             };
+
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.Email ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
@@ -105,6 +112,11 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
             Assert.IsNotNull( userAuthentication.CognitoUser );
             Assert.IsNotNull( userAuthentication.CognitoUser.Device );
+
+            //Check that the refresh, access, and Id tokens did indeed refresh.
+            //Assert.AreNotEqual( userAuthenticationInit.RefreshToken, userAuthentication.RefreshToken );
+            Assert.AreNotEqual( userAuthenticationInit.AccessToken, userAuthentication.AccessToken );
+            Assert.AreNotEqual( userAuthenticationInit.IdToken, userAuthentication.IdToken );
 
         }
     }
