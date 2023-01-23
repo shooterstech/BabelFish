@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Runtime;
+using Amazon.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient {
@@ -78,14 +79,30 @@ namespace Scopos.BabelFish.APIClients {
                         foreach (var keyValuePair in request.HeaderKeyValuePairs)
                             requestMessage.Headers.Add( keyValuePair.Key, keyValuePair.Value );
 
-                    if (request.RequiresCredentials) {
-                        throw new NotImplementedException( "Authenticated calls are not implemented yet." );
+                    /*
+                    if ( request.PostParameters != null ) {
+                        requestMessage.Content= request.PostParameters;
                     }
+                    */
+
+                    //If we are making an authenticated call, update the temporary IAM credentials.
+                    if (request.RequiresCredentials)
+                        request.Credentials.GenerateIAMCredentials();
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     logger.Info( $"Calling {request} on {uri}.");
                     DateTime startTime = DateTime.Now;
-                    responseMessage = await httpClient.SendAsync( requestMessage );
+
+                    if (request.RequiresCredentials) {
+                        //If we are making an authenticated call, use the exstention method from https://github.com/FantasticFiasco/aws-signature-version-4 to sign the request.
+                        responseMessage = await httpClient.SendAsync( 
+                            requestMessage, 
+                            AuthenticationConstants.AWSRegion, 
+                            AuthenticationConstants.AWSServiceName, 
+                            request.Credentials.ImmutableCredentials );
+                    } else {
+                        responseMessage = await httpClient.SendAsync( requestMessage );
+                    }
 
                     response.TimeToRun = DateTime.Now - startTime;
                     logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );

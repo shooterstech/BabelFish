@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var response = await client.GetClubListAsync( request );
 
-            Assert.AreEqual( response.StatusCode, System.Net.HttpStatusCode.OK );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
 
             var clubList = response.ClubList;
 

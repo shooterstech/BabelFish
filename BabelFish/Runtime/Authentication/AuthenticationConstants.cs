@@ -6,6 +6,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
     internal static class AuthenticationConstants {
 
         internal const string AWSRegion = "us-east-1";
+        internal const string AWSServiceName = "execute-api";
         internal const string AWSPoolID = $"{AWSRegion}_ujMUC50fP";
         internal const string AWSIdentityPoolID = $"{AWSRegion}:ecdb1323-5308-445f-845e-55871ebf14e2";
         internal const string AWSAccountID = "703601548845";

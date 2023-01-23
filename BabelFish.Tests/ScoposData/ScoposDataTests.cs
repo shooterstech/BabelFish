@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         }
 
         [TestMethod]
-        public async Task GetCupsOfCoffeeConsumedWithRequestObject() {
+        public void GetCupsOfCoffeeConsumedWithRequestObject() {
             var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
 
             GetCupsOfCoffeePublicRequest request = new GetCupsOfCoffeePublicRequest();
@@ -93,7 +93,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         }
 
         [TestMethod]
-        public async Task GetCupsOfCoffeeConsumedWithoutRequestObject() {
+        public void GetCupsOfCoffeeConsumedWithoutRequestObject() {
             var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
 
             var response = client.GetCuposOfCoffeePublicAsync();

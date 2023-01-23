@@ -56,7 +56,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
-        public UserAuthentication(string email, string password) {
+        public UserAuthentication( string email, string password ) {
 
             logger.Info( $"About to try and authenticate user with email {email} with a new device." );
 
@@ -92,15 +92,15 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     throw new NotImplementedException();
                 }
 
-            } catch (AggregateException ae ) {
-                ae.Handle((x) => {
+            } catch (AggregateException ae) {
+                ae.Handle( ( x ) => {
                     if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
                         throw new NotAuthorizedException( x.Message, x, logger );
                     } else {
                         //Not sure what would cause us to get here
                         throw new AuthenticationException( x.Message, x, logger );
                     }
-                });
+                } );
             }
 
             //After authentication, confirm this device (which is assumed to be a new device) and associated it with the cognito user
@@ -129,8 +129,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
             logger.Info( $"About to try and authenticate user with email {email} with an existing device {deviceKey}." );
             this.Email = email;
-            this.DeviceKey= deviceKey;
-            this.DeviceGroupKey= deviceGroupKey;
+            this.DeviceKey = deviceKey;
+            this.DeviceGroupKey = deviceGroupKey;
             this.CognitoUser = new CognitoUser( this.Email, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
 
             //NOTE: Adding the Device to the user before calling .StartWithSrpAuthAsync will result in a bad password error.
@@ -139,7 +139,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             //NOTE: This mehtod, with passing the DeviceGroupKey and DevicePass seems to work, in that is passes authentication, however, it generates a new device
             InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest() {
                 Password = password,
-                DeviceGroupKey= deviceGroupKey,
+                DeviceGroupKey = deviceGroupKey,
                 DevicePass = AuthenticationConstants.DevicePassword
             };
 
@@ -176,7 +176,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             }
 
             //Oddly, the flow above allows the user to authenticate even when the device is not associated with te user. Howerver, the code below which tries and associates the device with the user will throw an exception if it is not known.
-            
+
             try {
                 CognitoDevice device = new CognitoDevice(
                     this.DeviceKey,
@@ -202,14 +202,14 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             }
         }
 
-        public UserAuthentication(string email, string refreshToken, string accessToken, string idToken, string deviceKey, string deviceGroupKey) {
+        public UserAuthentication( string email, string refreshToken, string accessToken, string idToken, string deviceKey, string deviceGroupKey ) {
 
 
             logger.Info( $"About to try and re-authenticate user with email {email} with an existing device {deviceKey}." );
             this.Email = email;
             this.RefreshToken = refreshToken;
             this.AccessToken = accessToken;
-            this.IdToken= idToken;
+            this.IdToken = idToken;
             this.DeviceKey = deviceKey;
             this.DeviceGroupKey = deviceGroupKey;
             this.CognitoUser = new CognitoUser( this.Email, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
@@ -286,7 +286,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         public DateTime IamCredentialsExpiration { get; private set; } = DateTime.MaxValue;
         public string AccessKey { get; private set; }
         public string SecretKey { get; private set; }
-        public string SessionToken { get; private set; }  
+        public string SessionToken { get; private set; }
+        public ImmutableCredentials ImmutableCredentials { get; private set; }
 
         public CognitoUser CognitoUser { get; private set; }
 
@@ -352,7 +353,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey;
             SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
 
-
+            ImmutableCredentials = new ImmutableCredentials( AccessKey, SecretKey, SessionToken );
         }
     }
 }
