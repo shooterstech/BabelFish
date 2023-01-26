@@ -33,6 +33,6 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         public string Relay { get; set; }
 
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public Scopos.BabelFish.DataModel.OrionMatch.VisibilityOption Privacy { get; set; }
+        public AttributeValue.VisibilityOption Privacy { get; set; }
     }
 }

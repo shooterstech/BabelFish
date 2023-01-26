@@ -2,74 +2,27 @@
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.Runtime;
+using NLog;
 
-namespace Scopos.BabelFish.DataModel.AttributeValue
-{
-    [Serializable]
-    [Obsolete("Really what the fuck is this?")]
-    public class InvalidBabelFishException : ShootersTechException {
-        // https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/creating-and-throwing-exceptions
-        public InvalidBabelFishException() : base() { }
-        public InvalidBabelFishException(string message) : base(message) { }
-        public InvalidBabelFishException(string message, Exception inner) : base(message, inner) { }
-    }
+namespace Scopos.BabelFish.DataModel.AttributeValue {
+    public class AttributeValueException : ShootersTechException {
 
-    internal static class AttributeValueException
-    {
-        public static string GetExceptionDefinitionError(string extraText = "")
-        {
-            return ExceptionTextFor("DefinitionError", extraText);
+        public AttributeValueException()
+            : base( "Something bad happened!" ) {
         }
-        public static string GetExceptionFieldNameError(string extraText = "")
-        {
-            return ExceptionTextFor("FieldNameError", extraText);
+        public AttributeValueException( string message )
+            : base( message ) {
         }
-        public static string GetExceptionFieldValueError(string extraText = "")
-        {
-            return ExceptionTextFor("FieldValueError", extraText);
+        public AttributeValueException( string message, Logger logger )
+            : base( message ) {
+            logger.Error( this, message );
         }
-        public static string GetExceptionFieldTypeError(string extraText = "")
-        {
-            return ExceptionTextFor("FieldTypeError", extraText);
+        public AttributeValueException( string message, Exception inner )
+            : base( message, inner ) {
         }
-        public static string GetExceptionKeyFieldNameError(string extraText = "")
-        {
-            return ExceptionTextFor("KeyFieldNameError", extraText);
+        public AttributeValueException( string message, Exception inner, Logger logger )
+            : base( message, inner ) {
+            logger.Error( this, message );
         }
-        public static string GetExceptionJSONParseError(string extraText = "")
-        {
-            return ExceptionTextFor("JSONParseError", extraText);
-        }
-
-        private static string ExceptionTextFor(string exceptionSubject, string extraText = "")
-        {
-            string returnException = "";
-            switch (exceptionSubject)
-            {
-                case "DefinitionError":
-                    returnException = "Definition exception";
-                    break;
-                case "FieldNameError":
-                    returnException = "Field Name exception";
-                    break;
-                case "FieldValueError":
-                    returnException = "Field Value exception";
-                    break;
-                case "FieldTypeError":
-                    returnException = "Field Type exception";
-                    break;
-                case "KeyFieldNameError":
-                    returnException = "Key Field Name exception";
-                    break;
-                case "JSONParseError":
-                    returnException = "Error attempting to parse returned json";
-                    break;
-                default:
-                    returnException = exceptionSubject;
-                    break;
-            }
-            return $"{returnException} {extraText}".TrimEnd(' ');
-        }
-
     }
 }

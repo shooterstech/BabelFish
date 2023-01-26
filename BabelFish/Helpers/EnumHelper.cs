@@ -16,9 +16,6 @@ namespace Scopos.BabelFish.Helpers {
     public enum DefinitionFieldTypeEnums { OPEN, CLOSED, SUGGEST, DERIVED };
 
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum VisibilityOption { PRIVATE, PUBLIC, PROTECTED };
-
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum AttributeValueActionEnums { EMPTY, UPDATE, DELETE };
 
     [JsonConverter( typeof( StringEnumConverter ) )]

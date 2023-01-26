@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,206 +12,203 @@ using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
-    public class GetReconfigurableRulebookDefinitionTests
-    {
-        private SetName setName;
-        private readonly DefinitionAPIClient _client = new DefinitionAPIClient( Constants.X_API_KEY );
+    public class GetReconfigurableRulebookDefinitionTests {
+
+        /// <summary>
+        /// Unit test to confirm the Constructors set the api key and API stage as expected.
+        /// </summary>
+        [TestMethod]
+        public void BasicConstructorTests() {
+
+            var defaultConstructorClient = new DefinitionAPIClient( Constants.X_API_KEY );
+            var apiStageConstructorClient = new DefinitionAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+
+            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
+            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+        }
 
         [TestMethod]
-        public void GetAttributeAirRifleType() {
+        public void GetAttributeAirRifleTest() {
 
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse("v1.0:ntparc:Three-Position Air Rifle Type");
 
-            var response = _client.GetAttributeDefinitionAsync(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetAttributeDefinitionAsync(setName);
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
+            Assert.IsNotNull( definition );
             Assert.IsNotNull(msgResponse);
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.AreEqual(objResponse.Fields.Count, 1);
-            Assert.AreEqual(objResponse.Fields[0].FieldName, "Three-Position Air Rifle Type");
+            Assert.AreEqual( setName.ToString(), definition.SetName);
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.AreEqual(1, definition.Fields.Count );
+            Assert.AreEqual( "Three-Position Air Rifle Type", definition.Fields[0].FieldName);
         }
 
         [TestMethod]
-        public void GetCourseOfFireType()
-        {
+        public void GetCourseOfFireTest() {
 
-            var setName = SetName.Parse("v2.0:ntparc:Three-Position Air Rifle 3x10");
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
-            var response = _client.GetCourseOfFireDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetCourseOfFireDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.RangeScripts.Count>=1);
-            Assert.AreEqual(objResponse.Description, setName.ProperName);
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue( definition.RangeScripts.Count > 0 );
+            Assert.IsTrue( definition.Events.Count > 0 );
+            Assert.IsTrue( definition.AbbreviatedFormats.Count > 0 );
+            Assert.IsTrue( definition.Singulars.Count > 0 );
         }
 
         [TestMethod]
-        public void GetEventStyleType()
-        {
+        public void GetEventStyleTest() {
 
-            var setName = SetName.Parse("v1.0:ntparc:Three-Position Precision Air Rifle");
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var setName = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" );
 
-            var response = _client.GetEventStyleDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetEventStyleDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.StageStyles.Count >= 1);
-            Assert.AreEqual(objResponse.Description, setName.ProperName);
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue( definition.StageStyles.Count > 0 );
+            Assert.IsTrue( definition.RelatedEventStyles.Count > 0 );
         }
 
         [TestMethod]
-        public void GetRankingRuleType()
+        public void GetRankingRuleTest()
         {
 
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse("v1.0:nra:BB Gun Qualification");
 
-            var response = _client.GetRankingRuleDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetRankingRuleDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.RankingRules.Count >= 1);
-            Assert.AreEqual(objResponse.HierarchicalName, $"{setName.Namespace}:{setName.ProperName}");
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue(definition.RankingRules.Count > 0 );
         }
 
         [TestMethod]
-        public void GetStageStyleType()
+        public void GetStageStyleTest()
         {
 
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse("v1.0:ntparc:Sporter Air Rifle Standing");
 
-            var response = _client.GetStageStyleDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetStageStyleDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.DisplayScoreFormats.Count >= 1);
-            Assert.AreEqual(objResponse.Description, setName.ProperName);
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue(definition.DisplayScoreFormats.Count > 0);
+            Assert.IsTrue( definition.RelatedStageStyles.Count > 0 );
         }
 
         [TestMethod]
-        public void GetTargetCollectionType()
+        public void GetTargetCollectionTest()
         {
 
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse("v1.0:ntparc:Air Rifle");
 
-            var response = _client.GetTargetCollectionDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetTargetCollectionDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.TargetCollections.Count >= 1);
-            Assert.AreEqual(objResponse.HierarchicalName, $"{setName.Namespace}:{setName.ProperName}");
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue(definition.TargetCollections.Count >= 1);
         }
 
         [TestMethod]
-        public void GetTargetType()
+        public void GetTargetTest()
         {
 
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse("v1.0:issf:10m Air Rifle");
 
-            var response = _client.GetTargetDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetTargetDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.ScoringRings.Count >= 1);
-            Assert.AreEqual(objResponse.HierarchicalName, $"{setName.Namespace}:{setName.ProperName}");
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue(definition.ScoringRings.Count > 0);
+            Assert.IsTrue( definition.AimingMarks.Count > 0 );
         }
 
         [TestMethod]
         public void GetScoreFormatCollectionType()
         {
 
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
 
-            var response = _client.GetScoreFormatCollectionDefinition(setName);
-            Assert.IsNotNull(response);
+            var taskResponse = client.GetScoreFormatCollectionDefinition( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
 
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual(objResponse.SetName, setName.ToString());
-            Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            Assert.IsTrue(objResponse.ScoreFormats.Count >= 1);
-            Assert.AreEqual(objResponse.HierarchicalName, $"{setName.Namespace}:{setName.ProperName}");
-        }
-
-        //[TestMethod]
-        public void GetResultListFormatType()
-        {
-            //API fetch needs built out
-            var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
-
-            var response = _client.GetResultListFormatCollection(setName);
-            Assert.IsNotNull(response);
-
-            var taskResult = response.Result;
-            var objResponse = taskResult.Definition;
-            var msgResponse = taskResult.MessageResponse;
-
-            Assert.IsNotNull(objResponse);
-            Assert.IsNotNull(msgResponse);
-
-            //Assert.AreEqual(objResponse.SetName, setName.ToString());
-            //Assert.AreEqual(objResponse.Type, taskResult.DefinitionType);
-            //Assert.IsTrue(objResponse.ScoreFormats.Count >= 1);
-            //Assert.AreEqual(objResponse.Description, setName.ProperName);
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( result.DefinitionType, definition.Type );
+            Assert.IsTrue(definition.ScoreFormats.Count > 0 );
+            Assert.IsTrue( definition.ScoreConfigs.Count > 0 );
         }
 
     }

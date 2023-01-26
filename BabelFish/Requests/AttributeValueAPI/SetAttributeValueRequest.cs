@@ -36,7 +36,6 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
                     serializedJSON.Append( "{\"attribute-values\": {" );
                     bool firstrun = true;
                     foreach (AttributeValue attributeValue in AttributeToUpdate.Attributes) {
-                        if (attributeValue.LastException == "") {
                             if (!firstrun)
                                 serializedJSON.Append( "," );
                             serializedJSON.Append( $"\"{attributeValue.SetName}\": {{" );
@@ -60,7 +59,6 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
                                 serializedJSON.Append( "]" );
                             serializedJSON.Append( "}" );
                             firstrun = false;
-                        }
                     }
                     serializedJSON.Append( "}}" );
 

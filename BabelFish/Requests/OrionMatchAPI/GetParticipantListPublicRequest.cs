@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
     public class GetParticipantListPublicRequest : Request {
-        public GetParticipantListPublicRequest( string matchid = "" ) : base( "GetMatchParticipantList" ) {
+        public GetParticipantListPublicRequest( string matchid = "" ) : base( "GetParticipantList" ) {
             MatchID = matchid;
         }
 

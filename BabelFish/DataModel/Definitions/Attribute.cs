@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -45,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [JsonProperty(Order = 12)]
         [JsonConverter(typeof(StringEnumConverter))]
-        public Helpers.VisibilityOption MaxVisibility { get; set; }
+        public VisibilityOption MaxVisibility { get; set; }
 
         [JsonProperty(Order = 13)]
         [DefaultValue(false)]

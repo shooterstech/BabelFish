@@ -74,7 +74,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
             }
             catch (Exception ex)
             {
-                CaptureErrors.Add(AttributeValueException.GetExceptionJSONParseError($": {ex.ToString()}"));
+                CaptureErrors.Add($": {ex.ToString()}");
             }
 
             Value = returnList;

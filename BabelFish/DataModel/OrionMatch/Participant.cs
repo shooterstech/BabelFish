@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CompetitorNumber { get; set; } = string.Empty;
 
-        public List<AttributeValue> AttributeValues { get; set; } = new List<AttributeValue>();
+        public List<Scopos.BabelFish.DataModel.AttributeValue.AttributeValue> AttributeValues { get; set; } = new List<Scopos.BabelFish.DataModel.AttributeValue.AttributeValue>();
 
         /// <summary>
         /// When a competitor's name is displayed, this is the default display value.
