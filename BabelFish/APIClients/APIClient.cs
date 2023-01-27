@@ -12,7 +12,7 @@ using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.DataModel;
 using Amazon.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
@@ -59,7 +59,7 @@ namespace Scopos.BabelFish.APIClients {
         #endregion properties
 
         #region Methods
-        protected async Task CallAPI<T>(Request request, Response<T> response) where T : new()
+        protected async Task CallAPI<T>(Request request, Response<T> response) where T : BaseClass
         {
             // Get Uri for call
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");

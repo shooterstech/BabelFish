@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
-    public class MatchParticipantList
+    public class MatchParticipantList : BaseClass
     {
         public List<MatchParticipant> ParticipantList = new List<MatchParticipant>();
     }

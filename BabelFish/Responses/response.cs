@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 
 namespace Scopos.BabelFish.Responses
@@ -17,7 +18,7 @@ namespace Scopos.BabelFish.Responses
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class Response<T>
-        where T : new() {
+        where T : BaseClass {
 
 
         protected JToken body = new JObject();
@@ -69,7 +70,7 @@ namespace Scopos.BabelFish.Responses
         {
             get;
             internal set;
-        } = new T();
+        } = default( T );
 
         /// <summary>
         /// Gets or Sets the Status Code returned by the Rest API call.

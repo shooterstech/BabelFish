@@ -6,6 +6,7 @@ using System.Reflection;
 namespace Scopos.BabelFish.DataModel.Definitions
 {
     [Serializable]
+    [Obsolete()]
     public class DefinitionCache
     {
         [JsonProperty(Order = 12)]

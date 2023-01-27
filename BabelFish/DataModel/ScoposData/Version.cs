@@ -2,9 +2,10 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.ScoposData {
-    public class VersionsList {
+    public class VersionsList : BaseClass {
         public List<VersionInfo> Versions = new List<VersionInfo>();
     }
 

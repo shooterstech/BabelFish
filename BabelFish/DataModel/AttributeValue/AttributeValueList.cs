@@ -4,7 +4,7 @@
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
-    public class AttributeValueList
+    public class AttributeValueList : BaseClass
     {
         public List<AttributeValue> Attributes { get; set; } = new List<AttributeValue>();
 

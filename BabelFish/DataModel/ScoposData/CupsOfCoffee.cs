@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.ScoposData {
-    public class CupsOfCoffee {
+    public class CupsOfCoffee : BaseClass {
 
         public CupsOfCoffee() { }
 

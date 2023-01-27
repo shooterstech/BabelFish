@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
@@ -66,7 +67,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             //Perform some simple tests on the returned data.
             Assert.AreEqual( matchId, match.MatchID );
             Assert.AreEqual( "Unit Test Match", match.Name );
-            Assert.AreEqual( "Public", match.Visibility.ToString() );
+            Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( "2023-01-19", match.StartDate );
         }
 

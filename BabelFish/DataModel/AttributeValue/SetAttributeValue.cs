@@ -2,11 +2,12 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
-    public class SetAttributeValueList
+    public class SetAttributeValueList : BaseClass
     {
         public List<SetAttributeValue> SetAttributeValues = new List<SetAttributeValue>();
 

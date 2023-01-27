@@ -6,8 +6,7 @@ using Newtonsoft.Json.Serialization;
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
-    public class ValidateUserID
-    {
+    public class ValidateUserID : BaseClass {
         public ValidateUserID() { }
 
         /// <summary>
