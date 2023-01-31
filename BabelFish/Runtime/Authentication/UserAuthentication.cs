@@ -9,6 +9,7 @@ using Amazon.Extensions.CognitoAuthentication;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.CognitoIdentity.Model;
 using NLog;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
 
@@ -25,16 +26,30 @@ namespace Scopos.BabelFish.Runtime.Authentication {
     public class UserAuthentication {
 
         /// <summary>
-        /// Called when a new instance of UserAuthentication is constructed using email 
+        /// Invoked when a new instance of UserAuthentication is constructed using email 
         /// and password, and the authentication into AWS is successful.
         /// </summary>
         public EventHandler<EventArgs> UserAuthenticationSuccessful;
 
         /// <summary>
-        /// Called when a new instance of UserAuthentication is constructed using email 
+        /// Invoked when a new instance of UserAuthentication is constructed using email 
         /// and password, and the authentication into AWS failed.
         /// </summary>
         public EventHandler<EventArgs> UserAuthenticationFailed;
+
+        /// <summary>
+        /// Invoked when a already authenticated user has their Cognito tokens refreshed successfully.
+        /// </summary>
+        public EventHandler<EventArgs<UserAuthentication>> RefreshTokensSuccessful;
+
+        /// <summary>
+        /// Invoked when a previously authenticated user attempts to refresh their cognito tokens, 
+        /// but the process is unsuccessful.
+        /// </summary>
+        public EventHandler<EventArgs<UserAuthentication>> RefreshTokensFailed;
+
+        public EventHandler<EventArgs<UserAuthentication>> GenerateIAMCredentialsSuccessful; 
+        public EventHandler<EventArgs<UserAuthentication>> GenerateIAMCredentialsFailed;
 
         //Create a Cognito Identify Provider using anonymous credentials
         private static AmazonCognitoIdentityProviderClient cognitoProvider = new AmazonCognitoIdentityProviderClient( new AnonymousAWSCredentials() );
@@ -81,6 +96,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
                     this.DeviceKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
                     this.DeviceGroupKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
+                    this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                    this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                     logger.Info( $"Successfully authenticated user with email {email}." );
                     if (UserAuthenticationSuccessful != null)
@@ -153,6 +170,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
                     this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
                     this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
+                    this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                    this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                     logger.Info( $"Successfully authenticated user with email {email}." );
                     if (UserAuthenticationSuccessful != null)
@@ -202,19 +221,33 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             }
         }
 
-        public UserAuthentication( string email, string refreshToken, string accessToken, string idToken, string deviceKey, string deviceGroupKey ) {
-
+        /// <summary>
+        /// Constructs a new User Authentication instance. To complete the re-authentication process, user should call .RefreshedTokens().
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="refreshToken"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="idToken"></param>
+        /// <param name="expirationTime"></param>
+        /// <param name="issuedTime"></param>
+        /// <param name="deviceKey"></param>
+        /// <param name="deviceGroupKey"></param>
+        /// <exception cref="DeviceNotKnownException">Thrown if the device is not known to be assciated with the user.</exception>
+        /// <exception cref="AuthenticationException">Thrown if the user could not be re-authenticated.</exception>
+        public UserAuthentication( string email, string refreshToken, string accessToken, string idToken, DateTime expirationTime, DateTime issuedTime, string deviceKey, string deviceGroupKey) {
 
             logger.Info( $"About to try and re-authenticate user with email {email} with an existing device {deviceKey}." );
             this.Email = email;
             this.RefreshToken = refreshToken;
             this.AccessToken = accessToken;
             this.IdToken = idToken;
+            this.ExpirationTime = expirationTime;
+            this.IssuedTime = issuedTime;
             this.DeviceKey = deviceKey;
             this.DeviceGroupKey = deviceGroupKey;
             this.CognitoUser = new CognitoUser( this.Email, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
 
-            this.CognitoUser.SessionTokens = new CognitoUserSession( idToken, accessToken, refreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours( 1 ) );
+            this.CognitoUser.SessionTokens = new CognitoUserSession( idToken, accessToken, refreshToken, issuedTime, expirationTime );
 
             try {
                 CognitoDevice device = new CognitoDevice(
@@ -239,31 +272,62 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     }
                 } );
             }
-
-            this.RefreshTokens();
         }
 
-        public void RefreshTokens() {
+        /// <summary>
+        /// Attempts to refresh the user's cognito tokens. 
+        /// Invokes the RefreshTokensSuccessful when the tokens are refreshed.
+        /// Invoked the RefreshTokensFailed when a failure happens (and then throws one of the Exceptions).
+        /// </summary>
+        /// <exception cref="AuthenticationException">Thrown if the user could not be re-authenticated.</exception>
+        /// <exception cref="ShootersTechException">Thrown if, not sure why, but maybe a networking issue preventing the re-authentication.</exception>
+        public void RefreshTokens(bool refreshNow = false) {
 
-            //We dont' know the actual experation date of the token, so setting it to 1 hour and then will re-fresh them regardless.
-            this.CognitoUser.SessionTokens = new CognitoUserSession( null, null, this.RefreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours( 1 ) );
+            if ( !refreshNow && this.CognitoUser.SessionTokens.ExpirationTime > DateTime.UtcNow.AddMinutes( 1 ) ) {
+                logger.Info( $"Purposefully not refreshing tokens for {this.Email} as the ExpirationTime is in the future." );
+                return;
+            }
 
-            //Create the refresh request object
-            InitiateRefreshTokenAuthRequest refreshRequest = new InitiateRefreshTokenAuthRequest() {
-                AuthFlowType = AuthFlowType.REFRESH_TOKEN_AUTH
-            };
+            try {
+                //We dont' know the actual experation date of the token, so setting it to 1 hour and then will re-fresh them regardless.
+                //this.CognitoUser.SessionTokens = new CognitoUserSession( null, null, this.RefreshToken, DateTime.UtcNow, DateTime.UtcNow.AddHours( 1 ) );
 
-            //CAll Cognito to refresh the token
-            var taskAuthFlowResponse = this.CognitoUser.StartWithRefreshTokenAuthAsync( refreshRequest );
-            var authFlowResponse = taskAuthFlowResponse.Result;
+                //Create the refresh request object
+                InitiateRefreshTokenAuthRequest refreshRequest = new InitiateRefreshTokenAuthRequest() {
+                    AuthFlowType = AuthFlowType.REFRESH_TOKEN_AUTH
+                };
 
-            //Now we have a new accessToken and a new refreshToken, both of which need to be re-saved
-            if (authFlowResponse.AuthenticationResult != null) {
-                this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
-                this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
-            } else {
-                //We would get here if the re-authentication failed. Need to determine how to handle this case.
-                throw new NotImplementedException();
+                //CAll Cognito to refresh the token
+                var taskAuthFlowResponse = this.CognitoUser.StartWithRefreshTokenAuthAsync( refreshRequest );
+                var authFlowResponse = taskAuthFlowResponse.Result;
+
+                //Now we have a new accessToken and a new refreshToken, both of which need to be re-saved
+                if (authFlowResponse.AuthenticationResult != null) {
+                    this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
+                    this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
+                    this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                    this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
+
+                    if (RefreshTokensSuccessful != null)
+                        RefreshTokensSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+                } else {
+
+                    //Not sure yet what would cause us to get here.
+
+                    if (RefreshTokensFailed != null)
+                        RefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+
+                    throw new AuthenticationException( $"Unable to perform a token refresh for {this.Email}. Calls to cognito returned, but without reauthenticating the user.", logger );
+                }
+            } catch ( Exception ex ) {
+
+                //Best guess to get here would be a networking issue. But that's only a guess.
+
+                if (RefreshTokensFailed != null)
+                    RefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+
+                throw new ShootersTechException( $"Unable to perform a token refresh for {this.Email}.", logger );
+
             }
         }
         /// <summary>
@@ -275,6 +339,9 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
         public string RefreshToken { get; private set; }
         public string AccessToken { get; private set; }
+        //The expiration time of the access token .. I think
+        public DateTime ExpirationTime { get; private set; }
+        public DateTime IssuedTime { get; private set; }
         public string IdToken { get; private set; }
         public string DeviceKey { get; private set; }
         public string DeviceGroupKey { get; private set; }
@@ -316,44 +383,63 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
         /// <summary>
         /// Generates the temporary IAM credentials for the logged in user. These would be 
-        /// AccessKey, SecretKey, and SessionToken
+        /// AccessKey, SecretKey, and SessionToken.
+        /// Invokes the GenerateIAMCredentialsSuccessful event on success, and GenerateIAMCredentialsFailed on failure. 
+        /// If the credentials do not need to be refreshed (have not expired yet), neither event is invoked.
         /// </summary>
+        /// <exception cref="ShootersTechException">Thrown when we are unabled to retreive temporary credentials. </exception>
         public void GenerateIAMCredentials() {
+
+            //Call RefreshTokens to reauthenticate if needed.
+            this.RefreshTokens();
 
             //Only generate if the IAM credentials are empty or its been over an hour, which is when they expire.
             if (IamCredentialsExpiration < DateTime.UtcNow)
                 return;
 
-            //Using the idToken, obtain the access key, secret access key, and session token
-            //First step get the Id of the Cognito User
-            var logins = new Dictionary<string, string>() {
+            try {
+                //Using the idToken, obtain the access key, secret access key, and session token
+                //First step get the Id of the Cognito User
+                var logins = new Dictionary<string, string>() {
                     { $"cognito-idp.{AuthenticationConstants.AWSRegion}.amazonaws.com/{AuthenticationConstants.AWSPoolID}", this.IdToken }
                 };
 
-            var getIDRequest = new Amazon.CognitoIdentity.Model.GetIdRequest() {
-                AccountId = AuthenticationConstants.AWSAccountID,
-                IdentityPoolId = AuthenticationConstants.AWSIdentityPoolID,
-                Logins = logins
-            };
+                var getIDRequest = new Amazon.CognitoIdentity.Model.GetIdRequest() {
+                    AccountId = AuthenticationConstants.AWSAccountID,
+                    IdentityPoolId = AuthenticationConstants.AWSIdentityPoolID,
+                    Logins = logins
+                };
 
-            var taskGetIDResponse = identityClient.GetIdAsync( getIDRequest );
-            var getIdResponse = taskGetIDResponse.Result;
+                var taskGetIDResponse = identityClient.GetIdAsync( getIDRequest );
+                var getIdResponse = taskGetIDResponse.Result;
 
-            //Second step, get the Credentials for the Identity we just learned
-            var getCredentialsForIdentityRequest = new GetCredentialsForIdentityRequest() {
-                IdentityId = getIdResponse.IdentityId,
-                Logins = logins
-            };
+                //Second step, get the Credentials for the Identity we just learned
+                var getCredentialsForIdentityRequest = new GetCredentialsForIdentityRequest() {
+                    IdentityId = getIdResponse.IdentityId,
+                    Logins = logins
+                };
 
-            var taskGetCredentialsForIdentityResponse = identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
-            var getCredentialsForIdentityResponse = taskGetCredentialsForIdentityResponse.Result;
+                var taskGetCredentialsForIdentityResponse = identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
+                var getCredentialsForIdentityResponse = taskGetCredentialsForIdentityResponse.Result;
 
-            IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration;
-            AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId;
-            SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey;
-            SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
+                IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration;
+                AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId;
+                SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey;
+                SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
 
-            ImmutableCredentials = new ImmutableCredentials( AccessKey, SecretKey, SessionToken );
+                ImmutableCredentials = new ImmutableCredentials( AccessKey, SecretKey, SessionToken );
+
+                if (GenerateIAMCredentialsSuccessful != null)
+                    GenerateIAMCredentialsSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+
+            } catch (Exception ex) {
+                //Currently not sure what would cause an exception to be thrown, possible networking issues, but catch them anyway.
+
+                if (GenerateIAMCredentialsFailed != null)
+                    GenerateIAMCredentialsFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+
+                throw new ShootersTechException( $"Unable to get IAM credentials for {this.Email}", ex, logger );
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.Tests;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.Tests.Authentication {
 
@@ -98,8 +98,25 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 userAuthenticationInit.RefreshToken,
                 userAuthenticationInit.AccessToken,
                 userAuthenticationInit.IdToken,
+                userAuthenticationInit.ExpirationTime,
+                userAuthenticationInit.IssuedTime,
                 userAuthenticationInit.DeviceKey,
                 userAuthenticationInit.DeviceGroupKey );
+
+            //going to test that the RefreshTokenSuccess event does and RefreshedTokensFailed event does not get invoked.
+            int onSuccessCount = 0;
+            int onFailureCount = 0;
+            EventHandler<EventArgs<UserAuthentication>> onSuccessHandler = delegate ( object sender, EventArgs<UserAuthentication> args ) {
+                onSuccessCount++;
+            };
+            EventHandler<EventArgs<UserAuthentication>> onFailureHandler = delegate ( object sender, EventArgs<UserAuthentication> args ) {
+                onFailureCount++;
+            };
+            userAuthentication.RefreshTokensSuccessful += onSuccessHandler;
+            userAuthentication.RefreshTokensFailed += onFailureHandler;
+
+            //Passing true forces the tokens to refresh, regardless of Expiration time. Inreal life, one would not need to call .RefreshToken normally, let alone eith true.
+            userAuthentication.RefreshTokens(true);
 
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.Email ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
@@ -111,12 +128,19 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsNotNull( userAuthentication.CognitoUser );
             Assert.IsNotNull( userAuthentication.CognitoUser.Device );
 
-            //Check that the refresh, access, and Id tokens did indeed refresh.
+            //Check that the access Id tokens did indeed refresh.
             //QUESTION: Are the supposed to all get refreshed ? 
-            //Assert.AreNotEqual( userAuthenticationInit.RefreshToken, userAuthentication.RefreshToken );
             Assert.AreNotEqual( userAuthenticationInit.AccessToken, userAuthentication.AccessToken );
-            //Assert.AreNotEqual( userAuthenticationInit.IdToken, userAuthentication.IdToken );
 
+            Assert.AreEqual( 1, onSuccessCount );
+            Assert.AreEqual( 0, onFailureCount );
+
+            //Make sure we can genreate iam credentials
+            userAuthenticationInit.GenerateIAMCredentials();
+
+            Assert.IsFalse( string.IsNullOrEmpty( userAuthenticationInit.AccessKey ) );
+            Assert.IsFalse( string.IsNullOrEmpty( userAuthenticationInit.SecretKey ) );
+            Assert.IsFalse( string.IsNullOrEmpty( userAuthenticationInit.SessionToken ) );
         }
 
         [TestMethod]
