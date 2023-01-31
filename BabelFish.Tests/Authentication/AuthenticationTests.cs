@@ -99,9 +99,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 userAuthenticationInit.AccessToken,
                 userAuthenticationInit.IdToken,
                 userAuthenticationInit.DeviceKey,
-                userAuthenticationInit.DeviceGroupKey ) {
-
-            };
+                userAuthenticationInit.DeviceGroupKey );
 
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.Email ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );

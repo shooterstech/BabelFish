@@ -79,12 +79,6 @@ namespace Scopos.BabelFish.APIClients {
                         foreach (var keyValuePair in request.HeaderKeyValuePairs)
                             requestMessage.Headers.Add( keyValuePair.Key, keyValuePair.Value );
 
-                    /*
-                    if ( request.PostParameters != null ) {
-                        requestMessage.Content= request.PostParameters;
-                    }
-                    */
-
                     //If we are making an authenticated call, update the temporary IAM credentials.
                     if (request.RequiresCredentials)
                         request.Credentials.GenerateIAMCredentials();

@@ -5,9 +5,9 @@
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-    <AssemblyVersion>1.1.1.9</AssemblyVersion>
+    <AssemblyVersion>1.2.1.1</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
-	<Version>1.1.1.9</Version>
+	<Version>1.2.1.1</Version>
 	<Authors>Shooter's Technology</Authors>
 	<Company>Shooter's Technology</Company>
 	<PackageDescription>Dot Net Library that provides a façade for Shooter's Tech REST API interface.</PackageDescription>
