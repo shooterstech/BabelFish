@@ -10,16 +10,18 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        private AttributeValueAPIClient(string apiKey) : base(apiKey) { }
+        public AttributeValueAPIClient(string xapikey ) : base( xapikey ) { }
+
+        public AttributeValueAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
 
         /// <summary>
         /// Get Attribute Value API
         /// </summary>
         /// <param name="requestParameters">GetAttributeValueRequest</param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(GetAttributeValueRequest requestParameters) {
+        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAsync(GetAttributeValueAuthenticatedRequest requestParameters) {
 
-            GetAttributeValueResponse response = new GetAttributeValueResponse(requestParameters);
+            GetAttributeValueAuthenticatedResponse response = new GetAttributeValueAuthenticatedResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -31,9 +33,9 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="AttributeNames">List<string> of valid Attribute Names</string>. Each attribute name must be formatted as a Set Name. </param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueResponse> GetAttributeValueAsync(List<string> attributeNames, UserAuthentication credentials) {
+        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAsync(List<string> attributeNames, UserAuthentication credentials) {
             
-            GetAttributeValueRequest requestParameters = new GetAttributeValueRequest(credentials)
+            GetAttributeValueAuthenticatedRequest requestParameters = new GetAttributeValueAuthenticatedRequest(credentials)
             {
                 AttributeNames = attributeNames
             };
@@ -46,9 +48,9 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters"></param>
         /// <returns>ValidateUserId object</returns>
-        public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(GetValidateUserIDRequest requestParameters) {
+        public async Task<GetValidateUserIDAuthenticatedResponse> GetValidateUserIDAsync(GetValidateUserIDAuthenticatedRequest requestParameters) {
 
-            GetValidateUserIDResponse response = new GetValidateUserIDResponse(requestParameters);
+            GetValidateUserIDAuthenticatedResponse response = new GetValidateUserIDAuthenticatedResponse(requestParameters);
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -60,27 +62,30 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="userID"></param>
         /// <returns>ValidateUserId object</returns>
-        public async Task<GetValidateUserIDResponse> GetValidateUserIDAsync(string userID) {
+        public bool GetValidateUserIDAsync(string userID) {
 
-            GetValidateUserIDRequest requestParameters = new GetValidateUserIDRequest()
+            GetValidateUserIDAuthenticatedRequest requestParameters = new GetValidateUserIDAuthenticatedRequest()
             {
                 UserID = userID
             };
 
-            return await GetValidateUserIDAsync(requestParameters);
+            var taskResponse = GetValidateUserIDAsync(requestParameters);
+            var responses = taskResponse.Result;
+            return responses.ValidateUserID.Valid;
         }
 
+        /*
         /// <summary>
         /// Assemble and Set 1 or more AttributeValue items
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValueList attributeValue, UserAuthentication credentials )
+        public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAsync(AttributeValueList attributeValue, UserAuthentication credentials )
         {
 
-            SetAttributeValueRequest requestParameters = new SetAttributeValueRequest(attributeValue, credentials);
+            SetAttributeValueAuthenticatedRequest requestParameters = new SetAttributeValueAuthenticatedRequest(attributeValue, credentials);
 
-            SetAttributeValueResponse response = new SetAttributeValueResponse( requestParameters );
+            SetAttributeValueAuthenticatedResponse response = new SetAttributeValueAuthenticatedResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
@@ -92,7 +97,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueResponse> SetAttributeValueAsync(AttributeValue attributeValue, UserAuthentication credentials )
+        public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAsync(AttributeValue attributeValue, UserAuthentication credentials )
         {
             
             AttributeValueList newAttribute = new AttributeValueList();
@@ -102,6 +107,7 @@ namespace Scopos.BabelFish.APIClients {
 
             return response;
         }
+        */
 
     }
 }

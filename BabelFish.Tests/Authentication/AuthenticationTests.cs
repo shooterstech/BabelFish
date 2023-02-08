@@ -112,8 +112,8 @@ namespace Scopos.BabelFish.Tests.Authentication {
             EventHandler<EventArgs<UserAuthentication>> onFailureHandler = delegate ( object sender, EventArgs<UserAuthentication> args ) {
                 onFailureCount++;
             };
-            userAuthentication.RefreshTokensSuccessful += onSuccessHandler;
-            userAuthentication.RefreshTokensFailed += onFailureHandler;
+            userAuthentication.OnRefreshTokensSuccessful += onSuccessHandler;
+            userAuthentication.OnRefreshTokensFailed += onFailureHandler;
 
             //Passing true forces the tokens to refresh, regardless of Expiration time. Inreal life, one would not need to call .RefreshToken normally, let alone eith true.
             userAuthentication.RefreshTokens(true);

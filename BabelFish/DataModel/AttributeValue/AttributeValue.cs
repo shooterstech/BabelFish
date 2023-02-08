@@ -3,6 +3,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
+using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
     public class AttributeValue {
@@ -21,13 +22,18 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="setName">Assign a valid Attribute SetName</param>
         /// <exception cref="Exception"></exception>
         public AttributeValue( string setName ) {
-            throw new NotImplementedException();
-
-            /*Comment out to implement
             SetName = setName;
             attributeDef.LoadDefinition(SetName);
             SetDefaultFieldValues();
-            */
+        }
+
+        public AttributeValue( string setName, string attributeValueAsString ) {
+            JObject attributeValueAsJobject = JObject.Parse( attributeValueAsString );
+            throw new NotImplementedException();
+        }
+
+        public AttributeValue( string setName, JObject attributeValueAsJobject) {
+            throw new NotImplementedException();
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
-    internal class AttributeValueDefinition {
+    public class AttributeValueDefinition {
         DefinitionAPIClient? clientDefinition;
 
         public Definitions.Attribute AttributeDefinition = new Definitions.Attribute();

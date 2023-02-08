@@ -29,27 +29,27 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// Invoked when a new instance of UserAuthentication is constructed using email 
         /// and password, and the authentication into AWS is successful.
         /// </summary>
-        public EventHandler<EventArgs> UserAuthenticationSuccessful;
+        public EventHandler<EventArgs> OnUserAuthenticationSuccessful;
 
         /// <summary>
         /// Invoked when a new instance of UserAuthentication is constructed using email 
         /// and password, and the authentication into AWS failed.
         /// </summary>
-        public EventHandler<EventArgs> UserAuthenticationFailed;
+        public EventHandler<EventArgs> OnUserAuthenticationFailed;
 
         /// <summary>
         /// Invoked when a already authenticated user has their Cognito tokens refreshed successfully.
         /// </summary>
-        public EventHandler<EventArgs<UserAuthentication>> RefreshTokensSuccessful;
+        public EventHandler<EventArgs<UserAuthentication>> OnRefreshTokensSuccessful;
 
         /// <summary>
         /// Invoked when a previously authenticated user attempts to refresh their cognito tokens, 
         /// but the process is unsuccessful.
         /// </summary>
-        public EventHandler<EventArgs<UserAuthentication>> RefreshTokensFailed;
+        public EventHandler<EventArgs<UserAuthentication>> OnRefreshTokensFailed;
 
-        public EventHandler<EventArgs<UserAuthentication>> GenerateIAMCredentialsSuccessful; 
-        public EventHandler<EventArgs<UserAuthentication>> GenerateIAMCredentialsFailed;
+        public EventHandler<EventArgs<UserAuthentication>> OnGenerateIAMCredentialsSuccessful; 
+        public EventHandler<EventArgs<UserAuthentication>> OnGenerateIAMCredentialsFailed;
 
         //Create a Cognito Identify Provider using anonymous credentials
         private static AmazonCognitoIdentityProviderClient cognitoProvider = new AmazonCognitoIdentityProviderClient( new AnonymousAWSCredentials() );
@@ -100,8 +100,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                     logger.Info( $"Successfully authenticated user with email {email}." );
-                    if (UserAuthenticationSuccessful != null)
-                        UserAuthenticationSuccessful.Invoke( this, new EventArgs() );
+                    if (OnUserAuthenticationSuccessful != null)
+                        OnUserAuthenticationSuccessful.Invoke( this, new EventArgs() );
                 } else {
                     //If we get there authentication was not successful, b/c we've been given a challenge that needs to be fulfilled.
 
@@ -174,8 +174,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                     logger.Info( $"Successfully authenticated user with email {email}." );
-                    if (UserAuthenticationSuccessful != null)
-                        UserAuthenticationSuccessful.Invoke( this, new EventArgs() );
+                    if (OnUserAuthenticationSuccessful != null)
+                        OnUserAuthenticationSuccessful.Invoke( this, new EventArgs() );
                 } else {
                     //If we get there authentication was not successful, b/c we've been given a challenge that needs to be fulfilled.
 
@@ -308,14 +308,14 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
                     this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
-                    if (RefreshTokensSuccessful != null)
-                        RefreshTokensSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+                    if (OnRefreshTokensSuccessful != null)
+                        OnRefreshTokensSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
                 } else {
 
                     //Not sure yet what would cause us to get here.
 
-                    if (RefreshTokensFailed != null)
-                        RefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+                    if (OnRefreshTokensFailed != null)
+                        OnRefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
                     throw new AuthenticationException( $"Unable to perform a token refresh for {this.Email}. Calls to cognito returned, but without reauthenticating the user.", logger );
                 }
@@ -323,8 +323,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                 //Best guess to get here would be a networking issue. But that's only a guess.
 
-                if (RefreshTokensFailed != null)
-                    RefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+                if (OnRefreshTokensFailed != null)
+                    OnRefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
                 throw new ShootersTechException( $"Unable to perform a token refresh for {this.Email}.", logger );
 
@@ -429,14 +429,14 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                 ImmutableCredentials = new ImmutableCredentials( AccessKey, SecretKey, SessionToken );
 
-                if (GenerateIAMCredentialsSuccessful != null)
-                    GenerateIAMCredentialsSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+                if (OnGenerateIAMCredentialsSuccessful != null)
+                    OnGenerateIAMCredentialsSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
             } catch (Exception ex) {
                 //Currently not sure what would cause an exception to be thrown, possible networking issues, but catch them anyway.
 
-                if (GenerateIAMCredentialsFailed != null)
-                    GenerateIAMCredentialsFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
+                if (OnGenerateIAMCredentialsFailed != null)
+                    OnGenerateIAMCredentialsFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
                 throw new ShootersTechException( $"Unable to get IAM credentials for {this.Email}", ex, logger );
             }
