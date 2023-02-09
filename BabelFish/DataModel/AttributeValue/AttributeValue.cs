@@ -9,30 +9,64 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     public class AttributeValue {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
+        private static AttributeValueDefinitionFetcher FETCHER = AttributeValueDefinitionFetcher.FETCHER;
 
-        internal Dictionary<string, Dictionary<string, dynamic>> attributeValues = new Dictionary<string, Dictionary<string, dynamic>>();
+        private Dictionary<string, Dictionary<string, dynamic>> attributeValues = new Dictionary<string, Dictionary<string, dynamic>>();
+        private SetName setName = null;
+        private Scopos.BabelFish.DataModel.Definitions.Attribute definition;
+        private AttributeValueValidation attributeValueValidation = new AttributeValueValidation();
 
+        /*
         internal AttributeValueDefinition attributeDef = new AttributeValueDefinition();
+        */
 
-        AttributeValueValidation attributeValueValidation = new AttributeValueValidation();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the x-api-key has not yet been set on AttributeValueDefinitionFetcher.FETCHER.</exception>
+        public AttributeValue( SetName setName ) {
+
+            if (!FETCHER.IsXApiKeySet)
+                throw new XApiKeyNotSetException();
+
+            this.SetName= setName;
+            definition = FETCHER.FetchAttributeDefinition( SetName );
+
+            SetDefaultFieldValues();
+        }
 
         /// <summary>
         /// Instantiate a new AttributeValue to modify
         /// </summary>
         /// <param name="setName">Assign a valid Attribute SetName</param>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException">Thrown if the passed in setName string could not be parsed into a validated SetName</exception>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the x-api-key has not yet been set on AttributeValueDefinitionFetcher.FETCHER.</exception>
         public AttributeValue( string setName ) {
-            SetName = setName;
-            attributeDef.LoadDefinition(SetName);
+
+            if (!FETCHER.IsXApiKeySet)
+                throw new XApiKeyNotSetException();
+
+            SetName = SetName.Parse( setName );
+            definition = FETCHER.FetchAttributeDefinition( SetName );
+
             SetDefaultFieldValues();
         }
 
         public AttributeValue( string setName, string attributeValueAsString ) {
+
+            if (!FETCHER.IsXApiKeySet)
+                throw new XApiKeyNotSetException();
+
             JObject attributeValueAsJobject = JObject.Parse( attributeValueAsString );
             throw new NotImplementedException();
         }
 
         public AttributeValue( string setName, JObject attributeValueAsJobject) {
+
+            if (!FETCHER.IsXApiKeySet)
+                throw new XApiKeyNotSetException();
+
             throw new NotImplementedException();
         }
 
@@ -40,7 +74,19 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// View the SetName of the AttributeValue.
         /// Assignment is done at instantiation.
         /// </summary>
-        public string SetName { get; private set; } = string.Empty;
+        public SetName SetName {
+            get {
+                return setName;
+            }
+            private set {
+                if (setName == null) {
+                    setName = value;
+                } else {
+                    var msg = "The value of SetName may only be set once, on instantiation of a AttributeValue object.";
+                    throw new AttributeValueException( msg );
+                }
+            }
+        }
 
         /// <summary>
         /// httpStatus (leave this as string in case we get an unexpected status not in an enum?)
@@ -61,7 +107,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefinition</returns>
         public List<AttributeField> GetDefintionFields() {
-            return attributeDef.Fields;
+            return definition.Fields;
         }
 
         /// <summary>
@@ -70,7 +116,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <returns></returns>
         public string GetDefinitionKeyFieldName() {
-            AttributeField findKey = attributeDef.Fields.Where( x => x.Key ).FirstOrDefault();
+            AttributeField findKey = definition.Fields.Where( x => x.Key ).FirstOrDefault();
             if (findKey != null)
                 return findKey.FieldName;
             else
@@ -82,7 +128,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefintion</AttributeField></returns>
         public List<AttributeField> GetDefinitionFieldsDefaultValues() {
-            return attributeDef.Fields.Where( x => x.DefaultValue.ToString() != string.Empty ).ToList();
+            return definition.Fields.Where( x => x.DefaultValue.ToString() != string.Empty ).ToList();
         }
 
         /// <summary>
@@ -90,7 +136,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefinition</returns>
         public List<AttributeField> GetDefinitionRequiredFields() {
-            return attributeDef.Fields.Where( x => x.Required == true ).ToList();
+            return definition.Fields.Where( x => x.Required == true ).ToList();
         }
 
         /// <summary>
@@ -99,7 +145,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <returns>true or false</returns>
         public bool IsMultipleValue {
             get {
-                return attributeDef.MultipleValues;
+                return definition.MultipleValues;
             }
         }
 
@@ -109,7 +155,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="fieldName">Field Name string from GetDefintionFields()</param>
         /// <returns>true or false</returns>
         public bool? IsFieldNameRequired( string fieldName ) {
-            return attributeDef.IsFieldNameRequired( fieldName );
+            return definition.RequiredAttributes.Contains( fieldName );
         }
         #endregion Definition
 

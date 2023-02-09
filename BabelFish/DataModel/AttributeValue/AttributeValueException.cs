@@ -25,4 +25,15 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             logger.Error( this, message );
         }
     }
+
+    /// <summary>
+    /// Thrown when a user tries to instantiate a AttributeValue but the x-api-key in the 
+    /// AttributeValueDefinitionFetcher is not yet set.
+    /// </summary>
+    public class XApiKeyNotSetException : AttributeValueException {
+
+        public XApiKeyNotSetException()
+            : base( "X Api Key on the AttributeValueDefinitionFetcher is not set. Can not instantaite any Attribute Value" ) {
+        }
+    }
 }

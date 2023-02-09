@@ -2,6 +2,8 @@
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
+
+    [Obsolete("What the fuck is this used for?")]
     public class AttributeValueDefinition {
         DefinitionAPIClient? clientDefinition;
 
