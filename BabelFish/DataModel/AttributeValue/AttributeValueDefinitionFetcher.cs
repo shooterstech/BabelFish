@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 return xApiKey;
             }
             set {
-                if (xApiKey != value && !string.IsNullOrEmpty( xApiKey ) ) {
+                if (xApiKey != value && !string.IsNullOrEmpty( value ) ) {
                     xApiKey = value;
                     client = new DefinitionAPIClient( xApiKey );
                 }
