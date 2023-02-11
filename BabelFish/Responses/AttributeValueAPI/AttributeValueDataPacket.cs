@@ -17,8 +17,6 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
 
         public VisibilityOption Visibility { get; set; }
 
-        public AttributeValueDefinition? Definition { get; set; }
-
         public string Message { get; set; }
     }
 }

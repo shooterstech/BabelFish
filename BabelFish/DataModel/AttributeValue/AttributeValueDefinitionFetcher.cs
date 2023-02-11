@@ -5,6 +5,17 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
+    /// <summary>
+    /// The AttributeValueDefinitionFetch is effectively a facade for the Definition API Client, and one
+    /// that only retreives Attribute Value definitions. 
+    /// 
+    /// this class is expected to be used within the instantiation of Attribute Values, which require the 
+    /// knowledge of the attribute definition. 
+    /// 
+    /// Access to the class is through the static class variable FETCHER
+    /// 
+    /// To use this class, the FETCHER's .XApiKey property must be set first.
+    /// </summary>
     public class AttributeValueDefinitionFetcher {
 
         public static AttributeValueDefinitionFetcher FETCHER = new AttributeValueDefinitionFetcher();

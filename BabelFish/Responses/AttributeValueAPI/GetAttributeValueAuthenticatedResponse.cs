@@ -69,71 +69,11 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
                     if (attrValueWrapperJObject.ContainsKey( "Message" ) )
                         avWrapper.Message = (string) attrValueWrapperJObject.GetValue( "Message" )[0];
                     if (avWrapper.StatusCode == HttpStatusCode.OK) {
-                        avWrapper.AttributeValue = new AttributeValue( setNameStr, (JObject) attrValueWrapperJObject.GetValue( "attribute-value" ) );
+                        avWrapper.AttributeValue = new AttributeValue( setNameStr, attrValueWrapperJObject.GetValue( "attribute-value" ) );
                         avWrapper.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)attrValueWrapperJObject["visibility"] );
                     }
                 }
-                /*
-                string otype = o.Type.ToString();
-                foreach (JProperty property in o.Properties()) {
-                    if (property.Name == OBJECT_LIST_NAME) {
-                        JObject o2 = JObject.Parse( property.Value.ToString() );
-                        foreach (JProperty property2 in o2.Properties()) {
-                            captureErrors.Clear();
-                            AttributeValue buildAttribute = new AttributeValue( property2.Name );
 
-                            JObject o3 = JObject.Parse( property2.Value.ToString() );
-                            foreach (JProperty property3 in o3.Properties()) {
-                                switch (property3.Name) {
-                                    case "Message": //Getting an error back
-                                        this.MessageResponse.Title = "GetAttributeValue API errors encountered";
-                                        this.MessageResponse.Message.Add( property3.Value.ToString() );
-                                        break;
-                                    case "ResponseCodes":
-                                        this.MessageResponse.ResponseCodes.Add( property3.Value.ToString() );
-                                        break;
-                                    case "statusCode":
-                                        buildAttribute.StatusCode = property3.Value.ToString();
-                                        break;
-                                    case "attribute-value":
-                                        if (buildAttribute.IsMultipleValue) {
-                                            string keyFieldName = buildAttribute.GetDefinitionKeyFieldName();
-                                            var objectList = Helpers.JsonHelper.Deserialize( property3.Value.ToString() );
-                                            foreach (Dictionary<string, dynamic> eachObject in (List<object>)objectList) {
-                                                if (eachObject.ContainsKey( keyFieldName )) {
-                                                    foreach (KeyValuePair<string, dynamic> item in eachObject)
-                                                        buildAttribute.SetFieldValue( item.Key,
-                                                                                item.Value,
-                                                                                eachObject[keyFieldName] );
-                                                } else {
-                                                    captureErrors.Add( $"{keyFieldName} not found for MultipleValues Field in {property2.Name}" );
-                                                }
-                                            }
-                                        } else {
-                                            if (property3.Name == "attribute-value") {
-                                                JObject o4 = JObject.Parse( property3.Value.ToString() );
-                                                foreach (JProperty property4 in o4.Properties()) {
-                                                    buildAttribute.SetFieldValue( property4.Name, property4.Value );
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case "visibility":
-                                        if (VisibilityOption.TryParse( property3.Value.ToString(), out VisibilityOption checkVis ))
-                                            buildAttribute.Visibility = checkVis;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            if (captureErrors.Count > 0)
-                                captureErrors.Add( "I'm not sure yet" );
-                            else if (this.MessageResponse.Message.Count == 0)
-                                returnAttributes.Add( buildAttribute );
-                        }
-                    }
-                }
-                */
             } catch (Exception ex) {
                 logger.Error( ex );
             }

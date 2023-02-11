@@ -9,11 +9,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.Helpers {
-    /// <summary>
-    /// 
-    /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum DefinitionFieldTypeEnums { OPEN, CLOSED, SUGGEST, DERIVED };
 
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum AttributeValueActionEnums { EMPTY, UPDATE, DELETE };

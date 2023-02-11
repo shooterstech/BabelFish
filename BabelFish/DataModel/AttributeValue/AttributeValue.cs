@@ -14,11 +14,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         private Dictionary<string, Dictionary<string, dynamic>> attributeValues = new Dictionary<string, Dictionary<string, dynamic>>();
         private SetName setName = null;
         private Scopos.BabelFish.DataModel.Definitions.Attribute definition;
-        private AttributeValueValidation attributeValueValidation = new AttributeValueValidation();
-
-        /*
-        internal AttributeValueDefinition attributeDef = new AttributeValueDefinition();
-        */
 
         /// <summary>
         /// 
@@ -53,21 +48,41 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             SetDefaultFieldValues();
         }
 
-        public AttributeValue( string setName, string attributeValueAsString ) {
+        public AttributeValue( string setName, JToken attributeValueAsJObject) {
 
             if (!FETCHER.IsXApiKeySet)
                 throw new XApiKeyNotSetException();
 
-            JObject attributeValueAsJobject = JObject.Parse( attributeValueAsString );
-            throw new NotImplementedException();
+            SetName = SetName.Parse( setName );
+            definition = FETCHER.FetchAttributeDefinition( SetName );
+
+            if (definition.MultipleValues) {
+                foreach( var av in (JArray) attributeValueAsJObject) {
+                    ParseJObject( (JObject) av );
+                }
+            } else {
+                ParseJObject( (JObject) attributeValueAsJObject );
+            }
         }
 
-        public AttributeValue( string setName, JObject attributeValueAsJobject) {
+        private void ParseJObject( JObject attributeValueAsJObject ) {
 
-            if (!FETCHER.IsXApiKeySet)
-                throw new XApiKeyNotSetException();
+            var keyFieldName = GetDefinitionKeyFieldName();
+            var keyFieldValue = "";
+            if (string.IsNullOrEmpty( keyFieldName ))
+                keyFieldValue = (string) attributeValueAsJObject[keyFieldName];
 
-            throw new NotImplementedException();
+            foreach( var field in definition.Fields) {
+                var fieldName = field.FieldName;
+                dynamic fieldValue = (dynamic) attributeValueAsJObject[fieldName];
+
+                if (definition.MultipleValues) {
+                    this.SetFieldValue( fieldName, fieldValue, keyFieldValue );
+                } else {
+                    this.SetFieldValue( fieldName, fieldValue );
+                }
+                
+            }
         }
 
         /// <summary>
@@ -103,11 +118,26 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         #region Definition
 
         /// <summary>
-        /// Get list of Attribute Definition Field objects
+        /// Helper function, returnss a list of AttributeFields that are defined in the Attribute's definition.
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefinition</returns>
         public List<AttributeField> GetDefintionFields() {
             return definition.Fields;
+        }
+
+        /// <summary>
+        /// Helper function, returns the AttributeFeild with name fieldName, from the Attribute's definition
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        /// <exception cref="AttributeValueException"></exception>
+        public AttributeField GetAttributeField( string fieldName ) {
+            foreach (var field in definition.Fields ) {
+                if (field.FieldName== fieldName) 
+                    return field;
+            }
+
+            throw new AttributeValueException( $"Field name {fieldName} is not part of the definition for {definition.SetName}." );
         }
 
         /// <summary>
@@ -140,7 +170,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         /// <summary>
-        /// Checks MultipleValues flag from AttributeDefinition
+        /// Returns a boolean indicating if the Attribute Value is allowed to have multiple values. 
+        /// This is defined within the Attribute's definition.
         /// </summary>
         /// <returns>true or false</returns>
         public bool IsMultipleValue {
@@ -216,13 +247,15 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="fieldName">Field Name to set</param>
         /// <param name="fieldValue">Field Value to set</param>
         /// <exception cref="AttributeValueException"></exception>
-        public void SetFieldValue( string fieldName, object fieldValue ) {
+        public void SetFieldValue( string fieldName, dynamic fieldValue ) {
             if (this.IsMultipleValue)
                 throw new AttributeValueException( $"Field being set is designated MultipleValue needing Key. Use overload SetFieldName(string fieldName, object fieldValue, string fieldKey)", logger );
 
-            if (!attributeValueValidation.ValidateSetFieldData( GetDefintionFields().Where( x => x.FieldName == fieldName ).FirstOrDefault(), fieldName, fieldValue ))
+            AttributeField attributeField = GetAttributeField( fieldName );
+
+            if (!attributeField.ValidateFieldValue( fieldValue )) {
                 throw new AttributeValueException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
-            else {
+            } else {
                 if (!attributeValues.ContainsKey( "AttributeList" ))
                     attributeValues.Add( "AttributeList", new Dictionary<string, dynamic> { { fieldName, fieldValue } } );
                 else {
@@ -232,16 +265,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                         attributeValues["AttributeList"].Add( fieldName, fieldValue );
                 }
             }
-        }
-
-        /// <summary>
-        /// Test Setting Attribute Value for Field Name
-        /// </summary>
-        /// <param name="fieldName"></param>
-        /// <param name="fieldValue"></param>
-        /// <returns>true if no errors, false if fails</returns>
-        public bool TrySetFieldValue( string fieldName, object fieldValue ) {
-            return attributeValueValidation.ValidateSetFieldData( GetDefintionFields().Where( x => x.FieldName == fieldName ).FirstOrDefault(), fieldName, fieldValue );
         }
 
         /// <summary>
@@ -255,7 +278,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (!this.IsMultipleValue)
                 throw new AttributeValueException( $"Field being set is designated SingleValue not accepting a Key. Use overload SetFieldName(string fieldName, object fieldValue)", logger );
 
-            if (!attributeValueValidation.ValidateSetFieldData( GetDefintionFields().Where( x => x.FieldName == fieldName ).FirstOrDefault(), fieldName, fieldValue ))
+            AttributeField attributeField = GetAttributeField( fieldName );
+
+            if (!attributeField.ValidateFieldValue( fieldValue ))
                 throw new AttributeValueException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             else {
                 if (!attributeValues.ContainsKey( fieldKey ))
@@ -265,19 +290,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                         attributeValues[fieldKey][fieldName] = fieldValue;
                     else
                         attributeValues[fieldKey].Add( fieldName, fieldValue );
-
                 }
             }
-        }
-
-        /// <summary>
-        /// Test Setting Attribute Value for Field with key
-        /// </summary>
-        /// <param name="fieldName"></param>
-        /// <param name="fieldValue"></param>
-        /// <returns>true if no errors, false if fails</returns>
-        public bool TrySetFieldValue( string fieldName, object fieldValue, string fieldKey ) {
-            return attributeValueValidation.ValidateSetFieldData( GetDefintionFields().Where( x => x.FieldName == fieldName ).FirstOrDefault(), fieldName, fieldValue, fieldKey );
         }
 
         /// <summary>
@@ -319,25 +333,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
         }
         #endregion Attribute
-
-        public bool ValidateForSubmit() {
-            // All Required Fields populated
-            foreach (AttributeField checkRequiredFields in GetDefinitionRequiredFields()) {
-                if (attributeValues.Values.Select( x => x.ContainsKey( checkRequiredFields.FieldName ) ).Count() == 0)
-                    throw new AttributeValueException( $"Submission Validation Failed: missing required field {checkRequiredFields.FieldName}", logger );
-            }
-
-            //Loop AttributeValues running against validation one more time.
-            foreach (KeyValuePair<string, Dictionary<string, dynamic>> checkAttr in this.attributeValues) {
-                foreach (KeyValuePair<string, dynamic> checkValue in checkAttr.Value) {
-                    if (!this.TrySetFieldValue( checkValue.Key, checkValue.Value ))
-                        throw new AttributeValueException( $"Submission Validation Failed: field validation failed for {checkValue.Key}:{checkValue.Value}", logger );
-                }
-            }
-
-            return true;
-        }
-
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
@@ -31,6 +32,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void GetAttributeValue_SingleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );

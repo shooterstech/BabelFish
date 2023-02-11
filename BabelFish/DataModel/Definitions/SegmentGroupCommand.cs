@@ -13,25 +13,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private const int DEFAULT_INT = -9999;
         private const string DEFAULT_STR = "";
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum LightIllumination { NONE, ON, OFF, DIM };
-
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum DisplayEventOptions {
-            NONE, Default, QualificationPreEvent, QualificationPostEvent, QualificationCallToLine, QualificationRemoveEquipment,
-            QualificationStart, QualificationStop, QualificationPreparationPeriodStart, QualificationPreparationPeriodStop, QualificationSightersStart, QualificationSightersStop,
-            QualificationStageStart, QualificationStageStop, QualificationTargetChangeStart, QualificationTargetChangeStop, QualificationChangeOverStart, QualificationChangeOverStop,
-            QualificationExtraTimeStart, QualificationExtraTimeStop, QualificationUnscheduledCeaseFire, QualificationBoatInImpactArea, QualificationAlibiStart, QualificationAlibiStop,
-            FinalPreEvent, FinalPostEvent, FinalCallToLine, FinalRemoveEquipment, FinalCommentary, FinalStart, FinalStop, FinalPreparationPeriodStart, FinalPreparationPeriodStop, FinalSightersStart, FinalSightersStop,
-            FinalAthleteIntroductionStart, FinalAthleteIntroductionStop, FinalStageStart, FinalStageStop, FinalEliminationStageStart, FinalEliminationStageStop,
-            FinalChangeOverStart, FinalChangeOverStop, FinalAthleteEliminated, FinalThirdPlaceAnnounced, FinalSecondPlaceAnnounced, FinalFirstPlaceAnnounced,
-            SpecialEventOne, SpecialEventTwo, SpecialEventThree, SpecialEventFour, SafetyBriefing
-        }
-
         private List<string> validationErrorList = new List<string>();
 
         public SegmentGroupCommand() {
