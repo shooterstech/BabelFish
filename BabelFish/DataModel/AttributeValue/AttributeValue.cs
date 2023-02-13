@@ -211,7 +211,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="FieldName">Valid FieldName as defined in AttributeDefintion</param>
         /// <returns>object to be type cast</returns>
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is a multi-value field.</exception>
-        public object GetFieldValue( string fieldName ) {
+        public dynamic GetFieldValue( string fieldName ) {
             var returnValue = new object();
             if (this.IsMultipleValue)
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", logger );
@@ -228,8 +228,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="FieldKey">Valid FieldKey string from GetFieldKeys()</param>
         /// <returns>object to be Type cast; null object if not found</returns>
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is a multi-value field.</exception>
-        public object? GetFieldValue( string fieldName, string fieldKey ) {
-            object? returnValue = null;
+        public dynamic GetFieldValue( string fieldName, string fieldKey ) {
+            dynamic returnValue = null;
             if (!this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' with key '{fieldKey}' in {SetName}", logger );
             } else {

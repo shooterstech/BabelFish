@@ -61,9 +61,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
             get
             {
                 if (Latitude == 0 || Longitude == 0)
-                    throw new GetOrionMatchRequestException("Longitude and Latitude are required and must be > 0.");
+                    throw new RequestException("Longitude and Latitude are required and must be > 0.");
+                
                 if (ShootingStyle == null || ShootingStyle.Count == 0)
-                    throw new GetOrionMatchRequestException("Shooting Style is required for search.");
+                    throw new RequestException("Shooting Style is required for search.");
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
                 parameterList.Add("distanceSearch", new List<string>() { DistanceSearch.ToString() });

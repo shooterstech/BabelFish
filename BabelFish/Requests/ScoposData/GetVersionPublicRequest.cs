@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.Requests.ScoposData {
         public override Dictionary<string, List<string>> QueryParameters {
             get {
                 if (Services.Count() == 0)
-                    throw new GetOrionMatchRequestException( "Must have at least one VersionService." );
+                    throw new RequestException( "Must have at least one VersionService." );
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
                 parameterList.Add( "services", Services.Select( s => s.Description() ).ToList() );
