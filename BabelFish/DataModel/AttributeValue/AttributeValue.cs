@@ -1,12 +1,14 @@
 ﻿using System.Text;
+using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.Definitions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.Responses.AttributeValueAPI;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
-    public class AttributeValue {
+    public class AttributeValue : IJToken {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
         private static AttributeValueDefinitionFetcher FETCHER = AttributeValueDefinitionFetcher.FETCHER;
@@ -48,7 +50,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             SetDefaultFieldValues();
         }
 
-        public AttributeValue( string setName, JToken attributeValueAsJObject) {
+        public AttributeValue( string setName, JToken attributeValueAsJToken) {
 
             if (!FETCHER.IsXApiKeySet)
                 throw new XApiKeyNotSetException();
@@ -57,11 +59,11 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             definition = FETCHER.FetchAttributeDefinition( SetName );
 
             if (definition.MultipleValues) {
-                foreach( var av in (JArray) attributeValueAsJObject) {
+                foreach( var av in (JArray) attributeValueAsJToken) {
                     ParseJObject( (JObject) av );
                 }
             } else {
-                ParseJObject( (JObject) attributeValueAsJObject );
+                ParseJObject( (JObject) attributeValueAsJToken );
             }
         }
 
@@ -338,6 +340,25 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             StringBuilder foo = new StringBuilder();
             foo.Append( $"{this.SetName} Attribute Value" );
             return foo.ToString();
+        }
+
+        public JToken ToJToken() {
+            
+            JArray multiPartValues = new JArray();
+            foreach (var multiPartValue in attributeValues.Values) {
+                JObject attributeValueJObject = new JObject();
+                foreach (var av in multiPartValue) {
+                    attributeValueJObject.Add( av.Key, av.Value );
+                }
+                multiPartValues.Add( attributeValueJObject );
+            }
+
+            if ( this.IsMultipleValue) {
+                return multiPartValues;
+            } else {
+                return multiPartValues[0];
+            }
+
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Scopos.BabelFish.Requests {
         /// </summary>
         public string OperationId { get; protected set; }
 
-        public HttpMethod HttpMethod { get; set; } = HttpMethod.Get;
+        public HttpMethod HttpMethod { get; protected set; } = HttpMethod.Get;
 
         /// <summary>
         /// Key / Value pairs of data that should be included in the request header.

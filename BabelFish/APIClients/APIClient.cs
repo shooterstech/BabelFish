@@ -83,6 +83,8 @@ namespace Scopos.BabelFish.APIClients {
                     if (request.RequiresCredentials)
                         request.Credentials.GenerateIAMCredentials();
 
+                    requestMessage.Content = request.PostParameters;
+
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     logger.Info( $"Calling {request} on {uri}.");
                     DateTime startTime = DateTime.Now;

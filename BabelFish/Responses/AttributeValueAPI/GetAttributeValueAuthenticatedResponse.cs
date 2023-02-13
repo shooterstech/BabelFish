@@ -55,6 +55,12 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             Value = new AttributeValuesWrapper();
 
             try {
+                /*
+                 * Deserializing the response manually for two reasons.
+                 * 1) some of the property names from the response to the data model don't line up
+                 * 2) (more importantly) there is no single data model for an attribute value. Since the data model
+                 * is dynamic and specified by the Attribute Definition.
+                 */
                 JObject o = JObject.Parse( Body.ToString() );
                 var attributeValueResponses = (JObject) o["attribute-values"];
                 foreach( var attributeValueResponseJObject in attributeValueResponses.Properties()) {
@@ -66,8 +72,15 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
 
                     avWrapper.SetName = SetName.Parse( setNameStr );
                     avWrapper.StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode) , ( string)attrValueWrapperJObject["statusCode"] );
-                    if (attrValueWrapperJObject.ContainsKey( "Message" ) )
-                        avWrapper.Message = (string) attrValueWrapperJObject.GetValue( "Message" )[0];
+                    if (attrValueWrapperJObject.ContainsKey( "Message" )) {
+                        try {
+                            avWrapper.Message = (string)attrValueWrapperJObject.GetValue( "Message" )[0];
+                        } catch (Exception ex) {
+                            //While there should be exactly 1 message in the Message array, catch for the chance there isn't. Swallow the error as it's not important enough to let the user know.
+                            logger.Error( ex, $"Unable to read the Message property from the attribute value for {setNameStr}." );
+                        }
+                    }
+
                     if (avWrapper.StatusCode == HttpStatusCode.OK) {
                         avWrapper.AttributeValue = new AttributeValue( setNameStr, attrValueWrapperJObject.GetValue( "attribute-value" ) );
                         avWrapper.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)attrValueWrapperJObject["visibility"] );

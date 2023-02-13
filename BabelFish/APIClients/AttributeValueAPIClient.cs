@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public AttributeValueAPIClient(string xapikey ) : base( xapikey ) { }
+        public AttributeValueAPIClient( string xapikey ) : base( xapikey ) { }
 
         public AttributeValueAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
 
@@ -19,11 +19,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetAttributeValueRequest</param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAsync(GetAttributeValueAuthenticatedRequest requestParameters) {
+        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAsync( GetAttributeValueAuthenticatedRequest requestParameters ) {
 
-            GetAttributeValueAuthenticatedResponse response = new GetAttributeValueAuthenticatedResponse(requestParameters);
+            GetAttributeValueAuthenticatedResponse response = new GetAttributeValueAuthenticatedResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -33,50 +33,27 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="AttributeNames">List<string> of valid Attribute Names</string>. Each attribute name must be formatted as a Set Name. </param>
         /// <returns>List of Attribute objects</returns>
-        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAsync(List<string> attributeNames, UserAuthentication credentials) {
-            
-            GetAttributeValueAuthenticatedRequest requestParameters = new GetAttributeValueAuthenticatedRequest(credentials)
-            {
+        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAsync( List<string> attributeNames, UserAuthentication credentials ) {
+
+            GetAttributeValueAuthenticatedRequest requestParameters = new GetAttributeValueAuthenticatedRequest( credentials ) {
                 AttributeNames = attributeNames
             };
 
-            return await GetAttributeValueAsync(requestParameters);
-        }
-
-        /*
-        /// <summary>
-        /// Assemble and Set 1 or more AttributeValue items
-        /// </summary>
-        /// <param name="attributeValue"></param>
-        /// <returns></returns>
-        public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAsync(AttributeValueList attributeValue, UserAuthentication credentials )
-        {
-
-            SetAttributeValueAuthenticatedRequest requestParameters = new SetAttributeValueAuthenticatedRequest(attributeValue, credentials);
-
-            SetAttributeValueAuthenticatedResponse response = new SetAttributeValueAuthenticatedResponse( requestParameters );
-
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
-
-            return response;
+            return await GetAttributeValueAsync( requestParameters );
         }
 
         /// <summary>
-        /// Assemble and Set 1 AttributeValue
+        /// 
         /// </summary>
-        /// <param name="attributeValue"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAsync(AttributeValue attributeValue, UserAuthentication credentials )
-        {
-            
-            AttributeValueList newAttribute = new AttributeValueList();
-            newAttribute.Attributes.Add(attributeValue);
+        public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAsync( SetAttributeValueAuthenticatedRequest request ) {
 
-            var response = await SetAttributeValueAsync(newAttribute, credentials).ConfigureAwait(false);
+            SetAttributeValueAuthenticatedResponse response = new SetAttributeValueAuthenticatedResponse( request );
+
+            await this.CallAPI( request, response ).ConfigureAwait( false );
 
             return response;
         }
-        */
-
     }
 }
