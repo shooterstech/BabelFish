@@ -43,37 +43,6 @@ namespace Scopos.BabelFish.APIClients {
             return await GetAttributeValueAsync(requestParameters);
         }
 
-        /// <summary>
-        /// Get UserId Validity
-        /// </summary>
-        /// <param name="requestParameters"></param>
-        /// <returns>ValidateUserId object</returns>
-        public async Task<GetValidateUserIDAuthenticatedResponse> GetValidateUserIDAsync(GetValidateUserIDAuthenticatedRequest requestParameters) {
-
-            GetValidateUserIDAuthenticatedResponse response = new GetValidateUserIDAuthenticatedResponse(requestParameters);
-
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
-
-            return response;
-        }
-
-        /// <summary>
-        /// Get UserId Validity
-        /// </summary>
-        /// <param name="userID"></param>
-        /// <returns>ValidateUserId object</returns>
-        public bool GetValidateUserIDAsync(string userID) {
-
-            GetValidateUserIDAuthenticatedRequest requestParameters = new GetValidateUserIDAuthenticatedRequest()
-            {
-                UserID = userID
-            };
-
-            var taskResponse = GetValidateUserIDAsync(requestParameters);
-            var responses = taskResponse.Result;
-            return responses.ValidateUserID.Valid;
-        }
-
         /*
         /// <summary>
         /// Assemble and Set 1 or more AttributeValue items
