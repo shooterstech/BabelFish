@@ -12,6 +12,7 @@
 	<Company>Shooter's Technology</Company>
 	<PackageDescription>Dot Net Library that provides a façade for Shooter's Tech REST API interface.</PackageDescription>
 	<PackageTags>shooters;tech;API</PackageTags>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

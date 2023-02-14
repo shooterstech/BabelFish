@@ -1,6 +1,7 @@
 ﻿using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Requests.AttributeValueAPI {
     public class GetAttributeValueAuthenticatedRequest : Request {
@@ -14,7 +15,7 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
         /// <summary>
         /// Attribute Names
         /// </summary>
-        public List<string> AttributeNames = new List<string>();
+        public List<SetName> AttributeNames = new List<SetName>();
 
         /// <summary>
         /// When making a get attribute value request, if the user (defined by the UserAuthentication) does not have a value for one of the 
@@ -35,8 +36,13 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
                 if (AttributeNames.Count() == 0)
                     throw new RequestException( "Must have at least one Attribute Name." );
 
+                //Convert the list of SetNames to ask for to a list of strings
+                List<string> attributeNamesAsStrings = new List<string>();
+                foreach (var attributeName in AttributeNames)
+                    attributeNamesAsStrings.Add( attributeName.ToString() );
+
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-                parameterList.Add( "attribute-def", AttributeNames );
+                parameterList.Add( "attribute-def", attributeNamesAsStrings );
                 parameterList.Add( "return-default", new List<string>() { ReturnDefaultValues.ToString().ToLower() } );
                 //NOTE: The Get Attribute Value API call also accepts a 'return-definiiton' parameter. Choosing not to include this as an option since BabelFish uses AttributeValueDefinitionFetcher to learn the definition of the Attribute.
 

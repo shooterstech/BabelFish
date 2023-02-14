@@ -28,11 +28,11 @@ namespace Scopos.BabelFish.APIClients {
         /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
         /// Generally this ia a parameterless call.
         /// </summary>
-        public async Task<GetClubListAuthenticatedResponse> GetClubListAsync( UserAuthentication credentials ) {
+        public async Task<GetClubListAuthenticatedResponse> GetClubListAuthenticatedAsync( UserAuthentication credentials ) {
 
             var request = new GetClubListAuthenticatedRequest( credentials );
 
-            return await GetClubListAsync(request);
+            return await GetClubListAuthenticatedAsync(request);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.APIClients {
         /// to return in a single response. 
         /// </summary>
         /// <param name="request"></param>
-        public async Task<GetClubListAuthenticatedResponse> GetClubListAsync( GetClubListAuthenticatedRequest request ) {
+        public async Task<GetClubListAuthenticatedResponse> GetClubListAuthenticatedAsync( GetClubListAuthenticatedRequest request ) {
 
             var response = new GetClubListAuthenticatedResponse( request );
 
@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAsync( GetClubDetailAuthenticatedRequest request ) {
+        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAuthenticatedAsync( GetClubDetailAuthenticatedRequest request ) {
 
             var response = new GetClubDetailAuthenticatedResponse( request );
 
@@ -70,10 +70,10 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="orionLicenseNumber"></param>
         /// <returns></returns>
-        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAsync( int orionLicenseNumber, UserAuthentication credentials ) {
+        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAuthenticatedAsync( int orionLicenseNumber, UserAuthentication credentials ) {
 
             var ownerId = $"OrionAcct{orionLicenseNumber:06d}";
-            return await GetClubDetailAsync( ownerId, credentials );
+            return await GetClubDetailAuthenticatedAsync( ownerId, credentials );
         }
 
         /// <summary>
@@ -82,11 +82,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
-        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAsync( string ownerId, UserAuthentication credentials ) {
+        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAuthenticatedAsync( string ownerId, UserAuthentication credentials ) {
 
             var request = new GetClubDetailAuthenticatedRequest( ownerId, credentials );
 
-            return await GetClubDetailAsync( request );
+            return await GetClubDetailAuthenticatedAsync( request );
         }
 
     }

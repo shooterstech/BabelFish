@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
                 Constants.TestDev7Credentials.Password );
             var request = new GetClubListAuthenticatedRequest( userAuthentication );
 
-            var response = await client.GetClubListAsync( request );
+            var response = await client.GetClubListAuthenticatedAsync( request );
 
             Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
 
@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
                 Constants.TestDev1Credentials.Password );
             var request1 = new GetClubListAuthenticatedRequest( userAuthentication );
 
-            var response1 = await client.GetClubListAsync( request1 );
+            var response1 = await client.GetClubListAuthenticatedAsync( request1 );
 
             Assert.AreEqual( response1.StatusCode, System.Net.HttpStatusCode.OK );
 
@@ -80,7 +80,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var request2 = new GetClubListAuthenticatedRequest( userAuthentication );
             request2.Token = response1.NextToken;
 
-            var response2 = await client.GetClubListAsync( request2 );
+            var response2 = await client.GetClubListAuthenticatedAsync( request2 );
             Assert.AreEqual( response2.StatusCode, System.Net.HttpStatusCode.OK );
 
             Assert.AreNotEqual( response1.MessageResponse.NextToken, response2.MessageResponse.NextToken );
@@ -98,7 +98,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
                 Constants.TestDev1Credentials.Password );
             var request = new GetClubDetailAuthenticatedRequest( ownerId, userAuthentication );
 
-            var response = await client.GetClubDetailAsync( request );
+            var response = await client.GetClubDetailAuthenticatedAsync( request );
 
             Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
 

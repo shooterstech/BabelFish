@@ -22,18 +22,18 @@ namespace Scopos.BabelFish.APIClients {
         public ScoreHistoryAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
 
 
-        public async Task<GetScoreHistoryResponse> GetScoreHistoryAsync(GetScoreHistoryRequest requestParameters)
+        public async Task<GetScoreHistoryAuthenticatedResponse> GetScoreHistoryAuthenticatedAsync( GetScoreHistoryAuthenticatedRequest requestParameters)
         {
-            var response = new GetScoreHistoryResponse( requestParameters );
+            var response = new GetScoreHistoryAuthenticatedResponse( requestParameters );
 
             await this.CallAPI(requestParameters, response).ConfigureAwait(false);
 
             return response;
         }
 
-        public async Task<GetScoreAverageResponse> GetScoreAverageAsync( GetScoreAverageRequest requestParameters ) {
+        public async Task<GetScoreAverageAuthenticatedResponse> GetScoreAverageAuthenticatedAsync( GetScoreAverageAuthenticatedRequest requestParameters ) {
 
-            var response = new GetScoreAverageResponse( requestParameters );
+            var response = new GetScoreAverageAuthenticatedResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
