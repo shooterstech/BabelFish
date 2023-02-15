@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Scopos.BabelFish.Helpers;
 using NLog;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataModel.AttributeValue;
+using System.Configuration;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
@@ -82,8 +84,94 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="value"></param>
         /// <returns></returns>
         public bool ValidateFieldValue( dynamic value ) {
-            logger.Info( "ValidateFieldValue is not yet implemented. It is always returning true." );
-            return true;
+            //TODO: This just checks the type of the value. It does not check against the validation rules.
+
+            switch (ValueType) {
+                case ValueType.STRING:
+                    if (MultipleValues)
+                        return value is List<string>;
+                    else
+                        return value is string;
+
+                case ValueType.BOOLEAN:
+                    if (MultipleValues)
+                        return value is List<bool>;
+                    else
+                        return value is bool;
+
+                case ValueType.DATE:
+                    if (MultipleValues)
+                        return value is List<DateTime>;
+                    else
+                        return value is DateTime;
+
+                case ValueType.DATE_TIME:
+                    if (MultipleValues)
+                        return value is List<DateTime>;
+                    else
+                        return value is DateTime;
+
+                case ValueType.TIME:
+                    if (MultipleValues)
+                        return value is List<TimeSpan>;
+                    else
+                        return value is TimeSpan;
+
+                case ValueType.INTEGER:
+                    if (MultipleValues)
+                        return value is List<int>;
+                    else
+                        return value is int;
+
+                case ValueType.FLOAT:
+                    if (MultipleValues)
+                        return value is List<float> || value is List<double> || value is List<decimal> || value is int;
+                    else
+
+                        return value is float || value is double || value is decimal || value is int;
+
+                default:
+                    //Shouldn't ever get here.
+                    logger.Error( $"Unexpected ValueType '{ValueType}'.");
+                    return true;
+            }
+        }
+
+        /// <summary>
+        /// Some ValueTypes are not stored as the underlying value, but instead are stored as strings.
+        /// This is because when the values are converted to json .
+        /// It is a best practice to call ValidateFieldValue() with the value prior to calliing this function.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="AttributeValueValidationException">Thrown if the passed in value is not the expected type.</exception>
+        internal dynamic SerializeFieldValue( dynamic value ) {
+            //NOTE that this isn't a true serialization. as values of type int, floats, booleans just get passed through and not converted to strings.
+
+            try {
+                if (MultipleValues) {
+
+                } else {
+                    switch (ValueType) {
+                        case ValueType.DATE:
+                            DateTime dateValue = (DateTime)value;
+                            return dateValue.ToString( DateTimeFormats.DATE_FORMAT );
+                        case ValueType.TIME:
+                            TimeSpan timeValue = (TimeSpan)value;
+                            return timeValue.ToString( DateTimeFormats.TIME_FORMAT );
+                        case ValueType.DATE_TIME:
+                            DateTime dateTimeValue = (DateTime)value;
+                            return dateTimeValue.ToString( DateTimeFormats.DATETIME_FORMAT );
+                        default:
+                            return value;
+                    }
+                }
+            } catch ( Exception ex ) {
+                //Presumable this would be a casting exception.
+                Type dynamicType = value.GetType();
+                var msg = $"Unable to serialize '{value}' to a string. Was expected a ValueType of '{ValueType}', instead got '{dynamicType}'.";
+                throw new AttributeValueValidationException( msg, ex, logger );
+            }
         }
 
     }

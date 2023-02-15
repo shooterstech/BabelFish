@@ -248,7 +248,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <param name="fieldName">Field Name to set</param>
         /// <param name="fieldValue">Field Value to set</param>
-        /// <exception cref="AttributeValueException"></exception>
+        /// <exception cref="AttributeValueException">Thrown if the user tries to call this function on a Attribute that has MultipleValues set to true. User should instead call the overloaded SetFieldValue with three parameters (including the fieldKey).</exception>
+        /// <exception cref="AttributeValueValidationException">Thrown if the fieldValue is either the wrong type or the value does not pass validation.</exception>
         public void SetFieldValue( string fieldName, dynamic fieldValue ) {
             if (this.IsMultipleValue)
                 throw new AttributeValueException( $"Field being set is designated MultipleValue needing Key. Use overload SetFieldName(string fieldName, object fieldValue, string fieldKey)", logger );
@@ -256,15 +257,18 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             AttributeField attributeField = GetAttributeField( fieldName );
 
             if (!attributeField.ValidateFieldValue( fieldValue )) {
-                throw new AttributeValueException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
+                throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             } else {
+                //If the ValueType is a DATE, TIME, or DATETIIME, convert it to a string before storing.
+                dynamic valueToStore = attributeField.SerializeFieldValue( fieldValue );
+
                 if (!attributeValues.ContainsKey( "AttributeList" ))
-                    attributeValues.Add( "AttributeList", new Dictionary<string, dynamic> { { fieldName, fieldValue } } );
+                    attributeValues.Add( "AttributeList", new Dictionary<string, dynamic> { { fieldName, valueToStore } } );
                 else {
                     if (attributeValues["AttributeList"].ContainsKey( fieldName ))
-                        attributeValues["AttributeList"][fieldName] = fieldValue;
+                        attributeValues["AttributeList"][fieldName] = valueToStore;
                     else
-                        attributeValues["AttributeList"].Add( fieldName, fieldValue );
+                        attributeValues["AttributeList"].Add( fieldName, valueToStore );
                 }
             }
         }
@@ -275,7 +279,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="fieldName">Field Name to set</param>
         /// <param name="fieldValue">Field value to set</param>
         /// <param name="fieldKey">Field Key to set</param>
-        /// <exception cref="AttributeValueException"></exception>
+        /// <exception cref="AttributeValueException">Thrown if the user tries to call this function on a Attribute that has MultipleValues set to false. User should instead call the overloaded SetFieldValue with two parameters (not including the fieldKey).</exception>
+        /// <exception cref="AttributeValueValidationException">Thrown if the fieldValue is either the wrong type or the value does not pass validation.</exception>
         public void SetFieldValue( string fieldName, object fieldValue, string fieldKey ) {
             if (!this.IsMultipleValue)
                 throw new AttributeValueException( $"Field being set is designated SingleValue not accepting a Key. Use overload SetFieldName(string fieldName, object fieldValue)", logger );
@@ -283,15 +288,18 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             AttributeField attributeField = GetAttributeField( fieldName );
 
             if (!attributeField.ValidateFieldValue( fieldValue ))
-                throw new AttributeValueException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
+                throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             else {
+                //If the ValueType is a DATE, TIME, or DATETIIME, convert it to a string before storing.
+                dynamic valueToStore = attributeField.SerializeFieldValue( fieldValue );
+
                 if (!attributeValues.ContainsKey( fieldKey ))
-                    attributeValues.Add( fieldKey, new Dictionary<string, dynamic> { { fieldName, fieldValue } } );
+                    attributeValues.Add( fieldKey, new Dictionary<string, dynamic> { { fieldName, valueToStore } } );
                 else {
                     if (attributeValues[fieldKey].ContainsKey( fieldName ))
-                        attributeValues[fieldKey][fieldName] = fieldValue;
+                        attributeValues[fieldKey][fieldName] = valueToStore;
                     else
-                        attributeValues[fieldKey].Add( fieldName, fieldValue );
+                        attributeValues[fieldKey].Add( fieldName, valueToStore );
                 }
             }
         }
