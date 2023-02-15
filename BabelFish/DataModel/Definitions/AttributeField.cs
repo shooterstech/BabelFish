@@ -150,6 +150,32 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             try {
                 if (MultipleValues) {
+                    var myList = new List<string>();
+                    switch (ValueType) {
+                        case ValueType.DATE:
+                            foreach (var item in value) {
+                                DateTime dateValue = (DateTime)item;
+                                myList.Add( dateValue.ToString( DateTimeFormats.DATE_FORMAT ) );
+                            }
+                            return myList;
+
+                        case ValueType.TIME:
+                            foreach (var item in value) {
+                                TimeSpan timeValue = (TimeSpan)item;
+                                myList.Add( timeValue.ToString( DateTimeFormats.TIME_FORMAT ) );
+                            }
+                            return myList;
+
+                        case ValueType.DATE_TIME:
+                            foreach (var item in value) {
+                                DateTime dateTimeValue = (DateTime)item;
+                                myList.Add( dateTimeValue.ToString( DateTimeFormats.DATETIME_FORMAT ) );
+                            }
+                            return myList;
+
+                        default:
+                            return value;
+                    }
 
                 } else {
                     switch (ValueType) {
@@ -166,12 +192,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                             return value;
                     }
                 }
+
             } catch ( Exception ex ) {
                 //Presumable this would be a casting exception.
                 Type dynamicType = value.GetType();
                 var msg = $"Unable to serialize '{value}' to a string. Was expected a ValueType of '{ValueType}', instead got '{dynamicType}'.";
                 throw new AttributeValueValidationException( msg, ex, logger );
             }
+        }
+
+        internal dynamic DeserializeFieldValue( dynamic value) {
+            return value;
         }
 
     }

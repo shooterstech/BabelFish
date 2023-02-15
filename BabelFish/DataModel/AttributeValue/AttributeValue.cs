@@ -132,7 +132,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <param name="fieldName"></param>
         /// <returns></returns>
-        /// <exception cref="AttributeValueException"></exception>
+        /// <exception cref="AttributeValueException">Thrown if the fieldName is not defined by the Attribute.</exception>
         public AttributeField GetAttributeField( string fieldName ) {
             foreach (var field in definition.Fields ) {
                 if (field.FieldName== fieldName) 
@@ -208,39 +208,48 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         /// <summary>
-        /// Retrieve single Value then cast object type based on GetFieldType()
+        /// Intended for Attributes with MultipleValues set to false (not a list).
+        /// Retreives the field value based on the passed in fieldName. If fieldName has not yet been set, the default value for the feild is returned.
+        /// Caller is responsible for casting to the approrpirate .NET type.
         /// </summary>
-        /// <param name="FieldName">Valid FieldName as defined in AttributeDefintion</param>
+        /// <param name="fieldName">Valid FieldName as defined in AttributeDefintion</param>
         /// <returns>object to be type cast</returns>
-        /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is a multi-value field.</exception>
+        /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is a multi-value attribute.</exception>
         public dynamic GetFieldValue( string fieldName ) {
-            var returnValue = new object();
-            if (this.IsMultipleValue)
-                throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", logger );
-            else
-                returnValue = (attributeValues["AttributeList"].ContainsKey( fieldName )) ? attributeValues["AttributeList"][fieldName] : new object();
+            AttributeField attributeField = GetAttributeField( fieldName );
+            dynamic returnValue = attributeField.DefaultValue;
 
-            return returnValue;
+            if (this.IsMultipleValue) {
+                throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", logger );
+            } else {
+                if (attributeValues["AttributeList"].ContainsKey( fieldName ))
+                    returnValue = attributeValues["AttributeList"][fieldName];
+            }
+
+            return attributeField.DeserializeFieldValue( returnValue );
         }
 
         /// <summary>
-        /// Get mulitple Values then cast object type based on GetFieldType()
+        /// Intended for Attributes with MultipleValues set to true (is a list).
+        /// Retreives the field value based on the passed in fieldName and fieldKey. If fieldName has not yet been set, or the fieldKey is not yet used, the default value for the feild is returned.
+        /// Caller is responsible for casting to the approrpirate .NET type.
         /// </summary>
-        /// <param name="FieldName">Valid FieldName from GetAttributeDefintionFields()</param>
-        /// <param name="FieldKey">Valid FieldKey string from GetFieldKeys()</param>
+        /// <param name="fieldName">Valid FieldName from GetAttributeDefintionFields()</param>
+        /// <param name="fieldKey">Valid FieldKey string from GetFieldKeys()</param>
         /// <returns>object to be Type cast; null object if not found</returns>
-        /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is a multi-value field.</exception>
+        /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is not a multi-value attribute.</exception>
         public dynamic GetFieldValue( string fieldName, string fieldKey ) {
-            dynamic returnValue = null;
+            AttributeField attributeField = GetAttributeField( fieldName );
+            dynamic returnValue = attributeField.DefaultValue;
+
             if (!this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' with key '{fieldKey}' in {SetName}", logger );
             } else {
-                returnValue = (attributeValues.ContainsKey( fieldKey ) && attributeValues[fieldKey].ContainsKey( fieldName )) ? attributeValues[fieldKey][fieldName] : null;
-                if (returnValue == null)
-                    throw new AttributeValueException( $"The field name '{fieldName}' with key '{fieldKey}' does not seem to exist in {SetName}", logger );
+                if (attributeValues.ContainsKey( fieldKey ) && attributeValues[fieldKey].ContainsKey( fieldName )) 
+                    returnValue = attributeValues[fieldKey][fieldName];
             }
 
-            return returnValue;
+            return attributeField.DeserializeFieldValue( returnValue );
         }
 
         /// <summary>
