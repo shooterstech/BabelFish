@@ -7,12 +7,15 @@ using NLog;
 using Newtonsoft.Json;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using System.Configuration;
+using System.Globalization;
+using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
     public class AttributeField {
 
         private static Logger logger= LogManager.GetCurrentClassLogger();
+        private static CultureInfo culture = CultureInfo.InvariantCulture;
 
         public AttributeField() {
             Required = false;
@@ -34,10 +37,74 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public FieldType FieldType { get; set; } = FieldType.OPEN;
 
+        private dynamic defaultValue = null;
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one. 
         /// </summary>
-        public dynamic DefaultValue { get; set; } = string.Empty;
+        [JsonIgnore]
+        public dynamic DefaultValue { 
+            get {
+                //If defaultValue is null, it means it wasn't set as part of the definition. instead return a default value based on the value type
+                if (defaultValue == null) {
+                    switch( ValueType ) {
+                        case ValueType.STRING:
+                            if (MultipleValues)
+                                defaultValue = new List<string>();
+                            else
+                                defaultValue = "";
+                            break;
+
+                        case ValueType.INTEGER:
+                            if (MultipleValues)
+                                defaultValue = new List<int>();
+                            else 
+                                defaultValue = 0;
+                            break;
+
+                        case ValueType.FLOAT:
+                            if (MultipleValues)
+                                defaultValue = new List<float>();
+                            else
+                                defaultValue = 0F;
+                            break;
+
+                        case ValueType.BOOLEAN:
+                            //Booleans can not be multivalues
+                            defaultValue = false;
+                            break;
+
+                        case ValueType.DATE:
+                        case ValueType.DATE_TIME:
+                            if (MultipleValues)
+                                defaultValue = new List<DateTime>();
+                            else
+                                defaultValue = DateTime.UtcNow;
+                            break;
+
+                        case ValueType.TIME:
+                            if (MultipleValues)
+                                defaultValue = new List<TimeSpan>();
+                            else
+                                defaultValue = TimeSpan.Zero;
+                            break;
+
+                        case ValueType.SETNAME:
+                            if (MultipleValues)
+                                defaultValue = new List<SetName>();
+                            else
+                                defaultValue = SetName.Parse( "v1.0:orion:Profile Name" );
+                            break;
+                    }
+
+                }
+
+                return defaultValue;
+            }
+            set {
+                if (value is JToken)
+                    value = DeserializeFromJTokens( value );
+            }
+        }
 
         /// <summary>
         /// True if the user may enter multiple values in this field (in other words, its a list). False if the user may only enter one value.
@@ -78,6 +145,56 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return $"{FieldName} of type {ValueType} Key: {Key}";
         }
 
+        internal dynamic DeserializeFromJTokens(JToken value) {
+            switch (ValueType) {
+                case ValueType.STRING:
+                    if (MultipleValues)
+                        return value.ToObject<List<string>>();
+                    else
+                        return (string) value;
+
+                case ValueType.BOOLEAN:
+                    //Attribute definitions don't allow lists of booleans
+                    return (bool) value;
+
+                case ValueType.DATE:
+                    if (MultipleValues)
+                        return value.ToObject<List<DateTime>>();
+                    else
+                        return (DateTime) value;
+
+                case ValueType.DATE_TIME:
+                    if (MultipleValues)
+                        return value.ToObject<List<DateTime>>();
+                    else
+                        return (DateTime)value;
+
+                case ValueType.TIME:
+                    if (MultipleValues)
+                        return value.ToObject<List<TimeSpan>>();
+                    else
+                        return (TimeSpan)value;
+
+                case ValueType.INTEGER:
+                    if (MultipleValues)
+                        return value.ToObject<List<int>>();
+                    else
+                        return (int) value;
+
+                case ValueType.FLOAT:
+                    if (MultipleValues)
+                        return value.ToObject<List<float>>();
+                    else
+
+                        return (float) value;
+
+                default:
+                    //Shouldn't ever get here.
+                    logger.Error( $"Unexpected ValueType '{ValueType}'." );
+                    return DefaultValue;
+            }
+        }
+
         /// <summary>
         /// Returns a boolean indicating if the passed in value passes all validation tests for thei field.
         /// </summary>
@@ -85,6 +202,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         public bool ValidateFieldValue( dynamic value ) {
             //TODO: This just checks the type of the value. It does not check against the validation rules.
+
+            Type t = value.GetType();
 
             switch (ValueType) {
                 case ValueType.STRING:
@@ -94,10 +213,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         return value is string;
 
                 case ValueType.BOOLEAN:
-                    if (MultipleValues)
-                        return value is List<bool>;
-                    else
-                        return value is bool;
+                    //Attribute definitions don't allow lists of booleans
+                    return value is bool;
 
                 case ValueType.DATE:
                     if (MultipleValues)
@@ -109,7 +226,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     if (MultipleValues)
                         return value is List<DateTime>;
                     else
-                        return value is DateTime;
+                        return value is DateTime; 
 
                 case ValueType.TIME:
                     if (MultipleValues)
@@ -128,7 +245,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         return value is List<float> || value is List<double> || value is List<decimal> || value is int;
                     else
 
-                        return value is float || value is double || value is decimal || value is int;
+                        return value is float 
+                            || value is double 
+                            || value is decimal 
+                            || value is int;
+
+                case ValueType.SETNAME:
+                    if (MultipleValues)
+                        return value is List<SetName>;
+                    else
+                        return value is SetName;
 
                 default:
                     //Shouldn't ever get here.
@@ -202,7 +328,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         internal dynamic DeserializeFieldValue( dynamic value) {
-            return value;
+            try {
+                if ( MultipleValues) {
+                    return value;
+                } else {
+                    switch (ValueType) {
+                        case ValueType.DATE:
+                            DateTime dateValue = DateTime.ParseExact( (string)value, DateTimeFormats.DATE_FORMAT, culture );
+                            return dateValue;
+                        case ValueType.TIME:
+                            TimeSpan timeValue = TimeSpan.ParseExact( (string)value, DateTimeFormats.TIME_FORMAT, culture );
+                            return timeValue;
+                        case ValueType.DATE_TIME:
+                            DateTime dateTimeValue = DateTime.ParseExact( (string)value, DateTimeFormats.DATETIME_FORMAT, culture );
+                            return dateTimeValue;
+                        default:
+                            return value;
+                    }
+
+                }
+
+            } catch (Exception ex) {
+                //Presumable this would be a casting exception.
+                var msg = $"Unable to deserialize '{value}' from a string. Was expected a ValueType of '{ValueType}'.";
+                throw new AttributeValueValidationException( msg, ex, logger );
+            }
         }
 
     }

@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
 using Newtonsoft.Json.Linq;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
+
     public class AttributeValue : IJToken {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
@@ -15,6 +15,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
         private Dictionary<string, Dictionary<string, dynamic>> attributeValues = new Dictionary<string, Dictionary<string, dynamic>>();
         private SetName setName = null;
+        private const string KEY_FOR_SINGLE_ATTRIBUTES = "Single-Value-Attribute-45861567";
+
         private Scopos.BabelFish.DataModel.Definitions.Attribute definition;
 
         /// <summary>
@@ -58,6 +60,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             SetName = SetName.Parse( setName );
             definition = FETCHER.FetchAttributeDefinition( SetName );
 
+            SetDefaultFieldValues();
+
             if (definition.MultipleValues) {
                 foreach( var av in (JArray) attributeValueAsJToken) {
                     ParseJObject( (JObject) av );
@@ -76,13 +80,18 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             foreach( var field in definition.Fields) {
                 var fieldName = field.FieldName;
-                dynamic fieldValue = (dynamic) attributeValueAsJObject[fieldName];
+                if (attributeValueAsJObject.ContainsKey( fieldName )) {
+                    dynamic fieldValue = field.DeserializeFromJTokens( attributeValueAsJObject[fieldName] );
 
-                if (definition.MultipleValues) {
-                    this.SetFieldValue( fieldName, fieldValue, keyFieldValue );
-                } else {
-                    this.SetFieldValue( fieldName, fieldValue );
-                }
+                    if (definition.MultipleValues) {
+                        this.SetFieldValue( fieldName, fieldValue, keyFieldValue );
+                    } else {
+                        this.SetFieldValue( fieldName, fieldValue );
+                    }
+                } 
+                //If the fieldName is not part of what we are deserializing, then the startegy is to set the value
+                //to the default value. Don't need to explicitly do that here, since when the user calls GetValue()
+                //if a value is not set, it returns the default then.
                 
             }
         }
@@ -156,15 +165,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         /// <summary>
-        /// Get Field list of default fields
-        /// </summary>
-        /// <returns>List<AttributeField> from AttributeDefintion</AttributeField></returns>
-        public List<AttributeField> GetDefinitionFieldsDefaultValues() {
-            return definition.Fields.Where( x => x.DefaultValue.ToString() != string.Empty ).ToList();
-        }
-
-        /// <summary>
-        /// Get list of Required Fields
+        /// Get list of AttributeFields that are Required
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefinition</returns>
         public List<AttributeField> GetDefinitionRequiredFields() {
@@ -222,8 +223,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", logger );
             } else {
-                if (attributeValues["AttributeList"].ContainsKey( fieldName ))
-                    returnValue = attributeValues["AttributeList"][fieldName];
+                if (attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].ContainsKey( fieldName ))
+                    returnValue = attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName];
             }
 
             return attributeField.DeserializeFieldValue( returnValue );
@@ -270,15 +271,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             } else {
                 //If the ValueType is a DATE, TIME, or DATETIIME, convert it to a string before storing.
                 dynamic valueToStore = attributeField.SerializeFieldValue( fieldValue );
-
-                if (!attributeValues.ContainsKey( "AttributeList" ))
-                    attributeValues.Add( "AttributeList", new Dictionary<string, dynamic> { { fieldName, valueToStore } } );
-                else {
-                    if (attributeValues["AttributeList"].ContainsKey( fieldName ))
-                        attributeValues["AttributeList"][fieldName] = valueToStore;
-                    else
-                        attributeValues["AttributeList"].Add( fieldName, valueToStore );
-                }
+                
+                SetDefaultFieldValues( KEY_FOR_SINGLE_ATTRIBUTES );
+                if (attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].ContainsKey( fieldName ))
+                    attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName] = valueToStore;
+                else
+                    attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].Add( fieldName, valueToStore );
             }
         }
 
@@ -302,14 +300,11 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 //If the ValueType is a DATE, TIME, or DATETIIME, convert it to a string before storing.
                 dynamic valueToStore = attributeField.SerializeFieldValue( fieldValue );
 
-                if (!attributeValues.ContainsKey( fieldKey ))
-                    attributeValues.Add( fieldKey, new Dictionary<string, dynamic> { { fieldName, valueToStore } } );
-                else {
-                    if (attributeValues[fieldKey].ContainsKey( fieldName ))
-                        attributeValues[fieldKey][fieldName] = valueToStore;
-                    else
-                        attributeValues[fieldKey].Add( fieldName, valueToStore );
-                }
+                SetDefaultFieldValues( fieldKey );
+                if (attributeValues[fieldKey].ContainsKey( fieldName ))
+                    attributeValues[fieldKey][fieldName] = valueToStore;
+                else
+                    attributeValues[fieldKey].Add( fieldName, valueToStore );
             }
         }
 
@@ -337,14 +332,24 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             throw new NotImplementedException();
         }
 
-        private void SetDefaultFieldValues( string keyField = "" ) {
+        /// <summary>
+        /// Calling SetDefaultFieldValue will add the passed in keyField to attributeValues
+        /// and set each field to its default value.
+        /// If keyField is already a key in attributeValues, no action is taken.
+        /// </summary>
+        /// <param name="keyField"></param>
+        /// <exception cref="AttributeValueException"></exception>
+        private void SetDefaultFieldValues( string keyField = KEY_FOR_SINGLE_ATTRIBUTES ) {
             try {
-                foreach (AttributeField fieldDefaults in GetDefinitionFieldsDefaultValues()) {
-                    if (fieldDefaults.Required == true) {
-                        if (keyField == string.Empty)
-                            SetFieldValue( fieldDefaults.FieldName, fieldDefaults.DefaultValue );
-                        else if (keyField != string.Empty)
-                            SetFieldValue( fieldDefaults.FieldName, fieldDefaults.DefaultValue, keyField );
+                if (!attributeValues.ContainsKey( keyField )) {
+                    attributeValues[keyField] = new Dictionary<string, dynamic>();
+
+                    foreach (AttributeField fields in definition.Fields) {
+
+                        if (keyField == KEY_FOR_SINGLE_ATTRIBUTES)
+                            SetFieldValue( fields.FieldName, fields.DefaultValue );
+                        else
+                            SetFieldValue( fields.FieldName, fields.DefaultValue, keyField );
                     }
                 }
             } catch (Exception ex) {
@@ -362,10 +367,17 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public JToken ToJToken() {
             
             JArray multiPartValues = new JArray();
-            foreach (var multiPartValue in attributeValues.Values) {
+            foreach (var multiPartValue in attributeValues) {
+                if (IsMultipleValue && multiPartValue.Key == KEY_FOR_SINGLE_ATTRIBUTES)
+                    continue;
+
                 JObject attributeValueJObject = new JObject();
-                foreach (var av in multiPartValue) {
-                    attributeValueJObject.Add( av.Key, av.Value );
+                foreach (var av in multiPartValue.Value) {
+                    AttributeField field = GetAttributeField( av.Key );
+                    if (field.MultipleValues)
+                        attributeValueJObject.Add( av.Key, JArray.FromObject( av.Value ) );
+                    else
+                        attributeValueJObject.Add( av.Key, av.Value );
                 }
                 multiPartValues.Add( attributeValueJObject );
             }

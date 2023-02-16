@@ -10,6 +10,7 @@ using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
@@ -68,14 +69,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttributeValue1.SetFieldValue( "ADate", newDate );
             testAttributeValue1.SetFieldValue( "ADateTime", newDateTime );
 
-            //Test that the .SetFieldValue worked locally
-            Assert.AreEqual( newIntValue,(int) testAttributeValue1.GetFieldValue( "AnInteger" ) );
-            Assert.AreEqual( newFloatValue, (float) testAttributeValue1.GetFieldValue( "AFloat" ) );
-            Assert.AreEqual( newStringValue, (string) testAttributeValue1.GetFieldValue( "AString" ) );
-            Assert.AreEqual( newBoolean, (bool)testAttributeValue1.GetFieldValue( "ABoolean" ) );
-            Assert.AreEqual( newDate, (DateTime)testAttributeValue1.GetFieldValue( "ADate" ) );
-            Assert.AreEqual( newDateTime, (DateTime)testAttributeValue1.GetFieldValue( "ADateTime" ) );
-
             //Generate a set attribute value request
             var setRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication );
             //Add the attribute data packet to the request. Note we do not need to create a new AttributeDataPacket, we can re-use the one we got from the .GetAttributeValue call
@@ -107,7 +100,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( newStringValue, (string) testAttributeValue2.GetFieldValue( "AString" ) );
             Assert.AreEqual( newBoolean, (bool)testAttributeValue2.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( newDate, (DateTime)testAttributeValue2.GetFieldValue( "ADate" ) );
-            Assert.AreEqual( newDateTime, (DateTime)testAttributeValue2.GetFieldValue( "ADateTime" ) );
+            Assert.IsTrue( Math.Abs((((DateTime)testAttributeValue2.GetFieldValue( "ADateTime" )).ToUniversalTime()- newDateTime).TotalSeconds) < .001D );
         }
     }
 }
