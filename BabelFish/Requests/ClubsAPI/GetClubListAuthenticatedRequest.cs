@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Scopos.BabelFish.Requests;
+using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.APIClients;
+
+namespace Scopos.BabelFish.Requests.ClubsAPI {
+    public class GetClubListAuthenticatedRequest : Request, IToken {
+
+
+        public GetClubListAuthenticatedRequest( UserAuthentication credentials ) : base( "GetClubList", credentials ) {
+            //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
+            this.RequiresCredentials = true;
+            this.SubDomain = APISubDomain.AUTHAPI;
+        }
+
+        /// <inheritdoc />
+        public string Token { get; set; }
+
+
+        /// <inheritdoc />
+        public override string RelativePath {
+
+            get { return $"/clubs"; }
+        }
+
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
+
+                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+
+                if (! string.IsNullOrEmpty( Token ) ) {
+                    parameterList.Add( "token", new List<string> { Token } );
+                }
+
+                return parameterList;
+            }
+        }
+    }
+}

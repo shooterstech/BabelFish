@@ -1,10 +1,12 @@
-﻿namespace Scopos.BabelFish.DataModel.Authentication
-{
+﻿
+using Scopos.BabelFish.DataModel;
+
+namespace Scopos.BabelFish.DataModel.Authentication {
     /// <summary>
     /// AWS Auth Tokens Returned
     /// </summary>
     [Serializable]
-    public class AuthTokens
+    public class AuthTokens : BaseClass
     {
         public string RefreshToken { get; set; } = string.Empty;
 

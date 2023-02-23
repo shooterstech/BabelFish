@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Responses
-{
-    public class MessageResponse : IResponse
-    {
+namespace Scopos.BabelFish.Responses {
+
+    /// <summary>
+    /// The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
+    /// </summary>
+    public class MessageResponse : IResponse {
 
         public List<String> Message { get; set; } = new List<string>();
 

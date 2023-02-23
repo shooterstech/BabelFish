@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public abstract class Definition {
+    public abstract class Definition : BaseClass {
 
         /// <summary>
         /// Defines the different high level disciplines in use with Shooting. Largely defined by the ISSF.
@@ -95,12 +96,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string CommonName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Version number of the definiton. major and minor, e.g. 1.10
+        /// Version number of the definiton,, represented in string form. major and minor, e.g. 1.10
         /// Version "0.0" is reserved as a copy of the most up to date version
         /// Version "x.0" is reserved as a copy of the most up to date version within the major version
         /// </summary>
         [JsonProperty(Order = 3)]
         public string Version { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Returns the Version of the Definition as an object DefinitionVersion.
+        /// the string varation is returned with the property .Version
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown if the Version can not be parsed to format x.y</exception>
+        public DefinitionVersion GetDefinitionVersion() {
+            return new DefinitionVersion( Version );
+        }
 
         /// <summary>
         /// The Definition Type

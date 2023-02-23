@@ -7,6 +7,6 @@ namespace Scopos.BabelFish.Helpers {
 
         public const string DATE_FORMAT = "yyyy-MM-dd";
         public const string DATETIME_FORMAT = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffffffK";
-        public const string TIME_FORMAT = "HH:mm:ss.f";
+        public const string TIME_FORMAT = "hh\\:mm\\:ss\\.ffffff";
     }
 }

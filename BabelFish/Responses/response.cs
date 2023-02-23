@@ -6,17 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 
 namespace Scopos.BabelFish.Responses
 {
     /// <summary>
     /// Abstract class representing all Rest API Responses.
+    /// A concret implementation of a Response class should coorespond to exactly one REST API method call.
     /// T is the type of data object expected returned by the REST API call.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class Response<T>
-        where T : new() {
+        where T : BaseClass {
 
 
         protected JToken body = new JObject();
@@ -53,7 +55,7 @@ namespace Scopos.BabelFish.Responses
 
 
         /// <summary>
-        /// Gets or sets the status data object returned by the Rest API Call.
+        /// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
         /// </summary>
         public MessageResponse MessageResponse
         {
@@ -62,13 +64,13 @@ namespace Scopos.BabelFish.Responses
         } = new MessageResponse();
 
         /// <summary>
-        /// Gets or sets the object data object returned by the Rest API Call.
+        /// Gets or sets the data object returned by the Rest API Call.
         /// </summary>
         public T Value
         {
             get;
             internal set;
-        } = new T();
+        } = default( T );
 
         /// <summary>
         /// Gets or Sets the Status Code returned by the Rest API call.

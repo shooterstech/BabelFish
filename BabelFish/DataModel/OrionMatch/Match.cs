@@ -4,7 +4,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch
 {
@@ -64,6 +66,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// Name of the Match
         /// </summary>
         [JsonProperty(Order = 7)]
+        public string MatchName {
+            get { return Name; }
+            set { Name = value; }
+        }
+
+        /// <summary>
+        /// Name of the Match
+        /// </summary>
+        [Obsolete("Use MatchName instead.")]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
@@ -73,8 +84,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
-        [JsonProperty(Order = 8)]
-        public string Visibility { get; set; } = string.Empty;
+        [JsonProperty( Order = 8 )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         [JsonProperty(Order = 9)]
         public string AccountNumber { get; set; } = string.Empty;

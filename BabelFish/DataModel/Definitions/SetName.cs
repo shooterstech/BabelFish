@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class SetName {
@@ -13,29 +12,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private string nameSpace = "";
         private string properName = "";
 
-        private SetName() { }
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        /*
-        [JsonConstructor]
-        public SetName(string setName) {
-            try {
-                var foo = setName.Split(':');
-                string version = foo[0];
-                this.nameSpace = foo[1];
-                this.properName = foo[2];
-
-                var bar = version.Substring(1).Split('.');
-                this.majorVersion = int.Parse(bar[0]);
-                this.minorVersion = int.Parse(bar[1]);
-            } catch (Exception ex) {
-                majorVersion = 0;
-                minorVersion = 0;
-                nameSpace = "";
-                properName = "";
-            }
-
-        }
-        */
+        /// <summary>
+        /// Default constructor. Should only be used in conjunction with a TryParse method.
+        /// </summary>
+        public SetName() { }
 
         public static bool TryParseVersion(string version, out int majorVersion, out int minorVersion) {
 
@@ -45,25 +27,39 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 minorVersion = int.Parse(bar[1]);
                 return true;
             } catch(Exception ex) {
+                var msg = $"Unable to parse the version string '{version}'";
+                logger.Error(msg, ex);
                 majorVersion = 1;
                 minorVersion = 1;
                 return false;
             }
         }
 
+        /// <summary>
+        /// Parses the passed in setName string, and returns a SetName object.
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
         public static SetName Parse(string setName) {
 
-            SetName sn = new SetName();
-            var foo = setName.Split(':');
-            string version = foo[0];
-            sn.nameSpace = foo[1];
-            sn.properName = foo[2];
+            try {
+                SetName sn = new SetName();
+                var foo = setName.Split( ':' );
+                string version = foo[0];
+                sn.nameSpace = foo[1];
+                sn.properName = foo[2];
 
-            var bar = version.Substring(1).Split('.');
-            sn.majorVersion = int.Parse(bar[0]);
-            sn.minorVersion = int.Parse(bar[1]);
+                var bar = version.Substring( 1 ).Split( '.' );
+                sn.majorVersion = int.Parse( bar[0] );
+                sn.minorVersion = int.Parse( bar[1] );
 
-            return sn;
+                return sn;
+            } catch (Exception ex) {
+                var msg = $"Unable to parse the set name string '{setName}'";
+                logger.Error( msg, ex );
+                throw new ArgumentException( msg, ex );
+            }
         }
 
         public static bool TryParse(string setName, out SetName sn) {
@@ -71,6 +67,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 sn = Parse(setName);
                 return true;
             } catch(Exception ex) {
+                var msg = $"Unable to parse the set name string '{setName}'";
+                logger.Error( msg, ex );
                 sn = null;
                 return false;
             }
@@ -90,6 +88,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 sn.minorVersion = int.Parse(bar[1]);
                 return true;
             } catch (Exception ex) {
+                var msg = $"Unable to parse the version string '{version}'";
+                logger.Error( msg, ex );
                 sn = null;
                 return false;
             }
@@ -122,6 +122,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="nameSpace"></param>
         /// <param name="name"></param>
         /// <param name="version">Must be in form v[major].[minor]</param>
+        /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
         public SetName(string nameSpace, string name, string version) {
             this.nameSpace = nameSpace;
             this.properName = name;
@@ -131,8 +132,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 this.majorVersion = int.Parse(bar[0]);
                 this.minorVersion = int.Parse(bar[1]);
             } catch (Exception ex) {
-                this.majorVersion = int.MinValue;
-                this.minorVersion = int.MinValue;
+                var msg = $"Unable to parse the version string '{version}'";
+                logger.Error( msg, ex );
+                throw new ArgumentException( msg, ex );
             }
         }
 

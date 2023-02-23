@@ -11,26 +11,38 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ClubOptions {
 
-        [Description( "The Club account has enabled their Rezults Team Page" )]
+        /// <summary>
+        /// The Club account has enabled their Rezults Team Page
+        /// </summary>
+        [Description( "ENABLEWWW" )]
         [EnumMember( Value = "ENABLEWWW" )]
         ENABLEWWW,
 
-        [Description( "The Club has choosen to auto accept Virtual Match invitations." )]
+        /// <summary>
+        /// The Club has choosen to auto accept Virtual Match invitations.
+        /// </summary>
+        [Description( "AUTOACCEPT" )]
         [EnumMember( Value = "AUTOACCEPT" )]
         AUTOACCEPT,
 
-
-        [Description( "I'm not entirely sure what we use this for" )]
+        /// <summary>
+        /// I'm not entirely sure what we use this for
+        /// </summary>
+        [Description( "EMAILNOTIFY" )]
         [EnumMember( Value = "EMAILNOTIFY" )]
         EMAILNOTIFY,
 
-
-        [Description( "The Club has requested their POC / SEC contacts be added to Scopos' email list." )]
+        /// <summary>
+        /// The Club has requested their POC / SEC contacts be added to Scopos' email list.
+        /// </summary>
+        [Description( "ADDTOEMAILLIST" )]
         [EnumMember( Value = "ADDTOEMAILLIST" )]
         ADDTOEMAILLIST,
 
-
-        [Description( "The Club has a valid mailing address." )]
+        /// <summary>
+        /// The Club has a valid mailing address.
+        /// </summary>
+        [Description( "VALIDADDRESS" )]
         [EnumMember( Value = "VALIDADDRESS" )]
         VALIDADDRESS
     }
