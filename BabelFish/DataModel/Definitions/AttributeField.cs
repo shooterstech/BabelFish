@@ -9,6 +9,7 @@ using Scopos.BabelFish.DataModel.AttributeValue;
 using System.Configuration;
 using System.Globalization;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
@@ -330,7 +331,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         internal dynamic DeserializeFieldValue( dynamic value) {
             try {
                 if ( MultipleValues) {
-                    return value;
+                    switch (ValueType) {
+                        case ValueType.DATE:
+                            var dateList = new List<DateTime>();
+                            foreach( var item in value)
+                                dateList.Add( DateTime.ParseExact( (string)item, DateTimeFormats.DATE_FORMAT, culture ) );
+                            return dateList;
+                        case ValueType.TIME:
+                            var timeList = new List<TimeSpan>();
+                            foreach (var item in value)
+                                timeList.Add( TimeSpan.ParseExact( (string)item, DateTimeFormats.TIME_FORMAT, culture ) );
+                            return timeList;
+                        case ValueType.DATE_TIME:
+                            var dateTimeList = new List<DateTime>();
+                            foreach (var item in value)
+                                dateTimeList.Add( DateTime.ParseExact( (string)item, DateTimeFormats.DATETIME_FORMAT, culture ) );
+                            return dateTimeList;
+                        default:
+                            return value;
+                    }
                 } else {
                     switch (ValueType) {
                         case ValueType.DATE:
