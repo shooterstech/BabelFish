@@ -157,5 +157,22 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsFalse( string.IsNullOrEmpty( userAuthenticationInit.SecretKey ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthenticationInit.SessionToken ) );
         }
+
+        /// <summary>
+        /// Attempts to clean up Devices attached to our test users. This isn't a real unit test, it just cleans things up.
+        /// Ideally this method would be marked with the ClassCleanup attribute. However, when doing so, VS doesn't want 
+        /// to run any of the tests. To get around this limitation, trying ot run this last. 
+        /// </summary>
+        [TestMethod]
+        public void Z_Cleanup() {
+
+            foreach (var users in Constants.TestDevCredentialsList) {
+                var userAuthenticationInit = new UserAuthentication(
+                    users.Username,
+                    users.Password );
+
+                int count = userAuthenticationInit.CleanUpOldDevices();
+            }
+        }
     }
 }

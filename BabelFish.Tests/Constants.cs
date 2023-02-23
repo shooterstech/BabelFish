@@ -40,6 +40,10 @@ namespace Scopos.BabelFish.Tests {
         public static string TestDev3UserId = "11d535ed-5bc2-43be-ac94-6776111c0eec";
         public static string TestDev7UserId = "26f32227-d428-41f6-b224-beed7b6e8850";
         public static string TestDev9UserId = "28489692-0a61-470e-aed8-c71b9cfbfe6e";
+
+        public static List<BasicUserCredentials> TestDevCredentialsList = new List<BasicUserCredentials>() {
+            TestDev1Credentials, TestDev3Credentials, TestDev7Credentials, TestDev9Credentials
+        };
     }
 
     public class BasicUserCredentials {
