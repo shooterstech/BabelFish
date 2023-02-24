@@ -12,6 +12,10 @@ namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
     /// </summary>
     public abstract class CommandParameters : IDeserializableAbstractClass {
 
+        /*
+         * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
+         */
+
         /// <summary>
         /// Implementation of the IDeserializableAbstractClass interface.
         /// To have added control over the Deserialization of abstract classes, in to

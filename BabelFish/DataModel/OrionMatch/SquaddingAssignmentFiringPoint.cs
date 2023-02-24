@@ -15,20 +15,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public SquaddingAssignmentFiringPoint() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
 
-            RelaySortOrder = 1;
-            FiringPointSortOrder = 1;
             ReentryTag = "";
         }
 
-        public string Relay { get; set; }
-
-        public int RelaySortOrder { get; set; }
-
+        /// <summary>
+        /// The name of the firing point the Individual is squadded on. Usually represented by an integer or a single character.
+        /// </summary>
         public string FiringPoint { get; set; }
 
-        public int FiringPointSortOrder { get; set; }
-
-        public string ReentryTag { get; set; }
+        /// <summary>
+        /// The name of the relay the Individual is squadded on. Usually represented by an integer value.
+        /// </summary>
+        public string Relay { get; set; }
 
         public int CompareTo(SquaddingAssignmentFiringPoint other) {
             int compare = this.Range.CompareTo(other.Range);

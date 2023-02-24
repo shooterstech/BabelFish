@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        public Dictionary<string, AttributeValueDataPacket> AttributeValues {
+        public Dictionary<string, AttributeValueDataPacketAPIResponse> AttributeValues {
             get { return Value.AttributeValues; }
         }
 
@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
         /// <returns></returns>
         public bool TryGetAttributeValue( string attributeDefinitionSetName, out AttributeValue attributeValue ) {
             attributeValue = null;
-            AttributeValueDataPacket avw;
+            AttributeValueDataPacketAPIResponse avw;
             if (Value.AttributeValues.TryGetValue( attributeDefinitionSetName, out avw)) {
                 if ( avw.StatusCode == System.Net.HttpStatusCode.OK ) {
                     attributeValue = avw.AttributeValue; ;
@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             return false;
         }
 
-        public bool TryGetAttributeValueWrapper( string attributeDefinitionSetName, out AttributeValueDataPacket attributeValueWrapper ) {
+        public bool TryGetAttributeValueWrapper( string attributeDefinitionSetName, out AttributeValueDataPacketAPIResponse attributeValueWrapper ) {
             if (Value.AttributeValues.TryGetValue( attributeDefinitionSetName, out attributeValueWrapper )) {
                 return true;
             }
@@ -67,10 +67,10 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
                     var setNameStr = attributeValueResponseJObject.Name;
                     var attrValueWrapperJObject = (JObject)attributeValueResponseJObject.Value;
 
-                    AttributeValueDataPacket avWrapper = new AttributeValueDataPacket();
+                    AttributeValueDataPacketAPIResponse avWrapper = new AttributeValueDataPacketAPIResponse();
                     Value.AttributeValues.Add( setNameStr, avWrapper );
 
-                    avWrapper.SetName = SetName.Parse( setNameStr );
+                    avWrapper.AttributeDef = SetName.Parse( setNameStr );
                     avWrapper.StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode) , ( string)attrValueWrapperJObject["statusCode"] );
                     if (attrValueWrapperJObject.ContainsKey( "Message" )) {
                         try {

@@ -15,9 +15,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public SquaddingAssignmentBank() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
         }
-        public string Relay { get; set; }
 
+        /// <summary>
+        /// The name of the bank of targets the Individual is squadded on. Usually represented by an integer or a single character.
+        /// </summary>
         public string Bank { get; set; }
+
+        /// <summary>
+        /// The name of the relay the Individual is squadded on. Usually represented by an integer value.
+        /// </summary>
+        public string Relay { get; set; }
 
         public int CompareTo(SquaddingAssignmentBank other) {
             int compare = this.Range.CompareTo(other.Range);

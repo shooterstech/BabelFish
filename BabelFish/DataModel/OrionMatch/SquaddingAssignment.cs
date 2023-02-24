@@ -12,17 +12,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     [JsonConverter( typeof( SquaddingAssignmentConverter ) )]
-    public abstract class SquaddingAssignment: IDeserializableAbstractClass  {
+    public abstract class SquaddingAssignment: IDeserializableAbstractClass {
+
+        /*
+         * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
+         */
 
         public SquaddingAssignment() { }
 
         public string Range { get; set; } = string.Empty;
 
-        public int RangeSortOrder { get; set; } = 1;
-
+        /// <summary>
+        /// When multiple Participants are shooting on the same SquaddingAssignment for the same relay, the Particpants will fire with this order. 
+        /// </summary>
         public int FiringOrder { get; set; } = 0;
 
+        /// <summary>
+        /// The Participant (team or individual) that this SquaddingAssignment is for
+        /// </summary>
         public Participant Participant { get; set; } = new Individual();
+
+        /// <summary>
+        /// If this is Event uses re-entry, this is the unique reentry tag for this individual. The values of an empty string ("") or "No Reentry" mean the same thing.
+        /// </summary>
+        public string ReentryTag { get; set; }
 
         /// <summary>
         /// Implementation of the IDeserializableAbstractClass interface.

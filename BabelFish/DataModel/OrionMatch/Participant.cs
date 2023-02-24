@@ -16,6 +16,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [JsonConverter(typeof(ParticipantConverter))]
     public abstract class Participant: IDeserializableAbstractClass {
 
+        /*
+         * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
+         */
+
         public Participant() { }
 
         /// <summary>
@@ -25,7 +29,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CompetitorNumber { get; set; } = string.Empty;
 
+        /// <summary>
+        /// A list of AttributeValues assigned to this Participant.
+        /// </summary>
         public List<Scopos.BabelFish.DataModel.AttributeValue.AttributeValue> AttributeValues { get; set; } = new List<Scopos.BabelFish.DataModel.AttributeValue.AttributeValue>();
+
+        /*
+         * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
+         * garand / springfield / vintage military rifle competition is one eacmple. On the first re-entry they may shoot a garand 
+         * rifle, the seocnd a sprinfield, and so on. 
+         * 
+         * To represent this, need a way to override AttributeValues based on the reentry tag.
+         */
 
         /// <summary>
         /// When a competitor's name is displayed, this is the default display value.
@@ -60,8 +75,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Hometown Club the Participant represents. Note, this is NOT the same as any team the Participant is shooting with. 
         /// </summary>
         public string Club { get; set; } = string.Empty;
-
-        public string ReentryTag { get; set; } = string.Empty;
 
         public override string ToString() {
             return this.DisplayName;
