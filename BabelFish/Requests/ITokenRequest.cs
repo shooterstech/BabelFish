@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.Requests {
     /// The top level response object may return NextToken, to indicate more data is avaliable.
     /// The response object's primary data model must also include a List<>. It is this list that could be combined accross multiple calls. 
     /// </summary>
-    public interface IToken {
+    public interface ITokenRequest {
 
         /// <summary>
         /// Token is used in a request when there is more data to return. With this pattern, the initial response will contain a value

@@ -16,8 +16,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
         public AttributeValueDataPacket() { }
 
-        public SetName AttributeDef { get; set; }
+        /// <summary>
+        /// the SetName, formatted as a string, of the Attribute definition.
+        /// </summary>
+        public string AttributeDef { get; set; }
 
+        [JsonIgnore]
         public AttributeValue AttributeValue { get; set; }
 
         public VisibilityOption Visibility { get; set; }

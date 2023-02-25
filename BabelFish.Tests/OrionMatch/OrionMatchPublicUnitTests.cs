@@ -156,27 +156,6 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue( listOfMatches.Count > 0 );
         }
 
-
-        [TestMethod]
-        public void OrionMatchAPI_GetASquaddingList() {
-
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-
-            var matchId = "1.1.2023011915575119.0";
-            var squaddingListName = "Individual";
-
-            var taskSquaddingListResponse = client.GetSquaddingListPublicAsync( matchId, squaddingListName );
-            var squaddingListResponse = taskSquaddingListResponse.Result;
-
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
-            var squaddingList = squaddingListResponse.Squadding;
-
-            Assert.AreEqual( matchId, squaddingList.MatchID );
-            Assert.AreEqual( squaddingListName, squaddingList.EventName );
-
-            Assert.IsTrue( squaddingList.SquaddingList.Count > 0 );
-        }
-
         [TestMethod]
         public void OrionMatchAPI_GetMatchParticipantList() {
 

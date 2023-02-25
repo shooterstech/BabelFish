@@ -78,18 +78,6 @@ namespace Scopos.BabelFish.Responses
         public HttpStatusCode StatusCode { get; internal set; }
 
         /// <summary>
-        /// Certain API Calls limit the amount of data that gets returned, on each call. 
-        /// When the returned data is limited, use the NextToken to return the next
-        /// set of data. If NextToken is null or an empty string, then all
-        /// data has been returned. 
-        /// </summary>
-        public string NextToken {  
-            get {
-                return this.MessageResponse.NextToken;
-            }
-        }
-
-        /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.
         /// </summary>
         public JToken Body {

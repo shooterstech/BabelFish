@@ -12,8 +12,6 @@ namespace Scopos.BabelFish.Responses
 
         List<String> Message { get; set; }
 
-        string NextToken { get; set; }
-
         [Obsolete( "ResponseCodes is no longer being included in new API Requests, and will stop being included in existing ones as they are updated. Use the response' StatusCode instead." )]
         List<String> ResponseCodes { get; set; }
 

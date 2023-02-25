@@ -88,10 +88,23 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="matchid"></param>
         /// <param name="squaddinglistname"></param>
-        /// <param name="withAuthentication">default false</param>
         /// <returns>Squadding Object</returns>
-        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname, bool withAuthentication = false ) {
+        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname ) {
             var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
+
+            return await GetSquaddingListPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Squadding List API, limit the response's length by the passed in relayName
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="squaddinglistname"></param>
+        /// <param name="relayName"></param>
+        /// <returns>Squadding Object</returns>
+        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname, string relayName ) {
+            var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
+            request.RelayName = relayName;
 
             return await GetSquaddingListPublicAsync( request ).ConfigureAwait( false );
         }

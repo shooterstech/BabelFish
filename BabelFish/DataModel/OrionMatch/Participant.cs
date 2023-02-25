@@ -32,7 +32,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of AttributeValues assigned to this Participant.
         /// </summary>
-        public List<Scopos.BabelFish.DataModel.AttributeValue.AttributeValue> AttributeValues { get; set; } = new List<Scopos.BabelFish.DataModel.AttributeValue.AttributeValue>();
+        public List<AttributeValueDataPacketMatch> AttributeValues { get; set; } = new List<AttributeValueDataPacketMatch>();
 
         /*
          * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 

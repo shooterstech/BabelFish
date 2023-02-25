@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Creates a new instance of a MatchID object based on the passed in string, that it expects to be in the MatchID format. 
         /// </summary>
         /// <param name="fullMatchID"></param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if the passed in fullMatchID string is not in the expected format.</exception>
+        /// <exception cref="FormatException">Thrown if the passed in fullMatchID string is not in the expected format.</exception>
         public MatchID( string fullMatchID ) {
             string[] parts = fullMatchID.Split( new char[] { '.' } );
 
@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return;
             }
 
-            throw new ArgumentOutOfRangeException( $"The match ID {fullMatchID} is not in the expected Match ID format" );
+            throw new FormatException( $"The match ID {fullMatchID} is not in the expected Match ID format" );
         }
 
         private MatchID( long domainID, long componentID, long primaryMatchID, long subMatchID ) {
@@ -50,7 +50,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="domainID"></param>
         /// <param name="componentID"></param>
         /// <param name="subMatchID"></param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if one of the passed in values is illegal.</exception>
+        /// <exception cref="FormatException">Thrown if one of the passed in values is illegal.</exception>
         public MatchID( long domainID, long componentID, long subMatchID ) {
             switch (subMatchID) {
                 case SUBMATCHID_LOCAL:
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     if (subMatchID > 1000)
                         break;
                     else {
-                        throw new ArgumentOutOfRangeException( $"The subMatchID is an illegal value." );
+                        throw new FormatException( $"The subMatchID is an illegal value." );
                     }
             }
 

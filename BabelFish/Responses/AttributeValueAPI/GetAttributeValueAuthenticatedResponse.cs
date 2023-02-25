@@ -70,7 +70,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
                     AttributeValueDataPacketAPIResponse avWrapper = new AttributeValueDataPacketAPIResponse();
                     Value.AttributeValues.Add( setNameStr, avWrapper );
 
-                    avWrapper.AttributeDef = SetName.Parse( setNameStr );
+                    avWrapper.AttributeDef = setNameStr;
                     avWrapper.StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode) , ( string)attrValueWrapperJObject["statusCode"] );
                     if (attrValueWrapperJObject.ContainsKey( "Message" )) {
                         try {

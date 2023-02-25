@@ -24,6 +24,9 @@ namespace  Scopos.BabelFish.DataModel.Clubs {
         /// A list of ClubAbbr data objects.
         /// </summary>        
         public List<ClubAbbr> Items { get; set; }
+        
+        /// <inheritdoc />
+        public string NextToken { get; set; } = string.Empty;
 
         public override string ToString() {
             return $"ClubList with {Items.Count} items";

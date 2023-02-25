@@ -7,7 +7,7 @@ using Scopos.BabelFish.DataModel;
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
     /// <summary>
-    /// Helper class that creates the added structure in the data model needed for Deserialzing a Match object from json.
+    /// Helper class that creates the added structure in the data model needed for Deserialzing a ResultList object from json.
     /// </summary>
     public class ResultListWrapper : BaseClass {
         public ResultList ResultList = new ResultList();
