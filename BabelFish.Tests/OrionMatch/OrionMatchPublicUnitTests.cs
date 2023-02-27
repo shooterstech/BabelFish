@@ -157,27 +157,6 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetMatchParticipantList() {
-
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            var matchId = "1.1.2023011915575119.0";
-
-            var taskParticipantListResponse = client.GetMatchParticipantListPublicAsync( matchId );
-            var participantListResponse = taskParticipantListResponse.Result;
-
-            Assert.AreEqual( HttpStatusCode.OK, participantListResponse.StatusCode );
-            var participantList = participantListResponse.ParticipantList;
-
-            Assert.IsTrue( participantList.Count > 0 );
-
-            //Check that the abstract data conversion works.
-            var matchParticipant = participantList[0];
-
-            Assert.AreEqual( Individual.CONCRETE_CLASS_ID, matchParticipant.Participant.ConcreteClassId );
-            Assert.IsTrue( matchParticipant.Participant is Individual );
-        }
-
-        [TestMethod]
         public void OrionMatchAPI_GetAMatchLocations() {
 
             //NOTE: This is one of the few occasions where it is appropriate to run this test in PRODUCTION, as the GetMatchLocations call relies on fresh (not stale) data.

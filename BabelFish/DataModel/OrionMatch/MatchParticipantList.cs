@@ -4,53 +4,25 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using NLog;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
-    /// Response object for a request of Squadding Assignments for a specified match and squadding event name.
+    /// A response object, describing a list of Match Participants in a match. Match Participants, in this API call, include athletes (competitors), match officials, and coaches. They do not include Teams.
     /// </summary>
-    public class SquaddingList : ITokenItems<SquaddingAssignment> {
+    public class MatchParticipantList : ITokenItems<MatchParticipant> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
-        public SquaddingList() {
-            Items = new List<SquaddingAssignment>();
+        public MatchParticipantList() {
+            Items = new List<MatchParticipant>();
         }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
             if (Items == null)
-                Items = new List<SquaddingAssignment>();
-        }
-
-        /// <summary>
-        /// The name of the squadding event, that this Squadding List is for.
-        /// </summary>
-        public string EventName { get; set; }
-
-        /// <summary>
-        /// Formatted as a string, the date and time this squadding list was last updated.
-        /// Use GetLastUpdated() to return this value as a DateTime object.
-        /// </summary>
-        [Obsolete("LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole.")]
-        public string LastUpdated { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="FormatException">Thrown if unable to parse the property LastUpdated into a DateTime object.</exception>
-        [Obsolete( "LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole." )]
-        public DateTime GetLastUpdated() {
-            try {
-                return DateTime.ParseExact( (string)LastUpdated, DateTimeFormats.DATETIME_FORMAT, CultureInfo.InvariantCulture );
-            } catch (Exception ex ) {
-                //Probable either a FormatException or a NullValueException
-                var msg = $"Can not parse LastUpdated values of '{LastUpdated}'. Received error {ex}.";
-                logger.Error( msg, ex );
-                throw new FormatException( msg );
-            }
+                Items = new List<MatchParticipant>();
         }
 
         /// <summary>
@@ -93,15 +65,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string MatchName { get; set; }
 
         /// <summary>
-        /// List of SquaddingAssignments (e.g. Individuals and where and when they will shoot). 
+        /// List of MatchParticipant (e.g. Individuals and their attributes, roles, and result cofs). 
         /// </summary>
-        public List<SquaddingAssignment> Items { get; set; }
+        public List<MatchParticipant> Items { get; set; }
 
         /// <inheritdoc />
         public string NextToken { get; set; } = string.Empty;
 
         public override string ToString() {
-            return $"SquaddingList with {Items.Count} items";
+            return $"MatchParticipantList with {Items.Count} items";
         }
     }
 }
