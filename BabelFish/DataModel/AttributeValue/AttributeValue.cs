@@ -1,13 +1,15 @@
 ﻿using System.Text;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.DataModel.Definitions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
+    [Serializable]
+    [JsonConverter( typeof( AttributeValueDataPacketConverter ) )]
     public class AttributeValue : IJToken {
 
         private Logger logger = LogManager.GetCurrentClassLogger();

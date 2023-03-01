@@ -1,32 +1,36 @@
-﻿using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Definitions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Scopos.BabelFish.DataModel;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
-using System.ComponentModel;
-using System.Runtime.Serialization;
-using Scopos.BabelFish.Helpers;
+using Newtonsoft.Json.Serialization;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
-    public abstract class AttributeValueDataPacket : IJToken {
 
-        public AttributeValueDataPacket() { }
+    [Serializable]
+    [JsonConverter( typeof( AttributeValueDataPacketConverter ) )]
+    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass {
+
+        public const int CONCRETE_CLASS_ID = 1;
+
+        public AttributeValueDataPacket() {
+            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        }
 
         /// <summary>
         /// the SetName, formatted as a string, of the Attribute definition.
         /// </summary>
         public string AttributeDef { get; set; }
 
-        [JsonIgnore]
+        
         public AttributeValue AttributeValue { get; set; }
 
         public VisibilityOption Visibility { get; set; }
 
         /// <inheritdoc/>
+        [Obsolete("Use JSON Customer Converters instead")]
         public JToken ToJToken() {
             
             JObject json = new JObject();
@@ -36,5 +40,13 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             return json;
         }
+
+        /// <summary>
+        /// Implementation of the IDeserializableAbstractClass interface.
+        /// To have added control over the Deserialization of abstract classes, in to
+        /// Concrete classes, the JSON should include a ConcreteClassId that specifies
+        /// the Concrete class.
+        /// </summary>
+        public int ConcreteClassId { get; set; }
     }
 }

@@ -8,7 +8,11 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
 
     public class AttributeValueDataPacketAPIResponse : AttributeValueDataPacket {
 
-        public AttributeValueDataPacketAPIResponse() { }
+        public const int CONCRETE_CLASS_ID = 1;
+
+        public AttributeValueDataPacketAPIResponse() {
+            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        }
 
         public System.Net.HttpStatusCode StatusCode { get; set; }
 

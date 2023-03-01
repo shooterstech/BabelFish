@@ -12,6 +12,7 @@ namespace Scopos.BabelFish.DataModel {
     /// Custom conversion to and from JSON is usually doen via custom convertrers. https://www.newtonsoft.com/json/help/html/CustomJsonConverter.htm
     /// However, i'm choosing not to follow this pattern because ... well at the moment I think a ToJToken() function will be easier to write.
     /// </summary>
+    [Obsolete("Use custom converters instead")]
     interface IJToken {
 
         /// <summary>

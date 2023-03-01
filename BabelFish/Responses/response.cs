@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 
@@ -35,6 +36,7 @@ namespace Scopos.BabelFish.Responses
              * A Concrete class constructor should have the following constructor definition:
              * public MyGreatResponseClass( MyGreatReqeustClass reqeust) : base() {}
              */
+
         }
 
         public Response( Request request ) {
