@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -88,8 +89,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         [JsonConverter( typeof( StringEnumConverter ) )]
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
+        /// <summary>
+        /// The orion account or at home account who owns this match.
+        /// </summary>
+        /// <example>OrionAcct000001 or AtHomeAcct123456</example>
         [JsonProperty(Order = 9)]
-        public string AccountNumber { get; set; } = string.Empty;
+        public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
         /// Start Date of the Match. Formatted as YYYY-MM-dd
@@ -210,7 +215,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// <summary>
         /// Contact information for the match, i.e. person's name, phone, email.
         /// </summary>
-        public MatchContact MatchContact { get; set; } = new MatchContact();
+        public List<Contact> MatchContacts { get; set; } = new List<Contact>();
 
         /// <summary>
         /// A list of scoring systems used in this match.

@@ -7,6 +7,7 @@ using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
+using NLog;
 
 namespace Scopos.BabelFish.Converters {
 
@@ -16,11 +17,13 @@ namespace Scopos.BabelFish.Converters {
     /// </summary>
     public class AttributeValueDataPacketConverter : JsonConverter {
 
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new AttributeValueDataPacketSpecifiedConcreteClassConverter() };
 
         /// <inheritdoc/>
         public override bool CanConvert( Type objectType ) {
-            return ( objectType == typeof( AttributeValue ) );
+            return (objectType == typeof( AttributeValue ));
         }
 
         /// <inheritdoc/>
@@ -42,7 +45,7 @@ namespace Scopos.BabelFish.Converters {
                 case AttributeValueDataPacketMatch.CONCRETE_CLASS_ID:
                     attributeValueDataPacket = new AttributeValueDataPacketMatch();
 
-                    if (jo.ContainsKey("ReentryTag"))
+                    if (jo.ContainsKey( "ReentryTag" ))
                         ((AttributeValueDataPacketMatch)attributeValueDataPacket).ReentryTag = jo["ReentryTag"]?.Value<string>();
                     break;
 
@@ -50,8 +53,16 @@ namespace Scopos.BabelFish.Converters {
                 default:
                     attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
 
-                    ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), (string)jo["StatusCode"] );
-                    ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message = ( string)jo.GetValue( "Message" )[0];
+                    if (jo.ContainsKey( "StatusCode" ))
+                        ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), (string)jo["StatusCode"] );
+
+                    if (jo.ContainsKey( "Message" )) {
+                        try {
+                            ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message = (string)jo.GetValue( "Message" )[0];
+                        } catch (Exception ex) {
+                            logger.Error( ex, $"Unable to read the Message property." );
+                        }
+                    }
                     break;
             }
 

@@ -50,8 +50,12 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             return false;
         }
 
+        
         /// <inheritdoc/>
         protected override void ConvertBodyToValue() {
+            base.ConvertBodyToValue();
+            return;
+
             Value = new AttributeValuesWrapper();
 
             try {

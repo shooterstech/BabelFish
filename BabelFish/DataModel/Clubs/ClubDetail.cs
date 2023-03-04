@@ -4,13 +4,15 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
-using BabelFish.DataModel;
+using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
 using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.DataModel.Clubs {
+namespace Scopos.BabelFish.DataModel.Clubs
+{
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
@@ -27,7 +29,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         internal void OnDeserialized( StreamingContext context ) {
             NewRecord = false; //If this object is being deserialized, we can assume it is an existing club.
             if (AdministratorList == null)
-                AdministratorList = new List<Person>();
+                AdministratorList = new List<Contact>();
             if (Notes == null)
                 Notes = new List<string>();
             if (LicenseList == null)
@@ -64,7 +66,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The list of people who are Administrators for this club.
         /// </summary>
         [DefaultValue( "" )]
-        public List<Person> AdministratorList { get; set; } = new List<Person>();
+        public List<Contact> AdministratorList { get; set; } = new List<Contact>();
 
         /// <summary>
         /// The email address of the club. May in fact be the email address of the administrator.
