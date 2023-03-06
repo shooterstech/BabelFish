@@ -132,26 +132,12 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// Get Match Locations API
-        /// </summary>
-        /// <returns>List<MatchLocation> Object</returns>
-        public async Task<GetMatchLocationsPublicResponse> GetMatchLocationsPublicAsync() {
-            GetMatchLocationsPublicResponse response = new GetMatchLocationsPublicResponse( new GetMatchLocationsPublicRequest() );
-
-            var request = new GetMatchLocationsPublicRequest();
-
-            await this.CallAPI( request, response ).ConfigureAwait( false );
-
-            return response;
-        }
-
-        /// <summary>
         /// Get Match Search API
         /// </summary>
         /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
-        public async Task<GetMatchSearchResponse> GetMatchSearchPublicAsync( GetMatchSearchPublicRequest requestParameters ) {
-            GetMatchSearchResponse response = new GetMatchSearchResponse( requestParameters );
+        public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
+            MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 

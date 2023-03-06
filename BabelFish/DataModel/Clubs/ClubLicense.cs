@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
-using BabelFish.DataModel;
+using Scopos.BabelFish.DataModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;

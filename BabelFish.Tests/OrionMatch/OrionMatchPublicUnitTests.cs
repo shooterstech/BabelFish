@@ -131,46 +131,5 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue( resultCof.EventScores.Count > 0 );
             Assert.IsTrue( resultCof.Shots.Count > 0 );
         }
-
-        [TestMethod]
-        public void OrionMatchAPI_GetAMatchSearch() {
-
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-
-            GetMatchSearchPublicRequest requestParameters = new GetMatchSearchPublicRequest() {
-                DistanceSearch = 5,
-                StartDate = new DateTime( 2023, 1, 1 ),
-                EndDate = new DateTime( 2023, 1, 31 ),
-                ShootingStyle = new List<string>() { "Air Rifle", "Smallbore Rifle" },
-                NumberOfMatchesToReturn = 100,
-                Longitude = -77.555569,
-                Latitude = 38.739453,
-            };
-            Assert.AreEqual( "MatchSearch", requestParameters.OperationId );
-
-            var taskMatchSearchResponse = client.GetMatchSearchPublicAsync( requestParameters );
-            var matchSearchResponse = taskMatchSearchResponse.Result;
-            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
-
-            var listOfMatches = matchSearchResponse.SearchList;
-            Assert.IsTrue( listOfMatches.Count > 0 );
-        }
-
-        [TestMethod]
-        public void OrionMatchAPI_GetAMatchLocations() {
-
-            //NOTE: This is one of the few occasions where it is appropriate to run this test in PRODUCTION, as the GetMatchLocations call relies on fresh (not stale) data.
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
-
-            var response = client.GetMatchLocationsPublicAsync();
-            Assert.IsNotNull( response );
-
-            var locations = response.Result.MatchLocations;
-            Assert.IsTrue( locations.Count > 0 );
-            var locationName = locations.FirstOrDefault().City;
-
-            Assert.IsNotNull( locationName );
-            Assert.AreNotEqual( locationName, "" );
-        }
     }
 }

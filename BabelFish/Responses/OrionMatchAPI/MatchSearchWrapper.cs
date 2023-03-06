@@ -11,6 +11,10 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// </summary>
     public class MatchSearchWrapper : BaseClass {
 
-        public List<Match> SearchList = new List<Match>();
+        public MatchSearchList MatchSearchList = new MatchSearchList();
+
+        public override string ToString() {
+            return $"Match Search results of length {MatchSearchList.Items.Count}";
+        }
     }
 }

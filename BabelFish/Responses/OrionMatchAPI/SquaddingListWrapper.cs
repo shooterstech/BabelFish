@@ -10,6 +10,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// Helper class that creates the added structure in the data model needed for Deserialzing a SquaddingList object from json.
     /// </summary>
     public class SquaddingListWrapper : BaseClass {
+
         public SquaddingList SquaddingList = new SquaddingList();
 
         public override string ToString() {

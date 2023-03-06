@@ -46,5 +46,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [DefaultValue( 0 )]
         public double Altitude { get; set; }
+
+        /// <summary>
+        /// If known the location of the caller, this is the distance from the caller, measured in kilometers.
+        /// </summary>
+        [DefaultValue( 0 )]
+        public double Distance { get; set; }
     }
 }
