@@ -16,7 +16,50 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         internal void OnDeserialized( StreamingContext context ) {
             if (Items == null)
                 Items = new List<MatchAbbr>();
+            if (ShootingStyles == null)
+                ShootingStyles = new List<string>();
         }
+
+        /// <summary>
+        /// Distance in miles to search.
+        /// The default is 100 miles.
+        /// </summary>
+        public int Distance { get; set; } = 500;
+
+        /// <summary>
+        /// The start date of the match dates to search.
+        /// The default value is the first day of the current month.
+        /// </summary>
+        public String StartDate { get; set; } = String.Empty;
+
+        /// <summary>
+        /// The end date of the match dates to search.
+        /// The default value is the last day of the current month.
+        /// </summary>
+        public String EndDate { get; set; } = String.Empty;
+
+        /// <summary>
+        /// The shooting style to search or unassigned for all.
+        /// The default value is Air Rifle.
+        /// </summary>
+        public List<string> ShootingStyles { get; set; } = new List<string>();
+
+        /// <summary>
+        /// The Logitude of an area to search.
+        /// If > default of 0, Latitude must also be > 0.
+        /// </summary>
+        public double Longitude { get; set; } = -84.5063057;
+
+        /// <summary>
+        /// The Latitude of an area to search.
+        /// If > default of 0, Longitude must also be > 0.
+        /// </summary>
+        public double Latitude { get; set; } = 38.0394328;
+
+        /// <summary>
+        /// The maximum number of search results to return. 
+        /// </summary>
+        public int Limit { get; set; } = 50;
 
         public List<MatchAbbr> Items { get; set; }
 

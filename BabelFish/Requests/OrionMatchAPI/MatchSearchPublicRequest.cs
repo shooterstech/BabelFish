@@ -52,6 +52,11 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
         /// <inheritdoc />
         public string Token { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The maximum number of search results to return. 
+        /// </summary>
+        public int Limit { get; set; } = 50;
+
         /// <inheritdoc />
         public override Request Copy() {
             var newRequest = new MatchSearchPublicRequest();
@@ -62,6 +67,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
             newRequest.Latitude = Latitude;
             newRequest.Token = Token;
             newRequest.Distance = Distance;
+            newRequest.Limit = Limit;
 
             return newRequest;
         }
@@ -80,6 +86,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
                 parameterList.Add("shooting-style", ShootingStyle);
                 parameterList.Add("longitude", new List<string>() { Longitude.ToString() });
                 parameterList.Add("latitude", new List<string>() { Latitude.ToString() });
+                parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
+                if ( ! string.IsNullOrEmpty( Token ))
+                    parameterList.Add( "token", new List<string>() { Token } );
 
                 return parameterList;
             }
