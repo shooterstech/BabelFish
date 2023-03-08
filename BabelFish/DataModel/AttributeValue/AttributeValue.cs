@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
     [JsonConverter( typeof( AttributeValueDataPacketConverter ) )]
-    public class AttributeValue : IJToken {
+    public class AttributeValue {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
         private static AttributeValueDefinitionFetcher FETCHER = AttributeValueDefinitionFetcher.FETCHER;
@@ -348,10 +348,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
                     foreach (AttributeField fields in definition.Fields) {
 
-                        if (keyField == KEY_FOR_SINGLE_ATTRIBUTES)
-                            SetFieldValue( fields.FieldName, fields.DefaultValue );
-                        else
+                        if (definition.MultipleValues)
                             SetFieldValue( fields.FieldName, fields.DefaultValue, keyField );
+                        else
+                            SetFieldValue( fields.FieldName, fields.DefaultValue );
                     }
                 }
             } catch (Exception ex) {

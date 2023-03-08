@@ -143,7 +143,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public ValueType ValueType { get; set; } = ValueType.STRING;
 
         public override string ToString() {
-            return $"{FieldName} of type {ValueType} Key: {Key}";
+            if (MultipleValues)
+                return $"'{FieldName}' of list of type {ValueType}";
+            else if (Key)
+                return $"'{FieldName}' of type {ValueType} KEY VALUE";
+            else
+                return $"'{FieldName}' of type {ValueType}";
         }
 
         internal dynamic DeserializeFromJTokens(JToken value) {

@@ -40,6 +40,7 @@ namespace Scopos.BabelFish.Converters {
             var id = jo["ConcreteClassId"]?.Value<int>();
 
             AttributeValueDataPacket attributeValueDataPacket;
+            bool okToDeserialize = true;
 
             switch (id) {
                 case AttributeValueDataPacketMatch.CONCRETE_CLASS_ID:
@@ -63,12 +64,19 @@ namespace Scopos.BabelFish.Converters {
                             logger.Error( ex, $"Unable to read the Message property." );
                         }
                     }
+
+                    if (((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode != HttpStatusCode.OK) {
+                        okToDeserialize = false;
+                        logger.Info( $"Unable to deserialize, received message '{((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message}'." );
+                    }
                     break;
             }
 
-            attributeValueDataPacket.AttributeDef = (string)jo.GetValue( "AttributeDef" );
-            attributeValueDataPacket.AttributeValue = new AttributeValue( attributeValueDataPacket.AttributeDef, jo.GetValue( "AttributeValue" ) );
-            attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
+            if (okToDeserialize) {
+                attributeValueDataPacket.AttributeDef = (string)jo.GetValue( "AttributeDef" );
+                attributeValueDataPacket.AttributeValue = new AttributeValue( attributeValueDataPacket.AttributeDef, jo.GetValue( "AttributeValue" ) );
+                attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
+            }
 
             return attributeValueDataPacket;
         }
