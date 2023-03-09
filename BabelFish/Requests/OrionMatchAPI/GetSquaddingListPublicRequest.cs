@@ -35,6 +35,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public string Token { get; set; } = string.Empty;
 
         /// <inheritdoc />
+        public int Limit { get; set; }
+
+        /// <inheritdoc />
         public override string RelativePath {
             get { return $"/match/{MatchID}/squadding-list/{SquaddingEventName}"; }
         }
@@ -52,6 +55,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 if (!string.IsNullOrEmpty( RelayName )) {
                     parameterList.Add( "relay", new List<string> { RelayName } );
                 }
+
+                if (Limit > 0)
+                    parameterList.Add( "limit", new List<string> { Limit.ToString() } );
 
                 return parameterList;
             }

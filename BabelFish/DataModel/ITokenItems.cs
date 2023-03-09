@@ -23,5 +23,11 @@ namespace Scopos.BabelFish.DataModel {
         /// A value of null or empoty string indicate there are no more items to return.
         /// </summary>
         string NextToken { get; set; }
+
+        /// <summary>
+        /// The maximum number of items that may be returned. 
+        /// The user may request a limit, usually between 1 and 50, but the API is allowed to restrict the value of limit. This is the value the API used.
+        /// </summary>
+        int Limit { get; set; }
     }
 }

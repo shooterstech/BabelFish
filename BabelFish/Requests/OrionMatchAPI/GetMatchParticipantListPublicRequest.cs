@@ -24,6 +24,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public string Token { get; set; } = string.Empty;
 
         /// <inheritdoc />
+        public int Limit { get; set; } = 0;
+
+        /// <inheritdoc />
         public override string RelativePath {
             get { return $"/match/{MatchID}/participant"; }
         }
@@ -41,6 +44,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 if (Role != MatchParticipantRole.NONE) {
                     parameterList.Add( "role", new List<string> { Role.Description() } );
                 }
+
+                if (Limit > 0)
+                    parameterList.Add( "limit", new List<string> { Limit.ToString() } );
 
                 return parameterList;
             }

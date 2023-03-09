@@ -19,6 +19,9 @@ namespace Scopos.BabelFish.Requests.ClubsAPI {
         public string Token { get; set; }
 
         /// <inheritdoc />
+        public int Limit { get; set; } = 0;
+
+        /// <inheritdoc />
         public override Request Copy() {
             var newRequest = new GetClubListAuthenticatedRequest( Credentials );
             newRequest.Token = this.Token;
@@ -42,6 +45,8 @@ namespace Scopos.BabelFish.Requests.ClubsAPI {
                 if (! string.IsNullOrEmpty( Token ) ) {
                     parameterList.Add( "token", new List<string> { Token } );
                 }
+                if (Limit > 0)
+                    parameterList.Add( "limit", new List<string> { Limit.ToString() } );
 
                 return parameterList;
             }

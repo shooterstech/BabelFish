@@ -38,6 +38,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 2 )]
         public string ParentID { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The list of Events in the Match that have Result Lists associated with them.
+        /// </summary>
         [JsonProperty( Order = 3 )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
@@ -65,15 +68,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonProperty( Order = 7 )]
         public string MatchName {
-            get { return Name; }
-            set { Name = value; }
-        }
+            get; set;
+        } = string.Empty;
 
         /// <summary>
         /// Name of the Match
         /// </summary>
         [Obsolete( "Use MatchName instead." )]
-        public string Name { get; set; } = string.Empty;
+        public string Name { 
+            get { return this.MatchName; }
+            set { this.MatchName = value; }
+        }
 
         /// <summary>
         /// Sets the public visibility for the match. Valid values are

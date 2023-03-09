@@ -40,19 +40,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// The shooting style to search or unassigned for all.
-        /// The default value is Air Rifle.
         /// </summary>
-        public List<string> ShootingStyles { get; set; } = new List<string>();
+        public List<string> ShootingStyles { get; set; 
+            //Currently choosing not to make this a list of ENUMs, as the possible list of Shooting Styles could grow or might become dynamic.
+        } = new List<string>();
 
         /// <summary>
         /// The Logitude of an area to search.
-        /// If > default of 0, Latitude must also be > 0.
         /// </summary>
         public double Longitude { get; set; } = -84.5063057;
 
         /// <summary>
         /// The Latitude of an area to search.
-        /// If > default of 0, Longitude must also be > 0.
         /// </summary>
         public double Latitude { get; set; } = 38.0394328;
 

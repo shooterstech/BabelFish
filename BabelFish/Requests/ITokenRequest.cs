@@ -21,5 +21,11 @@ namespace Scopos.BabelFish.Requests {
         /// When making the request, a Token value of null or empty string means to return the first set of data.
         /// </summary>
         string Token { get; set; }
+
+        /// <summary>
+        /// The requested number of items to return. Usually a value between 1 and 50. The default is usually 50.
+        /// the API does not have to adhere to this requested limit.
+        /// </summary>
+        int Limit { get; set; }
     }
 }
