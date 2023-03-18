@@ -13,14 +13,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
     /// </summary>
     [Serializable]
-    [JsonConverter(typeof(ParticipantConverter))]
-    public abstract class Participant: IDeserializableAbstractClass {
+    [JsonConverter( typeof( ParticipantConverter ) )]
+    public abstract class Participant : IDeserializableAbstractClass {
 
         /*
          * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
          */
 
-        public Participant() { }
+        public Participant() {
+            Coaches = new List<Individual>();
+        }
 
         /// <summary>
         /// A unique, human readable, value assigned to all Participants in a match.
@@ -43,6 +45,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          */
 
         /// <summary>
+        /// A list of this Participant's coaches.
+        /// </summary>
+        public List<Individual> Coaches { get; set; }
+    
+
+        /// <summary>
         /// When a competitor's name is displayed, this is the default display value.
         /// </summary>
         public string DisplayName { get; set; } = string.Empty;
@@ -56,12 +64,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Hometown the participant is from.
         /// </summary>
         public string HomeTown { get; set; } = string.Empty;
-
-        /// <summary>
-        /// $type coming from API data
-        /// </summary>
-        [JsonProperty(PropertyName = "$type")]
-        public string type{ get; set; } = string.Empty;
 
         /// <summary>
         /// When a competitor's name is displayed, and there is limited number of characters, use this value. 
