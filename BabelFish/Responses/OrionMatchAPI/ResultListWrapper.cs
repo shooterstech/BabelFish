@@ -10,6 +10,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// Helper class that creates the added structure in the data model needed for Deserialzing a ResultList object from json.
     /// </summary>
     public class ResultListWrapper : BaseClass {
+
         public ResultList ResultList = new ResultList();
 
         public override string ToString() {

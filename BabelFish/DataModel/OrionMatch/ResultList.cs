@@ -8,10 +8,10 @@ using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList {
+    public class ResultList : ITokenItems<ResultEvent> {
 
         public ResultList() {
-            Results = new List<ResultEvent>();
+            Items = new List<ResultEvent>();
         }
 
         [JsonProperty( Order = 1 )]
@@ -49,7 +49,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int SortOrder { get; set; } = 0;
 
         [JsonProperty( Order = 8 )]
-        public List<ResultEvent> Results { get; set; } = new List<ResultEvent>();
+        public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 
         /// <summary>
         /// Deprecated, use ResultName
@@ -89,6 +89,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         public string ScoreConfigName { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        public string NextToken { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        public int Limit { get; set; } = 50;
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

@@ -17,6 +17,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             var newRequest = new GetSquaddingListPublicRequest( MatchID, SquaddingEventName );
             newRequest.RelayName = this.RelayName;
             newRequest.Token = this.Token;
+            newRequest.Limit = this.Limit;
 
             return newRequest;
         }
