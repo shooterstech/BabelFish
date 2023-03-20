@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             var keyFieldName = GetDefinitionKeyFieldName();
             var keyFieldValue = "";
-            if (string.IsNullOrEmpty( keyFieldName ))
+            if (!string.IsNullOrEmpty( keyFieldName ))
                 keyFieldValue = (string) attributeValueAsJObject[keyFieldName];
 
             foreach( var field in definition.Fields) {
@@ -198,7 +198,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         #region Attribute
 
         /// <summary>
-        /// Get a string list of Field Keys for SetName
+        /// Returns this Attribute Value's current field keys. Each one of these field keys may be used 
+        /// as part of the .GetFieldValue() or .SetFieldValue() calls.
         /// </summary>
         /// <returns>List<string> of Field Keys</returns>
         /// <exception cref="AttributeValueException"></exception>
@@ -346,12 +347,14 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 if (!attributeValues.ContainsKey( keyField )) {
                     attributeValues[keyField] = new Dictionary<string, dynamic>();
 
-                    foreach (AttributeField fields in definition.Fields) {
+                    foreach (AttributeField field in definition.Fields) {
 
-                        if (definition.MultipleValues)
-                            SetFieldValue( fields.FieldName, fields.DefaultValue, keyField );
+                        if (field.Key)
+                            SetFieldValue( field.FieldName, keyField, keyField );
+                        else if (definition.MultipleValues)
+                            SetFieldValue( field.FieldName, field.DefaultValue, keyField );
                         else
-                            SetFieldValue( fields.FieldName, fields.DefaultValue );
+                            SetFieldValue( field.FieldName, field.DefaultValue );
                     }
                 }
             } catch (Exception ex) {
