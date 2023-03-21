@@ -11,11 +11,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public const int CONCRETE_CLASS_ID = 2;
 
-        public Team() {
+        public Team() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
             this.TeamMembers = new List<Participant>();
+            this.TeamCaptains = new List<Individual>();
         }
 
+        /// <summary>
+        /// The contributing team members. These are the Participants that will make up the score shot by the team. 
+        /// </summary>
         public List<Participant> TeamMembers { get; set; }
+
+        /// <summary>
+        /// The designated team captains for this team. A Team captain may also be a coach and may also be a member.
+        /// </summary>
+        public List<Individual> TeamCaptains { get; set; }
     }
 }

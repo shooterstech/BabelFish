@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetSquaddingListPublicResponse : Response<Squadding>
+    public class GetSquaddingListPublicResponse : Response<SquaddingListWrapper>, ITokenResponse<GetSquaddingListPublicRequest>
     {
 
         public GetSquaddingListPublicResponse( GetSquaddingListPublicRequest request ) : base() {
@@ -18,9 +20,15 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        /// 
-        public Squadding Squadding {
-            get { return Value; }
+        public SquaddingList SquaddingList {
+            get { return Value.SquaddingList; }
+        }
+
+        /// <inheritdoc/>
+        public GetSquaddingListPublicRequest GetNextRequest() {
+            var nextRequest = (GetSquaddingListPublicRequest) Request.Copy();
+            nextRequest.Token = Value.SquaddingList.NextToken;
+            return nextRequest;
         }
     }
 }

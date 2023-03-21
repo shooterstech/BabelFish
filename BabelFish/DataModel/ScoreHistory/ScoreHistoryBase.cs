@@ -15,6 +15,10 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
     [JsonConverter( typeof( ScoreHistoryBaseConverter ) )]
     public abstract class ScoreHistoryBase : IDeserializableAbstractClass {
 
+        /*
+         * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
+         */
+
         /// <summary>
         /// The number of shots fired within this ScoreHistoryEntry
         /// </summary>

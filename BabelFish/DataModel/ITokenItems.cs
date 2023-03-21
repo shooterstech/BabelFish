@@ -17,5 +17,17 @@ namespace Scopos.BabelFish.DataModel {
     public interface ITokenItems<T> {
 
         List<T> Items { get; set; }
+
+        /// <summary>
+        /// When there are more items to return, NextToken contains the next token to pass to the call to the next set of items.
+        /// A value of null or empoty string indicate there are no more items to return.
+        /// </summary>
+        string NextToken { get; set; }
+
+        /// <summary>
+        /// The maximum number of items that may be returned. 
+        /// The user may request a limit, usually between 1 and 50, but the API is allowed to restrict the value of limit. This is the value the API used.
+        /// </summary>
+        int Limit { get; set; }
     }
 }

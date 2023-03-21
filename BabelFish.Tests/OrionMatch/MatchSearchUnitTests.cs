@@ -1,0 +1,117 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
+
+namespace Scopos.BabelFish.Tests.OrionMatch {
+
+    [TestClass]
+    public class MatchSearchUnitTests {
+
+        /// <summary>
+        /// Conducts a default search and checks that soemthing comes back.
+        /// </summary>
+        [TestMethod]
+        public void BasicTestSearch() {
+
+            //Conducting test in production since the development database doesn't always have entries in it.
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            var request = new MatchSearchPublicRequest();
+
+            var taskMatchSearchResponse = client.GetMatchSearchPublicAsync( request );
+            var matchSearchResponse = taskMatchSearchResponse.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
+
+            //It is possible, however unlikely, that the search comes back without any items.
+            Assert.IsTrue( matchSearchResponse.MatchSearchList.Items.Count > 0 );
+        }
+
+        /// <summary>
+        /// Specifies good set of input parameters to the serach, and checks they match the output parameters.
+        /// </summary>
+        [TestMethod]
+        public void MatchSearchInputMatchesOutput() {
+
+            //Conducting test in production since the development database doesn't always have entries in it.
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            var distance = 325;
+            var startDate = new DateTime( 2022, 01, 01 );
+            var endDate = new DateTime( 2022, 01, 31 );
+            var limit = 7;
+            var longitude = -77.5;
+            var latitude = 38.7;
+            var request = new MatchSearchPublicRequest() {
+                Distance = distance,
+                StartDate = startDate,
+                EndDate = endDate,
+                Limit = limit,
+                Longitude = longitude,
+                Latitude = latitude
+            };
+
+            var taskMatchSearchResponse = client.GetMatchSearchPublicAsync( request );
+            var matchSearchResponse = taskMatchSearchResponse.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
+
+            var matchSearchList = matchSearchResponse.MatchSearchList;
+            Assert.AreEqual( limit, matchSearchList.Items.Count );
+            Assert.AreEqual( distance, matchSearchList.Distance );
+            Assert.AreEqual( latitude, matchSearchList.Latitude );
+            Assert.AreEqual(longitude, matchSearchList.Longitude );
+            Assert.AreEqual( limit, matchSearchList.Limit );
+            Assert.AreEqual( startDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ), matchSearchList.StartDate );
+            Assert.AreEqual( endDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ), matchSearchList.EndDate );
+        }
+
+        /// <summary>
+        /// Tests that the Token / NextToken / .GetNextRequest() methods are all working as expected.
+        /// </summary>
+        [TestMethod]
+        public void NextTokenTest() {
+
+            //Conducting test in production since the development database doesn't always have entries in it.
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            var distance = 500;
+            var startDate = new DateTime( 2022, 01, 01 );
+            var endDate = new DateTime( 2022, 12, 31 );
+            var limit = 7;
+            var longitude = -77.5;
+            var latitude = 38.7;
+            var request1 = new MatchSearchPublicRequest() {
+                Distance = distance,
+                StartDate = startDate,
+                EndDate = endDate,
+                Limit = limit,
+                Longitude = longitude,
+                Latitude = latitude
+            };
+
+            var taskMatchSearchResponse1 = client.GetMatchSearchPublicAsync( request1 );
+            var matchSearchResponse1 = taskMatchSearchResponse1.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse1.StatusCode );
+            Assert.AreEqual( limit, matchSearchResponse1.MatchSearchList.Items.Count );
+
+            var request2 = matchSearchResponse1.GetNextRequest();
+
+            var taskMatchSearchResponse2 = client.GetMatchSearchPublicAsync( request2 );
+            var matchSearchResponse2 = taskMatchSearchResponse2.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse2.StatusCode );
+            Assert.AreEqual( limit, matchSearchResponse2.MatchSearchList.Items.Count );
+
+            var request3 = matchSearchResponse2.GetNextRequest();
+            Assert.AreNotEqual( request1.Token, request2.Token );
+            Assert.AreNotEqual( request2.Token, request3.Token );
+        }
+    }
+}

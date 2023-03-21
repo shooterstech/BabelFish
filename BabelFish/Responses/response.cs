@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 
@@ -35,6 +36,7 @@ namespace Scopos.BabelFish.Responses
              * A Concrete class constructor should have the following constructor definition:
              * public MyGreatResponseClass( MyGreatReqeustClass reqeust) : base() {}
              */
+
         }
 
         public Response( Request request ) {
@@ -76,18 +78,6 @@ namespace Scopos.BabelFish.Responses
         /// Gets or Sets the Status Code returned by the Rest API call.
         /// </summary>
         public HttpStatusCode StatusCode { get; internal set; }
-
-        /// <summary>
-        /// Certain API Calls limit the amount of data that gets returned, on each call. 
-        /// When the returned data is limited, use the NextToken to return the next
-        /// set of data. If NextToken is null or an empty string, then all
-        /// data has been returned. 
-        /// </summary>
-        public string NextToken {  
-            get {
-                return this.MessageResponse.NextToken;
-            }
-        }
 
         /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.

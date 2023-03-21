@@ -31,6 +31,14 @@ namespace Scopos.BabelFish.Requests {
         }
 
         /// <summary>
+        /// Creates a new instance of a Request Object, with all the same parameters
+        /// </summary>
+        /// <returns></returns>
+        public virtual Request Copy() { 
+            throw new NotImplementedException(); 
+        }
+
+        /// <summary>
         /// Indicates if this request requires user credentials.
         /// </summary>
         public bool RequiresCredentials { get; protected set; } = false;

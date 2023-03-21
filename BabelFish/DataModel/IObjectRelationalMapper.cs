@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.DataModel {
+namespace Scopos.BabelFish.DataModel {
     /// <summary>
     /// Defines a set of functions and properties a class needs to have in order 
     /// to be stored in a SQL Table.

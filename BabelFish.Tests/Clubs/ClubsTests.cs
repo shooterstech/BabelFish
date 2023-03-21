@@ -51,7 +51,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             Assert.IsTrue( clubList.Items.Count > 0, "The response's ClubList should have a length greather than zero." );
 
-            Assert.AreEqual( response.MessageResponse.NextToken, "", "Expecting NextToken to be an empty string with user test_dev_7." );
+            Assert.AreEqual( clubList.NextToken, "", "Expecting NextToken to be an empty string with user test_dev_7." );
 
         }
 
@@ -74,16 +74,16 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var clubList = response1.ClubList;
 
             Assert.IsTrue( clubList.Items.Count > 0, "The response's ClubList should have a length greather than zero." );
-            Assert.AreNotEqual( response1.MessageResponse.NextToken, "", "Expecting NextToken to be an non empty string with user test_dev_1." );
+            Assert.AreNotEqual( clubList.NextToken, "", "Expecting NextToken to be an non empty string with user test_dev_1." );
 
             //Perform the follow up request, with the toekn value
             var request2 = new GetClubListAuthenticatedRequest( userAuthentication );
-            request2.Token = response1.NextToken;
+            request2.Token = clubList.NextToken;
 
             var response2 = await client.GetClubListAuthenticatedAsync( request2 );
             Assert.AreEqual( response2.StatusCode, System.Net.HttpStatusCode.OK );
 
-            Assert.AreNotEqual( response1.MessageResponse.NextToken, response2.MessageResponse.NextToken );
+            Assert.AreNotEqual( response1.ClubList.NextToken, response2.ClubList.NextToken );
         }
 
         [TestMethod]

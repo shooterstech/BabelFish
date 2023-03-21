@@ -5,9 +5,14 @@ using System.Text;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     /// <summary>
-    /// A SquaddingAssignmentFiringPoint represents the complete squadding of one participant (athlete or team) in a squadding Event, where the participant is firing on a single target.
+    /// A SquaddingAssignmentSquad represents the complete squadding of one participant (athlete or team) in a squadding Event, where the participant is firing within a squad of participants. 
+    /// Squads are almost exclusively used in shotgun events.
     /// </summary>
     public class SquaddingAssignmentSquad : SquaddingAssignment, IComparable<SquaddingAssignmentSquad> {
+        
+        /*
+         * NOTE: In shotgun, where they use squads, there is no concept of a relay. There is such a concept of order of squads, but the term 'relay' is not used.
+         */
 
         public const int CONCRETE_CLASS_ID = 3;
 
@@ -15,6 +20,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             ConcreteClassId = CONCRETE_CLASS_ID;
         }
 
+        /// <summary>
+        /// The name of the squad the Individual is squadded on.
+        /// </summary>
         public string Squad {get; set; }
 
         public int CompareTo(SquaddingAssignmentSquad other) {

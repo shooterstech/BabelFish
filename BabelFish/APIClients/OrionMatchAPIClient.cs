@@ -88,10 +88,23 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="matchid"></param>
         /// <param name="squaddinglistname"></param>
-        /// <param name="withAuthentication">default false</param>
         /// <returns>Squadding Object</returns>
-        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname, bool withAuthentication = false ) {
+        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname ) {
             var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
+
+            return await GetSquaddingListPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Squadding List API, limit the response's length by the passed in relayName
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="squaddinglistname"></param>
+        /// <param name="relayName"></param>
+        /// <returns>Squadding Object</returns>
+        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname, string relayName ) {
+            var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
+            request.RelayName = relayName;
 
             return await GetSquaddingListPublicAsync( request ).ConfigureAwait( false );
         }
@@ -119,26 +132,12 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// Get Match Locations API
-        /// </summary>
-        /// <returns>List<MatchLocation> Object</returns>
-        public async Task<GetMatchLocationsPublicResponse> GetMatchLocationsPublicAsync() {
-            GetMatchLocationsPublicResponse response = new GetMatchLocationsPublicResponse( new GetMatchLocationsPublicRequest() );
-
-            var request = new GetMatchLocationsPublicRequest();
-
-            await this.CallAPI( request, response ).ConfigureAwait( false );
-
-            return response;
-        }
-
-        /// <summary>
         /// Get Match Search API
         /// </summary>
         /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
-        public async Task<GetMatchSearchResponse> GetMatchSearchPublicAsync( GetMatchSearchPublicRequest requestParameters ) {
-            GetMatchSearchResponse response = new GetMatchSearchResponse( requestParameters );
+        public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
+            MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
@@ -146,12 +145,12 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// Get Participant List API
+        /// Requests a list of Match Participants for a specified match.
         /// </summary>
         /// <param name="requestParameters">GetParticipantListRequest object</param>
         /// <returns>Match Participant List Object</returns>
-        public async Task<GetParticipantListPublicResponse> GetMatchParticipantListPublicAsync( GetParticipantListPublicRequest requestParameters ) {
-            GetParticipantListPublicResponse response = new GetParticipantListPublicResponse( requestParameters );
+        public async Task<GetMatchParticipantListPublicResponse> GetMatchParticipantListPublicAsync( GetMatchParticipantListPublicRequest requestParameters ) {
+            GetMatchParticipantListPublicResponse response = new GetMatchParticipantListPublicResponse( requestParameters );
 
             await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
 
@@ -159,12 +158,25 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// Get Participant List API
+        /// Requests a list of Match Participants for a specified match.
         /// </summary>
         /// <param name="matchid"></param>
         /// <returns>Match Participant List Object</returns>
-        public async Task<GetParticipantListPublicResponse> GetMatchParticipantListPublicAsync( string matchid ) {
-            var request = new GetParticipantListPublicRequest( matchid );
+        public async Task<GetMatchParticipantListPublicResponse> GetMatchParticipantListPublicAsync( string matchid ) {
+            var request = new GetMatchParticipantListPublicRequest( matchid );
+
+            return await GetMatchParticipantListPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Requests a list of Match Participants for a specified match. Limited by Match Particpants with the specified role
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="role"></param>
+        /// <returns>Match Participant List Object</returns>
+        public async Task<GetMatchParticipantListPublicResponse> GetMatchParticipantListPublicAsync( string matchid, MatchParticipantRole role ) {
+            var request = new GetMatchParticipantListPublicRequest( matchid );
+            request.Role = role;
 
             return await GetMatchParticipantListPublicAsync( request ).ConfigureAwait( false );
         }
