@@ -24,7 +24,8 @@ namespace Scopos.BabelFish.APIClients {
 
             GetAttributeValueAuthenticatedResponse response = new GetAttributeValueAuthenticatedResponse( requestParameters );
 
-            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
+            await response.PostResponseProcessingAsync();
 
             return response;
         }
@@ -75,7 +76,7 @@ namespace Scopos.BabelFish.APIClients {
 
             SetAttributeValueAuthenticatedResponse response = new SetAttributeValueAuthenticatedResponse( request );
 
-            await this.CallAPI( request, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( request, response );
 
             return response;
         }

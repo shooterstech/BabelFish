@@ -11,6 +11,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Helpers;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
@@ -45,7 +46,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             //For the purpose of this unit test, I am starting with a clean / brand new Attribute Value. Normally, in real life
             //The user's attribute value should be read first
-            var phoneNumberAttrValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNamePhoneNumber );
+            var phoneNumberAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( SetName.Parse( setNamePhoneNumber ) ).Result;
 
             //Work
             var workFieldKey = "MyWorkNumber";

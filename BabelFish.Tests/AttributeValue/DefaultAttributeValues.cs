@@ -29,9 +29,9 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
 
-            var testAttributeValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNameTestAttriubte );
+            var testAttributeValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
             var today = DateTime.Today;
             var now = DateTime.UtcNow;
             var zero = TimeSpan.Zero;

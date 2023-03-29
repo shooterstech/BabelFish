@@ -7,6 +7,7 @@ using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
+using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
 
 namespace Scopos.BabelFish.Converters {
@@ -74,7 +75,9 @@ namespace Scopos.BabelFish.Converters {
 
             if (okToDeserialize) {
                 attributeValueDataPacket.AttributeDef = (string)jo.GetValue( "AttributeDef" );
-                attributeValueDataPacket.AttributeValue = new AttributeValue( attributeValueDataPacket.AttributeDef, jo.GetValue( "AttributeValue" ) );
+                logger.Info( "About to call AttributeValue.CreateAsync()" );
+                attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), jo.GetValue( "AttributeValue" ) );
+                logger.Info( "Returned from calling AttributeValue.CreateAsync()" );
                 attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
             }
 

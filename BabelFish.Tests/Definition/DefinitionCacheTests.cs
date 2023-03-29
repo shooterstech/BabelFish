@@ -35,7 +35,6 @@ namespace Scopos.BabelFish.Tests.Definition {
             var responseNoCache = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( requestNoCache );
             var responseWithCache = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( requestWithCache );
 
-
             var taskResponseNoCache = client.GetDefinition<Scopos.BabelFish.DataModel.Definitions.Attribute>( requestNoCache, responseNoCache );
             var resultNoCache = taskResponseNoCache.Result;
             Assert.AreEqual( HttpStatusCode.OK, resultNoCache.StatusCode, $"Expecting and OK status code, instead received {resultNoCache.StatusCode}." );

@@ -14,6 +14,7 @@ using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
 using Amazon.Runtime;
+using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient {
@@ -43,7 +44,7 @@ namespace Scopos.BabelFish.APIClients {
 
         #region properties
 
-        [Obsolete("What is this used for?")]
+        [Obsolete( "What is this used for?" )]
         private DateTime? ContinuationToken = null;
 
         /// <summary>
@@ -59,13 +60,12 @@ namespace Scopos.BabelFish.APIClients {
         #endregion properties
 
         #region Methods
-        protected async Task CallAPI<T>(Request request, Response<T> response) where T : BaseClass
-        {
+        protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass {
             // Get Uri for call
-            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace("?#", "");
+            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
             try {
-                
+
                 HttpResponseMessage responseMessage = new HttpResponseMessage();
 
                 HttpRequestMessage requestMessage;
@@ -86,15 +86,15 @@ namespace Scopos.BabelFish.APIClients {
                     requestMessage.Content = request.PostParameters;
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
-                    logger.Info( $"Calling {request} on {uri}.");
+                    logger.Info( $"Calling {request} on {uri}." );
                     DateTime startTime = DateTime.Now;
 
                     if (request.RequiresCredentials) {
                         //If we are making an authenticated call, use the exstention method from https://github.com/FantasticFiasco/aws-signature-version-4 to sign the request.
-                        responseMessage = await httpClient.SendAsync( 
-                            requestMessage, 
-                            AuthenticationConstants.AWSRegion, 
-                            AuthenticationConstants.AWSServiceName, 
+                        responseMessage = await httpClient.SendAsync(
+                            requestMessage,
+                            AuthenticationConstants.AWSRegion,
+                            AuthenticationConstants.AWSServiceName,
                             request.Credentials.ImmutableCredentials );
                     } else {
                         responseMessage = await httpClient.SendAsync( requestMessage );
@@ -107,9 +107,9 @@ namespace Scopos.BabelFish.APIClients {
                 response.StatusCode = responseMessage.StatusCode;
 
                 using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
-                using (StreamReader sr = new StreamReader(s))
-                using (JsonReader reader = new JsonTextReader(sr)) {
-                    var apiReturnJson = JObject.ReadFrom(reader);
+                using (StreamReader sr = new StreamReader( s ))
+                using (JsonReader reader = new JsonTextReader( sr )) {
+                    var apiReturnJson = JObject.ReadFrom( reader );
                     try {
 
                         //TODO: Do something with invalid data format from Forbidden....
@@ -118,26 +118,24 @@ namespace Scopos.BabelFish.APIClients {
 
                         if (responseMessage.IsSuccessStatusCode)
                             response.Body = apiReturnJson;
-                        
+
                         //Log errors set in calls
-                        if ( response.MessageResponse.Message.Count > 0)
-                            logger.Error("Processing Call Error {processingerror}", string.Join("; ", response.MessageResponse.Message));
+                        if (response.MessageResponse.Message.Count > 0)
+                            logger.Error( "Processing Call Error {processingerror}", string.Join( "; ", response.MessageResponse.Message ) );
 
                     } catch (Exception ex) {
-                        throw new Exception($"Error parsing return json: {ex.ToString()}");
+                        throw new Exception( $"Error parsing return json: {ex.ToString()}" );
                     }
                 }
 
                 if (!responseMessage.IsSuccessStatusCode)
-                    logger.Error("API error with: {errorphrase}", responseMessage.ReasonPhrase);
+                    logger.Error( "API error with: {errorphrase}", responseMessage.ReasonPhrase );
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 response.StatusCode = HttpStatusCode.InternalServerError;
-                response.MessageResponse.Message.Add($"API Call failed: {ex.Message}");
-                response.MessageResponse.ResponseCodes.Add(HttpStatusCode.InternalServerError.ToString());
-                logger.Fatal(ex, "API Call failed: {failmsg}", ex.Message);
+                response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
+                response.MessageResponse.ResponseCodes.Add( HttpStatusCode.InternalServerError.ToString() );
+                logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
             }
         }
         #endregion Methods

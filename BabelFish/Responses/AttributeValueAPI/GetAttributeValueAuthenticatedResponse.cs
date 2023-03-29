@@ -22,6 +22,14 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             get { return Value.AttributeValues; }
         }
 
+        public async Task PostResponseProcessingAsync() {
+            foreach ( var attributeValue in AttributeValues.Values ) {
+                if (attributeValue.AttributeValueTask != null && !attributeValue.AttributeValueTask.IsCompleted) {
+                    await attributeValue.FinishThisBullShitAsync();
+                }
+            }
+        }
+
         /// <summary>
         /// Attempts to return the asked for AttributeValue. There are two reasons a False would
         /// be returned. 1) The set name was not part of the asked for list of attribute values in the request.
@@ -36,7 +44,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             AttributeValueDataPacketAPIResponse avw;
             if (Value.AttributeValues.TryGetValue( attributeDefinitionSetName, out avw)) {
                 if ( avw.StatusCode == System.Net.HttpStatusCode.OK ) {
-                    attributeValue = avw.AttributeValue; ;
+                    attributeValue = avw.AttributeValue;
                     return true;
                 }
             }

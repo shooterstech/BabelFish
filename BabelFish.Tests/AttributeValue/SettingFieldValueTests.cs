@@ -24,8 +24,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void HappyPathSingleAttributeFieldDataTypes() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
-            var testAttrValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNameTestAttriubte );
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
+            var testAttrValue =  Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             //Create some random data to store
             var random = new Random();
@@ -61,8 +61,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void HappyPathListAttributeFieldDataTypes() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
-            var testAttrValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNameTestAttriubte );
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
+            var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             //Create some random data to store
             List<string> myListOfStrings = new List<string>();
@@ -89,8 +89,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void WrongDataTypeForString() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
-            var testAttrValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNameTestAttriubte );
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
+            var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             testAttrValue.SetFieldValue( "AString", 1234 );
         }
@@ -103,8 +103,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void WrongDataTypeForInt() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
-            var testAttrValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNameTestAttriubte );
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
+            var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             testAttrValue.SetFieldValue( "AnInteger", 1234.5678 );
         }
@@ -117,8 +117,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void WrongUseOfSetFieldValue1() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
-            var testAttrValue = new Scopos.BabelFish.DataModel.AttributeValue.AttributeValue( setNameTestAttriubte );
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
+            var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             testAttrValue.SetFieldValue( "AString", 1234, "MyFieldKey" );
         }

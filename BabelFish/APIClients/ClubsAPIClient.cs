@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = new GetClubListAuthenticatedResponse( request );
 
-            await this.CallAPI( request, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -59,7 +59,7 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = new GetClubDetailAuthenticatedResponse( request );
 
-            await this.CallAPI( request, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }

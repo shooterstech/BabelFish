@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.APIClients {
         {
             var response = new GetScoreHistoryAuthenticatedResponse( requestParameters );
 
-            await this.CallAPI(requestParameters, response).ConfigureAwait(false);
+            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
 
             return response;
         }
@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = new GetScoreAverageAuthenticatedResponse( requestParameters );
 
-            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }

@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.APIClients {
 
             GetVersionPublicResponse response = new GetVersionPublicResponse( requestParameters );
 
-            await this.CallAPI( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
 
             return response;
         }
@@ -51,7 +51,7 @@ namespace Scopos.BabelFish.APIClients {
 
             GetCupsOfCoffeePublicResponse response = new GetCupsOfCoffeePublicResponse( requestParameters );
 
-            await this.CallAPI( requestParameters, response );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -66,7 +66,7 @@ namespace Scopos.BabelFish.APIClients {
 
             GetCupsOfCoffeePublicResponse response = new GetCupsOfCoffeePublicResponse( requestParameters );
 
-            await this.CallAPI( requestParameters, response );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }

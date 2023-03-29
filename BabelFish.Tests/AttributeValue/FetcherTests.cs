@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -17,11 +18,11 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         /// </summary>
         [TestMethod]
         [ExpectedException( typeof( XApiKeyNotSetException ) )]
-        public void A_MissingXApiKeyTest() {
+        public async Task A_MissingXApiKeyTest() {
 
             //Without setting the x api key, an exception should be thrown.
             var setNameEmailStr = "v2.3:orion:Email Address";
-            var definitionEmail = AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinition( setNameEmailStr );
+            var definitionEmail = await AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinitionAsync( setNameEmailStr );
         }
 
         /// <summary>
@@ -41,21 +42,21 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         }
 
         [TestMethod]
-        public void C_HappyPathFetchDefinitionTest() {
+        public async Task C_HappyPathFetchDefinitionTest() {
 
             //Set the x api key
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             //Test using with a string as the set name.
             var setNameEmailStr = "v2.3:orion:Email Address";
-            var definitionEmail = AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinition( setNameEmailStr );
+            var definitionEmail = await AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinitionAsync( setNameEmailStr );
             Assert.IsNotNull( definitionEmail );
             Assert.AreEqual( setNameEmailStr, definitionEmail.GetSetName().ToString() );
 
             //Test using with a string as the set name.
             var setNamePhoneStr = "v2.1:orion:Phone Number";
             var setNamePhone = SetName.Parse( setNamePhoneStr );
-            var definitionPhone = AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinition( setNamePhone );
+            var definitionPhone = await AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinitionAsync( setNamePhone );
             Assert.IsNotNull( definitionPhone );
             Assert.AreEqual( setNamePhoneStr, definitionPhone.GetSetName().ToString() );
         }

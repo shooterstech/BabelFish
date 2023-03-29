@@ -27,6 +27,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         
         public AttributeValue AttributeValue { get; set; }
 
+        protected internal Task<AttributeValue> AttributeValueTask { get; set; }
+
+        protected internal async Task FinishThisBullShitAsync() {
+            AttributeValue = await AttributeValueTask;
+        }
+
         public VisibilityOption Visibility { get; set; }
 
         /// <inheritdoc/>

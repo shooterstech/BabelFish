@@ -19,58 +19,48 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         private SetName setName = null;
         private const string KEY_FOR_SINGLE_ATTRIBUTES = "Single-Value-Attribute-45861567";
 
-        private Scopos.BabelFish.DataModel.Definitions.Attribute definition;
+        private Scopos.BabelFish.DataModel.Definitions.Attribute definition = null;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
         /// <exception cref="XApiKeyNotSetException">Thrown if the x-api-key has not yet been set on AttributeValueDefinitionFetcher.FETCHER.</exception>
-        public AttributeValue( SetName setName ) {
+        private AttributeValue( SetName setName ) {
 
             if (!FETCHER.IsXApiKeySet)
                 throw new XApiKeyNotSetException();
 
             this.SetName= setName;
-            definition = FETCHER.FetchAttributeDefinition( SetName );
-
-            SetDefaultFieldValues();
         }
 
-        /// <summary>
-        /// Instantiate a new AttributeValue to modify
-        /// </summary>
-        /// <param name="setName">Assign a valid Attribute SetName</param>
-        /// <exception cref="ArgumentException">Thrown if the passed in setName string could not be parsed into a validated SetName</exception>
-        /// <exception cref="XApiKeyNotSetException">Thrown if the x-api-key has not yet been set on AttributeValueDefinitionFetcher.FETCHER.</exception>
-        public AttributeValue( string setName ) {
+        public static async Task<AttributeValue> CreateAsync( SetName setName ) {
+            AttributeValue av = new AttributeValue( setName );
+            await av.InitializeAsync();
 
-            if (!FETCHER.IsXApiKeySet)
-                throw new XApiKeyNotSetException();
-
-            SetName = SetName.Parse( setName );
-            definition = FETCHER.FetchAttributeDefinition( SetName );
-
-            SetDefaultFieldValues();
+            return av;
         }
 
-        public AttributeValue( string setName, JToken attributeValueAsJToken) {
+        public static async Task<AttributeValue> CreateAsync( SetName setName, JToken attributeValueAsJToken ) {
+            AttributeValue av = new AttributeValue( setName );
+            await av.InitializeAsync();
 
-            if (!FETCHER.IsXApiKeySet)
-                throw new XApiKeyNotSetException();
-
-            SetName = SetName.Parse( setName );
-            definition = FETCHER.FetchAttributeDefinition( SetName );
-
-            SetDefaultFieldValues();
-
-            if (definition.MultipleValues) {
-                foreach( var av in (JArray) attributeValueAsJToken) {
-                    ParseJObject( (JObject) av );
+            if (av.definition.MultipleValues) {
+                foreach (var avAsJToken in (JArray)attributeValueAsJToken) {
+                    av.ParseJObject( (JObject)avAsJToken );
                 }
             } else {
-                ParseJObject( (JObject) attributeValueAsJToken );
+                av.ParseJObject( (JObject)attributeValueAsJToken );
             }
+
+            return av;
+        }
+
+        private async Task InitializeAsync() {
+
+            definition = await FETCHER.FetchAttributeDefinitionAsync( SetName );
+
+            SetDefaultFieldValues();
         }
 
         private void ParseJObject( JObject attributeValueAsJObject ) {

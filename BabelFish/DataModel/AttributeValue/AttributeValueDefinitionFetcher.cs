@@ -2,7 +2,7 @@
 using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// <summary>
@@ -51,7 +51,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
         }
 
-        public Scopos.BabelFish.DataModel.Definitions.Attribute FetchAttributeDefinition( string attributeDef ) {
+        public async Task<Scopos.BabelFish.DataModel.Definitions.Attribute> FetchAttributeDefinitionAsync( string attributeDef ) {
 
             if (string.IsNullOrEmpty( xApiKey )) {
                 throw new XApiKeyNotSetException();
@@ -59,17 +59,16 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             var setName = SetName.Parse( attributeDef );
 
-            return FetchAttributeDefinition( setName );
+            return await FetchAttributeDefinitionAsync( setName );
         }
 
-        public Scopos.BabelFish.DataModel.Definitions.Attribute FetchAttributeDefinition( SetName attributeDef ) {
+        public async Task<Scopos.BabelFish.DataModel.Definitions.Attribute> FetchAttributeDefinitionAsync( SetName attributeDef ) {
 
             if (string.IsNullOrEmpty( xApiKey )) {
                 throw new XApiKeyNotSetException();
             }
 
-            var taskResponse = client.GetAttributeDefinitionAsync( attributeDef );
-            var response = taskResponse.Result;
+            var response = await client.GetAttributeDefinitionAsync( attributeDef );
             return response.Definition;
         }
     }

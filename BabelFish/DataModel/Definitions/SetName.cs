@@ -5,7 +5,7 @@ using System.Text;
 using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class SetName {
+    public class SetName: IEquatable<SetName> {
 
         private int majorVersion = 0;
         private int minorVersion = 0;
@@ -217,6 +217,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             sb.Append(':');
             sb.Append(properName);
             return sb.ToString();
+        }
+
+        public bool Equals( SetName other ) {
+            return this.ToString().Equals( other.ToString() );
+        }
+
+        public override bool Equals( object obj ) {
+            if ( obj == null || ! (obj is SetName)) 
+                return false;
+            return base.Equals( (SetName) obj );
+        }
+
+        public override int GetHashCode() {
+            return ToString().GetHashCode();
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         /// Tests the retreival of a single Attribute Value
         /// </summary>
         [TestMethod]
-        public void GetAttributeValue_SingleValue() {
+        public async Task GetAttributeValue_SingleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;

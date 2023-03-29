@@ -9,6 +9,7 @@ using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
+using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient {
@@ -31,7 +32,7 @@ namespace Scopos.BabelFish.APIClients {
                 DateTime startTime = DateTime.Now;
 
                 T definition;
-                if (!IgnoreLocalCache &&
+                if (false && !IgnoreLocalCache &&
                     !request.IgnoreLocalCache &&
                     DefinitionCache.CACHE.TryGetDefinition<T>( request.DefinitionType, request.SetName, out definition )) {
                     response.TimeToRun = DateTime.Now - startTime;
@@ -46,12 +47,13 @@ namespace Scopos.BabelFish.APIClients {
                         { request.SetName.ToString(), JObject.FromObject( definition ) }
                     };
 
+                    await DummyTask();
                     response.MessageResponse = fakeBody.ToObject<MessageResponse>();
                     response.Body = fakeBody;
 
                 } else {
 
-                    await this.CallAPI( request, response ).ConfigureAwait( false );
+                    await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
                     // Save returned definition to cache
                     if (response.Body != null)
@@ -65,6 +67,10 @@ namespace Scopos.BabelFish.APIClients {
             }
 
             return response;
+        }
+
+        private async Task<string> DummyTask() {
+            return "dummy";
         }
 
         /// <summary>
