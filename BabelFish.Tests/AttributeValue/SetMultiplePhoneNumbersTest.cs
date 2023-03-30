@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
              */
 
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(

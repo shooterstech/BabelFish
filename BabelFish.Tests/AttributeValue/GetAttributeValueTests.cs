@@ -121,6 +121,49 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.IsTrue( emailAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
         }
 
+
+        [TestMethod]
+        public async Task GetAttributeValue_MultipleValueRepeated() {
+
+            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+
+            var setNameProfileName = "v1.0:orion:Profile Name";
+            var setNameDOB = "v1.0:orion:Date of Birth";
+            var setNameEmail = "v2.0:orion:Email Address";
+            var setNamePhone = "v2.0:orion:Phone Number";
+
+            List<SetName> myAttributes = new List<SetName>()
+            {
+               SetName.Parse( setNamePhone ),
+               SetName.Parse( setNameProfileName ),
+               SetName.Parse( setNameDOB ),
+               SetName.Parse( setNameEmail )
+            };
+
+            //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
+            var request = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
+                AttributeNames = myAttributes,
+                ReturnDefaultValues = true
+            };
+
+            var response = await client.GetAttributeValueAuthenticatedAsync( request );
+
+            var profile1 = response.AttributeValues[setNameProfileName].AttributeValue;
+            var dob1 = response.AttributeValues[setNameDOB].AttributeValue;
+            var email1 = response.AttributeValues[setNameEmail].AttributeValue;
+            var phone1 = response.AttributeValues[setNamePhone].AttributeValue;
+
+            Assert.IsNotNull( profile1 );
+            Assert.IsNotNull( dob1 );
+            Assert.IsNotNull( email1 );
+            Assert.IsNotNull( phone1 );
+        }
+
         [TestMethod]
         public void GetAttributeValue_DoesNotExist() {
 

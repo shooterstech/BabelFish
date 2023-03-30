@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
 
         public async Task PostResponseProcessingAsync() {
             foreach ( var attributeValue in AttributeValues.Values ) {
-                if (attributeValue.AttributeValueTask != null && !attributeValue.AttributeValueTask.IsCompleted) {
+                if (attributeValue.AttributeValueTask != null) {
                     await attributeValue.FinishThisBullShitAsync();
                 }
             }
