@@ -24,14 +24,14 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         /// need to be updated.
         /// </summary>
         [TestMethod]
-        public void DefaultValuesTest() {
+        public async Task DefaultValuesTest() {
 
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
 
-            var testAttributeValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
+            var testAttributeValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte );
             var today = DateTime.Today;
             var now = DateTime.UtcNow;
             var zero = TimeSpan.Zero;
@@ -50,6 +50,32 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.IsTrue( ((List<DateTime>)testAttributeValue.GetFieldValue( "AListOfDates" )).Count == 0 );
             Assert.IsTrue( ((List<DateTime>)testAttributeValue.GetFieldValue( "AListOfDateTimes" )).Count == 0 );
             Assert.IsTrue( ((List<TimeSpan>)testAttributeValue.GetFieldValue( "AListOfTimes" )).Count == 0 );
+        }
+
+        /// <summary>
+        /// Note really a test, more of an example of how to get default value and test values against validation.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        [ExpectedException( typeof( AttributeValueValidationException ) )]
+        public async Task FieldsTest() {
+
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+
+            //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
+
+            var testAttributeValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte );
+
+            //Loop through a list of the fields
+            foreach( var field in testAttributeValue.GetDefintionFields() ) {
+                var fieldName = field.FieldName;  //Name of the field
+                var defaultValue = field.DefaultValue; //Note the return type is dynamic so you have to know what to cast it to
+                var feidlType = field.FieldType; //And this is how you learn what type of field it is. 
+                var validation = field.Validation; //This is the validation rule. Note, not fully implemented yet.
+                var passesValidation = field.ValidateFieldValue( "input value" ); //returns true or false if the input value passes the validation test.
+                testAttributeValue.SetFieldValue( field.FieldName, "input value" ); //Will throw a AttributeValueValidationException if the input does not pass validation.
+            }
         }
     }
 }
