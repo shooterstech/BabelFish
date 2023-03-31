@@ -121,7 +121,12 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.IsTrue( emailAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
         }
 
-
+        /// <summary>
+        /// The purpose of this test is largely to check in the async call to fetch definitions
+        /// is working, especially if the definition is already in cache and a IO bound API call
+        /// is not needed.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task GetAttributeValue_MultipleValueRepeated() {
 
@@ -151,17 +156,29 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
                 ReturnDefaultValues = true
             };
 
-            var response = await client.GetAttributeValueAuthenticatedAsync( request );
+            var response1 = await client.GetAttributeValueAuthenticatedAsync( request );
 
-            var profile1 = response.AttributeValues[setNameProfileName].AttributeValue;
-            var dob1 = response.AttributeValues[setNameDOB].AttributeValue;
-            var email1 = response.AttributeValues[setNameEmail].AttributeValue;
-            var phone1 = response.AttributeValues[setNamePhone].AttributeValue;
+            var profile1 = response1.AttributeValues[setNameProfileName].AttributeValue;
+            var dob1 = response1.AttributeValues[setNameDOB].AttributeValue;
+            var email1 = response1.AttributeValues[setNameEmail].AttributeValue;
+            var phone1 = response1.AttributeValues[setNamePhone].AttributeValue;
 
             Assert.IsNotNull( profile1 );
             Assert.IsNotNull( dob1 );
             Assert.IsNotNull( email1 );
             Assert.IsNotNull( phone1 );
+
+            var response2 = await client.GetAttributeValueAuthenticatedAsync( request );
+
+            var profile2 = response2.AttributeValues[setNameProfileName].AttributeValue;
+            var dob2 = response2.AttributeValues[setNameDOB].AttributeValue;
+            var email2 = response2.AttributeValues[setNameEmail].AttributeValue;
+            var phone2 = response2.AttributeValues[setNamePhone].AttributeValue;
+
+            Assert.IsNotNull( profile2 );
+            Assert.IsNotNull( dob2 );
+            Assert.IsNotNull( email2 );
+            Assert.IsNotNull( phone2 );
         }
 
         [TestMethod]

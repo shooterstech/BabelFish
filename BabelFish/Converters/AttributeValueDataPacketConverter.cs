@@ -75,9 +75,9 @@ namespace Scopos.BabelFish.Converters {
 
             if (okToDeserialize) {
                 attributeValueDataPacket.AttributeDef = (string)jo.GetValue( "AttributeDef" );
-                logger.Info( "About to call AttributeValue.CreateAsync()" );
+                logger.Info( $"About to call AttributeValue.CreateAsync() for {attributeValueDataPacket.AttributeDef}." );
                 attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), jo.GetValue( "AttributeValue" ) );
-                logger.Info( "Returned from calling AttributeValue.CreateAsync()" );
+                logger.Info( $"Returned from calling AttributeValue.CreateAsync() for {attributeValueDataPacket.AttributeDef}." );
                 attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
             }
 

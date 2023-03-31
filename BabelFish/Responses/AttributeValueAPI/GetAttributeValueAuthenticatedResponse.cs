@@ -22,10 +22,20 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             get { return Value.AttributeValues; }
         }
 
-        public async Task PostResponseProcessingAsync() {
+        /// <summary>
+        /// Deserilization of a AttributeValueDataPacket is handled by the overridden ReadJson()
+        /// method of AttributeValueDataPacketConverter class. Because to deserialize an AttributeValue
+        /// the Definition of the Attribute must be known. And reading the Definition is an IO bound
+        /// Async call. But ReadJson() is not Async and can't be made async because it is overridden.
+        /// To get around this limitation, the Task is assigned to AttributeValueTask (instead
+        /// of awaiting and assigning to AttributeValue. The awaiting of AttributeValueTask
+        /// is then handled in an async call sepeartly.
+        /// </summary>
+        /// <returns></returns>
+        protected internal async Task PostResponseProcessingAsync() {
             foreach ( var attributeValue in AttributeValues.Values ) {
                 if (attributeValue.AttributeValueTask != null) {
-                    await attributeValue.FinishThisBullShitAsync();
+                    await attributeValue.FinishInitializationAsync();
                 }
             }
         }
