@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
@@ -53,13 +54,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
-        public void OrionMatchAPI_GetAMatch() {
+        public async Task OrionMatchAPI_GetAMatch() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             var matchId = "1.1.2023011915575119.0";
-            var taskResponse = client.GetMatchDetailPublicAsync( matchId );
+            var response = await client.GetMatchDetailPublicAsync( matchId );
 
-            var response = taskResponse.Result;
             Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
 
             var match = response.Match;

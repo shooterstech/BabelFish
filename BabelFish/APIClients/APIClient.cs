@@ -132,7 +132,7 @@ namespace Scopos.BabelFish.APIClients {
                     logger.Error( "API error with: {errorphrase}", responseMessage.ReasonPhrase );
 
             } catch (Exception ex) {
-                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.StatusCode = HttpStatusCode.PreconditionFailed;
                 response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
                 response.MessageResponse.ResponseCodes.Add( HttpStatusCode.InternalServerError.ToString() );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );

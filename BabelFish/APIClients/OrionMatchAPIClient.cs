@@ -7,6 +7,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
     public class OrionMatchAPIClient : APIClient {
@@ -20,6 +21,7 @@ namespace Scopos.BabelFish.APIClients {
 
         public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
 
+        #region Get Match Detail
         /// <summary>
         /// Get Match Detail API
         /// </summary>
@@ -29,7 +31,7 @@ namespace Scopos.BabelFish.APIClients {
 
             GetMatchPublicResponse response = new GetMatchPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -40,11 +42,63 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( string matchid, bool withAuthentication = false ) {
+        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( string matchid ) {
             var request = new GetMatchPublicRequest( matchid );
 
-            return await GetMatchDetailPublicAsync( request ).ConfigureAwait( false );
+            return await GetMatchDetailPublicAsync( request );
         }
+
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="withAuthentication">default false</param>
+        /// <returns>Match Object</returns>
+        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( MatchID matchid ) {
+            var request = new GetMatchPublicRequest( matchid );
+
+            return await GetMatchDetailPublicAsync( request );
+        }
+
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetMatchRequest object</param>
+        /// <returns>Match Object</returns>
+        public async Task<GetMatchAuthenticatedResponse> GetMatchDetailAuthenticatedAsync( GetMatchAuthenticatedRequest requestParameters ) {
+
+            GetMatchAuthenticatedResponse response = new GetMatchAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="withAuthentication">default false</param>
+        /// <returns>Match Object</returns>
+        public async Task<GetMatchAuthenticatedResponse> GetMatchDetailAuthenticatedAsync( string matchid, UserAuthentication credentials ) {
+            var request = new GetMatchAuthenticatedRequest( matchid, credentials );
+
+            return await GetMatchDetailAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="withAuthentication">default false</param>
+        /// <returns>Match Object</returns>
+        public async Task<GetMatchAuthenticatedResponse> GetMatchDetailAuthenticatedAsync( MatchID matchid, UserAuthentication credentials ) {
+            var request = new GetMatchAuthenticatedRequest( matchid, credentials );
+
+            return await GetMatchDetailAuthenticatedAsync( request );
+        }
+
+        #endregion
 
         /// <summary>
         /// Get Result List API
@@ -54,7 +108,7 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<GetResultListPublicResponse> GetResultListPublicAsync( GetResultListPublicRequest requestParameters ) {
             GetResultListPublicResponse response = new GetResultListPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -78,7 +132,7 @@ namespace Scopos.BabelFish.APIClients {
 
             GetSquaddingListPublicResponse response = new GetSquaddingListPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -92,7 +146,7 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname ) {
             var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
 
-            return await GetSquaddingListPublicAsync( request ).ConfigureAwait( false );
+            return await GetSquaddingListPublicAsync( request );
         }
 
         /// <summary>
@@ -106,7 +160,7 @@ namespace Scopos.BabelFish.APIClients {
             var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
             request.RelayName = relayName;
 
-            return await GetSquaddingListPublicAsync( request ).ConfigureAwait( false );
+            return await GetSquaddingListPublicAsync( request );
         }
 
         /// <summary>
@@ -117,7 +171,7 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( GetResultCOFDetailPublicRequest requestParameters ) {
             GetResultCOFDetailPublicResponse response = new GetResultCOFDetailPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -139,7 +193,7 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
             MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -152,7 +206,7 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<GetMatchParticipantListPublicResponse> GetMatchParticipantListPublicAsync( GetMatchParticipantListPublicRequest requestParameters ) {
             GetMatchParticipantListPublicResponse response = new GetMatchParticipantListPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response );
 
             return response;
         }
@@ -165,7 +219,7 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<GetMatchParticipantListPublicResponse> GetMatchParticipantListPublicAsync( string matchid ) {
             var request = new GetMatchParticipantListPublicRequest( matchid );
 
-            return await GetMatchParticipantListPublicAsync( request ).ConfigureAwait( false );
+            return await GetMatchParticipantListPublicAsync( request );
         }
 
         /// <summary>
@@ -178,7 +232,7 @@ namespace Scopos.BabelFish.APIClients {
             var request = new GetMatchParticipantListPublicRequest( matchid );
             request.Role = role;
 
-            return await GetMatchParticipantListPublicAsync( request ).ConfigureAwait( false );
+            return await GetMatchParticipantListPublicAsync( request );
         }
 
     }
