@@ -447,20 +447,33 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// Removes devices from the user, if they have not been used in the last 45 days.
         /// </summary>
         /// <returns></returns>
-        public int CleanUpOldDevices() {
+        public async Task<int> CleanUpOldDevices() {
 
             //The .ListDevicesAsync() method can take a continuation token, to return the
             //next set of devices. The problme is, there is no way to get the token from 
             //the initial call.
             //Submitted issue to git hub for this enhancement https://github.com/aws/aws-sdk-net-extensions-cognito/issues/106
-            var listOfDevicesTask = this.CognitoUser.ListDevicesAsync( 60, null );
-            var listOfDevices = listOfDevicesTask.Result;
+            var listDevicesResponse = await this.CognitoUser.ListDevicesV2Async( 60, null );
             var count = 0;
+            int numberOfDays = 45;
 
-            foreach ( var device in listOfDevices ) {
-                if ( (DateTime.Now - device.LastAuthenticated).TotalDays > 45 ) {
-                    device.ForgetDeviceAsync().Wait();
+            foreach ( var deviceType in listDevicesResponse.Devices) {
+                if ( (DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                    var device = new CognitoDevice( deviceType, this.CognitoUser );
+                    await device.ForgetDeviceAsync();
                     count++;
+                }
+            }
+
+            while( ! string.IsNullOrEmpty(listDevicesResponse.PaginationToken) ) {
+                listDevicesResponse = await this.CognitoUser.ListDevicesV2Async( 60, listDevicesResponse.PaginationToken );
+
+                foreach (var deviceType in listDevicesResponse.Devices) {
+                    if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                        var device = new CognitoDevice( deviceType, this.CognitoUser );
+                        await device.ForgetDeviceAsync();
+                        count++;
+                    }
                 }
             }
 

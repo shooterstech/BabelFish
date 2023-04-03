@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             //Pass in a fake match id
-            var taskNotFound = client.GetMatchDetailPublicAsync( "1.2345.6789012345678901.0" );
+            var taskNotFound = client.GetMatchDetailPublicAsync( new MatchID("1.2345.6789012345678901.0") );
 
             var matchNotFoundResponse = taskNotFound.Result;
             Assert.AreEqual( HttpStatusCode.NotFound, matchNotFoundResponse.StatusCode );
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue( matchNotFoundResponse.MessageResponse.Message.Any( x => x.Contains( "could not be found" ) ) );
 
             //Match id with visibility set to PROTECTED, which can not be viewed from the public api call
-            var taskUnauthorized = client.GetMatchDetailPublicAsync( "1.1.2021031511174545.0" );
+            var taskUnauthorized = client.GetMatchDetailPublicAsync( new MatchID( "1.1.2021031511174545.0" ) );
 
             var matchUnauthorizedResponse = taskUnauthorized.Result;
             Assert.AreEqual( HttpStatusCode.Unauthorized, matchUnauthorizedResponse.StatusCode );
@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task OrionMatchAPI_GetAMatch() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            var matchId = "1.1.2023011915575119.0";
+            var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchDetailPublicAsync( matchId );
 
             Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var match = response.Match;
 
             //Perform some simple tests on the returned data.
-            Assert.AreEqual( matchId, match.MatchID );
+            Assert.AreEqual( matchId.ToString(), match.MatchID );
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( "2023-01-19", match.StartDate );

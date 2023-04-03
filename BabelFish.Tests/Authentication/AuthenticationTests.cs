@@ -164,14 +164,14 @@ namespace Scopos.BabelFish.Tests.Authentication {
         /// to run any of the tests. To get around this limitation, trying ot run this last. 
         /// </summary>
         [TestMethod]
-        public void Z_Cleanup() {
+        public async Task Z_Cleanup() {
 
             foreach (var users in Constants.TestDevCredentialsList) {
                 var userAuthenticationInit = new UserAuthentication(
                     users.Username,
                     users.Password );
 
-                int count = userAuthenticationInit.CleanUpOldDevices();
+                int count = await userAuthenticationInit.CleanUpOldDevices();
             }
         }
     }

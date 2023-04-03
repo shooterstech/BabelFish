@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
 
-            var matchId = "1.1.2023011915575119.0";
+            var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchDetailAuthenticatedAsync( matchId, userAuthentication );
 
             Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var match = response.Match;
 
             //Perform some simple tests on the returned data.
-            Assert.AreEqual( matchId, match.MatchID );
+            Assert.AreEqual( matchId.ToString(), match.MatchID );
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( "2023-01-19", match.StartDate );
