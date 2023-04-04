@@ -12,6 +12,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public GetSquaddingListAuthenticatedRequest( MatchID matchid, string squaddingEventName, UserAuthentication credentials ) : base( "GetSquaddingList", credentials ) {
             MatchID = matchid;
             SquaddingEventName = squaddingEventName;
+            this.RequiresCredentials = true;
         }
 
         /// <inheritdoc />

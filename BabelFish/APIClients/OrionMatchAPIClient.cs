@@ -207,6 +207,7 @@ namespace Scopos.BabelFish.APIClients {
 
         #endregion
 
+        #region Get Result COF
         /// <summary>
         /// Get Course Of Fire Detail API
         /// </summary>
@@ -226,9 +227,33 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="resultCOFID"></param>
         /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( string resultCOFID ) {
-            return await GetResultCourseOfFireDetailPublicAsync( new GetResultCOFDetailPublicRequest( resultCOFID ) ).ConfigureAwait( false );
+            return await GetResultCourseOfFireDetailPublicAsync( new GetResultCOFDetailPublicRequest( resultCOFID ) );
         }
 
+        /// <summary>
+        /// Get Course Of Fire Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetResultCOFDetailRequest object</param>
+        /// <returns>ResultCOF Object</returns>
+        public async Task<GetResultCOFDetailAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( GetResultCOFDetailAuthenticatedRequest requestParameters ) {
+            GetResultCOFDetailAuthenticatedResponse response = new GetResultCOFDetailAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Course Of Fire Detail API
+        /// </summary>
+        /// <param name="resultCOFID"></param>
+        /// <returns>ResultCOF Object</returns>
+        public async Task<GetResultCOFDetailAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( string resultCOFID, UserAuthentication credentials ) {
+            return await GetResultCourseOfFireDetailAuthenticatedAsync( new GetResultCOFDetailAuthenticatedRequest( resultCOFID, credentials ) );
+        }
+        #endregion
+
+        #region Match Search
         /// <summary>
         /// Get Match Search API
         /// </summary>
@@ -241,6 +266,20 @@ namespace Scopos.BabelFish.APIClients {
 
             return response;
         }
+
+        /// <summary>
+        /// Get Match Search API
+        /// </summary>
+        /// <param name="requestParameters">GetMatchSearchRequest object</param>
+        /// <returns>List<Match> Object</returns>
+        public async Task<MatchSearchAuthenticatedResponse> GetMatchSearchAuthenticatedAsync( MatchSearchAuthenticatedRequest requestParameters ) {
+            MatchSearchAuthenticatedResponse response = new MatchSearchAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+        #endregion
 
         #region Match Participant List
         /// <summary>

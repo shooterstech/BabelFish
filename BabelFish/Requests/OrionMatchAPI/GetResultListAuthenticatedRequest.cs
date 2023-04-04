@@ -11,6 +11,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public GetResultListAuthenticatedRequest( MatchID matchid, string listname, UserAuthentication credentials ) : base( "GetResultList", credentials ) {
             MatchID = matchid;
             ResultListName = listname;
+            this.RequiresCredentials = true;
         }
 
         /// <inheritdoc />

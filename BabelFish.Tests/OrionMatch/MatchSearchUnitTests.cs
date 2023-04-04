@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
@@ -16,15 +17,35 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         /// Conducts a default search and checks that soemthing comes back.
         /// </summary>
         [TestMethod]
-        public void BasicTestSearch() {
+        public async Task BasicTestSearchPublic() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
 
             var request = new MatchSearchPublicRequest();
 
-            var taskMatchSearchResponse = client.GetMatchSearchPublicAsync( request );
-            var matchSearchResponse = taskMatchSearchResponse.Result;
+            var matchSearchResponse = await client.GetMatchSearchPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
+
+            //It is possible, however unlikely, that the search comes back without any items.
+            Assert.IsTrue( matchSearchResponse.MatchSearchList.Items.Count > 0 );
+        }
+
+        [TestMethod]
+        public async Task BasicTestSearchAuthenticated() {
+
+            //Conducting test in production since the development database doesn't always have entries in it.
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+
+            var request = new MatchSearchAuthenticatedRequest(userAuthentication);
+
+            Assert.IsTrue( request.RequiresCredentials );
+
+            var matchSearchResponse = await client.GetMatchSearchAuthenticatedAsync( request );
 
             Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
 

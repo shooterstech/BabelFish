@@ -13,11 +13,13 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         public GetMatchParticipantListAuthenticatedRequest( MatchID matchid, UserAuthentication credentials ) : base( "GetMatchParticipantList", credentials ) {
             MatchID = matchid;
+            this.RequiresCredentials = true;
         }
 
 
         public GetMatchParticipantListAuthenticatedRequest( string matchid, UserAuthentication credentials ) : base( "GetMatchParticipantList", credentials ) {
             MatchID = new MatchID( matchid );
+            this.RequiresCredentials = true;
         }
 
         public MatchID MatchID { get; set; }
