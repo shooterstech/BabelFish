@@ -7,17 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetSquaddingListPublicRequest : Request, ITokenRequest {
-
-        public GetSquaddingListPublicRequest(MatchID matchid, string squaddingEventName ) : base( "GetSquaddingList" ) {
+    public class GetResultListAuthenticatedRequest : Request, ITokenRequest {
+        public GetResultListAuthenticatedRequest( MatchID matchid, string listname, UserAuthentication credentials ) : base( "GetResultList", credentials ) {
             MatchID = matchid;
-            SquaddingEventName = squaddingEventName;
+            ResultListName = listname;
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new GetSquaddingListPublicRequest( MatchID, SquaddingEventName );
-            newRequest.RelayName = this.RelayName;
+            var newRequest = new GetResultListAuthenticatedRequest( MatchID, ResultListName, Credentials );
             newRequest.Token = this.Token;
             newRequest.Limit = this.Limit;
 
@@ -26,13 +24,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         public MatchID MatchID { get; set; }
 
-        public string SquaddingEventName { get; set; }
-
-        /// <summary>
-        /// The relay query parameter limits the returned list of SquaddingAssignments to only those that have a 'Relay' name equal to this parameter's value. 
-        /// An empty string or null value will return the entire list.
-        /// </summary>
-        public string RelayName { get; set; } = string.Empty;
+        public string ResultListName { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public string Token { get; set; } = string.Empty;
@@ -42,7 +34,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         /// <inheritdoc />
         public override string RelativePath {
-            get { return $"/match/{MatchID}/squadding-list/{SquaddingEventName}"; }
+            get { return $"/match/{MatchID}/result-list/{ResultListName}"; }
         }
 
         /// <inheritdoc />
@@ -53,10 +45,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 if (!string.IsNullOrEmpty( Token )) {
                     parameterList.Add( "token", new List<string> { Token } );
-                }
-
-                if (!string.IsNullOrEmpty( RelayName )) {
-                    parameterList.Add( "relay", new List<string> { RelayName } );
                 }
 
                 if (Limit > 0)

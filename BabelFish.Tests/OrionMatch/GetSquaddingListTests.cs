@@ -7,6 +7,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
@@ -15,12 +16,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
 
         [TestMethod]
-        public void GetSquaddingListBasicTest() {
+        public void GetSquaddingListBasicPublicTest() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //This match id has three relays of 20 athletes
-            var matchId = "1.1.2023022315342668.0";
+            var matchId = new MatchID( "1.1.2023022315342668.0" );
             var squaddingListName = "Individual";
 
             var taskSquaddingListResponse = client.GetSquaddingListPublicAsync( matchId, squaddingListName );
@@ -29,7 +30,31 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
             var squaddingList = squaddingListResponse.SquaddingList;
 
-            Assert.AreEqual( matchId, squaddingList.MatchID );
+            Assert.AreEqual( matchId.ToString(), squaddingList.MatchID );
+            Assert.AreEqual( squaddingListName, squaddingList.EventName );
+
+            Assert.IsTrue( squaddingList.Items.Count > 0 );
+        }
+
+        [TestMethod]
+        public void GetSquaddingListBasicAuthenticatedTest() {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+
+            //This match id has three relays of 20 athletes
+            var matchId = new MatchID( "1.1.2023022315342668.0" );
+            var squaddingListName = "Individual";
+
+            var taskSquaddingListResponse = client.GetSquaddingListAuthenticatedAsync( matchId, squaddingListName, userAuthentication );
+            var squaddingListResponse = taskSquaddingListResponse.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
+            var squaddingList = squaddingListResponse.SquaddingList;
+
+            Assert.AreEqual( matchId.ToString(), squaddingList.MatchID );
             Assert.AreEqual( squaddingListName, squaddingList.EventName );
 
             Assert.IsTrue( squaddingList.Items.Count > 0 );
@@ -45,7 +70,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             //This match id has three relays of 20 athletes
-            var matchId = "1.1.2023022315342668.0";
+            var matchId = new MatchID( "1.1.2023022315342668.0" );
             var squaddingListName = "Individual";
 
             //Ask for all squadding assignments on relay 2
@@ -75,7 +100,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //This match id has three relays of 20 athletes
-            var matchId = "1.1.2023022315342668.0";
+            var matchId = new MatchID( "1.1.2023022315342668.0" );
             var squaddingListName = "Individual";
 
             var taskSquaddingListResponse1 = client.GetSquaddingListPublicAsync( matchId, squaddingListName );

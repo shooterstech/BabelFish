@@ -7,6 +7,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
@@ -14,12 +15,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
 
         [TestMethod]
-        public void GetResultListBasicTest() {
+        public void GetResultListBasicPublicTest() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //This match id has three relays of 20 athletes
-            var matchId = "1.1.2023011915575119.0";
+            var matchId = new MatchID( "1.1.2023011915575119.0" );
             var resultListName = "Individual - All";
 
             var taskResultListResponse = client.GetResultListPublicAsync( matchId, resultListName );
@@ -28,7 +29,31 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, resultListResponse.StatusCode );
             var resultList = resultListResponse.ResultList;
 
-            Assert.AreEqual( matchId, resultList.MatchID );
+            Assert.AreEqual( matchId.ToString(), resultList.MatchID );
+            Assert.AreEqual( resultListName, resultList.ResultName );
+
+            Assert.IsTrue( resultList.Items.Count > 0 );
+        }
+
+        [TestMethod]
+        public void GetResultListBasicAuthenticatedTest() {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+
+            //This match id has three relays of 20 athletes
+            var matchId = new MatchID( "1.1.2023011915575119.0" );
+            var resultListName = "Individual - All";
+
+            var taskResultListResponse = client.GetResultListAuthenticatedAsync( matchId, resultListName, userAuthentication );
+            var resultListResponse = taskResultListResponse.Result;
+
+            Assert.AreEqual( HttpStatusCode.OK, resultListResponse.StatusCode );
+            var resultList = resultListResponse.ResultList;
+
+            Assert.AreEqual( matchId.ToString(), resultList.MatchID );
             Assert.AreEqual( resultListName, resultList.ResultName );
 
             Assert.IsTrue( resultList.Items.Count > 0 );
@@ -40,7 +65,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //This match id has three relays of 20 athletes
-            var matchId = "1.1.2023011915575119.0";
+            var matchId = new MatchID( "1.1.2023011915575119.0" ); 
             var resultListName = "Individual - All";
 
             var requestInit = new GetResultListPublicRequest( matchId, resultListName ) {
@@ -52,7 +77,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, resultListResponseInit.StatusCode );
             var resultListInit = resultListResponseInit.ResultList;
 
-            Assert.AreEqual( matchId, resultListInit.MatchID );
+            Assert.AreEqual( matchId.ToString(), resultListInit.MatchID );
             Assert.AreEqual( resultListName, resultListInit.ResultName );
             Assert.IsTrue( resultListInit.Items.Count > 0 );
             Assert.AreNotEqual( "", resultListInit.NextToken );
@@ -67,7 +92,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, resultListResponseNext.StatusCode );
             var resultListNext = resultListResponseNext.ResultList;
 
-            Assert.AreEqual( matchId, resultListNext.MatchID );
+            Assert.AreEqual( matchId.ToString(), resultListNext.MatchID );
             Assert.AreEqual( resultListName, resultListNext.ResultName );
             Assert.IsTrue( resultListNext.Items.Count > 0 );
             Assert.AreNotEqual( "", resultListNext.NextToken );

@@ -76,6 +76,7 @@ namespace Scopos.BabelFish.APIClients {
 
         #endregion
 
+        #region Get Result List
         /// <summary>
         /// Get Result List API
         /// </summary>
@@ -95,10 +96,35 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns>ResultList Object</returns>
-        public async Task<GetResultListPublicResponse> GetResultListPublicAsync( string matchid, string listname ) {
+        public async Task<GetResultListPublicResponse> GetResultListPublicAsync( MatchID matchid, string listname ) {
             return await GetResultListPublicAsync( new GetResultListPublicRequest( matchid, listname ) ).ConfigureAwait( false );
         }
 
+        /// <summary>
+        /// Get Result List API
+        /// </summary>
+        /// <param name="requestParameters">GetResultListRequest object</param>
+        /// <returns>ResultList Object</returns>
+        public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( GetResultListAuthenticatedRequest requestParameters ) {
+            GetResultListAuthenticatedResponse response = new GetResultListAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Result List API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="listname"></param>
+        /// <returns>ResultList Object</returns>
+        public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( MatchID matchid, string listname, UserAuthentication credentials ) {
+            return await GetResultListAuthenticatedAsync( new GetResultListAuthenticatedRequest( matchid, listname, credentials ) ).ConfigureAwait( false );
+        }
+        #endregion
+
+        #region Get Squadding List
         /// <summary>
         /// Get Squadding List API
         /// </summary>
@@ -119,7 +145,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="squaddinglistname"></param>
         /// <returns>Squadding Object</returns>
-        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname ) {
+        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( MatchID matchid, string squaddinglistname ) {
             var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
 
             return await GetSquaddingListPublicAsync( request );
@@ -132,12 +158,54 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="squaddinglistname"></param>
         /// <param name="relayName"></param>
         /// <returns>Squadding Object</returns>
-        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( string matchid, string squaddinglistname, string relayName ) {
+        public async Task<GetSquaddingListPublicResponse> GetSquaddingListPublicAsync( MatchID matchid, string squaddinglistname, string relayName ) {
             var request = new GetSquaddingListPublicRequest( matchid, squaddinglistname );
             request.RelayName = relayName;
 
             return await GetSquaddingListPublicAsync( request );
         }
+
+        /// <summary>
+        /// Get Squadding List API
+        /// </summary>
+        /// <param name="requestParameters">GetSquaddingListRequest object</param>
+        /// <returns>Squadding Object</returns>
+        public async Task<GetSquaddingListAuthenticatedResponse> GetSquaddingListAuthenticatedAsync( GetSquaddingListAuthenticatedRequest requestParameters ) {
+
+            GetSquaddingListAuthenticatedResponse response = new GetSquaddingListAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Squadding List API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="squaddinglistname"></param>
+        /// <returns>Squadding Object</returns>
+        public async Task<GetSquaddingListAuthenticatedResponse> GetSquaddingListAuthenticatedAsync( MatchID matchid, string squaddinglistname, UserAuthentication credentials ) {
+            var request = new GetSquaddingListAuthenticatedRequest( matchid, squaddinglistname, credentials );
+
+            return await GetSquaddingListAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Get Squadding List API, limit the response's length by the passed in relayName
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="squaddinglistname"></param>
+        /// <param name="relayName"></param>
+        /// <returns>Squadding Object</returns>
+        public async Task<GetSquaddingListAuthenticatedResponse> GetSquaddingListAuthenticatedAsync( MatchID matchid, string squaddinglistname, string relayName, UserAuthentication credentials ) {
+            var request = new GetSquaddingListAuthenticatedRequest( matchid, squaddinglistname, credentials );
+            request.RelayName = relayName;
+
+            return await GetSquaddingListAuthenticatedAsync( request );
+        }
+
+        #endregion
 
         /// <summary>
         /// Get Course Of Fire Detail API

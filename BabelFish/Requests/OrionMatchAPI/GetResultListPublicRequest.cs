@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
     public class GetResultListPublicRequest : Request, ITokenRequest {
-        public GetResultListPublicRequest( string matchid = "", string listname = "" ) : base( "GetResultList" ) {
+
+        public GetResultListPublicRequest( MatchID matchid, string listname ) : base( "GetResultList" ) {
             MatchID = matchid;
             ResultListName = listname;
         }
@@ -20,7 +22,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             return newRequest;
         }
 
-        public string MatchID { get; set; } = string.Empty;
+        public MatchID MatchID { get; set; }
 
         public string ResultListName { get; set; } = string.Empty;
 

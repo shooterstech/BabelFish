@@ -60,7 +60,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         }
 
         public override Request Copy() {
-            GetMatchParticipantListPublicRequest newRequest = new GetMatchParticipantListPublicRequest( MatchID );
+            GetMatchParticipantListAuthenticatedRequest newRequest = new GetMatchParticipantListAuthenticatedRequest( MatchID, Credentials );
             newRequest.Role = this.Role; 
             newRequest.Token = this.Token;
             return newRequest;

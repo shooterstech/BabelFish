@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetSquaddingListPublicRequest : Request, ITokenRequest {
+    public class GetSquaddingListAuthenticatedRequest : Request, ITokenRequest {
 
-        public GetSquaddingListPublicRequest(MatchID matchid, string squaddingEventName ) : base( "GetSquaddingList" ) {
+        public GetSquaddingListAuthenticatedRequest( MatchID matchid, string squaddingEventName, UserAuthentication credentials ) : base( "GetSquaddingList", credentials ) {
             MatchID = matchid;
             SquaddingEventName = squaddingEventName;
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new GetSquaddingListPublicRequest( MatchID, SquaddingEventName );
+            var newRequest = new GetSquaddingListAuthenticatedRequest( MatchID, SquaddingEventName, Credentials );
             newRequest.RelayName = this.RelayName;
             newRequest.Token = this.Token;
             newRequest.Limit = this.Limit;
