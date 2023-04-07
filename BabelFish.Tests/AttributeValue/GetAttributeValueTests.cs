@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void GetAttributeValue_MultipleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = client.XApiKey;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -84,12 +84,14 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var setNameProfileName = "v1.0:orion:Profile Name";
             var setNameDOB = "v1.0:orion:Date of Birth";
             var setNameEmail = "v2.0:orion:Email Address";
+            var setNameAddress = "v1.0:orion:Address";
 
             List<SetName> myAttributes = new List<SetName>()
             {
                SetName.Parse( setNameProfileName ),
                SetName.Parse( setNameDOB ),
-               SetName.Parse( setNameEmail )
+               SetName.Parse( setNameEmail ),
+               SetName.Parse( setNameAddress )
             };
 
             //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
@@ -105,7 +107,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             //The returned data should have three AttriuteValueDataPacket
             var attributeValueDataPackets = response.AttributeValues;
-            Assert.IsTrue( attributeValueDataPackets.Count == 3 );
+            Assert.IsTrue( attributeValueDataPackets.Count == 4 );
             Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameProfileName ) );
             Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameDOB ) );
             Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameEmail ) );
@@ -119,6 +121,16 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             var emailAttributeValueDataPacket = attributeValueDataPackets[setNameEmail];
             Assert.IsTrue( emailAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
+
+            var addressAttributeValueDataPacket = attributeValueDataPackets[setNameAddress];
+            Assert.IsTrue( addressAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
+
+            var addresses = addressAttributeValueDataPacket.AttributeValue;
+            var stateField = addresses.GetAttributeField( "State" );
+            foreach( var value in stateField.Values ) {
+                var stateCode = value.Value; //2 letter state code, which is what should get saved back to the attribute value
+                var stateName = value.Name;  //Fully spelled out state name for display purposes.
+            }
         }
 
         /// <summary>
