@@ -4,11 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
-{
-    public class GetScoreHistoryAbstractRequest : Request
-    {
+namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
+
+    /// <summary>
+    /// The GetScoreHistoryAbstractRequest class may be used as the base request class for all GetScoreHistory and
+    /// GetScoreAvearge requests. We just choose to name it Get*ScoreHistory* because ... well ... we flipped
+    /// a coin and that is what won.
+    /// </summary>
+    public class GetScoreHistoryAbstractRequest : Request, ITokenRequest {
 
         private SetName eventStyle = null;
         private List<SetName> stageStyles = new List<SetName>();
@@ -17,7 +22,13 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetScoreHistoryAbstractRequest(string operationId) : base( operationId ) { }
+        public GetScoreHistoryAbstractRequest( string operationId ) : base( operationId ) { }
+
+        /// <summary>
+        /// Public constructor. 
+        /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
+        /// </summary>
+        public GetScoreHistoryAbstractRequest( string operationId, UserAuthentication credentials ) : base( operationId, credentials ) { }
 
         /// <summary>
         /// Gets or Sets the SetName of the Event Style for the Score History request.
@@ -29,7 +40,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
         public SetName EventStyle {
             get { return eventStyle; }
             set {
-                if ( stageStyles.Count == 0 ) {
+                if (stageStyles.Count == 0) {
                     eventStyle = value;
                 } else {
                     throw new GetScoreHistoryRequestException( "Can not set both EventStyle and StageStyles. Prior to this call, StageStyles had one or more values." );
@@ -55,15 +66,11 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
             }
         }
 
-        /// <summary>
-        /// The maximum number of items to return;
-        /// </summary>
-        public uint Limit { get; set; } = 100;
+        /// <inheritdoc />
+        public string Token { get; set; }
 
-        /// <summary>
-        /// Submit ContinuationToken from Response when using Limit parameter
-        /// </summary>
-        public override string ContinuationToken { get => base.ContinuationToken; set => base.ContinuationToken = value; }
+        /// <inheritdoc />
+        public int Limit { get; set; } = 0;
 
         /// <summary>
         /// The start date of the range of dates to return.
@@ -100,32 +107,30 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
 
         /// <inheritdoc />
         /// <exception cref="GetScoreHistoryRequestException">Thrown if call WithAuthentication=false and no UserIds set.</exception>
-        public override Dictionary<string, List<string>> QueryParameters
-        {
-            get
-            {
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
                 if (!RequiresCredentials && (UserIds == null || UserIds.Count == 0))
-                    throw new GetScoreHistoryRequestException("UserIds required for Non-Authenticated request.");
+                    throw new GetScoreHistoryRequestException( "UserIds required for Non-Authenticated request." );
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
 
                 if (eventStyle != null)
-                    parameterList.Add("event-style-def", new List<string>() { eventStyle.ToString() });
+                    parameterList.Add( "event-style-def", new List<string>() { eventStyle.ToString() } );
 
                 if (stageStyles.Count > 0)
-                    parameterList.Add("stage-style-def", stageStyles.Select(s => s.ToString()).ToList());
+                    parameterList.Add( "stage-style-def", stageStyles.Select( s => s.ToString() ).ToList() );
 
                 if (UserIds != null && UserIds.Count > 0)
-                    parameterList.Add("user-id", UserIds);
+                    parameterList.Add( "user-id", UserIds );
 
                 if (ContinuationToken != null && ContinuationToken != string.Empty)
-                    parameterList.Add("continuation-token", new List<string>() { ContinuationToken });
+                    parameterList.Add( "token", new List<string>() { ContinuationToken } );
 
-                parameterList.Add("limit", new List<string>() { Limit.ToString() });
-                parameterList.Add("start-date", new List<string>() { StartDate.ToString(Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
-                parameterList.Add("end-date", new List<string>() { EndDate.ToString(Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
-                parameterList.Add("include-related", new List<string>() { IncludeRelated.ToString() });
-                parameterList.Add("format", new List<string>() { Format.ToString() });
+                parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
+                parameterList.Add( "start-date", new List<string>() { StartDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "end-date", new List<string>() { EndDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "include-related", new List<string>() { IncludeRelated.ToString() } );
+                parameterList.Add( "format", new List<string>() { Format.ToString() } );
 
                 return parameterList;
             }

@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
-    public class GetScoreAverageAuthenticatedRequest : GetScoreHistoryAbstractRequest {
-
+    public class GetScoreHistoryPublicRequest : GetScoreHistoryAbstractRequest {
 
         /// <inheritdoc />
-        public GetScoreAverageAuthenticatedRequest( UserAuthentication credentials ) : base( "GetScoreHistory", credentials ) { }
+        public GetScoreHistoryPublicRequest() : base( "GetScoreHistory" ) { }
 
         /// <inheritdoc />
         public override string RelativePath {
-            get { return $"/athlete/score/average"; }
+            get { return $"/athlete/score/history"; }
         }
     }
 }

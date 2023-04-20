@@ -11,6 +11,6 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
     /// </summary>
     public class ScoreHistoryWrapper  : BaseClass {
 
-        public ScoreHistory ScoreHistory { get; set; }
+        public ScoreHistory ScoreHistoryList { get; set; }
     }
 }

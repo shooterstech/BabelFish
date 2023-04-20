@@ -4,9 +4,9 @@ using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
 namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
-    public class GetScoreHistoryAuthenticatedResponse : Response<ScoreHistoryWrapper>, ITokenResponse<GetScoreHistoryAuthenticatedRequest> {
+    public class GetScoreHistoryPublicResponse : Response<ScoreHistoryWrapper>, ITokenResponse<GetScoreHistoryPublicRequest> {
 
-        public GetScoreHistoryAuthenticatedResponse( GetScoreHistoryAuthenticatedRequest request) {
+        public GetScoreHistoryPublicResponse( GetScoreHistoryPublicRequest request) {
             this.Request = request;
         }
 
@@ -16,8 +16,8 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
         }
 
         /// <inheritdoc/>
-        public GetScoreHistoryAuthenticatedRequest GetNextRequest() {
-            var nextRequest = (GetScoreHistoryAuthenticatedRequest)Request.Copy();
+        public GetScoreHistoryPublicRequest GetNextRequest() {
+            var nextRequest = (GetScoreHistoryPublicRequest)Request.Copy();
             nextRequest.Token = Value.ScoreHistoryList.NextToken;
             return nextRequest;
         }
