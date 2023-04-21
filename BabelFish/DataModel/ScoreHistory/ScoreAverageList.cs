@@ -8,9 +8,9 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
     /// <summary>
     /// Represents the data returned by a GetScoreAverage API call.
     /// </summary>
-    public class ScoreAverage : ITokenItems<ScoreAverageBase> {
+    public class ScoreAverageList : ITokenItems<ScoreAverageBase> {
 
-        public ScoreAverage() { }
+        public ScoreAverageList() { }
 
         public List<ScoreAverageBase> Items { get; set; } = new List<ScoreAverageBase>();
 

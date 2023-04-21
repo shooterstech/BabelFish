@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.CognitoIdentity.Model;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime.Authentication;
 
@@ -17,6 +18,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
 
         private SetName eventStyle = null;
         private List<SetName> stageStyles = new List<SetName>();
+        private int limit = 50;
 
         /// <summary>
         /// Public constructor. 
@@ -37,7 +39,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// StageStyles is required, but both are not allowed.
         /// </summary>
         /// <exception cref="GetScoreHistoryRequestException">Thrown if called tried to set EventStyle with StageStles previously having one or more values.</exception>
-        public SetName EventStyle {
+        public SetName EventStyleDef {
             get { return eventStyle; }
             set {
                 if (stageStyles.Count == 0) {
@@ -55,7 +57,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// StageStyles is required, but both are not allowed.
         /// </summary>
         /// <exception cref="GetScoreHistoryRequestException">Thrown if called tried to set StageStles previously having one or more values.</exception>
-        public List<SetName> StageStyles {
+        public List<SetName> StageStyleDefs {
             get { return stageStyles; }
             set {
                 if (eventStyle == null) {
@@ -70,7 +72,16 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         public string Token { get; set; }
 
         /// <inheritdoc />
-        public int Limit { get; set; } = 0;
+        /// <exception cref="ArgumentOutOfRangeException">Thrown if the set value is outside the expected range of 1 to 100.</exception>
+        public int Limit {
+            get { return limit; } 
+            set { 
+                if ( value > 0 && value <= 100 )
+                    limit = value;
+                else
+                    throw new ArgumentOutOfRangeException( $"Limit may only be between the values of 1 and 100 (inclusive). Instead received '{value}'.");
+            }
+        }
 
         /// <summary>
         /// The start date of the range of dates to return.

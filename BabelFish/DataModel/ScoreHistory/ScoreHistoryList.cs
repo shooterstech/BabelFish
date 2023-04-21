@@ -7,12 +7,12 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
     /// <summary>
     /// Represents the data returned by a Get score History API Call
     /// </summary>
-    public class ScoreHistory : ITokenItems<ScoreHistoryBase> {
+    public class ScoreHistoryList : ITokenItems<ScoreHistoryBase> {
 
         /// <summary>
         /// Public base constructor.
         /// </summary>
-        public ScoreHistory() { }
+        public ScoreHistoryList() { }
 
         public List<ScoreHistoryBase> Items { get; set; } = new List<ScoreHistoryBase>();
 

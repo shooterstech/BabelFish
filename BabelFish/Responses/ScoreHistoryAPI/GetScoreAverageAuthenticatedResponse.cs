@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
             this.Request = request;
         }
 
-        public ScoreAverage ScoreAverage {
+        public ScoreAverageList ScoreAverage {
             get { return Value.ScoreAverageList; }
         }
 

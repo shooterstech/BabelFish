@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
             this.Request = request;
         }
 
-        public ScoreHistory ScoreHistory
+        public ScoreHistoryList ScoreHistoryList
         {
             get { return Value.ScoreHistoryList; }
         }
