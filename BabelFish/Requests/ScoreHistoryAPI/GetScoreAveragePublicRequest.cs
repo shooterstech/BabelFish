@@ -1,14 +1,13 @@
-﻿using Scopos.BabelFish.Runtime.Authentication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
-    public class GetScoreAverageAuthenticatedRequest : GetScoreHistoryAbstractRequest {
+    public class GetScoreAveragePublicRequest : GetScoreHistoryAbstractRequest {
 
 
         /// <inheritdoc />
-        public GetScoreAverageAuthenticatedRequest( UserAuthentication credentials ) : base( "GetScoreHistory", credentials ) { }
+        public GetScoreAveragePublicRequest() : base( "GetScoreHistory" ) { }
 
         /// <inheritdoc />
         public override string RelativePath {
