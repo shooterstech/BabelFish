@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.Tests {
         public static BasicUserCredentials TestDev7Credentials = new BasicUserCredentials() {
             Username = "test_dev_7@shooterstech.net",
             Password = "abcd1234",
-            DeviceKey = "us-east-1_28303d2c-8c58-49e5-a56f-9e3e736cdeb3",
+            DeviceKey = "us-east-1_2290d8e2-7574-4271-99c0-059f4d5563ee",
             DeviceGroupKey = "-X1RRYAQO"
         };
 

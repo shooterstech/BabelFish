@@ -449,10 +449,6 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// <returns></returns>
         public int CleanUpOldDevices() {
 
-            //The .ListDevicesAsync() method can take a continuation token, to return the
-            //next set of devices. The problme is, there is no way to get the token from 
-            //the initial call.
-            //Submitted issue to git hub for this enhancement https://github.com/aws/aws-sdk-net-extensions-cognito/issues/106
             var listOfDevicesTask = this.CognitoUser.ListDevicesAsync( 60, null );
             var listOfDevices = listOfDevicesTask.Result;
             var count = 0;

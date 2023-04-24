@@ -64,7 +64,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Pull the attribute value back, and check we have reasonable values.
             var profileNameAttributeValue = profileNameAttributeValueDataPacket.AttributeValue;
 
-            Assert.AreEqual( "Chris", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
+            Assert.AreEqual( "Christopher", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
             Assert.AreEqual( "Jones", (string)profileNameAttributeValue.GetFieldValue( "FamilyName" ) );
         }
 
