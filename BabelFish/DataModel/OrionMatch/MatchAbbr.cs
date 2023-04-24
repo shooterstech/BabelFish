@@ -71,6 +71,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
+        /// <summary>
+        /// The high level shooting style that this match was conducted under.
+        /// </summary>
+        public string ShootingStyle { get; set; } = string.Empty;
+
         public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "MatchAbbr for " );
