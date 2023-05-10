@@ -74,6 +74,10 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             foreach( var matchSearchAbbr in matchSearchList.Items ) {
                 Assert.AreEqual( shootingStyle, matchSearchAbbr.ShootingStyle );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchID ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchName ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerId ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerName ) );
             }
         }
 

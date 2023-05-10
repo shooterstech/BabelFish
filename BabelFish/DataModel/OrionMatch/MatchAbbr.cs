@@ -41,13 +41,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Name of the Match
         /// </summary>
-        public string MatchName {get; set;      }
+        public string MatchName { get; set; } = string.Empty;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
         public string OwnerId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Human readable name of the Owner, usually a school or club name.
+        /// </summary>
+        public string OwnerName { get; set;} = string.Empty;
 
 
         /// <summary>
