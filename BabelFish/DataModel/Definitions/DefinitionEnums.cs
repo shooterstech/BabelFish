@@ -13,11 +13,56 @@ using System.Runtime.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
 
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum LightIllumination { NONE, ON, OFF, DIM };
+    public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
+
+
+    /// <summary>
+    /// Defines the different high level disciplines in use with Shooting. Largely defined by the ISSF.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum DisciplineType {
+        /// <summary>
+        /// The Discipline Archery
+        /// </summary>
+        [Description( "ARCHERY" )][EnumMember( Value = "ARCHERY" )] ARCHERY,
+
+        /// <summary>
+        /// The Discipline Biathlon
+        /// </summary>
+        [Description( "BIATHLON" )][EnumMember( Value = "BIATHLON" )] BIATHLON,
+
+        /// <summary>
+        /// Hybrid Discipline, which is when two or more Disciplins are used together.
+        /// </summary>
+        [Description( "HYBRID" )][EnumMember( Value = "HYBRID" )] HYBRID,
+
+        /// <summary>
+        /// The Pistol Discipline
+        /// </summary>
+        [Description( "PISTOL" )][EnumMember( Value = "PISTOL" )] PISTOL,
+
+        /// <summary>
+        /// The Rifle Discipline
+        /// </summary>
+        [Description( "RIFLE" )][EnumMember( Value = "RIFLE" )] RIFLE,
+
+        /// <summary>
+        /// The Running Target Discipline
+        /// </summary>
+        [Description( "RUNNING TARGET" )][EnumMember( Value = "RUNNING TARGET" )] RUNNINGTARGET,
+
+        /// <summary>
+        /// Shotgun Discipline
+        /// </summary>
+        [Description( "SHOTGUN" )][EnumMember( Value = "SHOTGUN" )] SHOTGUN,
+
+        /// <summary>
+        /// Not Applicable
+        /// </summary>
+        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA
+    }
 
 
     [JsonConverter( typeof( StringEnumConverter ) )]
@@ -31,6 +76,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         FinalChangeOverStart, FinalChangeOverStop, FinalAthleteEliminated, FinalThirdPlaceAnnounced, FinalSecondPlaceAnnounced, FinalFirstPlaceAnnounced,
         SpecialEventOne, SpecialEventTwo, SpecialEventThree, SpecialEventFour, SafetyBriefing
     }
+
+
+    /// <summary>
+    /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
+    /// NOTE EventtType is purposefully misspelled.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
+
+    public enum FieldType {
+        OPEN,
+        CLOSED,
+        SUGGEST,
+        DERIVED
+    }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum LightIllumination { NONE, ON, OFF, DIM };
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
+
 
     /// <summary>
     /// The type of data that is stored within an AttributeField. 
@@ -94,12 +163,5 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "SET NAME" )]
         [EnumMember( Value = "SET NAME" )]
         SETNAME
-    }
-
-    public enum FieldType {
-        OPEN,
-        CLOSED,
-        SUGGEST,
-        DERIVED
     }
 }

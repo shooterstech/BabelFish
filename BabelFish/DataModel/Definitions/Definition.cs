@@ -14,52 +14,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
     public abstract class Definition : BaseClass {
 
-        /// <summary>
-        /// Defines the different high level disciplines in use with Shooting. Largely defined by the ISSF.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum DisciplineType {
-            /// <summary>
-            /// The Discipline Archery
-            /// </summary>
-            [Description("ARCHERY")] [EnumMember(Value = "ARCHERY")] ARCHERY,
-
-            /// <summary>
-            /// The Discipline Biathlon
-            /// </summary>
-            [Description("BIATHLON")] [EnumMember(Value = "BIATHLON")] BIATHLON,
-
-            /// <summary>
-            /// Hybrid Discipline, which is when two or more Disciplins are used together.
-            /// </summary>
-            [Description("HYBRID")] [EnumMember(Value = "HYBRID")] HYBRID,
-
-            /// <summary>
-            /// The Pistol Discipline
-            /// </summary>
-            [Description("PISTOL")] [EnumMember(Value = "PISTOL")] PISTOL,
-
-            /// <summary>
-            /// The Rifle Discipline
-            /// </summary>
-            [Description("RIFLE")] [EnumMember(Value = "RIFLE")] RIFLE,
-
-            /// <summary>
-            /// The Running Target Discipline
-            /// </summary>
-            [Description("RUNNING TARGET")] [EnumMember(Value = "RUNNING TARGET")] RUNNINGTARGET,
-
-            /// <summary>
-            /// Shotgun Discipline
-            /// </summary>
-            [Description("SHOTGUN")] [EnumMember(Value = "SHOTGUN")] SHOTGUN,
-
-            /// <summary>
-            /// Not Applicable
-            /// </summary>
-            [Description("NOT APPLICABLE")] [EnumMember(Value = "NOT APPLICABLE")] NA
-        }
-
         [NonSerialized]
         public List<string> errorList = new List<string>();
 

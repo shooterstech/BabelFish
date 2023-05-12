@@ -17,12 +17,6 @@ namespace Scopos.BabelFish.DataModel.Definitions
     public class Event
     {
 
-        /// <summary>
-        /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
-        /// NOTE EventtType is purposefully misspelled.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
         private List<string> validationErrorList = new List<string>();
 
         public Event()
@@ -86,18 +80,21 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [DefaultValue("")]
         public string Values { get; set; }
 
-        [JsonProperty(Order = 10)]
-        public string StageStyle { get; set; }
-
+        /// <summary>
+        /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
+        /// </summary>
         [JsonProperty(Order = 11)]
-        public dynamic StageStyleSelection { get; set; }
+        public StageStyleSelection StageStyleSelection { get; set; }
 
-        [JsonProperty(Order = 12)]
-        public string EventStyle { get; set; }
-
+        /// <summary>
+        /// EventStyleSelection determines how the resulting Result COF is mapped to a EVENT STYLE.
+        /// </summary>
         [JsonProperty(Order = 13)]
-        public dynamic EventStyleSelection { get; set; }
+        public EventStyleSelection EventStyleSelection { get; set; }
 
+        /// <summary>
+        /// Internal documentation comments. All text is ignored by the system.
+        /// </summary>
         [JsonProperty(Order = 14)]
         [DefaultValue("")]
         public string Comment { get; set; }
