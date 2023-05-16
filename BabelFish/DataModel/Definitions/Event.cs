@@ -84,13 +84,13 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
         /// </summary>
         [JsonProperty(Order = 11)]
-        public StageStyleSelection StageStyleSelection { get; set; }
+        public StageStyleMapping StageStyleMapping { get; set; }
 
         /// <summary>
         /// EventStyleSelection determines how the resulting Result COF is mapped to a EVENT STYLE.
         /// </summary>
         [JsonProperty(Order = 13)]
-        public EventStyleSelection EventStyleSelection { get; set; }
+        public EventStyleMapping EventStyleMapping { get; set; }
 
         /// <summary>
         /// Internal documentation comments. All text is ignored by the system.

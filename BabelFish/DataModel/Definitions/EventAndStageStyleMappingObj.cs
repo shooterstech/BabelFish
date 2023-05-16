@@ -14,18 +14,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class EventAndStageStyleMappingObj {
 
         public EventAndStageStyleMappingObj() {
-            EventStyleMappings = new List<EventStyleMapping>();
+            EventStyleMappings = new List<EventStyleSelection>();
 
-            StageStyleMappings = new List<StageStyleMapping>();
+            StageStyleMappings = new List<StageStyleSelection>();
         }
 
         [OnDeserialized]
         internal void OnDeserializedMethod( StreamingContext context ) {
             if (EventStyleMappings == null)
-                EventStyleMappings = new List<EventStyleMapping>();
+                EventStyleMappings = new List<EventStyleSelection>();
 
             if (StageStyleMappings == null)
-                StageStyleMappings = new List<StageStyleMapping>();
+                StageStyleMappings = new List<StageStyleSelection>();
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( "" )] //Purposefully setting the JSON serializer default value to an empty string, which does not equal the object initialzer default value.
         public string DefaultStageStyleDef { get; set; } = "v1.0:orion:Default";
 
-        public List<EventStyleMapping> EventStyleMappings { get; set; }
+        public List<EventStyleSelection> EventStyleMappings { get; set; }
 
-        public List<StageStyleMapping> StageStyleMappings { get; set; }
+        public List<StageStyleSelection> StageStyleMappings { get; set; }
     }
 }
