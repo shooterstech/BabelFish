@@ -62,7 +62,7 @@ namespace Scopos.BabelFish.APIClients {
         #region Methods
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass {
             // Get Uri for call
-            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
+            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
             try {
 

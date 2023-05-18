@@ -8,8 +8,9 @@ namespace Scopos.BabelFish.Requests.AthenaTarget {
     public class AthenaEmployLoginCodeAuthenticatedRequest : Request {
 
 
-        public AthenaEmployLoginCodeAuthenticatedRequest( string authCode, UserAuthentication credentials ) : base( "GetClubDetail", credentials ) {
-            //NOTE: Because this request requires user credentials, we're only writing one constructor that includes parameters for crendentials.
+
+        public AthenaEmployLoginCodeAuthenticatedRequest( string authCode, UserAuthentication credentials ) : base( "AthenaEmployLoginCode", credentials ) {
+            //NOTE: Because this request requires user credentials and a authcode, we're only writing one constructor that includes these two requirements.
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;
             this.HttpMethod = HttpMethod.Post;
@@ -31,6 +32,20 @@ namespace Scopos.BabelFish.Requests.AthenaTarget {
         public override string RelativePath {
 
             get { return $"/target/login"; }
+        }
+
+        /// <inheritdoc />
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
+
+                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+
+                if (!string.IsNullOrEmpty( AuthCode )) {
+                    parameterList.Add( "auth-code", new List<string> { AuthCode } );
+                }
+
+                return parameterList;
+            }
         }
     }
 }

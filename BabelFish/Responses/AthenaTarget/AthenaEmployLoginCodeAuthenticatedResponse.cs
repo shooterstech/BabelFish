@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataModel.AthenaTarget;
 using Scopos.BabelFish.Requests.AthenaTarget;
 
 namespace Scopos.BabelFish.Responses.AthenaTarget {
-    public class AthenaEmployLoginCodeAuthenticatedResponse : Response<AthenaEmployLoginCodeResponse> {
+    public class AthenaEmployLoginCodeAuthenticatedResponse : Response<ESTUnitLogin> {
 
         public AthenaEmployLoginCodeAuthenticatedResponse( AthenaEmployLoginCodeAuthenticatedRequest request ) : base() {
             this.Request = request;
@@ -16,7 +16,7 @@ namespace Scopos.BabelFish.Responses.AthenaTarget {
         /// Facade function that returns the same as this.Value
         /// </summary>
         /// 
-        public AthenaEmployLoginCodeResponse EmployLoginCodeResponse {
+        public ESTUnitLogin EmployLoginCodeResponse {
             get { return Value; }
         }
     }
