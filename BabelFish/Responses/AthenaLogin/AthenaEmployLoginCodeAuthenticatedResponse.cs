@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.DataModel.AthenaTarget;
-using Scopos.BabelFish.Requests.AthenaTarget;
+using Scopos.BabelFish.DataModel.AthenaLogin;
+using Scopos.BabelFish.Requests.AthenaLogin;
 
-namespace Scopos.BabelFish.Responses.AthenaTarget {
-    public class AthenaEmployLoginCodeAuthenticatedResponse : Response<ESTUnitLogin> {
+namespace Scopos.BabelFish.Responses.AthenaLogin {
+    public class AthenaEmployLoginCodeAuthenticatedResponse : Response<ESTUnitLoginWrapper> {
 
         public AthenaEmployLoginCodeAuthenticatedResponse( AthenaEmployLoginCodeAuthenticatedRequest request ) : base() {
             this.Request = request;
@@ -16,8 +16,8 @@ namespace Scopos.BabelFish.Responses.AthenaTarget {
         /// Facade function that returns the same as this.Value
         /// </summary>
         /// 
-        public ESTUnitLogin EmployLoginCodeResponse {
-            get { return Value; }
+        public ESTUnitLogin ESTUnitLogin {
+            get { return Value.ESTUnitLogin; }
         }
     }
 }

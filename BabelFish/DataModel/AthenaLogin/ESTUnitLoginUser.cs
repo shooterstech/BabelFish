@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.DataModel.AthenaTarget {
+namespace Scopos.BabelFish.DataModel.AthenaLogin {
     public class ESTUnitLoginUser {
 
         /// <summary>
