@@ -98,6 +98,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
     [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ShotMappingMethodType { SEQUENTIAL }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum SingularType {
+        [Description( "Shot" )]
+        [EnumMember( Value = "Shot" )]
+        SHOT,
+
+        [Description( "Test" )]
+        [EnumMember( Value = "Test" )]
+        TEST
+    }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
 
 
