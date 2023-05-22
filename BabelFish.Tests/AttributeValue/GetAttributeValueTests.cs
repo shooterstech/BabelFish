@@ -42,6 +42,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameProfileName = "v1.0:orion:Profile Name";
             List<string> myAttributes = new List<string>()
@@ -72,7 +73,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         /// Tests the retreival of multiple attributes
         /// </summary>
             [TestMethod]
-        public void GetAttributeValue_MultipleValue() {
+        public async Task GetAttributeValue_MultipleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
@@ -80,6 +81,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameProfileName = "v1.0:orion:Profile Name";
             var setNameDOB = "v1.0:orion:Date of Birth";
@@ -136,6 +138,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameProfileName = "v1.0:orion:Profile Name";
             var setNameDOB = "v1.0:orion:Date of Birth";
@@ -182,7 +185,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         }
 
         [TestMethod]
-        public void GetAttributeValue_DoesNotExist() {
+        public async Task GetAttributeValue_DoesNotExist() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
@@ -190,6 +193,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameNotARealAttribute = "v1.0:orion:Not a Real Attribute";
             List<string> myAttributes = new List<string>()
