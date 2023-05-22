@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
 
         [TestMethod]
-        public void SetMultiplePhoneNumbers() {
+        public async Task SetMultiplePhoneNumbers() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             var setNamePhoneNumber = "v2.0:orion:Phone Number";
@@ -39,6 +39,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             //Retreive the user's current values.            
             //Will use a GetAttributeValueAuthenticatedRequest object in this unit test, so I can set ReturnDefaultvalues to true (it is by default false).

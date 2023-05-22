@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     public class SetAttributeValueTests {
 
         [TestMethod]
-        public void SetAttributeValue_SingleAttribute() {
+        public async Task SetAttributeValue_SingleAttribute() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
             var setNameTestAttriubte = "v1.0:orion:Test Attribute";
