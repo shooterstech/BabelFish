@@ -32,6 +32,28 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
+        public async Task<AthenaLogoutSessionAuthenticatedResponse> AthenaLogoutSessionAuthenticatedAsync(AthenaLogoutSessionAuthenticatedRequest request)
+        {
+
+            var response = new AthenaLogoutSessionAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<AthenaListActiveSessionsAuthenticatedResponse> AthenaListActiveSessionsAuthenticatedAsync(AthenaListActiveSessionsAuthenticatedRequest request)
+        {
+
+            var response = new AthenaListActiveSessionsAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+
+
         /*
         public async Task<AthenaLogoutSessionAuthenticatedResponse> AthenaLogoutSessionAuthenticatedAsync( AthenaLogoutSessionAuthenticatedRequest request ) {
 
