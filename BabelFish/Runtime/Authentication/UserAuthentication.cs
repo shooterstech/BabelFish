@@ -75,9 +75,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// logging on with a new Device and will save the DeviceKey and DeviceGroupKey
         /// to the private variables. The caller is responsible for verifying the device is legit.
         /// 
-        /// DO NOT use this constructor inside a Blazor / Razor page. It uses Async functions that,
-        /// because it is a Constructor, can not be awaited. If used inside a Blazor / Razor page
-        /// the page will deadlock and hang.
+        /// After the contructor returns, call InitializeAsync() to complete the constructor / initialziation process.
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
@@ -103,9 +101,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// the user (identified by their email) using their password, deviceKey
         /// and deviceGroupKey.
         /// 
-        /// DO NOT use this constructor inside a Blazor / Razor page. It uses Async functions that,
-        /// because it is a Constructor, can not be awaited. If used inside a Blazor / Razor page
-        /// the page will deadlock and hang.
+        /// After the contructor returns, call InitializeAsync() to complete the constructor / initialziation process.
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
@@ -140,9 +136,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// <summary>
         /// Constructs a new User Authentication instance. To complete the re-authentication process, user should call .RefreshedTokens().
         /// 
-        /// DO NOT use this constructor inside a Blazor / Razor page. It uses Async functions that,
-        /// because it is a Constructor, can not be awaited. If used inside a Blazor / Razor page
-        /// the page will deadlock and hang.
+        /// After the contructor returns, call InitializeAsync() to complete the constructor / initialziation process.
         /// </summary>
         /// <param name="email"></param>
         /// <param name="refreshToken"></param>
@@ -173,6 +167,18 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             constructorType = ConstructorType.REFRESH_TOKEN;
         }
 
+        /// <summary>
+        /// To complete the Constructor process a number of Async calls need to be made. Because it is not possible
+        /// (at least not wise) to call Async within a constructor this InitializaAsync() method is used to complete
+        /// the process. It should be called immediatly after the Constructor.
+        /// 
+        /// If InitializeAsync() is not called an exception InitializeAsyncNotCompletedException() will be thrown.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="NotAuthorizedException"></exception>
+        /// <exception cref="AuthenticationException"></exception>
+        /// <exception cref="DeviceNotKnownException"></exception>
         public async Task InitializeAsync() {
 
             CognitoDevice device;
