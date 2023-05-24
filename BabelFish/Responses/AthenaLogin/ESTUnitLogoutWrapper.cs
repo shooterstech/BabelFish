@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Responses.AthenaLogin
 
         public override string ToString()
         {
-            return "logout list";
+            return $"EST Unit Logout count of {ESTUnitLogout.Items.Count}";
         }
     }
 }

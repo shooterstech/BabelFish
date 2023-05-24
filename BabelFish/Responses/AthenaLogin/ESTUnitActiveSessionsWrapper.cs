@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Responses.AthenaLogin
 
         public override string ToString()
         {
-            return "active session list";
+            return $"EST Unit Active Session count of {ESTUnitActiveSessions.Items.Count}";
         }
     }
 }
