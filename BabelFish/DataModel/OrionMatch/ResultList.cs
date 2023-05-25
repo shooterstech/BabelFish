@@ -82,6 +82,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 15 )]
         public string ResultListID { get; set; } = string.Empty;
 
+        public bool Preliminary { get; set; } = false;
+
 
         /// <summary>
         /// The SetName of the Course of Fire

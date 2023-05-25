@@ -41,6 +41,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
             var request = new GetClubListAuthenticatedRequest( userAuthentication );
 
             var response = await client.GetClubListAuthenticatedAsync( request );
@@ -65,6 +66,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password );
+            await userAuthentication.InitializeAsync();
             var request1 = new GetClubListAuthenticatedRequest( userAuthentication );
 
             var response1 = await client.GetClubListAuthenticatedAsync( request1 );
@@ -96,6 +98,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password );
+            await userAuthentication.InitializeAsync();
             var request = new GetClubDetailAuthenticatedRequest( ownerId, userAuthentication );
 
             var response = await client.GetClubDetailAuthenticatedAsync( request );
