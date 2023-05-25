@@ -98,6 +98,43 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
     [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum LinkToOption {
+        /// <summary>
+        /// Indicates that the Cell should link to the ResultCOF Page (sometimes called Individual Score Page). 
+        /// </summary>
+        [Description( "ResultCOF" )]
+        [EnumMember( Value = "ResultCOF" )]
+        ResultCOF,
+
+        /// <summary>
+        /// Indicates that the Cell should not link to any other page. Which is the default option. 
+        /// </summary>
+        [Description( "None" )]
+        [EnumMember( Value = "None" )]
+        None
+    }
+
+    /// <summary>
+    /// In a Result List Format, Fields describe the data to dispaly. The ResultFieldMethod
+    /// specifies where the data is coming from.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ResultFieldMethod {
+        [Description( "Score" )]
+        [EnumMember( Value = "Score" )]
+        SCORE,
+
+        [Description( "ParticipantAttribute" )]
+        [EnumMember( Value = "ParticipantAttribute" )]
+        PARTICIPANT_ATTRIBUTE,
+
+        [Description( "Attribute" )]
+        [EnumMember( Value = "Attribute" )]
+        ATTRIBUTE
+    }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShotMappingMethodType { SEQUENTIAL }
 
 

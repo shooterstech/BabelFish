@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.APIClients {
 
         public DefinitionAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
 
-        public async Task<GetDefinitionPublicResponse<T>> GetDefinition<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
+        public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
             try {
                 // TimeToRun if we use cache
                 DateTime startTime = DateTime.Now;
@@ -75,6 +75,10 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         public bool IgnoreLocalCache { get; set; } = false;
 
+        [Obsolete( "Use GetAttributeDefinitionAsync() instead." )]
+        public async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinition( SetName setName ) {
+            return await GetAttributeDefinitionAsync(setName);
+        }
 
         public async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
@@ -84,11 +88,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute> response = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-
+        [Obsolete( "Use GetCourseOfFireDefinitionAsync() instead." )]
         public async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinition( SetName setName ) {
+            return await GetCourseOfFireDefinitionAsync(setName);
+        }
+
+        public async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.COURSEOFFIRE;
 
@@ -96,10 +104,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<CourseOfFire> response = new GetDefinitionPublicResponse<CourseOfFire>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "Use GetEventStyleDefinitionAsync() instead." )]
         public async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinition( SetName setName ) {
+            return await GetEventStyleDefinitionAsync( setName );
+        }
+
+        public async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.EVENTSTYLE;
 
@@ -107,10 +120,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<EventStyle> response = new GetDefinitionPublicResponse<EventStyle>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "Use GetRankingRuleDefinitionAsync() instead." )]
         public async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinition( SetName setName ) {
+            return await GetRankingRuleDefinitionAsync(setName);
+        }
+
+        public async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RANKINGRULES;
 
@@ -118,10 +136,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<RankingRule> response = new GetDefinitionPublicResponse<RankingRule>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "Use GetStageStyleDefinitionAsync() instead." )]
         public async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinition( SetName setName ) {
+            return await GetStageStyleDefinitionAsync(setName);
+        }
+
+        public async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.STAGESTYLE;
 
@@ -129,10 +152,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<StageStyle> response = new GetDefinitionPublicResponse<StageStyle>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "User GetTargetCollectionDefinitionAsync() instead." )]
         public async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinition( SetName setName ) {
+            return await GetTargetCollectionDefinitionAsync( setName );
+        }
+
+        public async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGETCOLLECTION;
 
@@ -140,10 +168,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<TargetCollection> response = new GetDefinitionPublicResponse<TargetCollection>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "Use GetTargetDefinitionAsync instead." )]
         public async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinition( SetName setName ) {
+            return await GetTargetDefinitionAsync(setName);
+        }
+
+        public async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGET;
 
@@ -151,10 +184,15 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<Target> response = new GetDefinitionPublicResponse<Target>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "Use GetScoreFormatCollectionDefinitionAsync instead." )]
         public async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinition( SetName setName ) {
+            return await GetScoreFormatCollectionDefinitionAsync( setName );
+        }
+
+        public async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.SCOREFORMATCOLLECTION;
 
@@ -162,7 +200,29 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionPublicResponse<ScoreFormatCollection> response = new GetDefinitionPublicResponse<ScoreFormatCollection>( request );
 
-            return await GetDefinition( request, response ).ConfigureAwait( false );
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
+        }
+
+        public async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyhleMappingDefinitionAsync( SetName setName ) {
+
+            var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
+
+            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+            GetDefinitionPublicResponse<EventAndStageStyleMapping> response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
+
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
+        }
+
+        public async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
+
+            var definitionType = DefinitionType.RESULTLISTFORMAT;
+
+            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+            GetDefinitionPublicResponse<ResultListFormat> response = new GetDefinitionPublicResponse<ResultListFormat>( request );
+
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
     }
 }
