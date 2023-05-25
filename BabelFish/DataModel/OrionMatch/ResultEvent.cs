@@ -22,6 +22,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         
         public string ResultCOFID { get; set; }
 
+        /// <summary>
+        /// Score. If the Preliminary result list is requested, Score will be the predicted score based on the athlete's score history and shots taken in the current match.
+        /// </summary>
         public Score Score { get; set; }
 
         public int Rank { get; set; }

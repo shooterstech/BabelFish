@@ -63,11 +63,19 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
+
+        private enum ConstructorType { EMAIL_PASSWORD, EMAIL_PASSWORD_DEVICE, REFRESH_TOKEN };
+        private ConstructorType constructorType;
+        private bool initCalled = false;
+        private InitiateSrpAuthRequest authRequest;
+
         /// <summary>
         /// Creates a new instance of UserAuthentication and attempts to authenticate
         /// the user (identified by their email) using their password. This flow also assumes
         /// logging on with a new Device and will save the DeviceKey and DeviceGroupKey
         /// to the private variables. The caller is responsible for verifying the device is legit.
+        /// 
+        /// After the contructor returns, call InitializeAsync() to complete the constructor / initialziation process.
         /// </summary>
         /// <param name="email"></param>
         /// <param name="password"></param>
@@ -80,68 +88,29 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
             //Starts the authentication process, using only the provided password.
             //This is the only time the password is needed. 
-            InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest() {
+            authRequest = new InitiateSrpAuthRequest() {
                 Password = password
             };
 
-            //Try and authenticate with cognito
-            try {
-                var taskAuthFlowResponse = this.CognitoUser.StartWithSrpAuthAsync( authRequest );
-                var authFlowResponse = taskAuthFlowResponse.Result;
-
-                if (authFlowResponse.AuthenticationResult != null) {
-                    //If we get here authentication was successful.
-                    this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
-                    this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
-                    this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
-                    this.DeviceKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
-                    this.DeviceGroupKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
-                    this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
-                    this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
-
-                    logger.Info( $"Successfully authenticated user with email {email}." );
-                    if (OnUserAuthenticationSuccessful != null)
-                        OnUserAuthenticationSuccessful.Invoke( this, new EventArgs() );
-                } else {
-                    //If we get there authentication was not successful, b/c we've been given a challenge that needs to be fulfilled.
-
-                    //Not yet sure how best to handle this execution path
-                    throw new NotImplementedException();
-                }
-
-            } catch (AggregateException ae) {
-                ae.Handle( ( x ) => {
-                    if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
-                        throw new NotAuthorizedException( x.Message, x, logger );
-                    } else {
-                        //Not sure what would cause us to get here
-                        throw new AuthenticationException( x.Message, x, logger );
-                    }
-                } );
-            }
-
-            //After authentication, confirm this device (which is assumed to be a new device) and associated it with the cognito user
-            var taskConfirmDeviceResponse = this.CognitoUser.ConfirmDeviceAsync(
-                this.AccessToken,
-                this.DeviceKey,
-                this.DeviceName,
-                GetDeviceVerifier().PasswordVerifier,
-                GetDeviceVerifier().Salt );
-            var confirmDeviceResponse = taskConfirmDeviceResponse.Result;
-
-            CognitoDevice device = new CognitoDevice(
-                this.DeviceKey,
-                new Dictionary<string, string>(),
-                DateTime.Today,
-                DateTime.Today,
-                DateTime.Today,
-                this.CognitoUser );
-
-            var taskGetDevice = device.GetDeviceAsync();
-            taskGetDevice.Wait();
-            this.CognitoUser.Device = device;
+            initCalled = false;
+            constructorType = ConstructorType.EMAIL_PASSWORD;
         }
 
+        /// <summary>
+        /// Creates a new instance of UserAuthentication and attempts to authenticate
+        /// the user (identified by their email) using their password, deviceKey
+        /// and deviceGroupKey.
+        /// 
+        /// After the contructor returns, call InitializeAsync() to complete the constructor / initialziation process.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <param name="deviceKey"></param>
+        /// <param name="deviceGroupKey"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="NotAuthorizedException"></exception>
+        /// <exception cref="AuthenticationException"></exception>
+        /// <exception cref="DeviceNotKnownException"></exception>
         public UserAuthentication( string email, string password, string deviceKey, string deviceGroupKey ) {
 
             logger.Info( $"About to try and authenticate user with email {email} with an existing device {deviceKey}." );
@@ -154,75 +123,20 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             //this.CognitoUser.Device = new CognitoDevice( new DeviceType() { DeviceKey = deviceKey }, this.CognitoUser );
 
             //NOTE: This mehtod, with passing the DeviceGroupKey and DevicePass seems to work, in that is passes authentication, however, it generates a new device
-            InitiateSrpAuthRequest authRequest = new InitiateSrpAuthRequest() {
+            authRequest = new InitiateSrpAuthRequest() {
                 Password = password,
                 DeviceGroupKey = deviceGroupKey,
                 DevicePass = AuthenticationConstants.DevicePassword
             };
 
-            //Try and authenticate with cognito
-            try {
-                var taskAuthFlowResponse = this.CognitoUser.StartWithSrpAuthAsync( authRequest );
-                var authFlowResponse = taskAuthFlowResponse.Result;
-
-                if (authFlowResponse.AuthenticationResult != null) {
-                    //If we get here authentication was successful.
-                    this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
-                    this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
-                    this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
-                    this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
-                    this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
-
-                    logger.Info( $"Successfully authenticated user with email {email}." );
-                    if (OnUserAuthenticationSuccessful != null)
-                        OnUserAuthenticationSuccessful.Invoke( this, new EventArgs() );
-                } else {
-                    //If we get there authentication was not successful, b/c we've been given a challenge that needs to be fulfilled.
-
-                    //Not yet sure how best to handle this execution path
-                    throw new NotImplementedException();
-                }
-
-            } catch (AggregateException ae) {
-                ae.Handle( ( x ) => {
-                    if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
-                        throw new NotAuthorizedException( x.Message, x, logger );
-                    } else {
-                        //Not sure what would cause us to get here
-                        throw new AuthenticationException( x.Message, x, logger );
-                    }
-                } );
-            }
-
-            //Oddly, the flow above allows the user to authenticate even when the device is not associated with te user. Howerver, the code below which tries and associates the device with the user will throw an exception if it is not known.
-
-            try {
-                CognitoDevice device = new CognitoDevice(
-                    this.DeviceKey,
-                    new Dictionary<string, string>(),
-                    DateTime.Today,
-                    DateTime.Today,
-                    DateTime.Today,
-                    this.CognitoUser );
-
-                var taskGetDevice = device.GetDeviceAsync();
-                taskGetDevice.Wait();
-                this.CognitoUser.Device = device;
-            } catch (AggregateException ae) {
-                ae.Handle( ( x ) => {
-                    if (x is Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException) {
-                        //Thrown if the device is not known to be associated with the user.
-                        throw new DeviceNotKnownException( x.Message, x, logger );
-                    } else {
-                        //Not sure what would cause us to get here
-                        throw new AuthenticationException( x.Message, x, logger );
-                    }
-                } );
-            }
+            initCalled = false;
+            constructorType = ConstructorType.EMAIL_PASSWORD_DEVICE;
         }
 
         /// <summary>
         /// Constructs a new User Authentication instance. To complete the re-authentication process, user should call .RefreshedTokens().
+        /// 
+        /// After the contructor returns, call InitializeAsync() to complete the constructor / initialziation process.
         /// </summary>
         /// <param name="email"></param>
         /// <param name="refreshToken"></param>
@@ -249,29 +163,179 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
             this.CognitoUser.SessionTokens = new CognitoUserSession( idToken, accessToken, refreshToken, issuedTime, expirationTime );
 
-            try {
-                CognitoDevice device = new CognitoDevice(
-                    this.DeviceKey,
-                    new Dictionary<string, string>(),
-                    DateTime.Today,
-                    DateTime.Today,
-                    DateTime.Today,
-                    this.CognitoUser );
+            initCalled = false;
+            constructorType = ConstructorType.REFRESH_TOKEN;
+        }
 
-                var taskGetDevice = device.GetDeviceAsync();
-                taskGetDevice.Wait();
-                this.CognitoUser.Device = device;
-            } catch (AggregateException ae) {
-                ae.Handle( ( x ) => {
-                    if (x is Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException) {
-                        //Thrown if the device is not known to be associated with the user.
-                        throw new DeviceNotKnownException( x.Message, x, logger );
-                    } else {
-                        //Not sure what would cause us to get here
-                        throw new AuthenticationException( x.Message, x, logger );
+        /// <summary>
+        /// To complete the Constructor process a number of Async calls need to be made. Because it is not possible
+        /// (at least not wise) to call Async within a constructor this InitializaAsync() method is used to complete
+        /// the process. It should be called immediatly after the Constructor.
+        /// 
+        /// If InitializeAsync() is not called an exception InitializeAsyncNotCompletedException() will be thrown.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        /// <exception cref="NotAuthorizedException"></exception>
+        /// <exception cref="AuthenticationException"></exception>
+        /// <exception cref="DeviceNotKnownException"></exception>
+        public async Task InitializeAsync() {
+
+            CognitoDevice device;
+
+            switch (constructorType) {
+                case ConstructorType.EMAIL_PASSWORD:
+                    //Try and authenticate with cognito
+                    try {
+                        var taskAuthFlowResponse = this.CognitoUser.StartWithSrpAuthAsync( authRequest );
+                        var authFlowResponse = taskAuthFlowResponse.Result;
+
+                        if (authFlowResponse.AuthenticationResult != null) {
+                            //If we get here authentication was successful.
+                            this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
+                            this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
+                            this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
+                            this.DeviceKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+                            this.DeviceGroupKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
+                            this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                            this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
+
+                            logger.Info( $"Successfully authenticated user with email {this.Email}." );
+                            if (OnUserAuthenticationSuccessful != null)
+                                OnUserAuthenticationSuccessful.Invoke( this, new EventArgs() );
+                        } else {
+                            //If we get there authentication was not successful, b/c we've been given a challenge that needs to be fulfilled.
+
+                            //Not yet sure how best to handle this execution path
+                            throw new NotImplementedException();
+                        }
+
+                    } catch (AggregateException ae) {
+                        ae.Handle( ( x ) => {
+                            if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
+                                throw new NotAuthorizedException( x.Message, x, logger );
+                            } else {
+                                //Not sure what would cause us to get here
+                                throw new AuthenticationException( x.Message, x, logger );
+                            }
+                        } );
                     }
-                } );
+
+                    //After authentication, confirm this device (which is assumed to be a new device) and associated it with the cognito user
+                    var confirmDeviceResponse =  await this.CognitoUser.ConfirmDeviceAsync(
+                        this.AccessToken,
+                        this.DeviceKey,
+                        this.DeviceName,
+                        GetDeviceVerifier().PasswordVerifier,
+                        GetDeviceVerifier().Salt );
+
+                    device = new CognitoDevice(
+                        this.DeviceKey,
+                        new Dictionary<string, string>(),
+                        DateTime.Today,
+                        DateTime.Today,
+                        DateTime.Today,
+                        this.CognitoUser );
+
+                    await device.GetDeviceAsync();
+                    this.CognitoUser.Device = device;
+
+                    break;
+
+                case ConstructorType.EMAIL_PASSWORD_DEVICE:
+
+                    //Try and authenticate with cognito
+                    try {
+                        var authFlowResponse = await this.CognitoUser.StartWithSrpAuthAsync( authRequest );
+
+                        if (authFlowResponse.AuthenticationResult != null) {
+                            //If we get here authentication was successful.
+                            this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
+                            this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
+                            this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
+                            this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                            this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
+
+                            logger.Info( $"Successfully authenticated user with email {this.Email}." );
+                            if (OnUserAuthenticationSuccessful != null)
+                                OnUserAuthenticationSuccessful.Invoke( this, new EventArgs() );
+                        } else {
+                            //If we get there authentication was not successful, b/c we've been given a challenge that needs to be fulfilled.
+
+                            //Not yet sure how best to handle this execution path
+                            throw new NotImplementedException();
+                        }
+
+                    } catch (AggregateException ae) {
+                        ae.Handle( ( x ) => {
+                            if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
+                                throw new NotAuthorizedException( x.Message, x, logger );
+                            } else {
+                                //Not sure what would cause us to get here
+                                throw new AuthenticationException( x.Message, x, logger );
+                            }
+                        } );
+                    }
+
+                    //Oddly, the flow above allows the user to authenticate even when the device is not associated with te user. Howerver, the code below which tries and associates the device with the user will throw an exception if it is not known.
+
+                    try {
+                        device = new CognitoDevice(
+                            this.DeviceKey,
+                            new Dictionary<string, string>(),
+                            DateTime.Today,
+                            DateTime.Today,
+                            DateTime.Today,
+                            this.CognitoUser );
+
+                        await device.GetDeviceAsync();
+                        this.CognitoUser.Device = device;
+                    } catch (AggregateException ae) {
+                        ae.Handle( ( x ) => {
+                            if (x is Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException) {
+                                //Thrown if the device is not known to be associated with the user.
+                                throw new DeviceNotKnownException( x.Message, x, logger );
+                            } else {
+                                //Not sure what would cause us to get here
+                                throw new AuthenticationException( x.Message, x, logger );
+                            }
+                        } );
+                    } catch (Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException rnfe) {
+                        throw new DeviceNotKnownException( rnfe.Message, rnfe, logger );
+                    } 
+
+                    break;
+
+                case ConstructorType.REFRESH_TOKEN:
+
+                    try {
+                        device = new CognitoDevice(
+                            this.DeviceKey,
+                            new Dictionary<string, string>(),
+                            DateTime.Today,
+                            DateTime.Today,
+                            DateTime.Today,
+                            this.CognitoUser );
+
+                        await device.GetDeviceAsync();
+                        this.CognitoUser.Device = device;
+                    } catch (AggregateException ae) {
+                        ae.Handle( ( x ) => {
+                            if (x is Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException) {
+                                //Thrown if the device is not known to be associated with the user.
+                                throw new DeviceNotKnownException( x.Message, x, logger );
+                            } else {
+                                //Not sure what would cause us to get here
+                                throw new AuthenticationException( x.Message, x, logger );
+                            }
+                        } );
+                    }
+
+                    break ;
             }
+
+            //Mark that this instance has finished the initalization process
+            initCalled = true;
         }
 
         /// <summary>
@@ -281,7 +345,11 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// </summary>
         /// <exception cref="AuthenticationException">Thrown if the user could not be re-authenticated.</exception>
         /// <exception cref="ShootersTechException">Thrown if, not sure why, but maybe a networking issue preventing the re-authentication.</exception>
-        public void RefreshTokens(bool refreshNow = false) {
+        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if InitializeAsync() was not called after calling the UserAuthentication constructor.</exception>
+        public async Task RefreshTokensAsync(bool refreshNow = false) {
+
+            if (!initCalled)
+                throw new InitializeAsyncNotCompletedException();
 
             if ( !refreshNow && this.CognitoUser.SessionTokens.ExpirationTime > DateTime.UtcNow.AddMinutes( 1 ) ) {
                 logger.Info( $"Purposefully not refreshing tokens for {this.Email} as the ExpirationTime is in the future." );
@@ -298,8 +366,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 };
 
                 //CAll Cognito to refresh the token
-                var taskAuthFlowResponse = this.CognitoUser.StartWithRefreshTokenAuthAsync( refreshRequest );
-                var authFlowResponse = taskAuthFlowResponse.Result;
+                var authFlowResponse = await this.CognitoUser.StartWithRefreshTokenAuthAsync( refreshRequest );
 
                 //Now we have a new accessToken and a new refreshToken, both of which need to be re-saved
                 if (authFlowResponse.AuthenticationResult != null) {
@@ -388,10 +455,11 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// If the credentials do not need to be refreshed (have not expired yet), neither event is invoked.
         /// </summary>
         /// <exception cref="ShootersTechException">Thrown when we are unabled to retreive temporary credentials. </exception>
-        public void GenerateIAMCredentials() {
+        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if InitializeAsync() was not called after calling the UserAuthentication constructor.</exception>
+        public async Task GenerateIAMCredentialsAsync() {
 
             //Call RefreshTokens to reauthenticate if needed.
-            this.RefreshTokens();
+            await this.RefreshTokensAsync();
 
             //Only generate if the IAM credentials are empty or its been over an hour, which is when they expire.
             if (IamCredentialsExpiration < DateTime.UtcNow)
@@ -410,8 +478,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     Logins = logins
                 };
 
-                var taskGetIDResponse = identityClient.GetIdAsync( getIDRequest );
-                var getIdResponse = taskGetIDResponse.Result;
+                var getIdResponse = await identityClient.GetIdAsync( getIDRequest );
 
                 //Second step, get the Credentials for the Identity we just learned
                 var getCredentialsForIdentityRequest = new GetCredentialsForIdentityRequest() {
@@ -419,8 +486,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     Logins = logins
                 };
 
-                var taskGetCredentialsForIdentityResponse = identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
-                var getCredentialsForIdentityResponse = taskGetCredentialsForIdentityResponse.Result;
+                var getCredentialsForIdentityResponse = await identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
 
                 IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration;
                 AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId;
@@ -447,15 +513,14 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// Removes devices from the user, if they have not been used in the last 45 days.
         /// </summary>
         /// <returns></returns>
-        public int CleanUpOldDevices() {
+        public async Task<int> CleanUpOldDevicesAsync() {
 
-            var listOfDevicesTask = this.CognitoUser.ListDevicesAsync( 60, null );
-            var listOfDevices = listOfDevicesTask.Result;
+            var listOfDevices = await this.CognitoUser.ListDevicesAsync( 60, null );
             var count = 0;
 
             foreach ( var device in listOfDevices ) {
                 if ( (DateTime.Now - device.LastAuthenticated).TotalDays > 45 ) {
-                    device.ForgetDeviceAsync().Wait();
+                    await device.ForgetDeviceAsync();
                     count++;
                 }
             }
