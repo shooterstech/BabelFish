@@ -72,6 +72,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         public string MatchName { get; set; } = string.Empty;
 
         /// <summary>
+        /// City, state, and possible country of the location of the match
+        /// </summary>
+        public string MatchLocation { get; set; } = "";
+
+        /// <summary>
         /// Unique ID for the parent of this match, if this is a Virtual Match. If this is not a
         /// Virtual Match, then it will be the same value as MatchID.
         /// </summary>

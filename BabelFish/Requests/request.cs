@@ -34,9 +34,7 @@ namespace Scopos.BabelFish.Requests {
         /// Creates a new instance of a Request Object, with all the same parameters
         /// </summary>
         /// <returns></returns>
-        public virtual Request Copy() { 
-            throw new NotImplementedException(); 
-        }
+        public virtual Request Copy() { throw new NotImplementedException("Concrete implementations of Request should implement Copy for their class."); }
 
         /// <summary>
         /// Indicates if this request requires user credentials.
@@ -63,11 +61,6 @@ namespace Scopos.BabelFish.Requests {
         /// x-api-key is not generally included in this list, and instead is specified in the APIClient.
         /// </summary>
         public Dictionary<string, string> HeaderKeyValuePairs { get; set; } = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Assigned from Response value, for some APIs where Limit is used
-        /// </summary>
-        public virtual string ContinuationToken { get; set; } = string.Empty;
 
         /// <summary>
         /// The relative path for this API Request call. For example, if the complete REST API call is

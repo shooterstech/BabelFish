@@ -119,5 +119,51 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             Assert.IsTrue( hasAtLeastOneStanding );
         }
+
+        [TestMethod]
+        public async Task GetScoreAverageUsingEventStyleWithTokens() {
+
+            var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            var scoreAverageRequest = new GetScoreAveragePublicRequest();
+            scoreAverageRequest.StartDate = new DateTime( 2023, 05, 1 );
+            scoreAverageRequest.EndDate = new DateTime( 2023, 05, 30 );
+            scoreAverageRequest.UserIds = new List<string>() { Constants.TestDev7UserId
+    };
+            var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
+            scoreAverageRequest.EventStyleDef = SetName.Parse( eventStyleDef );
+            scoreAverageRequest.Format = ScoreHistoryFormatOptions.DAY;
+
+            GetScoreAveragePublicResponse scoreAverageResponse;
+            List<ScoreAverageBase> myScoreAverages = new List<ScoreAverageBase>();
+            bool moreData;
+            string lastToken = "";
+
+            do {
+                scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync( scoreAverageRequest );
+                myScoreAverages.AddRange( scoreAverageResponse.ScoreAverageList.Items );
+                
+                Assert.AreNotEqual( lastToken, scoreAverageResponse.ScoreAverageList.NextToken );
+                lastToken = scoreAverageResponse.ScoreAverageList.NextToken;
+                
+                moreData = !string.IsNullOrEmpty( scoreAverageResponse.ScoreAverageList.NextToken );
+                scoreAverageRequest = scoreAverageResponse.GetNextRequest();
+            } while (moreData);
+        }
+
+        [TestMethod]
+        public async Task Getsomething() {
+            var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
+            scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 25 );
+            scoreHistoryRequest.EndDate = new DateTime( 2023, 05, 31 );
+            scoreHistoryRequest.UserIds = new List<string>() { "26f32227-d428-41f6-b224-beed7b6e8850" };
+            scoreHistoryRequest.Format = ScoreHistoryFormatOptions.DAY;
+
+            var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+        }
     }
 }

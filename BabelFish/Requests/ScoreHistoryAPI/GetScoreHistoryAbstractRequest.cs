@@ -35,8 +35,9 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// <summary>
         /// Gets or Sets the SetName of the Event Style for the Score History request.
         /// On Get, a returned value of null, means the EventStyle has not been set yet.
-        /// On Set, StageStyles must be an empty list, as either EventStyle is required, or
-        /// StageStyles is required, but both are not allowed.
+        /// On Set, StageStyles must be an empty list.
+        /// Setting both StageStyles and  EventStyle is vorbotten.
+        /// Setting neither will return all EventStyles for the athletes in the UserIds list.
         /// </summary>
         /// <exception cref="GetScoreHistoryRequestException">Thrown if called tried to set EventStyle with StageStles previously having one or more values.</exception>
         public SetName EventStyleDef {
@@ -53,14 +54,15 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// <summary>
         /// Gets or Sets the list of SetNames of the Stage Styles for the Score History request.
         /// On Get, an empty list returned means the StageStyles has not been set yet.
-        /// On Set, EventStyle must be null, as either EventStyle is required, or
-        /// StageStyles is required, but both are not allowed.
+        /// On Set, EventStyle must be null.
+        /// Setting both StageStyles and  EventStyle is vorbotten.
+        /// Setting neither will return all EventStyles for the athletes in the UserIds list.
         /// </summary>
         /// <exception cref="GetScoreHistoryRequestException">Thrown if called tried to set StageStles previously having one or more values.</exception>
         public List<SetName> StageStyleDefs {
             get { return stageStyles; }
             set {
-                if (eventStyle == null) {
+                if (eventStyle == null || value.Count == 0) {
                     stageStyles = value;
                 } else {
                     throw new GetScoreHistoryRequestException( "Can not set both EventStyle and StageStyles. Prior to this call, EventStyle had already been set." );
@@ -134,8 +136,8 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
                 if (UserIds != null && UserIds.Count > 0)
                     parameterList.Add( "user-id", UserIds );
 
-                if (ContinuationToken != null && ContinuationToken != string.Empty)
-                    parameterList.Add( "token", new List<string>() { ContinuationToken } );
+                if (! string.IsNullOrEmpty(Token))
+                    parameterList.Add( "token", new List<string>() { Token } );
 
                 parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
                 parameterList.Add( "start-date", new List<string>() { StartDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
