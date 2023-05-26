@@ -89,7 +89,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
         }
 
         [TestMethod]
-        public async Task GetClubDetail() {
+        public async Task GetClubDetailAuthenticated() {
 
 
             var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
@@ -112,6 +112,24 @@ namespace Scopos.BabelFish.Tests.Clubs {
             Assert.IsTrue( clubDetail.LicenseList.Count > 0, "Expecting the length of the license list is greather than zero." );
 
             Assert.IsTrue( clubDetail.Options.Count > 0, "Expecting at least one ClubOption." );
+        }
+
+        [TestMethod]
+        public async Task GetClubDetailPublic() {
+
+
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            var ownerId = "OrionAcct000001";
+            var request = new GetClubDetailPublicRequest( ownerId );
+
+            var response = await client.GetClubDetailPublicAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+
+            var clubDetail = response.ClubDetail;
+
+            Assert.AreEqual( ownerId, clubDetail.OwnerId, "Expecting the OwnerId to match, what was sent." );
         }
     }
 }
