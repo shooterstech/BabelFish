@@ -15,14 +15,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
     public class Attribute : Definition {
 
-        //TODO: Convert string constants into an ENUM
-        public const string DESIGNATION_ATHLETE = "ATHLETE";
-        public const string DESIGNATION_CLUB = "CLUB";
-        public const string DESIGNATION_MATCH_OFFICIAL = "MATCH OFFICIAL";
-        public const string DESIGNATION_TEAM = "TEAM";
-        public const string DESIGNATION_TEAM_OFFICIAL = "TEAM OFFICIAL";
-        public const string DESIGNATION_USER = "USER";
-        public const string DESIGNATION_HIDDEN = "HIDDEN";
 
         public Attribute() : base() {
             Type = DefinitionType.ATTRIBUTE;
@@ -31,9 +23,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [OnDeserialized]
         internal new void OnDeserializedMethod(StreamingContext context) {
             base.OnDeserializedMethod(context);
+
             //Designation is not required, but if the user doesn't include it, set it to all values except HIDDEN
             if (Designation.Count() == 0)
-                Designation = new List<string>() { DESIGNATION_ATHLETE, DESIGNATION_CLUB, DESIGNATION_MATCH_OFFICIAL, DESIGNATION_TEAM, DESIGNATION_TEAM_OFFICIAL, DESIGNATION_USER };
+                Designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
         }
 
         [JsonProperty(Order = 10)]
@@ -41,8 +34,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string DisplayName { get; set; } = string.Empty;
 
         [JsonProperty(Order = 11)]
-        [DefaultValue(null)]
-        public List<string> Designation { get; set; } = new List<string>();
+        public List<AttributeDesignation> Designation { get; set; } = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
 
         [JsonProperty(Order = 12)]
         [JsonConverter(typeof(StringEnumConverter))]

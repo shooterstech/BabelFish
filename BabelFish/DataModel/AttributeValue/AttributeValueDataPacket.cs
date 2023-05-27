@@ -50,9 +50,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public JToken ToJToken() {
             
             JObject json = new JObject();
-            json.Add( "attribute-def", AttributeDef.ToString() );
-            json.Add( "visibility", Visibility.ToString() );
-            json.Add( "attribute-value", AttributeValue.ToJToken() );
+            json.Add( "AttributeDef", AttributeDef.ToString() );
+            json.Add( "Visibility", Visibility.ToString() );
+            json.Add( "AttributeValue", AttributeValue.ToJToken() );
 
             return json;
         }

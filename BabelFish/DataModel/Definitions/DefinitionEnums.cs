@@ -13,6 +13,37 @@ using System.Runtime.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum AttributeDesignation {
+
+        [Description( "ATHLETE" )]
+        [EnumMember( Value = "ATHLETE" )]
+        ATHLETE,
+
+
+        [Description( "CLUB" )]
+        [EnumMember( Value = "CLUB" )] CLUB,
+
+
+        [Description( "MATCH OFFICIAL" )]
+        [EnumMember( Value = "MATCH OFFICIAL" )] MATCH_OFFICIAL,
+
+
+        [Description( "TEAM" )]
+        [EnumMember( Value = "TEAM" )] TEAM,
+
+
+        [Description( "TEAM OFFICIAL" )]
+        [EnumMember( Value = "TEAM OFFICIAL" )] TEAM_OFFICIAL,
+
+
+        [Description( "USER" )]
+        [EnumMember( Value = "USER" )] USER,
+
+
+        [Description( "HIDDEN" )]
+        [EnumMember( Value = "HIDDEN" )] HIDDEN
+    }
 
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
