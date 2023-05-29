@@ -38,5 +38,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The options for Source, are dependent on the value of Method.
         /// </summary>
         public FieldSource Source { get; set; }
+
+        public override string ToString() {
+            return $"{FieldName} for {Method}";
+        }
     }
 }
