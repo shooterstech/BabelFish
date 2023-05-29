@@ -24,6 +24,10 @@ National Match
 National Championship
         */
         /// <summary>
+        /// Unknown
+        /// </summary>
+        [Description( "" )][EnumMember( Value = "" )] UNKNOWN,
+        /// <summary>
         /// Training
         /// </summary>
         [Description( "Training" )] [EnumMember( Value = "Training" )] TRAINING,

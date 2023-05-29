@@ -69,7 +69,11 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
 
             var response = await client.GetAttributeDefinitionAsync( attributeDef );
-            return response.Definition;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK )
+                return response.Definition;
+
+            //If we get here, likely a definition not found error.
+            throw new AttributeValueException( response.MessageResponse.ToString() );
         }
     }
 }

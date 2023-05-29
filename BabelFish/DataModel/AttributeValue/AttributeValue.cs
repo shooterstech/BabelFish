@@ -247,6 +247,33 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         /// <summary>
+        /// If applicable, returns the AttributeValueAppellation for this AttributeValue.
+        /// Only applicable if the underlying definition is a simple attribute, and the field
+        /// type is CLOSED.
+        /// </summary>
+        public string AttributeValueAppellation {
+            get {
+                try {
+                    if (definition.SimpleAttribute && GetDefintionFields()[0].FieldType == FieldType.CLOSED ) {
+                        var field = GetDefintionFields()[0];
+                        var value = GetFieldValue( field.FieldName );
+                        foreach (var foo in field.Values ) {
+                            if (foo.Value == value) {
+                                return foo.AttributeValueAppellation;
+                            }
+                        }
+                        return "";
+                    } else {
+                        return "";
+                    }
+                } catch (Exception e) {
+                    logger.Error( e );
+                    return "";
+                }
+            }
+        }
+
+        /// <summary>
         /// Set Attribute Value for Field Name
         /// </summary>
         /// <param name="fieldName">Field Name to set</param>

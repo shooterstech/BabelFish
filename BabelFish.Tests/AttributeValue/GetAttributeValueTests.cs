@@ -214,5 +214,18 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var notARealAttributeValueDataPacket = attributeValueDataPackets[setNameNotARealAttribute];
             Assert.IsTrue( notARealAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.NotFound );
         }
+
+        [TestMethod]
+        public async Task AttributeValueAppellationTest() {
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+            var rifleType = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+
+            rifleType.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
+            Assert.AreEqual( "Sporter", rifleType.AttributeValueAppellation );
+
+            rifleType.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
+            Assert.AreEqual( "Precision", rifleType.AttributeValueAppellation );
+        }
     }
 }

@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.APIClients {
                     await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
                     // Save returned definition to cache
-                    if (response.Body != null)
+                    if (response.Body != null && response.StatusCode == System.Net.HttpStatusCode.OK)
                         DefinitionCache.CACHE.SaveDefinition<T>( request.SetName, response.Definition );
                 }
             } catch (Exception ex) {

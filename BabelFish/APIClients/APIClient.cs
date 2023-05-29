@@ -83,7 +83,13 @@ namespace Scopos.BabelFish.APIClients {
                     if (request.RequiresCredentials)
                         await request.Credentials.GenerateIAMCredentialsAsync();
 
-                    requestMessage.Content = request.PostParameters;
+                    /*
+                     * Technically, HTTP GET methods can have a body / content. However, some versions of .net don't support it.
+                     * So only add .Content on non GET calls
+                     * https://stackoverflow.com/questions/3981564/cannot-send-a-content-body-with-this-verb-type
+                     */
+                    if (request.HttpMethod != HttpMethod.Get )
+                        requestMessage.Content = request.PostParameters;
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     logger.Info( $"Calling {request} on {uri}." );

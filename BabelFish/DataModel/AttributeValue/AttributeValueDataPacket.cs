@@ -54,6 +54,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             json.Add( "Visibility", Visibility.ToString() );
             json.Add( "AttributeValue", AttributeValue.ToJToken() );
 
+            var appellation = AttributeValue.AttributeValueAppellation;
+            if ( string.IsNullOrEmpty( appellation ) )
+                json.Add( "AttributeValueAppellation", appellation );
+
             return json;
         }
 

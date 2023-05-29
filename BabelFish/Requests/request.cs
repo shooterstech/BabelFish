@@ -108,7 +108,10 @@ namespace Scopos.BabelFish.Requests {
             }
         }
 
-        //TODO: Figure out how to return values to be posted. Noting that sometimes we post a JSON string, much more than name value pairs. 
+        
+        /// <summary>
+        /// Only applicable to non httpMethod.GET calls. This is the body of the request.
+        /// </summary>
         public virtual StringContent PostParameters {
             get {
                 return new StringContent( "" );
