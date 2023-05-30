@@ -5,7 +5,7 @@ using Scopos.BabelFish.Runtime;
 using NLog;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
-    public class AttributeValueException : ShootersTechException {
+    public class AttributeValueException : ScoposException {
 
         public AttributeValueException()
             : base( "Something bad happened!" ) {
@@ -29,7 +29,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// <summary>
     /// Thrown when attempting to set a value that is either the wrong type or does not pass validation.
     /// </summary>
-    public class AttributeValueValidationException : ShootersTechException {
+    public class AttributeValueValidationException : ScoposException {
 
         public AttributeValueValidationException()
             : base( "Inappropraite value." ) {

@@ -117,5 +117,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return sn;
         }
 
+        public override string ToString() {
+            return $"{Type}: {SetName}";
+        }
+
     }
 }

@@ -344,12 +344,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// Invoked the RefreshTokensFailed when a failure happens (and then throws one of the Exceptions).
         /// </summary>
         /// <exception cref="AuthenticationException">Thrown if the user could not be re-authenticated.</exception>
-        /// <exception cref="ShootersTechException">Thrown if, not sure why, but maybe a networking issue preventing the re-authentication.</exception>
+        /// <exception cref="ScoposException">Thrown if, not sure why, but maybe a networking issue preventing the re-authentication.</exception>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if InitializeAsync() was not called after calling the UserAuthentication constructor.</exception>
         public async Task RefreshTokensAsync(bool refreshNow = false) {
 
             if (!initCalled)
-                throw new InitializeAsyncNotCompletedException();
+                throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the UserAuthentication constructor. Can not proceed until after this call is successful." );
 
             if ( !refreshNow && this.CognitoUser.SessionTokens.ExpirationTime > DateTime.UtcNow.AddMinutes( 1 ) ) {
                 logger.Info( $"Purposefully not refreshing tokens for {this.Email} as the ExpirationTime is in the future." );
@@ -393,7 +393,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 if (OnRefreshTokensFailed != null)
                     OnRefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
-                throw new ShootersTechException( $"Unable to perform a token refresh for {this.Email}.", logger );
+                throw new ScoposException( $"Unable to perform a token refresh for {this.Email}.", logger );
 
             }
         }
@@ -454,7 +454,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// Invokes the GenerateIAMCredentialsSuccessful event on success, and GenerateIAMCredentialsFailed on failure. 
         /// If the credentials do not need to be refreshed (have not expired yet), neither event is invoked.
         /// </summary>
-        /// <exception cref="ShootersTechException">Thrown when we are unabled to retreive temporary credentials. </exception>
+        /// <exception cref="ScoposException">Thrown when we are unabled to retreive temporary credentials. </exception>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if InitializeAsync() was not called after calling the UserAuthentication constructor.</exception>
         public async Task GenerateIAMCredentialsAsync() {
 
@@ -504,7 +504,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 if (OnGenerateIAMCredentialsFailed != null)
                     OnGenerateIAMCredentialsFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
-                throw new ShootersTechException( $"Unable to get IAM credentials for {this.Email}", ex, logger );
+                throw new ScoposException( $"Unable to get IAM credentials for {this.Email}", ex, logger );
             }
         }
 
