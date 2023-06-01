@@ -232,5 +232,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( Name );
             return foo.ToString();
         }
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        public string LastUpdated { get; set; }
     }
 }

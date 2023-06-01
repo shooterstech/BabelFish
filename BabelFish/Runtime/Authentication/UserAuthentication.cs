@@ -187,8 +187,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 case ConstructorType.EMAIL_PASSWORD:
                     //Try and authenticate with cognito
                     try {
-                        var taskAuthFlowResponse = this.CognitoUser.StartWithSrpAuthAsync( authRequest );
-                        var authFlowResponse = taskAuthFlowResponse.Result;
+                        var authFlowResponse = await this.CognitoUser.StartWithSrpAuthAsync( authRequest );
 
                         if (authFlowResponse.AuthenticationResult != null) {
                             //If we get here authentication was successful.

@@ -22,12 +22,15 @@ namespace Scopos.BabelFish.Requests {
         public Request(string operationId) {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
-        }
+			this.SubDomain = APISubDomain.API;
+		}
         public Request( string operationId, UserAuthentication credentials ) {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
 
-            this.Credentials = credentials;
+			this.RequiresCredentials = true;
+			this.SubDomain = APISubDomain.AUTHAPI;
+			this.Credentials = credentials;
         }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace Scopos.BabelFish.Requests {
         public virtual Request Copy() { throw new NotImplementedException("Concrete implementations of Request should implement Copy for their class."); }
 
         /// <summary>
-        /// Indicates if this request requires user credentials.
+        /// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.
         /// </summary>
         public bool RequiresCredentials { get; protected set; } = false;
 
@@ -45,6 +48,7 @@ namespace Scopos.BabelFish.Requests {
 
         /// <summary>
         /// The REST API subdomain used in this request. 
+        /// Automatically set to AUTHAPI when using the Request constructor using UserAuthentication. Set to API otherwise.
         /// </summary>
         public APISubDomain SubDomain { get; protected set; } = APISubDomain.API;
 
