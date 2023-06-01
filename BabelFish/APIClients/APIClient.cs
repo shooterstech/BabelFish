@@ -62,7 +62,7 @@ namespace Scopos.BabelFish.APIClients {
         #region Methods
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass {
             // Get Uri for call
-            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.orionscoringsystem.com/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
+            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
             try {
 
@@ -81,7 +81,7 @@ namespace Scopos.BabelFish.APIClients {
 
                     //If we are making an authenticated call, update the temporary IAM credentials.
                     if (request.RequiresCredentials)
-                        request.Credentials.GenerateIAMCredentials();
+                        await request.Credentials.GenerateIAMCredentialsAsync();
 
                     requestMessage.Content = request.PostParameters;
 
@@ -106,7 +106,7 @@ namespace Scopos.BabelFish.APIClients {
 
                 response.StatusCode = responseMessage.StatusCode;
 
-                using (Stream s = responseMessage.Content.ReadAsStreamAsync().Result)
+                using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
                 using (StreamReader sr = new StreamReader( s ))
                 using (JsonReader reader = new JsonTextReader( sr )) {
                     var apiReturnJson = JObject.ReadFrom( reader );
