@@ -226,9 +226,31 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 StageLabel = new List<string>(),
                 Competition = ShowInSegment.CompetitionType.BOTH
             };
-        }
+		}
 
-        [JsonProperty(Order = 10)]
+		/// <summary>
+		/// Unique display mode specifics for this segement.
+		/// Must be one of the following
+		/// GroupMode
+		/// ShotCalling
+		/// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
+		/// DefaultCommand: Required with default value of [ ] 
+		/// </summary>
+		[DefaultValue( null )]
+		[JsonProperty( Order = 10 )]
+		public List<SpecialOptions> Special { get; set; }
+
+		public List<SpecialOptions> GetSpecial() {
+			if (Special != null)
+				return Special;
+
+			if (Parent.Special != null)
+				return Parent.Special;
+
+			return Parent.Parent.Special;
+		}
+
+		[JsonProperty(Order = 10)]
         [DefaultValue(-9999)]
         public int StringSize { get; set; }
 

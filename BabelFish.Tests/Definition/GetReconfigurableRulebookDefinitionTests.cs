@@ -9,6 +9,7 @@ using Scopos.BabelFish;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
@@ -54,8 +55,8 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task GetCourseOfFireTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
 
             var result = await client.GetCourseOfFireDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
@@ -72,6 +73,47 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( definition.Events.Count > 0 );
             Assert.IsTrue( definition.AbbreviatedFormats.Count > 0 );
             Assert.IsTrue( definition.Singulars.Count > 0 );
+
+            foreach (var childEvent in definition.Events) {
+                var childNames = childEvent.GetChildrenEventNames();
+                Assert.IsTrue( childNames.Count > 0 );
+            }
+        }
+
+        [TestMethod]
+        public async Task COFChildrenTest() {
+
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
+
+            var result = await client.GetCourseOfFireDefinitionAsync( setName );
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+
+            EventComposite top = EventComposite.GrowEventTree( result.Definition );
+            Assert.IsTrue( top.HasChildren );
+            Assert.IsFalse( top.HasParent );
+            Assert.AreEqual( EventtType.EVENT, top.EventType );
+            Assert.IsTrue( ! string.IsNullOrEmpty( top.EventName ) );
+
+            foreach(  var child in top.Children ) {
+                Assert.IsTrue( child.Parent == top );
+                Assert.IsTrue( child.HasChildren );
+                Assert.IsTrue( child.HasParent );
+                Assert.AreNotEqual( EventtType.EVENT, child.EventType );
+                Assert.IsTrue( !string.IsNullOrEmpty( child.EventName ) );
+            }
+
+            var descendants = top.GetAllSingulars();
+            Assert.AreEqual( 60, descendants.Count );
+
+            var prone = top.FindEventComposite( "Prone" );
+            Assert.AreEqual( "Prone", prone.EventName );
+
+            var kneeling = top.FindEventComposite( "KN 2" );
+            Assert.AreEqual( "KN 2", kneeling.EventName );
+
+            var standing = top.FindEventComposite( "S4" );
+            Assert.AreEqual( "S4", standing.EventName );
         }
 
         [TestMethod]

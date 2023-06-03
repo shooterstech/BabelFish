@@ -180,8 +180,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         TEST
     }
 
+	[JsonConverter( typeof( StringEnumConverter ) )]
+	public enum SpecialOptions {
+		[Description( "GroupMode" )]
+		[EnumMember( Value = "GroupMode" )]
+		GROUP_MODE,
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
+		[Description( "ShotCalling" )]
+		[EnumMember( Value = "ShotCalling" )]
+		SHOT_CALLING
+	}
+
+
+	[JsonConverter( typeof( StringEnumConverter ) )]
     public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
 
 

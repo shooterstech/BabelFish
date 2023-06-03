@@ -110,6 +110,11 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public dynamic Meta { get; set; }
 
         /// <summary>
+        /// EventName is only set when the shot is part of a Result COF .Shots dictionary
+        /// </summary>
+        public string EventName { get; set; }
+
+        /// <summary>
         /// Returns the x and y coordinates, measured in pixels, of the aiming bull center in the verification photo.
         /// These values are read from the Meta dictionary using VerImgBullXCoor and VerImgBullYCoor.
         /// </summary>

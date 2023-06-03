@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
@@ -18,6 +20,8 @@ namespace Scopos.BabelFish.DataModel.Definitions
     {
 
         private List<string> validationErrorList = new List<string>();
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
@@ -59,6 +63,32 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [JsonProperty(Order = 3)]
         public dynamic Children { get; set; }
 
+        public List<string> GetChildrenEventNames() {
+            List<string> listOfEventNames = new List<string>();
+
+            try {
+                if (Children is JArray) {
+                    foreach (var childName in Children) {
+                        listOfEventNames.Add( (string)childName );
+                    }
+                } else {
+                    //It's a dictionary
+                    var values = (string)Children["Values"];
+                    var valueIndexes = values.Split( ".." );
+                    int start = int.Parse( valueIndexes[0] );
+                    int stop = int.Parse( valueIndexes[1] );
+
+                    for (int i = start; i < stop; i++) {
+                        var eventName = (string)Children["EventName"];
+                        listOfEventNames.Add( eventName.Replace( "{}", i.ToString() ) );
+                    }
+                }
+            } catch (Exception ex) {
+                logger.Error( ex );
+            }
+            return listOfEventNames;
+        }
+
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
@@ -98,5 +128,9 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [JsonProperty(Order = 14)]
         [DefaultValue("")]
         public string Comment { get; set; }
+
+        public override string ToString() {
+            return $"{EventName} of {EventType}";
+        }
     }
 }

@@ -148,6 +148,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         [JsonProperty(Order = 50)]
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
 
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
+            Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = new Dictionary<string, Athena.Shot.Shot>();
+
+            foreach( var t in Shots.Values )
+                if ( !string.IsNullOrEmpty( t.EventName  ))
+                    shots.Add(t.EventName, t);
+
+            return shots;
+        }
+
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
         /// </summary>
