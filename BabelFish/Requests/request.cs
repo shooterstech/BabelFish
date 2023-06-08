@@ -19,13 +19,30 @@ namespace Scopos.BabelFish.Requests {
 
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationId"></param>
+        /// <exception cref="ArgumentNullException">Thrown if OperationId is null or an empty string</exception>
         public Request(string operationId) {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
 			this.SubDomain = APISubDomain.API;
 		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationId"></param>
+        /// <param name="credentials"></param>
+        /// <exception cref="ArgumentNullException">Thrown if UserAuthentication is null or OperationId is null or an empty string</exception>
         public Request( string operationId, UserAuthentication credentials ) {
-            if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
+            if (string.IsNullOrEmpty( operationId )) 
+                throw new ArgumentNullException( "OperationId may not be null or an empty string" );
+
+            if (credentials == null)
+                throw new ArgumentNullException( "User Credentials argument may not be null." );
+
             this.OperationId = operationId;
 
 			this.RequiresCredentials = true;

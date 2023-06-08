@@ -96,6 +96,8 @@ namespace Scopos.BabelFish.APIClients {
                     DateTime startTime = DateTime.Now;
 
                     if (request.RequiresCredentials) {
+                        if (request.Credentials == null)
+                            throw new AuthenticationException( $"Attempting to make an authenticated call with null credentials" );
                         //If we are making an authenticated call, use the exstention method from https://github.com/FantasticFiasco/aws-signature-version-4 to sign the request.
                         responseMessage = await httpClient.SendAsync(
                             requestMessage,
