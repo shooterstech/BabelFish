@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.Helpers {
+namespace Scopos.BabelFish.Helpers {
     /// <summary>
     /// Provides helper functions to format certain data into common string formatting
     /// </summary>
