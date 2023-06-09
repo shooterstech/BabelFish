@@ -26,6 +26,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             if (StageStyleMappings == null)
                 StageStyleMappings = new List<StageStyleSelection>();
+
+            if (AttributeValueAppellation == null)
+                AttributeValueAppellation = new List<string>();
+
+            if (TargetCollectionName == null)
+                TargetCollectionName = new List<string>();
         }
 
         /// <summary>
@@ -33,14 +39,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonProperty( Order = 1 )]
         [DefaultValue( "" )]
-        public string AttributeValueAppellation { get; set; } = string.Empty;
+        public List<string> AttributeValueAppellation { get; set; } = new List<string>();
 
         /// <summary>
         /// The TargetCollectionName to use within this mapping.
         /// </summary>
         [JsonProperty( Order = 2 )]
         [DefaultValue( "" )]
-        public string TargetCollectionName { get; set; } = string.Empty;
+        public List<string> TargetCollectionName { get; set; } = new List<string>();
 
         /// <summary>
         /// The EventStyle definition to use if a mappings could not be found.

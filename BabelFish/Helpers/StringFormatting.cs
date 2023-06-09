@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.Helpers {
                 if (!string.IsNullOrEmpty( city ))
                     return $"{city}, {country}";
 
-                if (string.IsNullOrEmpty( state ))
+                if (!string.IsNullOrEmpty( state ))
                     return $"{state}, {country}";
                 return country;
             }
