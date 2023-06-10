@@ -27,6 +27,30 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     }
 
     /// <summary>
+    /// Thrown when the Attribute definition, when reading in an AttribureValue could not be found.
+    /// </summary>
+    public class AttributeNotFoundException : AttributeValueException {
+
+        public AttributeNotFoundException()
+            : base( "Attribute definition could not be found." ) {
+        }
+        public AttributeNotFoundException( string message )
+            : base( message ) {
+        }
+        public AttributeNotFoundException( string message, Logger logger )
+            : base( message ) {
+            logger.Error( this, message );
+        }
+        public AttributeNotFoundException( string message, Exception inner )
+            : base( message, inner ) {
+        }
+        public AttributeNotFoundException( string message, Exception inner, Logger logger )
+            : base( message, inner ) {
+            logger.Error( this, message );
+        }
+    }
+
+    /// <summary>
     /// Thrown when attempting to set a value that is either the wrong type or does not pass validation.
     /// </summary>
     public class AttributeValueValidationException : ScoposException {

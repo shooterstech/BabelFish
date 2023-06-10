@@ -40,7 +40,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             return av;
         }
-
+        
+        /// <exception cref="AttributeNotFoundException">Thrown if the attribute def, identified by the SetName, could not be found.</exception>
         public static async Task<AttributeValue> CreateAsync( SetName setName, JToken attributeValueAsJToken ) {
             AttributeValue av = new AttributeValue( setName );
             await av.InitializeAsync();
@@ -56,6 +57,11 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             return av;
         }
 
+        /// <summary>
+        /// Should be called after the constructor, to complete the async portion of the constructor process. 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="AttributeNotFoundException">Thrown if the attribute def, identified by the SetName, could not be found.</exception>
         private async Task InitializeAsync() {
 
             definition = await FETCHER.FetchAttributeDefinitionAsync( SetName );

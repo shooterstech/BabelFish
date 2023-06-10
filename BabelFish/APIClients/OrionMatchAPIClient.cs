@@ -118,6 +118,7 @@ namespace Scopos.BabelFish.APIClients {
             GetResultCOFDetailPublicResponse response = new GetResultCOFDetailPublicResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
             return response;
         }
