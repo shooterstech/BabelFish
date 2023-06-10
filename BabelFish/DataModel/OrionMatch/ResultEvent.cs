@@ -47,32 +47,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     }
 
-    /*
-    [Serializable]
-    public class ResultEventTeamMember {
-
-        public ResultEventTeamMember() {
-            Score = new Score();
-            Children = new List<ResultEventChild>();
-        }
-
-        [Obsolete( "Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef" )]
-        public string ScoreFormat { get; set; }
-
-
-
-        public string DisplayName { get; set; }
-
-        public string UserID { get; set; }
-
-        public Score Score { get; set; }
-
-        public List<ResultEventChild> Children { get; set; }
-
-        public string ResultCOFID { get; set; }
-    }
-    */
-
     [Serializable]
     public class ResultEventChild {
 

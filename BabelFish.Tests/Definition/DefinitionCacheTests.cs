@@ -13,6 +13,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Scopos.BabelFish.Tests.Definition {
 

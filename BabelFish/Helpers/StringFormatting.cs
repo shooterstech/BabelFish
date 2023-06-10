@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataModel.Definitions;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Scopos.BabelFish.Helpers {
     /// <summary>
     /// Provides helper functions to format certain data into common string formatting
     /// </summary>
     public static class StringFormatting {
+
+        private static TextInfo textInfo = new CultureInfo( "en-US", false ).TextInfo;
 
         /// <summary>
         /// Formats a span of dates, a start and end date, to a common formatted string.
@@ -46,6 +51,37 @@ namespace Scopos.BabelFish.Helpers {
                     return $"{state}, {country}";
                 return country;
             }
+        }
+
+        public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.OrionMatch.Score score ) {
+
+            /*
+            string format = "{d}"; //default value
+            foreach( var scoreConfig in scoreFormatCollection.ScoreConfigs ) {
+                if ( scoreConfig.ScoreConfigName == scoreConfigName ) {
+                    if (scoreConfig.ScoreFormats.TryGetValue(scoreFormatName, out format)) {
+                        break;
+                    }
+                }
+            }
+
+            string[] operands = Regex.Split( format, @"\{.}" );
+
+            format = format.Replace( "{i}", score.I.ToString() );
+            format = format.Replace( "{d}", score.D.ToString("F1") );
+            format = format.Replace( "{i}", score.I.ToString() );
+            */
+
+            return score.D.ToString( "F1" );
+        }
+
+        /// <summary>
+        /// Returns the input string in Title Case
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string TitleCase( string input ) {
+            return textInfo.ToTitleCase( input );
         }
     }
 }
