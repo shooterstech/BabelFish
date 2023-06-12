@@ -54,8 +54,15 @@ namespace Scopos.BabelFish.Helpers {
         }
 
         public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.OrionMatch.Score score ) {
-
-            /*
+            
+            var lowerI = score.I.ToString(); // integer
+            var lowerD = score.D.ToString("F1"); // decimal
+            var lowerX = score.X.ToString(); // X count
+            var upperX = score.X > 0 ? "*" : ""; //asterisk for inners
+            var lowerS = score.S > 0 ? score.S.ToString() : score.D.ToString(); // summed score, if no score, then decimal is here.
+            var lowerV = ((int)score.V).ToString(); // Var score, as int
+            var upperV = score.V.ToString(); // Var score as single decimal
+            
             string format = "{d}"; //default value
             foreach( var scoreConfig in scoreFormatCollection.ScoreConfigs ) {
                 if ( scoreConfig.ScoreConfigName == scoreConfigName ) {
@@ -65,14 +72,10 @@ namespace Scopos.BabelFish.Helpers {
                 }
             }
 
-            string[] operands = Regex.Split( format, @"\{.}" );
+            format = format.Replace( "{i}", lowerI ).Replace("{d}", lowerD).Replace("{x}", lowerX).Replace("{X}", upperX).Replace("{s}", lowerS).Replace("{v}", lowerV).Replace("{V}", upperV);
+            //format = format.Replace( "{d}", lowerD );
 
-            format = format.Replace( "{i}", score.I.ToString() );
-            format = format.Replace( "{d}", score.D.ToString("F1") );
-            format = format.Replace( "{i}", score.I.ToString() );
-            */
-
-            return score.D.ToString( "F1" );
+            return format;
         }
 
         /// <summary>
