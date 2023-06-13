@@ -73,12 +73,16 @@ namespace Scopos.BabelFish.DataModel.Definitions
                     }
                 } else {
                     //It's a dictionary
-                    var values = (string)Children["Values"];
-                    var valueIndexes = values.Split( ".." );
-                    int start = int.Parse( valueIndexes[0] );
-                    int stop = int.Parse( valueIndexes[1] );
+                    
+                    //var values = (string)Children["Values"];
+                    //var valueIndexes = values.Split( ".." );
+                    //int start = int.Parse( valueIndexes[0] );
+                    //int stop = int.Parse( valueIndexes[1] );
 
-                    for (int i = start; i < stop; i++) {
+                    ValueSeries vs = new ValueSeries((string)Children["Values"]);
+                    var valueList = vs.GetAsList();
+
+                    foreach (int i in valueList){
                         var eventName = (string)Children["EventName"];
                         listOfEventNames.Add( eventName.Replace( "{}", i.ToString() ) );
                     }

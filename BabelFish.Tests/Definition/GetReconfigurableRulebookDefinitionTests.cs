@@ -117,6 +117,44 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task COFGenerateChildrenTest()
+        {
+
+            var client = new DefinitionAPIClient(Constants.X_API_KEY);
+            var setName = SetName.Parse("v2.0:orion:Informal Practice Air Rifle");
+
+            var result = await client.GetCourseOfFireDefinitionAsync(setName);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+
+            EventComposite top = EventComposite.GrowEventTree(result.Definition);
+            Assert.IsTrue(top.HasChildren);
+            Assert.IsFalse(top.HasParent);
+            Assert.AreEqual(EventtType.EVENT, top.EventType);
+            Assert.IsTrue(!string.IsNullOrEmpty(top.EventName));
+
+            foreach (var child in top.Children)
+            {
+                Assert.IsTrue(child.Parent == top);
+                //Assert.IsTrue(child.HasChildren);
+                Assert.IsTrue(child.HasParent);
+                Assert.AreNotEqual(EventtType.EVENT, child.EventType);
+                Assert.IsTrue(!string.IsNullOrEmpty(child.EventName));
+            }
+
+            var descendants = top.GetAllSingulars();
+            Assert.AreEqual(500, descendants.Count);
+
+            var prone = top.FindEventComposite("Prone");
+            Assert.AreEqual("Prone", prone.EventName);
+
+            var kneeling = top.FindEventComposite("KN 2");
+            Assert.AreEqual("KN 2", kneeling.EventName);
+
+            var standing = top.FindEventComposite("S4");
+            Assert.AreEqual("S4", standing.EventName);
+        }
+
+        [TestMethod]
         public async Task GetEventStyleTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };

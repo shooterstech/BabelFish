@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Amazon.Util;
 using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.Helpers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class EventComposite {
@@ -67,7 +71,51 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return $"{EventName} of {EventType}";
         }
 
-        public static EventComposite GrowEventTree( CourseOfFire cof ) {
+        private static void GenerateChildStage(Event gEvent, int stageValue){
+            if (gEvent.Children is JArray)
+                return;
+
+            if (gEvent.Children.ContainsKey("String")){
+                int strValue = (int)gEvent.Children["String"];
+                if (strValue <= 0) return; // nothing to do
+                int startVal = strValue * (stageValue - 1) + 1;
+                int endVal = startVal - 1 + strValue;
+
+                gEvent.Children["String"] = -1;
+                gEvent.Children["Values"] = String.Format("{0}..{1}", startVal, endVal);
+            }
+        }
+
+        private static void GenerateEvents(CourseOfFire cof){
+            List<Event> generatedEventList = new List<Event>();
+            foreach( Event t in cof.Events ) {
+                if (t.Values != "" && t.Values != null){ //needs generating
+                    ValueSeries vs = new ValueSeries((string)t.Values);
+                    var valueList = vs.GetAsList();
+
+
+                    foreach (int i in valueList) { //i is stageValue
+                        Event newEvent = t.Clone();
+                        newEvent.EventName = newEvent.EventName.Replace( "{}", i.ToString() );
+                        newEvent.Values = "";
+
+                        GenerateChildStage(newEvent, i);
+
+                        generatedEventList.Add(newEvent);
+                    }
+                }
+                else {
+                    generatedEventList.Add(t);
+                }
+            }
+
+            cof.Events = generatedEventList;
+        }
+
+        public static EventComposite GrowEventTree( CourseOfFire cofRef ) {
+
+            CourseOfFire cof = cofRef.Clone(); //dont modify passed in cof
+            GenerateEvents(cof);
 
             EventComposite top;
             Event topLevelEvent = null;
