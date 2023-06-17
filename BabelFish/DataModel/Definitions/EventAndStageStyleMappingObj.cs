@@ -38,14 +38,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The AttributeValueAppellation to use within this mapping.
         /// </summary>
         [JsonProperty( Order = 1 )]
-        [DefaultValue( "" )]
         public List<string> AttributeValueAppellation { get; set; } = new List<string>();
 
         /// <summary>
         /// The TargetCollectionName to use within this mapping.
         /// </summary>
         [JsonProperty( Order = 2 )]
-        [DefaultValue( "" )]
         public List<string> TargetCollectionName { get; set; } = new List<string>();
 
         /// <summary>

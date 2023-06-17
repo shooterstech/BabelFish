@@ -25,6 +25,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonProperty( Order = 2 )]
         [DefaultValue( "" )]
-        public string EventAppellation { get; set; } = string.Empty;
+        public string StageAppellation { get; set; } = string.Empty;
     }
 }

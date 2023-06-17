@@ -34,24 +34,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Use GetLastUpdated() to return this value as a DateTime object.
         /// </summary>
         [Obsolete("LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole.")]
-        public string LastUpdated { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="FormatException">Thrown if unable to parse the property LastUpdated into a DateTime object.</exception>
-        [Obsolete( "LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole." )]
-        public DateTime GetLastUpdated() {
-            try {
-                return DateTime.ParseExact( (string)LastUpdated, DateTimeFormats.DATETIME_FORMAT, CultureInfo.InvariantCulture );
-            } catch (Exception ex ) {
-                //Probable either a FormatException or a NullValueException
-                var msg = $"Can not parse LastUpdated values of '{LastUpdated}'. Received error {ex}.";
-                logger.Error( msg, ex );
-                throw new FormatException( msg );
-            }
-        }
+        public DateTime LastUpdated { get; set; }
 
         /// <summary>
         /// Formatted as a string, the Match ID that this squadding list is from.

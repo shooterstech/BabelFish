@@ -54,6 +54,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return "MatchParticipant for " + Participant.DisplayName;
         }
 
-        public string LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 }
