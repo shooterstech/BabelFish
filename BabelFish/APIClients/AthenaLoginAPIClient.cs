@@ -52,13 +52,5 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
-
-
-        /*
-        public async Task<AthenaLogoutSessionAuthenticatedResponse> AthenaLogoutSessionAuthenticatedAsync( AthenaLogoutSessionAuthenticatedRequest request ) {
-
-        }
-        */
-
     }
 }
