@@ -16,9 +16,13 @@ namespace Scopos.BabelFish.APIClients {
         /// Assumes Production stage level.
         /// </summary>
         /// <param name="xapikey"></param>
-        public OrionMatchAPIClient( string xapikey ) : base( xapikey ) { }
+        public OrionMatchAPIClient( string xapikey ) : base( xapikey ) {
+			IgnoreLocalCache = false;
+		}
 
-        public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
+        public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+			IgnoreLocalCache = false;
+		}
 
         /// <summary>
         /// Get Match Detail API

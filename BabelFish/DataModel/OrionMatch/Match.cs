@@ -249,6 +249,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// UTC time the match data was last updated.
         /// </summary>
-        public string LastUpdated { get; set; }
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

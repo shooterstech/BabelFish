@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient {
 
-        DefinitionCache definitionCacheHelper;
+        ResponseCache definitionCacheHelper;
         private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
@@ -22,58 +22,19 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="apiKey"></param>
         public DefinitionAPIClient( string apiKey ) : base( apiKey ) {
+            IgnoreLocalCache = false;
         }
 
-        public DefinitionAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
+        public DefinitionAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+			IgnoreLocalCache = false;
+		}
 
         public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
-            try {
-                // TimeToRun if we use cache
-                DateTime startTime = DateTime.Now;
 
-                T definition;
-                if (!IgnoreLocalCache &&
-                    !request.IgnoreLocalCache &&
-                    DefinitionCache.CACHE.TryGetDefinition<T>( request.DefinitionType, request.SetName, out definition )) {
-                    response.TimeToRun = DateTime.Now - startTime;
-
-                    //We found a copy of the definition in our local cache. No need to make the actual API call. Instead, generate
-                    //a response object that makes it look like we made the request. 
-
-                    response.StatusCode = System.Net.HttpStatusCode.OK;
-                    JObject fakeBody = new JObject {
-                        { "Title" , $"Cached response for {request.DefinitionType} {request.SetName}" },
-                        { "Message" , new JArray() {$"Cached response for {request.DefinitionType} {request.SetName}" } },
-                        { request.SetName.ToString(), JObject.FromObject( definition ) }
-                    };
-
-                    response.MessageResponse = fakeBody.ToObject<MessageResponse>();
-                    response.Body = fakeBody;
-
-                } else {
-
-                    await this.CallAPIAsync( request, response ).ConfigureAwait( false );
-
-                    // Save returned definition to cache
-                    if (response.Body != null && response.StatusCode == System.Net.HttpStatusCode.OK)
-                        DefinitionCache.CACHE.SaveDefinition<T>( request.SetName, response.Definition );
-                }
-            } catch (Exception ex) {
-                logger.Error( $"GetDefinition Error: {ex.Message}" );
-                response.MessageResponse.Message.Add( $"GetDefinition Error: {ex.Message}" );
-                response.MessageResponse.ResponseCodes.Add( "GetDefinition Error" );
-                response.StatusCode = System.Net.HttpStatusCode.InternalServerError;
-            }
-
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
             return response;
-        }
 
-        /// <summary>
-        /// Indicates if the local cache should be ignored and always pull the definition from the Rest API.
-        /// The default value is false, meaning to use the local cache.
-        /// The option to ignore local cache can either be wet at the API Client level, or on a per request level.
-        /// </summary>
-        public bool IgnoreLocalCache { get; set; } = false;
+        }
 
         [Obsolete( "Use GetAttributeDefinitionAsync() instead." )]
         public async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinition( SetName setName ) {

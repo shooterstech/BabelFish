@@ -9,6 +9,8 @@ using NLog;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
+using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Requests {
     /// <summary>
@@ -56,10 +58,33 @@ namespace Scopos.BabelFish.Requests {
         /// <returns></returns>
         public virtual Request Copy() { throw new NotImplementedException("Concrete implementations of Request should implement Copy for their class."); }
 
-        /// <summary>
-        /// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.
-        /// </summary>
-        public bool RequiresCredentials { get; protected set; } = false;
+		/// <summary>
+		/// Concrete implementationst that want to cache their requests, must implement
+		/// a unique string to be used as the request key. 
+		/// </summary>
+		/// <returns></returns>
+		protected internal string GetRequestCacheKey() {
+            var accessToken = "";
+            if (Credentials != null)
+                accessToken = Credentials.AccessToken;
+
+            //NOTE: Purposefully not including PostParameters, as PostParameters are only included
+            //on non-httpmethod-GET calls. And cache is only for GET calls.
+            return $"{this.SubDomain.SubDomainNameWithStage()}:{this.RelativePath}:{this.QueryString}:{accessToken}";
+		}
+
+		/// <summary>
+		/// Indicates if the local response cache should be ignored and always 
+		/// make the request to the Rest API.
+		/// The default value is false, meaning to use the local cache (if avaliable and permitted by the Rest API client).
+		/// The option to ignore local cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
+		/// </summary>
+		public bool IgnoreLocalCache { get; set; } = false;
+
+		/// <summary>
+		/// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.
+		/// </summary>
+		public bool RequiresCredentials { get; protected set; } = false;
 
         public UserAuthentication Credentials { get; set; }
 
