@@ -34,12 +34,5 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
         public override string RelativePath {
             get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>( DefinitionType ).Value}/{SetName}"; }
         }
-
-        /// <summary>
-        /// Indicates if the local cache should be ignored and always pull the definition from the Rest API.
-        /// The default value is false, meaning to use the local cache.
-        /// The option to ignore local cache can either be wet at the API Client level, or on a per request level.
-        /// </summary>
-        public bool IgnoreLocalCache { get; set; } = false;
     }
 }

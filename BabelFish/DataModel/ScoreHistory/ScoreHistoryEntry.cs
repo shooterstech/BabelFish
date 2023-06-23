@@ -38,6 +38,10 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         [JsonConverter( typeof( StringEnumConverter ) )]
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
+        public string MatchName { get; set; } = "";
+        
+        public string MatchLocation { get; set; } = "";
+
         public string ScoreFormatted { get; set; } = "";
 
         public Athena.Score Score { get; set; }

@@ -41,6 +41,7 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
                 Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var authCode = "zzzzzz"; //test authcode that returns fake data with a 200 success code.
             var request = new AthenaEmployLoginCodeAuthenticatedRequest( authCode, userAuthentication );
@@ -67,6 +68,8 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
                 Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
             //Pass in a code that is not real, and check the response comes back as .NotFound
             var authCode = "fakecode";
             var request = new AthenaEmployLoginCodeAuthenticatedRequest( authCode, userAuthentication );

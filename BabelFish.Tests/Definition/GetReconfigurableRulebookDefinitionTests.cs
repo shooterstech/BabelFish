@@ -9,6 +9,7 @@ using Scopos.BabelFish;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
@@ -31,35 +32,33 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetAttributeAirRifleTest() {
+        public async Task GetAttributeAirRifleTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse("v1.0:ntparc:Three-Position Air Rifle Type");
+            var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
-            var taskResponse = client.GetAttributeDefinitionAsync(setName);
-            var result = taskResponse.Result;
+            var result = await client.GetAttributeDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
 
             Assert.IsNotNull( definition );
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual( setName.ToString(), definition.SetName);
+            Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.AreEqual(1, definition.Fields.Count );
-            Assert.AreEqual( "Three-Position Air Rifle Type", definition.Fields[0].FieldName);
+            Assert.AreEqual( 1, definition.Fields.Count );
+            Assert.AreEqual( "Three-Position Air Rifle Type", definition.Fields[0].FieldName );
         }
 
         [TestMethod]
-        public void GetCourseOfFireTest() {
+        public async Task GetCourseOfFireTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
 
-            var taskResponse = client.GetCourseOfFireDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetCourseOfFireDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -74,16 +73,94 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( definition.Events.Count > 0 );
             Assert.IsTrue( definition.AbbreviatedFormats.Count > 0 );
             Assert.IsTrue( definition.Singulars.Count > 0 );
+
+            foreach (var childEvent in definition.Events) {
+                var childNames = childEvent.GetChildrenEventNames();
+                Assert.IsTrue( childNames.Count > 0 );
+            }
         }
 
         [TestMethod]
-        public void GetEventStyleTest() {
+        public async Task COFChildrenTest() {
+
+            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
+
+            var result = await client.GetCourseOfFireDefinitionAsync( setName );
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+
+            EventComposite top = EventComposite.GrowEventTree( result.Definition );
+            Assert.IsTrue( top.HasChildren );
+            Assert.IsFalse( top.HasParent );
+            Assert.AreEqual( EventtType.EVENT, top.EventType );
+            Assert.IsTrue( ! string.IsNullOrEmpty( top.EventName ) );
+
+            foreach(  var child in top.Children ) {
+                Assert.IsTrue( child.Parent == top );
+                Assert.IsTrue( child.HasChildren );
+                Assert.IsTrue( child.HasParent );
+                Assert.AreNotEqual( EventtType.EVENT, child.EventType );
+                Assert.IsTrue( !string.IsNullOrEmpty( child.EventName ) );
+            }
+
+            var descendants = top.GetAllSingulars();
+            Assert.AreEqual( 60, descendants.Count );
+
+            var prone = top.FindEventComposite( "Prone" );
+            Assert.AreEqual( "Prone", prone.EventName );
+
+            var kneeling = top.FindEventComposite( "KN 2" );
+            Assert.AreEqual( "KN 2", kneeling.EventName );
+
+            var standing = top.FindEventComposite( "S4" );
+            Assert.AreEqual( "S4", standing.EventName );
+        }
+
+        [TestMethod]
+        public async Task COFGenerateChildrenTest()
+        {
+
+            var client = new DefinitionAPIClient(Constants.X_API_KEY);
+            var setName = SetName.Parse("v2.0:orion:Informal Practice Air Rifle");
+
+            var result = await client.GetCourseOfFireDefinitionAsync(setName);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+
+            EventComposite top = EventComposite.GrowEventTree(result.Definition);
+            Assert.IsTrue(top.HasChildren);
+            Assert.IsFalse(top.HasParent);
+            Assert.AreEqual(EventtType.EVENT, top.EventType);
+            Assert.IsTrue(!string.IsNullOrEmpty(top.EventName));
+
+            foreach (var child in top.Children)
+            {
+                Assert.IsTrue(child.Parent == top);
+                //Assert.IsTrue(child.HasChildren);
+                Assert.IsTrue(child.HasParent);
+                Assert.AreNotEqual(EventtType.EVENT, child.EventType);
+                Assert.IsTrue(!string.IsNullOrEmpty(child.EventName));
+            }
+
+            var descendants = top.GetAllSingulars();
+            Assert.AreEqual(500, descendants.Count);
+
+            var prone = top.FindEventComposite("Prone");
+            Assert.AreEqual("Prone", prone.EventName);
+
+            var kneeling = top.FindEventComposite("KN 2");
+            Assert.AreEqual("KN 2", kneeling.EventName);
+
+            var standing = top.FindEventComposite("S4");
+            Assert.AreEqual("S4", standing.EventName);
+        }
+
+        [TestMethod]
+        public async Task GetEventStyleTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" );
 
-            var taskResponse = client.GetEventStyleDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetEventStyleDefinition( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -99,14 +176,12 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetRankingRuleTest()
-        {
+        public async Task GetRankingRuleTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse("v1.0:nra:BB Gun Qualification");
+            var setName = SetName.Parse( "v1.0:nra:BB Gun Qualification" );
 
-            var taskResponse = client.GetRankingRuleDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetRankingRuleDefinition( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -117,18 +192,16 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.RankingRules.Count > 0 );
+            Assert.IsTrue( definition.RankingRules.Count > 0 );
         }
 
         [TestMethod]
-        public void GetStageStyleTest()
-        {
+        public async Task GetStageStyleTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse("v1.0:ntparc:Sporter Air Rifle Standing");
+            var setName = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" );
 
-            var taskResponse = client.GetStageStyleDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetStageStyleDefinition( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -139,19 +212,17 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.DisplayScoreFormats.Count > 0);
+            Assert.IsTrue( definition.DisplayScoreFormats.Count > 0 );
             Assert.IsTrue( definition.RelatedStageStyles.Count > 0 );
         }
 
         [TestMethod]
-        public void GetTargetCollectionTest()
-        {
+        public async Task GetTargetCollectionTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse("v1.0:ntparc:Air Rifle");
+            var setName = SetName.Parse( "v1.0:ntparc:Air Rifle" );
 
-            var taskResponse = client.GetTargetCollectionDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetTargetCollectionDefinition( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -162,18 +233,16 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.TargetCollections.Count >= 1);
+            Assert.IsTrue( definition.TargetCollections.Count >= 1 );
         }
 
         [TestMethod]
-        public void GetTargetTest()
-        {
+        public async Task GetTargetTest() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse("v1.0:issf:10m Air Rifle");
+            var setName = SetName.Parse( "v1.0:issf:10m Air Rifle" );
 
-            var taskResponse = client.GetTargetDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetTargetDefinition( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -184,19 +253,17 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.ScoringRings.Count > 0);
+            Assert.IsTrue( definition.ScoringRings.Count > 0 );
             Assert.IsTrue( definition.AimingMarks.Count > 0 );
         }
 
         [TestMethod]
-        public void GetScoreFormatCollectionType()
-        {
+        public async Task GetScoreFormatCollectionType() {
 
             var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
-            var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
+            var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
-            var taskResponse = client.GetScoreFormatCollectionDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetScoreFormatCollectionDefinition( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -207,7 +274,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.ScoreFormats.Count > 0 );
+            Assert.IsTrue( definition.ScoreFormats.Count > 0 );
             Assert.IsTrue( definition.ScoreConfigs.Count > 0 );
         }
 

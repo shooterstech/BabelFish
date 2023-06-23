@@ -14,8 +14,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Match {
 
+        private string parentId = "";
+
         public Match() { }
 
+        
         /// <summary>
         /// After an object is deserialized form JSON,
         /// adds defaults to empty properties
@@ -36,7 +39,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
         [JsonProperty( Order = 2 )]
-        public string ParentID { get; set; } = string.Empty;
+        public string ParentID { 
+            get {
+                if (string.IsNullOrEmpty( parentId ))
+                    return MatchID;
+                else
+                    return parentId;
+            }
+            set {
+                parentId = value;
+            }
+        }
 
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
@@ -105,6 +118,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonProperty( Order = 11 )]
         public string MatchID { get; set; } = string.Empty;
+
+        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.LOCAL_MATCH;
 
         /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to
@@ -230,5 +245,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( Name );
             return foo.ToString();
         }
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }
