@@ -67,6 +67,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// TARGET SCHEME Collection
         /// </summary>
-        [Description( "TARGET SCHEME" )] [EnumMember( Value = "TARGET SCHEME" )] TARGETSCHEME
+        [Description( "TARGET SCHEME" )] [EnumMember( Value = "TARGET SCHEME" )] TARGETSCHEME,
+
+        /// <summary>
+        /// EVENT AND STAGE STYLE MAPPING Collection
+        /// </summary>
+        [Description("EVENT AND STAGE STYLE MAPPING")][EnumMember(Value = "EVENT AND STAGE STYLE MAPPING")] EVENTANDSTAGESTYLEMAPPING
     }
 }

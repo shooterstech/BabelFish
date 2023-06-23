@@ -93,12 +93,24 @@ namespace Scopos.BabelFish.DataModel.Definitions
         public dynamic StageStyleSelection { get; set; }
 
         [JsonProperty(Order = 12)]
-        public string EventStyle { get; set; }
+        public dynamic StageStyleMapping { get; set; }
 
         [JsonProperty(Order = 13)]
-        public dynamic EventStyleSelection { get; set; }
+        public string StageAppellation { get; set; }
 
         [JsonProperty(Order = 14)]
+        public string EventStyle { get; set; }
+
+        [JsonProperty(Order = 15)]
+        public dynamic EventStyleSelection { get; set; }
+
+        [JsonProperty(Order = 16)]
+        public dynamic EventStyleMapping { get; set; }
+
+        [JsonProperty(Order = 17)]
+        public string EventAppellation { get; set; }
+
+        [JsonProperty(Order = 18)]
         [DefaultValue("")]
         public string Comment { get; set; }
     }
