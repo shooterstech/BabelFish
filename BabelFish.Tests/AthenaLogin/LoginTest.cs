@@ -84,5 +84,46 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
             Assert.IsTrue( message.Contains( "not recognized, expired or is invalid" ) );
 
         }
+
+        [TestMethod]
+        public async Task ActiveLoginSessions() {
+
+            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            //Test Dev 3 is associated with something ...
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev3Credentials.Username,
+                Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var request = new AthenaListActiveSessionsAuthenticatedRequest( userAuthentication );
+            var response = await client.AthenaListActiveSessionsAuthenticatedAsync( request );
+
+            //NOTE this is kinda difficult to write a unit test for, since there is no way to control
+            //if there are legit active user sessions. At best we can test the response was expected.
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+
+        }
+
+        [TestMethod]
+        public async Task LogoutSessions() {
+
+            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            //Test Dev 3 is associated with something ...
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev3Credentials.Username,
+                Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var request = new AthenaLogoutSessionAuthenticatedRequest( userAuthentication ) {
+                ThingNames = new List<string>() { "ESTTarget-000000001" }
+            };
+
+            var response = await client.AthenaLogoutSessionAuthenticatedAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+
+        }
     }
 }

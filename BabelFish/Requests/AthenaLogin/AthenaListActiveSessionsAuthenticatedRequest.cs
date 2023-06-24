@@ -11,12 +11,12 @@ namespace Scopos.BabelFish.Requests.AthenaLogin
 
 
 
-        public AthenaListActiveSessionsAuthenticatedRequest(UserAuthentication credentials) : base("AthenaLogoutSession", credentials)
+        public AthenaListActiveSessionsAuthenticatedRequest(UserAuthentication credentials) : base( "AthenaListActiveSessions", credentials)
         {
             //NOTE: Because this request requires user credentials and a authcode, we're only writing one constructor that includes these two requirements.
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;
-            this.HttpMethod = HttpMethod.Post;
+            this.HttpMethod = HttpMethod.Get;
         }
 
         /// <inheritdoc />
