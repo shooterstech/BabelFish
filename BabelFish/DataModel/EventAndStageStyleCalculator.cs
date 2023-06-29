@@ -7,31 +7,19 @@ using System.Text;
 namespace BabelFish.DataModel {
     public class EventAndStageStyleMappingCalculation {
 
-        private JObject _definition;
-        private JObject _mappings;
-        private JObject _defaultMapping;
-        public EventAndStageStyleMappingCalculation(string eventAndStageStyleMappingDefinition) {
-            _definition = JObject.Parse(eventAndStageStyleMappingDefinition);
-            if (_definition.ContainsKey("Mappings") && _definition.ContainsKey("DefaultMapping")) {
-                // may need to deal with null assignment on these.
-                _mappings = _definition["Mappings"] as JObject; 
-                _defaultMapping = _definition["DefaultMapping"] as JObject;
-            }
+        private EventAndStageStyleMapping _definition;
+        private List<EventAndStageStyleMappingObj> _mappings;
+        private EventAndStageStyleMappingObj _defaultMapping;
+        public EventAndStageStyleMappingCalculation(EventAndStageStyleMapping eventAndStageStyleMappingDefinition) {
+            _definition = eventAndStageStyleMappingDefinition;
+            _mappings = _definition.Mappings;
+            _defaultMapping = _definition.DefaultMapping;
         }
 
-        public string GetEventStyleDef(string attributeValueAppellation = "", string targetCollectionName = "", string eventAppellation = "", string lastLineOfDefenseDefinition = "") {
-            JObject lastLineOfDefenseDefinitionJson = JObject.Parse(lastLineOfDefenseDefinition);
-            //Default to known Orion Default
-            string eventStyleMappingToReturn = "v1.0:orion:default";
-            //Default to mapping file defaultMapping DefaultDef
-            if (_defaultMapping.ContainsKey("DefaultEventStyleDef")) {
-                eventStyleMappingToReturn = (string)_defaultMapping["DefaultEventStyleDef"];
-            }
+        public string GetEventStyleDef(string attributeValueAppellation, string targetCollectionName, EventStyleMapping eventStyleMapping) {
             // COF defaultDefault Def
-            if (lastLineOfDefenseDefinitionJson.ContainsKey("EventStyleMapping") && ((JObject)lastLineOfDefenseDefinitionJson["EventStyleMapping"]).ContainsKey("DefaultDef")){
-                // this is where I am getting eventAppellation FROM, so it will always match (duh)
-                eventStyleMappingToReturn = (string)lastLineOfDefenseDefinitionJson["EventStyleMapping"]["DefaultDef"];
-            }
+            // this is where I am getting eventAppellation FROM, so it will always match (duh) and it has a default value already.
+            string eventStyleMappingToReturn = eventStyleMapping.DefaultDef;
             /*
             we DONT want to do this to try and get the most specific default,
             then most specific definition
@@ -39,31 +27,65 @@ namespace BabelFish.DataModel {
                 return eventStyleMappingToReturn
             */
             // event appellation matching something in the defaultMapping
-            if (_defaultMapping.ContainsKey("EventStyleMappings")) {
-                foreach (JObject eventStyleMapping in _defaultMapping["EventStyleMappings"]) {
-                    if (eventStyleMapping.ContainsKey("EventAppellation") && eventStyleMapping.ContainsKey("EventStyleDef") && string.Compare(eventAppellation, (string)eventStyleMapping["EventAppellation"]) == 0) {
-                    eventStyleMappingToReturn = (string)eventStyleMapping["EventStyleDef"];
+            if (eventStyleMapping.DefaultDef == "v1.0:orion:Default") {
+                foreach (EventStyleSelection eventSMapping in _defaultMapping.EventStyleMappings) {
+                    if (eventStyleMapping.EventAppellation == eventSMapping.EventAppellation) {
+                        eventStyleMappingToReturn = eventSMapping.EventStyleDef;
+                    }
                 }
             }
 
             // actually searching the Mappings to find a definition.
-            foreach (JObject mapping in _mappings) {
+            foreach (EventAndStageStyleMappingObj mapping in _mappings) {
                 // if attributeValue and TargetCollection both match, then we are in the right spot.
-                if "AttributeValueAppellation" in mapping and "TargetCollectionName" in mapping and attributeValueAppellation in mapping["AttributeValueAppellation"] and targetCollectionName in mapping["TargetCollectionName"]){
-                    if "DefaultEventStyleDef" in mapping){
-                    // default in the specific mapping default
-                            eventStyleMappingToReturn = mapping["DefaultEventStyleDef"]
+                if (mapping.AttributeValueAppellation.Contains(attributeValueAppellation) && mapping.TargetCollectionName.Contains(targetCollectionName)) {
+                    if (eventStyleMapping.DefaultDef == "v1.0:orion:Default") {
+                        //should only happen if the DefaultDef was not given. this is the general "DefaultEventStyleDef" in mapping files under a specific target and attrib
+                        eventStyleMappingToReturn = mapping.DefaultEventStyleDef;
                     }
-                }
-                for (eventStyleMapping in mapping["EventStyleMappings"]) {
-                    if "EventAppellation" in eventStyleMapping and "EventStyleDef" in eventStyleMapping and eventStyleMapping["EventAppellation"] == eventAppellation) {
-                    // if event appellation matches, set definition to that. this is most specific
-                        eventStyleMappingToReturn = eventStyleMapping["EventStyleDef"]
+                    foreach (EventStyleSelection eventSMapping in mapping.EventStyleMappings) {
+                        if ( eventSMapping.EventAppellation == eventStyleMapping.EventAppellation ) {
+                            // if event appellation matches, set definition to that. this is most specific
+                            eventStyleMappingToReturn = eventSMapping.EventStyleDef;
                         }
                     }
                 }
             }
-            return eventStyleMappingToReturn
+            return eventStyleMappingToReturn;
+        }
+
+        public string GetStageStyleDef(string attributeValueAppellation, string targetCollectionName, StageStyleMapping stageStyleMapping) {
+            // COF defaultDefault Def
+            // this is where I am getting eventAppellation FROM, so it will always match (duh)
+            string stageStyleMappingToReturn = stageStyleMapping.DefaultDef;
+
+            // stage appellation matching something in the defaultMapping
+            // This needs to be looked at closely. I think it should be an EventStyleMapping, as that contains DefaultDef....
+            if (stageStyleMapping.DefaultDef == "v1.0:orion:Default") {
+                foreach (StageStyleSelection stageSMapping in _defaultMapping.StageStyleMappings) {
+                    if (stageStyleMapping.StageAppellation == stageSMapping.StageAppellation) {
+                        stageStyleMappingToReturn = stageSMapping.StageStyleDef;
+                    }
+                }
+            }
+
+            // actually searching the Mappings to find a definition.
+            foreach (EventAndStageStyleMappingObj mapping in _mappings) {
+                // if attributeValue and TargetCollection both match, then we are in the right spot.
+                if (mapping.AttributeValueAppellation.Contains(attributeValueAppellation) && mapping.TargetCollectionName.Contains(targetCollectionName)) {
+                    if (stageStyleMapping.DefaultDef == "v1.0:orion:Default") {
+                        stageStyleMappingToReturn = mapping.DefaultStageStyleDef;
+                    }
+                    foreach (StageStyleSelection stageSMapping in mapping.StageStyleMappings) {
+                        if (stageSMapping.StageAppellation == stageStyleMapping.StageAppellation ) {
+                            // if stage appellation matches, set definition to that. this is most specific
+                            stageStyleMappingToReturn = stageSMapping.StageStyleDef;
+                        }
+                    }
+                }
+            }
+            return stageStyleMappingToReturn;
         }
     }
 }
+
