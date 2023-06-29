@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -23,7 +24,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Stage's appellation (name) to use when looking up the mapping. Event appellations are usually common across (printed) rulebooks that have different courses of fire.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [JsonProperty(Order = 2)]
         [DefaultValue( "" )]
         public string StageAppellation { get; set; } = string.Empty;
     }

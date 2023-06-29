@@ -17,11 +17,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.EventType = EventtType.NONE;
         }
 
-        public string EventName { get; private set; }   
+        public string EventName { get; private set; }  
 
         public EventtType EventType { get; private set; }
 
         public List<EventComposite> Children { get; private set; }
+
+        public string EventAppellation { get; private set; }
+
+        public string StageAppellation { get; private set; }
 
         public EventComposite Parent { get; private set; }
 
@@ -89,16 +93,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private static void GenerateEvents(CourseOfFire cof){
             List<Event> generatedEventList = new List<Event>();
             foreach( Event t in cof.Events ) {
+                if (t.EventType == EventtType.STAGE) {
+                    Console.WriteLine(t.ToString() + " COF SA " + t.StageStyleMapping.StageAppellation);
+                }
                 if (t.Values != "" && t.Values != null){ //needs generating
                     ValueSeries vs = new ValueSeries((string)t.Values);
                     var valueList = vs.GetAsList();
 
-
                     foreach (int i in valueList) { //i is stageValue
                         Event newEvent = t.Clone();
-                        newEvent.EventName = newEvent.EventName.Replace( "{}", i.ToString() );
+                        newEvent.EventName = newEvent.EventName.Replace("{}", i.ToString());
                         newEvent.Values = "";
-
+                        //makes the "K1" "K2" "K3" (...) events
                         GenerateChildStage(newEvent, i);
 
                         generatedEventList.Add(newEvent);
@@ -121,6 +127,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Event topLevelEvent = null;
 
             //Identify the top level event
+            //needed for the SINGLE EVENT WE HAVE
             foreach( Event t in cof.Events ) {
                 if ( t.EventType == EventtType.EVENT ) {
                     topLevelEvent = t;
@@ -129,11 +136,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
             if (topLevelEvent == null)
                 throw new ScoposException( "Could not identify a top level event, with Event Type == Event." );
-
+            //add the event to the event tree, this is the root.
             top = new EventComposite() {
-                EventName = topLevelEvent.EventName
+                EventName = topLevelEvent.EventName,
+                EventAppellation = topLevelEvent.EventStyleMapping.EventAppellation
+                //StageAppellation = topLevelEvent.StageStyleMapping.StageAppellation
             };
-
+            //this should be where we go through 
             GrowChildren( cof, top, 0 );
 
             return top;
@@ -149,10 +158,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 if (t.EventName == parent.EventName ) {
                     parent.EventType = t.EventType;
                     foreach( var childName in t.GetChildrenEventNames() ) {
-                        EventComposite child = new EventComposite() {
-                            EventName = childName,
-                            Parent = parent
-                        };
+                        EventComposite child;
+                        if (t.EventType == EventtType.STAGE) {
+                            Console.WriteLine(t.EventName + " EN and SA " + t.StageStyleMapping.StageAppellation);
+                            child = new EventComposite() {
+                                EventName = childName,
+                                Parent = parent,
+                                StageAppellation = parent.StageAppellation,
+                                EventAppellation = parent.EventAppellation
+                            };
+                        } else {
+                            child = new EventComposite() {
+                                EventName = childName,
+                                Parent = parent,
+                                EventAppellation = parent.EventAppellation
+                            };
+                        }
                         parent.Children.Add( child );
 
                         GrowChildren( cof, child, level );
