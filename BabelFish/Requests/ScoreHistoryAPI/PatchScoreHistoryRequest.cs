@@ -1,0 +1,40 @@
+using Scopos.BabelFish.Runtime.Authentication;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using Scopos.BabelFish.DataModel.ScoreHistory;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NLog;
+
+
+namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
+    public class PatchScoreHistoryRequest : Request {
+
+        /// <inheritdoc />
+        public PatchScoreHistoryRequest(UserAuthentication credentials ) : base( "PostScoreHistory", credentials ) {
+            HttpMethod = HttpMethod.Post;
+        }
+
+        public ScoreHistoryPostEntry ScoreHistoryPatch { get; set; } = new ScoreHistoryPostEntry();
+
+        /// <inheritdoc />
+        public override string RelativePath {
+            get { return $"/athlete/score/history"; }
+        }
+
+        public override StringContent PostParameters {
+            get {
+                StringBuilder serializedJSON = new StringBuilder();
+                try {
+                    return new StringContent( JsonConvert.SerializeObject( ScoreHistoryPatch ), Encoding.UTF8, "application/json" );
+                } catch (Exception ex) {
+                    //logger.Error( ex );
+                    return new StringContent( "" );
+                }
+            }
+        }
+
+        
+    }
+}
