@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.APIClients
             List<string> keysToRemove = new List<string>();
             lock (mutex) {
                 foreach( var item in cachedRequests ) {
-                    if( item.Value.ValidUntil > DateTime.UtcNow ) {
+                    if( item.Value.ValidUntil < DateTime.UtcNow ) {
                         keysToRemove.Add( item.Key );
                     }
                 }
@@ -91,6 +91,15 @@ namespace Scopos.BabelFish.APIClients
                 foreach( var key in keysToRemove ) {
                     cachedRequests.Remove( key );
                 }
+            }
+        }
+
+        /// <summary>
+        /// Removes all items from cache
+        /// </summary>
+        public void Clear() {
+            lock(mutex) {
+                cachedRequests.Clear();
             }
         }
     }
