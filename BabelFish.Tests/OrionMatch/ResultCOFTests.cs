@@ -45,5 +45,21 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( 0, resultCof.Participant.AttributeValues.Count );
 
         }
+
+        [TestMethod]
+        public async Task ResultCOFCachingTest() {
+
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            var cofResponse1 = await client.GetResultCourseOfFireDetailPublicAsync( "fd668b05-0073-4a7b-adcc-25bd45f8b199" );
+            var resultCof1 = cofResponse1.ResultCOF;
+
+            var cofResponse2 = await client.GetResultCourseOfFireDetailPublicAsync( "fd668b05-0073-4a7b-adcc-25bd45f8b199" );
+            var resultCof2 = cofResponse1.ResultCOF;
+
+            Assert.IsTrue( cofResponse1.TimeToRun > cofResponse2.TimeToRun * 10 );
+
+        }
     }
 }

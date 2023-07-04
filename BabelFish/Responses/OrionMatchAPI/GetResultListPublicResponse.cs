@@ -40,13 +40,13 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
 					return DateTime.UtcNow.AddSeconds( 30 );
 
 				if (timeSinceLastUpdate.TotalMinutes < 60)
-					return DateTime.UtcNow.AddMinutes( 2 );
+					return DateTime.UtcNow.AddMinutes( 1 );
 
 				if (timeSinceLastUpdate.TotalHours < 10)
-					return DateTime.UtcNow.AddMinutes( 10 );
+					return DateTime.UtcNow.AddMinutes( 5 );
 
-				if (timeSinceLastUpdate.TotalDays < 2)
-					return DateTime.UtcNow.AddMinutes( 60 );
+				if (timeSinceLastUpdate.TotalDays < 7)
+					return DateTime.UtcNow.AddMinutes( 30 );
 
 				return DateTime.UtcNow.AddDays( 1 );
 			} catch (Exception ex) {
