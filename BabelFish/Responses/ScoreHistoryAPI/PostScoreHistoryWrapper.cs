@@ -8,6 +8,6 @@ using Scopos.BabelFish.DataModel;
 namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
     public class PostScoreHistoryWrapper : BaseClass {
 
-        public ScoreHistoryPostEntry PostScoreHistory { get; set; }
+        public ScoreHistoryPostEntry ScoreHistoryPost { get; set; }
     }
 }

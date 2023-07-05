@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
 
         /// <inheritdoc />
         public PatchScoreHistoryRequest(UserAuthentication credentials ) : base( "PostScoreHistory", credentials ) {
-            HttpMethod = HttpMethod.Post;
+            HttpMethod = HttpMethod.Put;
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;
         }

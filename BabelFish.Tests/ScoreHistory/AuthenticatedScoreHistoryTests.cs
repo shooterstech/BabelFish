@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
     {
 
         [TestMethod]
-        public async Task GetScoreAverageUsingEventStyle()
+        public async Task PostScoreHistory()
         {
             var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
 
@@ -66,11 +66,56 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
 
             var postResponse = await scoreHistoryClient.PostScoreHistoryAsync(postRequest);
-            var debug = postResponse.MessageResponse.ToString();
-
+            
             Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
 
         }
+
+        [TestMethod]
+        public async Task PatchScoreHistory()
+        {
+            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
+
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await userAuthentication.InitializeAsync();
+
+            var postRequest = new PostScoreHistoryRequest(userAuthentication);
+            postRequest.ScoreHistoryPost.EventStyleDef = "evstyle";
+            var scoreA = new Score();
+            var entryA = new PostStageStyleScore("stageStyle_a", scoreA);
+
+            var scoreB = new Score();
+            var entryB = new PostStageStyleScore("stageStyle_b", scoreB);
+
+            var scoreC = new Score();
+            var entryC = new PostStageStyleScore("stageStyle_c", scoreB);
+
+            postRequest.ScoreHistoryPost.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
+            var postResponse = await scoreHistoryClient.PostScoreHistoryAsync(postRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+
+
+            var patchRequest = new PatchScoreHistoryRequest(userAuthentication);
+            var body = postResponse.ScoreHistoryPost;
+            patchRequest.ScoreHistoryPatch = body;
+            body.LocalDate = new DateTime(2012, 04, 1);
+            body.CourseOfFireDef = "newcofdef";
+            body.MatchType = "newPRACTICE";
+            body.MatchLocation = "newmosby";
+            body.MatchName = "newmatchname";
+
+            entryC.Score.I = 34;
+
+            body.StageScores = new List<PostStageStyleScore> { entryC };
+
+            var patchResponse = await scoreHistoryClient.PatchScoreHistoryAsync(patchRequest);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, patchResponse.StatusCode);
+
+        }
+
     }
         
 }
