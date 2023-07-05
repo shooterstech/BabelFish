@@ -27,7 +27,6 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetScoreAverageUsingEventStyle()
         {
-
             var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
 
             var userAuthentication = new UserAuthentication(
@@ -67,6 +66,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
 
             var postResponse = await scoreHistoryClient.PostScoreHistoryAsync(postRequest);
+            var debug = postResponse.MessageResponse.ToString();
 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
 

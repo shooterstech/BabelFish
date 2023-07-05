@@ -14,6 +14,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         public string StageStyleDef { get; set; } = "";
         public Score Score {get; set;}
+        public int NumShots { get; set; } = 0;
 
     }
 

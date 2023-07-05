@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.APIClients;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -13,6 +14,8 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// <inheritdoc />
         public PostScoreHistoryRequest(UserAuthentication credentials ) : base( "PostScoreHistory", credentials ) {
             HttpMethod = HttpMethod.Post;
+            this.RequiresCredentials = true;
+            this.SubDomain = APISubDomain.AUTHAPI;
         }
 
         public ScoreHistoryPostEntry ScoreHistoryPost { get; set; } = new ScoreHistoryPostEntry();
