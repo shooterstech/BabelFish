@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -15,6 +18,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class Match {
 
         private string parentId = "";
+        private Logger logger = LogManager.GetCurrentClassLogger();
 
         public Match() { }
 
@@ -143,10 +147,38 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string StartDate { get; set; } = string.Empty;
 
         /// <summary>
+        /// Returns the value of .StartDate property as a DateTime object. If .StartDate can not
+        /// be parsed returns .Today as the value.
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetStartDate() {
+            try {
+                return DateTime.ParseExact( StartDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch (Exception ex) {
+                logger.Error( ex, $"Unable to parse StartDate with value '{StartDate}' as a DateTime from Match ID {MatchID}." );
+                return DateTime.Today;
+            }
+        }
+
+        /// <summary>
         /// End Date of the Match. Formatted as YYYY-MM-dd
         /// </summary>
         [JsonProperty( Order = 13 )]
         public string EndDate { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Returns the value of .StartDate property as a DateTime object. If .StartDate can not
+        /// be parsed returns .Today as the value.
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetEndDate() {
+            try {
+                return DateTime.ParseExact( EndDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch (Exception ex) {
+                logger.Error( ex, $"Unable to parse EndDate with value '{EndDate}' as a DateTime from Match ID {MatchID}." );
+                return DateTime.Today;
+            }
+        }
 
         /// <summary>
         /// A list of common Incident Reports that may occure during the competition.

@@ -9,11 +9,9 @@ using Scopos.BabelFish;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
-using System.Drawing.Printing;
-using BabelFish.DataModel;
-using AwsSignatureVersion4.Private;
 
-namespace Scopos.BabelFish.Tests.Definition {
+namespace Scopos.BabelFish.Tests.Definition
+{
     [TestClass]
     public class GetReconfigurableRulebookDefinitionTests {
 
