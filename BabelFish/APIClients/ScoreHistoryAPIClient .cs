@@ -74,7 +74,17 @@ namespace Scopos.BabelFish.APIClients {
 
             return response;
         }
-        
+
+        public async Task<DeleteScoreHistoryResponse> DeleteScoreHistoryAsync(DeleteScoreHistoryRequest requestParameters)
+        {
+
+            var response = new DeleteScoreHistoryResponse(requestParameters);
+
+            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
 
 
     }

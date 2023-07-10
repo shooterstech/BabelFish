@@ -116,6 +116,41 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
         }
 
+        [TestMethod]
+        public async Task DeleteScoreHistory()
+        {
+            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
+
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await userAuthentication.InitializeAsync();
+
+            var postRequest = new PostScoreHistoryRequest(userAuthentication);
+            postRequest.ScoreHistoryPost.EventStyleDef = "evstyle";
+            var scoreA = new Score();
+            var entryA = new PostStageStyleScore("stageStyle_a", scoreA);
+
+            var scoreB = new Score();
+            var entryB = new PostStageStyleScore("stageStyle_b", scoreB);
+
+            var scoreC = new Score();
+            var entryC = new PostStageStyleScore("stageStyle_c", scoreB);
+
+            postRequest.ScoreHistoryPost.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
+            var postResponse = await scoreHistoryClient.PostScoreHistoryAsync(postRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+
+
+            var deleteRequest = new DeleteScoreHistoryRequest(userAuthentication);
+            deleteRequest.ResultCOFID = postResponse.ScoreHistoryPost.ResultCOFID;
+
+            var deleteResponse = await scoreHistoryClient.DeleteScoreHistoryAsync(deleteRequest);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
+
+        }
+
     }
         
 }
