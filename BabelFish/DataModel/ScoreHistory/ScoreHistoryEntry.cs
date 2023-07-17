@@ -39,6 +39,12 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         public string MatchName { get; set; } = "";
+
+        /// <summary>
+        /// The Match ID that this score was shot in. An empty string means the match ID is 
+        /// either not known, or the score was entered manually. 
+        /// </summary>
+        public string MatchID { get; set; } = "";
         
         public string MatchLocation { get; set; } = "";
 
