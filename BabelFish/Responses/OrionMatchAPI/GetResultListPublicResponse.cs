@@ -45,14 +45,11 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
 				if (timeSinceLastUpdate.TotalHours < 10)
 					return DateTime.UtcNow.AddMinutes( 5 );
 
-				if (timeSinceLastUpdate.TotalDays < 7)
-					return DateTime.UtcNow.AddMinutes( 30 );
-
-				return DateTime.UtcNow.AddDays( 1 );
+				return DateTime.UtcNow.AddMinutes( 10 );
 			} catch (Exception ex) {
-				//Likely will never get here, if so, likely from a very old match.
-				return DateTime.UtcNow.AddDays( 1 );
-			}
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes( 10 );
+            }
 		}
 	}
 }

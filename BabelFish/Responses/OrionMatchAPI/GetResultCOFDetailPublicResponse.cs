@@ -51,32 +51,29 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
                     ResultCOF.Participant.AttributeValues.Remove( attributeValue );
                 }
             }
-		}
+        }
 
-		/// <inheritdoc />
-		protected internal override DateTime GetCacheValueExpiryTime() {
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
 
-			try {
-				var timeSinceLastUpdate = DateTime.UtcNow - ResultCOF.LastUpdated;
+            try {
+                var timeSinceLastUpdate = DateTime.UtcNow - ResultCOF.LastUpdated;
 
-				//If it was recently updated, set the expiry time fairly quickly, as more changes may be coming.
-				if (timeSinceLastUpdate.TotalMinutes < 5)
-					return DateTime.UtcNow.AddSeconds( 30 );
+                //If it was recently updated, set the expiry time fairly quickly, as more changes may be coming.
+                if (timeSinceLastUpdate.TotalMinutes < 15)
+                    return DateTime.UtcNow.AddSeconds( 30 );
 
-				if (timeSinceLastUpdate.TotalMinutes < 60)
-					return DateTime.UtcNow.AddMinutes( 2 );
+                if (timeSinceLastUpdate.TotalMinutes < 60)
+                    return DateTime.UtcNow.AddMinutes( 1 );
 
-				if (timeSinceLastUpdate.TotalHours < 10)
-					return DateTime.UtcNow.AddMinutes( 10 );
+                if (timeSinceLastUpdate.TotalHours < 10)
+                    return DateTime.UtcNow.AddMinutes( 5 );
 
-				if (timeSinceLastUpdate.TotalDays < 2)
-					return DateTime.UtcNow.AddMinutes( 30 );
-
-				return DateTime.UtcNow.AddDays( 1 );
-			} catch (Exception ex) {
-				//Likely will never get here, if so, likely from a very old match.
-				return DateTime.UtcNow.AddDays( 1 );
-			}
-		}
-	}
+                return DateTime.UtcNow.AddMinutes( 10 );
+            } catch (Exception ex) {
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes( 10 );
+            }
+        }
+    }
 }

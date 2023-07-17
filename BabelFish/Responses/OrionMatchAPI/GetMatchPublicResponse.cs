@@ -35,18 +35,12 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
                     return DateTime.UtcNow.AddMinutes( 1 );
 
                 if (timeSinceLastUpdate.TotalMinutes < 60)
-					return DateTime.UtcNow.AddMinutes( 5 );
+					return DateTime.UtcNow.AddMinutes( 2 );
 
-				if (timeSinceLastUpdate.TotalHours < 10)
-					return DateTime.UtcNow.AddMinutes( 15 );
-
-				if (timeSinceLastUpdate.TotalDays < 2)
-					return DateTime.UtcNow.AddMinutes( 60 );
-
-                return DateTime.UtcNow.AddDays( 1 );
+				return DateTime.UtcNow.AddMinutes( 10 );
 			} catch (Exception ex) {
                 //Likely will never get here, if so, likely from a very old match.
-                return DateTime.UtcNow.AddDays( 1 );
+                return DateTime.UtcNow.AddMinutes( 10 );
             }
 		}
 	}
