@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.Athena;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
@@ -51,5 +51,8 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         public string ScoreFormatted { get; set; } = "";
 
         public Athena.Score Score { get; set; }
+
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
     }
 }
