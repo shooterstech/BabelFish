@@ -15,14 +15,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class Singular {
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum ShotMappingMethodType { SEQUENTIAL }
-
         private List<string> validationErrorList = new List<string>();
 
         public Singular () {
 
-            Type = "Shot";
+            Type = SingularType.SHOT;
             EventName = "";
             Values = "";
             ScoreFormat = "d";
@@ -33,8 +30,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The type of singular event this is. Must be one of the following:
         ///  * Shot
+        ///  * Test
         /// </summary>
-        public string Type { get; set; }
+        public SingularType Type { get; set; }
 
         /// <summary>
         /// The format for the EventName. The compiled EventName must be unique within the COURSE OF FIRE. 

@@ -10,7 +10,8 @@ using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Tests.Definition {
+namespace Scopos.BabelFish.Tests.Definition
+{
     [TestClass]
     public class GetReconfigurableRulebookDefinitionTests {
 
@@ -209,6 +210,77 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.AreEqual( result.DefinitionType, definition.Type );
             Assert.IsTrue(definition.ScoreFormats.Count > 0 );
             Assert.IsTrue( definition.ScoreConfigs.Count > 0 );
+        }
+
+        [TestMethod]
+        public void GetAppellationTest() {
+
+            var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreLocalCache = true };
+            var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
+
+            var taskResponse = client.GetCourseOfFireDefinitionAsync(setName);
+            var result = taskResponse.Result;
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
+            EventComposite eventTree = new EventComposite() { };
+            eventTree = EventComposite.GrowEventTree(definition);
+            foreach (var thing in eventTree.Children) {
+                Console.WriteLine(thing.StageAppellation + " SA and SN " + thing.EventName + " " + thing.EventType);
+            }
+
+            //Console.WriteLine( eventTree.FindEventComposite("Standing").ToString() );
+
+            /*
+            foreach (var eventThing in eventTree) {
+                if(eventThing.EventType == EventtType.STAGE) {
+                    Console.WriteLine("StageAppell: " + eventThing.StageStyleMapping.StageAppellation + "\tDef: " + eventThing.StageStyleMapping.DefaultDef);
+                }
+                if (eventThing.EventType == EventtType.EVENT) {
+                    Console.WriteLine("EventAppell: " + eventThing.EventStyleMapping.EventAppellation + "\tDef: " + eventThing.EventStyleMapping.DefaultDef);
+                }
+            }*/
+
+            Assert.IsNotNull(definition);
+            Assert.IsNotNull(msgResponse);
+        }
+
+        [TestMethod]
+        public void GetEventAndStageMappingTest() {
+
+            var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreLocalCache = true };
+            var mappingSetName = SetName.Parse("v1.0:ntparc:Air Rifle");
+            var cofSetName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
+
+            var mappingResponse = client.GetEventAndStageStyhleMappingDefinitionAsync(mappingSetName);
+            var mappingResult = mappingResponse.Result;
+            var mapping = mappingResult.Definition;
+            Assert.AreEqual(HttpStatusCode.OK, mappingResult.StatusCode, $"Expecting and OK status code, instead received {mappingResult.StatusCode}.");
+
+            var cofResponse = client.GetCourseOfFireDefinitionAsync(cofSetName);
+            var cofResult = cofResponse.Result;
+            var cofDefinition = cofResult.Definition;
+            Assert.AreEqual(HttpStatusCode.OK, cofResult.StatusCode, $"Expecting and OK status code, instead received {cofResult.StatusCode}.");
+
+            EventAndStageStyleMappingCalculation mappingCalc = new EventAndStageStyleMappingCalculation(mapping);
+            foreach (var thing in cofDefinition.Events) {
+                if (thing.EventType == EventtType.EVENT) {
+                    Console.WriteLine("EventAppell: " + thing.EventStyleMapping.EventAppellation.ToString());
+                    Console.WriteLine("DefaultDef: " + thing.EventStyleMapping.DefaultDef.ToString());
+                    Console.WriteLine("CalcReturn: " + mappingCalc.GetEventStyleDef("Precision", "10m Air Rifle", thing.EventStyleMapping));
+                    //Assert.AreEqual("v1.0:nra:Conventional Position 50ft Metallic", mappingCalc.GetEventStyleDef("Conventional Metallic", "50ft Conventional Rifle", thing.EventStyleMapping));
+                }
+                // I am having issues with this right here, not sure what the heck is up with stage appellation not being passed forward, but it isn't but The DefaultDef is being passed. so IDFK
+                if (thing.EventType == EventtType.STAGE) {
+                    Console.WriteLine("StageAppell: " + thing.StageStyleMapping.StageAppellation.ToString());
+                    Console.WriteLine("DefaultDef: " + thing.StageStyleMapping.DefaultDef.ToString());
+                    Console.WriteLine("CalcReturn: " + mappingCalc.GetStageStyleDef("Precision", "10m Air Rifle", thing.StageStyleMapping));
+                    //Assert.AreEqual("v1.0:nra:Conventional Position 50ft Metallic", mappingCalc.GetStageStyleDef("Conventional Metallic", "50ft Conventional Rifle", thing.StageStyleMapping));
+                }
+                Console.WriteLine("");
+            }
+
         }
 
     }

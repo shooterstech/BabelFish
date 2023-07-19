@@ -72,6 +72,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         public string MatchName { get; set; } = string.Empty;
 
         /// <summary>
+        /// City, state, and possible country of the location of the match
+        /// </summary>
+        public string MatchLocation { get; set; } = "";
+
+        /// <summary>
         /// Unique ID for the parent of this match, if this is a Virtual Match. If this is not a
         /// Virtual Match, then it will be the same value as MatchID.
         /// </summary>
@@ -142,6 +147,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         [JsonProperty(Order = 50)]
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
+
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
+            Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = new Dictionary<string, Athena.Shot.Shot>();
+
+            foreach( var t in Shots.Values )
+                if ( !string.IsNullOrEmpty( t.EventName  ))
+                    shots.Add(t.EventName, t);
+
+            return shots;
+        }
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.

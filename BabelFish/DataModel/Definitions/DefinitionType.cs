@@ -35,6 +35,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "EVENT STYLE" )] [EnumMember( Value = "EVENT STYLE" )] EVENTSTYLE,
 
         /// <summary>
+        /// EVENT AND STAGE STYLE MAPPING Definition
+        /// </summary>
+        [Description( "EVENT AND STAGE STYLE MAPPING" )][EnumMember( Value = "EVENT AND STAGE STYLE MAPPING" )] EVENTANDSTAGESTYLEMAPPING,
+
+        /// <summary>
         /// RANKING RULES Definition
         /// </summary>
         [Description( "RANKING RULES" )] [EnumMember( Value = "RANKING RULES" )] RANKINGRULES,

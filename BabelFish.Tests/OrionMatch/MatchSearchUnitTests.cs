@@ -78,6 +78,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchName ) );
                 Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerId ) );
                 Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerName ) );
+
+                var returnedStartDate = DateTime.Parse( matchSearchAbbr.StartDate );
+                var returnedEndDate = DateTime.Parse( matchSearchAbbr.EndDate );
+
+                Assert.IsTrue( returnedStartDate <= endDate, $"{matchSearchAbbr.MatchName} start date {matchSearchAbbr.StartDate} is after the search's end date {endDate}." );
+                Assert.IsTrue( returnedEndDate >= startDate, $"{matchSearchAbbr.MatchName} end date {matchSearchAbbr.EndDate} is before the search's start date {startDate}." );
             }
         }
 

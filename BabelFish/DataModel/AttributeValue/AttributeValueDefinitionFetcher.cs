@@ -3,6 +3,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// <summary>
@@ -22,6 +23,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
         private string xApiKey = "";
         private DefinitionAPIClient client = null;
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
 
         private AttributeValueDefinitionFetcher() { }
 
@@ -69,7 +72,14 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
 
             var response = await client.GetAttributeDefinitionAsync( attributeDef );
-            return response.Definition;
+            if (response.StatusCode == System.Net.HttpStatusCode.OK )
+                return response.Definition;
+
+            //If we get here, likely a definition not found error.
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                throw new AttributeNotFoundException( $"Attribute Definition for '{attributeDef}' could not be found.", logger );
+
+            throw new AttributeValueException( response.MessageResponse.ToString(), logger );
         }
     }
 }

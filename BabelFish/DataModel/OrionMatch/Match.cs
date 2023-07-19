@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
     public class Match {
 
+        private string parentId = "";
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
         public Match() { }
 
+        
         /// <summary>
         /// After an object is deserialized form JSON,
         /// adds defaults to empty properties
@@ -36,7 +43,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
         [JsonProperty( Order = 2 )]
-        public string ParentID { get; set; } = string.Empty;
+        public string ParentID { 
+            get {
+                if (string.IsNullOrEmpty( parentId ))
+                    return MatchID;
+                else
+                    return parentId;
+            }
+            set {
+                parentId = value;
+            }
+        }
 
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
@@ -106,6 +123,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 11 )]
         public string MatchID { get; set; } = string.Empty;
 
+        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.LOCAL_MATCH;
+
         /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to
         /// make change requests to the match, such as add athletes or teams, insert
@@ -128,10 +147,38 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string StartDate { get; set; } = string.Empty;
 
         /// <summary>
+        /// Returns the value of .StartDate property as a DateTime object. If .StartDate can not
+        /// be parsed returns .Today as the value.
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetStartDate() {
+            try {
+                return DateTime.ParseExact( StartDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch (Exception ex) {
+                logger.Error( ex, $"Unable to parse StartDate with value '{StartDate}' as a DateTime from Match ID {MatchID}." );
+                return DateTime.Today;
+            }
+        }
+
+        /// <summary>
         /// End Date of the Match. Formatted as YYYY-MM-dd
         /// </summary>
         [JsonProperty( Order = 13 )]
         public string EndDate { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Returns the value of .StartDate property as a DateTime object. If .StartDate can not
+        /// be parsed returns .Today as the value.
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetEndDate() {
+            try {
+                return DateTime.ParseExact( EndDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch (Exception ex) {
+                logger.Error( ex, $"Unable to parse EndDate with value '{EndDate}' as a DateTime from Match ID {MatchID}." );
+                return DateTime.Today;
+            }
+        }
 
         /// <summary>
         /// A list of common Incident Reports that may occure during the competition.
@@ -230,5 +277,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( Name );
             return foo.ToString();
         }
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

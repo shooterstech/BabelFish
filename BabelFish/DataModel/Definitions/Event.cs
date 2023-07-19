@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
@@ -17,13 +19,9 @@ namespace Scopos.BabelFish.DataModel.Definitions
     public class Event
     {
 
-        /// <summary>
-        /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
-        /// NOTE EventtType is purposefully misspelled.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
         private List<string> validationErrorList = new List<string>();
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
@@ -65,6 +63,36 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [JsonProperty(Order = 3)]
         public dynamic Children { get; set; }
 
+        public List<string> GetChildrenEventNames() {
+            List<string> listOfEventNames = new List<string>();
+
+            try {
+                if (Children is JArray) {
+                    foreach (var childName in Children) {
+                        listOfEventNames.Add( (string)childName );
+                    }
+                } else {
+                    //It's a dictionary
+                    
+                    //var values = (string)Children["Values"];
+                    //var valueIndexes = values.Split( ".." );
+                    //int start = int.Parse( valueIndexes[0] );
+                    //int stop = int.Parse( valueIndexes[1] );
+
+                    ValueSeries vs = new ValueSeries((string)Children["Values"]);
+                    var valueList = vs.GetAsList();
+
+                    foreach (int i in valueList){
+                        var eventName = (string)Children["EventName"];
+                        listOfEventNames.Add( eventName.Replace( "{}", i.ToString() ) );
+                    }
+                }
+            } catch (Exception ex) {
+                logger.Error( ex );
+            }
+            return listOfEventNames;
+        }
+
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
@@ -86,20 +114,27 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [DefaultValue("")]
         public string Values { get; set; }
 
-        [JsonProperty(Order = 10)]
-        public string StageStyle { get; set; }
-
+        /// <summary>
+        /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
+        /// </summary>
         [JsonProperty(Order = 11)]
-        public dynamic StageStyleSelection { get; set; }
+        public StageStyleMapping StageStyleMapping { get; set; }
 
-        [JsonProperty(Order = 12)]
-        public string EventStyle { get; set; }
-
+        /// <summary>
+        /// EventStyleSelection determines how the resulting Result COF is mapped to a EVENT STYLE.
+        /// </summary>
         [JsonProperty(Order = 13)]
-        public dynamic EventStyleSelection { get; set; }
+        public EventStyleMapping EventStyleMapping { get; set; }
 
+        /// <summary>
+        /// Internal documentation comments. All text is ignored by the system.
+        /// </summary>
         [JsonProperty(Order = 14)]
         [DefaultValue("")]
         public string Comment { get; set; }
+
+        public override string ToString() {
+            return $"{EventName} of {EventType}";
+        }
     }
 }

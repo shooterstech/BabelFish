@@ -20,9 +20,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class CourseOfFire : Definition {
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
-
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
         }
@@ -42,12 +39,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonProperty(Order = 10)]
         public string CommonName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// A list of ATTRIBUTES that each competitor needs to have in order for the mapping to EVENT STYLE or STAGE STYLE to work. Used when a COURSE OF FIRE is defined for multiple equipment classes.
-        /// </summary>
-        [JsonProperty(Order = 11)]
-        public List<string> RequiredAttributes { get; set; } = new List<string>();
 
         /// <summary>
         /// Formatted as a SetName, the TargetCollectionDef to use to score shots. The specific TARGET definition to use is calculated with the 

@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Athena.DataFormat
         /// When ShotPresentation == "CURRENT", this property holds the EventTyhpe to show. The current EventType is listed under LiveDispaly.CurrentEvents.
         /// NOTE, only relavent during a live display of shots.
         /// </summary>
-        public Scopos.BabelFish.DataModel.Definitions.Event.EventtType EventType { get; set; } = Scopos.BabelFish.DataModel.Definitions.Event.EventtType.NONE;
+        public Definitions.EventtType EventType { get; set; } = Definitions.EventtType.NONE;
 
         public override string ToString()
         {

@@ -5,7 +5,7 @@ using System.Text;
 using NLog;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
-    public class AuthenticationException : ShootersTechException {
+    public class AuthenticationException : ScoposException {
         public AuthenticationException()
             : base( "Something bad happened!" ) {
         }
@@ -64,27 +64,6 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         }
 
         public DeviceNotKnownException( string message, Exception inner, Logger logger )
-            : base( message, inner, logger ) {
-        }
-    }
-
-    public class InitializeAsyncNotCompletedException : AuthenticationException {
-        public InitializeAsyncNotCompletedException()
-            : base( "InitializeAsync() was not called after the UserAuthentication constructor. Can not proceed until after this call was successful." ) {
-        }
-        public InitializeAsyncNotCompletedException( string message )
-            : base( message ) {
-        }
-
-        public InitializeAsyncNotCompletedException( string message, Logger logger )
-            : base( message, logger ) {
-        }
-
-        public InitializeAsyncNotCompletedException( string message, Exception inner )
-            : base( message, inner ) {
-        }
-
-        public InitializeAsyncNotCompletedException( string message, Exception inner, Logger logger )
             : base( message, inner, logger ) {
         }
     }
