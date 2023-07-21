@@ -151,8 +151,6 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
 
         }
-
-    }
   
 
 		[TestMethod]

@@ -16,7 +16,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public SimpleCOF() { }
 
-        public string Name { get; set; } = string.Empty;
+        [Obsolete( "Use CourseOfFireDef instead." )]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The Course of Fire definition that this simple COF is emulating.
+        /// </summary>
+        public string CourseOfFireDef { get; set; }
 
         public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
     }
