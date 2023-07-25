@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Newtonsoft.Json.Linq;
 using NLog;
 
@@ -52,6 +53,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
             body.EventStyleDef = "evstyledef";
+            body.Visibility = VisibilityOption.PUBLIC;
 
 
             var scoreA = new Score();
@@ -106,6 +108,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             body.MatchType = "newPRACTICE";
             body.MatchLocation = "newmosby";
             body.MatchName = "newmatchname";
+            body.Visibility = VisibilityOption.PUBLIC;
 
             entryC.Score.I = 34;
 

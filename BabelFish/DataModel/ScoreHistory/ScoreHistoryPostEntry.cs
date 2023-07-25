@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel.Athena;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
     public class PostStageStyleScore {
@@ -29,6 +30,8 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         public string CourseOfFireDef { get; set; } = "";
 
         public DateTime LocalDate { get; set; } = DateTime.Today;
+
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PROTECTED;
 
         public string MatchType { get; set; } = "";
 
