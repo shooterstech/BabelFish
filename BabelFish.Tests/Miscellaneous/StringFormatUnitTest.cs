@@ -16,11 +16,6 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
     [TestClass]
     public class StringFormatUnitTest {
 
-        [TestMethod]
-        public void DumbTest() {
-            Assert.AreEqual(1, 1);
-        }
-
         /// <summary>
         /// Tests Format Score of String Formatting works as expected.
         /// </summary>
@@ -37,33 +32,38 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
             var formatDefinition = result.Definition;
             Assert.IsNotNull(formatDefinition);
 
-            var scoreObj = new Scopos.BabelFish.DataModel.OrionMatch.Score();
-            scoreObj.X = 4; // prolly keep something in this, or asserts with x will fail rn.
-            scoreObj.I = 97;
-            scoreObj.S = 42;
-            scoreObj.V = 101.8f;
-            scoreObj.D = 105.2f;
-            scoreObj.A = 10.3f;
-            scoreObj.N = 11;
+            var scoreEventObj = new Scopos.BabelFish.DataModel.OrionMatch.Score();
+            scoreEventObj.X = 4; // prolly keep something in this, or asserts with x will fail rn.
+            scoreEventObj.I = 97;
+            scoreEventObj.S = 103.4f;
+            scoreEventObj.V = 101.8f;
+            scoreEventObj.D = 105.2f;
+            scoreEventObj.A = 10.3f;
+            scoreEventObj.N = 11;
 
-            var integerEvent = StringFormatting.FormatScore(formatDefinition, "Integer", "Events", scoreObj);
-            stopwatch.Start();
-            var stdStringStart = stopwatch.Elapsed;
-            Console.WriteLine("StandardString START:\t" + stdStringStart);
-            for (int i = 0; i < 10000; i++) {
-                integerEvent = StringFormatting.FormatScore(formatDefinition, "Integer", "Events", scoreObj);
-            }
-            //Assert.AreEqual(scoreObj.I.ToString() + " - " + scoreObj.X.ToString(), integerEvent);
-            var stdStringStop = stopwatch.Elapsed;
-            Console.WriteLine("StandardString STOP:\t" + stdStringStop);
-            Console.WriteLine("AVG TIME/call:\t\t\t" + ((stdStringStop-stdStringStart)/10000) );
-            Console.WriteLine(integerEvent);
+            var formattedInterger = StringFormatting.FormatScore(formatDefinition, "Integer", "Events", scoreEventObj);
+            Assert.AreEqual( "97 - 4", formattedInterger );
 
-            var integerAccumulated = StringFormatting.FormatScore(formatDefinition, "Integer", "AccumulatedFinals", scoreObj);
-            Assert.AreEqual(scoreObj.S.ToString(), integerAccumulated);
-            var integerShots = StringFormatting.FormatScore(formatDefinition, "Integer", "Shots", scoreObj);
-            var asterisk = scoreObj.X > 0 ? "*" : "";
-            Assert.AreEqual( scoreObj.D.ToString() + asterisk, integerShots);
+            var formattedDecimal = StringFormatting.FormatScore( formatDefinition, "Decimal", "Events", scoreEventObj );
+            Assert.AreEqual( "105.2", formattedDecimal );
+
+            var formattedAccumulativeFinals = StringFormatting.FormatScore( formatDefinition, "Integer", "AccumulatedFinals", scoreEventObj );
+            Assert.AreEqual( "103.4", formattedAccumulativeFinals );
+
+            var scoreShotObj = new Scopos.BabelFish.DataModel.OrionMatch.Score() {
+                X = 1,
+                I = 10,
+                D = 10.4f
+            };
+
+            var formattedShotInteger = StringFormatting.FormatScore( formatDefinition, "Integer", "Shots", scoreShotObj );
+            Assert.AreEqual( "10.4*", formattedShotInteger );
+
+            var formattedShotIntegerConv = StringFormatting.FormatScore( formatDefinition, "Conventional", "Shots", scoreShotObj );
+            Assert.AreEqual( "10*", formattedShotIntegerConv );
+
+            var formattedShotDecimal = StringFormatting.FormatScore( formatDefinition, "Decimal", "Shots", scoreShotObj );
+            Assert.AreEqual( "10.4", formattedShotDecimal );
         }
     }
 }
