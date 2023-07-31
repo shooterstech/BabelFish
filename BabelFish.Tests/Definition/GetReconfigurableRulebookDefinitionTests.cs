@@ -283,5 +283,62 @@ namespace Scopos.BabelFish.Tests.Definition
 
         }
 
+        [TestMethod]
+        public void GetEventsBoolsTest() {
+            var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreLocalCache = true };
+            var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
+
+            var taskResponse = client.GetCourseOfFireDefinitionAsync(setName);
+            var result = taskResponse.Result;
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
+            EventComposite eventTree = new EventComposite() { };
+            eventTree = EventComposite.GrowEventTree(definition);
+            bool none = false;
+            bool @event = false;
+            bool stage = false;
+            bool series = false;
+            bool @string = false;
+            bool singular = true;
+            var events = eventTree.GetEvents(none, @event, stage, series, @string, singular);
+            foreach (var eventt in events) {
+                Console.WriteLine($"Name: {eventt.EventName}\tType: {eventt.EventType}"); 
+            }
+            //need to check the list contains EventtType of the true kinds
+            // icky lambda, sorry Erik
+            // does not pass if there are none of those event types
+            //  (ie. NONE type, in v3.0:ntparc:Three-Position Air Rifle 3x10 there are no events with EventtType.NONE, this will fail asserts)
+            var containsType = (List<EventComposite> list, EventtType et) => { 
+                foreach (var item in list) {
+                    if (item.EventType == et) 
+                        return true;
+                }
+            return false;
+            };
+
+            Assert.AreEqual(containsType(events, EventtType.NONE), none);
+            Assert.AreEqual(containsType(events, EventtType.EVENT), @event);
+            Assert.AreEqual(containsType(events, EventtType.STAGE), stage);
+            Assert.AreEqual(containsType(events, EventtType.SERIES), series);
+            Assert.AreEqual(containsType(events, EventtType.STRING), @string);
+            Assert.AreEqual(containsType(events, EventtType.SINGULAR), singular);
+            //Console.WriteLine( eventTree.FindEventComposite("Standing").ToString() );
+            /*
+            foreach (var eventThing in eventTree) {
+                if(eventThing.EventType == EventtType.STAGE) {
+                    Console.WriteLine("StageAppell: " + eventThing.StageStyleMapping.StageAppellation + "\tDef: " + eventThing.StageStyleMapping.DefaultDef);
+                }
+                if (eventThing.EventType == EventtType.EVENT) {
+                    Console.WriteLine("EventAppell: " + eventThing.EventStyleMapping.EventAppellation + "\tDef: " + eventThing.EventStyleMapping.DefaultDef);
+                }
+            }*/
+
+            Assert.IsNotNull(definition);
+            Assert.IsNotNull(msgResponse);
+
+        }
+
     }
 }
