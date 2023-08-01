@@ -45,20 +45,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Returns a list of all descendants that are Singulars
         /// </summary>
         public List<EventComposite> GetAllSingulars() {
-
+            return GetEvents(false,false,false,false,false,true);
+        }
+        public List<EventComposite> GetEvents(bool none = true, bool @event = true, bool stage = true, bool series = true, bool @string = true, bool singular = true) {
+            //NONE, EVENT, STAGE, SERIES, STRING, SINGULAR
             List<EventComposite> descendants = new List<EventComposite>();
 
-            if (this.EventType == EventtType.SINGULAR) {
-                descendants.Add( this );
-            } else {
-                foreach (var child in Children) {
-                    descendants.AddRange( child.GetAllSingulars() );
-                }
+            if (this.EventType == EventtType.NONE && none) {
+                descendants.Add(this);
+            }
+            if (this.EventType == EventtType.EVENT && @event) {
+                descendants.Add(this);
+            }
+            if (this.EventType == EventtType.STAGE && stage) {
+                descendants.Add(this);
+            }
+            if (this.EventType == EventtType.SERIES && series) {
+                descendants.Add(this);
+            }
+            if (this.EventType == EventtType.STRING && @string) {
+                descendants.Add(this);
+            }
+            if (this.EventType == EventtType.SINGULAR && singular) {
+                descendants.Add(this);
+            }
+            foreach (var child in Children) {
+                descendants.AddRange( child.GetEvents(none, @event, stage, series, @string, singular ) );
             }
 
             return descendants;
         }
-
         public EventComposite FindEventComposite( string eventName ) {
 
             if ( this.EventName == eventName ) return this;
@@ -93,9 +109,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private static void GenerateEvents(CourseOfFire cof){
             List<Event> generatedEventList = new List<Event>();
             foreach( Event t in cof.Events ) {
-                if (t.EventType == EventtType.STAGE) {
-                    Console.WriteLine(t.ToString() + " COF SA " + t.StageStyleMapping.StageAppellation);
-                }
                 if (t.Values != "" && t.Values != null){ //needs generating
                     ValueSeries vs = new ValueSeries((string)t.Values);
                     var valueList = vs.GetAsList();
@@ -160,7 +173,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     foreach( var childName in t.GetChildrenEventNames() ) {
                         EventComposite child;
                         if (t.EventType == EventtType.STAGE) {
-                            Console.WriteLine(t.EventName + " EN and SA " + t.StageStyleMapping.StageAppellation);
                             child = new EventComposite() {
                                 EventName = childName,
                                 Parent = parent,
