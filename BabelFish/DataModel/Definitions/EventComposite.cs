@@ -29,6 +29,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public EventComposite Parent { get; private set; }
 
+        public string ScoreFormat { get; private set; }
+
         public bool HasChildren {
             get {
                 return Children.Count > 0;
@@ -109,7 +111,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private static void GenerateEvents(CourseOfFire cof){
             List<Event> generatedEventList = new List<Event>();
             foreach( Event t in cof.Events ) {
-                if (t.Values != "" && t.Values != null){ //needs generating
+                if (!string.IsNullOrEmpty( t.Values ) ){ //needs generating
                     ValueSeries vs = new ValueSeries((string)t.Values);
                     var valueList = vs.GetAsList();
 
@@ -129,6 +131,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             cof.Events = generatedEventList;
+        }
+
+        private static void GenerateSingulars(CourseOfFire cof ) {
+            List<Singular> generatedSingulars = new List<Singular>();
+            foreach(  Singular s in cof.Singulars ) {
+                if (!string.IsNullOrEmpty( s.Values) ) { //Needs generating
+                    ValueSeries vs = new ValueSeries((string) s.Values);
+                    var valueList = vs.GetAsList();
+                    foreach( int i in valueList ) {
+                        Singular newSingular = s.Clone();
+                        s.EventName = s.EventName.Replace("{}", i.ToString());
+                        s.Values = "";
+
+                        generatedSingulars.Add(newSingular);
+                    }
+                } else {
+                    generatedSingulars.Add( s );
+                }
+            }
+
+            cof.Singulars = generatedSingulars;
         }
 
         public static EventComposite GrowEventTree( CourseOfFire cofRef ) {
@@ -152,8 +175,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //add the event to the event tree, this is the root.
             top = new EventComposite() {
                 EventName = topLevelEvent.EventName,
-                EventAppellation = topLevelEvent.EventStyleMapping.EventAppellation
+                EventAppellation = topLevelEvent.EventStyleMapping.EventAppellation,
                 //StageAppellation = topLevelEvent.StageStyleMapping.StageAppellation
+                ScoreFormat = topLevelEvent.ScoreFormat
             };
             //this should be where we go through 
             GrowChildren( cof, top, 0 );
@@ -170,7 +194,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             foreach ( Event t in cof.Events ) {
                 if (t.EventName == parent.EventName ) {
                     parent.EventType = t.EventType;
-                    foreach( var childName in t.GetChildrenEventNames() ) {
+					parent.ScoreFormat = t.ScoreFormat;
+					foreach ( var childName in t.GetChildrenEventNames() ) {
                         EventComposite child;
                         if (t.EventType == EventtType.STAGE) {
                             child = new EventComposite() {
@@ -195,7 +220,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             //If we get here, then the parent must be a Singular ... or at least *should* be a Singular
+            foreach( Singular s in cof.Singulars ) {
+				parent.EventType = EventtType.SINGULAR;
+                parent.ScoreFormat = s.ScoreFormat;
+                return;
+			}
+
+            //We shouldn't get here if the cof is defined correctly.
             parent.EventType = EventtType.SINGULAR;
+            parent.ScoreFormat = "Shot";
         }
 
     }

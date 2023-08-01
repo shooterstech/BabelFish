@@ -53,6 +53,7 @@ namespace Scopos.BabelFish.Helpers {
             }
         }
 
+        [Obsolete( "Deprecated because the input class variable Score is also deprecated.")]
         public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.OrionMatch.Score score ) {
             
             var lowerI = score.I.ToString(); // integer
@@ -76,14 +77,51 @@ namespace Scopos.BabelFish.Helpers {
             //format = format.Replace( "{d}", lowerD );
 
             return format;
-        }
+		}
 
-        /// <summary>
-        /// Returns the input string in Title Case
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        public static string TitleCase( string input ) {
+		public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.Athena.Score score ) {
+
+			var lowerI = score.I.ToString(); // integer
+			var lowerD = score.D.ToString( "F1" ); // decimal
+			var lowerX = score.X.ToString(); // X count
+			var upperX = score.X > 0 ? "*" : ""; //asterisk for inners
+			var lowerS = score.S > 0 ? score.S.ToString() : score.D.ToString(); // summed score, if no score, then decimal is here.
+
+			string format = "{d}"; //default value
+			foreach (var scoreConfig in scoreFormatCollection.ScoreConfigs) {
+				if (scoreConfig.ScoreConfigName == scoreConfigName) {
+					if (scoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out format )) {
+						break;
+					}
+				}
+			}
+
+			format = format.Replace( "{i}", lowerI ).Replace( "{d}", lowerD ).Replace( "{x}", lowerX ).Replace( "{X}", upperX ).Replace( "{s}", lowerS );
+			//format = format.Replace( "{d}", lowerD );
+
+			return format;
+		}
+
+		public static string FormatScore( string format, Scopos.BabelFish.DataModel.Athena.Score score ) {
+
+			var lowerI = score.I.ToString(); // integer
+			var lowerD = score.D.ToString( "F1" ); // decimal
+			var lowerX = score.X.ToString(); // X count
+			var upperX = score.X > 0 ? "*" : ""; //asterisk for inners
+			var lowerS = score.S > 0 ? score.S.ToString() : score.D.ToString(); // summed score, if no score, then decimal is here.
+
+			format = format.Replace( "{i}", lowerI ).Replace( "{d}", lowerD ).Replace( "{x}", lowerX ).Replace( "{X}", upperX ).Replace( "{s}", lowerS );
+			//format = format.Replace( "{d}", lowerD );
+
+			return format;
+		}
+
+		/// <summary>
+		/// Returns the input string in Title Case
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		public static string TitleCase( string input ) {
             return textInfo.ToTitleCase( input );
         }
     }

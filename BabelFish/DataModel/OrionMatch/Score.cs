@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Scopos.BabelFish.DataModel.OrionMatch
 {
     [Serializable]
-    [Obsolete("Use Scopos.BabelFish.DataModel.Athena.Shot.Shot instead.")]
+    [Obsolete("Use Scopos.BabelFish.DataModel.Athena.Score instead.")]
     public class Score
     {
 
