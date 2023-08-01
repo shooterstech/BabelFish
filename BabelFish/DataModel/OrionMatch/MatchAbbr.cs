@@ -10,7 +10,8 @@ using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    public class MatchAbbr {
+	[Serializable]
+	public class MatchAbbr {
 
         public MatchAbbr() {
 

@@ -4,10 +4,11 @@ using System.Text;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    /// <summary>
-    /// An AttributeValue that helps describe a Partipant in a match.
-    /// </summary>
-    public class AttributeValueDataPacketMatch : AttributeValueDataPacket {
+	/// <summary>
+	/// An AttributeValue that helps describe a Partipant in a match.
+	/// </summary>
+	[Serializable]
+	public class AttributeValueDataPacketMatch : AttributeValueDataPacket {
 
         public const int CONCRETE_CLASS_ID = 2;
 

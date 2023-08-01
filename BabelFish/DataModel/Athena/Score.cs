@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Athena
 {
-    public class Score
+	[Serializable]
+	public class Score
     {
         public Score()
         {

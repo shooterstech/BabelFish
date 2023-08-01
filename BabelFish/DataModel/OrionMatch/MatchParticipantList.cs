@@ -8,10 +8,11 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    /// <summary>
-    /// A response object, describing a list of Match Participants in a match. Match Participants, in this API call, include athletes (competitors), match officials, and coaches. They do not include Teams.
-    /// </summary>
-    public class MatchParticipantList : ITokenItems<MatchParticipant> {
+	/// <summary>
+	/// A response object, describing a list of Match Participants in a match. Match Participants, in this API call, include athletes (competitors), match officials, and coaches. They do not include Teams.
+	/// </summary>
+	[Serializable]
+	public class MatchParticipantList : ITokenItems<MatchParticipant> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 

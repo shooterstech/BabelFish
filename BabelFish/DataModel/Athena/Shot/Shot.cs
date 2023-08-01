@@ -10,7 +10,8 @@ using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
-    public class Shot : IEquatable<Shot>, IPenalty
+	[Serializable]
+	public class Shot : IEquatable<Shot>, IPenalty
     {
 
         /// <summary>Shot Attribute to indicate the shot was a sighter.</summary>

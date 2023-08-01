@@ -10,7 +10,8 @@ using Newtonsoft.Json.Converters;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum MatchTypeOptions {
+	[Serializable]
+	public enum MatchTypeOptions {
         /*
          * Training
 Practice Match

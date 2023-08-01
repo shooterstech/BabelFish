@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
+	[Serializable]
 
-    /// <summary>
-    /// ShotUpdateRequest messages are sent to the Target on the topic {Owner}/{FP}/shot/update.
-    /// </summary>
-    public class ShotUpdateRequest
+	/// <summary>
+	/// ShotUpdateRequest messages are sent to the Target on the topic {Owner}/{FP}/shot/update.
+	/// </summary>
+	public class ShotUpdateRequest
     {
 
         /// <summary>

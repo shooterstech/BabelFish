@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
-    public class Location
+	[Serializable]
+	public class Location
     {
         public float X { get; set; }
 
