@@ -112,6 +112,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
         }
 
+        /*
         /// <summary>
         /// httpStatus (leave this as string in case we get an unexpected status not in an enum?)
         /// </summary>
@@ -123,6 +124,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
         [JsonConverter( typeof( StringEnumConverter ) )]
         public Helpers.AttributeValueActionEnums Action { get; set; } = Helpers.AttributeValueActionEnums.EMPTY;
+        */
 
         #region Definition
 

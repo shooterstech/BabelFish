@@ -68,6 +68,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         private ConstructorType constructorType;
         private bool initCalled = false;
         private InitiateSrpAuthRequest authRequest;
+        private string userId = "";
 
         /// <summary>
         /// Creates a new instance of UserAuthentication and attempts to authenticate
@@ -400,6 +401,15 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// Emailaddress the user uses to log in with. It is the same as the user's username
         /// </summary>
         public string Email { get; private set; }
+
+        public async Task<string> GetUserIdAsync() {
+            if (string.IsNullOrEmpty( this.userId )) {
+                var userDetails = await this.CognitoUser.GetUserDetailsAsync();
+                this.userId = userDetails.Username;
+            }
+
+            return this.userId;
+        }
 
         //NOTE: Purposefully not even keeping a variable for password
 
