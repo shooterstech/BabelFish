@@ -46,7 +46,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Required.
         /// </summary>
         [JsonProperty(Order = 12)]
-        public string TargetCollectionDef { get; set; } = string.Empty;
+        [DefaultValue( "v1.0:ntparc:Air Rifle" )]
+        public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
 
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
@@ -66,7 +67,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
         [JsonProperty(Order = 15)]
-        public string ScoreFormatCollectionDef { get; set; } = string.Empty;
+        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
+        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
@@ -74,6 +76,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 16)]
         public string ScoreConfigDefault { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The default Event and Stage Style Mapping file to use. 
+        /// </summary>
+        [JsonProperty( Order = 17 )]
+        [DefaultValue( "v1.0:orion:Default" )]
+        public string DefaultEventAndStageStyleMappingDef { get; set; } = "v1.0:orion:Default";
+        
         /// <summary>
         /// Range command script with Paper Targets or EST Configuration. 
         /// </summary>

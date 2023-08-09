@@ -5,7 +5,9 @@ using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Requests;
 using System.Net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog.LayoutRenderers;
 
 namespace Scopos.BabelFish.APIClients
 {
@@ -23,9 +25,21 @@ namespace Scopos.BabelFish.APIClients
 
         public static ResponseCache CACHE= new ResponseCache();
 
-        private ResponseCache() {
+        private static readonly JsonSerializerSettings JSETTINGS_WITHOUT_DEFAULTS = new JsonSerializerSettings() {
+			TypeNameHandling = TypeNameHandling.Auto,
+			NullValueHandling = NullValueHandling.Ignore,
+			Formatting = Formatting.Indented,
+			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+		};
+
+		private ResponseCache() {
 
         }
+
+        /// <summary>
+        /// The directory that BabelFish may use to store cached responses. 
+        /// </summary>
+        public DirectoryInfo? LocalStoreDirectory { get; set; } = null;
 
         /// <summary>
         /// Attempts to retreive a Response from memory based on the passed in request value. 
@@ -63,6 +77,23 @@ namespace Scopos.BabelFish.APIClients
             if (response.ValidUntil > DateTime.UtcNow) {
                 lock (mutex) {
                     cachedRequests[request.GetRequestCacheKey()] = response;
+
+                    if ( LocalStoreDirectory != null ) {
+                        string relativePath = request.GetRequestCacheKey();
+                        relativePath = relativePath.Replace( ':', ' ' );
+
+						string filename = $"{LocalStoreDirectory.FullName}\\{relativePath}.json";
+
+						FileInfo file = new FileInfo( filename );
+                        file.Directory.Create();
+
+                        var json = JsonConvert.SerializeObject( response, JSETTINGS_WITHOUT_DEFAULTS );
+
+						using (StreamWriter sw = File.CreateText( file.FullName )) {
+							sw.WriteLine( json );
+						}
+
+					}
                 }
             }
         }

@@ -28,6 +28,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
+            ResponseCache.CACHE.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\temp" );
             var requestNoCache = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             var requestWithCache = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             requestNoCache.IgnoreLocalCache = true;

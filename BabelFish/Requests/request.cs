@@ -70,7 +70,18 @@ namespace Scopos.BabelFish.Requests {
 
             //NOTE: Purposefully not including PostParameters, as PostParameters are only included
             //on non-httpmethod-GET calls. And cache is only for GET calls.
-            return $"{this.SubDomain.SubDomainNameWithStage()}:{this.RelativePath}:{this.QueryString}:{accessToken}";
+            StringBuilder key = new StringBuilder();
+            key.Append( this.SubDomain.SubDomainNameWithStage() );
+            key.Append( this.RelativePath );
+            if (!string.IsNullOrEmpty( this.QueryString )) {
+                key.Append( '/' );
+                key.Append( this.QueryString );
+            }
+            if (!string.IsNullOrEmpty( accessToken )) {
+				key.Append( '/' );
+                key.Append( accessToken );
+			}
+            return key.ToString();
 		}
 
 		/// <summary>

@@ -23,9 +23,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public List<EventComposite> Children { get; private set; }
 
-        public string EventAppellation { get; private set; }
+        public string EventAppellation {
+            get {
+                if (EventStyleMapping != null)
+                    return EventStyleMapping.EventAppellation;
+                return null;
+            }
+        }
 
-        public string StageAppellation { get; private set; }
+        public string StageAppellation { get {
+                if (StageStyleMapping != null)
+                    return StageStyleMapping.StageAppellation;
+                return null;
+            }
+        }
+
+        public EventStyleMapping EventStyleMapping { get; private set; }
+
+        public StageStyleMapping StageStyleMapping { get; private set; }
 
         public EventComposite Parent { get; private set; }
 
@@ -175,8 +190,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //add the event to the event tree, this is the root.
             top = new EventComposite() {
                 EventName = topLevelEvent.EventName,
-                EventAppellation = topLevelEvent.EventStyleMapping.EventAppellation,
-                //StageAppellation = topLevelEvent.StageStyleMapping.StageAppellation
+				EventStyleMapping = topLevelEvent.EventStyleMapping,
                 ScoreFormat = topLevelEvent.ScoreFormat
             };
             //this should be where we go through 
@@ -195,20 +209,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 if (t.EventName == parent.EventName ) {
                     parent.EventType = t.EventType;
 					parent.ScoreFormat = t.ScoreFormat;
+                    if (t.EventType == EventtType.STAGE)
+                        parent.StageStyleMapping = t.StageStyleMapping;
 					foreach ( var childName in t.GetChildrenEventNames() ) {
                         EventComposite child;
                         if (t.EventType == EventtType.STAGE) {
                             child = new EventComposite() {
                                 EventName = childName,
-                                Parent = parent,
-                                StageAppellation = parent.StageAppellation,
-                                EventAppellation = parent.EventAppellation
+                                Parent = parent
                             };
                         } else {
                             child = new EventComposite() {
                                 EventName = childName,
-                                Parent = parent,
-                                EventAppellation = parent.EventAppellation
+                                Parent = parent
                             };
                         }
                         parent.Children.Add( child );

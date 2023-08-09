@@ -226,21 +226,18 @@ namespace Scopos.BabelFish.Tests.Definition
             var msgResponse = result.MessageResponse;
             EventComposite eventTree = new EventComposite() { };
             eventTree = EventComposite.GrowEventTree(definition);
-            foreach (var thing in eventTree.Children) {
-                Console.WriteLine(thing.StageAppellation + " SA and SN " + thing.EventName + " " + thing.EventType);
-            }
+            
+            foreach (var e in eventTree.GetEvents()) {
+                if (e.EventType == EventtType.EVENT)
+                    Assert.IsNotNull( e.EventStyleMapping );
+                else
+                    Assert.IsNull( e.EventStyleMapping );
 
-            //Console.WriteLine( eventTree.FindEventComposite("Standing").ToString() );
-
-            /*
-            foreach (var eventThing in eventTree) {
-                if(eventThing.EventType == EventtType.STAGE) {
-                    Console.WriteLine("StageAppell: " + eventThing.StageStyleMapping.StageAppellation + "\tDef: " + eventThing.StageStyleMapping.DefaultDef);
-                }
-                if (eventThing.EventType == EventtType.EVENT) {
-                    Console.WriteLine("EventAppell: " + eventThing.EventStyleMapping.EventAppellation + "\tDef: " + eventThing.EventStyleMapping.DefaultDef);
-                }
-            }*/
+                if (e.EventType == EventtType.STAGE)
+					Assert.IsNotNull( e.StageStyleMapping );
+				else
+					Assert.IsNull( e.StageStyleMapping );
+			}
 
             Assert.IsNotNull(definition);
             Assert.IsNotNull(msgResponse);
