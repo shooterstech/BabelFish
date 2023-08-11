@@ -82,11 +82,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 17 )]
         [DefaultValue( "v1.0:orion:Default" )]
         public string DefaultEventAndStageStyleMappingDef { get; set; } = "v1.0:orion:Default";
-        
-        /// <summary>
-        /// Range command script with Paper Targets or EST Configuration. 
-        /// </summary>
-        [JsonProperty(Order = 20)]
+
+		/// <summary>
+		/// The default Attribute Value to use to determine a user's Attribute Value Appellation when shooting this course of fire.
+		/// </summary>
+		[JsonProperty( Order = 18 )]
+		[DefaultValue( "v1.0:orion:Air Rifle Training Category" )]
+		public string DefaultAttributeDef { get; set; } = "v1.0:orion:Air Rifle Training Category";
+
+		/// <summary>
+		/// Range command script with Paper Targets or EST Configuration. 
+		/// </summary>
+		[JsonProperty(Order = 20)]
         public List<RangeScript> RangeScripts { get; set; } = new List<RangeScript>();
 
         /// <summary>
