@@ -11,6 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public const int SUBMATCHID_MATCH_GROUP = 2;
         public const int SUBMATCHID_LEAGUE = 3;
         public const int SUBMATCHID_PRACTICE = 4;
+        public const int SUBMATCHID_MANUAL = 9;
 
         private long domainID = 1;
         private long componentID = 0;
@@ -59,6 +60,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 case SUBMATCHID_MATCH_GROUP:
                 case SUBMATCHID_PRACTICE:
                 case SUBMATCHID_VIRTUAL_PARENT:
+                case SUBMATCHID_MANUAL:
                     break;
                 default:
                     if (subMatchID > 1000)
@@ -155,7 +157,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     case SUBMATCHID_MATCH_GROUP:
                     case SUBMATCHID_LEAGUE:
                     case SUBMATCHID_PRACTICE:
-                        return false;
+                    case SUBMATCHID_MANUAL:
+
+						return false;
                     default:
                         return true;
                 }
@@ -224,6 +228,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     default:
                         return false;
                 }
+            }
+        }
+
+        public bool ManuallyEntered {
+            get {
+                switch (subMatchID) {
+                    case SUBMATCHID_MANUAL:
+                        return true;
+                    default:
+                        return false;
+
+				}
             }
         }
 
