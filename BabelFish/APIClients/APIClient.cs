@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.APIClients {
 				response.TimeToRun = DateTime.Now - startTime;
                 response.CachedResponse = true;
 
-				logger.Info( $"Returning a cached Response for {request}." );
+				logger.Debug( $"Returning a cached Response for {request}." );
                 return;
 			}
 
