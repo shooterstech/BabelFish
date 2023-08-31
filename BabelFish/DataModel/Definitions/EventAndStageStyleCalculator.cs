@@ -3,6 +3,8 @@ using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Newtonsoft;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -13,10 +15,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private EventAndStageStyleMapping _definition;
         private List<EventAndStageStyleMappingObj> _mappings;
         private EventAndStageStyleMappingObj _defaultMapping;
+        private Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private const string DEFAULT_DEF = "v1.0:orion:Default";
+
         public EventAndStageStyleMappingCalculation( EventAndStageStyleMapping eventAndStageStyleMappingDefinition ) {
             _definition = eventAndStageStyleMappingDefinition;
-            _mappings = _definition.Mappings;
-            _defaultMapping = _definition.DefaultMapping;
+            if (_definition != null) {
+                _mappings = _definition.Mappings;
+                _defaultMapping = _definition.DefaultMapping;
+            } else {
+                logger.Warn( $"Parameter eventAndStageStyleMappingDefinition is null. Likely the medea concrete rulebook, or a course of fire definition file, is referencing a mapping definitions incorrectly." );
+                _mappings = new List<EventAndStageStyleMappingObj>();
+                _defaultMapping = new EventAndStageStyleMappingObj();
+            }
         }
 
         /// <summary>
@@ -28,14 +39,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         public string GetEventStyleDef( string attributeValueAppellation, string targetCollectionName, EventStyleMapping eventStyleMapping ) {
             // this is the worst case, nothing else matches circumstance
-            string eventStyleMappingToReturn = "v1.0:orion:Default";
+            string eventStyleMappingToReturn = DEFAULT_DEF;
 
             //Next to the worst case, take the value from .DefaultDef if it exists
-            if (!string.IsNullOrEmpty( eventStyleMapping.DefaultDef ))
+            if (!string.IsNullOrEmpty( eventStyleMapping.DefaultDef ) && eventStyleMapping.DefaultDef != DEFAULT_DEF)
                 eventStyleMappingToReturn = eventStyleMapping.DefaultDef;
 
             //Next, take the default value from the Mapping definition file
-            if (!string.IsNullOrEmpty( _defaultMapping.DefaultEventStyleDef ))
+            if (!string.IsNullOrEmpty( _defaultMapping.DefaultEventStyleDef ) && _defaultMapping.DefaultEventStyleDef != DEFAULT_DEF)
                 eventStyleMappingToReturn = _defaultMapping.DefaultEventStyleDef;
 
             //Next, try and match the EventAppellation from the default mappings.
@@ -74,14 +85,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         public string GetStageStyleDef( string attributeValueAppellation, string targetCollectionName, StageStyleMapping stageStyleMapping ) {
             // this is the worst case, nothing else matches circumstance
-            string stageStyleMappingToReturn = "v1.0:orion:Default";
+            string stageStyleMappingToReturn = DEFAULT_DEF;
 
             //Next to the worst case, take the value from .DefaultDef if it exists
-            if (!string.IsNullOrEmpty( stageStyleMapping.DefaultDef ))
+            if (!string.IsNullOrEmpty( stageStyleMapping.DefaultDef ) && stageStyleMapping.DefaultDef != DEFAULT_DEF)
                 stageStyleMappingToReturn = stageStyleMapping.DefaultDef;
 
             //Next, take the default value from the Mapping definition file
-            if (!string.IsNullOrEmpty( _defaultMapping.DefaultStageStyleDef ))
+            if (!string.IsNullOrEmpty( _defaultMapping.DefaultStageStyleDef ) && _defaultMapping.DefaultStageStyleDef != DEFAULT_DEF)
                 stageStyleMappingToReturn = _defaultMapping.DefaultStageStyleDef;
 
             // stage appellation matching something in the defaultMapping
