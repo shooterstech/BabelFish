@@ -165,11 +165,25 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsFalse( string.IsNullOrEmpty( userAuthenticationInit.SessionToken ) );
         }
 
+        [TestMethod]
+        public async Task GetCognitoUserDetialsTests() {
+
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var userId = await userAuthentication.GetUserIdAsync();
+
+            Assert.AreEqual( Constants.TestDev7UserId, userId );
+
+        }
+        
         /// <summary>
-        /// Attempts to clean up Devices attached to our test users. This isn't a real unit test, it just cleans things up.
-        /// Ideally this method would be marked with the ClassCleanup attribute. However, when doing so, VS doesn't want 
-        /// to run any of the tests. To get around this limitation, trying ot run this last. 
-        /// </summary>
+         /// Attempts to clean up Devices attached to our test users. This isn't a real unit test, it just cleans things up.
+         /// Ideally this method would be marked with the ClassCleanup attribute. However, when doing so, VS doesn't want 
+         /// to run any of the tests. To get around this limitation, trying ot run this last. 
+         /// </summary>
         [TestMethod]
         public async Task Z_Cleanup() {
 

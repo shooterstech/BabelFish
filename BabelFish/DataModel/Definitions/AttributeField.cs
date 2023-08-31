@@ -7,7 +7,6 @@ using NLog;
 using Newtonsoft.Json;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using System.Configuration;
-using System.Globalization;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
@@ -16,7 +15,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class AttributeField {
 
         private static Logger logger= LogManager.GetCurrentClassLogger();
-        private static CultureInfo culture = CultureInfo.InvariantCulture;
 
         public AttributeField() {
             Required = false;
@@ -340,17 +338,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         case ValueType.DATE:
                             var dateList = new List<DateTime>();
                             foreach( var item in value)
-                                dateList.Add( DateTime.ParseExact( (string)item, DateTimeFormats.DATE_FORMAT, culture ) );
+                                dateList.Add( DateTime.ParseExact( (string)item, DateTimeFormats.DATE_FORMAT, DateTimeFormats.CULTURE ) );
                             return dateList;
                         case ValueType.TIME:
                             var timeList = new List<TimeSpan>();
                             foreach (var item in value)
-                                timeList.Add( TimeSpan.ParseExact( (string)item, DateTimeFormats.TIME_FORMAT, culture ) );
+                                timeList.Add( TimeSpan.ParseExact( (string)item, DateTimeFormats.TIME_FORMAT, DateTimeFormats.CULTURE ) );
                             return timeList;
                         case ValueType.DATE_TIME:
                             var dateTimeList = new List<DateTime>();
                             foreach (var item in value)
-                                dateTimeList.Add( DateTime.ParseExact( (string)item, DateTimeFormats.DATETIME_FORMAT, culture ) );
+                                dateTimeList.Add( DateTime.ParseExact( (string)item, DateTimeFormats.DATETIME_FORMAT, DateTimeFormats.CULTURE ) );
                             return dateTimeList;
                         default:
                             return value;
@@ -358,13 +356,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 } else {
                     switch (ValueType) {
                         case ValueType.DATE:
-                            DateTime dateValue = DateTime.ParseExact( (string)value, DateTimeFormats.DATE_FORMAT, culture );
+                            DateTime dateValue = DateTime.ParseExact( (string)value, DateTimeFormats.DATE_FORMAT, DateTimeFormats.CULTURE );
                             return dateValue;
                         case ValueType.TIME:
-                            TimeSpan timeValue = TimeSpan.ParseExact( (string)value, DateTimeFormats.TIME_FORMAT, culture );
+                            TimeSpan timeValue = TimeSpan.ParseExact( (string)value, DateTimeFormats.TIME_FORMAT, DateTimeFormats.CULTURE );
                             return timeValue;
                         case ValueType.DATE_TIME:
-                            DateTime dateTimeValue = DateTime.ParseExact( (string)value, DateTimeFormats.DATETIME_FORMAT, culture );
+                            DateTime dateTimeValue = DateTime.ParseExact( (string)value, DateTimeFormats.DATETIME_FORMAT, DateTimeFormats.CULTURE );
                             return dateTimeValue;
                         default:
                             return value;

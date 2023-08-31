@@ -8,7 +8,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
-using Scopos.BabelFish.Responses.ScoreHistoryAPI;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 
 namespace Scopos.BabelFish.Tests.ScoreHistory {
@@ -86,6 +86,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
                     hasAtLeastOneStageStyleEntry |= true;
                     var scoreHistoryStageStyle = (ScoreHistoryStageStyleEntry)scoreHistoryBase;
                     Assert.AreEqual( stageStyleDef, scoreHistoryStageStyle.StageStyleDef );
+                    Assert.AreEqual( VisibilityOption.PUBLIC, scoreHistoryStageStyle.Visibility );
                 }
             }
 

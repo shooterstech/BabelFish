@@ -41,6 +41,7 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
                 Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var authCode = "zzzzzz"; //test authcode that returns fake data with a 200 success code.
             var request = new AthenaEmployLoginCodeAuthenticatedRequest( authCode, userAuthentication );
@@ -67,6 +68,8 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
                 Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
             //Pass in a code that is not real, and check the response comes back as .NotFound
             var authCode = "fakecode";
             var request = new AthenaEmployLoginCodeAuthenticatedRequest( authCode, userAuthentication );
@@ -79,6 +82,47 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
             //The message list dhould incldue the message it's expired or invalid.
             var message = response.MessageResponse.Message[0];
             Assert.IsTrue( message.Contains( "not recognized, expired or is invalid" ) );
+
+        }
+
+        [TestMethod]
+        public async Task ActiveLoginSessions() {
+
+            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            //Test Dev 3 is associated with something ...
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev3Credentials.Username,
+                Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var request = new AthenaListActiveSessionsAuthenticatedRequest( userAuthentication );
+            var response = await client.AthenaListActiveSessionsAuthenticatedAsync( request );
+
+            //NOTE this is kinda difficult to write a unit test for, since there is no way to control
+            //if there are legit active user sessions. At best we can test the response was expected.
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+
+        }
+
+        [TestMethod]
+        public async Task LogoutSessions() {
+
+            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            //Test Dev 3 is associated with something ...
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev3Credentials.Username,
+                Constants.TestDev3Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var request = new AthenaLogoutSessionAuthenticatedRequest( userAuthentication ) {
+                ThingNames = new List<string>() { "ESTTarget-000000001" }
+            };
+
+            var response = await client.AthenaLogoutSessionAuthenticatedAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
 
         }
     }

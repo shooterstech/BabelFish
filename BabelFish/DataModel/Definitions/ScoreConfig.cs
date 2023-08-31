@@ -16,5 +16,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Values are a Score Format, eg. "{i} - {x}"
         /// </summary>
         public Dictionary<string, string> ScoreFormats { get; set; } = new Dictionary<string, string>();
+
+        public override string ToString() {
+            return ScoreConfigName;
+        }
     }
 }

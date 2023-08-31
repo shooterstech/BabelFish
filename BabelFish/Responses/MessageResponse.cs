@@ -13,6 +13,10 @@ namespace Scopos.BabelFish.Responses {
 
         public List<String> Message { get; set; } = new List<string>();
 
+        public override string ToString() {
+            return string.Join(", ", Message);
+        }
+
         [Obsolete( "ResponseCodes is no longer being included in new API Requests, and will stop being included in existing ones as they are updated. Use the response' StatusCode instead." )]
         public List<String> ResponseCodes { get; set; } = new List<string>();
 

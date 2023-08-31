@@ -69,6 +69,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttributeValue1.SetFieldValue( "ABoolean", newBoolean );
             testAttributeValue1.SetFieldValue( "ADate", newDate );
             testAttributeValue1.SetFieldValue( "ADateTime", newDateTime );
+            testAttriubuteAttributeValueDataPacket1.Visibility = VisibilityOption.PROTECTED;
 
             //Generate a set attribute value request
             var setRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication );
@@ -102,6 +103,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( newBoolean, (bool)testAttributeValue2.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( newDate, (DateTime)testAttributeValue2.GetFieldValue( "ADate" ) );
             Assert.IsTrue( Math.Abs((((DateTime)testAttributeValue2.GetFieldValue( "ADateTime" )).ToUniversalTime()- newDateTime).TotalSeconds) < .001D );
+            Assert.AreEqual( VisibilityOption.PROTECTED, testAttriubuteAttributeValueDataPacket2.Visibility );
         }
     }
 }

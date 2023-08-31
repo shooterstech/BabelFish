@@ -10,7 +10,8 @@ using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
-    public class Shot : IEquatable<Shot>, IPenalty
+	[Serializable]
+	public class Shot : IEquatable<Shot>, IPenalty
     {
 
         /// <summary>Shot Attribute to indicate the shot was a sighter.</summary>
@@ -108,6 +109,16 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public string MatchID { get; set; }
 
         public dynamic Meta { get; set; }
+
+        /// <summary>
+        /// EventName is only set when the shot is part of a Result COF .Shots dictionary
+        /// </summary>
+        public string EventName { get; set; }
+
+        /// <summary>
+        /// ScoreFormatted may only be set when the Shot is part of a Result COF .Shots dictrionary
+        /// </summary>
+        public string ScoreFormatted { get; set; }
 
         /// <summary>
         /// Returns the x and y coordinates, measured in pixels, of the aiming bull center in the verification photo.

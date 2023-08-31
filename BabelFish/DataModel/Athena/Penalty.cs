@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Athena
 {
-    /// <summary>
-    /// Describes a Penalty that is applied to a shot, athlete, team, etc
-    /// </summary>
-    public class Penalty
+	/// <summary>
+	/// Describes a Penalty that is applied to a shot, athlete, team, etc
+	/// </summary>
+    [Serializable]
+	public class Penalty
     {
 
         private float penalty = 0;

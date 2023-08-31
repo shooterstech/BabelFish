@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
-
-    public class MatchParticipantResult {
+	[Serializable]
+	public class MatchParticipantResult {
 
         public MatchParticipantResult() {
         }

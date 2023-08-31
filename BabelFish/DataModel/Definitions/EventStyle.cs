@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public EventStyle() : base() {
             Type = DefinitionType.EVENTSTYLE;
 
-            //Don't initialize EventStyles or StageStyles, since one of these values as to be null.
+            //Don't initialize EventStyles or StageStyles, since one of these values has to be null.
         }
 
         [OnDeserialized]
