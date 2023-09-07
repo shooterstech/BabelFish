@@ -4,6 +4,8 @@ using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using Newtonsoft;
+using NLog;
 
 namespace Scopos.BabelFish.Helpers {
     /// <summary>
@@ -12,6 +14,7 @@ namespace Scopos.BabelFish.Helpers {
     public static class StringFormatting {
 
         private static TextInfo textInfo = new CultureInfo( "en-US", false ).TextInfo;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Formats a span of dates, a start and end date, to a common formatted string.
@@ -79,6 +82,14 @@ namespace Scopos.BabelFish.Helpers {
             return format;
 		}
 
+        /// <summary>
+        /// Formats to a string, the inputed score, based on the ScoreFormatCollection
+        /// </summary>
+        /// <param name="scoreFormatCollection">The ScoreFormatCollection definition to use to learn how to format the passed in Score.</param>
+        /// <param name="scoreConfigName">The name of the ScoreConfig to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Integer' or 'Decimal'</param>
+        /// <param name="scoreFormatName">The name of the Scoreformat to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Events' or 'Shots'</param>
+        /// <param name="score"></param>
+        /// <returns></returns>
 		public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.Athena.Score score ) {
 
 			var lowerI = score.I.ToString(); // integer
@@ -87,19 +98,42 @@ namespace Scopos.BabelFish.Helpers {
 			var upperX = score.X > 0 ? "*" : ""; //asterisk for inners
 			var lowerS = score.S > 0 ? score.S.ToString() : score.D.ToString(); // summed score, if no score, then decimal is here.
 
-			string format = "{d}"; //default value
-			foreach (var scoreConfig in scoreFormatCollection.ScoreConfigs) {
-				if (scoreConfig.ScoreConfigName == scoreConfigName) {
-					if (scoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out format )) {
-						break;
-					}
-				}
-			}
+            //This is the "If nothing else matches default value" format
+            string format = "{d}";
+            string formattedScore = "Unknown";
 
-			format = format.Replace( "{i}", lowerI ).Replace( "{d}", lowerD ).Replace( "{x}", lowerX ).Replace( "{X}", upperX ).Replace( "{s}", lowerS );
-			//format = format.Replace( "{d}", lowerD );
+            if (scoreFormatCollection != null) {
+                //Check that the passed in scoreFormatName is valid. If it is not, take the first value in the .ScoreFormats list
+                if (scoreFormatCollection.ScoreFormats.Count > 0 && !scoreFormatCollection.ScoreFormats.Contains( scoreFormatName )) {
+                    logger.Warn( $"User passed in a scoreFormatName '{scoreFormatName}' that is not recongnized by the ScoreFormatCollection. Will use a default value instead '{scoreFormatCollection.ScoreFormats[0]}'." );
+                    scoreFormatName = scoreFormatCollection.ScoreFormats[0];
+                }
 
-			return format;
+                //This should be the happy path, finding both the scoreConfig and scoreFormat
+                bool foundTheScoreConfig = false;
+                foreach (var scoreConfig in scoreFormatCollection.ScoreConfigs) {
+                    if (scoreConfig.ScoreConfigName == scoreConfigName) {
+                        foundTheScoreConfig = true;
+                        if (scoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out format )) {
+                            break;
+                        }
+                    }
+                }
+
+                //If the scoreConfig was not found, take the first one in the list
+                if (!foundTheScoreConfig && scoreFormatCollection.ScoreConfigs.Count > 0) {
+                    scoreFormatCollection.ScoreConfigs[0].ScoreFormats.TryGetValue( scoreFormatName, out format );
+                }
+            }
+
+            try {
+                formattedScore = format.Replace( "{i}", lowerI ).Replace( "{d}", lowerD ).Replace( "{x}", lowerX ).Replace( "{X}", upperX ).Replace( "{s}", lowerS );
+            } catch (Exception ex){
+                logger.Error( ex, $"Could not format score with '{format}'." );
+                formattedScore = "Unknown";
+            }
+
+			return formattedScore;
 		}
 
 		public static string FormatScore( string format, Scopos.BabelFish.DataModel.Athena.Score score ) {
