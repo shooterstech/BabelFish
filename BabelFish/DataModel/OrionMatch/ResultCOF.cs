@@ -52,7 +52,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         public DateTime LastUpdated { get; set; } = new DateTime();
 
         /// <summary>
-        /// Boolean indicating if this is a partial Result COF, containing only delta. 
+        /// Boolean indicating if this is a partial Result COF that contains only delta (Delta is true),
+        /// or a Result COF that has all of the EventScores and Shots (Delta is false).
         /// ResultCOF pulled from the REST API, this value should be false.
         /// ResultCOF pushed from the IoT Topic, this value should be true.
         /// </summary>
