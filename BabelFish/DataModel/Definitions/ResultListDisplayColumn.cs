@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public List<string> BodyClassList { get; set; } = new List<string>();
 
+        [Obsolete("Replaced with LinkToOptions for the row (this property is just for the cell)")]
         public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
 
         /// <summary>
