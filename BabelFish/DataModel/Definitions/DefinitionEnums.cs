@@ -131,14 +131,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum LinkToOption {
         /// <summary>
-        /// Indicates that the Cell should link to the ResultCOF Page (sometimes called Individual Score Page). 
+        /// Indicates that the Cell or Row should link to the ResultCOF Page (sometimes called Individual Score Page). 
         /// </summary>
         [Description( "ResultCOF" )]
         [EnumMember( Value = "ResultCOF" )]
         ResultCOF,
 
         /// <summary>
-        /// Indicates that the Cell should not link to any other page. Which is the default option. 
+        /// Indicates that the Cell or Row should link to the athletes or team's public profile page, if they have one. 
+        /// </summary>
+        [Description( "PublicProfile" )]
+        [EnumMember( Value = "PublicProfile" )]
+        PublicProfile,
+
+        /// <summary>
+        /// Indicates that the Cell or Row should not link to any other page. Which is the default option. 
         /// </summary>
         [Description( "None" )]
         [EnumMember( Value = "None" )]

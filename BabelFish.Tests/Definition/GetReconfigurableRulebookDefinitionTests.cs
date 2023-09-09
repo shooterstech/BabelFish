@@ -213,6 +213,28 @@ namespace Scopos.BabelFish.Tests.Definition
         }
 
         [TestMethod]
+        public void GetResultListFormatTest() {
+
+            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
+            var setName = SetName.Parse( "v1.0:orion:3P Individual" );
+
+            var taskResponse = client.GetResultListFormatDefinitionAsync( setName );
+            var result = taskResponse.Result;
+            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
+
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
+
+            Assert.AreEqual( setName.ToString(), definition.SetName );
+            Assert.AreEqual( DefinitionType.RESULTLISTFORMAT, definition.Type );
+            Assert.AreEqual( 4, definition.Fields.Count );
+            Assert.IsTrue( definition.Format.Display.Body.RowLinkTo.Contains( LinkToOption.ResultCOF ) );
+        }
+
+        [TestMethod]
         public void GetAppellationTest() {
 
             var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreLocalCache = true };
