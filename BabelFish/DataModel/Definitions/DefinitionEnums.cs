@@ -48,6 +48,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
 
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum CompetitionType {
+        /// <summary>
+        /// COMPETITION: Shows only record fire shots
+        /// </summary>
+        [Description( "COMPETITION" )][EnumMember( Value = "COMPETITION" )] COMPETITION,
+
+        /// <summary>
+        /// SIGHTER
+        /// </summary>
+        [Description( "SIGHTER" )][EnumMember( Value = "SIGHTER" )] SIGHTER,
+
+        /// <summary>
+        /// BOTH
+        /// </summary>
+        [Description( "BOTH" )][EnumMember( Value = "BOTH" )] BOTH
+    }
 
     /// <summary>
     /// Defines the different high level disciplines in use with Shooting. Largely defined by the ISSF.
