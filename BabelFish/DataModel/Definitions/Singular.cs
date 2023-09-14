@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// one Singular object define the shots fired in kneeling, a second Singular object defines the shots 
     /// fired in prone, and a third object defines the shots fired in standing.
     /// </summary>
-    public class Singular {
+    public class Singular : IReconfigurableRulebookObject {
 
         private List<string> validationErrorList = new List<string>();
 
@@ -64,6 +65,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         public ShotMappingMethodType ShotMappingMethod { get; set; }
+
+        /// <inheritdoc/>
+        [DefaultValue( "" )]
+        [JsonProperty( Order = 100 )]
+        public string Comment { get; set; } = string.Empty;
 
         /// <summary>
         /// Generates a list of Events based on the definition of this Singular
