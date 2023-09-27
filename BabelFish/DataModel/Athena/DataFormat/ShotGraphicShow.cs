@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Athena.DataFormat
 {
@@ -22,7 +23,7 @@ namespace Scopos.BabelFish.DataModel.Athena.DataFormat
         /// Show Competition shots or sighter shots.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public Scopos.BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType Competition { get; set; } = Scopos.BabelFish.DataModel.Definitions.ShowInSegment.CompetitionType.COMPETITION;
+        public CompetitionType Competition { get; set; } = CompetitionType.COMPETITION;
 
         /// <summary>
         /// If Competition == SIGHTER, then show all sighters that have a StageLabel equal to, well, this property.
