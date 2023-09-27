@@ -210,7 +210,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return new ShowInSegment() {
                 StageLabel = new List<string>(),
-                Competition = ShowInSegment.CompetitionType.BOTH
+                Competition = CompetitionType.BOTH
             };
         }
 

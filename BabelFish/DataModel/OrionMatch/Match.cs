@@ -180,12 +180,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
-        /// <summary>
-        /// A list of common Incident Reports that may occure during the competition.
-        /// </summary>
-        [JsonProperty( Order = 14 )]
-        public List<IncidentReportRuleDefinition> CommonIncidentReports { get; set; } = new List<IncidentReportRuleDefinition>();
-
         [JsonProperty( Order = 15 )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
