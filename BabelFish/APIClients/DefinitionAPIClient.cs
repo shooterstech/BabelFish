@@ -164,6 +164,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        [Obsolete( "Spelling error. Use GetEventAndStageStyleMappingDefinitionAsync instead." )]
         public async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyhleMappingDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
@@ -173,9 +174,20 @@ namespace Scopos.BabelFish.APIClients {
             GetDefinitionPublicResponse<EventAndStageStyleMapping> response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
-        }
+		}
 
-        public async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
+		public async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+
+			var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
+
+			GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+			GetDefinitionPublicResponse<EventAndStageStyleMapping> response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
+
+			return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
+		}
+
+		public async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RESULTLISTFORMAT;
 

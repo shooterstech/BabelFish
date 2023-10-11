@@ -8,14 +8,19 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
+using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
+    /// <summary>
+    /// Tests the user of the Public API call for returning Attribute Value on a user.
+    /// Which does not use authapi authenticated calls.
+    /// </summary>
     [TestClass]
     public class GetPublicAttributeValueTests {
 
         /// <summary>
-        /// Tests the retreival of a single Attribute Value
+        /// Tests the retreival of a single Attribute Value who's visibility is PUBLIC
         /// </summary>
         [TestMethod]
         public async Task GetAttributeValue_SingleValue() {
@@ -23,12 +28,34 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
+			//We're first going to make an authenticated call to set the values we expect to later read.
+			var userAuthentication = new UserAuthentication(
+				Constants.TestDev7Credentials.Username,
+				Constants.TestDev7Credentials.Password );
+			await userAuthentication.InitializeAsync();
 
-            var setNameProfileName = "v1.0:orion:Air Rifle Training Category";
-            List<string> myAttributes = new List<string>()
-            {
-               setNameProfileName
-            };
+			var setNameTrainingCategory = "v1.0:orion:Air Rifle Training Category";
+			List<string> myAttributes = new List<string>()
+			{
+			   setNameTrainingCategory
+			};
+
+			var trainingCategoryAttrValueToSet = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( SetName.Parse( setNameTrainingCategory ) );
+			trainingCategoryAttrValueToSet.SetFieldValue( "Rifle Type and Category", "SH1" );
+
+			var trainingCategoryDataPacketToSet = new AttributeValueDataPacketAPIResponse {
+				AttributeDef = setNameTrainingCategory,
+				AttributeValue = trainingCategoryAttrValueToSet,
+				Visibility = VisibilityOption.PUBLIC
+			};
+
+			var setSocialMediaRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication ) {
+				AttributeValuesToUpdate = new List<AttributeValueDataPacket> { trainingCategoryDataPacketToSet }
+			};
+
+			await client.SetAttributeValueAuthenticatedAsync( setSocialMediaRequest );
+
+            //Now the test is to read the value using the PUBLIC api call
             var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
             var response = taskResponse.Result;
             Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
@@ -36,150 +63,86 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //The returned data should have one AttriuteValueDataPacket if the Profile Name set name.
             var attributeValueDataPackets = response.AttributeValues;
             Assert.IsTrue( attributeValueDataPackets.Count == 1 );
-            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameProfileName  ) );
+            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameTrainingCategory ) );
 
             //Retreive the data packet and check that the status code is success.
-            var profileNameAttributeValueDataPacket = attributeValueDataPackets[setNameProfileName];
-            Assert.IsTrue( profileNameAttributeValueDataPacket.StatusCode== System.Net.HttpStatusCode.OK );
+            var trainingCategoryAttributeValueDataPacket = attributeValueDataPackets[setNameTrainingCategory];
+            Assert.IsTrue( trainingCategoryAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
 
             //Pull the attribute value back, and check we have reasonable values.
-            var profileNameAttributeValue = profileNameAttributeValueDataPacket.AttributeValue;
+            var profileNameAttributeValue = trainingCategoryAttributeValueDataPacket.AttributeValue;
 
-            Assert.AreEqual( "SH2", (string) profileNameAttributeValue.GetFieldValue( "Rifle Type and Category" ) );
-        }
+            Assert.AreEqual( "SH1", (string) profileNameAttributeValue.GetFieldValue( "Rifle Type and Category" ) );
+		}
 
-        /// <summary>
-        /// Tests the retreival of multiple attributes
-        /// </summary>
-            [TestMethod]
-        public async Task GetAttributeValue_MultipleValue() {
+		/// <summary>
+		/// Tests the retreival of a single Attribute Value who's visibility is PRIVATE.
+		/// The read response should come back with a NOT FOUND, with no data avaliable.
+		/// </summary>
+		[TestMethod]
+		public async Task GetAttributeValue_PRIVATE_Visibility() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev7Credentials.Username,
-                Constants.TestDev7Credentials.Password );
-            await userAuthentication.InitializeAsync();
+			//We're first going to make an authenticated call to set the values we expect to later read.
+			var userAuthentication = new UserAuthentication(
+				Constants.TestDev7Credentials.Username,
+				Constants.TestDev7Credentials.Password );
+			await userAuthentication.InitializeAsync();
 
-            var setNameProfileName = "v1.0:orion:Profile Name";
-            var setNameDOB = "v1.0:orion:Date of Birth";
-            var setNameEmail = "v2.0:orion:Email Address";
+			var setNameTrainingCategory = "v1.0:orion:Air Pistol Training Category";
+			List<string> myAttributes = new List<string>()
+			{
+			   setNameTrainingCategory
+			};
 
-            List<SetName> myAttributes = new List<SetName>()
-            {
-               SetName.Parse( setNameProfileName ),
-               SetName.Parse( setNameDOB ),
-               SetName.Parse( setNameEmail )
-            };
+			var trainingCategoryAttrValueToSet = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( SetName.Parse( setNameTrainingCategory ) );
+			trainingCategoryAttrValueToSet.SetFieldValue( "Pistol Type and Category", "SH1" );
 
-            //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
-            var request = new GetAttributeValueAuthenticatedRequest( userAuthentication ) { 
-                AttributeNames = myAttributes,
-                ReturnDefaultValues = true
-            };
+			var trainingCategoryDataPacketToSet = new AttributeValueDataPacketAPIResponse {
+				AttributeDef = setNameTrainingCategory,
+				AttributeValue = trainingCategoryAttrValueToSet,
+				Visibility = VisibilityOption.PRIVATE
+			};
 
-            var taskResponse = client.GetAttributeValueAuthenticatedAsync( request );
-            var response = taskResponse.Result;
-            //This is the overall status code for the call
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+			var setSocialMediaRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication ) {
+				AttributeValuesToUpdate = new List<AttributeValueDataPacket> { trainingCategoryDataPacketToSet }
+			};
 
-            //The returned data should have three AttriuteValueDataPacket
-            var attributeValueDataPackets = response.AttributeValues;
-            Assert.IsTrue( attributeValueDataPackets.Count == 3 );
-            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameProfileName ) );
-            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameDOB ) );
-            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameEmail ) );
+			await client.SetAttributeValueAuthenticatedAsync( setSocialMediaRequest );
 
-            //Retreive the three data packet and check that the status code is success.
-            var profileNameAttributeValueDataPacket = attributeValueDataPackets[setNameProfileName];
-            Assert.IsTrue( profileNameAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
+			//Now the test is to read the value using the PUBLIC api call
+			var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
+			var response = taskResponse.Result;
+			//The overall status code for the call should be .OK (only the status code for reading the specific attribure value is .NotFound)
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
 
-            var dobAttributeValueDataPacket = attributeValueDataPackets[setNameDOB];
-            Assert.IsTrue( dobAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
+			//The returned data should have one AttriuteValueDataPacket if the Profile Name set name.
+			var attributeValueDataPackets = response.AttributeValues;
+			Assert.IsTrue( attributeValueDataPackets.Count == 1 );
+			Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameTrainingCategory ) );
 
-            var emailAttributeValueDataPacket = attributeValueDataPackets[setNameEmail];
-            Assert.IsTrue( emailAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
-        }
+			//Retreive the data packet and check that the status code is success.
+			var trainingCategoryAttributeValueDataPacket = attributeValueDataPackets[setNameTrainingCategory];
+			Assert.IsTrue( trainingCategoryAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.NotFound );
 
-        /// <summary>
-        /// The purpose of this test is largely to check in the async call to fetch definitions
-        /// is working, especially if the definition is already in cache and a IO bound API call
-        /// is not needed.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task GetAttributeValue_MultipleValueRepeated() {
+			//Because it is not found, the .AttributeValue should also be NULL
+			Assert.IsNull( trainingCategoryAttributeValueDataPacket.AttributeValue ); 
+		}
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
-
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev7Credentials.Username,
-                Constants.TestDev7Credentials.Password );
-            await userAuthentication.InitializeAsync();
-
-            var setNameProfileName = "v1.0:orion:Profile Name";
-            var setNameDOB = "v1.0:orion:Date of Birth";
-            var setNameEmail = "v2.0:orion:Email Address";
-            var setNamePhone = "v2.0:orion:Phone Number";
-
-            List<SetName> myAttributes = new List<SetName>()
-            {
-               SetName.Parse( setNamePhone ),
-               SetName.Parse( setNameProfileName ),
-               SetName.Parse( setNameDOB ),
-               SetName.Parse( setNameEmail )
-            };
-
-            //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
-            var request = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
-                AttributeNames = myAttributes,
-                ReturnDefaultValues = true
-            };
-
-            var response1 = await client.GetAttributeValueAuthenticatedAsync( request );
-
-            var profile1 = response1.AttributeValues[setNameProfileName].AttributeValue;
-            var dob1 = response1.AttributeValues[setNameDOB].AttributeValue;
-            var email1 = response1.AttributeValues[setNameEmail].AttributeValue;
-            var phone1 = response1.AttributeValues[setNamePhone].AttributeValue;
-
-            Assert.IsNotNull( profile1 );
-            Assert.IsNotNull( dob1 );
-            Assert.IsNotNull( email1 );
-            Assert.IsNotNull( phone1 );
-
-            var response2 = await client.GetAttributeValueAuthenticatedAsync( request );
-
-            var profile2 = response2.AttributeValues[setNameProfileName].AttributeValue;
-            var dob2 = response2.AttributeValues[setNameDOB].AttributeValue;
-            var email2 = response2.AttributeValues[setNameEmail].AttributeValue;
-            var phone2 = response2.AttributeValues[setNamePhone].AttributeValue;
-
-            Assert.IsNotNull( profile2 );
-            Assert.IsNotNull( dob2 );
-            Assert.IsNotNull( email2 );
-            Assert.IsNotNull( phone2 );
-        }
-
-        [TestMethod]
+		[TestMethod]
         public async Task GetAttributeValue_DoesNotExist() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
-
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev7Credentials.Username,
-                Constants.TestDev7Credentials.Password );
-            await userAuthentication.InitializeAsync();
 
             var setNameNotARealAttribute = "v1.0:orion:Not a Real Attribute";
             List<string> myAttributes = new List<string>()
             {
                setNameNotARealAttribute
             };
-            var taskResponse = client.GetAttributeValueAuthenticatedAsync( myAttributes, userAuthentication );
+            var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
             var response = taskResponse.Result;
             //The overall status code for the call should be a 200 (OK).
             Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
@@ -192,19 +155,68 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Retreive the data packet and check that the status code is not found.
             var notARealAttributeValueDataPacket = attributeValueDataPackets[setNameNotARealAttribute];
             Assert.IsTrue( notARealAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.NotFound );
-        }
+		}
 
-        [TestMethod]
-        public async Task AttributeValueAppellationTest() {
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
-            var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
-            var rifleType = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+        /// <summary>
+        /// Tests if publicly reading a Attribute Value with multiple values gets returned and interpreted properly.
+        /// </summary>
+        /// <returns></returns>
+		[TestMethod]
+		public async Task GetAttributeValue_MultipleValueAttributeValue() {
 
-            rifleType.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
-            Assert.AreEqual( "Sporter", rifleType.AttributeValueAppellation );
+			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
+			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
-            rifleType.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
-            Assert.AreEqual( "Precision", rifleType.AttributeValueAppellation );
-        }
+            //We're first going to make an authenticated call to set the values we expect to later read.
+            var userAuthentication = new UserAuthentication(
+				Constants.TestDev7Credentials.Username,
+				Constants.TestDev7Credentials.Password );
+			await userAuthentication.InitializeAsync();
+
+			var setNameSocialMedia = "v1.0:orion:Social Media Accounts";
+			List<string> myAttributes = new List<string>()
+			{
+			   setNameSocialMedia
+			};
+
+            var socialMediaAttrValueToSet = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( SetName.Parse( setNameSocialMedia ) );
+            socialMediaAttrValueToSet.SetFieldValue( "ProfileName", "myFacebookAccount", "FACEBOOK" );
+			socialMediaAttrValueToSet.SetFieldValue( "ProfileName", "myInstagramAccount", "INSTAGRAM" );
+
+			var socialMediaDataPacketToSet = new AttributeValueDataPacketAPIResponse {
+                AttributeDef = setNameSocialMedia,
+                AttributeValue = socialMediaAttrValueToSet,
+                Visibility = VisibilityOption.PUBLIC
+            };
+
+            var setSocialMediaRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication ) {
+                AttributeValuesToUpdate = new List<AttributeValueDataPacket> { socialMediaDataPacketToSet }
+            };
+
+            await client.SetAttributeValueAuthenticatedAsync( setSocialMediaRequest );
+
+
+            //Now read the attribute value we just set, using the public API
+			var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
+			var response = taskResponse.Result;
+
+			//The overall status code for the call should be a 200 (OK).
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+
+			//The returned data should have one AttriuteValueDataPacket.
+			var attributeValueDataPackets = response.AttributeValues;
+			Assert.IsTrue( attributeValueDataPackets.Count == 1 );
+			Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameSocialMedia ) );
+
+			//Retreive the data packet and check that the status code is not found.
+			var socialMediaAttributeValueDataPacket = attributeValueDataPackets[setNameSocialMedia];
+			Assert.IsTrue( socialMediaAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
+
+            var facebook = socialMediaAttributeValueDataPacket.AttributeValue.GetFieldValue( "ProfileName", "FACEBOOK" );
+            var instagram = socialMediaAttributeValueDataPacket.AttributeValue.GetFieldValue( "ProfileName", "INSTAGRAM" );
+
+            Assert.AreEqual( "myFacebookAccount", facebook );
+            Assert.AreEqual( "myInstagramAccount", instagram );
+		}
     }
 }
