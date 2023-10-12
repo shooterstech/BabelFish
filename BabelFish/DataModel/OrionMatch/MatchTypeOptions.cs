@@ -23,6 +23,8 @@ Regional Match
 Regional Championship
 National Match
 National Championship
+
+League is another potential (not currently included) MatchTypeOption. But because a League is a group of matches, and not a description of a single match, choosing not to include it.
         */
         /// <summary>
         /// Unknown

@@ -24,12 +24,13 @@ namespace Scopos.BabelFish.APIClients {
 			IgnoreLocalCache = false;
 		}
 
-        /// <summary>
-        /// Get Match Detail API
-        /// </summary>
-        /// <param name="requestParameters">GetMatchRequest object</param>
-        /// <returns>Match Object</returns>
-        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( GetMatchPublicRequest requestParameters ) {
+		#region Public Match API Calls
+		/// <summary>
+		/// Get Match Detail API
+		/// </summary>
+		/// <param name="requestParameters">GetMatchRequest object</param>
+		/// <returns>Match Object</returns>
+		public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( GetMatchPublicRequest requestParameters ) {
 
             GetMatchPublicResponse response = new GetMatchPublicResponse( requestParameters );
 
@@ -42,9 +43,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Get Match Detail API
         /// </summary>
         /// <param name="matchid"></param>
-        /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( string matchid, bool withAuthentication = false ) {
+        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( string matchid ) {
             var request = new GetMatchPublicRequest( matchid );
 
             return await GetMatchDetailPublicAsync( request ).ConfigureAwait( false );
@@ -186,5 +186,34 @@ namespace Scopos.BabelFish.APIClients {
             return await GetMatchParticipantListPublicAsync( request ).ConfigureAwait( false );
         }
 
-    }
+		#endregion
+
+		#region League API CAlls
+		/// <summary>
+		/// Get League Detail API
+		/// </summary>
+		/// <param name="requestParameters">GetMatchRequest object</param>
+		/// <returns>Match Object</returns>
+		public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( GetLeaguePublicRequest requestParameters ) {
+
+			GetLeaguePublicResponse response = new GetLeaguePublicResponse( requestParameters );
+
+			await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+			return response;
+		}
+
+		/// <summary>
+		/// Get League Detail API
+		/// </summary>
+		/// <param name="matchid"></param>
+		/// <returns>Match Object</returns>
+		public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( string matchid ) {
+			var request = new GetLeaguePublicRequest( matchid );
+
+			return await GetLeagueDetailPublicAsync( request ).ConfigureAwait( false );
+		}
+		#endregion
+
+	}
 }
