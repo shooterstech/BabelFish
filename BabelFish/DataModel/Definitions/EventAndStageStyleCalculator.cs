@@ -60,8 +60,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             // actually searching the Mappings to find a definition.
             foreach (EventAndStageStyleMappingObj mapping in _mappings) {
-                // if attributeValue and TargetCollection both match, then we are in the right spot.
-                if (mapping.AttributeValueAppellation.Contains( attributeValueAppellation ) && mapping.TargetCollectionName.Contains( targetCollectionName )) {
+				// if attributeValue and TargetCollection both match, then we are in the right spot.
+				// if .AttributeValueAppellation is empty or .TargetCollectionName is empty then that serves as a wild card that matches everything
+				if ((mapping.AttributeValueAppellation.Contains( attributeValueAppellation ) || mapping.AttributeValueAppellation.Count == 0)
+                    && (mapping.TargetCollectionName.Contains( targetCollectionName ) || mapping.TargetCollectionName.Count == 0)) {
 
                     //should only happen if the DefaultDef was not given. this is the general "DefaultEventStyleDef" in mapping files under a specific target and attrib
                     eventStyleMappingToReturn = mapping.DefaultEventStyleDef;
@@ -106,10 +108,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             // actually searching the Mappings to find a definition.
             foreach (EventAndStageStyleMappingObj mapping in _mappings) {
-                // if attributeValue and TargetCollection both match, then we are in the right spot.
-                if (mapping.AttributeValueAppellation.Contains( attributeValueAppellation ) && mapping.TargetCollectionName.Contains( targetCollectionName )) {
+				// if attributeValue and TargetCollection both match, then we are in the right spot.
+                // if .AttributeValueAppellation is empty or .TargetCollectionName is empty then that serves as a wild card that matches everything
+				if ((mapping.AttributeValueAppellation.Contains( attributeValueAppellation ) || mapping.AttributeValueAppellation.Count == 0)
+					&& (mapping.TargetCollectionName.Contains( targetCollectionName ) || mapping.TargetCollectionName.Count == 0)) {
 
-                    stageStyleMappingToReturn = mapping.DefaultStageStyleDef;
+					stageStyleMappingToReturn = mapping.DefaultStageStyleDef;
                     foreach (StageStyleSelection stageSMapping in mapping.StageStyleMappings) {
                         if (stageSMapping.StageAppellation == stageStyleMapping.StageAppellation) {
                             // if stage appellation matches, set definition to that. this is most specific
