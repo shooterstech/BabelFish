@@ -98,7 +98,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int Limit { get; set; } = 50;
 
-        public override string ToString() {
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        public string Creator { get; set; }
+
+		public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "ResultList for " );
             foo.Append( ResultName );

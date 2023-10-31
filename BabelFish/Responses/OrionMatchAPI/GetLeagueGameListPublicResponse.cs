@@ -8,23 +8,23 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetLeagueGamesPublicResponse : Response<LeagueGameSearchWrapper>, ITokenResponse<GetLeagueGamesPublicRequest> {
+    public class GetLeagueGameListPublicResponse : Response<LeagueGameListWrapper>, ITokenResponse<GetLeagueGameListPublicRequest> {
 
-        public GetLeagueGamesPublicResponse( GetLeagueGamesPublicRequest request ) : base() {
+        public GetLeagueGameListPublicResponse( GetLeagueGameListPublicRequest request ) : base() {
             this.Request = request;
         }
 
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        public LeagueGameSearch LeagueGames
+        public LeagueGameList LeagueGames
         {
             get { return Value.LeagueGames; }
         }
 
         /// <inheritdoc/>
-        public GetLeagueGamesPublicRequest GetNextRequest() {
-            var nextRequest = (GetLeagueGamesPublicRequest)Request.Copy();
+        public GetLeagueGameListPublicRequest GetNextRequest() {
+            var nextRequest = (GetLeagueGameListPublicRequest)Request.Copy();
             nextRequest.Token = Value.LeagueGames.NextToken;
             return nextRequest;
 		}

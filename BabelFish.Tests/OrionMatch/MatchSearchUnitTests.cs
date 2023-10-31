@@ -68,8 +68,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( latitude, matchSearchList.Latitude );
             Assert.AreEqual(longitude, matchSearchList.Longitude );
             Assert.AreEqual( limit, matchSearchList.Limit );
-            Assert.AreEqual( startDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ), matchSearchList.StartDate );
-            Assert.AreEqual( endDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ), matchSearchList.EndDate );
+            Assert.AreEqual( startDate, matchSearchList.StartDate );
+            Assert.AreEqual( endDate, matchSearchList.EndDate );
             Assert.IsTrue( matchSearchList.ShootingStyles.Contains( shootingStyle ) );
 
             foreach( var matchSearchAbbr in matchSearchList.Items ) {

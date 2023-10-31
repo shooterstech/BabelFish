@@ -31,6 +31,13 @@ namespace  Scopos.BabelFish.DataModel.Clubs {
         /// <inheritdoc />
         public int Limit { get; set; } = 50;
 
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
+
         public override string ToString() {
             return $"ClubList with {Items.Count} items";
         }

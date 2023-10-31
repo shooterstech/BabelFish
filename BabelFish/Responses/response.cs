@@ -120,7 +120,7 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = Body.ToObject<T>();
+            Value = Body.ToObject<T>( APIClients.APIClient.DeSerializer );
         }
     }
 }

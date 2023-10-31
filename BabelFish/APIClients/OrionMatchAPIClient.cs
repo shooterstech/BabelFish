@@ -216,9 +216,9 @@ namespace Scopos.BabelFish.APIClients {
 		/// Get League Games API
 		/// </summary>
 		/// <param name="requestParameters">GetMatchRequest object</param>
-		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( GetLeagueGamesPublicRequest requestParameters ) {
+		public async Task<GetLeagueGameListPublicResponse> GetLeagueGamesPublicAsync( GetLeagueGameListPublicRequest requestParameters ) {
 
-			GetLeagueGamesPublicResponse response = new GetLeagueGamesPublicResponse( requestParameters );
+			GetLeagueGameListPublicResponse response = new GetLeagueGameListPublicResponse( requestParameters );
 
 			await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
 
@@ -229,8 +229,8 @@ namespace Scopos.BabelFish.APIClients {
 		/// Get League Games API
 		/// </summary>
 		/// <param name="leagueId"></param>
-		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( string leagueId ) {
-			var request = new GetLeagueGamesPublicRequest( leagueId );
+		public async Task<GetLeagueGameListPublicResponse> GetLeagueGamesPublicAsync( string leagueId ) {
+			var request = new GetLeagueGameListPublicRequest( leagueId );
 
 			return await GetLeagueGamesPublicAsync( request ).ConfigureAwait( false );
 		}

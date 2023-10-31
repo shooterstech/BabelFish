@@ -76,6 +76,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int Limit { get; set; } = 50;
 
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
+
         public override string ToString() {
             return $"MatchParticipantList with {Items.Count} items";
         }

@@ -24,7 +24,12 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         public const string X_API_KEY_NAME = "x-api-key";
 
-        private JsonSerializer serializer = new JsonSerializer();
+        /// <summary>
+        /// Standard json serializer settings intended for use while deserializing json to object model.
+        /// Will ignore any json values that are null, and instead use the default value of the property.
+        /// </summary>
+        public static JsonSerializer DeSerializer = new JsonSerializer(  ) { NullValueHandling = NullValueHandling.Ignore };
+
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public HttpClient httpClient = new HttpClient();
 
@@ -140,7 +145,7 @@ namespace Scopos.BabelFish.APIClients {
 
                         //TODO: Do something with invalid data format from Forbidden....
                         if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
-                            response.MessageResponse = apiReturnJson.ToObject<MessageResponse>();
+                            response.MessageResponse = apiReturnJson.ToObject<MessageResponse>( DeSerializer );
 
                         if (responseMessage.IsSuccessStatusCode)
                             response.Body = apiReturnJson;

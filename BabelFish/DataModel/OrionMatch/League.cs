@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
@@ -82,6 +82,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public string SeasonName { get; set; }
 
+        public LeagueSeasonType SeasonType { get; set; }
+
         public string MatchType { get { return "League"; } }
 
 		/// <summary>
@@ -89,49 +91,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public Contact LeagueAdministrator { get; set; } = new Contact();
 
-		/// <summary>
-		/// Start Date of the Match. Formatted as YYYY-MM-dd
-		/// </summary>
-		[JsonProperty( Order = 10 )]
-        public string StartDate { get; set; } = string.Empty;
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime StartDate { get; set; }
 
-        /// <summary>
-        /// Returns the value of .StartDate property as a DateTime object. If .StartDate can not
-        /// be parsed returns .Today as the value.
-        /// </summary>
-        /// <returns></returns>
-        public DateTime GetStartDate() {
-            try {
-                return DateTime.ParseExact( StartDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-            } catch (Exception ex) {
-                logger.Error( ex, $"Unable to parse StartDate with value '{StartDate}' as a DateTime from League ID {LeagueID}." );
-                return DateTime.Today;
-            }
-        }
-
-        /// <summary>
-        /// End Date of the Match. Formatted as YYYY-MM-dd
-        /// </summary>
-        [JsonProperty( Order = 13 )]
-        public string EndDate { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Returns the value of .StartDate property as a DateTime object. If .StartDate can not
-        /// be parsed returns .Today as the value.
-        /// </summary>
-        /// <returns></returns>
-        public DateTime GetEndDate() {
-            try {
-                return DateTime.ParseExact( EndDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-            } catch (Exception ex) {
-                logger.Error( ex, $"Unable to parse EndDate with value '{EndDate}' as a DateTime from League ID {LeagueID}." );
-                return DateTime.Today;
-            }
-        }
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime EndDate { get; set; }
 
         public LeagueConfiguration Configuration { get; set; }
 
-        public string Boilerplate { get; set; } = string.Empty;
+		/// <summary>
+		/// String holding the software (Orion Scoring System) and Version number of the software.
+		/// </summary>
+		public string Creator { get; set; }
+
+		public string Boilerplate { get; set; } = string.Empty;
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

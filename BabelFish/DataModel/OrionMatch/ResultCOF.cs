@@ -171,23 +171,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         [JsonProperty(Order = 61)]
         public List<Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicShow> PostDisplay { get; set; }
 
-        /// <summary>
-        /// GUID returned from API
-        /// EKA: This field is used for storage in Dynamo only. 
-        /// </summary>
-        //public string RESULTCOF_ResultCOFID { get; set; } = string.Empty;
+		/// <summary>
+		/// String holding the software (Orion Scoring System) and Version number of the software.
+		/// </summary>
+		public string Creator { get; set; }
 
-        /// <summary>
-        /// EKA: This field is used for storage in Dynamo only. 
-        /// </summary>
-        //public string UniqueID { get; set; } = string.Empty;
+		/// <summary>
+		/// GUID returned from API
+		/// EKA: This field is used for storage in Dynamo only. 
+		/// </summary>
+		//public string RESULTCOF_ResultCOFID { get; set; } = string.Empty;
 
-        /// <summary>
-        /// EKA: This field is used for storage in Dynamo only. 
-        /// </summary>
-        //public string CheckSum { get; set; } = string.Empty;
+		/// <summary>
+		/// EKA: This field is used for storage in Dynamo only. 
+		/// </summary>
+		//public string UniqueID { get; set; } = string.Empty;
 
-        public override string ToString()
+		/// <summary>
+		/// EKA: This field is used for storage in Dynamo only. 
+		/// </summary>
+		//public string CheckSum { get; set; } = string.Empty;
+
+		public override string ToString()
         {
             StringBuilder foo = new StringBuilder();
             foo.Append("ResultCOF for ");

@@ -8,34 +8,98 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    
+
+    /// <summary>
+    /// Specifies the type of season the league is. Preseason, regular season, or postseason
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum LeagueSeasonType {
+
+        /// <summary>
+        /// Preseason league
+        /// </summary>
+        [Description( "Preseason" )]
+        [EnumMember( Value = "Preseason" )]
+        PRESEASON,
+
+        /// <summary>
+        /// Regular season league
+        /// </summary>
+        [Description( "Regular" )]
+        [EnumMember( Value = "Regular" )]
+        REGULAR,
+
+        /// <summary>
+        /// Postseason League
+        /// </summary>
+        [Description( "Postseason" )]
+        [EnumMember( Value = "Postseason" )]
+        POSTSEASTON
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum LeagueVirtualType {
+
+        /// <summary>
+        /// This is a bye week game for the home team. 
+        /// </summary>
+        [Description( "Bye Week" )]
+        [EnumMember( Value = "Bye Week" )]
+        BYE_WEEK,
+
+        /// <summary>
+        /// Both the home team and away team are competing from their home ranges.
+        /// </summary>
+        [Description( "Virtual" )]
+        [EnumMember( Value = "Virtual" )]
+        VIRTUAL,
+
+        /// <summary>
+        /// The game is cancelled.
+        /// </summary>
+        [Description( "Cancelled" )]
+        [EnumMember( Value = "Cancelled" )]
+        CANCELLED,
+
+        /// <summary>
+        /// This is a forced bye week game for the home team. 
+        /// </summary>
+        [Description( "Forced Bye Week" )]
+        [EnumMember( Value = "Forced Bye Week" )]
+        FORCED_BYE_WEEK,
+
+        /// <summary>
+        /// The game is scheduled, but not yet released to the teams for competition.
+        /// </summary>
+        [Description( "Not Set" )]
+        [EnumMember( Value = "Not Set" )]
+        NOT_SET,
+
+        /// <summary>
+        /// The game is will competed at the home team's range.
+        /// </summary>
+        [Description( "Local" )]
+        [EnumMember( Value = "Local" )]
+        LOCAL
+    }
+
+
     [JsonConverter( typeof( StringEnumConverter ) )]
 	[Serializable]
 	public enum MatchTypeOptions {
-        /*
-         * Training
-Practice Match
-Postal Match
-Local Match
-League Game
-Virtual Match
-Regional Match
-Regional Championship
-National Match
-National Championship
-
-League is another potential (not currently included) MatchTypeOption. But because a League is a group of matches, and not a description of a single match, choosing not to include it.
-        */
         /// <summary>
         /// Unknown
         /// </summary>
         [Description( "" )][EnumMember( Value = "" )] UNKNOWN,
         /// <summary>
-        /// Training
+        /// Training (this value is usually set by Orion)
         /// </summary>
         [Description( "Training" )] [EnumMember( Value = "Training" )] TRAINING,
         /// <summary>
-        /// Practice
+        /// Practice (this value is usually set by Athena)
         /// </summary>
         [Description( "Practice" )][EnumMember( Value = "Practice" )] PRACTICE,
         /// <summary>

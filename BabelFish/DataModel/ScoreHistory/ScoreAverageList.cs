@@ -20,6 +20,13 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// <inheritdoc />
         public int Limit { get; set; } = 50;
 
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
+
         public override string ToString() {
             return $"ScoreAverage with {Items.Count} items";
         }

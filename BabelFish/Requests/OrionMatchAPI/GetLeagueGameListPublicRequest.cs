@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
-    public class GetLeagueGamesPublicRequest : Request, ITokenRequest {
+    public class GetLeagueGameListPublicRequest : Request, ITokenRequest {
 
-        public GetLeagueGamesPublicRequest( string leagueId = "" ) : base( "GetLeagueGames" ) {
+        public GetLeagueGameListPublicRequest( string leagueId ) : base( "GetLeagueGameList" ) {
+			if (string.IsNullOrEmpty( leagueId ) ) {
+				throw new ArgumentNullException( "Parameter leagueId may not be null or an empty string." );
+			}
+
 			LeagueId = leagueId;
         }
 
-        public string LeagueId { get; set; } = string.Empty;
+        public string LeagueId { get; private set; } = string.Empty;
 
 
 		/// <inheritdoc />
@@ -151,5 +155,26 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 		/// false, then the default set of GamesNotSet, VirtualLeagueGames, and LocalLeagueGames will be returned.
 		/// </summary>
 		public bool CancelledGames { get; set; } = false;
-	}
+
+		/// <inheritdoc />
+        public override Request Copy() {
+            var newRequest = new GetLeagueGameListPublicRequest( LeagueId );
+            newRequest.Token = this.Token;
+            newRequest.Limit = this.Limit;
+			newRequest.StartDate = this.StartDate;
+			newRequest.EndDate = this.EndDate;
+
+			newRequest.Division = this.Division;
+			newRequest.Conference = this.Conference;
+			newRequest.TeamId = this.TeamId;
+			newRequest.GamesNotSet = this.GamesNotSet;
+			newRequest.VirtualLeagueGames = this.VirtualLeagueGames;
+			newRequest.LocalLeagueGames = this.LocalLeagueGames;
+			newRequest.ByeWeeks = this.ByeWeeks;
+			newRequest.ForcedByeWeeks = this.ForcedByeWeeks;
+			newRequest.CancelledGames = this.CancelledGames;
+
+            return newRequest;
+        }
+    }
 }
