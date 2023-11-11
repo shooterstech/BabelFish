@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient {
@@ -22,12 +25,62 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="apiKey"></param>
         public DefinitionAPIClient( string apiKey ) : base( apiKey ) {
-            IgnoreLocalCache = false;
+            IgnoreInMemoryCache = false;
+            IgnoreFileSystemCache = false;
         }
 
         public DefinitionAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
-			IgnoreLocalCache = false;
-		}
+			IgnoreInMemoryCache = false;
+            IgnoreFileSystemCache = false;
+        }
+
+        protected override async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request )  {
+
+            if (!(request is GetDefinitionPublicRequest)) {
+                throw new ArgumentException( "The parameter reqeust, must be of type GetDefinitionPublicRequest." );
+            }
+
+            //Make sure the user wants us to use the file system cache
+            if (IgnoreInMemoryCache || request.IgnoreFileSystemCache)
+                return new Tuple<bool, ResponseIntermediateObject?>(false, null);
+
+            var definitionRequest = (GetDefinitionPublicRequest)request;
+            try {
+                if (LocalStoreDirectory != null && LocalStoreDirectory.Exists) {
+
+                    string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
+                    string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType}\\{definitionFileName}";
+
+                    FileInfo fileInfo = new FileInfo( filename );
+                    if (fileInfo.Exists) {
+
+                        using (StreamReader sr = File.OpenText( filename ))
+                        using (JsonTextReader reader = new JsonTextReader( sr )) {
+                            var jsonFromFile = await JObject.ReadFromAsync( reader );
+
+                            var response = new ResponseIntermediateObject();
+                            response.MessageResponse = new MessageResponse();
+                            response.Body = new JObject();
+                            response.Body[definitionRequest.SetName.ToString()] = jsonFromFile;
+
+                            return new Tuple<bool, ResponseIntermediateObject?>( true, response );
+                        }
+                    } else {
+                        logger.Warn( $"Can't read definition '{filename}' because the file does  not exist." );
+                        return new Tuple<bool, ResponseIntermediateObject?>( false, null ); 
+                    }
+
+                } else {
+                    logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory has not been set or it doesn't exist." );
+                    return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+                }
+            } catch (Exception ex ) {
+                logger.Error( ex, $"Something unexpected happen while reading the definitions for '{definitionRequest.SetName}'." );
+            }
+
+            return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+        }
+
 
         public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
 

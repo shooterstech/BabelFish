@@ -90,7 +90,9 @@ namespace Scopos.BabelFish.Requests {
 		/// The default value is false, meaning to use the local cache (if avaliable and permitted by the Rest API client).
 		/// The option to ignore local cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
 		/// </summary>
-		public bool IgnoreLocalCache { get; set; } = false;
+		public bool IgnoreInMemoryCache { get; set; } = false;
+
+        public bool IgnoreFileSystemCache { get; set; } = false;
 
 		/// <summary>
 		/// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.

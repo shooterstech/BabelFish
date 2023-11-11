@@ -12,7 +12,7 @@ using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public abstract class Definition : BaseClass {
+    public abstract class Definition : BaseClass, IReconfigurableRulebookObject {
 
         [NonSerialized]
         public List<string> errorList = new List<string>();
@@ -98,9 +98,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue("2020-03-31")]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonProperty(Order = 11)]
+        [JsonProperty(Order = 101)]
         [DefaultValue(false)]
         public bool Discontinued { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
 
         /// <summary>
         /// Returns a SetName object based on the Definitions Version and HierrchcialName

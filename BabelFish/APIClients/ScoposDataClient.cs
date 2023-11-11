@@ -9,9 +9,20 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public ScoposDataClient( string apiKey ) : base( apiKey ) { }
+        public ScoposDataClient( string apiKey ) : base( apiKey ) {
 
-        public ScoposDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
+            //ScoposDataClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
+        public ScoposDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+
+            //ScoposDataClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
 
         /// <summary>
         /// GetVersion API for multiple services

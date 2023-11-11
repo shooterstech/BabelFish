@@ -19,9 +19,20 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey"></param>
-        public AthenaLoginAPIClient( string xapikey) : base(xapikey) { }
+        public AthenaLoginAPIClient( string xapikey) : base(xapikey) {
 
-        public AthenaLoginAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
+            //AthenaLoginAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
+        public AthenaLoginAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+
+            //AthenaLoginAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
 
         public async Task<AthenaEmployLoginCodeAuthenticatedResponse> AthenaEmployLoginCodeAuthenticatedAsync( AthenaEmployLoginCodeAuthenticatedRequest request ) {
 

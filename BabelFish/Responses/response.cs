@@ -71,10 +71,14 @@ namespace Scopos.BabelFish.Responses
 		}
 
         /// <summary>
-        /// If true, indicates this response was from cache, and not from an API call.
+        /// If true, indicates this response was from in memory cache, and not from an API call.
         /// </summary>
-        public bool CachedResponse { get; protected internal set; } = false;
+        public bool InMemoryCachedResponse { get; protected internal set; } = false;
 
+        /// <summary>
+        /// If true, indicates this response was from file system local storage, and not from an API call.
+        /// </summary>
+        public bool FileSystemCachedResponse { get; protected internal set; } = false;
 
 		/// <summary>
 		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.

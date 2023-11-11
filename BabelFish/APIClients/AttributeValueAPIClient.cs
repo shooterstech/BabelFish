@@ -11,9 +11,19 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public AttributeValueAPIClient( string xapikey ) : base( xapikey ) { }
+        public AttributeValueAPIClient( string xapikey ) : base( xapikey ) {
 
-        public AttributeValueAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
+            //AttributeValueAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
+        public AttributeValueAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+
+            //AttributeValueAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
 
         /// <summary>
         /// Get Attribute Value API

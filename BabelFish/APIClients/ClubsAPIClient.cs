@@ -20,9 +20,19 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey"></param>
-        public ClubsAPIClient( string xapikey) : base(xapikey) { }
+        public ClubsAPIClient( string xapikey) : base(xapikey) {
 
-        public ClubsAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
+            //ClubsAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
+        public ClubsAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+
+            //ClubsAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
 
         /// <summary>
         /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.

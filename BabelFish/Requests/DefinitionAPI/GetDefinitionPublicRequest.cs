@@ -16,6 +16,7 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
 
             SetName = setName;
             DefinitionType = definitionType;
+            IgnoreFileSystemCache = false;
         }
 
         public GetDefinitionPublicRequest( SetName setName, DefinitionType definitionType, UserAuthentication credentials ) : base( "GetDefinition", credentials ) {
@@ -24,6 +25,7 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
 
             SetName = setName;
             DefinitionType = definitionType;
+            IgnoreFileSystemCache = false;
         }
 
         public SetName? SetName { get; set; } = null;

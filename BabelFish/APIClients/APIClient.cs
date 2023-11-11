@@ -49,9 +49,6 @@ namespace Scopos.BabelFish.APIClients {
 
         #region properties
 
-        [Obsolete( "What is this used for?" )]
-        private DateTime? ContinuationToken = null;
-
         /// <summary>
         /// Users x-api-key for valid AWS access
         /// </summary>
@@ -66,25 +63,42 @@ namespace Scopos.BabelFish.APIClients {
 
         #region Methods
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass {
-			// Get Uri for call
-			string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
+            // Get Uri for call
+            string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
-			DateTime startTime = DateTime.Now;
+            DateTime startTime = DateTime.Now;
 
-			//Check if there is a cached response we can use first. 
-			ResponseIntermediateObject cachedResponse = null;
-			if (!IgnoreLocalCache && !request.IgnoreLocalCache && request.HttpMethod == HttpMethod.Get && ResponseCache.CACHE.TryGetResponse( request, out cachedResponse )) {
+            //Check if there is a cached response we can use first. 
+            ResponseIntermediateObject cachedResponse = null;
+            if (!IgnoreInMemoryCache && !request.IgnoreInMemoryCache && request.HttpMethod == HttpMethod.Get && ResponseCache.CACHE.TryGetResponse( request, out cachedResponse )) {
 
                 response.StatusCode = HttpStatusCode.OK;
                 response.MessageResponse = cachedResponse.MessageResponse.Clone();
-                response.MessageResponse.Message.Add( "Cached Response" );
+                response.MessageResponse.Message.Add( "In memory cached response" );
                 response.Body = cachedResponse.Body;
-				response.TimeToRun = DateTime.Now - startTime;
-                response.CachedResponse = true;
+                response.TimeToRun = DateTime.Now - startTime;
+                response.InMemoryCachedResponse = true;
 
-				logger.Debug( $"Returning a cached Response for {request}." );
+                logger.Debug( $"Returning a in-memory cached Response for {request}." );
                 return;
-			}
+            }
+
+            if (!IgnoreFileSystemCache && !request.IgnoreFileSystemCache && request.HttpMethod == HttpMethod.Get) {
+
+                var fileSystemReadResponse = await TryReadFromFileSystemAsync( request ).ConfigureAwait( false );
+
+                if (fileSystemReadResponse.Item1) {
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.MessageResponse.Message.Add( "Read from file system response" );
+                    response.Body = fileSystemReadResponse.Item2.Body;
+                    response.TimeToRun = DateTime.Now - startTime;
+                    response.FileSystemCachedResponse = true;
+
+                    ResponseCache.CACHE.SaveResponse( fileSystemReadResponse.Item2 );
+                    logger.Debug( $"Returning a file system cached Response for {request}." );
+                    return;
+                }
+            }
 
 
             try {
@@ -111,14 +125,14 @@ namespace Scopos.BabelFish.APIClients {
                      * So only add .Content on non GET calls
                      * https://stackoverflow.com/questions/3981564/cannot-send-a-content-body-with-this-verb-type
                      */
-                    if (request.HttpMethod != HttpMethod.Get )
+                    if (request.HttpMethod != HttpMethod.Get)
                         requestMessage.Content = request.PostParameters;
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     logger.Info( $"Calling {request} on {uri}." );
-					
+
                     startTime = DateTime.Now;
-					if (request.RequiresCredentials) {
+                    if (request.RequiresCredentials) {
                         if (request.Credentials == null)
                             throw new AuthenticationException( $"Attempting to make an authenticated call with null credentials" );
                         //If we are making an authenticated call, use the exstention method from https://github.com/FantasticFiasco/aws-signature-version-4 to sign the request.
@@ -159,7 +173,7 @@ namespace Scopos.BabelFish.APIClients {
                     }
                 }
 
-                if (responseMessage.IsSuccessStatusCode ) {
+                if (responseMessage.IsSuccessStatusCode) {
                     //Caching is only valid for GET calls
                     if (request.HttpMethod == HttpMethod.Get) {
                         cachedResponse = new ResponseIntermediateObject() {
@@ -173,31 +187,46 @@ namespace Scopos.BabelFish.APIClients {
                         ResponseCache.CACHE.SaveResponse( cachedResponse );
                     }
                 } else {
-                    logger.Error( $"API error with: {responseMessage.ReasonPhrase}"  );
+                    logger.Error( $"API error with: {responseMessage.ReasonPhrase}" );
                 }
 
             } catch (Exception ex) {
-                
+
                 response.StatusCode = HttpStatusCode.InternalServerError;
                 response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
                 response.MessageResponse.ResponseCodes.Add( HttpStatusCode.InternalServerError.ToString() );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
             }
-		}
+        }
 
-		/// <summary>
-		/// Indicates if the local response cache should be ignored and always 
-		/// make the request to the Rest API.
-		/// The default value is true. Which means if an API Client wants to use local
-		/// cached values, it must be enabled (set to false) within the concrete API Client.
-		/// The option to ignore local cache can either be wet at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
-		/// 
-		/// To enable cache for a API call two things needs to happen. First the concrete
-		/// APIClient needs to enabled caching response by setting .IgnoreLocalCache to false.
-		/// Second, each request object must enable it by overridding GetCacheValueExpiryTime
-		/// to a value in the future.
-		/// </summary>
-		public bool IgnoreLocalCache { get; set; } = true;
+        /// <summary>
+        /// The directory that BabelFish may use to store cached responses. 
+        /// </summary>
+        public DirectoryInfo? LocalStoreDirectory { get; set; }
+
+        protected virtual async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request ) {
+
+            //Default behavior is not to try and read from the file system.
+
+            return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+        }
+
+
+        /// <summary>
+        /// Indicates if the local response cache should be ignored and always 
+        /// make the request to the Rest API.
+        /// The default value is true. Which means if an API Client wants to use local
+        /// cached values, it must be enabled (set to false) within the concrete API Client.
+        /// The option to ignore local cache can either be wet at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
+        /// 
+        /// To enable cache for a API call two things needs to happen. First the concrete
+        /// APIClient needs to enabled caching response by setting .IgnoreLocalCache to false.
+        /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
+        /// to a value in the future.
+        /// </summary>
+        public bool IgnoreInMemoryCache { get; set; } = true;
+
+        public bool IgnoreFileSystemCache { get; set; } = true;
 		#endregion Methods
 	}
 }

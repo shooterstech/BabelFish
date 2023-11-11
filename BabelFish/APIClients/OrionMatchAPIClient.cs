@@ -17,20 +17,28 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="xapikey"></param>
         public OrionMatchAPIClient( string xapikey ) : base( xapikey ) {
-			IgnoreLocalCache = false;
-		}
+			IgnoreInMemoryCache = false;
+
+            //OrionMatchAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
 
         public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
-			IgnoreLocalCache = false;
-		}
+			IgnoreInMemoryCache = false;
 
-		#region Public Match API Calls
-		/// <summary>
-		/// Get Match Detail API
-		/// </summary>
-		/// <param name="requestParameters">GetMatchRequest object</param>
-		/// <returns>Match Object</returns>
-		public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( GetMatchPublicRequest requestParameters ) {
+            //OrionMatchAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+        }
+
+        #region Public Match API Calls
+        /// <summary>
+        /// Get Match Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetMatchRequest object</param>
+        /// <returns>Match Object</returns>
+        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( GetMatchPublicRequest requestParameters ) {
 
             GetMatchPublicResponse response = new GetMatchPublicResponse( requestParameters );
 
