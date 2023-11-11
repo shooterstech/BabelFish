@@ -13,6 +13,7 @@ using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient {
@@ -34,7 +35,16 @@ namespace Scopos.BabelFish.APIClients {
             IgnoreFileSystemCache = false;
         }
 
-        protected override async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request )  {
+        /// <summary>
+        /// Attempts to read the Definition file from the local file system.
+        /// Because this method is async, and we can't have 'out' variables on async methods, this method instead returns a tuple.
+        /// .Item1 is a boolean indicating if it was successful.
+        /// .Item2 is the ResponseIntermediateObject (if successful) containing the definition file.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Parameter request must be of type GetDefinitionPublicRequest</exception>
+        protected override async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request ) {
 
             if (!(request is GetDefinitionPublicRequest)) {
                 throw new ArgumentException( "The parameter reqeust, must be of type GetDefinitionPublicRequest." );
@@ -42,14 +52,16 @@ namespace Scopos.BabelFish.APIClients {
 
             //Make sure the user wants us to use the file system cache
             if (IgnoreInMemoryCache || request.IgnoreFileSystemCache)
-                return new Tuple<bool, ResponseIntermediateObject?>(false, null);
+                return new Tuple<bool, ResponseIntermediateObject?>( false, null );
 
             var definitionRequest = (GetDefinitionPublicRequest)request;
             try {
                 if (LocalStoreDirectory != null && LocalStoreDirectory.Exists) {
 
                     string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
-                    string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType}\\{definitionFileName}";
+                    string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
+
+                    logger.Info( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
 
                     FileInfo fileInfo = new FileInfo( filename );
                     if (fileInfo.Exists) {
@@ -59,22 +71,26 @@ namespace Scopos.BabelFish.APIClients {
                             var jsonFromFile = await JObject.ReadFromAsync( reader );
 
                             var response = new ResponseIntermediateObject();
+                            response.Request = request;
                             response.MessageResponse = new MessageResponse();
+                            //Format the JObject response as if it was read from the REST API
                             response.Body = new JObject();
                             response.Body[definitionRequest.SetName.ToString()] = jsonFromFile;
+                            response.ValidUntil = DateTime.UtcNow.AddDays( 1 ); //UMMMM, what's a good value to set here?
 
                             return new Tuple<bool, ResponseIntermediateObject?>( true, response );
                         }
                     } else {
-                        logger.Warn( $"Can't read definition '{filename}' because the file does  not exist." );
-                        return new Tuple<bool, ResponseIntermediateObject?>( false, null ); 
+                        logger.Warn( $"Can't read definition '{filename}' because the file does not exist." );
                     }
 
                 } else {
-                    logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory has not been set or it doesn't exist." );
-                    return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+                    if (LocalStoreDirectory == null)
+                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory has not been set." );
+                    else
+                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory '{LocalStoreDirectory.FullName}' doesn't exist." );
                 }
-            } catch (Exception ex ) {
+            } catch (Exception ex) {
                 logger.Error( ex, $"Something unexpected happen while reading the definitions for '{definitionRequest.SetName}'." );
             }
 

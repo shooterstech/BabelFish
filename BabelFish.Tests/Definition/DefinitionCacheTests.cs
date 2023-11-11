@@ -67,6 +67,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var client = new DefinitionAPIClient( Constants.X_API_KEY );
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
+            //TODO figure out how to read the value of the definition directory from a config file.
             client.LocalStoreDirectory = new System.IO.DirectoryInfo( @"g:\My Drive\Definitions" );
             var attributeRequest = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             attributeRequest.IgnoreFileSystemCache = false;
@@ -78,6 +79,27 @@ namespace Scopos.BabelFish.Tests.Definition {
             
             //The non-cached response should tell us it was from file system
             Assert.IsTrue( attributeResult.FileSystemCachedResponse );
+            Assert.IsFalse( attributeResult.InMemoryCachedResponse );
+
+            var attribute = attributeResult.Value;
+            Assert.AreEqual( "v1.0:ntparc:Three-Position Air Rifle Type", attribute.SetName );
+            Assert.AreEqual( 1, attribute.Fields.Count );
+
+            //If we repeat the request, should pull from in-memory
+            var attributeRequest2 = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
+
+            var attributeResponse2 = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest2 );
+
+            var attributeResult2 = await client.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest2, attributeResponse2 );
+            Assert.AreEqual( HttpStatusCode.OK, attributeResult2.StatusCode, $"Expecting and OK status code, instead received {attributeResult.StatusCode}." );
+
+            //The non-cached response should tell us it was from file system
+            Assert.IsFalse( attributeResult2.FileSystemCachedResponse );
+            Assert.IsTrue( attributeResult2.InMemoryCachedResponse );
+
+            var attribute2 = attributeResult2.Value;
+            Assert.AreEqual( "v1.0:ntparc:Three-Position Air Rifle Type", attribute2.SetName );
+            Assert.AreEqual( 1, attribute2.Fields.Count );
         }
 
         [TestMethod]

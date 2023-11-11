@@ -79,10 +79,11 @@ namespace Scopos.BabelFish.APIClients {
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
 
-                logger.Debug( $"Returning a in-memory cached Response for {request}." );
+                logger.Info( $"Returning a in-memory cached Response for {request}." );
                 return;
             }
 
+            //If enabled by the concrete API Client, check if we can read the value from the local file system.
             if (!IgnoreFileSystemCache && !request.IgnoreFileSystemCache && request.HttpMethod == HttpMethod.Get) {
 
                 var fileSystemReadResponse = await TryReadFromFileSystemAsync( request ).ConfigureAwait( false );
@@ -95,7 +96,7 @@ namespace Scopos.BabelFish.APIClients {
                     response.FileSystemCachedResponse = true;
 
                     ResponseCache.CACHE.SaveResponse( fileSystemReadResponse.Item2 );
-                    logger.Debug( $"Returning a file system cached Response for {request}." );
+                    logger.Info( $"Returning a file system cached Response for {request}." );
                     return;
                 }
             }
@@ -200,7 +201,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// The directory that BabelFish may use to store cached responses. 
+        /// The directory that BabelFish may use to read and store cached responses. 
         /// </summary>
         public DirectoryInfo? LocalStoreDirectory { get; set; }
 
@@ -214,18 +215,27 @@ namespace Scopos.BabelFish.APIClients {
 
         /// <summary>
         /// Indicates if the local response cache should be ignored and always 
-        /// make the request to the Rest API.
+        /// make the request to the Local File System and then to the Rest API.
         /// The default value is true. Which means if an API Client wants to use local
         /// cached values, it must be enabled (set to false) within the concrete API Client.
-        /// The option to ignore local cache can either be wet at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
+        /// The option to ignore in memory cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
         /// 
         /// To enable cache for a API call two things needs to happen. First the concrete
-        /// APIClient needs to enabled caching response by setting .IgnoreLocalCache to false.
+        /// APIClient needs to enabled caching response by setting .IgnoreInMemoryCache to false.
         /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
         /// to a value in the future.
         /// </summary>
         public bool IgnoreInMemoryCache { get; set; } = true;
 
+        /// <summary>
+        /// Indicates if the local file system cache should be ignored and always pass through to making the
+        /// call to the Rest API.
+        /// The option to ignore file system cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
+        /// 
+        /// To enable cache for anAPI call two things must happen. First, the concrete APIClient needs
+        /// to enable file system cache by setting .IgnoreFileSystemCache to false. Second the client's
+        /// LocalStoreDirectory must be set.
+        /// </summary>
         public bool IgnoreFileSystemCache { get; set; } = true;
 		#endregion Methods
 	}
