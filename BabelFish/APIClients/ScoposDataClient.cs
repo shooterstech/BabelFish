@@ -3,7 +3,7 @@ using Scopos.BabelFish.Responses.ScoposData;
 using Scopos.BabelFish.DataModel.ScoposData;
 
 namespace Scopos.BabelFish.APIClients {
-    public class ScoposDataClient : APIClient {
+    public class ScoposDataClient : APIClient<ScoposDataClient> {
 
         /// <summary>
         /// Instantiate client

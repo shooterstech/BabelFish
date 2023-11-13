@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
@@ -124,7 +125,7 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = Body.ToObject<T>( APIClients.APIClient.DeSerializer );
+            Value = Body.ToObject<T>( DefinitionAPIClient.DeSerializer );
         }
     }
 }

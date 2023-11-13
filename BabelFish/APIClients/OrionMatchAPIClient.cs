@@ -9,7 +9,7 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
-    public class OrionMatchAPIClient : APIClient {
+    public class OrionMatchAPIClient : APIClient<OrionMatchAPIClient> {
 
         /// <summary>
         /// Default constructor.

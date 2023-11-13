@@ -36,5 +36,9 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
         public override string RelativePath {
             get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>( DefinitionType ).Value}/{SetName}"; }
         }
+
+        public override string ToString() {
+            return $"{OperationId} request for {DefinitionType.Description()} {SetName}";
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.APIClients {
     /// API Client to access information about an Orion Acct, club ownership, and club teams.
     /// An Orion Acct is the same as a Club. And a Club is the same as an Orion Acct
     /// </summary>
-    public class ClubsAPIClient : APIClient {
+    public class ClubsAPIClient : APIClient<ClubsAPIClient> {
 
         /// <summary>
         /// Instantiate client

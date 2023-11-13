@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.APIClients {
-    public class DefinitionAPIClient : APIClient {
+    public class DefinitionAPIClient : APIClient<DefinitionAPIClient> {
 
         ResponseCache definitionCacheHelper;
         private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();

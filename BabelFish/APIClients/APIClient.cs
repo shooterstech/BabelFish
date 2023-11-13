@@ -17,7 +17,10 @@ using Amazon.Runtime;
 using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.APIClients {
-    public abstract class APIClient {
+    public abstract class APIClient<T> {
+        //APIClient is being marked as a generic abstract class, so each concrete instance get's their own set of static properties and
+        //variables declared within APIClient. Specifically LocalStorageDirectory.
+        //https://stackoverflow.com/questions/3542171/c-sharp-abstract-class-static-field-inheritance
 
         /// <summary>
         /// The name (key value) to use in http requests for the x api -key
@@ -37,14 +40,14 @@ namespace Scopos.BabelFish.APIClients {
             this.XApiKey = xapikey;
             this.ApiStage = APIStage.PRODUCTION;
 
-            logger.Info( $"BablFish API instantiated for {ApiStage}." );
+            logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
 
         protected APIClient( string xapikey, APIStage apiStage ) {
             this.XApiKey = xapikey;
             this.ApiStage = apiStage;
 
-            logger.Info( $"BablFish API instantiated for {ApiStage}." );
+            logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
 
         #region properties
@@ -79,7 +82,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
 
-                logger.Info( $"Returning a in-memory cached Response for {request}." );
+                logger.Trace( $"Returning a in-memory cached Response for {request}." );
                 return;
             }
 
@@ -202,8 +205,10 @@ namespace Scopos.BabelFish.APIClients {
 
         /// <summary>
         /// The directory that BabelFish may use to read and store cached responses. 
+        /// Because APIClient is a generic class, each concret instance of APIClient get's gtheir own static
+        /// property LocalStoreDirectory. https://stackoverflow.com/questions/3542171/c-sharp-abstract-class-static-field-inheritance
         /// </summary>
-        public DirectoryInfo? LocalStoreDirectory { get; set; }
+        public static DirectoryInfo? LocalStoreDirectory { get; set; }
 
         protected virtual async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request ) {
 

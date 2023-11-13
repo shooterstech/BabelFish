@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.APIClients {
     /// <summary>
     /// API Client to access and update information about Athena EST Units.
     /// </summary>
-    public class AthenaLoginAPIClient : APIClient {
+    public class AthenaLoginAPIClient : APIClient<AthenaLoginAPIClient> {
 
         /// <summary>
         /// Instantiate client

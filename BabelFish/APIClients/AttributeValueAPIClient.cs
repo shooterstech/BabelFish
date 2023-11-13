@@ -5,7 +5,7 @@ using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
-    public class AttributeValueAPIClient : APIClient {
+    public class AttributeValueAPIClient : APIClient<AttributeValueAPIClient> {
 
         /// <summary>
         /// Instantiate client

@@ -11,7 +11,7 @@ using Scopos.BabelFish.Responses.ScoreHistoryAPI;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
-    public class ScoreHistoryAPIClient : APIClient {
+    public class ScoreHistoryAPIClient : APIClient<ScoreHistoryAPIClient> {
 
         /// <summary>
         /// Instantiate client
