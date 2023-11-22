@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -12,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// etc. 
     /// </summary>
     [Serializable]
-    public class SimpleCOF {
+    public class SimpleCOF :ITelerikBindModel {
 
         public SimpleCOF() { }
 
@@ -25,7 +26,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string CourseOfFireDef { get; set; }
 
         public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
-    }
+
+        /// <inheritdoc/>
+		public string TextField {
+            get {
+				SetName setName;
+				if (SetName.TryParse( CourseOfFireDef, out setName )) {
+					return setName.ProperName;
+				} else {
+					return "Unknown";
+				}
+			}
+        }
+
+		/// <inheritdoc/>
+		public string ValueField {
+			get {
+				SetName setName;
+				if (SetName.TryParse( CourseOfFireDef, out setName )) {
+					return setName.ToString();
+				} else {
+					return "Unknown";
+				}
+			}
+		}
+	}
 
     public class SimpleCOFComponent {
         public string StageStyle { get; set; } = string.Empty;

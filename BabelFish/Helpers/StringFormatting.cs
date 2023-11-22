@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Newtonsoft;
 using NLog;
 using System.Runtime.CompilerServices;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Helpers {
     /// <summary>
@@ -34,6 +35,10 @@ namespace Scopos.BabelFish.Helpers {
             else
                 return $"{startDate.ToString( "MM/dd/yy" )} - {endDate.ToString( "MM/dd/yy" )}";
 
+        }
+
+        public static string SingleDate( DateTime date ) {
+            return date.ToString( "ddd, dd MMM yyyy" );
         }
 
         public static string Location( string city, string state, string country="" ) {
@@ -111,15 +116,15 @@ namespace Scopos.BabelFish.Helpers {
 
             return FormatScore( format, score );
         }
-
+        
         /// <summary>
-        /// Formats to a string, the inputed score, based on the ScoreFormatCollection
-        /// </summary>
-        /// <param name="scoreFormatCollection">The ScoreFormatCollection definition to use to learn how to format the passed in Score.</param>
-        /// <param name="scoreConfigName">The name of the ScoreConfig to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Integer' or 'Decimal'</param>
-        /// <param name="scoreFormatName">The name of the Scoreformat to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Events' or 'Shots'</param>
-        /// <param name="score"></param>
-        /// <returns></returns>
+         /// Formats to a string, the inputed score, based on the ScoreFormatCollection
+         /// </summary>
+         /// <param name="scoreFormatCollection">The ScoreFormatCollection definition to use to learn how to format the passed in Score.</param>
+         /// <param name="scoreConfigName">The name of the ScoreConfig to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Integer' or 'Decimal'</param>
+         /// <param name="scoreFormatName">The name of the Scoreformat to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Events' or 'Shots'</param>
+         /// <param name="score"></param>
+         /// <returns></returns>
         [Obsolete( "Deprecated because the input class variable Score is also deprecated." )]
         public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.OrionMatch.Score score ) {
 
