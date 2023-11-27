@@ -4,6 +4,7 @@ using Newtonsoft.Json.Converters;
 using NLog;
 using Newtonsoft.Json.Linq;
 using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
@@ -13,7 +14,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     public class AttributeValue {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
-        private static AttributeValueDefinitionFetcher FETCHER = AttributeValueDefinitionFetcher.FETCHER;
 
         private Dictionary<string, Dictionary<string, dynamic>> attributeValues = new Dictionary<string, Dictionary<string, dynamic>>();
         private SetName setName = null;
@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="XApiKeyNotSetException">Thrown if the x-api-key has not yet been set on AttributeValueDefinitionFetcher.FETCHER.</exception>
         private AttributeValue( SetName setName ) {
 
-            if (!FETCHER.IsXApiKeySet)
+            if (!DefinitionFetcher.IsXApiKeySet)
                 throw new XApiKeyNotSetException();
 
             this.SetName= setName;
@@ -64,7 +64,8 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="AttributeNotFoundException">Thrown if the attribute def, identified by the SetName, could not be found.</exception>
         private async Task InitializeAsync() {
 
-            definition = await FETCHER.FetchAttributeDefinitionAsync( SetName );
+            var getDefinitionResponse = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( SetName );
+            definition = getDefinitionResponse.Definition;
 
             SetDefaultFieldValues();
         }

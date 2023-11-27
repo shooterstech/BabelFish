@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -21,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Name { get; set; }
 
         /// <summary>
-        /// The Course of Fire definition that this simple COF is emulating.
+        /// The set name of the Course of Fire definition that this simple COF is emulating.
         /// </summary>
         public string CourseOfFireDef { get; set; }
 
@@ -52,11 +53,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		}
 	}
 
-    public class SimpleCOFComponent {
-        public string StageStyle { get; set; } = string.Empty;
+    public class SimpleCOFComponent: IGetStageStyleDefinition {
+		/// <summary>
+		/// SetName of a StageStyle to include. Value must be a memember of the parent EventStyle
+		/// objects .StageStyles list. 
+		/// </summary>
+		public string StageStyle { get; set; } = string.Empty;
 
+		/// <summary>
+		/// The number of shots that are fired for this stage of a event.
+		/// </summary>
         public int Shots { get; set; } = 0;
 
+		/// <inheritdoc/>
+		/// <exception cref="ArgumentException">Thrown if the value of .StageStyle could not be parsed. Which shouldn't happen.</exception>
+		public async Task<StageStyle> GetStageStyleDefinitionAsync() {
+
+			SetName stageStyleSetName = SetName.Parse( StageStyle );
+			var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetStageStyleDefinitionAsync( stageStyleSetName );
+			return getDefiniitonResponse.Definition;
+
+		}
+
+
+		[Obsolete("Potentially obsolute, as we are allowing the user to specify the score format outside of the definition.")]
         public string ScoreFormat { get; set; } = string.Empty;
     }
 }

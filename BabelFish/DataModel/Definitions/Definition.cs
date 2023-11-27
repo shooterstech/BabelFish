@@ -17,6 +17,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [NonSerialized]
         public List<string> errorList = new List<string>();
 
+        private string commonName = string.Empty;
+
         /// <summary>
         /// Public constructor for Definition class.
         /// </summary>
@@ -44,10 +46,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
-        /// A human readable short name for this Definition.
+        /// A human readable short name for this Definition. If no specific value
+        /// is given, then the ProperName portion of the SetName is returned instead.
         /// </summary>
         [JsonProperty(Order = 2)]
-        public string CommonName { get; set; } = string.Empty;
+        public string CommonName { 
+            get {
+                if (string.IsNullOrEmpty(commonName)) {
+                    SetName sn;
+                    if (Scopos.BabelFish.DataModel.Definitions.SetName.TryParse(this.SetName, out sn)) {
+                        return sn.ProperName;
+                    }
+                    //Shouldn't ever really get here, b/c every Definition should/better have a SetName.
+                    return "Unknown";
+                } else {
+                    return commonName;
+                }
+            }
+            set {
+                if (!string.IsNullOrEmpty(value)) {
+                    commonName = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Version number of the definiton,, represented in string form. major and minor, e.g. 1.10

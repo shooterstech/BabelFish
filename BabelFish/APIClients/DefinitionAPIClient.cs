@@ -110,7 +110,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetAttributeDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.ATTRIBUTE;
 
@@ -126,7 +126,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetCourseOfFireDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.COURSEOFFIRE;
 
@@ -142,7 +142,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetEventStyleDefinitionAsync( setName );
         }
 
-        public async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.EVENTSTYLE;
 
@@ -158,7 +158,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetRankingRuleDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RANKINGRULES;
 
@@ -174,7 +174,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetStageStyleDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.STAGESTYLE;
 
@@ -190,7 +190,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetTargetCollectionDefinitionAsync( setName );
         }
 
-        public async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGETCOLLECTION;
 
@@ -206,7 +206,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetTargetDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGET;
 
@@ -222,7 +222,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetScoreFormatCollectionDefinitionAsync( setName );
         }
 
-        public async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.SCOREFORMATCOLLECTION;
 
@@ -245,7 +245,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
 		}
 
-		public async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+		public virtual async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
 
 			var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
 
@@ -256,7 +256,7 @@ namespace Scopos.BabelFish.APIClients {
 			return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
 		}
 
-		public async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
+		public virtual async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RESULTLISTFORMAT;
 

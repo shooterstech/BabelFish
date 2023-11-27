@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task SetAttributeValue_SingleAttribute() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,

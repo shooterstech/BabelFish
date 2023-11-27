@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public void GetSquaddingListLimitToRelay() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             //This match id has three relays of 20 athletes
             var matchId = "1.1.2023022315342668.0";

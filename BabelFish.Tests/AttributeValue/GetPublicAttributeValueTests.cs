@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task GetAttributeValue_SingleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
 			//We're first going to make an authenticated call to set the values we expect to later read.
 			var userAuthentication = new UserAuthentication(
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 		public async Task GetAttributeValue_PRIVATE_Visibility() {
 
 			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
-			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+			DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
 			//We're first going to make an authenticated call to set the values we expect to later read.
 			var userAuthentication = new UserAuthentication(
@@ -135,7 +135,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task GetAttributeValue_DoesNotExist() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNameNotARealAttribute = "v1.0:orion:Not a Real Attribute";
             List<string> myAttributes = new List<string>()
@@ -165,7 +165,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 		public async Task GetAttributeValue_MultipleValueAttributeValue() {
 
 			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+			DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             //We're first going to make an authenticated call to set the values we expect to later read.
             var userAuthentication = new UserAuthentication(
