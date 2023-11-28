@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <summary>
         /// Special Sum score. Usually used in an Event to add the Integer value
         /// from one child Event with the Decimal value from a different child Event.
+        /// ONly applicable to Scores from Event Stypes == EVENT. 
         /// </summary>
         public float S {
             get {
