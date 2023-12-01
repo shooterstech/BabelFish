@@ -266,5 +266,21 @@ namespace Scopos.BabelFish.APIClients {
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
+
+        public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( GetDefinitionListPublicRequest request ) {
+
+            GetDefinitionListPublicResponse response = new GetDefinitionListPublicResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
+            return response;
+		}
+
+        public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( DefinitionType type ) {
+			GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
+
+            return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
+
+		}
     }
 }

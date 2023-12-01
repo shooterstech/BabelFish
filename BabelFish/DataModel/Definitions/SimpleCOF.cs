@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.APIClients;
+using System.Drawing.Printing;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -28,7 +29,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
 
-        /// <inheritdoc/>
+		public override string ToString() {
+			return $"SimpleCOF for {CourseOfFireDef}";
+		}
+
+		/// <inheritdoc/>
 		public string TextField {
             get {
 				SetName setName;
@@ -64,6 +69,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// The number of shots that are fired for this stage of a event.
 		/// </summary>
         public int Shots { get; set; } = 0;
+
+		public override string ToString() {
+			return $"SimpleCOFComponent for {StageStyle}";
+		}
 
 		/// <inheritdoc/>
 		/// <exception cref="ArgumentException">Thrown if the value of .StageStyle could not be parsed. Which shouldn't happen.</exception>

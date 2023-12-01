@@ -109,8 +109,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Not Applicable
         /// </summary>
-        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA
-    }
+        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
+
+		/// <summary>
+		/// Benchrest
+		/// </summary>
+		[Description( "BENCHREST" )][EnumMember( Value = "BENCHREST" )] BENCHREST
+	}
 
 
     [JsonConverter( typeof( StringEnumConverter ) )]
