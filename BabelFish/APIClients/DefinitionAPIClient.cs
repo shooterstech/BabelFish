@@ -282,5 +282,24 @@ namespace Scopos.BabelFish.APIClients {
             return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
 
 		}
-    }
+
+        /// <summary>
+        /// Retreives a list of SparseDefinitions in order or relavancy to the provided searchTerm. Maximum 20 items are returned.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>
+		public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( DefinitionType type, string searchTerm ) {
+			GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
+            request.Search = searchTerm;
+            request.Limit = 20;
+
+            //As the search matching is done on the server, we will be turning off client level caching.
+            request.IgnoreFileSystemCache = true;
+            request.IgnoreInMemoryCache = true;
+
+			return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
+
+		}
+	}
 }

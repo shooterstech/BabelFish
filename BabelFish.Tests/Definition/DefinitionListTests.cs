@@ -29,6 +29,8 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 			foreach( var item in definitionList.Items ) {
 				Assert.AreEqual( DefinitionType.ATTRIBUTE, item.Type );
+				//No search term, so score shold be -1
+				Assert.IsTrue( item.SearchScore == -1 ); 
 			}
 		}
 
@@ -52,6 +54,32 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 			//Check that it is much much faster
 			Assert.IsTrue( getDefinitionListResponse1.TimeToRun > 100* getDefinitionListResponse2.TimeToRun );
+		}
+
+		[TestMethod]
+		public async Task SearchTermTest() {
+
+
+			var client = new DefinitionAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
+
+			var getDefinitionListResponse = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE, "Air Rifle Category" );
+
+			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse.StatusCode );
+			Assert.AreEqual( DefinitionType.ATTRIBUTE, getDefinitionListResponse.DefinitionType );
+			//Caching should always be disabled when doing a search term.
+			Assert.IsFalse( getDefinitionListResponse.InMemoryCachedResponse );
+
+			var definitionList = getDefinitionListResponse.DefinitionList;
+
+			//NOTE: The count could be zero, if the serach term didn't match anything
+			Assert.IsTrue( definitionList.Items.Count >= 0 );
+			//Should always be 20 or less
+			Assert.IsTrue( definitionList.Items.Count <= 20 );
+
+			foreach (var item in definitionList.Items) {
+				Assert.AreEqual( DefinitionType.ATTRIBUTE, item.Type );
+				Assert.IsTrue( item.SearchScore >= 0 );
+			}
 		}
 	}
 }
