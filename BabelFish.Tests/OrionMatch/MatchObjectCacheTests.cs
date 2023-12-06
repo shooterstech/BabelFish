@@ -13,6 +13,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
@@ -23,7 +24,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 		public async Task MatchObjectCacheTest() {
 
 			var client = new OrionMatchAPIClient( Constants.X_API_KEY );
-			var matchId = "1.2899.2023061619492879.0";
+			var matchId = new MatchID( "1.2899.2023061619492879.0" );
 
 			//The initial request should cache the response.
 			var responseNoCache = await client.GetMatchDetailPublicAsync( matchId );

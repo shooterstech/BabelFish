@@ -2,6 +2,7 @@
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
@@ -35,12 +36,13 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
-        public void GetMatchParticipantListAuthenteicatedTest() {
+        public async Task GetMatchParticipantListAuthenteicatedTest() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );

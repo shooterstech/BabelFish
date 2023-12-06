@@ -38,6 +38,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             string resultCofId = "4608b306-8b6d-40c2-b608-e5375d05bd12";
 

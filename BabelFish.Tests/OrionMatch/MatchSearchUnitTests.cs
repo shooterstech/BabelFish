@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue( matchSearchResponse.MatchSearchList.Items.Count > 0 );
         }
 
+        [Ignore("Currently the Rest API for authenticated match search is not working.")]
         [TestMethod]
         public async Task BasicTestSearchAuthenticated() {
 
@@ -40,6 +41,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var request = new MatchSearchAuthenticatedRequest(userAuthentication);
 

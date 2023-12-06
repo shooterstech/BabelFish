@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
@@ -15,19 +16,18 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
 
         [TestMethod]
-        public void GetResultListBasicPublicTest() {
+        public async Task GetResultListBasicPublicTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var resultListName = "Individual - All";
 
-            var taskResultListResponse = client.GetResultListPublicAsync( matchId, resultListName );
-            var resultListResponse = taskResultListResponse.Result;
+            var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
 
-            Assert.AreEqual( HttpStatusCode.OK, resultListResponse.StatusCode );
-            var resultList = resultListResponse.ResultList;
+            Assert.AreEqual( HttpStatusCode.OK, getResultListResponse.StatusCode );
+            var resultList = getResultListResponse.ResultList;
 
             Assert.AreEqual( matchId.ToString(), resultList.MatchID );
             Assert.AreEqual( resultListName, resultList.ResultName );
@@ -36,12 +36,13 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
-        public void GetResultListBasicAuthenticatedTest() {
+        public async Task GetResultListBasicAuthenticatedTest() {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023011915575119.0" );

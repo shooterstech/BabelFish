@@ -21,6 +21,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchDetailAuthenticatedAsync( matchId, userAuthentication );
