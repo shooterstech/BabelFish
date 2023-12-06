@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Runtime.Authentication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +9,7 @@ using System.Threading.Tasks;
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
     public class GetSquaddingListPublicRequest : Request, ITokenRequest {
 
-        public GetSquaddingListPublicRequest( string matchid = "", string squaddingEventName = "" ) : base( "GetSquaddingList" ) {
+        public GetSquaddingListPublicRequest(MatchID matchid, string squaddingEventName ) : base( "GetSquaddingList" ) {
             MatchID = matchid;
             SquaddingEventName = squaddingEventName;
         }
@@ -22,9 +24,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             return newRequest;
         }
 
-        public string MatchID { get; set; } = string.Empty;
+        public MatchID MatchID { get; set; }
 
-        public string SquaddingEventName { get; set; } = string.Empty;
+        public string SquaddingEventName { get; set; }
 
         /// <summary>
         /// The relay query parameter limits the returned list of SquaddingAssignments to only those that have a 'Relay' name equal to this parameter's value. 

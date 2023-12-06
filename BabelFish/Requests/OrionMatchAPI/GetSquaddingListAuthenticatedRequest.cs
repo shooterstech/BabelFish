@@ -1,4 +1,5 @@
 ﻿using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Runtime.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,16 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetResultListPublicRequest : Request, ITokenRequest {
+    public class GetSquaddingListAuthenticatedRequest : Request, ITokenRequest {
 
-        public GetResultListPublicRequest( MatchID matchid, string listname ) : base( "GetResultList" ) {
+        public GetSquaddingListAuthenticatedRequest( MatchID matchid, string squaddingEventName, UserAuthentication credentials ) : base( "GetSquaddingList", credentials ) {
             MatchID = matchid;
-            ResultListName = listname;
+            SquaddingEventName = squaddingEventName;
+            this.RequiresCredentials = true;
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new GetResultListPublicRequest( MatchID, ResultListName );
+            var newRequest = new GetSquaddingListAuthenticatedRequest( MatchID, SquaddingEventName, Credentials );
+            newRequest.RelayName = this.RelayName;
             newRequest.Token = this.Token;
             newRequest.Limit = this.Limit;
 
@@ -24,7 +27,13 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         public MatchID MatchID { get; set; }
 
-        public string ResultListName { get; set; } = string.Empty;
+        public string SquaddingEventName { get; set; }
+
+        /// <summary>
+        /// The relay query parameter limits the returned list of SquaddingAssignments to only those that have a 'Relay' name equal to this parameter's value. 
+        /// An empty string or null value will return the entire list.
+        /// </summary>
+        public string RelayName { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public string Token { get; set; } = string.Empty;
@@ -32,14 +41,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// <inheritdoc />
         public int Limit { get; set; }
 
-        /// <summary>
-        /// If this is a public match and preliminary is true, then this GetResultList will return participants ranked and scored by their predictive results; the predictive scores are based on a participant's score history and shots taken in the current match. 
-        /// </summary>
-        public bool Preliminary { get; set; }
-
         /// <inheritdoc />
         public override string RelativePath {
-            get { return $"/match/{MatchID}/result-list/{ResultListName}"; }
+            get { return $"/match/{MatchID}/squadding-list/{SquaddingEventName}"; }
         }
 
         /// <inheritdoc />
@@ -52,11 +56,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                     parameterList.Add( "token", new List<string> { Token } );
                 }
 
+                if (!string.IsNullOrEmpty( RelayName )) {
+                    parameterList.Add( "relay", new List<string> { RelayName } );
+                }
+
                 if (Limit > 0)
                     parameterList.Add( "limit", new List<string> { Limit.ToString() } );
-
-                if (Preliminary)
-                    parameterList.Add("preliminary", new List<string> { Preliminary.ToString() } );
 
                 return parameterList;
             }
