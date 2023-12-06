@@ -7,7 +7,8 @@ using NLog;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    public class MatchSearchList : ITokenItems<MatchAbbr> {
+	[Serializable]
+	public class MatchSearchList : ITokenItems<MatchAbbr> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 

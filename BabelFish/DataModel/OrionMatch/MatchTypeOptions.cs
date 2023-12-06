@@ -10,11 +10,36 @@ using Newtonsoft.Json.Converters;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum MatchTypeOptions {
+	[Serializable]
+	public enum MatchTypeOptions {
+        /*
+         * Training
+Practice Match
+Postal Match
+Local Match
+League Game
+Virtual Match
+Regional Match
+Regional Championship
+National Match
+National Championship
+        */
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        [Description( "" )][EnumMember( Value = "" )] UNKNOWN,
         /// <summary>
         /// Training
         /// </summary>
         [Description( "Training" )] [EnumMember( Value = "Training" )] TRAINING,
+        /// <summary>
+        /// Practice
+        /// </summary>
+        [Description( "Practice" )][EnumMember( Value = "Practice" )] PRACTICE,
+        /// <summary>
+        /// Practice Match
+        /// </summary>
+        [Description( "Practice Match" )][EnumMember( Value = "Practice Match" )] PRACTICE_MATCH,
         /// <summary>
         /// Postal Match
         /// </summary>
@@ -22,11 +47,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Local Match
         /// </summary>
-        [Description( "Local Match" )] [EnumMember( Value = "Local Match" )] LOCAL_MATCH,
+        [Description( "Local Match" )][EnumMember( Value = "Local Match" )] LOCAL_MATCH,
         /// <summary>
         /// League Game
         /// </summary>
         [Description( "League Game" )] [EnumMember( Value = "League Game" )] LEAGUE_GAME,
+        /// <summary>
+        /// League Game
+        /// </summary>
+        [Description( "Virtual Match" )][EnumMember( Value = "Virtual Match" )] VIRTUAL_MATCH,
         /// <summary>
         /// League Championship
         /// </summary>

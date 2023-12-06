@@ -8,6 +8,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]

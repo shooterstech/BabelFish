@@ -17,9 +17,13 @@ namespace Scopos.BabelFish.APIClients {
         /// Assumes Production stage level.
         /// </summary>
         /// <param name="xapikey"></param>
-        public OrionMatchAPIClient( string xapikey ) : base( xapikey ) { }
+        public OrionMatchAPIClient( string xapikey ) : base( xapikey ) {
+			IgnoreLocalCache = false;
+		}
 
-        public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) { }
+        public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+			IgnoreLocalCache = false;
+		}
 
         #region Get Match Detail
         /// <summary>
@@ -216,7 +220,8 @@ namespace Scopos.BabelFish.APIClients {
         public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( GetResultCOFDetailPublicRequest requestParameters ) {
             GetResultCOFDetailPublicResponse response = new GetResultCOFDetailPublicResponse( requestParameters );
 
-            await this.CallAPIAsync( requestParameters, response );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
             return response;
         }

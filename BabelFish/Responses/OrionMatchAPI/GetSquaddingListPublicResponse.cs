@@ -30,5 +30,28 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
             nextRequest.Token = Value.SquaddingList.NextToken;
             return nextRequest;
         }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            try {
+                var timeSinceLastUpdate = DateTime.UtcNow - SquaddingList.LastUpdated;
+
+                //If it was recently updated, set the expiry time fairly quickly, as more changes may be coming.
+                if (timeSinceLastUpdate.TotalMinutes < 5)
+                    return DateTime.UtcNow.AddSeconds( 30 );
+
+                if (timeSinceLastUpdate.TotalMinutes < 60)
+                    return DateTime.UtcNow.AddMinutes( 1 );
+
+                if (timeSinceLastUpdate.TotalHours < 10)
+                    return DateTime.UtcNow.AddMinutes( 5 );
+
+                return DateTime.UtcNow.AddMinutes( 10 );
+            } catch (Exception ex) {
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes( 10 );
+            }
+        }
     }
 }

@@ -9,6 +9,8 @@ using NLog;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
+using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Requests {
     /// <summary>
@@ -19,34 +21,87 @@ namespace Scopos.BabelFish.Requests {
 
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationId"></param>
+        /// <exception cref="ArgumentNullException">Thrown if OperationId is null or an empty string</exception>
         public Request(string operationId) {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
-        }
+			this.SubDomain = APISubDomain.API;
+		}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="operationId"></param>
+        /// <param name="credentials"></param>
+        /// <exception cref="ArgumentNullException">Thrown if UserAuthentication is null or OperationId is null or an empty string</exception>
         public Request( string operationId, UserAuthentication credentials ) {
-            if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
+            if (string.IsNullOrEmpty( operationId )) 
+                throw new ArgumentNullException( "OperationId may not be null or an empty string" );
+
+            if (credentials == null)
+                throw new ArgumentNullException( "User Credentials argument may not be null." );
+
             this.OperationId = operationId;
 
-            this.Credentials = credentials;
+			this.RequiresCredentials = true;
+			this.SubDomain = APISubDomain.AUTHAPI;
+			this.Credentials = credentials;
         }
 
         /// <summary>
         /// Creates a new instance of a Request Object, with all the same parameters
         /// </summary>
         /// <returns></returns>
-        public virtual Request Copy() { 
-            throw new NotImplementedException(); 
-        }
+        public virtual Request Copy() { throw new NotImplementedException("Concrete implementations of Request should implement Copy for their class."); }
 
-        /// <summary>
-        /// Indicates if this request requires user credentials.
-        /// </summary>
-        public bool RequiresCredentials { get; protected set; } = false;
+		/// <summary>
+		/// Concrete implementationst that want to cache their requests, must implement
+		/// a unique string to be used as the request key. 
+		/// </summary>
+		/// <returns></returns>
+		protected internal string GetRequestCacheKey() {
+            var accessToken = "";
+            if (Credentials != null)
+                accessToken = Credentials.AccessToken;
+
+            //NOTE: Purposefully not including PostParameters, as PostParameters are only included
+            //on non-httpmethod-GET calls. And cache is only for GET calls.
+            StringBuilder key = new StringBuilder();
+            key.Append( this.SubDomain.SubDomainNameWithStage() );
+            key.Append( this.RelativePath );
+            if (!string.IsNullOrEmpty( this.QueryString )) {
+                key.Append( '/' );
+                key.Append( this.QueryString );
+            }
+            if (!string.IsNullOrEmpty( accessToken )) {
+				key.Append( '/' );
+                key.Append( accessToken );
+			}
+            return key.ToString();
+		}
+
+		/// <summary>
+		/// Indicates if the local response cache should be ignored and always 
+		/// make the request to the Rest API.
+		/// The default value is false, meaning to use the local cache (if avaliable and permitted by the Rest API client).
+		/// The option to ignore local cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
+		/// </summary>
+		public bool IgnoreLocalCache { get; set; } = false;
+
+		/// <summary>
+		/// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.
+		/// </summary>
+		public bool RequiresCredentials { get; protected set; } = false;
 
         public UserAuthentication Credentials { get; set; }
 
         /// <summary>
         /// The REST API subdomain used in this request. 
+        /// Automatically set to AUTHAPI when using the Request constructor using UserAuthentication. Set to API otherwise.
         /// </summary>
         public APISubDomain SubDomain { get; protected set; } = APISubDomain.API;
 
@@ -63,11 +118,6 @@ namespace Scopos.BabelFish.Requests {
         /// x-api-key is not generally included in this list, and instead is specified in the APIClient.
         /// </summary>
         public Dictionary<string, string> HeaderKeyValuePairs { get; set; } = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Assigned from Response value, for some APIs where Limit is used
-        /// </summary>
-        public virtual string ContinuationToken { get; set; } = string.Empty;
 
         /// <summary>
         /// The relative path for this API Request call. For example, if the complete REST API call is
@@ -115,7 +165,10 @@ namespace Scopos.BabelFish.Requests {
             }
         }
 
-        //TODO: Figure out how to return values to be posted. Noting that sometimes we post a JSON string, much more than name value pairs. 
+        
+        /// <summary>
+        /// Only applicable to non httpMethod.GET calls. This is the body of the request.
+        /// </summary>
         public virtual StringContent PostParameters {
             get {
                 return new StringContent( "" );

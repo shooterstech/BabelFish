@@ -65,18 +65,6 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// Returns detailed information about an Orion account (aka a clubs account), identified by the 
-        /// passed in orionLicenseNumber
-        /// </summary>
-        /// <param name="orionLicenseNumber"></param>
-        /// <returns></returns>
-        public async Task<GetClubDetailAuthenticatedResponse> GetClubDetailAuthenticatedAsync( int orionLicenseNumber, UserAuthentication credentials ) {
-
-            var ownerId = $"OrionAcct{orionLicenseNumber:06d}";
-            return await GetClubDetailAuthenticatedAsync( ownerId, credentials );
-        }
-
-        /// <summary>
         /// Returns detailed information about an Orion account (aka a clubs account), identified by
         /// the passed on owner-id (e.g. OrionAcct001234).
         /// </summary>
@@ -87,6 +75,33 @@ namespace Scopos.BabelFish.APIClients {
             var request = new GetClubDetailAuthenticatedRequest( ownerId, credentials );
 
             return await GetClubDetailAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Returns detailed information about an Orion account (aka a clubs account).
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<GetClubDetailPublicResponse> GetClubDetailPublicAsync( GetClubDetailPublicRequest request ) {
+
+            var response = new GetClubDetailPublicResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Returns detailed information about an Orion account (aka a clubs account), identified by
+        /// the passed on owner-id (e.g. OrionAcct001234).
+        /// </summary>
+        /// <param name="ownerId"></param>
+        /// <returns></returns>
+        public async Task<GetClubDetailPublicResponse> GetClubDetailPublicAsync( string ownerId, UserAuthentication credentials ) {
+
+            var request = new GetClubDetailPublicRequest( ownerId );
+
+            return await GetClubDetailPublicAsync( request );
         }
 
     }

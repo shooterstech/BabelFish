@@ -7,6 +7,6 @@ using Scopos.BabelFish.DataModel;
 namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
     public class ScoreAverageWrapper : BaseClass {
 
-        public ScoreAverage ScoreAverage { get; set; }
+        public ScoreAverageList ScoreAverageList { get; set; }
     }
 }

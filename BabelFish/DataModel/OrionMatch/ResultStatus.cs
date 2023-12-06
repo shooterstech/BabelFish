@@ -10,7 +10,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// FUTURE", "INTERMEDIATE", "UNOFFICIAL", "OFFICIAL
     /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum ResultStatus {
+	[Serializable]
+	public enum ResultStatus {
         FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
     }
 }

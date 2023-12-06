@@ -22,6 +22,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         
         public string ResultCOFID { get; set; }
 
+        /// <summary>
+        /// Score. If the Preliminary result list is requested, Score will be the predicted score based on the athlete's score history and shots taken in the current match.
+        /// </summary>
         public Score Score { get; set; }
 
         public int Rank { get; set; }
@@ -37,31 +40,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string UserID { get; set; } = "";
 
-        public List<ResultEventTeamMember> TeamMembers { get; set; } = new List<ResultEventTeamMember>();
+        /// <summary>
+        /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual WARNING value will be null.
+        /// </summary>
+        public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
-    }
-
-    [Serializable]
-    public class ResultEventTeamMember {
-
-        public ResultEventTeamMember() {
-            Score = new Score();
-            Children = new List<ResultEventChild>();
-        }
-
-        public string ScoreFormat { get; set; }
-
-
-
-        public string DisplayName { get; set; }
-
-        public string UserID { get; set; }
-
-        public Score Score { get; set; }
-
-        public List<ResultEventChild> Children { get; set; }
-
-        public string ResultCOFID { get; set; }
     }
 
     [Serializable]
@@ -71,6 +54,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Score = new Score();
         }
 
+        [Obsolete( "Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef" )]
         public string ScoreFormat { get; set; }
 
         public Score Score { get; set; }

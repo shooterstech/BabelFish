@@ -15,11 +15,11 @@ using System.ComponentModel;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
-    public class SetMultiplePhoneNumbersTest {
+    public class SetMultipleValuesTest {
 
 
         [TestMethod]
-        public void SetMultiplePhoneNumbers() {
+        public async Task SetMultiplePhoneNumbers() {
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             var setNamePhoneNumber = "v2.0:orion:Phone Number";
@@ -34,11 +34,12 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             //Retreive the user's current values.            
             //Will use a GetAttributeValueAuthenticatedRequest object in this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
@@ -96,6 +97,70 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Check that the read values are the same as the values we set.
             Assert.AreEqual( workNumber, readPhoneNumberAttrValue.GetFieldValue( "PhoneNumber", workFieldKey ) );
             Assert.AreEqual( mobileNumber, readPhoneNumberAttrValue.GetFieldValue( "PhoneNumber", mobileFieldKey ) );
-        }
-    }
+		}
+
+		[TestMethod]
+		public async Task SetMultipleSocialMediaAccounts() {
+			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+
+			var setNameSocialMedia = "v1.0:orion:Social Media Accounts";
+
+			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
+			AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+
+			var userAuthentication = new UserAuthentication(
+				Constants.TestDev7Credentials.Username,
+				Constants.TestDev7Credentials.Password );
+			await userAuthentication.InitializeAsync();
+
+			//Retreive the user's current values.            
+			//Will use a GetAttributeValueAuthenticatedRequest object in this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
+			List<SetName> myAttributes = new List<SetName>() { SetName.Parse( setNameSocialMedia ) };
+
+            //For the purpose of this unit test, I am starting with a clean / brand new Attribute Value. Normally, in real life
+            //The user's attribute value should be read first
+            var socialMediaAttrValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( SetName.Parse( setNameSocialMedia ) );
+
+            socialMediaAttrValue.SetFieldValue( "ProfileName", "facebook_test", "FACEBOOK" );
+			socialMediaAttrValue.SetFieldValue( "ProfileName", "instagram_test", "INSTAGRAM" );
+
+			var sendSocialmediaAttrValueDataPacket = new AttributeValueDataPacketAPIResponse() {
+				AttributeDef = setNameSocialMedia,
+				AttributeValue = socialMediaAttrValue,
+				Visibility = VisibilityOption.PUBLIC
+			};
+			var setRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication ) {
+				AttributeValuesToUpdate = new List<AttributeValueDataPacket>() { sendSocialmediaAttrValueDataPacket }
+			};
+			var taskSetResponse = client.SetAttributeValueAuthenticatedAsync( setRequest );
+			var setResponse = taskSetResponse.Result;
+
+			//Check the status of the overall call
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, setResponse.StatusCode );
+
+			var getRequest = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
+				AttributeNames = myAttributes,
+				ReturnDefaultValues = true
+			};
+			var taskGetResponse = client.GetAttributeValueAuthenticatedAsync( getRequest );
+			var getResponse = taskGetResponse.Result;
+
+			//Check the status of the overall call
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.StatusCode );
+
+			//Pull the Attribute Value Data Packet for Phone Number
+			var readSocialMediaAttrValueDataPacket = getResponse.AttributeValues[setNameSocialMedia];
+
+			//Check the status of the phone number data packet
+			//NOTE: If ReturnDefaultValues wasn't set to true, the .StatusCode could return a Not Found error if the data does not yet exist in database.
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, readSocialMediaAttrValueDataPacket.StatusCode );
+
+			var readPhoneNumberAttrValue = readSocialMediaAttrValueDataPacket.AttributeValue;
+
+			//Check that the read values are the same as the values we set.
+			Assert.AreEqual( "facebook_test", readPhoneNumberAttrValue.GetFieldValue( "ProfileName", "FACEBOOK" ) );
+			Assert.AreEqual( "instagram_test", readPhoneNumberAttrValue.GetFieldValue( "ProfileName", "INSTAGRAM" ) );
+			Assert.AreEqual( "", readPhoneNumberAttrValue.GetFieldValue( "ProfileName", "SNAPCHAT" ) );
+		}
+	}
 }

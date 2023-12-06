@@ -14,10 +14,103 @@ using System.Runtime.Serialization;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
+    public enum AttributeDesignation {
+
+        [Description( "ATHLETE" )]
+        [EnumMember( Value = "ATHLETE" )]
+        ATHLETE,
+
+
+        [Description( "CLUB" )]
+        [EnumMember( Value = "CLUB" )] CLUB,
+
+
+        [Description( "MATCH OFFICIAL" )]
+        [EnumMember( Value = "MATCH OFFICIAL" )] MATCH_OFFICIAL,
+
+
+        [Description( "TEAM" )]
+        [EnumMember( Value = "TEAM" )] TEAM,
+
+
+        [Description( "TEAM OFFICIAL" )]
+        [EnumMember( Value = "TEAM OFFICIAL" )] TEAM_OFFICIAL,
+
+
+        [Description( "USER" )]
+        [EnumMember( Value = "USER" )] USER,
+
+
+        [Description( "HIDDEN" )]
+        [EnumMember( Value = "HIDDEN" )] HIDDEN
+    }
 
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum LightIllumination { NONE, ON, OFF, DIM };
+    public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum CompetitionType {
+        /// <summary>
+        /// COMPETITION: Shows only record fire shots
+        /// </summary>
+        [Description( "COMPETITION" )][EnumMember( Value = "COMPETITION" )] COMPETITION,
+
+        /// <summary>
+        /// SIGHTER
+        /// </summary>
+        [Description( "SIGHTER" )][EnumMember( Value = "SIGHTER" )] SIGHTER,
+
+        /// <summary>
+        /// BOTH
+        /// </summary>
+        [Description( "BOTH" )][EnumMember( Value = "BOTH" )] BOTH
+    }
+
+    /// <summary>
+    /// Defines the different high level disciplines in use with Shooting. Largely defined by the ISSF.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum DisciplineType {
+        /// <summary>
+        /// The Discipline Archery
+        /// </summary>
+        [Description( "ARCHERY" )][EnumMember( Value = "ARCHERY" )] ARCHERY,
+
+        /// <summary>
+        /// The Discipline Biathlon
+        /// </summary>
+        [Description( "BIATHLON" )][EnumMember( Value = "BIATHLON" )] BIATHLON,
+
+        /// <summary>
+        /// Hybrid Discipline, which is when two or more Disciplins are used together.
+        /// </summary>
+        [Description( "HYBRID" )][EnumMember( Value = "HYBRID" )] HYBRID,
+
+        /// <summary>
+        /// The Pistol Discipline
+        /// </summary>
+        [Description( "PISTOL" )][EnumMember( Value = "PISTOL" )] PISTOL,
+
+        /// <summary>
+        /// The Rifle Discipline
+        /// </summary>
+        [Description( "RIFLE" )][EnumMember( Value = "RIFLE" )] RIFLE,
+
+        /// <summary>
+        /// The Running Target Discipline
+        /// </summary>
+        [Description( "RUNNING TARGET" )][EnumMember( Value = "RUNNING TARGET" )] RUNNINGTARGET,
+
+        /// <summary>
+        /// Shotgun Discipline
+        /// </summary>
+        [Description( "SHOTGUN" )][EnumMember( Value = "SHOTGUN" )] SHOTGUN,
+
+        /// <summary>
+        /// Not Applicable
+        /// </summary>
+        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA
+    }
 
 
     [JsonConverter( typeof( StringEnumConverter ) )]
@@ -31,6 +124,101 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         FinalChangeOverStart, FinalChangeOverStop, FinalAthleteEliminated, FinalThirdPlaceAnnounced, FinalSecondPlaceAnnounced, FinalFirstPlaceAnnounced,
         SpecialEventOne, SpecialEventTwo, SpecialEventThree, SpecialEventFour, SafetyBriefing
     }
+
+
+    /// <summary>
+    /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
+    /// NOTE EventtType is purposefully misspelled.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
+
+    public enum FieldType {
+        OPEN,
+        CLOSED,
+        SUGGEST,
+        DERIVED
+    }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum LightIllumination { NONE, ON, OFF, DIM };
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum LinkToOption {
+        /// <summary>
+        /// Indicates that the Cell or Row should link to the ResultCOF Page (sometimes called Individual Score Page). 
+        /// </summary>
+        [Description( "ResultCOF" )]
+        [EnumMember( Value = "ResultCOF" )]
+        ResultCOF,
+
+        /// <summary>
+        /// Indicates that the Cell or Row should link to the athletes or team's public profile page, if they have one. 
+        /// </summary>
+        [Description( "PublicProfile" )]
+        [EnumMember( Value = "PublicProfile" )]
+        PublicProfile,
+
+        /// <summary>
+        /// Indicates that the Cell or Row should not link to any other page. Which is the default option. 
+        /// </summary>
+        [Description( "None" )]
+        [EnumMember( Value = "None" )]
+        None
+    }
+
+    /// <summary>
+    /// In a Result List Format, Fields describe the data to dispaly. The ResultFieldMethod
+    /// specifies where the data is coming from.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ResultFieldMethod {
+        [Description( "Score" )]
+        [EnumMember( Value = "Score" )]
+        SCORE,
+
+        [Description( "ParticipantAttribute" )]
+        [EnumMember( Value = "ParticipantAttribute" )]
+        PARTICIPANT_ATTRIBUTE,
+
+        [Description( "Attribute" )]
+        [EnumMember( Value = "Attribute" )]
+        ATTRIBUTE
+    }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ShotMappingMethodType { SEQUENTIAL }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum SingularType {
+        [Description( "Shot" )]
+        [EnumMember( Value = "Shot" )]
+        SHOT,
+
+        [Description( "Test" )]
+        [EnumMember( Value = "Test" )]
+        TEST
+    }
+
+	[JsonConverter( typeof( StringEnumConverter ) )]
+	public enum SpecialOptions {
+		[Description( "GroupMode" )]
+		[EnumMember( Value = "GroupMode" )]
+		GROUP_MODE,
+
+		[Description( "ShotCalling" )]
+		[EnumMember( Value = "ShotCalling" )]
+		SHOT_CALLING
+	}
+
+
+	[JsonConverter( typeof( StringEnumConverter ) )]
+    public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
+
 
     /// <summary>
     /// The type of data that is stored within an AttributeField. 
@@ -94,12 +282,5 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "SET NAME" )]
         [EnumMember( Value = "SET NAME" )]
         SETNAME
-    }
-
-    public enum FieldType {
-        OPEN,
-        CLOSED,
-        SUGGEST,
-        DERIVED
     }
 }

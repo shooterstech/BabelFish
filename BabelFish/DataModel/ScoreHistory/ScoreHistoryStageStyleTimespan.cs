@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// <summary>
         /// String, formatted as a SetName, representing the Stage Style this ScoreHistryEntry represents
         /// </summary>
-        public string StageStyle { get; set; }
+        public string StageStyleDef { get; set; }
 
         public override string ToString()
         {
@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
             foo.Append(" - ");
             foo.Append(base.UserId);
             foo.Append(" - ");
-            foo.Append(StageStyle);
+            foo.Append(StageStyleDef);
             return foo.ToString();
         }
     }

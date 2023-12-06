@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         /// Specifies good set of input parameters to the serach, and checks they match the output parameters.
         /// </summary>
         [TestMethod]
-        public void MatchSearchInputMatchesOutput() {
+        public async Task MatchSearchInputMatchesOutput() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
@@ -68,17 +68,18 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var limit = 7;
             var longitude = -77.5;
             var latitude = 38.7;
+            var shootingStyle = "Air Rifle";
             var request = new MatchSearchPublicRequest() {
                 Distance = distance,
                 StartDate = startDate,
                 EndDate = endDate,
                 Limit = limit,
                 Longitude = longitude,
-                Latitude = latitude
+                Latitude = latitude,
+                ShootingStyle = new List<string>() { shootingStyle }
             };
 
-            var taskMatchSearchResponse = client.GetMatchSearchPublicAsync( request );
-            var matchSearchResponse = taskMatchSearchResponse.Result;
+            var matchSearchResponse = await client.GetMatchSearchPublicAsync( request );
 
             Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
 
@@ -90,6 +91,21 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( limit, matchSearchList.Limit );
             Assert.AreEqual( startDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ), matchSearchList.StartDate );
             Assert.AreEqual( endDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ), matchSearchList.EndDate );
+            Assert.IsTrue( matchSearchList.ShootingStyles.Contains( shootingStyle ) );
+
+            foreach( var matchSearchAbbr in matchSearchList.Items ) {
+                Assert.AreEqual( shootingStyle, matchSearchAbbr.ShootingStyle );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchID ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchName ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerId ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerName ) );
+
+                var returnedStartDate = DateTime.Parse( matchSearchAbbr.StartDate );
+                var returnedEndDate = DateTime.Parse( matchSearchAbbr.EndDate );
+
+                Assert.IsTrue( returnedStartDate <= endDate, $"{matchSearchAbbr.MatchName} start date {matchSearchAbbr.StartDate} is after the search's end date {endDate}." );
+                Assert.IsTrue( returnedEndDate >= startDate, $"{matchSearchAbbr.MatchName} end date {matchSearchAbbr.EndDate} is before the search's start date {startDate}." );
+            }
         }
 
         /// <summary>

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
-    public class ShotLog
+	[Serializable]
+	public class ShotLog
     {
 
         public string TimeUpdated { get; set; }

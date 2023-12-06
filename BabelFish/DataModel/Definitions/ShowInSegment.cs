@@ -6,46 +6,25 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Scopos.BabelFish.DataModel.Definitions
-{
-    public class ShowInSegment
-    {
+namespace Scopos.BabelFish.DataModel.Definitions {
+    public class ShowInSegment {
 
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum CompetitionType
-        {
-            /*
-             * In order to get an Enum to serialize / deserialize to values with spaces have to do a couple of things.
-             * First use the EnumMember(Value = "   ") attribute. This is what does the serialzing / deserialzing.
-             * In order to get the Descriptions in code, have to use the Description attribute in conjunction with the
-             * ExtensionMethod .Description() (Located in the ExtensionMethods.cs class).
-            */
-            /// <summary>
-            /// COMPETITION: Shows only record fire shots
-            /// </summary>
-            [Description("COMPETITION")] [EnumMember(Value = "COMPETITION")] COMPETITION,
 
-            /// <summary>
-            /// SIGHTER
-            /// </summary>
-            [Description("SIGHTER")] [EnumMember(Value = "SIGHTER")] SIGHTER,
-
-            /// <summary>
-            /// BOTH
-            /// </summary>
-            [Description("BOTH")] [EnumMember(Value = "BOTH")] BOTH
-        }
-
-        public ShowInSegment()
-        {
+        public ShowInSegment() {
 
         }
 
-        [DefaultValue(null)]
-        public List<string> StageLabel { get; set; }
+        [OnDeserialized]
+        internal new void OnDeserializedMethod( StreamingContext context ) {
 
-        [JsonConverter(typeof(StringEnumConverter))]
+            if (StageLabel == null)
+                StageLabel = new List<string>();
+        }
+
+        public List<string> StageLabel { get; set; } = new List<string>();
+
+        [JsonConverter( typeof( StringEnumConverter ) )]
         public CompetitionType Competition { get; set; }
 
         /// <summary>
@@ -54,7 +33,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// STRING (default)
         /// Past(n), where n is an integer
         /// </summary>
-        [DefaultValue("STRING")]
+        [DefaultValue( "STRING" )]
         public string ShotPresentation { get; set; }
 
     }

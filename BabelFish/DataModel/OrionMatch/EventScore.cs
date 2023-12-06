@@ -74,6 +74,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         public string StageStyleDef { get; set; } = string.Empty;
 
         /// <summary>
+        /// ScoreFormatted may only be set when the Shot is part of a Result COF .Events dictrionary
+        /// </summary>
+        public string ScoreFormatted { get; set; }
+
+        /// <summary>
         /// Set Name of the target definition
         /// EKA: TargetDef no longer used. Is specified in Course of Fire Def
         /// </summary>

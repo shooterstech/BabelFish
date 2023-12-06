@@ -42,6 +42,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameProfileName = "v1.0:orion:Profile Name";
             List<string> myAttributes = new List<string>()
@@ -64,7 +65,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Pull the attribute value back, and check we have reasonable values.
             var profileNameAttributeValue = profileNameAttributeValueDataPacket.AttributeValue;
 
-            Assert.AreEqual( "Chris", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
+            Assert.AreEqual( "Christopher", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
             Assert.AreEqual( "Jones", (string)profileNameAttributeValue.GetFieldValue( "FamilyName" ) );
         }
 
@@ -72,7 +73,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         /// Tests the retreival of multiple attributes
         /// </summary>
             [TestMethod]
-        public void GetAttributeValue_MultipleValue() {
+        public async Task GetAttributeValue_MultipleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = client.XApiKey;
@@ -80,6 +81,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameProfileName = "v1.0:orion:Profile Name";
             var setNameDOB = "v1.0:orion:Date of Birth";
@@ -148,6 +150,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameProfileName = "v1.0:orion:Profile Name";
             var setNameDOB = "v1.0:orion:Date of Birth";
@@ -194,7 +197,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         }
 
         [TestMethod]
-        public void GetAttributeValue_DoesNotExist() {
+        public async Task GetAttributeValue_DoesNotExist() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
             AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
@@ -202,6 +205,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             var setNameNotARealAttribute = "v1.0:orion:Not a Real Attribute";
             List<string> myAttributes = new List<string>()
@@ -221,6 +225,19 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Retreive the data packet and check that the status code is not found.
             var notARealAttributeValueDataPacket = attributeValueDataPackets[setNameNotARealAttribute];
             Assert.IsTrue( notARealAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.NotFound );
+        }
+
+        [TestMethod]
+        public async Task AttributeValueAppellationTest() {
+            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+            var rifleType = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+
+            rifleType.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
+            Assert.AreEqual( "Sporter", rifleType.AttributeValueAppellation );
+
+            rifleType.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
+            Assert.AreEqual( "Precision", rifleType.AttributeValueAppellation );
         }
     }
 }

@@ -20,9 +20,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class CourseOfFire : Definition {
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
-
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
         }
@@ -44,18 +41,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string CommonName { get; set; } = string.Empty;
 
         /// <summary>
-        /// A list of ATTRIBUTES that each competitor needs to have in order for the mapping to EVENT STYLE or STAGE STYLE to work. Used when a COURSE OF FIRE is defined for multiple equipment classes.
-        /// </summary>
-        [JsonProperty(Order = 11)]
-        public List<string> RequiredAttributes { get; set; } = new List<string>();
-
-        /// <summary>
         /// Formatted as a SetName, the TargetCollectionDef to use to score shots. The specific TARGET definition to use is calculated with the 
         /// SegementGroupSegment.TargetSetIndex.
         /// Required.
         /// </summary>
         [JsonProperty(Order = 12)]
-        public string TargetCollectionDef { get; set; } = string.Empty;
+        [DefaultValue( "v1.0:ntparc:Air Rifle" )]
+        public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
 
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
@@ -75,7 +67,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
         [JsonProperty(Order = 15)]
-        public string ScoreFormatCollectionDef { get; set; } = string.Empty;
+        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
+        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
@@ -84,9 +77,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string ScoreConfigDefault { get; set; } = string.Empty;
 
         /// <summary>
-        /// Range command script with Paper Targets or EST Configuration. 
+        /// The default Event and Stage Style Mapping file to use. 
         /// </summary>
-        [JsonProperty(Order = 20)]
+        [JsonProperty( Order = 17 )]
+        [DefaultValue( "v1.0:orion:Default" )]
+        public string DefaultEventAndStageStyleMappingDef { get; set; } = "v1.0:orion:Default";
+
+		/// <summary>
+		/// The default Attribute Value to use to determine a user's Attribute Value Appellation when shooting this course of fire.
+		/// </summary>
+		[JsonProperty( Order = 18 )]
+		[DefaultValue( "v1.0:orion:Air Rifle Training Category" )]
+		public string DefaultAttributeDef { get; set; } = "v1.0:orion:Air Rifle Training Category";
+
+		/// <summary>
+		/// Range command script with Paper Targets or EST Configuration. 
+		/// </summary>
+		[JsonProperty(Order = 20)]
         public List<RangeScript> RangeScripts { get; set; } = new List<RangeScript>();
 
         /// <summary>
