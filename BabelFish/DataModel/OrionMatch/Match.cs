@@ -81,21 +81,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
-        /// Name of the Match
+        /// The name of the Match
         /// </summary>
-        [JsonProperty( Order = 7 )]
-        public string MatchName {
+        public string Name {
             get; set;
-        } = string.Empty;
-
-        /// <summary>
-        /// Name of the Match
-        /// </summary>
-        [Obsolete( "Use MatchName instead." )]
-        public string Name { 
-            get { return this.MatchName; }
-            set { this.MatchName = value; }
-        }
+        } = string.Empty; 
 
         /// <summary>
         /// Sets the public visibility for the match. Valid values are
@@ -204,26 +194,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// returned by the Rest API, but are not sent to the cloud. Instead 'AuthorizationList'
         /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
         /// </summary>
-        /// TODO: The list of Authorization is finite. Convert this property to be a list of enum values.
-        /// The optional values are:
-        /// Read Incident Reports
-        /// Create Incident Reports
-        /// Update Incident Reports
-        /// Close Incident Reports
-        /// Create Target Images
-        /// Create Entries
-        /// Update Entries
-        /// Delete Entries
-        /// Read Scores
-        /// Read Results
-        /// Read Squadding
-        /// Read Personal Scores
-        /// Read Personal Results
-        /// Read Personal Squadding
-        /// Read Personal Incident Reports
-        ///
         [JsonProperty( Order = 19 )]
-        public List<string> Authorization { get; set; } = new List<string>();
+        public List<MatchAuthorizationRole> Authorization { get; set; } = new List<MatchAuthorizationRole>();
 
         /// <summary>
         /// A list of Authorization roles participants in the match have.

@@ -1,5 +1,6 @@
 ﻿using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Runtime.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,24 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetMatchParticipantListPublicRequest : Request, ITokenRequest {
+    public class GetMatchParticipantListAuthenticatedRequest : Request, ITokenRequest {
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="matchid"></param>
-        public GetMatchParticipantListPublicRequest( MatchID matchid ) : base( "GetMatchParticipantList" ) {
+
+        public GetMatchParticipantListAuthenticatedRequest( MatchID matchid, UserAuthentication credentials ) : base( "GetMatchParticipantList", credentials ) {
             MatchID = matchid;
+            this.RequiresCredentials = true;
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="matchid"></param>
-        public GetMatchParticipantListPublicRequest( string matchid ) : base( "GetMatchParticipantList" ) {
+
+        public GetMatchParticipantListAuthenticatedRequest( string matchid, UserAuthentication credentials ) : base( "GetMatchParticipantList", credentials ) {
             MatchID = new MatchID( matchid );
+            this.RequiresCredentials = true;
         }
-
 
         public MatchID MatchID { get; set; }
 
@@ -66,7 +62,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         }
 
         public override Request Copy() {
-            GetMatchParticipantListPublicRequest newRequest = new GetMatchParticipantListPublicRequest( MatchID );
+            GetMatchParticipantListAuthenticatedRequest newRequest = new GetMatchParticipantListAuthenticatedRequest( MatchID, Credentials );
             newRequest.Role = this.Role; 
             newRequest.Token = this.Token;
             return newRequest;

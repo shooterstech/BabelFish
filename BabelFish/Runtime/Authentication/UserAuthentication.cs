@@ -524,13 +524,31 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// <returns></returns>
         public async Task<int> CleanUpOldDevicesAsync() {
 
-            var listOfDevices = await this.CognitoUser.ListDevicesAsync( 60, null );
+            //The .ListDevicesAsync() method can take a continuation token, to return the
+            //next set of devices. The problme is, there is no way to get the token from 
+            //the initial call.
+            //Submitted issue to git hub for this enhancement https://github.com/aws/aws-sdk-net-extensions-cognito/issues/106
+            var listDevicesResponse = await this.CognitoUser.ListDevicesV2Async( 60, null );
             var count = 0;
+            int numberOfDays = 45;
 
-            foreach ( var device in listOfDevices ) {
-                if ( (DateTime.Now - device.LastAuthenticated).TotalDays > 45 ) {
+            foreach ( var deviceType in listDevicesResponse.Devices) {
+                if ( (DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                    var device = new CognitoDevice( deviceType, this.CognitoUser );
                     await device.ForgetDeviceAsync();
                     count++;
+                }
+            }
+
+            while( ! string.IsNullOrEmpty(listDevicesResponse.PaginationToken) ) {
+                listDevicesResponse = await this.CognitoUser.ListDevicesV2Async( 60, listDevicesResponse.PaginationToken );
+
+                foreach (var deviceType in listDevicesResponse.Devices) {
+                    if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                        var device = new CognitoDevice( deviceType, this.CognitoUser );
+                        await device.ForgetDeviceAsync();
+                        count++;
+                    }
                 }
             }
 

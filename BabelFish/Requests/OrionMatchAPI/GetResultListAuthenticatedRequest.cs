@@ -1,4 +1,5 @@
 ﻿using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Runtime.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetResultListPublicRequest : Request, ITokenRequest {
-
-        public GetResultListPublicRequest( MatchID matchid, string listname ) : base( "GetResultList" ) {
+    public class GetResultListAuthenticatedRequest : Request, ITokenRequest {
+        public GetResultListAuthenticatedRequest( MatchID matchid, string listname, UserAuthentication credentials ) : base( "GetResultList", credentials ) {
             MatchID = matchid;
             ResultListName = listname;
+            this.RequiresCredentials = true;
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new GetResultListPublicRequest( MatchID, ResultListName );
+            var newRequest = new GetResultListAuthenticatedRequest( MatchID, ResultListName, Credentials );
             newRequest.Token = this.Token;
             newRequest.Limit = this.Limit;
 
@@ -31,11 +32,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         /// <inheritdoc />
         public int Limit { get; set; }
-
-        /// <summary>
-        /// If this is a public match and preliminary is true, then this GetResultList will return participants ranked and scored by their predictive results; the predictive scores are based on a participant's score history and shots taken in the current match. 
-        /// </summary>
-        public bool Preliminary { get; set; }
 
         /// <inheritdoc />
         public override string RelativePath {
@@ -54,9 +50,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 if (Limit > 0)
                     parameterList.Add( "limit", new List<string> { Limit.ToString() } );
-
-                if (Preliminary)
-                    parameterList.Add("preliminary", new List<string> { Preliminary.ToString() } );
 
                 return parameterList;
             }
