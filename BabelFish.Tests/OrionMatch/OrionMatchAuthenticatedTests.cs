@@ -9,6 +9,7 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.DataModel.Athena;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
@@ -34,7 +35,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( matchId.ToString(), match.MatchID );
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
-            Assert.AreEqual( "2023-01-19", match.StartDate );
+            Assert.AreEqual( "2023-01-19", match.StartDate.ToString( DateTimeFormats.DATE_FORMAT ) );
         }
     }
 }

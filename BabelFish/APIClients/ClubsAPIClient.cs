@@ -61,6 +61,34 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
+        /// Generally this ia a parameterless call.
+        /// </summary>
+        /// <param name="currentlyShooting">If true, limits the returned list of clubs, to only the clubs that are currently shooting</param>
+        public async Task<GetClubListPublicResponse> GetClubListPublicAsync( bool currentlyShooting = false  ) {
+
+            var request = new GetClubListPublicRequest( );
+            request.CurrentlyShooting = currentlyShooting;
+
+            return await GetClubListPublicAsync( request );
+        }
+
+        /// <summary>
+        /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
+        /// Generally this ia a parameterless call, but may also include a Token value, with the list of clubs is too large
+        /// to return in a single response. 
+        /// </summary>
+        /// <param name="request"></param>
+        public async Task<GetClubListPublicResponse> GetClubListPublicAsync( GetClubListPublicRequest request ) {
+
+            var response = new GetClubListPublicResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
         /// Returns detailed information about an Orion account (aka a clubs account).
         /// </summary>
         /// <param name="request"></param>

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.APIClients;
-using System.Drawing.Printing;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
