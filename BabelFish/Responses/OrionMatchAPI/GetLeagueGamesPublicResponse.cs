@@ -8,9 +8,9 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetLeagueGameListPublicResponse : Response<LeagueGameListWrapper>, ITokenResponse<GetLeagueGameListPublicRequest> {
+    public class GetLeagueGamesPublicResponse : Response<LeagueGameListWrapper>, ITokenResponse<GetLeagueGamesPublicRequest> {
 
-        public GetLeagueGameListPublicResponse( GetLeagueGameListPublicRequest request ) : base() {
+        public GetLeagueGamesPublicResponse( GetLeagueGamesPublicRequest request ) : base() {
             this.Request = request;
         }
 
@@ -23,8 +23,8 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
         }
 
         /// <inheritdoc/>
-        public GetLeagueGameListPublicRequest GetNextRequest() {
-            var nextRequest = (GetLeagueGameListPublicRequest)Request.Copy();
+        public GetLeagueGamesPublicRequest GetNextRequest() {
+            var nextRequest = (GetLeagueGamesPublicRequest)Request.Copy();
             nextRequest.Token = Value.LeagueGames.NextToken;
             return nextRequest;
 		}

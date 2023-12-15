@@ -9,20 +9,24 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetLeaguePublicResponse : Response<LeagueWrapper>
+    public class GetLeagueTeamDetailPublicResponse : Response<LeagueTeamDetailWrapper>
     {
 
-        public GetLeaguePublicResponse(GetLeaguePublicRequest request ) : base() {
+        public GetLeagueTeamDetailPublicResponse( GetLeagueTeamDetailPublicRequest request ) : base() {
             this.Request = Request;
         }
 
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        public League League
+        public LeagueTeamDetail LeagueTeamDetail
         {
-            get { return Value.League; }
+            get { return Value.LeagueTeamDetail; }
 		}
+
+        public LeagueTeam LeagueTeam {
+            get { return Value.LeagueTeamDetail.LeagueTeam; }
+        }
 
 		/// <inheritdoc />
 		protected internal override DateTime GetCacheValueExpiryTime() {

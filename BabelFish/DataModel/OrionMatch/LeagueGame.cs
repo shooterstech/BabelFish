@@ -43,5 +43,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public LeagueTeamResult HomeTeam { get; set; }
 
 		public LeagueTeamResult AwayTeam { get; set; }
+
+        public override string ToString() {
+			return GameName;
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
@@ -15,7 +16,7 @@ using NLog;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
-    public class League {
+    public class League: LeagueBase {
 
         private string parentId = "";
         private Logger logger = LogManager.GetCurrentClassLogger();
@@ -40,15 +41,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
-        /// Name of the Match
-        /// </summary>
-        [JsonProperty( Order = 7 )]
-        public string LeagueName {
-            get; set;
-        } = string.Empty;
-
-
-        /// <summary>
         /// Sets the public visibility for the match. Valid values are
         /// Private : No visibility
         /// Protected : Only athletes, their coaches, and match officials may see
@@ -66,23 +58,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 9 )]
         public string OwnerId { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Unique LeagueID for this League.
-        /// 
-        /// This is a required field.
-        /// </summary>
-        [JsonProperty( Order = 11 )]
-        public string LeagueID { get; set; } = string.Empty;
-
-        public int LeagueNetworkID { get; set; }
-
-        public string LeagueNetworkName { get; set; }
-
-        public int SeasonID { get; set; }
-
-        public string SeasonName { get; set; }
-
-        public LeagueSeasonType SeasonType { get; set; }
 
         public string MatchType { get { return "League"; } }
 
@@ -96,8 +71,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [JsonConverter( typeof( DateConverter ) )]
         public DateTime EndDate { get; set; }
-
-        public LeagueConfiguration Configuration { get; set; }
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.

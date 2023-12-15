@@ -5,7 +5,7 @@ using System.Text;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
-    /// Describes the result of one team that competed in one league game.
+    /// Represents one of the two teams playing in a LeagueGame, including their results and reference back to their LeagueTeam.
     /// </summary>
     public class LeagueTeamResult {
 

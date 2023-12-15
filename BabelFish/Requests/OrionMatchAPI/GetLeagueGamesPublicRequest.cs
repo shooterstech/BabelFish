@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
-    public class GetLeagueGameListPublicRequest : Request, ITokenRequest {
+    public class GetLeagueGamesPublicRequest : Request, ITokenRequest {
 
-        public GetLeagueGameListPublicRequest( string leagueId ) : base( "GetLeagueGameList" ) {
+        public GetLeagueGamesPublicRequest( string leagueId ) : base( "GetLeagueGames" ) {
 			if (string.IsNullOrEmpty( leagueId ) ) {
 				throw new ArgumentNullException( "Parameter leagueId may not be null or an empty string." );
 			}
@@ -158,7 +158,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
 		/// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new GetLeagueGameListPublicRequest( LeagueId );
+            var newRequest = new GetLeagueGamesPublicRequest( LeagueId );
             newRequest.Token = this.Token;
             newRequest.Limit = this.Limit;
 			newRequest.StartDate = this.StartDate;

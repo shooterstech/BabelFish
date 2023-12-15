@@ -1,8 +1,8 @@
-﻿using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.Common;
+﻿using Scopos.BabelFish.DataModel.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -17,11 +17,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public const int ByeWeekTeamID = 2147483647;
 
+        [OnDeserialized]
+        internal void OnDeserialized( StreamingContext context ) {
+            if (Schedule == null)
+                Schedule = new List<LeagueGame>();
+            if (SeasonAverage == null)
+                SeasonAverage = new Athena.Score();
+            if (Record == null)
+                Record = new LeagueRecord();
+        }
+
         public int TeamID { get; set; }
 
         public string TeamName { get; set; }
 
-        [DefaultValue("")]
+        [DefaultValue( "" )]
         public string Hometown { get; set; }
 
         /// <summary>
@@ -47,5 +57,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string Division { get; set; }
 
         public Contact Coach { get; set; }
+
+        public List<LeagueGame> Schedule {get; set; }
+
+        /// <summary>
+        /// J is the Integer score average.
+        /// K is the Decimal score average.
+        /// L is the inner ten average.
+        /// </summary>
+        public Scopos.BabelFish.DataModel.Athena.Score SeasonAverage { get; set; }
+
+        public LeagueRecord Record { get; set; }
     }
 }

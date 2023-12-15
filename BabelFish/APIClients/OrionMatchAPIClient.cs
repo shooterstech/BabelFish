@@ -398,9 +398,9 @@ namespace Scopos.BabelFish.APIClients {
 		/// Get League Games API
 		/// </summary>
 		/// <param name="requestParameters">GetMatchRequest object</param>
-		public async Task<GetLeagueGameListPublicResponse> GetLeagueGamesPublicAsync( GetLeagueGameListPublicRequest requestParameters ) {
+		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( GetLeagueGamesPublicRequest requestParameters ) {
 
-			GetLeagueGameListPublicResponse response = new GetLeagueGameListPublicResponse( requestParameters );
+			GetLeagueGamesPublicResponse response = new GetLeagueGamesPublicResponse( requestParameters );
 
 			await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
 
@@ -411,12 +411,59 @@ namespace Scopos.BabelFish.APIClients {
 		/// Get League Games API
 		/// </summary>
 		/// <param name="leagueId"></param>
-		public async Task<GetLeagueGameListPublicResponse> GetLeagueGamesPublicAsync( string leagueId ) {
-			var request = new GetLeagueGameListPublicRequest( leagueId );
+		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( string leagueId ) {
+			var request = new GetLeagueGamesPublicRequest( leagueId );
 
 			return await GetLeagueGamesPublicAsync( request ).ConfigureAwait( false );
-		}
-		#endregion
+        }
 
-	}
+        /// <summary>
+        /// Get League Teams API
+        /// </summary>
+        /// <param name="requestParameters">GetLeagueTeamsPublicRequest object</param>
+        public async Task<GetLeagueTeamsPublicResponse> GetLeagueTeamsPublicAsync( GetLeagueTeamsPublicRequest requestParameters ) {
+
+            GetLeagueTeamsPublicResponse response = new GetLeagueTeamsPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get League Teams API
+        /// </summary>
+        /// <param name="leagueId"></param>
+        public async Task<GetLeagueTeamsPublicResponse> GetLeagueTeamsPublicAsync( string leagueId ) {
+            var request = new GetLeagueTeamsPublicRequest( leagueId );
+
+            return await GetLeagueTeamsPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get League Team Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetLeagueTeamsPublicRequest object</param>
+        public async Task<GetLeagueTeamDetailPublicResponse> GetLeagueTeamDetailPublicAsync( GetLeagueTeamDetailPublicRequest requestParameters ) {
+
+            GetLeagueTeamDetailPublicResponse response = new GetLeagueTeamDetailPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get League Teams API
+        /// </summary>
+        /// <param name="leagueId"></param>
+        /// <param name="teamId"></param>
+        public async Task<GetLeagueTeamDetailPublicResponse> GetLeagueTeamDetailPublicAsync( string leagueId, int teamId ) {
+            var request = new GetLeagueTeamDetailPublicRequest( leagueId, teamId );
+
+            return await GetLeagueTeamDetailPublicAsync( request ).ConfigureAwait( false );
+        }
+        #endregion
+
+    }
 }
