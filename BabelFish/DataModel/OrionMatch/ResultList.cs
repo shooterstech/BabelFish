@@ -24,6 +24,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string RankingRuleDef { get; set; } = string.Empty;
 
         /// <summary>
+        /// Set name of the Result List Format definition to use when displaying this result list.
+        /// </summary>
+        [JsonProperty( Order = 2 )]
+        public string ResultListFormatDef { get; set; } = string.Empty;
+
+        /// <summary>
         /// Indicates the completion status of this Result List
         /// </summary>
         [JsonProperty( Order = 3 )]
