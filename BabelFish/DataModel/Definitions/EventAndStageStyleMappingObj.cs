@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Given the Target Collection Name, AttributeValueAppellation, and EventAppellation / StageAppellation, the Event and Stage Style Mapping
     /// defines how to map these inputs to an EventStyle or StageStyle. This is then used in the generation of a ResultCOF data structure.
     /// </summary>
-    public class EventAndStageStyleMappingObj {
+    public class EventAndStageStyleMappingObj : IReconfigurableRulebookObject {
 
         public EventAndStageStyleMappingObj() {
             EventStyleMappings = new List<EventStyleSelection>();
@@ -63,5 +63,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<EventStyleSelection> EventStyleMappings { get; set; }
 
         public List<StageStyleSelection> StageStyleMappings { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
     }
 }

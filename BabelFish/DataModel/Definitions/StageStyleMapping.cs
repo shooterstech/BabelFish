@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// When doing so, these Events may be mapped to an EVENT STYLE or STAGE STYLE respectively. 
     /// An EventStyleSelection or StageStyleSelection define how that mapping is to occur.
     /// </summary>
-    public class StageStyleMapping {
+    public class StageStyleMapping : IReconfigurableRulebookObject {
 
         /// <summary>
         /// The default STAGE STYLE to use, if no mapping could be found. 
@@ -27,5 +27,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 2)]
         [DefaultValue( "" )]
         public string StageAppellation { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        [JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
     }
 }

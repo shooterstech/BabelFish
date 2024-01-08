@@ -131,5 +131,49 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             Assert.AreEqual( ownerId, clubDetail.OwnerId, "Expecting the OwnerId to match, what was sent." );
         }
+
+        [TestMethod]
+        public async Task GetClubListPublic() {
+
+            //Using production, to get more real values.
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            //Should return all clubs without any parameters ... or at least up to the token limit
+            var request = new GetClubListPublicRequest( );
+            request.CurrentlyShooting = false;
+
+            var getAllClubsResponse = await client.GetClubListPublicAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getAllClubsResponse.StatusCode );
+
+            var clubList = getAllClubsResponse.ClubList;
+
+            Assert.IsTrue( clubList.Items.Count == 50, "The response's ClubList should have 50 clubs." );
+            Assert.AreNotEqual( clubList.NextToken, "", "Expecting NextToken to be a non empty string." );
+
+        }
+
+        [TestMethod]
+        public async Task GetClubCurrentlyShooting() {
+
+            //Using production, to get more real values.
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            //as this call requires clubs to be shooting, the list may be empty (b/c no one is shooting)
+            var request = new GetClubListPublicRequest();
+            request.CurrentlyShooting = true;
+
+            var getClubCurrentlyShooting = await client.GetClubListPublicAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getClubCurrentlyShooting.StatusCode );
+
+            var clubList = getClubCurrentlyShooting.ClubList.Items;
+
+            //All clubs in the returned list (if there are any) should have a shot fired within the last 10 minutes.
+            foreach( var club in clubList ) {
+                Assert.IsTrue( (DateTime.UtcNow - club.LastPublicShot).TotalMinutes < 11.0);
+            }
+
+        }
     }
 }

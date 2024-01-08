@@ -49,6 +49,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( "v1.0:ntparc:Air Rifle" )]
         public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
 
+        [JsonProperty( Order = 12 )]
+        /// <summary>
+        /// The name of the Target Collection to use as the default when creating a new Course of Fire. 
+        /// Must be a value specified in the TargetCollectionDef.
+        /// </summary>
+        public string DefaultTargetCollectionName { get; set; }
+
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
         /// </summary>

@@ -29,5 +29,10 @@ namespace Scopos.BabelFish.DataModel {
         /// The user may request a limit, usually between 1 and 50, but the API is allowed to restrict the value of limit. This is the value the API used.
         /// </summary>
         int Limit { get; set; }
+
+        /// <summary>
+        /// Indicates if this response has more items. Almost always determiend if NextToken is null or an empty string.
+        /// </summary>
+        bool HasMoreItems { get; }
     }
 }

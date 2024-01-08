@@ -5,6 +5,10 @@ using System.Text;
 using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
+    /// </summary>
     public class SetName: IEquatable<SetName> {
 
         private int majorVersion = 0;

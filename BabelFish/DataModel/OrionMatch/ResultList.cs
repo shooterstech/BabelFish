@@ -24,6 +24,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string RankingRuleDef { get; set; } = string.Empty;
 
         /// <summary>
+        /// Set name of the Result List Format definition to use when displaying this result list.
+        /// </summary>
+        [JsonProperty( Order = 2 )]
+        public string ResultListFormatDef { get; set; } = string.Empty;
+
+        /// <summary>
         /// Indicates the completion status of this Result List
         /// </summary>
         [JsonProperty( Order = 3 )]
@@ -98,7 +104,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int Limit { get; set; } = 50;
 
-        public override string ToString() {
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        public string Creator { get; set; }
+
+		public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "ResultList for " );
             foo.Append( ResultName );

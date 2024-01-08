@@ -5,14 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.APIClients {
-    public class DefinitionAPIClient : APIClient {
+    public class DefinitionAPIClient : APIClient<DefinitionAPIClient> {
 
         ResponseCache definitionCacheHelper;
         private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -22,12 +26,77 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="apiKey"></param>
         public DefinitionAPIClient( string apiKey ) : base( apiKey ) {
-            IgnoreLocalCache = false;
+            IgnoreInMemoryCache = false;
+            IgnoreFileSystemCache = false;
         }
 
         public DefinitionAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
-			IgnoreLocalCache = false;
-		}
+			IgnoreInMemoryCache = false;
+            IgnoreFileSystemCache = false;
+        }
+
+        /// <summary>
+        /// Attempts to read the Definition file from the local file system.
+        /// Because this method is async, and we can't have 'out' variables on async methods, this method instead returns a tuple.
+        /// .Item1 is a boolean indicating if it was successful.
+        /// .Item2 is the ResponseIntermediateObject (if successful) containing the definition file.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Parameter request must be of type GetDefinitionPublicRequest</exception>
+        protected override async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request ) {
+
+            if (!(request is GetDefinitionPublicRequest)) {
+                throw new ArgumentException( "The parameter reqeust, must be of type GetDefinitionPublicRequest." );
+            }
+
+            //Make sure the user wants us to use the file system cache
+            if (IgnoreInMemoryCache || request.IgnoreFileSystemCache)
+                return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+
+            var definitionRequest = (GetDefinitionPublicRequest)request;
+            try {
+                if (LocalStoreDirectory != null && LocalStoreDirectory.Exists) {
+
+                    string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
+                    string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
+
+                    logger.Info( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
+
+                    FileInfo fileInfo = new FileInfo( filename );
+                    if (fileInfo.Exists) {
+
+                        using (StreamReader sr = File.OpenText( filename ))
+                        using (JsonTextReader reader = new JsonTextReader( sr )) {
+                            var jsonFromFile = await JObject.ReadFromAsync( reader );
+
+                            var response = new ResponseIntermediateObject();
+                            response.Request = request;
+                            response.MessageResponse = new MessageResponse();
+                            //Format the JObject response as if it was read from the REST API
+                            response.Body = new JObject();
+                            response.Body[definitionRequest.SetName.ToString()] = jsonFromFile;
+                            response.ValidUntil = DateTime.UtcNow.AddDays( 1 ); //UMMMM, what's a good value to set here?
+
+                            return new Tuple<bool, ResponseIntermediateObject?>( true, response );
+                        }
+                    } else {
+                        logger.Warn( $"Can't read definition '{filename}' because the file does not exist." );
+                    }
+
+                } else {
+                    if (LocalStoreDirectory == null)
+                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory has not been set." );
+                    else
+                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory '{LocalStoreDirectory.FullName}' doesn't exist." );
+                }
+            } catch (Exception ex) {
+                logger.Error( ex, $"Something unexpected happen while reading the definitions for '{definitionRequest.SetName}'." );
+            }
+
+            return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+        }
+
 
         public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
 
@@ -41,7 +110,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetAttributeDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.ATTRIBUTE;
 
@@ -57,7 +126,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetCourseOfFireDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.COURSEOFFIRE;
 
@@ -73,7 +142,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetEventStyleDefinitionAsync( setName );
         }
 
-        public async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.EVENTSTYLE;
 
@@ -89,7 +158,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetRankingRuleDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RANKINGRULES;
 
@@ -105,7 +174,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetStageStyleDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.STAGESTYLE;
 
@@ -121,7 +190,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetTargetCollectionDefinitionAsync( setName );
         }
 
-        public async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGETCOLLECTION;
 
@@ -137,7 +206,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetTargetDefinitionAsync(setName);
         }
 
-        public async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGET;
 
@@ -153,7 +222,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetScoreFormatCollectionDefinitionAsync( setName );
         }
 
-        public async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.SCOREFORMATCOLLECTION;
 
@@ -176,7 +245,7 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
 		}
 
-		public async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+		public virtual async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
 
 			var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
 
@@ -187,7 +256,7 @@ namespace Scopos.BabelFish.APIClients {
 			return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
 		}
 
-		public async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
+		public virtual async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RESULTLISTFORMAT;
 
@@ -197,5 +266,40 @@ namespace Scopos.BabelFish.APIClients {
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
-    }
+
+        public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( GetDefinitionListPublicRequest request ) {
+
+            GetDefinitionListPublicResponse response = new GetDefinitionListPublicResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
+            return response;
+		}
+
+        public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( DefinitionType type ) {
+			GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
+
+            return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
+
+		}
+
+        /// <summary>
+        /// Retreives a list of SparseDefinitions in order or relavancy to the provided searchTerm. Maximum 20 items are returned.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>
+		public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( DefinitionType type, string searchTerm ) {
+			GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
+            request.Search = searchTerm;
+            request.Limit = 20;
+
+            //As the search matching is done on the server, we will be turning off client level caching.
+            request.IgnoreFileSystemCache = true;
+            request.IgnoreInMemoryCache = true;
+
+			return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
+
+		}
+	}
 }

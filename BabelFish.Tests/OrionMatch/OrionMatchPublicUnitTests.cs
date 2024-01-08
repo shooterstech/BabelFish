@@ -69,7 +69,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( matchId.ToString(), match.MatchID );
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
-            Assert.AreEqual( "2023-01-19", match.StartDate );
+            Assert.AreEqual( new DateTime(2023, 1, 19), match.StartDate );
         }
     }
 }

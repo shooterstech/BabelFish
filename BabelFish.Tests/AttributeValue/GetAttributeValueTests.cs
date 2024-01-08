@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task GetAttributeValue_SingleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task GetAttributeValue_MultipleValue() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = client.XApiKey;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -145,7 +145,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task GetAttributeValue_MultipleValueRepeated() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -200,7 +200,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task GetAttributeValue_DoesNotExist() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -229,7 +229,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
         [TestMethod]
         public async Task AttributeValueAppellationTest() {
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
             var rifleType = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
 

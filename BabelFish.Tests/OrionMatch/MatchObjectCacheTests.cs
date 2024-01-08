@@ -29,12 +29,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 			//The initial request should cache the response.
 			var responseNoCache = await client.GetMatchDetailPublicAsync( matchId );
 			Assert.AreEqual( HttpStatusCode.OK, responseNoCache.StatusCode );
-			Assert.IsFalse( responseNoCache.CachedResponse );
+			Assert.IsFalse( responseNoCache.InMemoryCachedResponse );
 
 			//The second request should use the cache
 			var responseWithCache = await client.GetMatchDetailPublicAsync( matchId );
 			Assert.AreEqual( HttpStatusCode.OK, responseWithCache.StatusCode );
-			Assert.IsTrue( responseWithCache.CachedResponse );
+			Assert.IsTrue( responseWithCache.InMemoryCachedResponse );
 
 			//The amount of time it took for the response should be very different 
 			Assert.IsTrue( responseNoCache.TimeToRun > responseWithCache.TimeToRun * 100 );

@@ -4,7 +4,8 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using NLog;
-using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Converters;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 	[Serializable]
@@ -31,13 +32,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The start date of the match dates to search.
         /// The default value is the first day of the current month.
         /// </summary>
-        public String StartDate { get; set; } = String.Empty;
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime StartDate { get; set; }
 
         /// <summary>
         /// The end date of the match dates to search.
         /// The default value is the last day of the current month.
         /// </summary>
-        public String EndDate { get; set; } = String.Empty;
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime EndDate { get; set; }
 
         /// <summary>
         /// The shooting style to search or unassigned for all.
@@ -62,6 +65,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int Limit { get; set; } = 50;
 
         public List<MatchAbbr> Items { get; set; }
+
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
 
         /// <inheritdoc />
         public string NextToken { get; set; } = string.Empty;

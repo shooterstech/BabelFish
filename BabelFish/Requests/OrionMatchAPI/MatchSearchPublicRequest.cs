@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Requests.OrionMatchAPI
-{
+namespace Scopos.BabelFish.Requests.OrionMatchAPI {
     public class MatchSearchPublicRequest : Request, ITokenRequest {
         /// <summary>
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public MatchSearchPublicRequest() : base( "MatchSearch")  { }
+        public MatchSearchPublicRequest() : base( "MatchSearch" ) { }
 
         /// <summary>
         /// Distance in miles to search.
@@ -23,13 +22,13 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
         /// The start date of the match dates to search.
         /// The default value is the first day of the current month.
         /// </summary>
-        public DateTime StartDate { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddDays(-14);
+        public DateTime StartDate { get; set; } = new DateTime( DateTime.Today.Year, DateTime.Today.Month, 1 ).AddDays( -14 );
 
         /// <summary>
         /// The end date of the match dates to search.
         /// The default value is the last day of the current month.
         /// </summary>
-        public DateTime EndDate { get; set; } = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddDays(0);
+        public DateTime EndDate { get; set; } = new DateTime( DateTime.Today.Year, DateTime.Today.Month, 1 ).AddDays( 0 );
 
         /// <summary>
         /// The shooting style to search or unassigned for all.
@@ -61,7 +60,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
         public override Request Copy() {
             var newRequest = new MatchSearchPublicRequest();
             newRequest.StartDate = StartDate;
-            newRequest.EndDate = EndDate;  
+            newRequest.EndDate = EndDate;
             newRequest.ShootingStyle = ShootingStyle;
             newRequest.Longitude = Longitude;
             newRequest.Latitude = Latitude;
@@ -72,22 +71,20 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
             return newRequest;
         }
 
-        public override Dictionary<string, List<string>> QueryParameters
-        {
-            get
-            {
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
                 if (Latitude == 0 || Longitude == 0)
-                    throw new RequestException("Longitude and Latitude are required and must be > 0.");
+                    throw new RequestException( "Longitude and Latitude are required and must be > 0." );
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-                parameterList.Add("distance", new List<string>() { Distance.ToString() });
-                parameterList.Add("start-date", new List<string>() { StartDate.ToString(Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
-                parameterList.Add("end-date", new List<string>() { EndDate.ToString(Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT) });
-                parameterList.Add("shooting-style", ShootingStyle);
-                parameterList.Add("longitude", new List<string>() { Longitude.ToString() });
-                parameterList.Add("latitude", new List<string>() { Latitude.ToString() });
+                parameterList.Add( "distance", new List<string>() { Distance.ToString() } );
+                parameterList.Add( "start-date", new List<string>() { StartDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "end-date", new List<string>() { EndDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "shooting-style", ShootingStyle );
+                parameterList.Add( "longitude", new List<string>() { Longitude.ToString() } );
+                parameterList.Add( "latitude", new List<string>() { Latitude.ToString() } );
                 parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
-                if ( ! string.IsNullOrEmpty( Token ))
+                if (!string.IsNullOrEmpty( Token ))
                     parameterList.Add( "token", new List<string>() { Token } );
 
                 return parameterList;
@@ -95,8 +92,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
         }
 
         /// <inheritdoc />
-        public override string RelativePath
-        {
+        public override string RelativePath {
             get { return $"/match/search"; }
         }
     }

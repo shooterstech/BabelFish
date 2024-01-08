@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
         [TestMethod]
         public async Task StringFormattingStandardScoreFormats() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
+            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
@@ -70,7 +70,7 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
         [TestMethod]
         public async Task StringFormattingStandardScoreFormatsUnexpectedValues() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreLocalCache = true };
+            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );

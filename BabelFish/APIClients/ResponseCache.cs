@@ -39,6 +39,7 @@ namespace Scopos.BabelFish.APIClients
         /// <summary>
         /// The directory that BabelFish may use to store cached responses. 
         /// </summary>
+        [Obsolete("Replaced with API Client's File System Cache")]
         public DirectoryInfo? LocalStoreDirectory { get; set; } = null;
 
         /// <summary>
