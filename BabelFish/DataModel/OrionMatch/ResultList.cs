@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent> {
+    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition {
 
         public ResultList() {
             Items = new List<ResultEvent>();
@@ -116,7 +118,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string Creator { get; set; }
 
-		public override string ToString() {
+        /// <inheritdoc />
+        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( CourseOfFireDef ))
+                return null;
+
+            SetName cofSetName = SetName.Parse( CourseOfFireDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( cofSetName );
+            return getDefiniitonResponse.Definition;
+        }
+
+        /// <inheritdoc />
+        public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( ResultListFormatDef ))
+                return null;
+
+            SetName rlfSetName = SetName.Parse( ResultListFormatDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( rlfSetName );
+            return getDefiniitonResponse.Definition;
+        }
+
+        public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "ResultList for " );
             foo.Append( ResultName );

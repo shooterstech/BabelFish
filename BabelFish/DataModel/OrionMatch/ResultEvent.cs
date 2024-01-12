@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultEvent {
 
         public ResultEvent() {
-            Score = new Score();
+            Score = new Scopos.BabelFish.DataModel.Athena.Score();
             Children = new List<ResultEventChild>();
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
@@ -25,7 +25,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Score. If the Preliminary result list is requested, Score will be the predicted score based on the athlete's score history and shots taken in the current match.
         /// </summary>
-        public Score Score { get; set; }
+        [Obsolete( "Replaced with EventScores" )]
+        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
 
         public int Rank { get; set; }
 
@@ -33,6 +34,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Contains the participants scores for the child events directly under this event. This is not a complete tree, for a complete
         /// tree look up the ResultCOF using the ResultCOFID.
         /// </summary>
+        [Obsolete( "Replaced with EventScores" )]
         public List<ResultEventChild> Children { get; set; } = new List<ResultEventChild>();
 
         /// <summary>
@@ -40,10 +42,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string UserID { get; set; } = "";
 
+        [Obsolete( "Replaced with EventScores" )]
+        public string EventName { get; set; }
+
         /// <summary>
         /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual WARNING value will be null.
         /// </summary>
         public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
+
+        public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
 
     }
 
@@ -51,13 +58,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultEventChild {
 
         public ResultEventChild() {
-            Score = new Score();
+            Score = new Scopos.BabelFish.DataModel.Athena.Score();
         }
 
         [Obsolete( "Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef" )]
         public string ScoreFormat { get; set; }
 
-        public Score Score { get; set; }
+        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
 
         public string EventName { get; set; }
 
