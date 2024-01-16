@@ -30,6 +30,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public ResultListDisplayPartitions Display {  get; set; }
 
+        /// <summary>
+        /// If the Result List is a team event, use DisplayForTeam to style the rows. If DisplayForTeam
+        /// is null/empty the use .Display.
+        /// </summary>
+        public ResultListDisplayPartitions DisplayForTeam { get; set; }
+
 
         public List<ResultListDisplayColumn> Columns { get; set; }
     }

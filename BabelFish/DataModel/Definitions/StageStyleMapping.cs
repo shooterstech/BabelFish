@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -13,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// When doing so, these Events may be mapped to an EVENT STYLE or STAGE STYLE respectively. 
     /// An EventStyleSelection or StageStyleSelection define how that mapping is to occur.
     /// </summary>
-    public class StageStyleMapping : IReconfigurableRulebookObject {
+    public class StageStyleMapping : IReconfigurableRulebookObject, IGetStageStyleDefinition {
 
         /// <summary>
         /// The default STAGE STYLE to use, if no mapping could be found. 
@@ -32,5 +33,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentException">Thrown if the value of .DefaultDef could not be parsed. Which shouldn't happen.</exception>
+        public async Task<StageStyle> GetStageStyleDefinitionAsync() {
+
+            SetName stageStyleSetName = SetName.Parse( DefaultDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetStageStyleDefinitionAsync( stageStyleSetName );
+            return getDefiniitonResponse.Definition;
+
+        }
     }
 }

@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
@@ -16,8 +17,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
-    public class Event
-    {
+    public class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition {
 
         private List<string> validationErrorList = new List<string>();
 
@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
         public Event()
         {
             //Children = new List<string>();
-            ScoreFormat = "d";
+            ScoreFormat = "Events";
             Calculation = "SUM";
             EventType = EventtType.NONE;
         }
@@ -103,6 +103,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
 
         /// <summary>
         /// The score format to use to display scores for this Event.
+        /// The possible values are learned from the Score Format Collection.
         /// </summary>
         [JsonProperty(Order = 5)]
         public string ScoreFormat { get; set; }
@@ -127,14 +128,30 @@ namespace Scopos.BabelFish.DataModel.Definitions
         public EventStyleMapping EventStyleMapping { get; set; }
 
         /// <summary>
+        /// The recommended Result List Format defintion to use when displaying a result list for this Event.
+        /// </summary>
+        [JsonProperty( Order = 14 )]
+        [DefaultValue( "" )]
+        public string ResultListFormatDef { get; set; } = string.Empty;
+
+        /// <summary>
         /// Internal documentation comments. All text is ignored by the system.
         /// </summary>
-        [JsonProperty(Order = 14)]
+        [JsonProperty(Order = 99)]
         [DefaultValue("")]
         public string Comment { get; set; }
 
         public override string ToString() {
             return $"{EventName} of {EventType}";
+        }
+
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentException">Thrown if the value of .ResultListFormatDef could not be parsed. Which shouldn't happen.</exception>
+        public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
+
+            SetName resultListFormatSetName = SetName.Parse( ResultListFormatDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            return getDefiniitonResponse.Definition;
         }
     }
 }
