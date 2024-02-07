@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+    /// <summary>
+    /// Represents a physical location on the globe. Usually city and state with longitude and latitude.
+    /// </summary>
     [Serializable]
     public class Location {
 

@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.APIClients {
             IgnoreFileSystemCache = true;
         }
 
-        #region Public Match API Calls
+        #region Match API Calls
         /// <summary>
         /// Get Match Detail API
         /// </summary>
@@ -85,6 +85,21 @@ namespace Scopos.BabelFish.APIClients {
             return await GetMatchDetailAuthenticatedAsync( request );
         }
 
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        public async Task<GetMatchResponse> GetMatchDetailAsync( MatchID matchid, UserAuthentication? credentials = null) {
+            if (credentials == null) {
+                return await GetMatchDetailPublicAsync( matchid );
+            } else {
+                return await GetMatchDetailAuthenticatedAsync( matchid, credentials );
+            }
+        }
+
         #endregion
 
         #region Get Result List
@@ -132,6 +147,21 @@ namespace Scopos.BabelFish.APIClients {
         /// <returns>ResultList Object</returns>
         public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( MatchID matchid, string listname, UserAuthentication credentials ) {
             return await GetResultListAuthenticatedAsync( new GetResultListAuthenticatedRequest( matchid, listname, credentials ) ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        public async Task<GetResultListResponse> GetResultLIstAsync( MatchID matchid, string listname, UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetResultListPublicAsync( matchid, listname );
+            } else {
+                return await GetResultListAuthenticatedAsync( matchid, listname, credentials );
+            }
         }
         #endregion
 
@@ -262,6 +292,21 @@ namespace Scopos.BabelFish.APIClients {
         /// <returns>ResultCOF Object</returns>
         public async Task<GetResultCOFDetailAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( string resultCOFID, UserAuthentication credentials ) {
             return await GetResultCourseOfFireDetailAuthenticatedAsync( new GetResultCOFDetailAuthenticatedRequest( resultCOFID, credentials ) );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetailAsync( string resultCOFID, UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetResultCourseOfFireDetailPublicAsync( resultCOFID );
+            } else {
+                return await GetResultCourseOfFireDetailAuthenticatedAsync( resultCOFID, credentials );
+            }
         }
         #endregion
 

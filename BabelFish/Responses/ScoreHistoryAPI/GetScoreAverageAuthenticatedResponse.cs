@@ -8,21 +8,10 @@ using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
 namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 
-    public class GetScoreAverageAuthenticatedResponse : Response<ScoreAverageWrapper>, ITokenResponse<GetScoreAverageAuthenticatedRequest> {
+    public class GetScoreAverageAuthenticatedResponse : GetScoreAverageAbstractResponse {
 
         public GetScoreAverageAuthenticatedResponse( GetScoreAverageAuthenticatedRequest request) {
             this.Request = request;
-        }
-
-        public ScoreAverageList ScoreAverage {
-            get { return Value.ScoreAverageList; }
-        }
-
-        /// <inheritdoc/>
-        public GetScoreAverageAuthenticatedRequest GetNextRequest() {
-            var nextRequest = (GetScoreAverageAuthenticatedRequest)Request.Copy();
-            nextRequest.Token = Value.ScoreAverageList.NextToken;
-            return nextRequest;
         }
     }
 }

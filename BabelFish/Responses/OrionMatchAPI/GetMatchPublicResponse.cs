@@ -9,20 +9,12 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetMatchPublicResponse : Response<MatchWrapper>
+    public class GetMatchPublicResponse : GetMatchResponse
     {
 
         public GetMatchPublicResponse(GetMatchPublicRequest request ) : base() {
             this.Request = Request;
         }
-
-        /// <summary>
-        /// Facade function that returns the same as this.Value
-        /// </summary>
-        public Match Match
-        {
-            get { return Value.Match; }
-		}
 
 		/// <inheritdoc />
 		protected internal override DateTime GetCacheValueExpiryTime() {

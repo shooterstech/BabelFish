@@ -7,17 +7,10 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
-    public class GetMatchAuthenticatedResponse : Response<MatchWrapper> {
+    public class GetMatchAuthenticatedResponse : GetMatchResponse {
 
         public GetMatchAuthenticatedResponse( GetMatchAuthenticatedRequest request ) : base() {
             this.Request = Request;
-        }
-
-        /// <summary>
-        /// Facade function that returns the same as this.Value
-        /// </summary>
-        public Match Match {
-            get { return Value.Match; }
         }
     }
 }

@@ -20,6 +20,8 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         private List<SetName> stageStyles = new List<SetName>();
         private int limit = 50;
 
+        public enum ScoreHistoryRequestType { SCORE_HISTORY, SCORE_AVERAGE };
+
         /// <summary>
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
@@ -31,6 +33,28 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
         public GetScoreHistoryAbstractRequest( string operationId, UserAuthentication credentials ) : base( operationId, credentials ) { }
+
+
+        /// <summary>
+        /// Factory method to return a concrete Get Score History Request or Get Score Average Request object based on value of User Authentication.
+        /// If it is null, then a public request is returned. If it is not null, then an Authenticated request is returned. 
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        public static GetScoreHistoryAbstractRequest Factory( ScoreHistoryRequestType requestType, UserAuthentication credentials ) {
+            if (requestType == ScoreHistoryRequestType.SCORE_HISTORY) {
+                if (credentials == null)
+                    return new GetScoreHistoryPublicRequest();
+                else
+                    return new GetScoreHistoryAuthenticatedRequest( credentials );
+            } else {
+				if (credentials == null)
+					return new GetScoreAveragePublicRequest();
+				else
+					return new GetScoreAverageAuthenticatedRequest( credentials );
+
+			}
+		}
 
         /// <summary>
         /// Gets or Sets the SetName of the Event Style for the Score History request.
