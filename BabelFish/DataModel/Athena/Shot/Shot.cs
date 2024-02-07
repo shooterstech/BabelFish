@@ -14,6 +14,9 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 	public class Shot : IEquatable<Shot>, IPenalty
     {
 
+        float bulletDiameter = 0;
+        float scoringDiameter = 0;
+
         /// <summary>Shot Attribute to indicate the shot was a sighter.</summary>
         public const string SHOT_ATTRIBUTE_SIGHTER = "SIGHTER";
         /// <summary>Shot Attribute to indicate the shot was a frame hit.</summary>
@@ -74,9 +77,53 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public string RangeTime { get; set; }
 
-        public float BulletDiameter { get; set; }
+        /// <summary>
+        /// The diamter of the bullet shot at the target. Measured in mm.
+        /// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
+        /// When getting, if the value is not set, the value of Scoring Diamter is instead returned. If Scoring Diamter is not set, then 4.5 is returned.
+        /// </summary>
+        public float BulletDiameter { 
+            get {
+                if (bulletDiameter > 0 )
+                    return bulletDiameter; 
 
-        public float ScoringDiameter { get; set; }
+                if (scoringDiameter > 0)
+                    return scoringDiameter;
+
+                return 4.5f;
+            }
+
+            set {
+                if ((value >= 4.0f && value <= 15.0f) || value == 0)
+                    bulletDiameter = value;
+
+                throw new ArgumentException( $"Can not set BulletDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+            }
+        }
+
+		/// <summary>
+		/// The diamter to use when scoring this shot against the scoring rings. Measured in mm.
+		/// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
+		/// When getting, if the value is not set, the value of Bullet Diamter is instead returned. If Bullet Diamter is not set, then 4.5 is returned.
+		/// </summary>
+		public float ScoringDiameter {
+			get {
+				if (scoringDiameter > 0)
+					return scoringDiameter;
+
+				if (bulletDiameter > 0)
+					return bulletDiameter;
+
+				return 4.5f;
+			}
+
+			set {
+				if ((value >= 4.0f && value <= 15.0f) || value == 0)
+					scoringDiameter = value;
+
+				throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+			}
+		}
 
         public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
 
