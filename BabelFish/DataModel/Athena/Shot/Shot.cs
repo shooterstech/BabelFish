@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
@@ -72,6 +73,9 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public DateTime TimeScored { get; set; }
 
+        /// <summary>
+        /// The value of the Range Clock when the shot was fired and scored. 
+        /// </summary>
         public string RangeTime { get; set; }
 
         public float BulletDiameter { get; set; }
@@ -91,9 +95,16 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public string StageLabel { get; set; }
 
+        /*
+         * NOTE We must maintain the possiblility of a Sequence value of 0, as some older version of
+         * Orion stored the first shot with Sequence == 0. However, any new implementations should
+         * use Sequence == 1 to represent the first scored shot.
+         */
         /// <summary>
-        /// An in order numbering of the shot, for the Result COF
+        /// An in order numbering of the shot, for the Result COF. 
+        /// Valid values are greater than zero (but not zero). Typically stored as integers.
         /// </summary>
+        [DefaultValue(-9999)]
         public float Sequence { get; set; }
 
         /// <summary>
