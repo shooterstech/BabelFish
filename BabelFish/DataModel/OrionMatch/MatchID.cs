@@ -252,6 +252,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Returns a booleaning indicating if this Match ID is for a score that was manually created by a user.
+        /// </summary>
         public bool ManuallyEntered {
             get {
                 switch (subMatchID) {
