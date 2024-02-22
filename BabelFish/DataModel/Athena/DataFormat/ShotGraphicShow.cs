@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.DataModel.Athena.DataFormat
         /// <summary>
         /// If Competition == SIGHTER, then show all sighters that have a StageLabel equal to, well, this property.
         /// </summary>
-        public string StageLabel { get; set; } = string.Empty;
+        public List<string> StageLabel { get; set; } = new List<string> ();
 
         /// <summary>
         /// ALL => Display all competition shots

@@ -163,13 +163,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
         /// </summary>
         [JsonProperty(Order = 60)]
-        public Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicShow LiveDisplay { get; set; }
+        public Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicDisplay LiveDisplay { get; set; }
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, after an event is completed.
         /// </summary>
         [JsonProperty(Order = 61)]
-        public List<Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicShow> PostDisplay { get; set; }
+        public List<Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicDisplay> PostDisplay { get; set; }
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.

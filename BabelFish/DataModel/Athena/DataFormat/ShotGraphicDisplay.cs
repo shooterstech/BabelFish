@@ -10,8 +10,10 @@ namespace Scopos.BabelFish.DataModel.Athena.DataFormat
     /// </summary>
     public class ShotGraphicDisplay
     {
-
-        public string DisplayName { get; set; } = String.Empty;
+        /// <summary>
+        /// Human Readable name used only in Post Displays
+        /// </summary>
+        public string PostDisplayName { get; set; } = String.Empty;
 
         /// <summary>
         /// Human readable description of what this ShotGraphicDisplay do.
