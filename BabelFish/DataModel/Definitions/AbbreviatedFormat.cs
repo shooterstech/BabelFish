@@ -52,6 +52,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue(null)]
         public List<AbbreviatedFormat> Children { get; set; }
 
+        /// <summary>
+        /// Human Readable score format string. defaults to decimal single value.
+        /// </summary>
+        [JsonProperty(Order = 5)]
+        [DefaultValue("{d}")]
+        public string ScoreFormatted { get; set; }
+
+        /// <summary>
+        /// available shot attribute list.
+        /// </summary>
+        [JsonProperty(Order = 6)]
+        public List<string> AttributeList { get; set; } = new List<string>();
+
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context) {
