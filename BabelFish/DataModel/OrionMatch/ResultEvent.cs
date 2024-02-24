@@ -22,7 +22,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public Participant Participant { get; set; } = new Individual();
 
-        [Obsolete("Use .Participant.DisplayName instead.")]
+		/// <summary>
+		/// The local Match ID that generated this ResultEvent.
+		/// Information on that match may be looked up in the ResultList's Metadata field.
+		/// </summary>
+		public string MatchID { get; set; }
+
+		[Obsolete("Use .Participant.DisplayName instead.")]
 		public string DisplayName { get; set; }
 
         [Obsolete("Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef")]
