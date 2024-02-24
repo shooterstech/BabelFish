@@ -17,7 +17,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         [JsonProperty( Order = 1 )]
-        public string MatchID { get; set; } = string.Empty;
+		[Obsolete( "Use .Metadata.MatchID" )]
+		public string MatchID { get; set; } = string.Empty;
 
         /// <summary>
         /// Set name of the Ranking Rule definition
@@ -70,7 +71,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         [JsonProperty( Order = 10 )]
-        public DateTime LastUpdated { get; set; } = new DateTime();
+		[Obsolete( "Use .Metadata.LastUpdated" )]
+		public DateTime LastUpdated { get; set; } = new DateTime();
 
         [JsonProperty( Order = 11 )]
         public string OwnerId { get; set; } = string.Empty;
@@ -113,13 +115,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
-        /// <summary>
-        /// String holding the software (Orion Scoring System) and Version number of the software.
-        /// </summary>
-        public string Creator { get; set; }
+		/// <summary>
+		/// String holding the software (Orion Scoring System) and Version number of the software.
+		/// </summary>
+		[Obsolete( "Use .Metadata.Creator" )]
+		public string Creator { get; set; }
 
-        /// <inheritdoc />
-        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+		/// <summary>
+		/// Key is the local match ID.
+		/// Value is the Metadate for the generative match.
+		/// When Orion generates a ResultList there will only be 1 value in Metadata.
+		/// When a Virtual Match is merged, each parent / child ID will be listed.
+		/// Local Matches will have exactly one value.
+		/// </summary>
+		public Dictionary<string, ResultListMetadata> Metadata { get; set; }
+
+		/// <inheritdoc />
+		public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
             if (string.IsNullOrEmpty( CourseOfFireDef ))
                 return null;
