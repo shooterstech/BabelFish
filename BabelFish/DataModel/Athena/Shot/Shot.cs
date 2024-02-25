@@ -101,7 +101,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
                 if ((value >= 4.0f && value <= 15.0f) || value == 0)
                     bulletDiameter = value;
 
-                throw new ArgumentException( $"Can not set BulletDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+                else 
+                    throw new ArgumentException( $"Can not set BulletDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
             }
         }
 
@@ -125,7 +126,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 				if ((value >= 4.0f && value <= 15.0f) || value == 0)
 					scoringDiameter = value;
 
-				throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+                else 
+				    throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
 			}
 		}
 

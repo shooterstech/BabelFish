@@ -112,8 +112,9 @@ namespace Scopos.BabelFish.APIClients {
             GetResultListPublicResponse response = new GetResultListPublicResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
+			await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
-            return response;
+			return response;
         }
 
         /// <summary>
@@ -135,8 +136,9 @@ namespace Scopos.BabelFish.APIClients {
             GetResultListAuthenticatedResponse response = new GetResultListAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
+			await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
-            return response;
+			return response;
         }
 
         /// <summary>
@@ -281,8 +283,9 @@ namespace Scopos.BabelFish.APIClients {
             GetResultCOFDetailAuthenticatedResponse response = new GetResultCOFDetailAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
+			await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
-            return response;
+			return response;
         }
 
         /// <summary>

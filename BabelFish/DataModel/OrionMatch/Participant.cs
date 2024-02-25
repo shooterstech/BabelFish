@@ -9,10 +9,14 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    /// <summary>
-    /// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
-    /// </summary>
-    [Serializable]
+	/// <summary>
+	/// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
+	/// 
+	/// IMPORTANT: When adding Participant to a class (such as Result COF or ResultEvent (under Result List), need to make 
+	/// sure to deserialize the Participant's attribute values. To do so, as an example, see GetResultCOFResponse's 
+	/// PostResponseProcessingAsync()
+	/// </summary>
+	[Serializable]
     [JsonConverter( typeof( ParticipantConverter ) )]
     public abstract class Participant : IDeserializableAbstractClass {
 
