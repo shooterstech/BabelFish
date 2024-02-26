@@ -56,7 +56,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Human Readable score format string. defaults to decimal single value.
         /// </summary>
         [JsonProperty(Order = 5)]
-        [DefaultValue("{d}")]
+        [DefaultValue("0 - 0")]
         public string ScoreFormatted { get; set; }
 
         /// <summary>
