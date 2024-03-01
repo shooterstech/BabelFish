@@ -47,17 +47,17 @@ namespace Scopos.BabelFish.DataModel.Athena {
         }
 
         /// <summary>
-        /// Special use case score. Value is displayed to one decimal place. Known to be used in Group Mode to display the Area of the shot group. 
+        /// Special use case score. Value is displayed to one decimal place. Known to be used to hold a averaged integer score, or in Group Mode to display the Area of the shot group. 
         /// </summary>
         public float J { get; set; } = 0;
 
         /// <summary>
-        /// Special use case score. Value is displayed to one decimal place. Known to be used in Group Mode to display the Roundness of the shot group.
+        /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged decimal score, or in Group Mode to display the Roundness of the shot group.
         /// </summary>
         public float K { get; set; } = 0;
 
         /// <summary>
-        /// Special use case score. Value is displayed to one decimal place. Known to be used in Group Mode to display the distance the center of the group is from the center of the target. 
+        /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged inner ten score, or in Group Mode to display the distance the center of the group is from the center of the target. 
         /// </summary>
         public float L { get; set; } = 0;
 
