@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.DataModel.Athena.DataFormat
-{
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Object that holds the EventNames of a specific shot, for each of the EventTypes.
     /// Since EventTypes are not required, values could be an empty string.
