@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch
 {
@@ -92,10 +93,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// <summary>
         /// The Local Date that this score was shot. 
         /// NOTE Local Date is not necessarily the same as the GMT date.
-        /// Formatted as yyyy-MM-dd
         /// </summary>
         [JsonProperty(Order = 14)]
-        public string LocalDate { get; set; } = string.Empty;
+		[JsonConverter( typeof( DateConverter ) )]
+		public DateTime LocalDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
