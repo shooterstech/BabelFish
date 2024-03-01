@@ -12,9 +12,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// An AbbreviatedFormat describes the format of a AbbreviatedResultCOF. These are used to display 
     /// event scores to the athlete within his or her Athena compliant EST Monitor and to spectators through EST Displays.
     /// </summary>
-    public class AbbreviatedFormat  {
-
-        private List<string> validationErrorList = new List<string>();
+    public class AbbreviatedFormat : IReconfigurableRulebookObject {
 
         public AbbreviatedFormat() {
             FormatName = "";
@@ -52,19 +50,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue(null)]
         public List<AbbreviatedFormat> Children { get; set; }
 
-        /// <summary>
-        /// Human Readable score format string. defaults to decimal single value.
-        /// </summary>
-        [JsonProperty(Order = 5)]
-        [DefaultValue("0 - 0")]
-        public string ScoreFormatted { get; set; }
-
-        /// <summary>
-        /// available shot attribute list.
-        /// </summary>
-        [JsonProperty(Order = 6)]
-        public List<string> AttributeList { get; set; } = new List<string>();
-
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99)]
+        public string Comment { get; set; }
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context) {

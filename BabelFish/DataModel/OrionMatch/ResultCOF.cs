@@ -164,14 +164,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.
         /// </summary>
         [JsonProperty(Order = 60)]
-        public Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicDisplay LiveDisplay { get; set; }
+        public ShotGraphicDisplay LiveDisplay { get; set; }
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, after an event is completed.
         /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.
         /// </summary>
         [JsonProperty(Order = 61)]
-        public List<Scopos.BabelFish.DataModel.Athena.DataFormat.ShotGraphicDisplay> PostDisplay { get; set; }
+        public List<ShotGraphicDisplay> PostDisplay { get; set; }
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.
