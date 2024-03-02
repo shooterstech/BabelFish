@@ -101,8 +101,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// <summary>
         /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
         /// </summary>
-        [JsonProperty(Order = 15)]
-        public string Status { get; set; } = string.Empty;
+        [JsonProperty( Order = 3 )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
         /// <summary>
         /// SetName of the Course Of Fire definition
