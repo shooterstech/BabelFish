@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -18,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// * Mapping of shots to singular events.
     /// A COURSE OF FIRE should only describe an event that can be completed with one outing to the range. In other words, an athlete should be able to complete the course of fire with one trip to the range. A multi-day event is the combination of two or more COURSE OF FIRE, that is defined outside of this type.
     /// </summary>
-    public class CourseOfFire : Definition {
+    public class CourseOfFire : Definition, IGetTargetCollectionDefinition {
 
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
@@ -48,6 +50,32 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 12)]
         [DefaultValue( "v1.0:ntparc:Air Rifle" )]
         public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
+
+        /// <inheritdoc/>
+        public async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync()
+        {
+            SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse(TargetCollectionDef);
+            var getDefiniitonResponse = await APIClients.DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync(targetCollectionDef);
+            return getDefiniitonResponse.Definition;
+        }
+
+        /// <summary>
+        /// Helper function to return the SetName of a DefaultTargetDefinition given a collectionName
+        /// </summary>
+        /// <param name="targetCollectionName"></param>
+        /// <returns></returns>
+        public async Task<SetName> GetDefaultTargetDefinition( string targetCollectionName )
+        {
+            var targetCollectionDef = await GetTargetCollectionDefinitionAsync();
+            foreach (var collection in targetCollectionDef.TargetCollections)
+            {
+                if(targetCollectionName == collection.TargetCollectionName)
+                {
+                    return Scopos.BabelFish.DataModel.Definitions.SetName.Parse(collection.TargetDefs.FirstOrDefault());
+                }
+            }
+            return Scopos.BabelFish.DataModel.Definitions.SetName.Parse(targetCollectionDef.TargetCollections[0].TargetDefs.FirstOrDefault());
+        }
 
         [JsonProperty( Order = 12 )]
         /// <summary>

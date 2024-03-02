@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.DataModel.Athena.DataFormat
+namespace Scopos.BabelFish.DataModel.OrionMatch
 {
     /// <summary>
     /// A ShotGraphicDisplay describes how both the target image graphic should be displayed, what shots
@@ -10,8 +10,10 @@ namespace Scopos.BabelFish.DataModel.Athena.DataFormat
     /// </summary>
     public class ShotGraphicDisplay
     {
-
-        public string DisplayName { get; set; } = String.Empty;
+        /// <summary>
+        /// Human Readable name used only in Post Displays
+        /// </summary>
+        public string PostDisplayName { get; set; } = String.Empty;
 
         /// <summary>
         /// Human readable description of what this ShotGraphicDisplay do.
@@ -33,6 +35,6 @@ namespace Scopos.BabelFish.DataModel.Athena.DataFormat
         /// <summary>
         /// Describites what (text) scores should be displayed along witgh the target image graphics.
         /// </summary>
-        public Scopos.BabelFish.DataModel.Definitions.AbbreviatedFormat AbbreviatedFormat { get; set; } = new Scopos.BabelFish.DataModel.Definitions.AbbreviatedFormat();
+        public AbbreviatedScoreDisplay AbbreviatedFormat { get; set; } = new AbbreviatedScoreDisplay();
     }
 }
