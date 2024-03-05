@@ -8,18 +8,11 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetResultListPublicResponse : GetResultListResponse, ITokenResponse<GetResultListPublicRequest> {
+    public class GetResultListPublicResponse : GetResultListAbstractResponse {
 
         public GetResultListPublicResponse( GetResultListPublicRequest request ) : base() {
             this.Request = request;
         }
-
-        /// <inheritdoc/>
-        public GetResultListPublicRequest GetNextRequest() {
-            var nextRequest = (GetResultListPublicRequest)Request.Copy();
-            nextRequest.Token = Value.ResultList.NextToken;
-            return nextRequest;
-		}
 
 		/// <inheritdoc />
 		protected internal override DateTime GetCacheValueExpiryTime() {

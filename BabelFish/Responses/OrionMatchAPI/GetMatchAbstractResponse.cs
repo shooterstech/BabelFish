@@ -9,9 +9,9 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// <summary>
     /// Abstract class to hide the difference between an Public and Authenticated API call.
     /// </summary>
-    public abstract class GetMatchResponse : Response<MatchWrapper> {
+    public abstract class GetMatchAbstractResponse : Response<MatchWrapper> {
 
-        public GetMatchResponse( ) : base() {
+        public GetMatchAbstractResponse( ) : base() {
         }
 
         /// <summary>

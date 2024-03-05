@@ -6,10 +6,10 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
-    public abstract class GetResultCOFDetailResponse : Response<CourseOfFireWrapper> {
+    public abstract class GetResultCOFAbstractResponse : Response<CourseOfFireWrapper> {
 
 
-        public GetResultCOFDetailResponse() : base() {
+        public GetResultCOFAbstractResponse() : base() {
         }
 
         /// <summary>

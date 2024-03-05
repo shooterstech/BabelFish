@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Amazon.CognitoIdentity.Model;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime.Authentication;
 

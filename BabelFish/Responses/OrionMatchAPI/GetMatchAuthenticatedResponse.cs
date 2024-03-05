@@ -7,7 +7,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
-    public class GetMatchAuthenticatedResponse : GetMatchResponse {
+    public class GetMatchAuthenticatedResponse : GetMatchAbstractResponse {
 
         public GetMatchAuthenticatedResponse( GetMatchAuthenticatedRequest request ) : base() {
             this.Request = Request;

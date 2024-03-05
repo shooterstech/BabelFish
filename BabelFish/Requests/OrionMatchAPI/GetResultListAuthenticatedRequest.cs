@@ -7,11 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetResultListAuthenticatedRequest : Request, ITokenRequest {
-        public GetResultListAuthenticatedRequest( MatchID matchid, string listname, UserAuthentication credentials ) : base( "GetResultList", credentials ) {
-            MatchID = matchid;
-            ResultListName = listname;
-            this.RequiresCredentials = true;
+    public class GetResultListAuthenticatedRequest : GetResultListAbstractRequest {
+        public GetResultListAuthenticatedRequest( MatchID matchId, string resultListName, UserAuthentication credentials ) : base( "GetResultList", matchId, resultListName, credentials ) {
         }
 
         /// <inheritdoc />
@@ -21,21 +18,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             newRequest.Limit = this.Limit;
 
             return newRequest;
-        }
-
-        public MatchID MatchID { get; set; }
-
-        public string ResultListName { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public string Token { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public int Limit { get; set; }
-
-        /// <inheritdoc />
-        public override string RelativePath {
-            get { return $"/match/{MatchID}/result-list/{ResultListName}"; }
         }
 
         /// <inheritdoc />

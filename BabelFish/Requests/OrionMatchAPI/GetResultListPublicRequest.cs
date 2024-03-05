@@ -6,11 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetResultListPublicRequest : Request, ITokenRequest {
+    public class GetResultListPublicRequest : GetResultListAbstractRequest {
 
-        public GetResultListPublicRequest( MatchID matchid, string listname ) : base( "GetResultList" ) {
-            MatchID = matchid;
-            ResultListName = listname;
+        public GetResultListPublicRequest( MatchID matchId, string resultListName ) : base( "GetResultList", matchId, resultListName ) {
         }
 
         /// <inheritdoc />
@@ -22,25 +20,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             return newRequest;
         }
 
-        public MatchID MatchID { get; set; }
-
-        public string ResultListName { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public string Token { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public int Limit { get; set; }
-
         /// <summary>
         /// If this is a public match and preliminary is true, then this GetResultList will return participants ranked and scored by their predictive results; the predictive scores are based on a participant's score history and shots taken in the current match. 
         /// </summary>
         public bool Preliminary { get; set; }
-
-        /// <inheritdoc />
-        public override string RelativePath {
-            get { return $"/match/{MatchID}/result-list/{ResultListName}"; }
-        }
 
         /// <inheritdoc />
         public override Dictionary<string, List<string>> QueryParameters {

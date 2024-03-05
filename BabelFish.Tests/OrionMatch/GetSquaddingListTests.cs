@@ -116,7 +116,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( 50, squaddingList1.Items.Count );
 
             //Now use the next token to make the next call.
-            var nextRequest = squaddingListResponse1.GetNextRequest();
+            var nextRequest = (GetSquaddingListPublicRequest) squaddingListResponse1.GetNextRequest();
             var taskSquaddingListResponse2 = client.GetSquaddingListPublicAsync( nextRequest );
             var squaddingListResponse2 = taskSquaddingListResponse2.Result;
 

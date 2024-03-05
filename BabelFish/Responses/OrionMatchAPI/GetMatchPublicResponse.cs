@@ -9,7 +9,7 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetMatchPublicResponse : GetMatchResponse
+    public class GetMatchPublicResponse : GetMatchAbstractResponse
     {
 
         public GetMatchPublicResponse(GetMatchPublicRequest request ) : base() {

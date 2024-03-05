@@ -8,6 +8,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
 {
 
     /// <summary>
+    /// Describes the status and score for one composite Event within a Course of Fire.
+    /// Scores of individual shots are not included (as they are not composite events).
     /// EventScore format for (JSONVersion) "2022-04-09"
     /// </summary>
     [Serializable]
@@ -77,17 +79,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// ScoreFormatted may only be set when the Shot is part of a Result COF .Events dictrionary
         /// </summary>
         public string ScoreFormatted { get; set; }
-
-        /// <summary>
-        /// Set Name of the target definition
-        /// EKA: TargetDef no longer used. Is specified in Course of Fire Def
-        /// </summary>
-        //public string? TargetDef { get; set; }
-
-        //public Ammunition? Ammunition { get; set; }
-
-        //public ScoreAverage? Average { get; set; }
-
-        //public Coordinate Coordinate {get; set;} = new Coordinate();
     }
 }

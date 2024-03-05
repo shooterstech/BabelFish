@@ -10,25 +10,10 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetSquaddingListAuthenticatedResponse : Response<SquaddingListWrapper>, ITokenResponse<GetSquaddingListAuthenticatedRequest>
-    {
+    public class GetSquaddingListAuthenticatedResponse : GetSquaddingListAbstractResponse {
 
         public GetSquaddingListAuthenticatedResponse( GetSquaddingListAuthenticatedRequest request ) : base() {
             this.Request = request;
-        }
-
-        /// <summary>
-        /// Facade function that returns the same as this.Value
-        /// </summary>
-        public SquaddingList SquaddingList {
-            get { return Value.SquaddingList; }
-        }
-
-        /// <inheritdoc/>
-        public GetSquaddingListAuthenticatedRequest GetNextRequest() {
-            var nextRequest = (GetSquaddingListAuthenticatedRequest) Request.Copy();
-            nextRequest.Token = Value.SquaddingList.NextToken;
-            return nextRequest;
         }
     }
 }

@@ -8,59 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetMatchParticipantListAuthenticatedRequest : Request, ITokenRequest {
+    public class GetMatchParticipantListAuthenticatedRequest : GetMatchParticipantListAbstractRequest {
 
 
-        public GetMatchParticipantListAuthenticatedRequest( MatchID matchid, UserAuthentication credentials ) : base( "GetMatchParticipantList", credentials ) {
-            MatchID = matchid;
-            this.RequiresCredentials = true;
-        }
-
-
-        public GetMatchParticipantListAuthenticatedRequest( string matchid, UserAuthentication credentials ) : base( "GetMatchParticipantList", credentials ) {
-            MatchID = new MatchID( matchid );
-            this.RequiresCredentials = true;
-        }
-
-        public MatchID MatchID { get; set; }
-
-        /// <summary>
-        /// Used to limit the request to a specific type of MatchParticipantRole.
-        /// </summary>
-        public MatchParticipantRole Role { get; set; } = MatchParticipantRole.NONE;
-
-        /// <inheritdoc />
-        public string Token { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public int Limit { get; set; } = 0;
-
-        /// <inheritdoc />
-        public override string RelativePath {
-            get { return $"/match/{MatchID}/participant"; }
+        public GetMatchParticipantListAuthenticatedRequest( MatchID matchId, UserAuthentication credentials ) : base( "GetMatchParticipantList", matchId, credentials ) {
         }
 
         /// <inheritdoc />
-        public override Dictionary<string, List<string>> QueryParameters {
-            get {
-
-                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-
-                if (!string.IsNullOrEmpty( Token )) {
-                    parameterList.Add( "token", new List<string> { Token } );
-                }
-
-                if (Role != MatchParticipantRole.NONE) {
-                    parameterList.Add( "role", new List<string> { Role.Description() } );
-                }
-
-                if (Limit > 0)
-                    parameterList.Add( "limit", new List<string> { Limit.ToString() } );
-
-                return parameterList;
-            }
-        }
-
         public override Request Copy() {
             GetMatchParticipantListAuthenticatedRequest newRequest = new GetMatchParticipantListAuthenticatedRequest( MatchID, Credentials );
             newRequest.Role = this.Role; 

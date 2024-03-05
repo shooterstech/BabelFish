@@ -8,17 +8,10 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetResultListAuthenticatedResponse : GetResultListResponse, ITokenResponse<GetResultListAuthenticatedRequest> {
+    public class GetResultListAuthenticatedResponse : GetResultListAbstractResponse {
 
         public GetResultListAuthenticatedResponse( GetResultListAuthenticatedRequest request ) : base() {
             this.Request = request;
-        }
-
-        /// <inheritdoc/>
-        public GetResultListAuthenticatedRequest GetNextRequest() {
-            var nextRequest = (GetResultListAuthenticatedRequest)Request.Copy();
-            nextRequest.Token = Value.ResultList.NextToken;
-            return nextRequest;
         }
     }
 }

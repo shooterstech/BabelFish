@@ -7,62 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetMatchParticipantListPublicRequest : Request, ITokenRequest {
+    public class GetMatchParticipantListPublicRequest : GetMatchParticipantListAbstractRequest {
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="matchid"></param>
-        public GetMatchParticipantListPublicRequest( MatchID matchid ) : base( "GetMatchParticipantList" ) {
-            MatchID = matchid;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="matchid"></param>
-        public GetMatchParticipantListPublicRequest( string matchid ) : base( "GetMatchParticipantList" ) {
-            MatchID = new MatchID( matchid );
-        }
-
-
-        public MatchID MatchID { get; set; }
-
-        /// <summary>
-        /// Used to limit the request to a specific type of MatchParticipantRole.
-        /// </summary>
-        public MatchParticipantRole Role { get; set; } = MatchParticipantRole.NONE;
-
-        /// <inheritdoc />
-        public string Token { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public int Limit { get; set; } = 0;
-
-        /// <inheritdoc />
-        public override string RelativePath {
-            get { return $"/match/{MatchID}/participant"; }
-        }
-
-        /// <inheritdoc />
-        public override Dictionary<string, List<string>> QueryParameters {
-            get {
-
-                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-
-                if (!string.IsNullOrEmpty( Token )) {
-                    parameterList.Add( "token", new List<string> { Token } );
-                }
-
-                if (Role != MatchParticipantRole.NONE) {
-                    parameterList.Add( "role", new List<string> { Role.Description() } );
-                }
-
-                if (Limit > 0)
-                    parameterList.Add( "limit", new List<string> { Limit.ToString() } );
-
-                return parameterList;
-            }
+        public GetMatchParticipantListPublicRequest( MatchID matchId ) : base( "GetMatchParticipantList", matchId ) {
+            MatchID = matchId;
         }
 
         public override Request Copy() {

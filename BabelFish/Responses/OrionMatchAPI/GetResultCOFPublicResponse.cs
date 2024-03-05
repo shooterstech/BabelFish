@@ -8,9 +8,9 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class GetResultCOFDetailPublicResponse : GetResultCOFDetailResponse {
+    public class GetResultCOFPublicResponse : GetResultCOFAbstractResponse {
 
-        public GetResultCOFDetailPublicResponse( GetResultCOFDetailPublicRequest request ) : base() {
+        public GetResultCOFPublicResponse( GetResultCOFPublicRequest request ) : base() {
             this.Request = request;
         }
 

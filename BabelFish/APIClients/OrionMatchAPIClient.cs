@@ -39,7 +39,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( GetMatchPublicRequest requestParameters ) {
+        public async Task<GetMatchPublicResponse> GetMatchPublicAsync( GetMatchPublicRequest requestParameters ) {
 
             GetMatchPublicResponse response = new GetMatchPublicResponse( requestParameters );
 
@@ -53,10 +53,10 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="matchid"></param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchPublicResponse> GetMatchDetailPublicAsync( MatchID matchid ) {
+        public async Task<GetMatchPublicResponse> GetMatchPublicAsync( MatchID matchid ) {
             var request = new GetMatchPublicRequest( matchid );
 
-            return await GetMatchDetailPublicAsync( request );
+            return await GetMatchPublicAsync( request );
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchAuthenticatedResponse> GetMatchDetailAuthenticatedAsync( GetMatchAuthenticatedRequest requestParameters ) {
+        public async Task<GetMatchAuthenticatedResponse> GetMatchAuthenticatedAsync( GetMatchAuthenticatedRequest requestParameters ) {
 
             GetMatchAuthenticatedResponse response = new GetMatchAuthenticatedResponse( requestParameters );
 
@@ -79,10 +79,10 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
-        public async Task<GetMatchAuthenticatedResponse> GetMatchDetailAuthenticatedAsync( MatchID matchid, UserAuthentication credentials ) {
+        public async Task<GetMatchAuthenticatedResponse> GetMatchAuthenticatedAsync( MatchID matchid, UserAuthentication credentials ) {
             var request = new GetMatchAuthenticatedRequest( matchid, credentials );
 
-            return await GetMatchDetailAuthenticatedAsync( request );
+            return await GetMatchAuthenticatedAsync( request );
         }
 
         /// <summary>
@@ -92,14 +92,23 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        public async Task<GetMatchResponse> GetMatchDetailAsync( MatchID matchid, UserAuthentication? credentials = null) {
+        public async Task<GetMatchAbstractResponse> GetMatchAsync( MatchID matchid, UserAuthentication? credentials = null) {
             if (credentials == null) {
-                return await GetMatchDetailPublicAsync( matchid );
+                return await GetMatchPublicAsync( matchid );
             } else {
-                return await GetMatchDetailAuthenticatedAsync( matchid, credentials );
+                return await GetMatchAuthenticatedAsync( matchid, credentials );
             }
         }
 
+        public async Task<GetMatchAbstractResponse> GetMatchAsync( GetMatchAbstractRequest requestParameters ) {
+            if (requestParameters is GetMatchPublicRequest)
+                return await this.GetMatchPublicAsync(( GetMatchPublicRequest )requestParameters );
+            else if (requestParameters is GetMatchAuthenticatedRequest)
+                return await this.GetMatchAuthenticatedAsync(( GetMatchAuthenticatedRequest )requestParameters );
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
         #endregion
 
         #region Get Result List
@@ -158,12 +167,22 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        public async Task<GetResultListResponse> GetResultLIstAsync( MatchID matchid, string listname, UserAuthentication? credentials = null ) {
+        public async Task<GetResultListAbstractResponse> GetResultListAsync( MatchID matchid, string listname, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetResultListPublicAsync( matchid, listname );
             } else {
                 return await GetResultListAuthenticatedAsync( matchid, listname, credentials );
             }
+        }
+
+        public async Task<GetResultListAbstractResponse> GetResultListAsync( GetResultListAbstractRequest requestParameters ) {
+            if (requestParameters is GetResultListPublicRequest)
+                return await this.GetResultListPublicAsync( (GetResultListPublicRequest)requestParameters );
+            else if (requestParameters is GetResultListAuthenticatedRequest)
+                return await this.GetResultListAuthenticatedAsync( (GetResultListAuthenticatedRequest)requestParameters );
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion
 
@@ -248,6 +267,24 @@ namespace Scopos.BabelFish.APIClients {
             return await GetSquaddingListAuthenticatedAsync( request );
         }
 
+        public async Task<GetSquaddingListAbstractResponse> GetSquaddingListAsync( MatchID matchId, string squaddinglistname, UserAuthentication credentials = null ) {
+            if (credentials == null) {
+                return await GetSquaddingListPublicAsync( matchId, squaddinglistname );
+            } else {
+                return await GetSquaddingListAuthenticatedAsync( matchId, squaddinglistname, credentials );
+            }
+        }
+
+        public async Task<GetSquaddingListAbstractResponse> GetSquaddingListAsync( GetSquaddingListAbstractRequest requestParameters ) {
+            if (requestParameters is GetSquaddingListPublicRequest)
+                return await this.GetSquaddingListPublicAsync( (GetSquaddingListPublicRequest)requestParameters );
+            else if (requestParameters is GetSquaddingListAuthenticatedRequest)
+                return await this.GetSquaddingListAuthenticatedAsync( (GetSquaddingListAuthenticatedRequest)requestParameters );
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
+
         #endregion
 
         #region Get Result COF
@@ -256,8 +293,8 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultCOFDetailRequest object</param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( GetResultCOFDetailPublicRequest requestParameters ) {
-            GetResultCOFDetailPublicResponse response = new GetResultCOFDetailPublicResponse( requestParameters );
+        public async Task<GetResultCOFPublicResponse> GetResultCourseOfFireDetailPublicAsync( GetResultCOFPublicRequest requestParameters ) {
+            GetResultCOFPublicResponse response = new GetResultCOFPublicResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
             await response.PostResponseProcessingAsync().ConfigureAwait( false );
@@ -270,8 +307,8 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="resultCOFID"></param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailPublicResponse> GetResultCourseOfFireDetailPublicAsync( string resultCOFID ) {
-            return await GetResultCourseOfFireDetailPublicAsync( new GetResultCOFDetailPublicRequest( resultCOFID ) );
+        public async Task<GetResultCOFPublicResponse> GetResultCourseOfFireDetailPublicAsync( string resultCOFID ) {
+            return await GetResultCourseOfFireDetailPublicAsync( new GetResultCOFPublicRequest( resultCOFID ) );
         }
 
         /// <summary>
@@ -279,8 +316,8 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultCOFDetailRequest object</param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( GetResultCOFDetailAuthenticatedRequest requestParameters ) {
-            GetResultCOFDetailAuthenticatedResponse response = new GetResultCOFDetailAuthenticatedResponse( requestParameters );
+        public async Task<GetResultCOFAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( GetResultCOFAuthenticatedRequest requestParameters ) {
+            GetResultCOFAuthenticatedResponse response = new GetResultCOFAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
 			await response.PostResponseProcessingAsync().ConfigureAwait( false );
@@ -293,8 +330,8 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="resultCOFID"></param>
         /// <returns>ResultCOF Object</returns>
-        public async Task<GetResultCOFDetailAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( string resultCOFID, UserAuthentication credentials ) {
-            return await GetResultCourseOfFireDetailAuthenticatedAsync( new GetResultCOFDetailAuthenticatedRequest( resultCOFID, credentials ) );
+        public async Task<GetResultCOFAuthenticatedResponse> GetResultCourseOfFireDetailAuthenticatedAsync( string resultCOFID, UserAuthentication credentials ) {
+            return await GetResultCourseOfFireDetailAuthenticatedAsync( new GetResultCOFAuthenticatedRequest( resultCOFID, credentials ) );
         }
 
         /// <summary>
@@ -304,12 +341,22 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        public async Task<GetResultCOFDetailResponse> GetResultCourseOfFireDetailAsync( string resultCOFID, UserAuthentication? credentials = null ) {
+        public async Task<GetResultCOFAbstractResponse> GetResultCourseOfFireDetailAsync( string resultCOFID, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetResultCourseOfFireDetailPublicAsync( resultCOFID );
             } else {
                 return await GetResultCourseOfFireDetailAuthenticatedAsync( resultCOFID, credentials );
             }
+        }
+
+        public async Task<GetResultCOFAbstractResponse> GetResultCOFAsync( GetResultCOFAbstractRequest requestParameters) {
+            if (requestParameters is GetResultCOFPublicRequest) 
+                return await this.GetResultCourseOfFireDetailPublicAsync( (GetResultCOFPublicRequest)(requestParameters));
+            else if (requestParameters is GetResultCOFAuthenticatedRequest)
+                return await this.GetResultCourseOfFireDetailAuthenticatedAsync( (GetResultCOFAuthenticatedRequest)requestParameters );
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion
 
@@ -338,6 +385,16 @@ namespace Scopos.BabelFish.APIClients {
             await this.CallAPIAsync( requestParameters, response );
 
             return response;
+        }
+
+        public async Task<MatchSearchAbstractResponse> GetMatchSearchAsync( MatchSearchAbstractRequest requestParameters ) {
+            if (requestParameters is MatchSearchPublicRequest )
+                return await this.GetMatchSearchPublicAsync((MatchSearchPublicRequest)requestParameters);
+            else if (requestParameters is MatchSearchAuthenticatedRequest)
+                return await this.GetMatchSearchAuthenticatedAsync((MatchSearchAuthenticatedRequest)requestParameters);
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion
 
@@ -414,6 +471,23 @@ namespace Scopos.BabelFish.APIClients {
             request.Role = role;
 
             return await GetMatchParticipantListAuthenticatedAsync( request );
+        }
+
+        public async Task<GetMatchParticipantListAbstractResponse> GetMatchParticipantListAsync( MatchID matchId, UserAuthentication credentials = null ) {
+            if (credentials == null)
+                return await this.GetMatchParticipantListPublicAsync( matchId );
+            else
+                return await this.GetMatchParticipantListAuthenticatedAsync( matchId, credentials );
+        }
+
+        public async Task<GetMatchParticipantListAbstractResponse> GetMatchParticipantListAsync( GetMatchParticipantListAbstractRequest requestParameters ) {
+            if (requestParameters is GetMatchParticipantListPublicRequest)
+                return await this.GetMatchParticipantListPublicAsync( (GetMatchParticipantListPublicRequest)(requestParameters) );
+            else if (requestParameters is GetMatchParticipantListAuthenticatedRequest)
+                return await this.GetMatchParticipantListAuthenticatedAsync( (GetMatchParticipantListAuthenticatedRequest)(requestParameters) );
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
 
 		#endregion

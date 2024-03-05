@@ -84,7 +84,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreNotEqual( "", resultListInit.NextToken );
 
             //Set up the next request
-            var requestNext = resultListResponseInit.GetNextRequest();
+            var requestNext = (GetResultListPublicRequest) resultListResponseInit.GetNextRequest();
             Assert.AreEqual( resultListInit.NextToken, requestNext.Token );
 
             var taskResultListResponseNext = client.GetResultListPublicAsync( requestNext );
