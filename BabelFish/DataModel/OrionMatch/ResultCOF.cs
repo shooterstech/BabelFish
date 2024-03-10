@@ -124,6 +124,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         [JsonProperty(Order = 22)]
         public string TargetCollectionName { get; set; }
 
+		/// <summary>
+		/// The name of the Target definition to use as the default when creating a new Course of Fire. 
+		/// Must be a value specified in the TargetCollectionDef.
+		/// </summary>
+		[JsonProperty( Order = 23 )]
+		public string DefaultTargetDefinition { get; set; }
+
 
         /// <summary>
         /// The GUID of the orion app user who shot this score. Is blank if not known.
@@ -173,7 +180,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.
         /// </summary>
         [JsonProperty(Order = 61)]
-        public List<ShotGraphicDisplay> PostDisplay { get; set; }
+        public List<ShotGraphicDisplay> PostDisplay { get; set; }        
+        
+        /// <summary>
+		/// The Firing Point Label of the current match, this is a string because it could not be a number
+		/// </summary>
+		public string FiringPointNumber { get; set; } = "0";
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.

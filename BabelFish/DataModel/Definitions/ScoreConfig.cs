@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ScoreConfig {
+    public class ScoreConfig: IReconfigurableRulebookObject {
 
         public ScoreConfig() { }
 
@@ -17,7 +17,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public Dictionary<string, string> ScoreFormats { get; set; } = new Dictionary<string, string>();
 
-        public override string ToString() {
+		/// <inheritdoc />
+		public string Comment { get; set; }
+
+		public override string ToString() {
             return ScoreConfigName;
         }
     }
