@@ -296,5 +296,50 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 Assert.AreNotEqual( "", game.GameName );
             }
         }
+
+        /// <summary>
+        /// Basic test for retreiving a League Team Detail
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task GetLeagueConfAndDivLists()
+        {
+
+            var client = new OrionMatchAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+
+            var requestTeamDetail = new GetLeagueTeamDetailPublicRequest("1.1.2023091512010588.3", 2213);
+            var requestGames = new GetLeagueGamesPublicRequest("1.1.2023091512010588.3");
+
+            var responseTeamDetail = await client.GetLeagueTeamDetailPublicAsync(requestTeamDetail);
+            var responseGames = await client.GetLeagueGamesPublicAsync(requestGames);
+            var leagueDetailResponse = await client.GetLeagueDetailPublicAsync("1.1.2023091512010588.3");
+
+            Assert.AreEqual(HttpStatusCode.OK, responseTeamDetail.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, responseGames.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, leagueDetailResponse.StatusCode);
+
+            var leagueTeamDetail = responseTeamDetail.LeagueTeamDetail;
+            var leagueGame = responseGames.LeagueGames;
+            var leagueDetail = leagueDetailResponse.League;
+            Assert.IsNotNull( leagueTeamDetail );
+            Assert.IsNotNull( leagueGame );
+            Assert.IsNotNull( leagueDetail );
+
+            List<string> confList = new List<string>();
+            confList.Append("Junior Rifle Club");
+            confList.Append("Jrotc");
+
+            Assert.AreEqual(confList, leagueTeamDetail.ConferenceList);
+            Assert.AreEqual(confList, leagueGame.ConferenceList);
+            Assert.AreEqual(confList, leagueDetail.ConferenceList);
+
+            List<string> divList = new List<string>();
+            divList.Append("Champions");
+            divList.Append("Distinguished");
+
+            Assert.AreEqual(divList, leagueTeamDetail.DivisionList);
+            Assert.AreEqual(divList, leagueGame.DivisionList);
+            Assert.AreEqual(divList, leagueDetail.DivisionList);
+        }
     }
 }
