@@ -58,5 +58,11 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
         [JsonProperty( Order = 8 )]
         public LeagueConfiguration Configuration { get; set; }
+
+        [JsonProperty(Order = 9)]
+        public List<string> ConferenceList { get; set; } = new List<string>();
+
+        [JsonProperty(Order = 10)]
+        public List<string> DivisionList { get; set; } = new List<string>();
     }
 }
