@@ -296,5 +296,55 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 Assert.AreNotEqual( "", game.GameName );
             }
         }
+
+        /// <summary>
+        /// Basic test for retreiving a League Team Detail
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task GetLeagueConfAndDivLists()
+        {
+
+            var client = new OrionMatchAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+
+            var requestTeamDetail = new GetLeagueTeamDetailPublicRequest("1.1.2023091512010588.3", 2213);
+            var requestGames = new GetLeagueGamesPublicRequest("1.1.2023091512010588.3");
+
+            var responseTeamDetail = await client.GetLeagueTeamDetailPublicAsync(requestTeamDetail);
+            var responseGames = await client.GetLeagueGamesPublicAsync(requestGames);
+            var leagueDetailResponse = await client.GetLeagueDetailPublicAsync("1.1.2023091512010588.3");
+
+            Assert.AreEqual(HttpStatusCode.OK, responseTeamDetail.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, responseGames.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, leagueDetailResponse.StatusCode);
+
+            var leagueTeamDetail = responseTeamDetail.LeagueTeamDetail;
+            var leagueGame = responseGames.LeagueGames;
+            var leagueDetail = leagueDetailResponse.League;
+            Assert.IsNotNull( leagueTeamDetail );
+            Assert.IsNotNull( leagueGame );
+            Assert.IsNotNull( leagueDetail );
+
+            List<string> confList = new string[] { "Junior Rifle Club", "Jrotc" }.ToList();
+            /*
+            confList[0] = "Junior Rifle Club";
+            confList[1] = "Jrotc";
+            */
+            //USE CollectionAssert when comparing lists. 
+            //not sure why that ISNT part of the Assert class, but it does not differentiate at all.... but hey this works lol
+            CollectionAssert.AreEqual(confList, leagueTeamDetail.ConferenceList);
+            CollectionAssert.AreEqual(confList, leagueGame.ConferenceList);
+            CollectionAssert.AreEqual(confList, leagueDetail.ConferenceList);
+
+            List<string> divList = new string[] { "Champions", "Distinguished" }.ToList();
+            /*
+            divList[0] = "Champions";
+            divList[1] = "Distinguished";
+            */
+
+            CollectionAssert.AreEqual(divList, leagueTeamDetail.DivisionList);
+            CollectionAssert.AreEqual(divList, leagueGame.DivisionList);
+            CollectionAssert.AreEqual(divList, leagueDetail.DivisionList);
+        }
     }
 }
