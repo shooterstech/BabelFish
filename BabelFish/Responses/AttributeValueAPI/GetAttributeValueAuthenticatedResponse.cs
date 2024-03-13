@@ -67,5 +67,11 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             }
             return false;
         }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            return DateTime.UtcNow.AddSeconds( 10 );
+        }
     }
 }

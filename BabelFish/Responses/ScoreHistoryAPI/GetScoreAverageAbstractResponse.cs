@@ -28,6 +28,12 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 			} else {
 				throw new ArgumentException( $"Parameter Request is of unexpected type ${Request.GetType()}." );
 			}
-		}
-	}
+        }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            return DateTime.UtcNow.AddSeconds( 10 );
+        }
+    }
 }

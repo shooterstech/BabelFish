@@ -133,7 +133,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// On a call without .WithAuthentication, at least one UserID on UserIds is required.
         /// User Ids are GUID formatted.
         /// </summary>
-        public List<string> UserIds { get; set; }
+        public List<string> UserIds { get; set; } = new List<string>();
 
 
         /// <summary>

@@ -16,6 +16,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
     public class ResultCOF
     {
         [JsonProperty(Order = 1)]
+        [Obsolete( "Use OwnerId instead.")]
         public string AccountNumber { get; set; } = string.Empty;
 
         /// <summary>
@@ -29,8 +30,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
         /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
         /// </summary>
-        [JsonProperty(Order = 3)]
-        public string Owner { get; set; } = string.Empty;
+        [JsonProperty( Order = 3 )]
+        [Obsolete( "Use OwnerId instead." )]
+        public string Owner {
+            get { return this.OwnerId; }
+            set { this.OwnerId = value; }
+        }
+
+        /// <summary>
+        /// The Owner of this data. 
+        /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
+        /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
+        /// </summary>
+        [JsonProperty( Order = 3 )]
+        public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
         /// The Version string of the JSON document.

@@ -349,7 +349,7 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        public async Task<GetResultCOFAbstractResponse> GetResultCOFAsync( GetResultCOFAbstractRequest requestParameters) {
+        public async Task<GetResultCOFAbstractResponse> GetResultCourseOfFireDetailAsync( GetResultCOFAbstractRequest requestParameters) {
             if (requestParameters is GetResultCOFPublicRequest) 
                 return await this.GetResultCourseOfFireDetailPublicAsync( (GetResultCOFPublicRequest)(requestParameters));
             else if (requestParameters is GetResultCOFAuthenticatedRequest)
