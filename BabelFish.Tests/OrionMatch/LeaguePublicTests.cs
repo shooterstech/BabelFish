@@ -325,21 +325,26 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsNotNull( leagueGame );
             Assert.IsNotNull( leagueDetail );
 
-            List<string> confList = new List<string>();
-            confList.Append("Junior Rifle Club");
-            confList.Append("Jrotc");
+            List<string> confList = new string[] { "Junior Rifle Club", "Jrotc" }.ToList();
+            /*
+            confList[0] = "Junior Rifle Club";
+            confList[1] = "Jrotc";
+            */
+            //USE CollectionAssert when comparing lists. 
+            //not sure why that ISNT part of the Assert class, but it does not differentiate at all.... but hey this works lol
+            CollectionAssert.AreEqual(confList, leagueTeamDetail.ConferenceList);
+            CollectionAssert.AreEqual(confList, leagueGame.ConferenceList);
+            CollectionAssert.AreEqual(confList, leagueDetail.ConferenceList);
 
-            Assert.AreEqual(confList, leagueTeamDetail.ConferenceList);
-            Assert.AreEqual(confList, leagueGame.ConferenceList);
-            Assert.AreEqual(confList, leagueDetail.ConferenceList);
+            List<string> divList = new string[] { "Champions", "Distinguished" }.ToList();
+            /*
+            divList[0] = "Champions";
+            divList[1] = "Distinguished";
+            */
 
-            List<string> divList = new List<string>();
-            divList.Append("Champions");
-            divList.Append("Distinguished");
-
-            Assert.AreEqual(divList, leagueTeamDetail.DivisionList);
-            Assert.AreEqual(divList, leagueGame.DivisionList);
-            Assert.AreEqual(divList, leagueDetail.DivisionList);
+            CollectionAssert.AreEqual(divList, leagueTeamDetail.DivisionList);
+            CollectionAssert.AreEqual(divList, leagueGame.DivisionList);
+            CollectionAssert.AreEqual(divList, leagueDetail.DivisionList);
         }
     }
 }
