@@ -67,6 +67,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public Scopos.BabelFish.DataModel.Athena.Score SeasonAverage { get; set; }
 
+        /// <summary>
+        /// Indicates the number of wins, loses, DNSs, DSQs the team has for the current League.
+        /// </summary>
         public LeagueRecord Record { get; set; }
     }
 }

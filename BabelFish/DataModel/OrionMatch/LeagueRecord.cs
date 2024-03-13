@@ -4,6 +4,10 @@ using System.ComponentModel;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+
+    /// <summary>
+    /// Indicates the number of wins, loses, DNSs, DSQs the team has for the current League.
+    /// </summary>
     public class LeagueRecord {
 
         /// <summary>

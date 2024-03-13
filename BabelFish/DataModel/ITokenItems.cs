@@ -24,6 +24,13 @@ namespace Scopos.BabelFish.DataModel {
         /// </summary>
         string NextToken { get; set; }
 
+        /*
+         * EKA 3 / 2024: Not sure if Limit is every included in a response object. Yes, it is used in the request object, but if it is part 
+         * of the response, it would just be echoing back what was sent.
+         * 
+         * Stated antoher way, we might be able to remove Limit
+         */
+
         /// <summary>
         /// The maximum number of items that may be returned. 
         /// The user may request a limit, usually between 1 and 50, but the API is allowed to restrict the value of limit. This is the value the API used.
