@@ -77,13 +77,31 @@ namespace Scopos.BabelFish.APIClients {
             return await GetAttributeValueAuthenticatedAsync( requestParameters );
         }
 
+        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAuthenticatedAsync( SetName attributeName, UserAuthentication credentials ) {
 
-		/// <summary>
-		/// Get Attribute Value API
-		/// </summary>
-		/// <param name="requestParameters">GetAttributeValueRequest</param>
-		/// <returns>List of Attribute objects</returns>
-		public async Task<GetAttributeValuePublicResponse> GetAttributeValuePublicAsync( GetAttributeValuePublicRequest requestParameters ) {
+            List<SetName> attributeSetNames = new List<SetName>() {
+                attributeName
+            };
+
+            return await this.GetAttributeValueAuthenticatedAsync( attributeSetNames, credentials );
+        }
+
+        public async Task<GetAttributeValueAuthenticatedResponse> GetAttributeValueAuthenticatedAsync( string attributeName, UserAuthentication credentials ) {
+
+            List<SetName> attributeSetNames = new List<SetName>() {
+                SetName.Parse(attributeName)
+            };
+
+            return await this.GetAttributeValueAuthenticatedAsync( attributeSetNames, credentials );
+        }
+
+
+        /// <summary>
+        /// Get Attribute Value API
+        /// </summary>
+        /// <param name="requestParameters">GetAttributeValueRequest</param>
+        /// <returns>List of Attribute objects</returns>
+        public async Task<GetAttributeValuePublicResponse> GetAttributeValuePublicAsync( GetAttributeValuePublicRequest requestParameters ) {
 
 			GetAttributeValuePublicResponse response = new GetAttributeValuePublicResponse( requestParameters );
 
@@ -130,14 +148,32 @@ namespace Scopos.BabelFish.APIClients {
 			};
 
 			return await GetAttributeValuePublicAsync( requestParameters );
-		}
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAuthenticatedAsync( SetAttributeValueAuthenticatedRequest request ) {
+        public async Task<GetAttributeValuePublicResponse> GetAttributeValuePublicAsync( SetName attributeName, string userId ) {
+
+            List<SetName> attributeSetNames = new List<SetName>() {
+                attributeName
+            };
+
+            return await this.GetAttributeValuePublicAsync( attributeSetNames, userId );
+        }
+
+        public async Task<GetAttributeValuePublicResponse> GetAttributeValuePublicAsync( string attributeName, string userId ) {
+
+            List<SetName> attributeSetNames = new List<SetName>() {
+                SetName.Parse(attributeName)
+            };
+
+            return await this.GetAttributeValuePublicAsync( attributeSetNames, userId );
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<SetAttributeValueAuthenticatedResponse> SetAttributeValueAuthenticatedAsync( SetAttributeValueAuthenticatedRequest request ) {
 
             SetAttributeValueAuthenticatedResponse response = new SetAttributeValueAuthenticatedResponse( request );
 
