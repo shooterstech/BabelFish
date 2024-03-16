@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.Requests.SocialNetworkAPI
 {
     public class ReadRelationshipRoleAuthenticatedRequest : RelationshipRoleCRADBaseRequest
     {
-        public ReadRelationshipRoleAuthenticatedRequest(UserAuthentication credentials) : base("CreateRelationshipRole", credentials)
+        public ReadRelationshipRoleAuthenticatedRequest(UserAuthentication credentials) : base("RelationshipRoleR", credentials)
         {
             HttpMethod = HttpMethod.Get;
 

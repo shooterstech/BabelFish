@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.Requests.SocialNetworkAPI
 {
     public class DeleteRelationshipRoleAuthenticatedRequest : RelationshipRoleCRADBaseRequest
     {
-        public DeleteRelationshipRoleAuthenticatedRequest(UserAuthentication credentials) : base("CreateRelationshipRole", credentials)
+        public DeleteRelationshipRoleAuthenticatedRequest(UserAuthentication credentials) : base("RelationshipRoleD", credentials)
         {
             HttpMethod = HttpMethod.Delete;
 
