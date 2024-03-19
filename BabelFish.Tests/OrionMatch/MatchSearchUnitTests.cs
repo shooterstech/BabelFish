@@ -140,7 +140,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse1.StatusCode );
             Assert.AreEqual( limit, matchSearchResponse1.MatchSearchList.Items.Count );
 
-            var request2 = matchSearchResponse1.GetNextRequest();
+            var request2 = (MatchSearchPublicRequest) matchSearchResponse1.GetNextRequest();
 
             var taskMatchSearchResponse2 = client.GetMatchSearchPublicAsync( request2 );
             var matchSearchResponse2 = taskMatchSearchResponse2.Result;

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 	[Serializable]
 	public class MatchID : IEquatable<MatchID> {
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public const int SUBMATCHID_LOCAL = 0;
         public const int SUBMATCHID_VIRTUAL_PARENT = 1;
@@ -74,6 +77,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this.componentID = componentID;
             this.primaryMatchID = newPrimatchMatchID();
             this.subMatchID = subMatchID;
+        }
+
+        /// <summary>
+        /// Attempts to parse the input value matchId into a MatchID object.
+        /// Returns a boolean indicating it's success
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool TryParse( string matchId, out MatchID result ) {
+            try {
+                result = new MatchID( matchId );
+                return true;
+            } catch ( FormatException fe ) {
+                Logger.Error( fe );
+                result = null;
+                return false; ;
+            }
         }
 
         private long newPrimatchMatchID() {
@@ -231,6 +252,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Returns a booleaning indicating if this Match ID is for a score that was manually created by a user.
+        /// </summary>
         public bool ManuallyEntered {
             get {
                 switch (subMatchID) {

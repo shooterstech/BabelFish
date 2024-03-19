@@ -7,11 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetSquaddingListPublicRequest : Request, ITokenRequest {
+    public class GetSquaddingListPublicRequest : GetSquaddingListAbstractRequest {
 
-        public GetSquaddingListPublicRequest(MatchID matchid, string squaddingEventName ) : base( "GetSquaddingList" ) {
-            MatchID = matchid;
-            SquaddingEventName = squaddingEventName;
+        public GetSquaddingListPublicRequest(MatchID matchId, string squaddingEventName ) : base( "GetSquaddingList", matchId, squaddingEventName ) {
         }
 
         /// <inheritdoc />
@@ -22,48 +20,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             newRequest.Limit = this.Limit;
 
             return newRequest;
-        }
-
-        public MatchID MatchID { get; set; }
-
-        public string SquaddingEventName { get; set; }
-
-        /// <summary>
-        /// The relay query parameter limits the returned list of SquaddingAssignments to only those that have a 'Relay' name equal to this parameter's value. 
-        /// An empty string or null value will return the entire list.
-        /// </summary>
-        public string RelayName { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public string Token { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public int Limit { get; set; }
-
-        /// <inheritdoc />
-        public override string RelativePath {
-            get { return $"/match/{MatchID}/squadding-list/{SquaddingEventName}"; }
-        }
-
-        /// <inheritdoc />
-        public override Dictionary<string, List<string>> QueryParameters {
-            get {
-
-                Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-
-                if (!string.IsNullOrEmpty( Token )) {
-                    parameterList.Add( "token", new List<string> { Token } );
-                }
-
-                if (!string.IsNullOrEmpty( RelayName )) {
-                    parameterList.Add( "relay", new List<string> { RelayName } );
-                }
-
-                if (Limit > 0)
-                    parameterList.Add( "limit", new List<string> { Limit.ToString() } );
-
-                return parameterList;
-            }
         }
     }
 }

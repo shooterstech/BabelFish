@@ -125,7 +125,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
 
-            var scoreAverageRequest = new GetScoreAveragePublicRequest();
+            GetScoreHistoryAbstractRequest scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 05, 1 );
             scoreAverageRequest.EndDate = new DateTime( 2023, 05, 30 );
             scoreAverageRequest.UserIds = new List<string>() { Constants.TestDev7UserId
@@ -134,13 +134,13 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreAverageRequest.EventStyleDef = SetName.Parse( eventStyleDef );
             scoreAverageRequest.Format = ScoreHistoryFormatOptions.DAY;
 
-            GetScoreAveragePublicResponse scoreAverageResponse;
+            GetScoreAverageAbstractResponse scoreAverageResponse;
             List<ScoreAverageBase> myScoreAverages = new List<ScoreAverageBase>();
             bool moreData;
             string lastToken = "";
 
             do {
-                scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync( scoreAverageRequest );
+                scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAsync( scoreAverageRequest );
                 myScoreAverages.AddRange( scoreAverageResponse.ScoreAverageList.Items );
                 
                 Assert.AreNotEqual( lastToken, scoreAverageResponse.ScoreAverageList.NextToken );

@@ -180,7 +180,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
 			bool hasAtLeastOneEventStyleEntry = false;
 
-			foreach (var scoreHistoryBase in scoreHistoryResponse.ScoreHistory.Items) {
+			foreach (var scoreHistoryBase in scoreHistoryResponse.ScoreHistoryList.Items) {
 				Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
 				if (scoreHistoryBase is ScoreHistoryEventStyleEntry) {
 					hasAtLeastOneEventStyleEntry |= true;

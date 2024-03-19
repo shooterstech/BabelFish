@@ -7,14 +7,10 @@ using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.Responses.Authentication.Credentials;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
-using Amazon.Runtime;
-using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -26,6 +22,11 @@ namespace Scopos.BabelFish.APIClients {
         /// The name (key value) to use in http requests for the x api -key
         /// </summary>
         public const string X_API_KEY_NAME = "x-api-key";
+
+        /// <summary>
+        /// Keep track of how many times this API Client is called. Will also update the sitewite statistics class.
+        /// </summary>
+        public static APIClientStatistics Statistics { get; private set; } = new APIClientStatistics();
 
         /// <summary>
         /// Standard json serializer settings intended for use while deserializing json to object model.
@@ -134,6 +135,7 @@ namespace Scopos.BabelFish.APIClients {
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     logger.Info( $"Calling {request} on {uri}." );
+                    Statistics.Increment();
 
                     startTime = DateTime.Now;
                     if (request.RequiresCredentials) {

@@ -207,4 +207,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [EnumMember( Value = "Delete Entries" )]
         DELETE_ENTRIES
     };
+
+    /// <summary>
+    /// FUTURE", "INTERMEDIATE", "UNOFFICIAL", "OFFICIAL
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    [Serializable]
+    public enum ResultStatus {
+        FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
+    }
 }

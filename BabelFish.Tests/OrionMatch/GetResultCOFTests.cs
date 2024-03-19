@@ -62,7 +62,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             string resultCofId = "4608b306-8b6d-40c2-b608-e5375d05bd12";
 
-            var request = new GetResultCOFDetailAuthenticatedRequest( resultCofId, userAuthentication );
+            var request = new GetResultCOFAuthenticatedRequest( resultCofId, userAuthentication );
 
             Assert.AreEqual( true, request.RequiresCredentials );
         }

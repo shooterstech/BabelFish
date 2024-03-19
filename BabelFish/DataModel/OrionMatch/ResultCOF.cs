@@ -16,6 +16,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
     public class ResultCOF
     {
         [JsonProperty(Order = 1)]
+        [Obsolete( "Use OwnerId instead.")]
         public string AccountNumber { get; set; } = string.Empty;
 
         /// <summary>
@@ -29,8 +30,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
         /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
         /// </summary>
-        [JsonProperty(Order = 3)]
-        public string Owner { get; set; } = string.Empty;
+        [JsonProperty( Order = 3 )]
+        [Obsolete( "Use OwnerId instead." )]
+        public string Owner {
+            get { return this.OwnerId; }
+            set { this.OwnerId = value; }
+        }
+
+        /// <summary>
+        /// The Owner of this data. 
+        /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
+        /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
+        /// </summary>
+        [JsonProperty( Order = 3 )]
+        public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
         /// The Version string of the JSON document.
@@ -101,8 +114,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// <summary>
         /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
         /// </summary>
-        [JsonProperty(Order = 15)]
-        public string Status { get; set; } = string.Empty;
+        [JsonProperty( Order = 3 )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
         /// <summary>
         /// SetName of the Course Of Fire definition
@@ -122,6 +136,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         [JsonProperty(Order = 22)]
         public string TargetCollectionName { get; set; }
+
+		/// <summary>
+		/// The name of the Target definition to use as the default when creating a new Course of Fire. 
+		/// Must be a value specified in the TargetCollectionDef.
+		/// </summary>
+		[JsonProperty( Order = 23 )]
+		public string DefaultTargetDefinition { get; set; }
 
 
         /// <summary>
@@ -172,7 +193,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.
         /// </summary>
         [JsonProperty(Order = 61)]
-        public List<ShotGraphicDisplay> PostDisplay { get; set; }
+        public List<ShotGraphicDisplay> PostDisplay { get; set; }        
+        
+        /// <summary>
+		/// The Firing Point Label of the current match, this is a string because it could not be a number
+		/// </summary>
+		public string FiringPointNumber { get; set; } = "0";
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.

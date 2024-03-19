@@ -28,5 +28,11 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
             nextRequest.Token = Value.LeagueGames.NextToken;
             return nextRequest;
 		}
+
+		/// <inheritdoc />
+		protected internal override DateTime GetCacheValueExpiryTime() {
+
+			return DateTime.UtcNow.AddMinutes( 1 );
+		}
 	}
 }

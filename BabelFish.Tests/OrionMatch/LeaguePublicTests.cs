@@ -157,7 +157,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
 
-            var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" );
+            var request = new GetLeagueGamesPublicRequest( "1.1.2023091512052862.3" ); // 1.1.2023091512010588.3" );
 
             GetLeagueGamesPublicResponse response;
             List<LeagueGame> allTheGames = new List<LeagueGame>();

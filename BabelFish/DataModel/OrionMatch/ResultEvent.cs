@@ -69,7 +69,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public DateTime LocalDate { get; set; } = DateTime.Today;
 
 		/// <summary>
-		/// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual WARNING value will be null.
+		/// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
 		/// </summary>
 		public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
