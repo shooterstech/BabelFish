@@ -34,9 +34,9 @@ namespace Scopos.BabelFish.Requests.SocialNetworkAPI
             {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-                if (string.IsNullOrEmpty(ActiveId))
+                if (!string.IsNullOrEmpty(ActiveId))
                     parameterList.Add("active-id", new List<string>() { ActiveId });
-                if (string.IsNullOrEmpty(PassiveId))
+                if (!string.IsNullOrEmpty(PassiveId))
                     parameterList.Add("passive-id", new List<string>() { PassiveId });
 
                 return parameterList;
