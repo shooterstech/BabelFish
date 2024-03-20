@@ -12,6 +12,11 @@ namespace Scopos.BabelFish.DataModel.SocialNetwork {
 
         public SocialRelationshipList() { }
 
+        public bool AsActive { get; set; } = false;
+        public bool AsPassive { get; set; } = false;
+        public bool IncomingRequests { get; set; } = false;
+        public bool OutgoingRequests { get; set; } = false;
+
         public List<SocialRelationship> Items { get; set; } = new List<SocialRelationship>();
 
         /// <inheritdoc />

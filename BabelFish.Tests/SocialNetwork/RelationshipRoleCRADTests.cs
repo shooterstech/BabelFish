@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
         
         [TestInitialize] 
         public void InitClient() {
-            socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
+            socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.BETA);
         }
 
         [TestMethod]

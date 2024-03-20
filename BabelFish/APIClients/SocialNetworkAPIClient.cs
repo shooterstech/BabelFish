@@ -66,6 +66,15 @@ namespace Scopos.BabelFish.APIClients
 
             return response;
         }
+
+        public async Task<ListSocialRelationshipsAuthenticatedResponse> ListSocialRelationshipsAuthenticatedAsync(ListSocialRelationshipsAuthenticatedRequest requestParameters)
+        {
+            var response = new ListSocialRelationshipsAuthenticatedResponse(requestParameters);
+
+            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
     }
 
 }
