@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.SocialNetwork {
             return RelationshipName == other.RelationshipName
                 && ActiveId == other.ActiveId
                 && PassiveId == other.PassiveId
-                && DateCreated == other.DateCreated
+                //&& DateCreated == other.DateCreated
                 && ActiveApproved == other.ActiveApproved
                 && PassiveId == other.PassiveId;
         }
