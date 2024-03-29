@@ -368,7 +368,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
 
             Assert.IsTrue(System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode);
 
-            //create the role
+            //user 7 requests to follow user 3
             var createRequest = new CreateRelationshipRoleAuthenticatedRequest(user7Authentication);
             createRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             createRequest.PassiveId = Constants.TestDev3UserId;
@@ -387,7 +387,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
 
             Assert.IsTrue(createResponse.SocialRelationship.Equals(expectedRelationship));
 
-            //approve
+            //user 3 approves the follow request 
             var user3Authentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
                 Constants.TestDev3Credentials.Password);
@@ -404,7 +404,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
             expectedRelationship.PassiveApproved = true;
             Assert.IsTrue(approveResponse.SocialRelationship.Equals(expectedRelationship));
 
-            //read approval
+            //user 7 reads the approved relationship
             var readRequest = new ReadRelationshipRoleAuthenticatedRequest(user7Authentication);
             readRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             readRequest.PassiveId = Constants.TestDev3UserId;
@@ -415,7 +415,93 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
 
             Assert.IsTrue(readResponse.SocialRelationship.Equals(expectedRelationship));
 
-            //delete the role (request already created from initial delete)
+            //user 7 unfollows user 3
+            deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
+
+            deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest); //make sure role was actually deleted
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, deleteResponse.StatusCode);
+
+        }
+
+        [TestMethod]
+        public async Task TestCoachApprovalProcess()
+        {
+
+            var user7Authentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await user7Authentication.InitializeAsync();
+
+            var user3Authentication = new UserAuthentication(
+                Constants.TestDev3Credentials.Username,
+                Constants.TestDev3Credentials.Password);
+            await user3Authentication.InitializeAsync();
+
+            //ensure role doesnt exist already
+            var deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest(user7Authentication);
+            deleteRequest.RelationshipName = SocialRelationshipName.COACH;
+            deleteRequest.ActiveId = Constants.TestDev3UserId;
+
+            var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest);
+
+            Assert.IsTrue(System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode);
+
+            //user7 requests that user3 coaches them
+            var createRequest = new CreateRelationshipRoleAuthenticatedRequest(user7Authentication);
+            createRequest.RelationshipName = SocialRelationshipName.COACH;
+            createRequest.ActiveId = Constants.TestDev3UserId;
+
+            var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync(createRequest);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, createResponse.StatusCode);
+
+            var expectedRelationship = new SocialRelationship();
+            expectedRelationship.RelationshipName = createRequest.RelationshipName;
+            expectedRelationship.PassiveId = Constants.TestDev7UserId;
+            expectedRelationship.ActiveId = createRequest.ActiveId;
+            expectedRelationship.ActiveApproved = false;
+            expectedRelationship.PassiveApproved = true;
+            expectedRelationship.DateCreated = DateTime.Today.ToString("yyyy-MM-dd");
+
+            Assert.IsTrue(createResponse.SocialRelationship.Equals(expectedRelationship));
+
+            //user3 attempts to approve the coach request but accidentally puts themself as the passive user
+            var approveRequestBad = new ApproveRelationshipRoleAuthenticatedRequest(user3Authentication);
+            approveRequestBad.RelationshipName = SocialRelationshipName.COACH;
+            approveRequestBad.ActiveId = Constants.TestDev7UserId;
+            
+            var approveResponseBad = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync(approveRequestBad);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, approveResponseBad.StatusCode);
+            
+            //user3 successfully approves the coach request
+            var approveRequestGood = new ApproveRelationshipRoleAuthenticatedRequest(user3Authentication);
+            approveRequestGood.RelationshipName = SocialRelationshipName.COACH;
+            approveRequestGood.PassiveId = Constants.TestDev7UserId;
+
+            var approveResponseGood = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync(approveRequestGood);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, approveResponseGood.StatusCode);
+
+            expectedRelationship.ActiveApproved = true;
+            Assert.IsTrue(approveResponseGood.SocialRelationship.Equals(expectedRelationship));
+
+            //user 7 reads approved coach relationship
+            var readRequest = new ReadRelationshipRoleAuthenticatedRequest(user7Authentication);
+            readRequest.RelationshipName = SocialRelationshipName.COACH;
+            readRequest.ActiveId = Constants.TestDev3UserId;
+
+            var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync(readRequest);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, readResponse.StatusCode);
+
+            Assert.IsTrue(readResponse.SocialRelationship.Equals(expectedRelationship));
+
+            //user 3 deletes the coaching relationship
+            deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest(user3Authentication);
+            deleteRequest.RelationshipName = SocialRelationshipName.COACH;
+            deleteRequest.PassiveId = Constants.TestDev7UserId;
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
 

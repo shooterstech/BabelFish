@@ -34,6 +34,6 @@ namespace Scopos.BabelFish.DataModel.SocialNetwork
         /// <summary>
         /// Coaches relationship
         /// </summary>
-        [Description("Coach")][EnumMember(Value = "Coach")] COACH,
+        [Description("Coach")][EnumMember(Value = "coach")] COACH,
     }
 }
