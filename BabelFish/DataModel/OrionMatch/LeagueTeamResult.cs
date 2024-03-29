@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public LeagueTeam Team { get; set; }
 
-        public Score Score { get; set; }
+        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
 
         public string Result { get; set; }
 

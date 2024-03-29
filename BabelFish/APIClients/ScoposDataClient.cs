@@ -14,6 +14,9 @@ namespace Scopos.BabelFish.APIClients {
             //ScoposDataClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
+
+            //We do want in memory cache
+            IgnoreInMemoryCache = false;
         }
 
         public ScoposDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
@@ -21,6 +24,9 @@ namespace Scopos.BabelFish.APIClients {
             //ScoposDataClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
+
+            //We do want in memory cache
+            IgnoreInMemoryCache = false;
         }
 
 

@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.APIClients {
 
 	/// <summary>
 	/// Thrown when a user tries to instantiate a AttributeValue but the x-api-key in the 
-	/// AttributeValueDefinitionFetcher is not yet set.
+	/// DefinitionFetcher is not yet set.
 	/// </summary>
 	public class XApiKeyNotSetException : ScoposException {
 

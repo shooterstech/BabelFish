@@ -22,6 +22,9 @@ namespace Scopos.BabelFish.APIClients {
             //ScoreHistoryAPIClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
+
+            //We do want (some) in memory cache. 
+            IgnoreInMemoryCache = false;
         }
 
         public ScoreHistoryAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
@@ -29,6 +32,9 @@ namespace Scopos.BabelFish.APIClients {
             //ScoreHistoryAPIClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
+
+            //We do want (some) in memory cache. 
+            IgnoreInMemoryCache = false;
         }
 
 

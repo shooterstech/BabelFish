@@ -23,8 +23,11 @@ namespace Scopos.BabelFish.APIClients {
 	/// </summary>
 	public class DefinitionFetcher : DefinitionAPIClient  {
 
-
-		protected internal static DefinitionFetcher FETCHER { get; private set; }
+		/*
+		 * By setting FETCHER to a empty string, if a user tries to access it, FETCHER will not be null, but will
+		 * throw a XApiKeyNotSetException, with an explaination as to why an exception was thrown.
+		 */
+		protected internal static DefinitionFetcher FETCHER { get; private set; } = new DefinitionFetcher( "" );
 
 		private static string xApiKey = "";
 

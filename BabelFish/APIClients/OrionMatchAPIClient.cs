@@ -18,6 +18,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="xapikey"></param>
         public OrionMatchAPIClient( string xapikey ) : base( xapikey ) {
+            //enable in memory cache
 			IgnoreInMemoryCache = false;
 
             //OrionMatchAPIClient does not support file system cache
@@ -26,7 +27,8 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
-			IgnoreInMemoryCache = false;
+            //enable in memory cache
+            IgnoreInMemoryCache = false;
 
             //OrionMatchAPIClient does not support file system cache
             LocalStoreDirectory = null;
