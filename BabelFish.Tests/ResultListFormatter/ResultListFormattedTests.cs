@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
             definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            userProfileLookup = new InMemoryUserProfileLookup();
+            userProfileLookup = new BaseUserProfileLookup();
         }
 
         [TestMethod]

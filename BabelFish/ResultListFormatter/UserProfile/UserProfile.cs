@@ -7,7 +7,7 @@ using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.ResultListFormatter.UserProfile {
 	/// <summary>
-	/// Represents a row in the user_profile table.
+	/// Represents the relationship between a user's UserId, AccountURL, and their visibility.
 	/// </summary>
 	public class UserProfile {
 
