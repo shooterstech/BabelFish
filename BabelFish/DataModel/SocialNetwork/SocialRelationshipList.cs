@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 namespace Scopos.BabelFish.DataModel.SocialNetwork {
 
     /// <summary>
-    /// Represents the data returned by a GetScoreAverage API call.
+    /// Represents the data returned by a Social Network API call.
     /// </summary>
     public class SocialRelationshipList : ITokenItems<SocialRelationship> {
 

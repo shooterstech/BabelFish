@@ -142,5 +142,43 @@ namespace Scopos.BabelFish.APIClients {
             return await GetClubDetailPublicAsync( request );
         }
 
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync(GetCoachAssignmentAuthenticatedRequest request)
+        {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync(int licenseNumber, UserAuthentication credentials)
+        {
+
+            var request = new GetCoachAssignmentAuthenticatedRequest(licenseNumber, credentials);
+
+            return await GetCoachAssignmentAuthenticatedAsync(request);
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> CreateCoachAssignmentAuthenticatedAsync(CreateCoachAssignmentAuthenticatedRequest request)
+        {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> DeleteCoachAssignmentAuthenticatedAsync(DeleteCoachAssignmentAuthenticatedRequest request)
+        {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
     }
 }
