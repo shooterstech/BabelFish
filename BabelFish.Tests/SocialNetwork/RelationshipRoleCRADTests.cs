@@ -23,14 +23,34 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
         }
 
         [TestMethod]
-        public async Task CreateThenDeleteFollowRelationshipRole()
+        public async Task BadFollowRequest()
         {
-            //create the role
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password);
             await userAuthentication.InitializeAsync();
 
+            //user 7 trys to make user 3 follow them and fails
+            var createRequestBad = new CreateRelationshipRoleAuthenticatedRequest(userAuthentication);
+            createRequestBad.RelationshipName = SocialRelationshipName.FOLLOW;
+            createRequestBad.ActiveId = Constants.TestDev3UserId;
+
+            var createResponseBad = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync(createRequestBad);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, createResponseBad.StatusCode);
+
+
+        }
+
+        [TestMethod]
+        public async Task CreateThenDeleteFollowRelationshipRole()
+        {
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await userAuthentication.InitializeAsync();
+
+            //user 7 follows user 3
             var createRequest = new CreateRelationshipRoleAuthenticatedRequest(userAuthentication);
             createRequest.RelationshipName = SocialRelationshipName.FOLLOW; 
             createRequest.PassiveId = Constants.TestDev3UserId;
