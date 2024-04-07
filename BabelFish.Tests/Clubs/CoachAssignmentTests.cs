@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Tests.Clubs
 {
+    [TestClass]
     public class CoachAssignmentTests
     {
         private ClubsAPIClient clubsClient;
