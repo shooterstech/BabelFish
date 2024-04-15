@@ -12,6 +12,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition {
 
+        private ResultStatus LocalStatus = ResultStatus.FUTURE;
+
         public ResultList() {
             Items = new List<ResultEvent>();
         }
@@ -37,7 +39,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonProperty( Order = 3 )]
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
+        public ResultStatus Status {
+            get
+            {
+                if (EndDate <= DateTime.UtcNow )
+                {
+                    LocalStatus = ResultStatus.OFFICIAL;
+                    return LocalStatus;
+                }
+                else
+                {
+                    return LocalStatus;
+                }
+            }
+            set
+            {
+                LocalStatus = value;
+            } 
+        }
 
         /// <summary>
         /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
