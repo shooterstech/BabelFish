@@ -214,6 +214,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [JsonConverter( typeof( StringEnumConverter ) )]
     [Serializable]
     public enum ResultStatus {
-        FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
+        /// <summary>
+        /// The underlying event has not started yet. No scores to report.
+        /// </summary>
+        FUTURE, 
+        /// <summary>
+        /// The underlying event has started but not yet complete. Only partial scores avalaible to report.
+        /// </summary>
+        INTERMEDIATE, 
+        /// <summary>
+        /// The underlying event has completed. All scores are in but not deemed Final yet. Likely a Challenge Period is still in progress.
+        /// </summary>
+        UNOFFICIAL, 
+        /// <summary>
+        /// The underlying event has completed, and all scores are final.
+        /// </summary>
+        OFFICIAL
     }
 }
