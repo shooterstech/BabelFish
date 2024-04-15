@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition {
 
-        private ResultStatus LocalStatus = ResultStatus.FUTURE;
+        private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
         public ResultList() {
             Items = new List<ResultEvent>();
@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultStatus Status {
             get
             {
-                if (EndDate <= DateTime.UtcNow )
+                if (EndDate <= DateTime.Today )
                 {
                     LocalStatus = ResultStatus.OFFICIAL;
                     return LocalStatus;

@@ -209,11 +209,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     };
 
     /// <summary>
-    /// FUTURE", "INTERMEDIATE", "UNOFFICIAL", "OFFICIAL
+    /// "FUTURE", "INTERMEDIATE", "UNOFFICIAL", "OFFICIAL
     /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     [Serializable]
     public enum ResultStatus {
-        FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
+        [Description("Future")]
+        [EnumMember(Value = "FUTURE")]
+        FUTURE,
+
+        [Description("Intermediate")]
+        [EnumMember(Value = "INTERMEDIATE")] 
+        INTERMEDIATE,
+
+        [Description("Unofficial")]
+        [EnumMember(Value = "UNOFFICIAL")]
+        UNOFFICIAL,
+
+        [Description("Official")]
+        [EnumMember(Value = "OFFICIAL")]
+        OFFICIAL
     }
 }
