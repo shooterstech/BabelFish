@@ -135,6 +135,13 @@ namespace Scopos.BabelFish.DataModel.Definitions
         public string ResultListFormatDef { get; set; } = string.Empty;
 
         /// <summary>
+        /// The recommended Ranking Rules defintion to use when displaying a ranking list for this Event.
+        /// </summary>
+        [JsonProperty(Order = 15)]
+        [DefaultValue("")]
+        public string RankingRuleDef { get; set; } = string.Empty;
+
+        /// <summary>
         /// Internal documentation comments. All text is ignored by the system.
         /// </summary>
         [JsonProperty(Order = 99)]
