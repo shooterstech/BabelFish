@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultStatus Status {
             get
             {
-                if (EndDate <= DateTime.Today )
+                if (EndDate < DateTime.Today )
                 {
                     LocalStatus = ResultStatus.OFFICIAL;
                     return LocalStatus;
