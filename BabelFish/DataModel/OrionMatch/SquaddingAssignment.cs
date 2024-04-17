@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     [JsonConverter( typeof( SquaddingAssignmentConverter ) )]
-    public abstract class SquaddingAssignment: IDeserializableAbstractClass {
+    public abstract class SquaddingAssignment: IDeserializableAbstractClass, IParticipant {
 
         /*
          * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/

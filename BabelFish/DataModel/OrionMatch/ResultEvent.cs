@@ -8,7 +8,7 @@ using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultEvent {
+    public class ResultEvent : IParticipant {
 
         public ResultEvent() {
             Score = new Scopos.BabelFish.DataModel.Athena.Score();
