@@ -63,14 +63,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// need defaults?
         /// </summary>
         [JsonProperty(Order = 4)]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
         /// need defaults?
         /// </summary>
         [JsonProperty(Order = 5)]
-        public DateTime EndDate { get; set; }
+        public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// The Version string of the JSON document

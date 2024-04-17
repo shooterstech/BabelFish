@@ -65,5 +65,28 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 				}
 			}
 		}
-	}
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime()
+        {
+
+            try
+            {
+                //if today is between start/end then timeout is 30 sec, else, make is 5 min
+                if(DateTime.UtcNow > ResultList.StartDate && DateTime.UtcNow < ResultList.EndDate)
+                {
+                    return DateTime.UtcNow.AddSeconds(30);
+                }
+                else
+                {
+                    return DateTime.UtcNow.AddMinutes(5);
+                }
+            }
+            catch (Exception ex)
+            {
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes(10);
+            }
+        }
+    }
 }

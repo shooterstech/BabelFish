@@ -48,6 +48,29 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 					ResultCOF.Participant.AttributeValues.Remove( attributeValue );
 				}
 			}
-		}
-	}
+        }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime()
+        {
+
+            try
+            {
+                //if today is between start/end then timeout is 30 sec, else, make is 5 min
+                if (ResultCOF.Status == ResultStatus.INTERMEDIATE)
+                {
+                    return DateTime.UtcNow.AddSeconds(30);
+                }
+                else
+                {
+                    return DateTime.UtcNow.AddMinutes(5);
+                }
+            }
+            catch (Exception ex)
+            {
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes(10);
+            }
+        }
+    }
 }

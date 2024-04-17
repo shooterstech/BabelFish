@@ -37,6 +37,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime LastUpdated { get; set; }
 
         /// <summary>
+        /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
+        /// need defaults?
+        /// </summary>
+        public DateTime StartDate { get; set; } = DateTime.Today;
+
+        /// <summary>
+        /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
+        /// need defaults?
+        /// </summary>
+        public DateTime EndDate { get; set; } = DateTime.Today;
+
+        /// <summary>
         /// Formatted as a string, the Match ID that this squadding list is from.
         /// Use GetMatchID() to return the value as a MatchID object.
         /// </summary>
