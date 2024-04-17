@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
     public abstract class GetResultListAbstractResponse : Response<ResultListWrapper>, ITokenResponse<GetResultListAbstractRequest> {
 
-		public GetResultListAbstractResponse() : base() {
+        public GetResultListAbstractResponse() : base() {
         }
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// </summary>
         public ResultList ResultList {
             get { return Value.ResultList; }
-		}
+        }
 
         public GetResultListAbstractRequest GetNextRequest() {
             if (Request is GetResultListPublicRequest) {
@@ -44,26 +44,42 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// </summary>
         /// <returns></returns>
         protected internal async Task PostResponseProcessingAsync() {
-			//Value (and subsequently Value.ResultCOF) could be null if the asked for result cof id doesn't exist or can not be converted.
-			if (Value != null) {
-				foreach (var resultEvent in Value.ResultList.Items) {
-					//If the Attr Definition can not be found, remove it.
-					List<AttributeValueDataPacketMatch> avToRemove = new List<AttributeValueDataPacketMatch>();
-					foreach (var attributeValue in resultEvent.Participant.AttributeValues) {
-						try {
-							if (attributeValue.AttributeValueTask != null) {
-								await attributeValue.FinishInitializationAsync();
-							}
-						} catch (AttributeNotFoundException nfe) {
-							avToRemove.Add( attributeValue );
-						}
-					}
+            //Value (and subsequently Value.ResultCOF) could be null if the asked for result cof id doesn't exist or can not be converted.
+            if (Value != null) {
+                foreach (var resultEvent in Value.ResultList.Items) {
+                    //If the Attr Definition can not be found, remove it.
+                    List<AttributeValueDataPacketMatch> avToRemove = new List<AttributeValueDataPacketMatch>();
+                    foreach (var attributeValue in resultEvent.Participant.AttributeValues) {
+                        try {
+                            if (attributeValue.AttributeValueTask != null) {
+                                await attributeValue.FinishInitializationAsync();
+                            }
+                        } catch (AttributeNotFoundException nfe) {
+                            avToRemove.Add( attributeValue );
+                        }
+                    }
 
-					foreach (var attributeValue in avToRemove) {
-						resultEvent.Participant.AttributeValues.Remove( attributeValue );
-					}
-				}
-			}
-		}
-	}
+                    foreach (var attributeValue in avToRemove) {
+                        resultEvent.Participant.AttributeValues.Remove( attributeValue );
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            try {
+                //if today is between start/end then timeout is 30 sec, else, make is 5 min
+                if (DateTime.Today >= ResultList.StartDate && DateTime.Today <= ResultList.EndDate) {
+                    return DateTime.UtcNow.AddSeconds( 30 );
+                } else {
+                    return DateTime.UtcNow.AddMinutes( 5 );
+                }
+            } catch (Exception ex) {
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes( 5 );
+            }
+        }
+    }
 }

@@ -33,5 +33,21 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             }
         }
 
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            try {
+                //if today is before end then timeout is 1 min, else, make is 5 min
+                if (DateTime.Today <= MatchParticipantList.EndDate) {
+                    return DateTime.UtcNow.AddMinutes( 1 );
+                } else {
+                    return DateTime.UtcNow.AddMinutes( 5 );
+                }
+            } catch (Exception ex) {
+                //Likely will never get here, if so, likely from a very old match.
+                return DateTime.UtcNow.AddMinutes( 5 );
+            }
+        }
+
     }
 }

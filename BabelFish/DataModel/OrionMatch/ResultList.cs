@@ -12,6 +12,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition {
 
+        private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
+
         public ResultList() {
             Items = new List<ResultEvent>();
         }
@@ -37,59 +39,90 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonProperty( Order = 3 )]
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
+        public ResultStatus Status {
+            get
+            {
+                if (EndDate < DateTime.Today )
+                {
+                    LocalStatus = ResultStatus.OFFICIAL;
+                    return LocalStatus;
+                }
+                else
+                {
+                    return LocalStatus;
+                }
+            }
+            set
+            {
+                LocalStatus = value;
+            } 
+        }
+
+        /// <summary>
+        /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
+        /// need defaults?
+        /// </summary>
+        [JsonProperty(Order = 4)]
+        public DateTime StartDate { get; set; } = DateTime.Today;
+
+        /// <summary>
+        /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
+        /// need defaults?
+        /// </summary>
+        [JsonProperty(Order = 5)]
+        public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// The Version string of the JSON document
         /// </summary>
-        [JsonProperty( Order = 4 )]
+        [JsonProperty( Order = 6 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 5 )]
+        [JsonProperty( Order = 7 )]
         public bool Team { get; set; } = false;
 
-        [JsonProperty( Order = 6 )]
+        [JsonProperty( Order = 8 )]
         public string ParentID { get; set; } = string.Empty;
 
         /// <summary>
         /// The relative importance / sort order of this ResultList within the match
         /// </summary>
-        [JsonProperty( Order = 7 )]
+        [JsonProperty( Order = 9 )]
         public int SortOrder { get; set; } = 0;
 
-        [JsonProperty( Order = 8 )]
+        [JsonProperty( Order = 10 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 
         /// <summary>
         /// Deprecated, use ResultName
         /// </summary>
         [Obsolete( "Deprecated, use ResultName" )]
-        [JsonProperty( Order = 15 )]
+        [JsonProperty( Order = 18 )]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 9 )]
+        [JsonProperty( Order = 11 )]
         public string ResultName { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 10 )]
+        [JsonProperty( Order = 12 )]
 		[Obsolete( "Use .Metadata.LastUpdated" )]
 		public DateTime LastUpdated { get; set; } = new DateTime();
 
-        [JsonProperty( Order = 11 )]
+        [JsonProperty( Order = 13 )]
         public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
         /// Set to true if this ResultList is considered one of the most important and should be featured
         /// </summary>
-        [JsonProperty( Order = 12 )]
+        [JsonProperty( Order = 14 )]
         public bool Primary { get; set; } = false;
 
-        [JsonProperty( Order = 13 )]
+        [JsonProperty( Order = 15 )]
         public string UniqueID { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 14 )]
+        [JsonProperty( Order = 16 )]
         public string EventName { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 15 )]
+        [JsonProperty( Order = 17 )]
         public string ResultListID { get; set; } = string.Empty;
 
         public bool Preliminary { get; set; } = false;
