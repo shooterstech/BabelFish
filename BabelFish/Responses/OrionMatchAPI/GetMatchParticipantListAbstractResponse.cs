@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
             try {
                 //if today is before end then timeout is 1 min, else, make is 5 min
-                if (DateTime.Today < MatchParticipantList.EndDate) {
+                if (DateTime.Today <= MatchParticipantList.EndDate) {
                     return DateTime.UtcNow.AddMinutes( 1 );
                 } else {
                     return DateTime.UtcNow.AddMinutes( 5 );
