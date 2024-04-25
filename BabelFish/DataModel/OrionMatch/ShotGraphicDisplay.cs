@@ -21,10 +21,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         public string Description { get; set; } = String.Empty;
 
         /// <summary>
-        /// Describes 1 to many target images that can be displayed, or rotated. In a Live event, only the 
-        /// first (index == 0) object should be displayed. 
+        /// Describes which shots should be displayed graphically.
         /// </summary>
-        public List<ShotGraphicShow> Show { get; set; } = new List<ShotGraphicShow>();
+        public ShotGraphicShow Show { get; set; } = new ShotGraphicShow();
 
         /// <summary>
         /// In a Live event, lists the current EventNames for each EventType. In a event that is

@@ -190,8 +190,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, after an event is completed.
-        /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.
         /// </summary>
+        /// <remarks> EKA: Currently this field is not used (Apr 2024), as we have no way of populating the values from the range script.
+        /// Rezults currently attempts to infer what to display, but can be kludgy depending on the COF.</remarks>
         [JsonProperty(Order = 61)]
         public List<ShotGraphicDisplay> PostDisplay { get; set; }        
         
