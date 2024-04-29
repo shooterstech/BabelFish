@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.Common {
     /// x is the Major Version
     /// y is the Minor Version
     /// z is the Patch Version
-    /// p is the Build version. Defaults to 1 if not included in the string.
+    /// p is the Build version. Defaults to 0 if not included in the string.
     /// </summary>
     public class Version : IComparable<Version>, IEquatable<Version> {
 
