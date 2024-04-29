@@ -9,6 +9,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Helpers.Extensions;
 using NLog;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.ResultListFormatter {
     public abstract class ResultListIntermediateFormattedRow {
@@ -217,7 +218,7 @@ namespace Scopos.BabelFish.ResultListFormatter {
 
 				case "Status":
 					if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
-						return metadata.Status;
+						return metadata.Status.Description();
 					else
 						return "";
 

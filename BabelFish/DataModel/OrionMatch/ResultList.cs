@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -35,42 +36,77 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultListFormatDef { get; set; } = string.Empty;
 
         /// <summary>
-        /// Indicates the completion status of this Result List
+        /// Indicates the completion status of this Result List. 
+        /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
         /// </summary>
         [JsonProperty( Order = 3 )]
         [JsonConverter( typeof( StringEnumConverter ) )]
         public ResultStatus Status {
-            get
-            {
-                if (EndDate < DateTime.Today )
-                {
-                    LocalStatus = ResultStatus.OFFICIAL;
-                    return LocalStatus;
+            get {
+                if (Metadata == null || Metadata.Count == 0)
+                    return ResultStatus.UNOFFICIAL;
+
+                bool allFuture = true;
+                bool allUnofficial = true;
+                bool allOfficial = true;
+                foreach (var rlmd in Metadata.Values) {
+                    allFuture &= rlmd.Status == ResultStatus.FUTURE;
+                    allUnofficial &= rlmd.Status == ResultStatus.UNOFFICIAL;
+                    allOfficial &= rlmd.Status == ResultStatus.OFFICIAL;
                 }
-                else
-                {
-                    return LocalStatus;
-                }
+
+                if (allFuture)
+                    return ResultStatus.FUTURE;
+                if (allUnofficial)
+                    return ResultStatus.UNOFFICIAL;
+                if (allOfficial)
+                    return ResultStatus.OFFICIAL;
+                return ResultStatus.INTERMEDIATE;
             }
-            set
-            {
-                LocalStatus = value;
-            } 
+            set {
+                //To make Status JSON serialziable, we need to have a SET method. Choosing 
+                //not to do anything, set the status is based on the .MetaData.Status
+                ;
+            }
         }
 
         /// <summary>
-        /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
-        /// need defaults?
+        /// The start date that the underlying event, in this Result List, started on.
+        /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonProperty(Order = 4)]
-        public DateTime StartDate { get; set; } = DateTime.Today;
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime StartDate {
+            get {
+                if (Metadata == null || Metadata.Count == 0)
+                    return DateTime.Today;
+
+                DateTime startDate = DateTime.MaxValue;
+                foreach( var rlmd in Metadata.Values ) {
+                    if (rlmd.StartDate < startDate)
+                        startDate = rlmd.StartDate;
+                }
+                return startDate;
+            }
+        }
 
         /// <summary>
-        /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
-        /// need defaults?
+        /// The end date that the underlying event, in this Result List, ended on.
+        /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonProperty(Order = 5)]
-        public DateTime EndDate { get; set; } = DateTime.Today;
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime EndDate {
+            get {
+                if (Metadata == null || Metadata.Count == 0)
+                    return DateTime.Today;
+
+                DateTime endDate = DateTime.MinValue;
+                foreach (var rlmd in Metadata.Values) {
+                    if (rlmd.EndDate > endDate)
+                        endDate = rlmd.EndDate;
+                }
+                return endDate;
+            }
+        }
 
         /// <summary>
         /// The Version string of the JSON document
@@ -104,7 +140,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         [JsonProperty( Order = 12 )]
-		[Obsolete( "Use .Metadata.LastUpdated" )]
+        [JsonConverter( typeof( DateTimeConverter ) )]
+        [Obsolete( "Use .Metadata.LastUpdated" )]
 		public DateTime LastUpdated { get; set; } = new DateTime();
 
         [JsonProperty( Order = 13 )]
