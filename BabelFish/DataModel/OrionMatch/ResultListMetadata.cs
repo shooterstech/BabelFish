@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -17,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// UTC time of last update
         /// </summary>
-        [JsonConverter( typeof( DateTimeConverter ) )]
+        [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
 		/// <summary>

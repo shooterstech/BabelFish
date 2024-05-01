@@ -35,6 +35,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Use GetLastUpdated() to return this value as a DateTime object.
         /// </summary>
         [Obsolete("LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole.")]
+        [JsonConverter( typeof( DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; }
 
         /// <summary>

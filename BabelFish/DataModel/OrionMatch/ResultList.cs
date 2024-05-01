@@ -63,11 +63,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     return ResultStatus.OFFICIAL;
                 return ResultStatus.INTERMEDIATE;
             }
-            set {
-                //To make Status JSON serialziable, we need to have a SET method. Choosing 
-                //not to do anything, set the status is based on the .MetaData.Status
-                ;
-            }
         }
 
         /// <summary>
@@ -141,7 +136,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [JsonProperty( Order = 12 )]
         [JsonConverter( typeof( DateTimeConverter ) )]
-        [Obsolete( "Use .Metadata.LastUpdated" )]
 		public DateTime LastUpdated { get; set; } = new DateTime();
 
         [JsonProperty( Order = 13 )]

@@ -49,6 +49,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// tree look up the ResultCOF using the ResultCOFID.
         /// </summary>
         [Obsolete( "Replaced with EventScores" )]
+        [JsonIgnore]
         public List<ResultEventChild> Children { get; set; } = new List<ResultEventChild>();
 
         /// <summary>

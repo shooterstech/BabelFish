@@ -44,8 +44,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
 
         public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; } = new Scopos.BabelFish.DataModel.Athena.Score();
 
-        /*
-         * EKA April 2024: Removing, because the EventType can be learned from the Course of Fire Definition
         /// <summary>
         /// EVENT
         /// STAGE
@@ -54,7 +52,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// etc
         /// </summary>
         public string EventType { get; set; } = string.Empty;
-        */
 
         /// <summary>
         /// The date and time of the first shot, in this event. 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -64,6 +65,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <summary>
         /// Returns a boolean indicating if this Score is 0 (all values are zero). 
         /// </summary>
+        [JsonIgnore]
         public bool IsZero {
             get {
                 return (X == 0 && D == 0 && I == 0 && S == 0 && J == 0 && K == 0 && L == 0);
