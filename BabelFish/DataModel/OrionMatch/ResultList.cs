@@ -115,12 +115,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 8 )]
         public string ParentID { get; set; } = string.Empty;
 
-        /// <summary>
-        /// The relative importance / sort order of this ResultList within the match
-        /// </summary>
-        [JsonProperty( Order = 9 )]
-        public int SortOrder { get; set; } = 0;
-
         [JsonProperty( Order = 10 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 

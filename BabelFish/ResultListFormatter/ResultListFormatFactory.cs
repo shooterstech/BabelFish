@@ -19,8 +19,13 @@ namespace Scopos.BabelFish.ResultListFormatter {
         private ResultListFormatFactory() { }
 
         /// <summary>
-        /// Returns the SetName of the ResultListFormat Definition to use given the
-        /// input parameters.
+        /// Returns the SetName of the ResultListFormat Definition to use given the passed in ResultList.
+        /// Updated ResultLists contain a field ".ResultListFormatDef" that specifies which RESULT LIST FORMAT 
+        /// definition to use. If one is listed, then it is returned. 
+        /// 
+        /// On older ResultList, with out a .ResultIstFromatDef listed, this method first tries and look up the default
+        /// RESULT LIST FORMAT definition to use based on the COF definition. Again, if one is not listed, then
+        /// a this method tries and predicts one.
         /// </summary>
         /// <param name="courseOfFireDef"></param>
         /// <param name="eventName"></param>
