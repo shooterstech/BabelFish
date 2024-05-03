@@ -246,8 +246,28 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         [JsonIgnore]
         public object DataObjectTag { get; set; }
 
-        public int Update { get; set; }
+        /// <summary>
+        /// A Shot is uniquely identified (and stored in a database) by the combination of its Result COF ID, 
+        /// Sequence number, and Update value. Each time a shot is updated, a ShotLog entry must be added.
+        /// By adding a ShotLog, the value for .Update is also updated.
+        /// NOTE: A Shot may not have a log entry with .Update == 0. This would be, for example, a manually 
+        /// added shot such as a MISS or Cross Fire. When adding a manual shot, it should come with a ShotLog,
+        /// which would be .Update == 1. 
+        /// </summary>
+        public int Update {
+            get {
+                if (UpdateLog == null)
+                    return 0;
+                else
+                    return UpdateLog.Count;
+            }
+        }
 
+        /// <summary>
+        /// A shot log entry is required for each Update to a shot.
+        /// the .Update value for a original (hasn't been changed) shot is 0. By adding 
+        /// a ShotLog, the value for .Update is also updated.
+        /// </summary>
         public List<ShotLog> UpdateLog { get; set; }
 
         /// <summary>
