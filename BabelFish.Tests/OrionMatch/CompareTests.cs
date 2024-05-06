@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class CompareTests {
 
-        List<MatchParticipant> participants = new List<MatchParticipant>();
+        List<SquaddingAssignmentFiringPoint> SquaddingAssignmentFPList = new List<SquaddingAssignmentFiringPoint>();
         string JONES_CHRIS = "Jones, Chris";
         string JONES_MONIKA = "Jones, Monika";
         string SMITH_DEREK = "Smith, Derek";
@@ -26,49 +26,57 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
         [TestInitialize] 
         public void TestInitialize() {
-            participants = new List<MatchParticipant>();
+            SquaddingAssignmentFPList = new List<SquaddingAssignmentFiringPoint>();
 
-            participants.Add(
-                new MatchParticipant() {
+            SquaddingAssignmentFPList.Add(
+                new SquaddingAssignmentFiringPoint() {
                     Participant = new Individual() {
                         LastName = "Jones",
                         GivenName = "Chris",
                         DisplayName = JONES_CHRIS,
                         CompetitorNumber = "101"
-                    }
+                    },
+                    FiringPoint = "1",
+                    Relay = "1"
                 }
                 );
 
-            participants.Add(
-                new MatchParticipant() {
+            SquaddingAssignmentFPList.Add(
+                new SquaddingAssignmentFiringPoint() {
                     Participant = new Individual() {
                         LastName = "Jones",
                         GivenName = "Monika",
                         DisplayName = JONES_MONIKA,
                         CompetitorNumber = "102"
-                    }
+                    },
+                    FiringPoint = "2",
+                    Relay = "1"
                 }
                 );
 
-            participants.Add(
-                new MatchParticipant() {
+            SquaddingAssignmentFPList.Add(
+                new SquaddingAssignmentFiringPoint() {
                     Participant = new Individual() {
                         FamilyName = "Smith",
                         GivenName = "Derek",
                         DisplayName = SMITH_DEREK,
                         CompetitorNumber = "103"
-                    }
+                    },
+                    FiringPoint = "1",
+                    Relay = "2"
                 }
                 );
 
-            participants.Add(
-                new MatchParticipant() {
+            SquaddingAssignmentFPList.Add(
+                new SquaddingAssignmentFiringPoint() {
                     Participant = new Individual() {
                         FamilyName = "Smith",
                         GivenName = "Janet",
                         DisplayName = SMITH_JANET,
                         CompetitorNumber = "104"
-                    }
+                    },
+                    FiringPoint = "2",
+                    Relay = "2"
                 }
                 );
         }
@@ -76,88 +84,67 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task CompareParticipantTests() {
 
-            participants.Sort( new CompareParticipant( CompareParticipant.CompareMethod.FAMILYNAME_GIVENNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING ) );
-            Assert.AreEqual( JONES_CHRIS, participants[0].Participant.DisplayName );
-            Assert.AreEqual( JONES_MONIKA, participants[1].Participant.DisplayName );
-            Assert.AreEqual( SMITH_DEREK, participants[2].Participant.DisplayName );
-            Assert.AreEqual( SMITH_JANET, participants[3].Participant.DisplayName );
+            SquaddingAssignmentFPList.Sort( new CompareParticipant( CompareParticipant.CompareMethod.FAMILYNAME_GIVENNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING ) );
+            Assert.AreEqual( JONES_CHRIS, SquaddingAssignmentFPList[0].Participant.DisplayName );
+            Assert.AreEqual( JONES_MONIKA, SquaddingAssignmentFPList[1].Participant.DisplayName );
+            Assert.AreEqual( SMITH_DEREK, SquaddingAssignmentFPList[2].Participant.DisplayName );
+            Assert.AreEqual( SMITH_JANET, SquaddingAssignmentFPList[3].Participant.DisplayName );
 
-            participants.Sort( new CompareParticipant( CompareParticipant.CompareMethod.FAMILYNAME_GIVENNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING ) );
-            Assert.AreEqual( SMITH_JANET, participants[0].Participant.DisplayName );
-            Assert.AreEqual( SMITH_DEREK, participants[1].Participant.DisplayName );
-            Assert.AreEqual( JONES_MONIKA, participants[2].Participant.DisplayName );
-            Assert.AreEqual( JONES_CHRIS, participants[3].Participant.DisplayName );
+            SquaddingAssignmentFPList.Sort( new CompareParticipant( CompareParticipant.CompareMethod.FAMILYNAME_GIVENNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING ) );
+            Assert.AreEqual( SMITH_JANET, SquaddingAssignmentFPList[0].Participant.DisplayName );
+            Assert.AreEqual( SMITH_DEREK, SquaddingAssignmentFPList[1].Participant.DisplayName );
+            Assert.AreEqual( JONES_MONIKA,  SquaddingAssignmentFPList[2].Participant.DisplayName );
+            Assert.AreEqual( JONES_CHRIS, SquaddingAssignmentFPList[3].Participant.DisplayName );
 
-            participants.Sort( new CompareParticipant( CompareParticipant.CompareMethod.GIVENNAME_FAMILYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING ) );
-            Assert.AreEqual( JONES_CHRIS, participants[0].Participant.DisplayName );
-            Assert.AreEqual( SMITH_DEREK, participants[1].Participant.DisplayName );
-            Assert.AreEqual( SMITH_JANET, participants[2].Participant.DisplayName );
-            Assert.AreEqual( JONES_MONIKA, participants[3].Participant.DisplayName );
+            SquaddingAssignmentFPList.Sort( new CompareParticipant( CompareParticipant.CompareMethod.GIVENNAME_FAMILYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING ) );
+            Assert.AreEqual( JONES_CHRIS, SquaddingAssignmentFPList[0].Participant.DisplayName );
+            Assert.AreEqual( SMITH_DEREK, SquaddingAssignmentFPList[1].Participant.DisplayName );
+            Assert.AreEqual( SMITH_JANET, SquaddingAssignmentFPList[2].Participant.DisplayName );
+            Assert.AreEqual( JONES_MONIKA, SquaddingAssignmentFPList[3].Participant.DisplayName );
 
-            participants.Sort( new CompareParticipant( CompareParticipant.CompareMethod.GIVENNAME_FAMILYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING ) );
-            Assert.AreEqual( JONES_MONIKA, participants[0].Participant.DisplayName );
-            Assert.AreEqual( SMITH_JANET, participants[1].Participant.DisplayName );
-            Assert.AreEqual( SMITH_DEREK, participants[2].Participant.DisplayName );
-            Assert.AreEqual( JONES_CHRIS, participants[3].Participant.DisplayName );
+            SquaddingAssignmentFPList.Sort( new CompareParticipant( CompareParticipant.CompareMethod.GIVENNAME_FAMILYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING ) );
+            Assert.AreEqual( JONES_MONIKA, SquaddingAssignmentFPList[0].Participant.DisplayName );
+            Assert.AreEqual( SMITH_JANET, SquaddingAssignmentFPList[1].Participant.DisplayName );
+            Assert.AreEqual( SMITH_DEREK, SquaddingAssignmentFPList[2].Participant.DisplayName );
+            Assert.AreEqual( JONES_CHRIS, SquaddingAssignmentFPList[3].Participant.DisplayName );
 
-            participants.Sort( new CompareParticipant( CompareParticipant.CompareMethod.DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING ) );
-            Assert.AreEqual( JONES_CHRIS, participants[0].Participant.DisplayName );
-            Assert.AreEqual( JONES_MONIKA, participants[1].Participant.DisplayName );
-            Assert.AreEqual( SMITH_DEREK, participants[2].Participant.DisplayName );
-            Assert.AreEqual( SMITH_JANET, participants[3].Participant.DisplayName );
+            SquaddingAssignmentFPList.Sort( new CompareParticipant( CompareParticipant.CompareMethod.DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING ) );
+            Assert.AreEqual( JONES_CHRIS, SquaddingAssignmentFPList[0].Participant.DisplayName );
+            Assert.AreEqual( JONES_MONIKA, SquaddingAssignmentFPList[1].Participant.DisplayName );
+            Assert.AreEqual( SMITH_DEREK, SquaddingAssignmentFPList[2].Participant.DisplayName );
+            Assert.AreEqual( SMITH_JANET, SquaddingAssignmentFPList[3].Participant.DisplayName );
 
-            participants.Sort( new CompareParticipant( CompareParticipant.CompareMethod.DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING ) );
-            Assert.AreEqual( SMITH_JANET, participants[0].Participant.DisplayName );
-            Assert.AreEqual( SMITH_DEREK, participants[1].Participant.DisplayName );
-            Assert.AreEqual( JONES_MONIKA, participants[2].Participant.DisplayName );
-            Assert.AreEqual( JONES_CHRIS, participants[3].Participant.DisplayName );
+            SquaddingAssignmentFPList.Sort( new CompareParticipant( CompareParticipant.CompareMethod.DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING ) );
+            Assert.AreEqual( SMITH_JANET, SquaddingAssignmentFPList[0].Participant.DisplayName );
+            Assert.AreEqual( SMITH_DEREK, SquaddingAssignmentFPList[1].Participant.DisplayName );
+            Assert.AreEqual( JONES_MONIKA, SquaddingAssignmentFPList[2].Participant.DisplayName );
+            Assert.AreEqual( JONES_CHRIS, SquaddingAssignmentFPList[3].Participant.DisplayName );
 
         }
 
         [TestMethod]
         public async Task CompareSquaddings() {
 
-            //Call the GetSquaddingList api
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-
-            //This match id has three relays of 20 athletes
-            var matchId = new MatchID( "1.1.2023022315342668.0" );
-            var squaddingListName = "Individual";
-            var taskSquaddingListResponse = client.GetSquaddingListPublicAsync( matchId, squaddingListName );
-            var squaddingListResponse = taskSquaddingListResponse.Result;
-
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
-            var squaddingList = squaddingListResponse.SquaddingList;
-
-            Assert.AreEqual( matchId.ToString(), squaddingList.MatchID );
-            Assert.AreEqual( squaddingListName, squaddingList.EventName );
-
-            Assert.IsTrue( squaddingList.Items.Count > 0 );
-            var squaddingListSqAssignments = squaddingList.Items;
-            var concreteSAFPList = new List<SquaddingAssignmentFiringPoint>();
-            foreach (var fp in squaddingListSqAssignments) {
-                concreteSAFPList.Add( (SquaddingAssignmentFiringPoint)fp );
-            }
-
             var sortByRelayFiringPointAsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
-            concreteSAFPList.Sort( sortByRelayFiringPointAsc );
-            Console.WriteLine( "sortByRelayFiringPointAsc" );
-            foreach (var fp in concreteSAFPList) { Console.WriteLine( fp.ToString() ); Console.WriteLine( fp.Participant.DisplayName ); }
-
-
-            Console.WriteLine( "\n\nNEXT\n" );
+            SquaddingAssignmentFPList.Sort( sortByRelayFiringPointAsc );
+            Assert.AreEqual(JONES_CHRIS, SquaddingAssignmentFPList[0].Participant.DisplayName);
+            Assert.AreEqual(JONES_MONIKA, SquaddingAssignmentFPList[1].Participant.DisplayName);
+            Assert.AreEqual(SMITH_DEREK, SquaddingAssignmentFPList[2].Participant.DisplayName);
+            Assert.AreEqual(SMITH_JANET, SquaddingAssignmentFPList[3].Participant.DisplayName);
 
             var sortByRelayFiringPointDsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING );
-            concreteSAFPList.Sort( sortByRelayFiringPointDsc );
-            Console.WriteLine( "sortByRelayFiringPointDsc" );
-            foreach (var fp in concreteSAFPList) { Console.WriteLine( fp.ToString() ); Console.WriteLine( fp.Participant.DisplayName ); }
-
-            Console.WriteLine( "\n\nNEXT\n" );
+            SquaddingAssignmentFPList.Sort( sortByRelayFiringPointDsc );
+            Assert.AreEqual(SMITH_JANET, SquaddingAssignmentFPList[0].Participant.DisplayName);
+            Assert.AreEqual(SMITH_DEREK, SquaddingAssignmentFPList[1].Participant.DisplayName);
+            Assert.AreEqual(JONES_MONIKA, SquaddingAssignmentFPList[2].Participant.DisplayName);
+            Assert.AreEqual(JONES_CHRIS, SquaddingAssignmentFPList[3].Participant.DisplayName);
 
             var sortByRelayFirstLastAsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
-            concreteSAFPList.Sort( sortByRelayFirstLastAsc );
-            Console.WriteLine( "sortByRelayFirstLastAsc" );
-            foreach (var fp in concreteSAFPList) { Console.WriteLine( fp.ToString() ); Console.WriteLine( fp.Participant.DisplayName ); }
+            SquaddingAssignmentFPList.Sort( sortByRelayFirstLastAsc );
+            Assert.AreEqual(JONES_CHRIS, SquaddingAssignmentFPList[0].Participant.DisplayName);
+            Assert.AreEqual(JONES_MONIKA, SquaddingAssignmentFPList[1].Participant.DisplayName);
+            Assert.AreEqual(SMITH_DEREK, SquaddingAssignmentFPList[2].Participant.DisplayName);
+            Assert.AreEqual(SMITH_JANET, SquaddingAssignmentFPList[3].Participant.DisplayName);
         }
     }
 }
