@@ -5,14 +5,25 @@ using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
+    /// <summary>
+    /// Implements the IComparer interface to sort a list of Participants, such as one
+    /// would have if they called the GetSquaddingList REST API call, or the GetMatchParticipant
+    /// REST API call.
+    /// </summary>
 
     public class CompareParticipant : IComparer<IParticipant> {
 
-        public enum CompareMethod { 
+        public enum CompareMethod {
+
+            /// <summary>
+            /// Sort by Given/First Name
+            /// </summary>
+            GIVENNAME_FAMILYNAME,
+
             /// <summary>
             /// Sort by Last name, then first name
             /// </summary>
-            LASTNAME, 
+            FAMILYNAME_GIVENNAME, 
             
             /// <summary>
             /// Sort by Display Name
@@ -34,18 +45,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             int compare = 0;
 
+            Individual X, Y;
+
             switch ( Method ) {
-                case CompareMethod.LASTNAME:
+                case CompareMethod.FAMILYNAME_GIVENNAME:
                     if (x.Participant is not Individual
                         || y.Participant is not Individual)
                         throw new ArgumentException( "Hey hey hey, we need individuals, not teams" );
 
-                    Individual X = (Individual) x.Participant;
-                    Individual Y = (Individual) y.Participant; 
+                    X = (Individual) x.Participant;
+                    Y = (Individual) y.Participant; 
 
                     compare = X.LastName.CompareTo( Y.LastName );
                     if (compare == 0)
-                        compare = Y.FirstName.CompareTo( X.FirstName ); 
+                        compare = X.FirstName.CompareTo( Y.FirstName ); 
+
+                    break;
+
+                case CompareMethod.GIVENNAME_FAMILYNAME:
+                    if (x.Participant is not Individual
+                        || y.Participant is not Individual)
+                        throw new ArgumentException( "Hey hey hey, we need individuals, not teams" );
+
+                    X = (Individual)x.Participant;
+                    Y = (Individual)y.Participant;
+
+                    compare = X.FirstName.CompareTo( Y.FirstName );
+                    if (compare == 0)
+                        compare = X.LastName.CompareTo( Y.LastName );
 
                     break;
 
