@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.ResultListFormatter {
         protected readonly Dictionary<string, string> fields = new Dictionary<string, string>();
         protected readonly ResultEvent resultEvent;
         protected readonly ResultListIntermediateFormatted resultListFormatted; //This row's parent container
-        protected Logger logger = null;
+        protected Logger logger = LogManager.GetCurrentClassLogger();
 
         public ResultListIntermediateFormattedRow( ResultListIntermediateFormatted rlf, ResultEvent re ) {
 

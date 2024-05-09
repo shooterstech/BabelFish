@@ -47,23 +47,35 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             //Value (and subsequently Value.ResultCOF) could be null if the asked for result cof id doesn't exist or can not be converted.
             if (Value != null) {
                 foreach (var resultEvent in Value.ResultList.Items) {
-                    //If the Attr Definition can not be found, remove it.
-                    List<AttributeValueDataPacketMatch> avToRemove = new List<AttributeValueDataPacketMatch>();
-                    foreach (var attributeValue in resultEvent.Participant.AttributeValues) {
-                        try {
-                            if (attributeValue.AttributeValueTask != null) {
-                                await attributeValue.FinishInitializationAsync();
-                            }
-                        } catch (AttributeNotFoundException nfe) {
-                            avToRemove.Add( attributeValue );
-                        }
-                    }
-
-                    foreach (var attributeValue in avToRemove) {
-                        resultEvent.Participant.AttributeValues.Remove( attributeValue );
-                    }
+                    await PostResponseProcessingForResultEventsAsync(resultEvent);
                 }
             }
+        }
+
+        private async Task PostResponseProcessingForResultEventsAsync( ResultEvent resultEvent) {
+            //If the Attr Definition can not be found, remove it.
+            List<AttributeValueDataPacketMatch> avToRemove = new List<AttributeValueDataPacketMatch>();
+            foreach (var attributeValue in resultEvent.Participant.AttributeValues) {
+                try {
+                    if (attributeValue.AttributeValueTask != null) {
+                        await attributeValue.FinishInitializationAsync();
+                    }
+                } catch (AttributeNotFoundException nfe) {
+                    avToRemove.Add( attributeValue );
+                }
+            }
+
+            foreach (var attributeValue in avToRemove) {
+                resultEvent.Participant.AttributeValues.Remove( attributeValue );
+            }
+
+            //Recursively call this function to also finish processing the Team Members
+            if (resultEvent.TeamMembers != null) {
+                foreach (var tm in resultEvent.TeamMembers) {
+                    await PostResponseProcessingForResultEventsAsync( tm );
+                }
+            }
+
         }
 
         /// <inheritdoc />
