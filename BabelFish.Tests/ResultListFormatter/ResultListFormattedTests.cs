@@ -7,8 +7,8 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
 using System.Threading.Tasks;
-using Scopos.BabelFish.ResultListFormatter;
-using Scopos.BabelFish.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 

@@ -7,7 +7,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormattedBodyRow : ResultListIntermediateFormattedRow {
 
         public ResultListIntermediateFormattedBodyRow( ResultListIntermediateFormatted rlf, ResultEvent re ) : base (rlf, re) {

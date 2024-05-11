@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scopos.BabelFish.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {

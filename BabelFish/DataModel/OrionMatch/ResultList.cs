@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public string MatchID { get; set; } = string.Empty;
 
         /// <summary>
-        /// Set name of the Ranking Rule definition
+        /// Set name of the Ranking Rule definition used to rank this result list.
         /// </summary>
         [JsonProperty( Order = 2 )]
         public string RankingRuleDef { get; set; } = string.Empty;
@@ -150,8 +150,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 17 )]
         public string ResultListID { get; set; } = string.Empty;
 
-        public bool Preliminary { get; set; } = false;
-
+        /// <summary>
+        /// Indicates if the scores in this Result List were projected based on the athlete's current performatnce.
+        /// Should only ever be true if Status is FUTURE or INTERMEDIATE
+        /// </summary>
+        public bool Projected { get; set; } = false;
 
         /// <summary>
         /// The SetName of the Course of Fire

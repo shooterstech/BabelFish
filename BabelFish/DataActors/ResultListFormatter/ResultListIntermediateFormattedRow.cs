@@ -11,7 +11,7 @@ using NLog;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public abstract class ResultListIntermediateFormattedRow {
 
         /// <summary>

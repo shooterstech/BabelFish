@@ -7,9 +7,9 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     /// <summary>
     /// ResultListFormatted is an intermediate formatted result list. It's like assembly code, half way 
