@@ -169,6 +169,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             cof.Singulars = generatedSingulars;
         }
 
+        /// <summary>
+        /// Generates the Event tree as defined by the passed in Course of Fire definition. 
+        /// the EventComposite that is passed back, is the top level Event in the tree.
+        /// </summary>
+        /// <param name="cofRef"></param>
+        /// <returns></returns>
+        /// <exception cref="ScoposException"></exception>
         public static EventComposite GrowEventTree( CourseOfFire cofRef ) {
 
             CourseOfFire cof = cofRef.Clone(); //dont modify passed in cof

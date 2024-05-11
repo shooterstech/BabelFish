@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataActors.EventScoresProjection;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch
 {
