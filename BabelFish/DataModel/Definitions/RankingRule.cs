@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [JsonProperty(Order = 10)]
         [DefaultValue(null)]
-        public List<RankingRule> RankingRules { get; set; } = new List<RankingRule>();
+        public List<RankingDirective> RankingRules { get; set; } = new List<RankingDirective>();
 
     }
 }

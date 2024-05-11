@@ -288,4 +288,39 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "SET NAME" )]
         SETNAME
     }
+
+    /// <summary>
+    /// Specifies the method to use to compare two competitors.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum TieBreakingRuleMethod {
+
+        /// <summary>
+        /// Use a value from the Score class.
+        /// </summary>
+        [Description( "Score" )]
+        [EnumMember( Value = "Score" )]
+        SCORE,
+
+        /// <summary>
+        /// Counts the number of EventType=Singular with Integer score equal to Source.
+        /// </summary>
+        [Description( "CountOf" )]
+        [EnumMember( Value = "CountOf" )]
+        COUNT_OF,
+
+        /// <summary>
+        /// Use a value from the Participant class
+        /// </summary>
+        [Description( "ParticipantAttribute" )]
+        [EnumMember( Value = "ParticipantAttribute" )]
+        PARTICIPANT_ATTRIBUTE,
+
+        /// <summary>
+        /// Use a value from the Particiipant's Attributes. Attribute must be a Simple Attribute.
+        /// </summary>
+        [Description( "Attribute" )]
+        [EnumMember( Value = "Attribute" )]
+        ATTRIBUTE
+    }
 }
