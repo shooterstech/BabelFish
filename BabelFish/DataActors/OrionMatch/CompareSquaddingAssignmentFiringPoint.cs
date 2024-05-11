@@ -5,13 +5,16 @@ using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Helpers.Extensions;
 using System.ComponentModel;
 
-namespace Scopos.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataActors.OrionMatch
+{
     /// <summary>
     /// Implements the IComparer interface to sort a list of SquaddingAssignmentFiringPoint, such as one
     /// would have if they called the GetSquaddingList REST API call. 
     /// </summary>
-    public class CompareSquaddingAssignmentFiringPoint : IComparer<SquaddingAssignmentFiringPoint> {
-        public enum CompareMethod {
+    public class CompareSquaddingAssignmentFiringPoint : IComparer<SquaddingAssignmentFiringPoint>
+    {
+        public enum CompareMethod
+        {
 
             /// <summary>
             /// Sort by Display Name
@@ -49,9 +52,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             FIRINGPOINT_DISPLAYNAME
         };
 
-        public CompareSquaddingAssignmentFiringPoint( CompareMethod compareMethod, SortBy sortBy ) {
-            this.Method = compareMethod;
-            this.SortBy = sortBy;
+        public CompareSquaddingAssignmentFiringPoint(CompareMethod compareMethod, SortBy sortBy)
+        {
+            Method = compareMethod;
+            SortBy = sortBy;
         }
 
         public CompareMethod Method { get; private set; }
@@ -59,79 +63,87 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public SortBy SortBy { get; private set; }
 
         /// <inheritdoc/>
-        public int Compare( SquaddingAssignmentFiringPoint x, SquaddingAssignmentFiringPoint y ) {
+        public int Compare(SquaddingAssignmentFiringPoint x, SquaddingAssignmentFiringPoint y)
+        {
 
             int compare = 0;
             Individual X, Y;
 
-            switch (Method) {
+            switch (Method)
+            {
 
                 case CompareMethod.DISPLAYNAME:
 
-                    compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    compare = x.Participant.DisplayName.CompareTo(y.Participant.DisplayName);
 
                     break;
 
                 case CompareMethod.GIVENNAME_FAMILYNAME:
                     if (x.Participant is not Individual
                         || y.Participant is not Individual)
-                        throw new ArgumentException( "Those aren't people! Individuals only!" );
+                        throw new ArgumentException("Those aren't people! Individuals only!");
 
                     X = (Individual)x.Participant;
                     Y = (Individual)y.Participant;
 
-                    compare = X.GivenName.CompareTo( Y.GivenName );
+                    compare = X.GivenName.CompareTo(Y.GivenName);
                     if (compare == 0)
-                        compare = Y.LastName.CompareTo( X.LastName );
+                        compare = Y.LastName.CompareTo(X.LastName);
                     break;
 
                 case CompareMethod.FAMILYNAME_GIVENNAME:
                     if (x.Participant is not Individual
                         || y.Participant is not Individual)
-                        throw new ArgumentException( "Those aren't people! Individuals only!" );
+                        throw new ArgumentException("Those aren't people! Individuals only!");
 
                     X = (Individual)x.Participant;
                     Y = (Individual)y.Participant;
 
-                    compare = X.LastName.CompareTo( Y.LastName );
+                    compare = X.LastName.CompareTo(Y.LastName);
                     if (compare == 0)
-                        compare = Y.GivenName.CompareTo( X.GivenName );
+                        compare = Y.GivenName.CompareTo(X.GivenName);
                     break;
 
                 case CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME:
 
-                    compare = x.Relay.CompareToAsIntegers( y.Relay );
-                    if (compare == 0) {
-                        compare = x.FiringPoint.CompareToAsIntegers( y.FiringPoint );
-                        if (compare == 0) {
-                            compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    compare = x.Relay.CompareToAsIntegers(y.Relay);
+                    if (compare == 0)
+                    {
+                        compare = x.FiringPoint.CompareToAsIntegers(y.FiringPoint);
+                        if (compare == 0)
+                        {
+                            compare = x.Participant.DisplayName.CompareTo(y.Participant.DisplayName);
                         }
                     }
                     break;
 
                 case CompareMethod.RELAY_DISPLAYNAME:
 
-                    compare = x.Relay.CompareToAsIntegers( y.Relay );
-                    if (compare == 0) {
-                        compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    compare = x.Relay.CompareToAsIntegers(y.Relay);
+                    if (compare == 0)
+                    {
+                        compare = x.Participant.DisplayName.CompareTo(y.Participant.DisplayName);
                     }
                     break;
 
                 case CompareMethod.FIRINGPOINT_RELAY_DISPLAYNAME:
-                    compare = x.FiringPoint.CompareToAsIntegers( y.FiringPoint );
-                    if (compare == 0) {
-                        compare = x.Relay.CompareToAsIntegers( y.Relay );
-                        if (compare == 0) {
-                            compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    compare = x.FiringPoint.CompareToAsIntegers(y.FiringPoint);
+                    if (compare == 0)
+                    {
+                        compare = x.Relay.CompareToAsIntegers(y.Relay);
+                        if (compare == 0)
+                        {
+                            compare = x.Participant.DisplayName.CompareTo(y.Participant.DisplayName);
                         }
                     }
                     break;
 
                 case CompareMethod.FIRINGPOINT_DISPLAYNAME:
 
-                    compare = x.FiringPoint.CompareToAsIntegers( y.FiringPoint );
-                    if (compare == 0) {
-                        compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    compare = x.FiringPoint.CompareToAsIntegers(y.FiringPoint);
+                    if (compare == 0)
+                    {
+                        compare = x.Participant.DisplayName.CompareTo(y.Participant.DisplayName);
                     }
                     break;
 

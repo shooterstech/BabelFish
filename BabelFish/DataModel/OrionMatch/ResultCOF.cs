@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
     /// Result COF format for (JSONVersion) "2022-04-09"
     /// </summary>
     [Serializable]
-    public class ResultCOF
+    public class ResultCOF : IEventScoreProjection
     {
         [JsonProperty(Order = 1)]
         [Obsolete( "Use OwnerId instead.")]
@@ -207,22 +207,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
 		/// </summary>
 		public string Creator { get; set; }
 
-		/// <summary>
-		/// GUID returned from API
-		/// EKA: This field is used for storage in Dynamo only. 
-		/// </summary>
-		//public string RESULTCOF_ResultCOFID { get; set; } = string.Empty;
-
-		/// <summary>
-		/// EKA: This field is used for storage in Dynamo only. 
-		/// </summary>
-		//public string UniqueID { get; set; } = string.Empty;
-
-		/// <summary>
-		/// EKA: This field is used for storage in Dynamo only. 
-		/// </summary>
-		//public string CheckSum { get; set; } = string.Empty;
-
+        /// <inheritdoc />
 		public override string ToString()
         {
             StringBuilder foo = new StringBuilder();
@@ -231,6 +216,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
             foo.Append(": ");
             foo.Append(MatchName);
             return foo.ToString();
+        }
+
+        /// <inheritdoc />
+        public void ProjectScores( ProjectorOfScores ps ) {
+            ps.ProjectEventScores( this );
+        }
+
+        /// <inheritdoc />
+        public List<IEventScores> GetTeamMembersAsIEventScores() {
+            //Result COF does not have TeamMembers (not yet at least) so returning an empty list
+            return new List<IEventScores>();
         }
     }
 }

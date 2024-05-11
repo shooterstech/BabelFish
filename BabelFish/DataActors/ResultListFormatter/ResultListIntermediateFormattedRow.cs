@@ -299,24 +299,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private Score GetScore( string eventName ) {
 
-            //.EventScores is the updated way (as of Jan 2024) to learn about a competitors score. Try using it first.
             EventScore scoreToReturn;
-            if (resultEvent.EventScores != null && resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn)) {
-                return scoreToReturn.Score;
-            }
 
-            //.Score is the deprecated method, use it second.
-            if (eventName == resultListFormatted.ResultList.EventName)
-                return resultEvent.Score;
-
-            foreach (var childEvent in resultEvent.Children) {
-                if (childEvent.EventName == eventName) {
-                    return childEvent.Score;
+            if (resultEvent.EventScores != null) {
+                if (resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
+                    
+                    if (this.resultListFormatted.ResultList.Projected && scoreToReturn.Projected != null) {
+                        //If the Result List is Projected, try and return the .Projected Score instance, if it is avaliable.
+                        return scoreToReturn.Projected;
+                    } else {
+                        //Else return the regular,, good old fashion, .Score instance
+                        return scoreToReturn.Score;
+                    }
                 }
             }
-
-            //If we get here couldn't find it in the Result Event.
-            //TODO search the ResultCOF for the score. 
 
             //For now return an empty Score data object
             return new Score();

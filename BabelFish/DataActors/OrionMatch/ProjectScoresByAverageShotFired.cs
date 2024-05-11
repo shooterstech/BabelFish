@@ -4,7 +4,7 @@ using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.EventScoresProjection {
+namespace Scopos.BabelFish.DataActors.OrionMatch {
     public class ProjectScoresByAverageShotFired : ProjectorOfScores {
 
         public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire  ) :base( courseOfFire ) { 
@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataActors.EventScoresProjection {
             var topLevelEvent = EventComposite.GrowEventTree( this.CourseOfFire );
             var stageStyleEvents = topLevelEvent.GetEvents( false, false, true, false, false, false );
 
-            //note, this is also not safe
+            //note, this is not safe
             var topLevelEventScore = projection.EventScores[topLevelEvent.EventName];
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.DataActors.EventScoresProjection {
+namespace Scopos.BabelFish.DataActors.OrionMatch {
     public abstract class ProjectorOfScores {
 
         public ProjectorOfScores( CourseOfFire courseOfFire ) {

@@ -9,7 +9,7 @@ using Scopos.BabelFish.DataActors.EventScoresProjection;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultEvent : IParticipant, IEventScoreProjection {
+    public class ResultEvent : IEventScoreProjection {
 
         public ResultEvent() {
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
@@ -49,14 +49,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
-		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
+		public List<IEventScores> GetTeamMembersAsIEventScores() {
 			if (TeamMembers == null) {
-				return new List<IEventScoreProjection>();
+				return new List<IEventScores>();
 			}
 
-			return TeamMembers.ToList<IEventScoreProjection>();
-
+			return TeamMembers.ToList<IEventScores>();
 		}
+
+		/// <inheritdoc />
+        public void ProjectScores( ProjectorOfScores ps ) {
+            ps.ProjectEventScores( this );
+        }
 
         public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
 

@@ -12,8 +12,10 @@ using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Tests;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using BabelFish.DataActors.OrionMatch;
 
-namespace Scopos.BabelFish.Tests.OrionMatch {
+namespace Scopos.BabelFish.Tests.OrionMatch
+{
 
     [TestClass]
     public class CompareTests {
