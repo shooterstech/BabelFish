@@ -208,6 +208,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public string Creator { get; set; }
 
+        /// <summary>
+        /// Helper function that indicates if this Match is currently going on. Which is 
+        /// determined by the Match's Start and End Date.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsOnGoing {
+            get {
+                return StartDate <= DateTime.Today
+                    && EndDate >= DateTime.Today;
+            }
+        }
+
 		public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "MatchDetail for " );
