@@ -18,19 +18,26 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var topLevelEvent = EventComposite.GrowEventTree( this.CourseOfFire );
             var stageStyleEvents = topLevelEvent.GetEvents( false, false, true, false, false, false );
 
-            //note, this is not safe
-            var topLevelEventScore = projection.EventScores[topLevelEvent.EventName];
-
+            EventScore topLevelEventScore;
+            projection.EventScores.TryGetValue(topLevelEvent.EventName, out topLevelEventScore);
+            int shotsInEvent = 0;
 
             foreach (var stageEvent in stageStyleEvents) {
-                //note, this is also not safe
-                var es = projection.EventScores[stageEvent.EventName];
+                EventScore es;
+                projection.EventScores.TryGetValue(stageEvent.EventName, out es);
+                //get singulars for stage I am in, then count those and that is how many shots to take total.
+                var singulars = stageEvent.GetEvents(false, false, false, false, false, true);
+                var shotsFired = es.NumShotsFired;
+                var shotsRemaining = singulars.Count - shotsFired;
+                var avgShotThisStage = es.Score.D / shotsFired;
 
-                //project the scores, currently by some fake method
+                //project the scores
                 es.Projected = new DataModel.Athena.Score();
-                es.Projected.X = es.Score.X + 1;
-                es.Projected.I = es.Score.I + 1;
-                es.Projected.D = es.Score.D + 1.1f;
+                es.Projected.X = (int)(es.Score.X + ((es.Score.X / shotsFired) * shotsRemaining));
+                es.Projected.I = (int)(es.Score.I + (int)(avgShotThisStage * shotsRemaining));
+                es.Projected.D = (1.0f) * (es.Score.D + (avgShotThisStage * shotsRemaining));
+
+                shotsInEvent += singulars.Count;
             }
 
             //Make the bold and wildly incorrect assumption that the topLevelEvent is the sum of the stages
@@ -39,8 +46,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             topLevelEventScore.Projected = new DataModel.Athena.Score();
 
             foreach (var stageEvent in stageStyleEvents) {
-                //note, still not safe
-                var es = projection.EventScores[stageEvent.EventName];
+                EventScore es;
+                projection.EventScores.TryGetValue(stageEvent.EventName, out es);
+
 
                 topLevelEventScore.Projected.X = es.Projected.X;
                 topLevelEventScore.Projected.I = es.Projected.I;

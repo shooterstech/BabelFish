@@ -12,7 +12,7 @@ using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Tests;
 using Newtonsoft.Json;
 using System.ComponentModel;
-using BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.OrionMatch
 {
