@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
+using System.Security.Cryptography;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
 
@@ -22,9 +23,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             
             foreach( var rankingRule in this.RankingRule.RankingRules ) {
 
-                foreach( var rule in rankingRule.)
+                ;
 
             }
+
+            return 0;
         }
     }
 }

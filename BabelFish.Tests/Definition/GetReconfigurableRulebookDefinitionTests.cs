@@ -118,7 +118,17 @@ namespace Scopos.BabelFish.Tests.Definition
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.RankingRules.Count > 0 );
+
+            //Each Ranking Rule definition should have one or more Ranking Directives
+            var rankingDirectives = definition.RankingRules;
+            Assert.IsTrue( rankingDirectives.Count > 0 );
+
+            //The first Ranking Directive's .AppliesTo must equal '*'
+            Assert.AreEqual( "*", rankingDirectives[0].AppliesTo );
+
+            //Must be one or more TieBreakingRules
+            var tieBreakingRules = rankingDirectives[0].Rules;
+            Assert.IsTrue( tieBreakingRules.Count > 0 );
         }
 
         [TestMethod]
