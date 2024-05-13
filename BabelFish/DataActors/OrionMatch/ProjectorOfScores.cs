@@ -4,6 +4,14 @@ using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
+
+    /// <summary>
+    /// Abstract base class, for classes that try to predict the final scores a participant will 
+    /// finish with, based on the scores they already shot.
+    /// 
+    /// Each concrete class that implements ProjectorOfScores will have its own algorithm for
+    /// making the predicted scores.
+    /// </summary>
     public abstract class ProjectorOfScores {
 
         public ProjectorOfScores( CourseOfFire courseOfFire ) {

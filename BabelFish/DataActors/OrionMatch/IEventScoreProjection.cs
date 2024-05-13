@@ -5,7 +5,10 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
 
-
+    /// <summary>
+    /// Implements an interface that may be used to project (predict) the scores a participant
+    /// could finish with, based on the scores they already shot.
+    /// </summary>
     public interface IEventScoreProjection : IEventScores {
 
         /// <summary>
