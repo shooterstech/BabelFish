@@ -125,7 +125,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
         }
 
         [TestMethod]
-        public async Task CompareSquaddings() {
+        public async Task CompareSquaddingTests() {
 
             var sortByRelayFiringPointAsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
             SquaddingAssignmentFPList.Sort( sortByRelayFiringPointAsc );
@@ -147,6 +147,30 @@ namespace Scopos.BabelFish.Tests.OrionMatch
             Assert.AreEqual(JONES_MONIKA_R1_FP2, SquaddingAssignmentFPList[1].Participant.DisplayName);
             Assert.AreEqual(SMITH_DEREK_R2_FP1, SquaddingAssignmentFPList[2].Participant.DisplayName);
             Assert.AreEqual(SMITH_JANET_R2_FP2, SquaddingAssignmentFPList[3].Participant.DisplayName);
+        }
+
+        [TestMethod]
+        public async Task CompareResultStatusTests() {
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.FUTURE ) == 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.INTERMEDIATE ) < 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.UNOFFICIAL ) < 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.OFFICIAL ) < 0 );
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.FUTURE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.INTERMEDIATE ) == 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL ) < 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.OFFICIAL ) < 0);
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.FUTURE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.INTERMEDIATE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.UNOFFICIAL ) == 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL ) < 0 );
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.FUTURE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.INTERMEDIATE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.UNOFFICIAL ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.OFFICIAL ) == 0 );
         }
     }
 }
