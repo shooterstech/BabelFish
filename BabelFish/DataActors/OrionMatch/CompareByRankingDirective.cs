@@ -1,0 +1,273 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using NLog;
+using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Helpers.Extensions;
+using Score = Scopos.BabelFish.DataModel.Athena.Score;
+
+namespace Scopos.BabelFish.DataActors.OrionMatch {
+
+    /// <summary>
+    /// Compares two IEventScores (e.g. Result COF or Result Event) by the rules defined in a 
+    /// Ranking Rule Definition.
+    /// </summary>
+    public class CompareByRankingDirective : IComparer<IEventScores>, IEqualityComparer<IEventScores> {
+
+        private enum TieBreakRuleList { RULES, LISTONLY };
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
+        public CompareByRankingDirective( CourseOfFire courseOfFire, RankingDirective rankingDirective ) {
+            this.CourseOfFire = courseOfFire;
+            this.RankingDirective = rankingDirective;
+        }
+
+        public CourseOfFire CourseOfFire { get; private set; }
+
+        public RankingDirective RankingDirective { get; private set; }
+
+        /// <summary>
+        /// The ResultStatus of the Result List we are sorting. The default value is OFFICIAL which effectively 
+        /// means all TieBreakingRules will be used. TieBreakingRules may be limited if ResultStatus is something
+        /// other than OFFICIAL
+        /// </summary>
+        public ResultStatus ResultStatus { get; set; } = ResultStatus.OFFICIAL;
+
+        /// <summary>
+        /// Indicates, if true, that the Projected Score instance should be used instead of the Score instance.
+        /// Would be the case if the result list we are sorting has .Projected = true.
+        /// The default, false, means to always use the .Score instance.
+        /// </summary>
+        public bool Projected { get; set; } = false;
+
+        /// <summary>
+        /// Compares two IEventScores objects to determine which is greater than the other based on the Ranking Rule 
+        /// Definition. The most common use for this is sorting a Result List of type Result Events. This method
+        /// uses the definitions' .Rules and .ListOnly TieBreakingRules. Which means, if the definition was written
+        /// correctly x should never equal y and a 0 will never be returned.  Note that this is different from 
+        /// CompareByRankingRuleDefinition.Equals, that will return true if x and y are considered to have an 
+        /// unbreakable tie.
+        /// 
+        /// Returns >= 1 if x is higher ranked than y
+        /// Returns <= -1 if y is higher ranked than x
+        /// 
+        /// Shouldn't ever return 0 if the Definition was written correctly.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public int Compare( IEventScores x, IEventScores y ) {
+
+            var compare = CompareByTieBreakingRuleList( TieBreakRuleList.RULES, x, y );
+
+            if ( compare == 0 ) {
+                compare = CompareByTieBreakingRuleList( TieBreakRuleList.LISTONLY, x, y );
+            }            
+
+            return compare;
+        }
+
+        /// <summary>
+        /// Compares two IEventScores objects to determien if they have an unbreakable tie (return value True). 
+        /// An unbreakable tie exists if all of the definitions .Rules passed without either x or y coming out ahead.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool Equals( IEventScores x, IEventScores y ) {
+
+            var compare = CompareByTieBreakingRuleList( TieBreakRuleList.RULES, x, y );
+
+            return compare == 0;
+        }
+
+        private int CompareByTieBreakingRuleList( TieBreakRuleList tieBreakingRuleType, IEventScores x, IEventScores y ) {
+
+            var compare = 0;
+            List<TieBreakingRule> tieBreakingRules;
+            if (tieBreakingRuleType == TieBreakRuleList.RULES)
+                tieBreakingRules = this.RankingDirective.Rules;
+            else
+                // TieBreakRuleList.LISTONLY
+                tieBreakingRules = this.RankingDirective.ListOnly;
+
+            foreach (var tieBreakingRule in this.RankingDirective.Rules) {
+
+                //Skip this rule if the it specifies a Result Status less than the .ResultStaus of the result list.
+                if (CompareResultStatus.COMPARER.Compare( tieBreakingRule.ResultStatus, this.ResultStatus ) >= 0) {
+
+                    switch (tieBreakingRule.Method) {
+                        case TieBreakingRuleMethod.SCORE:
+                            compare = CompareScore( tieBreakingRule, x, y );
+                            break;
+
+                        case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
+                            compare = CompareParticipantAttribute( tieBreakingRule, x, y );
+                            break;
+
+                        case TieBreakingRuleMethod.ATTRIBUTE:
+                            compare = CompareAttribute( tieBreakingRule, x, y );
+                            break;
+
+                        default:
+                            throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{tieBreakingRule.Method}'." );
+                    }
+                }
+            }
+
+            return compare;
+        }
+
+        private int CompareScore( TieBreakingRule rule, IEventScores x, IEventScores y ) {
+
+            Score xScore, yScore;
+
+            if (TryGetScore( x, rule.EventName, out xScore ) && TryGetScore( y, rule.EventName, out yScore )) {
+                switch (rule.Source) {
+                    case "I":
+                    case "i":
+                        return xScore.I - yScore.I;
+                    case "X":
+                    case "x":
+                        return xScore.X - yScore.X;
+                    case "D":
+                    case "d":
+                        //To avoid floating point errors, need to evalute jus the first decimal place
+                        return (int)((xScore.D - yScore.D) * 10);
+                    case "S":
+                    case "s":
+                        //To avoid floating point errors, need to evalute jus the first decimal place
+                        return (int)((xScore.S - yScore.S) * 10);
+                    case "J":
+                    case "j":
+                        //To avoid floating point errors, need to evalute jus the first three decimal place
+                        return (int)((xScore.J - yScore.J) * 100);
+                    case "K":
+                    case "k":
+                        //To avoid floating point errors, need to evalute jus the first three decimal place
+                        return (int)((xScore.K - yScore.K) * 100);
+                    case "L":
+                    case "l":
+                        //To avoid floating point errors, need to evalute jus the first three decimal place
+                        return (int)((xScore.L - yScore.L) * 100);
+                }
+
+            }
+
+            return 0;
+        }
+
+        private int CompareParticipantAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
+
+            switch (rule.Source.ToUpper()) {
+                case "FAMILYNAME":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        return ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
+                    return 0;
+
+                case "GIVENNAME":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        return ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
+                    return 0;
+
+                case "MIDDLENAME":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        return ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
+                    return 0;
+
+                case "COMPETITORNUMBER":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        return ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
+                    return 0;
+
+                case "DISPLAYNAME":
+                    return x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+
+                case "DISPLAYNAMESHORT":
+                    return x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
+
+                case "HOMETOWN":
+                    return x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
+
+                case "COUNTRY":
+                    return x.Participant.Country.CompareTo( y.Participant.Country );
+
+                case "CLUB":
+                    return x.Participant.Club.CompareTo( y.Participant.Club );
+
+                default:
+                    logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
+                    return 0;
+
+            }
+
+
+            return 0;
+        }
+
+        private int CompareAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
+
+            if (rule.Source is string) {
+                //should probable check if rule.Source is a proper SetName, but that takes clock cycles and we are trying to make sorting as fast as possible
+                string setName = rule.Source;
+
+                dynamic xAttrValue = null;
+                dynamic yAttrValue = null;
+
+                foreach (var av in x.Participant.AttributeValues) {
+                    if (av.AttributeDef == setName) {
+                        try {
+                            xAttrValue = av.AttributeValue.GetFieldValue();
+                        } catch (Exception ex) {
+                            logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
+                            return 0;
+                        }
+                    }
+                }
+
+                foreach (var av in y.Participant.AttributeValues) {
+                    if (av.AttributeDef == setName) {
+                        try {
+                            xAttrValue = av.AttributeValue.GetFieldValue();
+                        } catch (Exception ex) {
+                            logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
+                            return 0;
+                        }
+                    }
+                }
+
+                if (xAttrValue != null && yAttrValue != null) 
+                    return xAttrValue.CompareTo( yAttrValue );
+            }
+
+            return 0;
+        }
+
+        private bool TryGetScore( IEventScores eventScores, string eventName, out Score score ) {
+            score = null;
+            EventScore eventScore;
+
+            if (eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
+                //Try and get the Projected Score instance first, if and only if we're told to use it
+                if (Projected && eventScore.Projected != null) {
+                    score = eventScore.Projected;
+                    return true;
+                }
+
+                //Normally, we would get the .Score dictionary
+                score = eventScore.Score;
+                return true;
+            }
+
+            return false;            
+        }
+
+        public int GetHashCode( IEventScores obj ) {
+            //The IEqualityComparer<IEventScores> interface requires GetHasCode(). Not really sure how to implement it wisely.
+            return obj.Participant.GetHashCode() ^ obj.EventScores.GetHashCode();
+        }
+    }
+}

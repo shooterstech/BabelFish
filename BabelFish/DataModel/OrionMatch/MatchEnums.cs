@@ -228,15 +228,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [EnumMember(Value = "INTERMEDIATE")] 
         INTERMEDIATE,
 
-        /*
-        /// <summary>
-        /// The underlying event has started but not yet complete. Preliminary scores are projected based on the participants current average in the match as well as other means to predict their scores.
-        /// </summary>
-        [Description( "Preliminary" )]
-        [EnumMember( Value = "PRELIMINARY" )]
-        PRELIMINARY,
-        */
-
         /// <summary>
         /// The underlying event has completed. All scores are in but not deemed Final yet. Likely a Challenge Period is still in progress.
         /// </summary>
