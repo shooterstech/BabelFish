@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,6 +64,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
+
+		/// <summary>
+		/// Scores for each Singular Event (usually a Shot).
+		/// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
+		/// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
+		/// </summary>
+		[JsonIgnore]
+		[DefaultValue( null ) ]
+		public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
 
     }
 }

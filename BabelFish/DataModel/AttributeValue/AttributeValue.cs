@@ -267,7 +267,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 return this.GetFieldValue( firstField.FieldName );
             }
 
-            throw new ArgumentException( "Can not call .GetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. ")
+            throw new ArgumentException( "Can not call .GetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );
         }
 
         /// <summary>
@@ -295,6 +295,22 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                     return "";
                 }
             }
+        }
+
+        /// <summary>
+        /// Special case for setting the field value on a Simple Attribute. Throws an exception if the Attribute is not simple.
+        /// </summary>
+        /// <param name="fieldValue"></param>
+        /// <exception cref="ArgumentException">Thrown when the Attribute is not a Simple Attribute.</exception>
+        public void SetFieldValue( dynamic fieldValue ) {
+
+
+            if (this.definition.SimpleAttribute) {
+                var firstField = this.definition.Fields[0];
+                this.SetFieldValue( firstField.FieldName, fieldValue );
+            }
+
+            throw new ArgumentException( "Can not call .SetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );
         }
 
         /// <summary>

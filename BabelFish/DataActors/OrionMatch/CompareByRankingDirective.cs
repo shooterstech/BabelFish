@@ -22,11 +22,18 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public CompareByRankingDirective( CourseOfFire courseOfFire, RankingDirective rankingDirective ) {
             this.CourseOfFire = courseOfFire;
             this.RankingDirective = rankingDirective;
+
+            this.EventTree = EventComposite.GrowEventTree( this.CourseOfFire );
         }
 
         public CourseOfFire CourseOfFire { get; private set; }
 
         public RankingDirective RankingDirective { get; private set; }
+
+        /// <summary>
+        /// The top level Event Composite within the course of fire definition.
+        /// </summary>
+        public EventComposite EventTree { get; private set; }
 
         /// <summary>
         /// The ResultStatus of the Result List we are sorting. The default value is OFFICIAL which effectively 
@@ -103,6 +110,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         case TieBreakingRuleMethod.SCORE:
                             compare = CompareScore( tieBreakingRule, x, y );
                             break;
+                        case TieBreakingRuleMethod.COUNT_OF:
+                            compare = CompareCountOf( tieBreakingRule, x, y );
+                            break;
 
                         case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
                             compare = CompareParticipantAttribute( tieBreakingRule, x, y );
@@ -125,85 +135,96 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             Score xScore, yScore;
 
-            if (TryGetScore( x, rule.EventName, out xScore ) && TryGetScore( y, rule.EventName, out yScore )) {
-                switch (rule.Source) {
-                    case "I":
-                    case "i":
-                        return xScore.I - yScore.I;
-                    case "X":
-                    case "x":
-                        return xScore.X - yScore.X;
-                    case "D":
-                    case "d":
-                        //To avoid floating point errors, need to evalute jus the first decimal place
-                        return (int)((xScore.D - yScore.D) * 10);
-                    case "S":
-                    case "s":
-                        //To avoid floating point errors, need to evalute jus the first decimal place
-                        return (int)((xScore.S - yScore.S) * 10);
-                    case "J":
-                    case "j":
-                        //To avoid floating point errors, need to evalute jus the first three decimal place
-                        return (int)((xScore.J - yScore.J) * 100);
-                    case "K":
-                    case "k":
-                        //To avoid floating point errors, need to evalute jus the first three decimal place
-                        return (int)((xScore.K - yScore.K) * 100);
-                    case "L":
-                    case "l":
-                        //To avoid floating point errors, need to evalute jus the first three decimal place
-                        return (int)((xScore.L - yScore.L) * 100);
+            if ( TryGetScore( x, rule.EventName, out xScore) &&  TryGetScore( y, rule.EventName, out yScore ) ) {
+                //When the rule's .Method is "Score" the .Source shold always be a string. However, checking for it to prevent exceptions being thrown.
+                if (rule.Source is string) {
+                    string source = (string)rule.Source;
+                    switch( source ) {
+                        case "I":
+                        case "i":
+                            return xScore.I - yScore.I;
+                        case "X":
+                        case "x":
+                            return xScore.X - yScore.X;
+                        case "D":
+                        case "d":
+                            //To avoid floating point errors, need to evalute jus the first decimal place
+                            return (int) (( xScore.D - yScore.D ) * 10);
+                        case "S":
+                        case "s":
+                            //To avoid floating point errors, need to evalute jus the first decimal place
+                            return (int)((xScore.S - yScore.S) * 10);
+                        case "J":
+                        case "j":
+                            //To avoid floating point errors, need to evalute jus the first three decimal place
+                            return (int)((xScore.J - yScore.J) * 100);
+                        case "K":
+                        case "k":
+                            //To avoid floating point errors, need to evalute jus the first three decimal place
+                            return (int)((xScore.K - yScore.K) * 100);
+                        case "L":
+                        case "l":
+                            //To avoid floating point errors, need to evalute jus the first three decimal place
+                            return (int)((xScore.L - yScore.L) * 100);
+                    }
                 }
-
             }
 
             return 0;
         }
 
+        private int CompareCountOf( TieBreakingRule rule, IEventScores x, IEventScores y ) {
+            //EKA May 2024 Choosing not to implement (at least not yet) the CompareCountOf 
+            logger.Error( "CompareCountOf() is not implemented. All comparisons are returning 0, meaning they are equal." );
+            return 0;
+        }
+
         private int CompareParticipantAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
 
-            switch (rule.Source.ToUpper()) {
-                case "FAMILYNAME":
-                    if (x.Participant is Individual && y.Participant is Individual)
-                        return ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
-                    return 0;
+            if (rule.Source is string) {
+                string source = ((string)rule.Source).ToUpper();
+                switch (source) {
+                    case "FAMILYNAME":
+                        if (x.Participant is Individual && y.Participant is Individual)
+                            return ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
+                        return 0;
 
-                case "GIVENNAME":
-                    if (x.Participant is Individual && y.Participant is Individual)
-                        return ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
-                    return 0;
+                    case "GIVENNAME":
+                        if (x.Participant is Individual && y.Participant is Individual)
+                            return ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
+                        return 0;
 
-                case "MIDDLENAME":
-                    if (x.Participant is Individual && y.Participant is Individual)
-                        return ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
-                    return 0;
+                    case "MIDDLENAME":
+                        if (x.Participant is Individual && y.Participant is Individual)
+                            return ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
+                        return 0;
 
-                case "COMPETITORNUMBER":
-                    if (x.Participant is Individual && y.Participant is Individual)
-                        return ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
-                    return 0;
+                    case "COMPETITORNUMBER":
+                        if (x.Participant is Individual && y.Participant is Individual)
+                            return ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
+                        return 0;
 
-                case "DISPLAYNAME":
-                    return x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    case "DISPLAYNAME":
+                        return x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
 
-                case "DISPLAYNAMESHORT":
-                    return x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
+                    case "DISPLAYNAMESHORT":
+                        return x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
 
-                case "HOMETOWN":
-                    return x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
+                    case "HOMETOWN":
+                        return x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
 
-                case "COUNTRY":
-                    return x.Participant.Country.CompareTo( y.Participant.Country );
+                    case "COUNTRY":
+                        return x.Participant.Country.CompareTo( y.Participant.Country );
 
-                case "CLUB":
-                    return x.Participant.Club.CompareTo( y.Participant.Club );
+                    case "CLUB":
+                        return x.Participant.Club.CompareTo( y.Participant.Club );
 
-                default:
-                    logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
-                    return 0;
+                    default:
+                        logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
+                        return 0;
 
+                }
             }
-
 
             return 0;
         }
@@ -211,8 +232,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         private int CompareAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
 
             if (rule.Source is string) {
-                //should probable check if rule.Source is a proper SetName, but that takes clock cycles and we are trying to make sorting as fast as possible
-                string setName = rule.Source;
+                string setName = ((string)rule.Source).ToUpper();
 
                 dynamic xAttrValue = null;
                 dynamic yAttrValue = null;

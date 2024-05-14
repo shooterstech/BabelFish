@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Added information to work with Method.
         /// </summary>
-        public string Source { get; set; }
+        public dynamic Source { get; set; }
 
         /// <summary>
         /// How the comparison should be made.
