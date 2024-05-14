@@ -96,17 +96,16 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
-        /// * AVG
         /// </summary>
-        [JsonProperty(Order = 4)]
-        public string Calculation { get; set; }
+        [JsonProperty( Order = 4 )]
+        public string Calculation { get; set; } = "SUM";
 
         /// <summary>
         /// The score format to use to display scores for this Event.
         /// The possible values are learned from the Score Format Collection.
         /// </summary>
-        [JsonProperty(Order = 5)]
-        public string ScoreFormat { get; set; }
+        [JsonProperty( Order = 5 )]
+        public string ScoreFormat { get; set; } = "Events";
 
         /// <summary>
         /// Formatted as a ValueSeries

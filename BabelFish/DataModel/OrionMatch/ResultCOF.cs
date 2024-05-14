@@ -170,7 +170,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object
         /// </summary>
         [JsonProperty(Order = 50)]
-        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
 
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
             Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = new Dictionary<string, Athena.Shot.Shot>();

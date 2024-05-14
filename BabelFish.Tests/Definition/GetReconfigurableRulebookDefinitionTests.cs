@@ -350,60 +350,47 @@ namespace Scopos.BabelFish.Tests.Definition
 
         }
 
+        /// <summary>
+        /// Tests if the GrewEventTree() and GetEvents methods returns a list of Events and Singulars in order as defined by the Course of Fire .Events.
+        /// </summary>
         [TestMethod]
-        public void GetEventsBoolsTest() {
-            var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
+        public void DoEventsGrowInOrder() {
 
-            var taskResponse = client.GetCourseOfFireDefinitionAsync(setName);
-            var result = taskResponse.Result;
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+            var cof = CourseOfFireHelper.Get_3x20_KPS_Cof();
+            var cof2 = CourseOfFireHelper.Get_60_Standing_Cof();
+            EventComposite eventTree = EventComposite.GrowEventTree(cof);
 
-            var definition = result.Definition;
-            var msgResponse = result.MessageResponse;
-            EventComposite eventTree = new EventComposite() { };
-            eventTree = EventComposite.GrowEventTree(definition);
-            bool none = false;
-            bool @event = false;
-            bool stage = false;
-            bool series = false;
-            bool @string = false;
-            bool singular = true;
-            var events = eventTree.GetEvents(none, @event, stage, series, @string, singular);
-            foreach (var eventt in events) {
-                Console.WriteLine($"Name: {eventt.EventName}\tType: {eventt.EventType}"); 
-            }
-            //need to check the list contains EventtType of the true kinds
-            // icky lambda, sorry Erik
-            // does not pass if there are none of those event types
-            //  (ie. NONE type, in v3.0:ntparc:Three-Position Air Rifle 3x10 there are no events with EventtType.NONE, this will fail asserts)
-            var containsType = (List<EventComposite> list, EventtType et) => { 
-                foreach (var item in list) {
-                    if (item.EventType == et) 
-                        return true;
-                }
-            return false;
-            };
+            //Should be 1 Event, with name Qualification
+            var events = eventTree.GetEvents( false, true, false, false, false, false );
+            Assert.IsTrue( events.Count == 1 );
+            Assert.AreEqual( "Qualification", events[0].EventName );
 
-            Assert.AreEqual(containsType(events, EventtType.NONE), none);
-            Assert.AreEqual(containsType(events, EventtType.EVENT), @event);
-            Assert.AreEqual(containsType(events, EventtType.STAGE), stage);
-            Assert.AreEqual(containsType(events, EventtType.SERIES), series);
-            Assert.AreEqual(containsType(events, EventtType.STRING), @string);
-            Assert.AreEqual(containsType(events, EventtType.SINGULAR), singular);
-            //Console.WriteLine( eventTree.FindEventComposite("Standing").ToString() );
-            /*
-            foreach (var eventThing in eventTree) {
-                if(eventThing.EventType == EventtType.STAGE) {
-                    Console.WriteLine("StageAppell: " + eventThing.StageStyleMapping.StageAppellation + "\tDef: " + eventThing.StageStyleMapping.DefaultDef);
-                }
-                if (eventThing.EventType == EventtType.EVENT) {
-                    Console.WriteLine("EventAppell: " + eventThing.EventStyleMapping.EventAppellation + "\tDef: " + eventThing.EventStyleMapping.DefaultDef);
-                }
-            }*/
+            //Should be 3 Stages
+            var stages = eventTree.GetEvents( false, false, true, false, false, false );
+            Assert.IsTrue( stages.Count == 3 );
+            Assert.AreEqual( "Kneeling", stages[0].EventName );
+            Assert.AreEqual( "Prone", stages[1].EventName );
+            Assert.AreEqual( "Standing", stages[2].EventName );
 
-            Assert.IsNotNull(definition);
-            Assert.IsNotNull(msgResponse);
+            //Should be 6 Strings
+            var strings = eventTree.GetEvents( false, false, false, false, true, false );
+            Assert.IsTrue( strings.Count == 6 );
+            Assert.AreEqual( "KN 1", strings[0].EventName );
+            Assert.AreEqual( "KN 2", strings[1].EventName );
+            Assert.AreEqual( "PR 1", strings[2].EventName );
+            Assert.AreEqual( "PR 2", strings[3].EventName );
+            Assert.AreEqual( "ST 1", strings[4].EventName );
+            Assert.AreEqual( "ST 2", strings[5].EventName );
+
+            //Should be 60 Singulars
+            var singulars = eventTree.GetEvents( false, false, false, false, false, true );
+            Assert.IsTrue( singulars.Count == 60 );
+            for ( int i = 0; i < 20; i++) 
+                Assert.AreEqual( $"K{i+1}", singulars[i].EventName );
+            for (int i = 0; i < 20; i++)
+                Assert.AreEqual( $"P{i + 1}", singulars[i+20].EventName );
+            for (int i = 0; i < 20; i++)
+                Assert.AreEqual( $"S{i + 1}", singulars[i+40].EventName );
 
         }
 

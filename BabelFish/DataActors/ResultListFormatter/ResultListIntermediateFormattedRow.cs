@@ -263,9 +263,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             foreach ( var av in resultEvent.Participant.AttributeValues ) { 
                 if (av.AttributeDef == source.Name) {
                     try {
-                        var fields = av.AttributeValue.GetDefintionFields();
-                        var firstField = fields[0];
-                        return av.AttributeValue.GetFieldValue( firstField.FieldName );
+                        return av.AttributeValue.GetFieldValue( );
                     } catch ( Exception ex ) {
                         logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
                         return "";
