@@ -120,15 +120,15 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 
             resultEvent.ProjectScores(new ProjectScoresByAverageShotFired(courseOfFire));
             Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(resultEvent));
-            Assert.AreEqual(resultEvent.EventScores["Qualification"].Projected.I, 396);
-            Assert.AreEqual(resultEvent.EventScores["Qualification"].Projected.D, 405.6f);
-            Assert.AreEqual(resultEvent.EventScores["Qualification"].Projected.X, 16);
             Assert.AreEqual(resultEvent.EventScores["Standing"].Projected.I, 198);
             Assert.AreEqual(resultEvent.EventScores["Standing"].Projected.D, 202.8f);
             Assert.AreEqual(resultEvent.EventScores["Standing"].Projected.X, 8);
             Assert.AreEqual(resultEvent.EventScores["Prone"].Projected.I, 198);
             Assert.AreEqual(resultEvent.EventScores["Prone"].Projected.D, 202.8f);
             Assert.AreEqual(resultEvent.EventScores["Prone"].Projected.X, 8);
+            Assert.AreEqual(resultEvent.EventScores["Qualification"].Projected.I, 396);
+            Assert.AreEqual(resultEvent.EventScores["Qualification"].Projected.D, 405.6f);
+            Assert.AreEqual(resultEvent.EventScores["Qualification"].Projected.X, 16);
         }
     }
 }
