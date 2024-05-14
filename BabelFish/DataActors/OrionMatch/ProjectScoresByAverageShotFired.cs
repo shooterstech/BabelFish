@@ -22,7 +22,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             EventScore topLevelEventScore;
             projection.EventScores.TryGetValue(topLevelEvent.EventName, out topLevelEventScore);
-            int shotsInEvent = 0;
 
             EventScore es;
             //first key is eventName, second key is avgType [(I)INT, (D)DEC, (X)INNER] value is avg.
@@ -46,30 +45,58 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     avgDecThisStage = es.Score.D / shotsFired;
                     avgXPerShot = (float)es.Score.X / (float)shotsFired;
 
-                    shotsInEvent += singulars.Count;
+                    //add this tot he avgShots dict, which gets avgd at the end for stages we know nothing about.
                     avgShots.Add(stageEvent.EventName, new Dictionary<string, float>());
                     avgShots[stageEvent.EventName].Add("I", avgIntThisStage);
                     avgShots[stageEvent.EventName].Add("D", avgDecThisStage);
                     avgShots[stageEvent.EventName].Add("X", avgXPerShot);
+                    Console.WriteLine(stageEvent.EventName);
                 }
-                else if(avgShots.Count > 0 && shotsFired == 0)
-                {//if we have avg from another stage and there arent shots fired in this stage yet
-                    //use the avg of the avgs
-                    var defaulting = GetAverageShot(avgShots);
-                    avgIntThisStage = defaulting["I"];
-                    avgDecThisStage = defaulting["D"];
-                    avgXPerShot = defaulting["X"];
-                    //add this to the avgShots dict for this stage.
-                    avgShots.Add(stageEvent.EventName, new Dictionary<string, float>());
-                    avgShots[stageEvent.EventName].Add("I", avgIntThisStage);
-                    avgShots[stageEvent.EventName].Add("D", avgDecThisStage);
-                    avgShots[stageEvent.EventName].Add("X", avgXPerShot);
+                else
+                {
+                    Console.WriteLine(stageEvent.EventName);
+                    continue;
                 }
 
                 //project the scores
                 es.Projected = new DataModel.Athena.Score();
                 es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining);
                 es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
+                es.Projected.D = (float)Math.Round(es.Projected.D, 1);
+                es.Projected.X = (int)(es.Score.X + (avgXPerShot * shotsRemaining));
+            }
+
+            foreach (var stageEvent in stageStyleEvents)
+            { // loop through the stage styles again, this time hitting anything we dont have any shots for.
+
+                projection.EventScores.TryGetValue(stageEvent.EventName, out es);
+                var singulars = stageEvent.GetEvents(false, false, false, false, false, true);
+                var shotsFired = es.NumShotsFired;
+                if(shotsFired > 0)
+                {
+                    continue;
+                }
+                //we want to always project shots if we have ANY remaining.
+                var shotsRemaining = singulars.Count - shotsFired;
+                var avgIntThisStage = 0.0f;
+                var avgDecThisStage = 0.0f;
+                var avgXPerShot = 0.0f;
+
+                var defaulting = GetAverageShot(avgShots);
+                avgIntThisStage = defaulting["I"];
+                avgDecThisStage = defaulting["D"];
+                avgXPerShot = defaulting["X"];
+                //add this to the avgShots dict for this stage.
+                avgShots.Add(stageEvent.EventName, new Dictionary<string, float>());
+                avgShots[stageEvent.EventName].Add("I", avgIntThisStage);
+                avgShots[stageEvent.EventName].Add("D", avgDecThisStage);
+                avgShots[stageEvent.EventName].Add("X", avgXPerShot);
+
+                //project the scores
+                es.Projected = new DataModel.Athena.Score();
+                es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining);
+                es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
+                es.Projected.D = (float)Math.Round(es.Projected.D, 1);
                 es.Projected.X = (int)(es.Score.X + (avgXPerShot * shotsRemaining));
             }
 
@@ -86,6 +113,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 topLevelEventScore.Projected.D += es.Projected.D;
                 topLevelEventScore.Projected.X += es.Projected.X;
             }
+            topLevelEventScore.Projected.D = (float)Math.Round(topLevelEventScore.Projected.D, 1);
         }
 
         private Dictionary<string, float> GetAverageShot(Dictionary<string,Dictionary<string,float>> allAvgs )
