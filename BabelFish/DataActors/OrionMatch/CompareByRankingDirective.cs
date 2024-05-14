@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             foreach (var tieBreakingRule in this.RankingDirective.Rules) {
 
                 //Skip this rule if the it specifies a Result Status less than the .ResultStaus of the result list.
-                if (CompareResultStatus.COMPARER.Compare( tieBreakingRule.ResultStatus, this.ResultStatus ) >= 0) {
+                if (CompareResultStatus.COMPARER.Compare( this.ResultStatus, tieBreakingRule.ResultStatus ) >= 0) {
 
                     switch (tieBreakingRule.Method) {
                         case TieBreakingRuleMethod.SCORE:
@@ -135,6 +135,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             Score xScore, yScore;
 
+            int compare = 0;
+
             if ( TryGetScore( x, rule.EventName, out xScore) &&  TryGetScore( y, rule.EventName, out yScore ) ) {
                 //When the rule's .Method is "Score" the .Source shold always be a string. However, checking for it to prevent exceptions being thrown.
                 if (rule.Source is string) {
@@ -142,35 +144,47 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     switch( source ) {
                         case "I":
                         case "i":
-                            return xScore.I - yScore.I;
+                            compare = xScore.I - yScore.I;
+                            break;
                         case "X":
                         case "x":
-                            return xScore.X - yScore.X;
+                            compare = xScore.X - yScore.X;
+                            break;
                         case "D":
                         case "d":
                             //To avoid floating point errors, need to evalute jus the first decimal place
-                            return (int) (( xScore.D - yScore.D ) * 10);
+                            compare = (int) (( xScore.D - yScore.D ) * 10);
+                            break;
                         case "S":
                         case "s":
                             //To avoid floating point errors, need to evalute jus the first decimal place
-                            return (int)((xScore.S - yScore.S) * 10);
+                            compare = (int)((xScore.S - yScore.S) * 10);
+                            break;
                         case "J":
                         case "j":
                             //To avoid floating point errors, need to evalute jus the first three decimal place
-                            return (int)((xScore.J - yScore.J) * 100);
+                            compare = (int)((xScore.J - yScore.J) * 100);
+                            break;
                         case "K":
                         case "k":
                             //To avoid floating point errors, need to evalute jus the first three decimal place
-                            return (int)((xScore.K - yScore.K) * 100);
+                            compare = (int)((xScore.K - yScore.K) * 100);
+                            break;
                         case "L":
                         case "l":
                             //To avoid floating point errors, need to evalute jus the first three decimal place
-                            return (int)((xScore.L - yScore.L) * 100);
+                            compare = (int)((xScore.L - yScore.L) * 100);
+                            break;
                     }
                 }
             }
 
-            return 0;
+            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
+                return compare;
+
+            //Else if sort order is Ascending
+            return -1 * compare;
+
         }
 
         private int CompareCountOf( TieBreakingRule rule, IEventScores x, IEventScores y ) {
