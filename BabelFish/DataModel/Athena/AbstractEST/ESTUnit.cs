@@ -86,6 +86,12 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         [DefaultValue(false)]
         public bool LowVoltage { get; set; }
 
+        /// <summary>
+        /// True if the Unit was shutdown nicely last time.
+        /// </summary>
+        [DefaultValue(true)]
+        public bool PreviousShutdown { get; set; } = true;
+
         [DefaultValue( false )]
         public bool InternetConnection { get; set; }
 
