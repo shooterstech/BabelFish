@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,16 +51,19 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold a averaged integer score, or in Group Mode to display the Area of the shot group. 
         /// </summary>
+        [DefaultValue(0)]
         public float J { get; set; } = 0;
 
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged decimal score, or in Group Mode to display the Roundness of the shot group.
         /// </summary>
+        [DefaultValue( 0 )]
         public float K { get; set; } = 0;
 
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged inner ten score, or in Group Mode to display the distance the center of the group is from the center of the target. 
         /// </summary>
+        [DefaultValue( 0 )]
         public float L { get; set; } = 0;
 
         /// <summary>

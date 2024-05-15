@@ -27,9 +27,29 @@ namespace Scopos.BabelFish.Converters {
             return (objectType == typeof( AttributeValue ));
         }
 
+        public override bool CanWrite { get { return true; } }
+
         /// <inheritdoc/>
         public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
-            throw new NotImplementedException();
+            /*
+            serializer.Converters.Remove( this );
+            JToken jToken = JToken.FromObject( value, serializer );
+            serializer.Converters.Add( this );
+            */
+
+            var attrValueDataPacket = (AttributeValueDataPacket)value;
+            JObject o = new JObject();
+
+            o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
+            o["Visibility"] = attrValueDataPacket.Visibility.ToString();
+            o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
+            o["AttributeValue"] = new JObject();
+
+            foreach ( var field in attrValueDataPacket.AttributeValue.GetDefintionFields() ) {
+                o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+            }
+            
+            o.WriteTo( writer );
         }
 
         /// <inheritdoc/>
