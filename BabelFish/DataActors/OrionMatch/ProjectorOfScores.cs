@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NLog.Filters;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
@@ -26,5 +27,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// </summary>
         /// <param name="projection"></param>
         public abstract void ProjectEventScores( IEventScoreProjection projection );
+
+        /// <summary>
+        /// When generating a Projected Result List, the Result List needs to identify who/what
+        /// made the projection. This string prepresents the concrete class that made the projection
+        /// and shold populate that Result List value.
+        /// </summary>
+        public abstract string ProjectionMadeBy { get; }
     }
 }

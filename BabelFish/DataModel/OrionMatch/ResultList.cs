@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -129,7 +131,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         [JsonProperty( Order = 12 )]
-        [JsonConverter( typeof( DateTimeConverter ) )]
+        [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
 		public DateTime LastUpdated { get; set; } = new DateTime();
 
         [JsonProperty( Order = 13 )]
@@ -154,7 +156,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Indicates if the scores in this Result List were projected based on the athlete's current performatnce.
         /// Should only ever be true if Status is FUTURE or INTERMEDIATE
         /// </summary>
+        [DefaultValue(false)]
         public bool Projected { get; set; } = false;
+
+        /// <summary>
+        /// If .Projected is true, .ProjectionMadeBy says who made the projection.
+        /// </summary>
+        [DefaultValue("")]
+        public string ProjectionMadeBy {  get; set; } = string.Empty;
 
         /// <summary>
         /// The SetName of the Course of Fire
@@ -218,6 +227,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( "ResultList for " );
             foo.Append( ResultName );
             return foo.ToString();
+        }
+
+        public void Sort(ProjectorOfScores ps) {
+
+            this.ProjectionMadeBy = ps.ProjectionMadeBy;
+
+            foreach( var item in this.Items ) {
+                item.ProjectScores( ps );
+
+                item.ProjectedRank = item.Rank;
+            }
         }
     }
 }

@@ -113,21 +113,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
         }
 
-        /*
-        /// <summary>
-        /// httpStatus (leave this as string in case we get an unexpected status not in an enum?)
-        /// </summary>
-        [JsonProperty( Order = 1 )]
-        public string StatusCode { get; set; } = string.Empty;
-
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
-
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public Helpers.AttributeValueActionEnums Action { get; set; } = Helpers.AttributeValueActionEnums.EMPTY;
-        */
-
         #region Definition
+
+        /// <summary>
+        /// Returns a copy of the Attributre that defines this Attribute Value
+        /// </summary>
+        public Definition Attribute {  get { return definition; } }
 
         /// <summary>
         /// Helper function, returnss a list of AttributeFields that are defined in the Attribute's definition.
