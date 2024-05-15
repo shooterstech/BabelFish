@@ -195,56 +195,68 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         private int CompareParticipantAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
 
+            int compare = 0;
             if (rule.Source is string) {
                 string source = ((string)rule.Source).ToUpper();
                 switch (source) {
                     case "FAMILYNAME":
                         if (x.Participant is Individual && y.Participant is Individual)
-                            return ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
-                        return 0;
+                            compare = ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
+                        break;
 
                     case "GIVENNAME":
                         if (x.Participant is Individual && y.Participant is Individual)
-                            return ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
-                        return 0;
+                            compare = ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
+                        break;
 
                     case "MIDDLENAME":
                         if (x.Participant is Individual && y.Participant is Individual)
-                            return ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
-                        return 0;
+                            compare = ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
+                        break;
 
                     case "COMPETITORNUMBER":
                         if (x.Participant is Individual && y.Participant is Individual)
-                            return ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
-                        return 0;
+                            compare = ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
+                        break;
 
                     case "DISPLAYNAME":
-                        return x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                        compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                        break;
 
                     case "DISPLAYNAMESHORT":
-                        return x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
+                        compare = x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
+                        break;
 
                     case "HOMETOWN":
-                        return x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
+                        compare = x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
+                        break;
 
                     case "COUNTRY":
-                        return x.Participant.Country.CompareTo( y.Participant.Country );
+                        compare = x.Participant.Country.CompareTo( y.Participant.Country );
+                        break;
 
                     case "CLUB":
-                        return x.Participant.Club.CompareTo( y.Participant.Club );
+                        compare = x.Participant.Club.CompareTo( y.Participant.Club );
+                        break;
 
                     default:
                         logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
-                        return 0;
+                        compare = 0;
+                        break;
 
                 }
             }
 
-            return 0;
+            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
+                return compare;
+
+            //Else if sort order is Ascending
+            return -1 * compare;
         }
 
         private int CompareAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
 
+            int compare = 0;
             if (rule.Source is string) {
                 string setName = ((string)rule.Source).ToUpper();
 
@@ -274,17 +286,21 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 }
 
                 if (xAttrValue != null && yAttrValue != null) 
-                    return xAttrValue.CompareTo( yAttrValue );
+                    compare = xAttrValue.CompareTo( yAttrValue );
             }
 
-            return 0;
+            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
+                return compare;
+
+            //Else if sort order is Ascending
+            return -1 * compare;
         }
 
         private bool TryGetScore( IEventScores eventScores, string eventName, out Score score ) {
             score = null;
             EventScore eventScore;
 
-            if (eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
+            if (!string.IsNullOrEmpty(eventName) && eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
                 //Try and get the Projected Score instance first, if and only if we're told to use it
                 if (Projected && eventScore.Projected != null) {
                     score = eventScore.Projected;
