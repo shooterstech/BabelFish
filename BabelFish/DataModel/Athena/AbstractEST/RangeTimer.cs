@@ -27,5 +27,10 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         public bool CountDown { get; set; }
 
         public string TimerState { get; set; }
+
+        /// <summary>
+        /// Applicable only to physical range timers (e.g. MM200). This is the brightness settign on the RGB matrix, value values 0 to 100.
+        /// </summary>
+        public int Brightness { get; set; }
     }
 }

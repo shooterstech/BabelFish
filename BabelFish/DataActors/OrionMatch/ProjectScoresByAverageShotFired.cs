@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     continue;
                 }
                 //we want to always project shots if we have ANY remaining.
-                var shotsRemaining = singulars.Count - shotsFired;
+                var shotsRemaining = singulars.Count;
                 var avgIntThisStage = 0.0f;
                 var avgDecThisStage = 0.0f;
                 var avgXPerShot = 0.0f;
