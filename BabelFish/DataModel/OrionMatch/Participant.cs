@@ -35,6 +35,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CompetitorNumber { get; set; } = string.Empty;
 
+
+        /*
+         * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
+         * garand / springfield / vintage military rifle competition is one eacmple. On the first re-entry they may shoot a garand 
+         * rifle, the seocnd a sprinfield, and so on. 
+         * 
+         * To represent this, need a way to override AttributeValues based on the reentry tag.
+         * 
+         * The Medea.Participant had a .ReentryTag property. Currently choosing not to implement it.
+         */
+
         /// <summary>
         /// A list of AttributeValues assigned to this Participant.
         /// </summary>
@@ -150,12 +161,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             throw new NotImplementedException($"Unable to convert type '{type}' to an Abstract class Participant.");
         }
 
-        public override bool CanWrite {
-            get { return false; }
-        }
-
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
-            throw new NotImplementedException(); // won't be called because CanWrite returns false
+            serializer.Serialize( writer, value );
         }
     }
 }

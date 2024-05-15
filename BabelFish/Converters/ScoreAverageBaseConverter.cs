@@ -52,12 +52,8 @@ namespace Scopos.BabelFish.Converters {
             throw new NotImplementedException( $"Unable to convert abstract class ScoreHistoryBase with ConcreteClassId '{id}' to it's concrete class." );
         }
 
-        public override bool CanWrite {
-            get { return false; }
-        }
-
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
-            throw new NotImplementedException(); // won't be called because CanWrite returns false
+            serializer.Serialize( writer, value );
         }
     }
 }

@@ -118,7 +118,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// Returns a copy of the Attributre that defines this Attribute Value
         /// </summary>
-        public Definition Attribute {  get { return definition; } }
+        public Scopos.BabelFish.DataModel.Definitions.Attribute Attribute {  get { return definition; } }
 
         /// <summary>
         /// Helper function, returnss a list of AttributeFields that are defined in the Attribute's definition.
@@ -299,6 +299,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (this.definition.SimpleAttribute) {
                 var firstField = this.definition.Fields[0];
                 this.SetFieldValue( firstField.FieldName, fieldValue );
+                return;
             }
 
             throw new ArgumentException( "Can not call .SetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );

@@ -191,14 +191,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		[Obsolete( "Use .Metadata.Creator" )]
 		public string Creator { get; set; }
 
-		/// <summary>
-		/// Key is the local match ID.
-		/// Value is the Metadate for the generative match.
-		/// When Orion generates a ResultList there will only be 1 value in Metadata.
-		/// When a Virtual Match is merged, each parent / child ID will be listed.
-		/// Local Matches will have exactly one value.
-		/// </summary>
-		public Dictionary<string, ResultListMetadata> Metadata { get; set; }
+        /// <summary>
+        /// Key is the local match ID.
+        /// Value is the Metadate for the generative match.
+        /// When Orion generates a ResultList there will only be 1 value in Metadata.
+        /// When a Virtual Match is merged, each parent / child ID will be listed.
+        /// Local Matches will have exactly one value.
+        /// </summary>
+        public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
 
 		/// <inheritdoc />
 		public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
