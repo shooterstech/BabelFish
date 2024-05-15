@@ -18,5 +18,10 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         public ESTUnit ESTUnit { get; set; }
 
         public Logging Logging { get; set; }
+
+        /// <summary>
+        /// Errors and warnings detected externally about the state of the Target.
+        /// </summary>
+        public List<string> ExternalErrors { get; set; } = new List<string>();
     }
 }
