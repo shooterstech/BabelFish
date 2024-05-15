@@ -33,6 +33,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this Event matches with a defined EventStyle
         /// this is the SetName of that EventStyle
         /// </summary>
+        [DefaultValue("")]
         public string EventStyleDef { get; set; } = string.Empty;
 
         public Athena.Score Score { get; set; } = new Athena.Score();
@@ -47,6 +48,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// SHOT
         /// etc
         /// </summary>
+        [DefaultValue( "" )]
         public string EventType { get; set; } = string.Empty;
 
         public string EventName { get; set; } = string.Empty;
@@ -61,6 +63,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this Event matches with a defined StageStyle
         /// this is the SetName of that StageStyle
         /// </summary>
+        [DefaultValue( "" )]
         public string StageStyleDef { get; set; } = string.Empty;
 
         /// <summary>
