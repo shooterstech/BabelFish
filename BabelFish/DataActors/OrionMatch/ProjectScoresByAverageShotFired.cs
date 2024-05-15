@@ -56,11 +56,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     avgShots[stageEvent.EventName].Add("I", avgIntThisStage);
                     avgShots[stageEvent.EventName].Add("D", avgDecThisStage);
                     avgShots[stageEvent.EventName].Add("X", avgXPerShot);
-                    Console.WriteLine(stageEvent.EventName);
                 }
                 else
                 {
-                    Console.WriteLine(stageEvent.EventName);
                     continue;
                 }
 
@@ -82,21 +80,26 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 {
                     continue;
                 }
+
                 //we want to always project shots if we have ANY remaining.
                 var shotsRemaining = singulars.Count;
                 var avgIntThisStage = 0.0f;
                 var avgDecThisStage = 0.0f;
                 var avgXPerShot = 0.0f;
 
-                var defaulting = GetAverageShot(avgShots);
-                avgIntThisStage = defaulting["I"];
-                avgDecThisStage = defaulting["D"];
-                avgXPerShot = defaulting["X"];
-                //add this to the avgShots dict for this stage.
-                avgShots.Add(stageEvent.EventName, new Dictionary<string, float>());
-                avgShots[stageEvent.EventName].Add("I", avgIntThisStage);
-                avgShots[stageEvent.EventName].Add("D", avgDecThisStage);
-                avgShots[stageEvent.EventName].Add("X", avgXPerShot);
+                if (avgShots.Count > 0 )
+                {
+                    //this step should only be attempted IF there are any avg shots
+                    var defaulting = GetAverageShot(avgShots);
+                    avgIntThisStage = defaulting["I"];
+                    avgDecThisStage = defaulting["D"];
+                    avgXPerShot = defaulting["X"];
+                    //add this to the avgShots dict for this stage.
+                    avgShots.Add(stageEvent.EventName, new Dictionary<string, float>());
+                    avgShots[stageEvent.EventName].Add("I", avgIntThisStage);
+                    avgShots[stageEvent.EventName].Add("D", avgDecThisStage);
+                    avgShots[stageEvent.EventName].Add("X", avgXPerShot);
+                }
 
                 //project the scores
                 es.Projected = new DataModel.Athena.Score();
