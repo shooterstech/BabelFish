@@ -99,6 +99,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// View the SetName of the AttributeValue.
         /// Assignment is done at instantiation.
         /// </summary>
+        [JsonIgnore]
         public SetName SetName {
             get {
                 return setName;
@@ -118,6 +119,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// Returns a copy of the Attributre that defines this Attribute Value
         /// </summary>
+        [JsonIgnore]
         public Scopos.BabelFish.DataModel.Definitions.Attribute Attribute {  get { return definition; } }
 
         /// <summary>
@@ -169,6 +171,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// This is defined within the Attribute's definition.
         /// </summary>
         /// <returns>true or false</returns>
+        [JsonIgnore]
         public bool IsMultipleValue {
             get {
                 return definition.MultipleValues;
