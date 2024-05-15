@@ -36,7 +36,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         
         public string ResultCOFID { get; set; }
 
+		/// <summary>
+		/// The absolute ranking of this competitor, using actual (and not projected) scores fired.
+		/// </summary>
         public int Rank { get; set; }
+
+		/// <summary>
+		/// The projected rank of this competitor, using projected scores.
+		/// </summary>
+		[DefaultValue(0)]
+		public int ProjectedRank { get; set; } = 0;
 
 		/// <summary>
 		/// The Local Date that this score was shot. 

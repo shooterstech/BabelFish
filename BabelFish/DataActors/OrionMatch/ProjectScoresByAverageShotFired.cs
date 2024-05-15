@@ -12,6 +12,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire  ) :base( courseOfFire ) { 
         }
 
+        public override string ProjectionMadeBy {
+            get {
+                return "BabelFish ProjectScoresByAverageShotFired";
+            }
+        }
+
         /// <inheritdoc/>
         /// <param name="projection"></param>
         public override void ProjectEventScores( IEventScoreProjection projection ) {
