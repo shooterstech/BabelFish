@@ -135,6 +135,9 @@ namespace Scopos.BabelFish.DataModel.Definitions
 
         /// <summary>
         /// The recommended Ranking Rules defintion to use when displaying a ranking list for this Event.
+        /// 
+        /// EKA NOTE: We may have to make this an object, as depending on the Score Formate (e.g. Integer
+        /// vs Decimal) we would have different RankingRuleDef. 
         /// </summary>
         [JsonProperty(Order = 15)]
         [DefaultValue("")]

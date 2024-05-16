@@ -146,6 +146,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 15 )]
         public string UniqueID { get; set; } = string.Empty;
 
+        /// <summary>
+        /// EventName is the name of the top level Event for this Result List.
+        /// </summary>
         [JsonProperty( Order = 16 )]
         public string EventName { get; set; } = string.Empty;
 
@@ -153,11 +156,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultListID { get; set; } = string.Empty;
 
         /// <summary>
-        /// Indicates if the scores in this Result List were projected based on the athlete's current performatnce.
+        /// Indicates if Projected Scores are included in this result list. Result lists are always
+        /// ranked and sorted by absoluate scores. However, if Projected is true, then a second set
+        /// of ProjectedRank and Projected scores are included. 
         /// Should only ever be true if Status is FUTURE or INTERMEDIATE
         /// </summary>
         [DefaultValue(false)]
         public bool Projected { get; set; } = false;
+
+        /// <summary>
+        /// Indicates if the Result List has been truncated. and the values in .Items are not all of the results.
+        /// 
+        /// Currently known to be set in the Reat API Get Result List lambda, when pulling result lists
+        /// from dynamo that are too large. There is some remaining question if this field is needed. In 
+        /// theory .Partial is the opposite of .HasMoreItems
+        /// </summary>
+        public bool Partial { get; set; } = false;
 
         /// <summary>
         /// If .Projected is true, .ProjectionMadeBy says who made the projection.
@@ -227,17 +241,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( "ResultList for " );
             foo.Append( ResultName );
             return foo.ToString();
-        }
-
-        public void Sort(ProjectorOfScores ps) {
-
-            this.ProjectionMadeBy = ps.ProjectionMadeBy;
-
-            foreach( var item in this.Items ) {
-                item.ProjectScores( ps );
-
-                item.ProjectedRank = item.Rank;
-            }
         }
     }
 }

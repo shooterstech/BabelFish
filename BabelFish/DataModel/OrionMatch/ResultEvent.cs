@@ -42,16 +42,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int Rank { get; set; }
 
 		/// <summary>
+		/// RankOrder is very nearly the same as Rank. The difference is if there is an unbreakable tie. In an
+		/// unbreakable tie the two partjicipants are given the same Rank but different RankOrder.
+		/// </summary>
+		public int RankOrder {  get; set; }
+
+		/// <summary>
 		/// The projected rank of this competitor, using projected scores.
 		/// </summary>
 		[DefaultValue(0)]
 		public int ProjectedRank { get; set; } = 0;
 
-		/// <summary>
-		/// The Local Date that this score was shot. 
-		/// NOTE Local Date is not necessarily the same as the GMT date.
-		/// </summary>
-		[JsonConverter( typeof( DateConverter ) )]
+        /// <summary>
+		/// ProjectedRankOrder is very nearly the same as ProjectedRank. The difference is if there is an unbreakable tie. In an
+		/// unbreakable tie the two partjicipants are given the same ProjectedRank but different ProjectedRankOrder.
+        /// </summary>
+        [DefaultValue( 0 )]
+        public int ProjectedRankOrder { get; set; } = 0;
+
+        /// <summary>
+        /// The Local Date that this score was shot. 
+        /// NOTE Local Date is not necessarily the same as the GMT date.
+        /// </summary>
+        [JsonConverter( typeof( DateConverter ) )]
 		public DateTime LocalDate { get; set; } = DateTime.Today;
 
 		/// <summary>

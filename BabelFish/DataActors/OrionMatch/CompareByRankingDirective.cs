@@ -26,6 +26,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             this.EventTree = EventComposite.GrowEventTree( this.CourseOfFire );
         }
 
+        public CompareByRankingDirective( CourseOfFire courseOfFire, RankingDirective rankingDirective, ResultStatus ResultStatus ) {
+            this.CourseOfFire = courseOfFire;
+            this.RankingDirective = rankingDirective;
+            this.ResultStatus = ResultStatus;
+
+            this.EventTree = EventComposite.GrowEventTree( this.CourseOfFire );
+        }
+
         public CourseOfFire CourseOfFire { get; private set; }
 
         public RankingDirective RankingDirective { get; private set; }
@@ -95,13 +103,19 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var compare = 0;
             List<TieBreakingRule> tieBreakingRules;
-            if (tieBreakingRuleType == TieBreakRuleList.RULES)
-                tieBreakingRules = this.RankingDirective.Rules;
-            else
+            if (tieBreakingRuleType == TieBreakRuleList.RULES) {
+                //Skip all of the tie breaking rules if the Result Status is still FUTURE
+                if (this.ResultStatus == ResultStatus.FUTURE) {
+                    tieBreakingRules = new List<TieBreakingRule>();
+                } else {
+                    tieBreakingRules = this.RankingDirective.Rules;
+                }
+            } else {
                 // TieBreakRuleList.LISTONLY
                 tieBreakingRules = this.RankingDirective.ListOnly;
+            }
 
-            foreach (var tieBreakingRule in this.RankingDirective.Rules) {
+            foreach (var tieBreakingRule in tieBreakingRules) {
 
                 //Skip this rule if the it specifies a Result Status less than the .ResultStaus of the result list.
                 if (CompareResultStatus.COMPARER.Compare( this.ResultStatus, tieBreakingRule.ResultStatus ) >= 0) {
@@ -125,6 +139,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         default:
                             throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{tieBreakingRule.Method}'." );
                     }
+
+                    if (compare != 0)
+                        return compare;
                 }
             }
 
@@ -180,10 +197,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             if (rule.SortOrder == Helpers.SortBy.DESCENDING)
-                return compare;
+                return -1 * compare;
 
             //Else if sort order is Ascending
-            return -1 * compare;
+            return compare;
 
         }
 
@@ -248,10 +265,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             if (rule.SortOrder == Helpers.SortBy.DESCENDING)
-                return compare;
+                return -1 * compare;
 
             //Else if sort order is Ascending
-            return -1 * compare;
+            return compare;
         }
 
         private int CompareAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {

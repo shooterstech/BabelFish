@@ -14,7 +14,7 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    public class RankingRuleDirectivesTests {
+    public class RankingRuleTests {
 
         /// <summary>
         /// Basic Unit Tests for when TieBreakingRules.Method is "Score".
@@ -264,6 +264,70 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) > 0 );
             Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) < 0 );
             Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) < 0 );
+        }
+
+        /// <summary>
+        /// Tests the parsing of the .Applies to Value
+        /// </summary>
+        [TestMethod]
+        public void AppliesToTests() {
+
+            var directive = new RankingDirective();
+
+            directive.AppliesTo = "*";
+            Assert.AreEqual( new Tuple<int, int>( 0, 20 ), directive.GetAppliesToStartAndCount( 20 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 0 ), directive.GetAppliesToStartAndCount( 0 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 4 ), directive.GetAppliesToStartAndCount( 4 ) );
+
+            directive.AppliesTo = "1..8";
+            Assert.AreEqual( new Tuple<int, int>( 0, 8 ), directive.GetAppliesToStartAndCount( 20 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 0 ), directive.GetAppliesToStartAndCount( 0 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 4 ), directive.GetAppliesToStartAndCount( 4 ) );
+
+            //From rank 9 to the end of the list
+            directive.AppliesTo = "9..";
+            Assert.AreEqual( new Tuple<int, int>( 8, 12 ), directive.GetAppliesToStartAndCount( 20 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 0 ), directive.GetAppliesToStartAndCount( 0 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 0 ), directive.GetAppliesToStartAndCount( 4 ) );
+
+            //Unparseable value
+            directive.AppliesTo = "FU";
+            Assert.AreEqual( new Tuple<int, int>( 0, 20 ), directive.GetAppliesToStartAndCount( 20 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 0 ), directive.GetAppliesToStartAndCount( 0 ) );
+            Assert.AreEqual( new Tuple<int, int>( 0, 4 ), directive.GetAppliesToStartAndCount( 4 ) );
+        }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
+            DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
+
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051514241320.0" ), "Individual - All" );
+            var resultList = resultListResponse.ResultList;
+            resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
+            resultList.Metadata.First().Value.EndDate = DateTime.Today;
+            var eventName = "Qualification"; // resultList.EventName;
+
+            var courseOfFireResponse = await definitionClient.GetCourseOfFireDefinitionAsync( SetName.Parse( resultList.CourseOfFireDef ) );
+            var courseOfFire = courseOfFireResponse.Value;
+
+            var rankingRuleResponse = await definitionClient.GetRankingRuleDefinitionAsync( SetName.Parse( resultList.RankingRuleDef ) );
+            var rankingRules = rankingRuleResponse.Value;
+
+            ResultEngine resultEngine = new ResultEngine( resultList, rankingRules );
+
+            ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
+
+            await resultEngine.SortAsync( ps );
+
+            foreach ( var re in resultList.Items ) {
+                Console.Write( $"{re.Rank} / {re.ProjectedRank}  {re.Participant.DisplayName}  " );
+                Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Projected.I}" );
+                Console.WriteLine();
+            }
+
         }
     }
 }
