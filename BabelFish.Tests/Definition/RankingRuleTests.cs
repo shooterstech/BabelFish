@@ -119,43 +119,43 @@ namespace Scopos.BabelFish.Tests.Definition {
             //Integer Descending, X's integer score is < Y's, Z's score is equal to Y's score
             directive.Rules.Clear();
             directive.Rules.Add( integerDescending );
-            Assert.IsTrue( comparer.Compare( x, y ) < 0 );
-            Assert.IsTrue( comparer.Compare( y, x ) > 0 );
+            Assert.IsTrue( comparer.Compare( x, y ) > 0 );
+            Assert.IsTrue( comparer.Compare( y, x ) < 0 );
             Assert.IsTrue( comparer.Compare( z, y ) == 0 );
 
             //Integer Ascending, X's integer score is < Y's
             directive.Rules.Clear();
             directive.Rules.Add( integerAscending );
-            Assert.IsTrue( comparer.Compare( x, y ) > 0 );
-            Assert.IsTrue( comparer.Compare( y, x ) < 0 );
+            Assert.IsTrue( comparer.Compare( x, y ) < 0 );
+            Assert.IsTrue( comparer.Compare( y, x ) > 0 );
             Assert.IsTrue( comparer.Compare( z, y ) == 0 );
 
             //Decimal Descending, X's decimal score is < Y's
             directive.Rules.Clear();
             directive.Rules.Add( decimalDescending );
-            Assert.IsTrue( comparer.Compare( x, y ) < 0 );
-            Assert.IsTrue( comparer.Compare( y, x ) > 0 );
+            Assert.IsTrue( comparer.Compare( x, y ) > 0 );
+            Assert.IsTrue( comparer.Compare( y, x ) < 0 );
             Assert.IsTrue( comparer.Compare( z, y ) == 0 );
 
             //Decimal Ascending, X's decimal score is < Y's
             directive.Rules.Clear();
             directive.Rules.Add( decimalAscending );
-            Assert.IsTrue( comparer.Compare( x, y ) > 0 );
-            Assert.IsTrue( comparer.Compare( y, x ) < 0 );
+            Assert.IsTrue( comparer.Compare( x, y ) < 0 );
+            Assert.IsTrue( comparer.Compare( y, x ) > 0 );
             Assert.IsTrue( comparer.Compare( z, y ) == 0 );
 
             //Inner Tens Descending, X's inner ten count is > Y's
             directive.Rules.Clear();
             directive.Rules.Add( xDescending );
-            Assert.IsTrue( comparer.Compare( x, y ) > 0 );
-            Assert.IsTrue( comparer.Compare( y, x ) < 0 );
+            Assert.IsTrue( comparer.Compare( x, y ) < 0 );
+            Assert.IsTrue( comparer.Compare( y, x ) > 0 );
             Assert.IsTrue( comparer.Compare( z, y ) == 0 );
 
             //Inner Tens Ascending, X's inner ten count is > Y's
             directive.Rules.Clear();
             directive.Rules.Add( xAscending );
-            Assert.IsTrue( comparer.Compare( x, y ) < 0 );
-            Assert.IsTrue( comparer.Compare( y, x ) > 0 );
+            Assert.IsTrue( comparer.Compare( x, y ) > 0 );
+            Assert.IsTrue( comparer.Compare( y, x ) < 0 );
             Assert.IsTrue( comparer.Compare( z, y ) == 0 );
         }
         /// <summary>
@@ -234,36 +234,35 @@ namespace Scopos.BabelFish.Tests.Definition {
             var directive = new RankingDirective();
             var comparer = new CompareByRankingDirective( cof, directive );
 
-            //Integer Descending, X's integer score is < Y's, Z's score is equal to Y's score
             directive.Rules.Clear();
             directive.Rules.Add( familyName );
+            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) > 0 );
+            Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) == 0 );
+            Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) > 0 );
+
+            directive.Rules.Clear();
+            directive.Rules.Add( givenName );
+            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) < 0 );
+            Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) > 0 );
+            Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) > 0 );
+
+            directive.Rules.Clear();
+            directive.Rules.Add( familyNameDesc );
             Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) < 0 );
             Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) == 0 );
             Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) < 0 );
 
             directive.Rules.Clear();
-            directive.Rules.Add( givenName );
-            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) > 0 );
+            directive.Rules.Add( compeNumber );
+            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) < 0 );
             Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) < 0 );
             Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) < 0 );
-
-            directive.Rules.Clear();
-            directive.Rules.Add( familyNameDesc );
-            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) > 0 );
-            Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) == 0 );
-            Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) > 0 );
-
-            directive.Rules.Clear();
-            directive.Rules.Add( compeNumber );
-            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) > 0 );
-            Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) > 0 );
-            Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) > 0 );
 
             directive.Rules.Clear();
             directive.Rules.Add( country );
-            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) > 0 );
-            Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) < 0 );
-            Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) < 0 );
+            Assert.IsTrue( comparer.Compare( johnSmith, lucyJones ) < 0 );
+            Assert.IsTrue( comparer.Compare( lucyJones, craigJones ) > 0 );
+            Assert.IsTrue( comparer.Compare( johnSmith, craigJones ) > 0 );
         }
 
         /// <summary>
@@ -304,19 +303,20 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051514241320.0" ), "Individual - All" );
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051514241320.0" ), "Standing - All" );
             var resultList = resultListResponse.ResultList;
             resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
             resultList.Metadata.First().Value.EndDate = DateTime.Today;
-            var eventName = "Qualification"; // resultList.EventName;
+            resultList.RankingRuleDef = "";
+            var eventName = "Standing"; // resultList.EventName;
 
             var courseOfFireResponse = await definitionClient.GetCourseOfFireDefinitionAsync( SetName.Parse( resultList.CourseOfFireDef ) );
             var courseOfFire = courseOfFireResponse.Value;
 
-            var rankingRuleResponse = await definitionClient.GetRankingRuleDefinitionAsync( SetName.Parse( resultList.RankingRuleDef ) );
-            var rankingRules = rankingRuleResponse.Value;
+            //var rankingRuleResponse = await definitionClient.GetRankingRuleDefinitionAsync( SetName.Parse( resultList.RankingRuleDef ) );
+            //var rankingRules = rankingRuleResponse.Value;
 
-            ResultEngine resultEngine = new ResultEngine( resultList, rankingRules );
+            ResultEngine resultEngine = new ResultEngine( resultList );
 
             ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
 

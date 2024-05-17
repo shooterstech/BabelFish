@@ -100,22 +100,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             //And if that didn't work, the user is pretty much screwed.
-            //Guess we'll try and use a generic set of ranking rules based on the Event Name.
-            var rankingRuleRef = $"v1.0:orion:Generic {this.ResultList.EventName}";
-            if (!string.IsNullOrEmpty( this.ResultList.RankingRuleDef ) && SetName.TryParse( rankingRuleRef, out rankingRuleSetName )) {
-                var getRankingRuleResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                if (getRankingRuleResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                    logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by using a generic ranking rule based on EventName '{this.ResultList.EventName}'." );
-                    this.RankingRule = getRankingRuleResponse.Value;
-                    return;
-                } else {
-                    string msg = $"Unable to retreive Ranking Rule '{rankingRuleSetName}'. Received status code '{getRankingRuleResponse.StatusCode}'.";
-                    throw new ScoposException( msg, logger );
-                }
-            }
-
-            //And if we get all the way down here, the user is screwed.
-            throw new ScoposException( $"Unable to determine which Ranking Rule definition to use to sort '{this.ResultList.Name}'.", logger );
+            //Guess we'll try and generate a Ranking Rule defintion based on the Event Name ... which is pretty clever is I do say so myself.
+            this.RankingRule = new RankingRule();
+            this.RankingRule.RankingRules.Add( RankingDirective.GetDefault( this.ResultList.EventName, this.ResultList.ScoreConfigName ) );
+            logger.Warn( $"A default / generic Ranking Rule will be used to sort Result List '{this.ResultList.Name}', dynamically generated based on EventName '{this.ResultList.EventName}' and Score Config Name '{this.ResultList.ScoreConfigName}'." );
 
         }
 
@@ -210,7 +198,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 if (this.RankingRule.RankingRules.Count > 0)
                     directive = this.RankingRule.RankingRules[0];
                 else
-                    directive = RankingDirective.GetDefault( this.ResultList.EventName );
+                    directive = RankingDirective.GetDefault( this.ResultList.EventName, this.ResultList.ScoreConfigName );
 
                 //Make a shallow copy of the list
                 var appliesTo = directive.GetAppliesToStartAndCount( this.ResultList.Items.Count );

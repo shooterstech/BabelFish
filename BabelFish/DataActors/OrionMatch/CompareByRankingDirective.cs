@@ -117,31 +117,34 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             foreach (var tieBreakingRule in tieBreakingRules) {
 
-                //Skip this rule if the it specifies a Result Status less than the .ResultStaus of the result list.
-                if (CompareResultStatus.COMPARER.Compare( this.ResultStatus, tieBreakingRule.ResultStatus ) >= 0) {
+                foreach (var compiledTieBreakingRule in tieBreakingRule.CompiledTieBreakingRules) {
 
-                    switch (tieBreakingRule.Method) {
-                        case TieBreakingRuleMethod.SCORE:
-                            compare = CompareScore( tieBreakingRule, x, y );
-                            break;
-                        case TieBreakingRuleMethod.COUNT_OF:
-                            compare = CompareCountOf( tieBreakingRule, x, y );
-                            break;
+                    //Skip this rule if the it specifies a Result Status less than the .ResultStaus of the result list.
+                    if (CompareResultStatus.COMPARER.Compare( this.ResultStatus, compiledTieBreakingRule.ResultStatus ) >= 0) {
 
-                        case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
-                            compare = CompareParticipantAttribute( tieBreakingRule, x, y );
-                            break;
+                        switch (compiledTieBreakingRule.Method) {
+                            case TieBreakingRuleMethod.SCORE:
+                                compare = CompareScore( compiledTieBreakingRule, x, y );
+                                break;
+                            case TieBreakingRuleMethod.COUNT_OF:
+                                compare = CompareCountOf( compiledTieBreakingRule, x, y );
+                                break;
 
-                        case TieBreakingRuleMethod.ATTRIBUTE:
-                            compare = CompareAttribute( tieBreakingRule, x, y );
-                            break;
+                            case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
+                                compare = CompareParticipantAttribute( compiledTieBreakingRule, x, y );
+                                break;
 
-                        default:
-                            throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{tieBreakingRule.Method}'." );
+                            case TieBreakingRuleMethod.ATTRIBUTE:
+                                compare = CompareAttribute( compiledTieBreakingRule, x, y );
+                                break;
+
+                            default:
+                                throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{compiledTieBreakingRule.Method}'." );
+                        }
+
+                        if (compare != 0)
+                            return compare;
                     }
-
-                    if (compare != 0)
-                        return compare;
                 }
             }
 

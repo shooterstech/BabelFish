@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// Required when EventName has a placeholder, ignored otherwise.
         /// </summary>
-        public string ValueSeries {  get; set; }
+        public string Values {  get; set; }
 
         /// <summary>
         /// Specifies the method to use to compare two competitors.
@@ -60,6 +60,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( ResultStatus.FUTURE )]
         [JsonConverter( typeof( StringEnumConverter ) )]
         public ResultStatus ResultStatus { get; set; } = ResultStatus.FUTURE;
+
+        /// <summary>
+        /// If the fields EventName and Values require interpretation, CompiledTieBreakingRules
+        /// interpres them and returns a new list of TieBreakingRules cooresponding to the interpretation.
+        /// If interpretation is not required, then it returns a list of one tie breaking rule, itself.
+        /// </summary>
+        public List<TieBreakingRule> CompiledTieBreakingRules {
+            get {
+                if (string.IsNullOrEmpty(EventName) || !EventName.Contains("{}")) {
+                    return new List<TieBreakingRule>() { this };
+                } else {
+                    List<TieBreakingRule> list = new List<TieBreakingRule>();
+                    ValueSeries vs = new ValueSeries( this.Values );
+                    foreach( var eventName in vs.GetAsList( this.EventName ) ) {
+                        var newTieBreakingRule = this.Clone();
+                        newTieBreakingRule.EventName = eventName;
+                        newTieBreakingRule.Values = "";
+                        list.Add( newTieBreakingRule );
+                    }
+                    return list;
+                }
+            }
+        }
 
     }
 }

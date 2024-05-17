@@ -28,11 +28,34 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public int Step { get; private set; }
 
+        /// <summary>
+        /// Interpres the Value Series, and returns a compiled and complete list of integers
+        /// as specified by the Value Series.
+        /// </summary>
+        /// <returns></returns>
         public List<int> GetAsList() {
             List<int> list = new List<int>();
 
             for (int i = StartValue; i <= EndValue; i += Step)
                 list.Add(i);
+
+            return list;
+        }
+
+        /// <summary>
+        /// Interprets the Value Series and returns a list of compiled event names.
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown if the passed in eventName does not contain the place holder '{}'.</exception>
+        public List<string> GetAsList(string eventName) {
+            if (!eventName.Contains( "{}" ))
+                throw new ArgumentException( $"The passed in eventName '{eventName}' string must contain '{{}}' for its values to be replaced." );
+
+            List<string> list = new List<string>();
+
+            for (int i = StartValue; i <= EndValue; i += Step)
+                list.Add( eventName.Replace( "{}", i.ToString() ) );
 
             return list;
         }

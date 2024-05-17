@@ -116,16 +116,47 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         /// <param name="topLevelEventName"></param>
         /// <returns></returns>
-        public static RankingDirective GetDefault( string topLevelEventName ) {
+        public static RankingDirective GetDefault( string topLevelEventName, string scoreConfigName = "Decimal" ) {
             var directive = new RankingDirective();
 
             directive.AppliesTo = "*";
-            directive.Rules.Add( new TieBreakingRule() {
-                EventName = topLevelEventName,
-                SortOrder = Helpers.SortBy.DESCENDING,
-                Method = TieBreakingRuleMethod.SCORE,
-                Source = "D"
-            } );
+
+            //Try and predict a set of tie breaking rules to use, based on the passed in score config name. 
+            //Note we are largely assuming the standard set of score config names from v1.0:orion:Standard Score Formats
+            switch (scoreConfigName.ToUpper()) {
+                case "DECIMAL":
+                case "DEC":
+                case "D":
+                default:
+                    directive.Rules.Add( new TieBreakingRule() {
+                        EventName = topLevelEventName,
+                        SortOrder = Helpers.SortBy.DESCENDING,
+                        Method = TieBreakingRuleMethod.SCORE,
+                        Source = "D"
+                    } );
+                    break;
+
+                case "INTEGER":
+                case "INT":
+                case "I":
+                case "CONVENTIONAL":
+                case "CONV":
+                case "C":
+                    directive.Rules.Add( new TieBreakingRule() {
+                        EventName = topLevelEventName,
+                        SortOrder = Helpers.SortBy.DESCENDING,
+                        Method = TieBreakingRuleMethod.SCORE,
+                        Source = "I"
+                    } );
+
+                    directive.Rules.Add( new TieBreakingRule() {
+                        EventName = topLevelEventName,
+                        SortOrder = Helpers.SortBy.DESCENDING,
+                        Method = TieBreakingRuleMethod.SCORE,
+                        Source = "X"
+                    } );
+                    break;
+            }
 
             directive.ListOnly.Add( new TieBreakingRule() {
                 Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
