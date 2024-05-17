@@ -196,8 +196,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             //Perform a ranking by Projected Score
-            //if the result list's status is less than UNOFFICIAL
-            if (CompareResultStatus.COMPARER.Compare( this.ResultList.Status, ResultStatus.UNOFFICIAL ) < 0) {
+            //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL)
+            if (this.ResultList.Status == ResultStatus.INTERMEDIATE) {
 
                 //Project (predict) the scores of athlets at the end of the match.
                 this.ResultList.ProjectionMadeBy = ps.ProjectionMadeBy;

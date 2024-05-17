@@ -92,6 +92,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return descendants;
         }
+
+        /// <summary>
+        /// Searches the children of this Event Composite, for one with the passed in eventName and returns it.
+        /// Returns null, if it could not be found.
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
         public EventComposite FindEventComposite( string eventName ) {
 
             if ( this.EventName == eventName ) return this;

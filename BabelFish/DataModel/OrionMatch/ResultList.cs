@@ -10,12 +10,15 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition {
+    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
+
+        private Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ResultList() {
             Items = new List<ResultEvent>();
@@ -214,26 +217,52 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
 
-		/// <inheritdoc />
-		public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for CourseOfFireDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
             if (string.IsNullOrEmpty( CourseOfFireDef ))
-                return null;
+                throw new ScoposAPIException( $"The value for CourseOfFireDef is empty or null.", Logger );
 
             SetName cofSetName = SetName.Parse( CourseOfFireDef );
             var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( cofSetName );
-            return getDefiniitonResponse.Definition;
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetCourseOfFireDefinition could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
         }
 
         /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( RankingRuleDef ))
+                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+
+            SetName rrSetName = SetName.Parse( RankingRuleDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rrSetName );
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetRankingRuleDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
             if (string.IsNullOrEmpty( ResultListFormatDef ))
-                return null;
+                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( rlfSetName );
-            return getDefiniitonResponse.Definition;
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetResultListFormatDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
         }
 
         public override string ToString() {
