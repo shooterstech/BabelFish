@@ -6,6 +6,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Helpers.Extensions;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
+using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
 
@@ -119,32 +120,30 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                 foreach (var compiledTieBreakingRule in tieBreakingRule.CompiledTieBreakingRules) {
 
-                    //Skip this rule if the it specifies a Result Status less than the .ResultStaus of the result list.
-                    if (CompareResultStatus.COMPARER.Compare( this.ResultStatus, compiledTieBreakingRule.ResultStatus ) >= 0) {
 
-                        switch (compiledTieBreakingRule.Method) {
-                            case TieBreakingRuleMethod.SCORE:
-                                compare = CompareScore( compiledTieBreakingRule, x, y );
-                                break;
-                            case TieBreakingRuleMethod.COUNT_OF:
-                                compare = CompareCountOf( compiledTieBreakingRule, x, y );
-                                break;
+                    switch (compiledTieBreakingRule.Method) {
+                        case TieBreakingRuleMethod.SCORE:
+                            compare = CompareScore( compiledTieBreakingRule, x, y );
+                            break;
+                        case TieBreakingRuleMethod.COUNT_OF:
+                            compare = CompareCountOf( compiledTieBreakingRule, x, y );
+                            break;
 
-                            case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
-                                compare = CompareParticipantAttribute( compiledTieBreakingRule, x, y );
-                                break;
+                        case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
+                            compare = CompareParticipantAttribute( compiledTieBreakingRule, x, y );
+                            break;
 
-                            case TieBreakingRuleMethod.ATTRIBUTE:
-                                compare = CompareAttribute( compiledTieBreakingRule, x, y );
-                                break;
+                        case TieBreakingRuleMethod.ATTRIBUTE:
+                            compare = CompareAttribute( compiledTieBreakingRule, x, y );
+                            break;
 
-                            default:
-                                throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{compiledTieBreakingRule.Method}'." );
-                        }
-
-                        if (compare != 0)
-                            return compare;
+                        default:
+                            throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{compiledTieBreakingRule.Method}'." );
                     }
+
+                    if (compare != 0)
+                        return compare;
+
                 }
             }
 
@@ -208,9 +207,40 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         }
 
         private int CompareCountOf( TieBreakingRule rule, IEventScores x, IEventScores y ) {
-            //EKA May 2024 Choosing not to implement (at least not yet) the CompareCountOf 
-            logger.Error( "CompareCountOf() is not implemented. All comparisons are returning 0, meaning they are equal." );
-            return 0;
+
+            int compare = 0;
+            if (rule.Source is int) {
+                int scoreToLookFor = (int)rule.Source;
+
+                Score xScore = null, yScore = null;
+
+                var @event = this.EventTree.FindEventComposite( rule.EventName );
+                if (@event != null) {
+
+
+                    var singularities = @event.GetAllSingulars();
+
+                    int xCount = 0, yCount = 0;
+                    foreach (var singularity in singularities) {
+                        if (TryGetScore( x, singularity.EventName, out xScore )) {
+                            if (xScore.I == scoreToLookFor)
+                                xCount++;
+                        }
+                        if (TryGetScore( y, singularity.EventName, out yScore )) {
+                            if (yScore.I == scoreToLookFor)
+                                yCount++;
+                        }
+                    }
+
+                    compare = xCount - yCount;
+                }
+            }
+
+            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
+                return -1 * compare;
+
+            //Else if sort order is Ascending
+            return compare;
         }
 
         private int CompareParticipantAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
@@ -320,7 +350,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             score = null;
             EventScore eventScore;
 
-            if (!string.IsNullOrEmpty(eventName) && eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
+            if (string.IsNullOrEmpty( eventName ))
+                return false;
+
+            if (eventScores.EventScores != null && eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
                 //Try and get the Projected Score instance first, if and only if we're told to use it
                 if (Projected && eventScore.Projected != null) {
                     score = eventScore.Projected;
@@ -329,6 +362,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                 //Normally, we would get the .Score dictionary
                 score = eventScore.Score;
+                return true;
+            }
+
+            Shot shot;
+            if (eventScores.Shots != null && eventScores.Shots.TryGetValue( eventName, out shot)) {
+                score = shot.Score;
                 return true;
             }
 

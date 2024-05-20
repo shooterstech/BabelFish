@@ -180,9 +180,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ResultFieldMethod {
+        /// <summary>
+        /// This is the absolute score the Participant has shot.
+        /// </summary>
         [Description( "Score" )]
         [EnumMember( Value = "Score" )]
         SCORE,
+
+        /// <summary>
+        /// This is the score the Participant is projected to have when they finish. If a Projected
+        /// score is nto known, then the absolute score is returned in its place.
+        /// </summary>
+        [Description( "Score" )]
+        [EnumMember( Value = "Score" )]
+        PROJECTED_SCORE,
 
         [Description( "ParticipantAttribute" )]
         [EnumMember( Value = "ParticipantAttribute" )]

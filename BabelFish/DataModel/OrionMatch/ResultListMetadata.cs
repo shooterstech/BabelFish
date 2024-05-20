@@ -42,12 +42,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public string OwnerId { get; set; } = string.Empty;
 
-		private ResultStatus localStatus = ResultStatus.INTERMEDIATE;
+		private ResultStatus localStatus = ResultStatus.FUTURE;
 
 		/// <summary>
 		/// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
 		/// </summary>
 		[JsonConverter( typeof( StringEnumConverter ) )]
+		[DefaultValue( ResultStatus.FUTURE )]
 		public ResultStatus Status {
 			get {
 				if (EndDate < DateTime.Today) {

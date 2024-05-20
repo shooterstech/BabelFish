@@ -72,8 +72,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         break;
 
                     case ResultFieldMethod.SCORE:
-                        fields[fieldName] = GetScore( source );
+                        fields[fieldName] = GetScore( source, false );
                         break;
+
+                    case ResultFieldMethod.PROJECTED_SCORE:
+                        fields[fieldName] = GetScore( source, true );
+                        break;
+
                     default:
                         //Should never get here
                         break;
@@ -116,10 +121,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 			switch (source) {
 				case "Rank":
-					if (resultEvent.Rank > 0)
+                    if (this.resultListFormatted.ResultList.Projected 
+                        && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE 
+                        && resultEvent.ProjectedRank > 0)
+                        return resultEvent.ProjectedRank.ToString();
+					
+                    if (resultEvent.Rank > 0)
 						return resultEvent.Rank.ToString();
-					else
-						return "";
+					
+					return "";
 				
                 case "DisplayName":
                     //Try the non depreciated field first
@@ -276,7 +286,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         }
 
-        private string GetScore( FieldSource source ) {
+        private string GetScore( FieldSource source, bool tryAndUseProjected = false ) {
             /*
              * source is a dictionary. For an Attribute should be
              * {
@@ -289,21 +299,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             string scoreConfigName = resultListFormatted.ResultList.ScoreConfigName;
 
-            Score score = GetScore( (string)source.Name );
+            Score score = GetScore( (string)source.Name, tryAndUseProjected );
             string scoreFormat = resultListFormatted.GetScoreFormat( source.ScoreFormat );
 
             return Scopos.BabelFish.Helpers.StringFormatting.FormatScore( scoreFormat, score );
         }
 
-        private Score GetScore( string eventName ) {
+        private Score GetScore( string eventName, bool tryAndUseProjected = false ) {
 
             EventScore scoreToReturn;
 
             if (resultEvent.EventScores != null) {
                 if (resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
-                    
-                    if (this.resultListFormatted.ResultList.Projected && scoreToReturn.Projected != null) {
-                        //If the Result List is Projected, try and return the .Projected Score instance, if it is avaliable.
+
+                    if (! tryAndUseProjected && scoreToReturn.Projected != null) {
+                        //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
                         //Else return the regular,, good old fashion, .Score instance

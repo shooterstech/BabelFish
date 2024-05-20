@@ -320,7 +320,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
 
-            await resultEngine.SortAsync( ps );
+            await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
                 Console.Write( $"{re.Rank} / {re.ProjectedRank}  {re.Participant.DisplayName}  " );

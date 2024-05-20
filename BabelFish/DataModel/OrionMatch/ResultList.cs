@@ -159,9 +159,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultListID { get; set; } = string.Empty;
 
         /// <summary>
-        /// Indicates if Projected Scores are included in this result list. Result lists are always
-        /// ranked and sorted by absoluate scores. However, if Projected is true, then a second set
-        /// of ProjectedRank and Projected scores are included. 
+        /// If True, Participants are listed in order of their projected score. 
         /// Should only ever be true if Status is FUTURE or INTERMEDIATE
         /// </summary>
         [DefaultValue(false)]

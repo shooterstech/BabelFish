@@ -117,17 +117,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
         /// RankingRule definition.
         /// 
-        /// If the status of the ResultList is less than UNOFFICIAL (e.g. FUTURE or INTERMEDIATE) then it also
-        /// calculates Projected scores. It then calculates the projected rank based on the Projected Scores.
-        /// The ResultList.Items array remains sorted by absolute score. To instead sort by ProjectedRank
-        /// use a CompareResultProjectedRank() comparer.
+        /// If the status of the ResultList is INTERMEDIATE then it also
+        /// calculates Projected scores usiing the passed in ProjectorOfScores. It then calculates the projected 
+        /// rank based on the Projected Scores.
+        /// 
+        /// In most cases, the ResultList.Items array remains sorted by absolute score. However, if the Status
+        /// is INTERMEDIATE and the parameter listAccordingToProjectedScores is true, then .Items is sorted
+        /// using the projected scores.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ScoposException">
         /// Thrown if the function could not learn the Course of Fire or Ranking Rule definitions. Either because
         /// the values could not be parsed, don't exists as definitions, or networking errors.
         /// </exception>
-        public async Task SortAsync( ProjectorOfScores ps ) {
+        public async Task SortAsync( ProjectorOfScores ps, bool listAccordingToProjectedScores ) {
 
             await LearnDefaultRankingRuleAsync();
 
@@ -183,7 +186,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 }
             }
 
-            //Perform a ranking by Projected Score
+            //Project scores and perform a ranking by Projected Score
             //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL)
             if (this.ResultList.Status == ResultStatus.INTERMEDIATE) {
 
@@ -238,6 +241,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     }
 
                     lastResultEventSeen = resultEvent;
+                }
+
+                //Only list the projected scores in order, if the caller asked us to
+                if (listAccordingToProjectedScores) {
+                    this.ResultList.Items = listToSort;
+                    this.ResultList.Projected = true;
                 }
 
             } else {
