@@ -118,7 +118,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             foreach (var tieBreakingRule in tieBreakingRules) {
 
-                foreach (var compiledTieBreakingRule in tieBreakingRule.CompiledTieBreakingRules) {
+                foreach (var compiledTieBreakingRule in tieBreakingRule.GetCompiledTieBreakingRules()) {
 
 
                     switch (compiledTieBreakingRule.Method) {
@@ -375,7 +375,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             Shot shot;
-            if (eventScores.Shots != null && eventScores.Shots.TryGetValue( eventName, out shot)) {
+            if (eventScores.Shots != null && eventScores.GetShotsByEventName().TryGetValue( eventName, out shot)) {
                 score = shot.Score;
                 return true;
             }

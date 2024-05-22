@@ -303,7 +303,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051815082269.0" ), "Individual - All" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024052217443689.0" ), "Kneeling - Intermediate" ); //
             var resultList = resultListResponse.ResultList;
             resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
             resultList.Metadata.First().Value.EndDate = DateTime.Today;

@@ -13,5 +13,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         Dictionary<string, EventScore> EventScores { get; }
 
         Dictionary<string, Shot> Shots { get; }
+
+        /// <summary>
+        /// Returns a copy of the Shots dictionary, but with the key being the Singular's EventName.
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, Shot> GetShotsByEventName();
     }
 }

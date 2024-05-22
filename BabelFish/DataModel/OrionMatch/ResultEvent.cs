@@ -12,6 +12,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultEvent : IEventScoreProjection {
 
+        //Key is the Singular Event Name, Value is the Shot
+        private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
+
         public ResultEvent() {
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
@@ -81,14 +84,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
 
-		/// <summary>
-		/// Scores for each Singular Event (usually a Shot).
-		/// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
-		/// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
-		/// </summary>
-		[JsonIgnore]
+        /// <summary>
+        /// Scores for each Singular Event (usually a Shot).
+        /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
+        /// To get a dictionary of Shots by their EventName, use GetShotsByEventName()
+        /// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
+        /// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
+        /// </summary>
+        [JsonIgnore]
 		[DefaultValue( null ) ]
 		public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
+
+        /// <inheritdoc />
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
+            if (shotsByEventName != null)
+                return shotsByEventName;
+
+            shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
+
+            foreach (var t in Shots.Values)
+                if (!string.IsNullOrEmpty( t.EventName ))
+                    shotsByEventName.Add( t.EventName, t );
+
+            return shotsByEventName;
+        }
 
     }
 }

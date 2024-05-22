@@ -67,22 +67,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// interpres them and returns a new list of TieBreakingRules cooresponding to the interpretation.
         /// If interpretation is not required, then it returns a list of one tie breaking rule, itself.
         /// </summary>
-        public List<TieBreakingRule> CompiledTieBreakingRules {
-            get {
-                if (string.IsNullOrEmpty(EventName) || !EventName.Contains("{}")) {
-                    return new List<TieBreakingRule>() { this };
-                } else {
-                    List<TieBreakingRule> list = new List<TieBreakingRule>();
-                    ValueSeries vs = new ValueSeries( this.Values );
-                    foreach( var eventName in vs.GetAsList( this.EventName ) ) {
-                        var newTieBreakingRule = this.Clone();
-                        newTieBreakingRule.EventName = eventName;
-                        newTieBreakingRule.Values = "";
-                        list.Add( newTieBreakingRule );
-                    }
-                    return list;
+        public List<TieBreakingRule> GetCompiledTieBreakingRules() {
+            if (string.IsNullOrEmpty( EventName ) || !EventName.Contains( "{}" )) {
+                return new List<TieBreakingRule>() { this };
+            } else {
+                List<TieBreakingRule> list = new List<TieBreakingRule>();
+                ValueSeries vs = new ValueSeries( this.Values );
+                foreach (var eventName in vs.GetAsList( this.EventName )) {
+                    var newTieBreakingRule = this.Clone();
+                    newTieBreakingRule.EventName = eventName;
+                    newTieBreakingRule.Values = "";
+                    list.Add( newTieBreakingRule );
                 }
+                return list;
             }
+
         }
 
     }

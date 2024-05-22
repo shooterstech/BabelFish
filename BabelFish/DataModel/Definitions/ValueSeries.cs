@@ -36,8 +36,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<int> GetAsList() {
             List<int> list = new List<int>();
 
-            for (int i = StartValue; i <= EndValue; i += Step)
-                list.Add(i);
+            if (StartValue > EndValue)
+                for (int i = StartValue; i >= EndValue; i -= Step)
+                    list.Add( i );
+            else
+                for (int i = StartValue; i <= EndValue; i += Step)
+                    list.Add( i );
+
 
             return list;
         }
@@ -54,16 +59,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             List<string> list = new List<string>();
 
-            for (int i = StartValue; i <= EndValue; i += Step)
-                list.Add( eventName.Replace( "{}", i.ToString() ) );
+            if (StartValue > EndValue)
+                for (int i = StartValue; i >= EndValue; i -= Step)
+                    list.Add( eventName.Replace( "{}", i.ToString() ) );
+            else
+                for (int i = StartValue; i <= EndValue; i += Step)
+                    list.Add( eventName.Replace( "{}", i.ToString() ) );
 
             return list;
         }
 
         private void Parse() {
-            //Check for a deprecated list option n-m
-            if (format.Contains("-") && !format.Contains(".."))
-                format = format.Replace("-", "..");
 
             var intStrings = format.Split(new string[] { "..", "," }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -94,13 +100,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 case 3:
                 default:
                     StartValue = list[0];
-                    EndValue = list[0];
-                    Step = list[1];
+                    EndValue = list[1];
+                    Step = Math.Abs( list[2] );
                     break;
             }
-
-            if (StartValue > EndValue && Step < 0)
-                Step *= -1;
         }
     }
 }
