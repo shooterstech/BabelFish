@@ -101,8 +101,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             //And if that didn't work, the user is pretty much screwed.
             //Guess we'll try and generate a Ranking Rule defintion based on the Event Name ... which is pretty clever is I do say so myself.
-            this.RankingRule = new RankingRule();
-            this.RankingRule.RankingRules.Add( RankingDirective.GetDefault( this.ResultList.EventName, this.ResultList.ScoreConfigName ) );
+            this.RankingRule = RankingRule.GetDefault( this.ResultList.EventName, this.ResultList.ScoreConfigName );
             logger.Warn( $"A default / generic Ranking Rule will be used to sort Result List '{this.ResultList.Name}', dynamically generated based on EventName '{this.ResultList.EventName}' and Score Config Name '{this.ResultList.ScoreConfigName}'." );
 
         }

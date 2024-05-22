@@ -114,7 +114,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 6 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 7 )]
+        [JsonProperty( Order = 7, DefaultValueHandling = DefaultValueHandling.Include )]
+        [DefaultValue( false )]
         public bool Team { get; set; } = false;
 
         [JsonProperty( Order = 8 )]
@@ -143,7 +144,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Set to true if this ResultList is considered one of the most important and should be featured
         /// </summary>
-        [JsonProperty( Order = 14 )]
+        [JsonProperty( Order = 14, DefaultValueHandling = DefaultValueHandling.Include )]
+        [DefaultValue( false )]
         public bool Primary { get; set; } = false;
 
         [JsonProperty( Order = 15 )]
@@ -162,6 +164,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If True, Participants are listed in order of their projected score. 
         /// Should only ever be true if Status is FUTURE or INTERMEDIATE
         /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         [DefaultValue(false)]
         public bool Projected { get; set; } = false;
 

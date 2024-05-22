@@ -169,6 +169,15 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         case "x":
                             compare = xScore.X - yScore.X;
                             break;
+                        case "IX":
+                        case "Ix":
+                        case "iX":
+                        case "ix":
+                            compare = xScore.I - yScore.I;
+                            if (compare != 0)
+                                break;
+                            compare = xScore.X - yScore.X;
+                            break;
                         case "D":
                         case "d":
                             //To avoid floating point errors, need to evalute jus the first decimal place

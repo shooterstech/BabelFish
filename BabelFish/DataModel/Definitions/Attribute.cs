@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod(context);
 
             //Designation is not required, but if the user doesn't include it, set it to all values except HIDDEN
-            if (Designation.Count() == 0)
+            if (Designation == null || Designation.Count() == 0)
                 Designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
         }
 

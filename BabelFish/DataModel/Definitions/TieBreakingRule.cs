@@ -46,6 +46,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// How the comparison should be made.
         /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Populate )]
         public SortBy SortOrder { get; set; }
 
         /// <summary>

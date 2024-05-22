@@ -27,12 +27,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// Information on that match may be looked up in the ResultList's Metadata field.
 		/// </summary>
 		public string MatchID { get; set; }
-
-		[Obsolete("Use .Participant.DisplayName instead.")]
-		public string DisplayName { get; set; }
-
-        [Obsolete("Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef")]
-        public string ScoreFormat { get; set; }
         
         public string ResultCOFID { get; set; }
 

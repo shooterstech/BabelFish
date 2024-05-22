@@ -49,6 +49,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		[JsonConverter( typeof( StringEnumConverter ) )]
 		[DefaultValue( ResultStatus.FUTURE )]
+		[JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
 		public ResultStatus Status {
 			get {
 				if (EndDate < DateTime.Today) {

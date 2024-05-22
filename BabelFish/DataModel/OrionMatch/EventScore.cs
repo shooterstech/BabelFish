@@ -36,8 +36,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue("")]
         public string EventStyleDef { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The actual score the Participant has shot.
+        /// </summary>
         public Athena.Score Score { get; set; } = new Athena.Score();
 
+        /// <summary>
+        /// The projected / predicted score the Participant is expected to finish with.
+        /// </summary>
         [DefaultValue( null )]
         public Athena.Score Projected { get; set; } = null;
 

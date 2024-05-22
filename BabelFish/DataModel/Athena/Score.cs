@@ -18,16 +18,19 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <summary>
         /// Number of inner tens.
         /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
         public int X { get; set; } = 0;
 
         /// <summary>
         /// Score in decimal value
         /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public float D { get; set; } = 0;
 
         /// <summary>
         /// Score in integer value
         /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public int I { get; set; } = 0;
 
 
@@ -36,6 +39,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// from one child Event with the Decimal value from a different child Event.
         /// ONly applicable to Scores from Event Stypes == EVENT. 
         /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public float S {
             get {
                 if (float.IsNaN( s ))
@@ -51,19 +55,19 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold a averaged integer score, or in Group Mode to display the Area of the shot group. 
         /// </summary>
-        [DefaultValue(0)]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public float J { get; set; } = 0;
 
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged decimal score, or in Group Mode to display the Roundness of the shot group.
         /// </summary>
-        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public float K { get; set; } = 0;
 
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged inner ten score, or in Group Mode to display the distance the center of the group is from the center of the target. 
         /// </summary>
-        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public float L { get; set; } = 0;
 
         /// <summary>

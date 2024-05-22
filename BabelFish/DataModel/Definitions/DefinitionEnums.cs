@@ -191,8 +191,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// This is the score the Participant is projected to have when they finish. If a Projected
         /// score is nto known, then the absolute score is returned in its place.
         /// </summary>
-        [Description( "Score" )]
-        [EnumMember( Value = "Score" )]
+        [Description( "ProjectedScore" )]
+        [EnumMember( Value = "ProjectedScore" )]
         PROJECTED_SCORE,
 
         [Description( "ParticipantAttribute" )]

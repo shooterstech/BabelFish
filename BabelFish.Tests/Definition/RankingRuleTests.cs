@@ -300,15 +300,15 @@ namespace Scopos.BabelFish.Tests.Definition {
         public async Task EriksPlayground() {
 
             DefinitionFetcher.XApiKey = Constants.X_API_KEY;
-            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051514241320.0" ), "Standing - All" );
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051815082269.0" ), "Individual - All" ); //
             var resultList = resultListResponse.ResultList;
             resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
             resultList.Metadata.First().Value.EndDate = DateTime.Today;
-            resultList.RankingRuleDef = "";
-            var eventName = "Standing"; // resultList.EventName;
+            // resultList.RankingRuleDef = "";
+            var eventName = resultList.EventName;
 
             var courseOfFireResponse = await definitionClient.GetCourseOfFireDefinitionAsync( SetName.Parse( resultList.CourseOfFireDef ) );
             var courseOfFire = courseOfFireResponse.Value;
@@ -323,8 +323,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
-                Console.Write( $"{re.Rank} / {re.ProjectedRank}  {re.Participant.DisplayName}  " );
-                Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Projected.I}" );
+                Console.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
+                Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
                 Console.WriteLine();
             }
 
