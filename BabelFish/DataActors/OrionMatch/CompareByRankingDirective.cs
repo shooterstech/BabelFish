@@ -181,27 +181,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         case "D":
                         case "d":
                             //To avoid floating point errors, need to evalute jus the first decimal place
-                            compare = (int) (( xScore.D - yScore.D ) * 10);
+                            compare = (int) (( xScore.D - yScore.D + .01f) * 10);
                             break;
                         case "S":
                         case "s":
                             //To avoid floating point errors, need to evalute jus the first decimal place
-                            compare = (int)((xScore.S - yScore.S) * 10);
+                            compare = (int)((xScore.S - yScore.S + .01f) * 10);
                             break;
                         case "J":
                         case "j":
                             //To avoid floating point errors, need to evalute jus the first three decimal place
-                            compare = (int)((xScore.J - yScore.J) * 100);
+                            compare = (int)((xScore.J - yScore.J + .0001f) * 1000);
                             break;
                         case "K":
                         case "k":
                             //To avoid floating point errors, need to evalute jus the first three decimal place
-                            compare = (int)((xScore.K - yScore.K) * 100);
+                            compare = (int)((xScore.K - yScore.K + .0001f) * 1000);
                             break;
                         case "L":
                         case "l":
                             //To avoid floating point errors, need to evalute jus the first three decimal place
-                            compare = (int)((xScore.L - yScore.L) * 100);
+                            compare = (int)((xScore.L - yScore.L + .0001f) * 1000);
                             break;
                     }
                 }
