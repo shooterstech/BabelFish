@@ -17,9 +17,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         public ProjectorOfScores( CourseOfFire courseOfFire ) {
             this.CourseOfFire = courseOfFire;
+
+            //The top level event should (better be) the only Event Type == EVENT.
+            this.TopLevelEvent = EventComposite.GrowEventTree( this.CourseOfFire );
         }
 
         public CourseOfFire CourseOfFire { get; private set; }
+
+        public EventComposite TopLevelEvent { get; private set; }
 
         /// <summary>
         /// Calculates projected scores for the passed in IEventScoreProjection. Stores

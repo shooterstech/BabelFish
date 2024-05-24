@@ -373,10 +373,10 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024052217443689.0" ), "Kneeling - Intermediate" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024052310533821.0" ), "Individual - All" ); //
             var resultList = resultListResponse.ResultList;
-            resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
-            resultList.Metadata.First().Value.EndDate = DateTime.Today;
+            //resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
+            //resultList.Metadata.First().Value.EndDate = DateTime.Today;
             // resultList.RankingRuleDef = "";
             var eventName = resultList.EventName;
 
@@ -386,6 +386,13 @@ namespace Scopos.BabelFish.Tests.Definition {
             //var rankingRuleResponse = await definitionClient.GetRankingRuleDefinitionAsync( SetName.Parse( resultList.RankingRuleDef ) );
             //var rankingRules = rankingRuleResponse.Value;
 
+            //Clear all the existing Projected Scores out
+            foreach( var part in resultList.Items) {
+                foreach( var eventScore in part.EventScores.Values ) {
+                    eventScore.Projected = null;
+                }
+            }
+
             ResultEngine resultEngine = new ResultEngine( resultList );
 
             ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
@@ -394,7 +401,8 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             foreach ( var re in resultList.Items ) {
                 Console.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
-                Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
+                //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
+                Console.Write( $"{re.EventScores["Qualification"].Score.I}  {re.EventScores["Final"].Score.D}  {re.EventScores["Aggregate"].Score.S}" );
                 Console.WriteLine();
             }
 

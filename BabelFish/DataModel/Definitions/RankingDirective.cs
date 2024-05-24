@@ -88,6 +88,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
                 return new Tuple<int, int>( 0, sizeOfList );
             }
+
+            /*
+             * 
+            if (string.IsNullOrEmpty( AppliesTo ) || AppliesTo == "*") {
+                return new Tuple<int, int>( 0, sizeOfList );
+            }
+
+            ValueSeries vs = new ValueSeries( AppliesTo );
+            if (vs.StartValue < vs.EndValue ) {
+                return new Tuple<int, int>( vs.StartValue-1, vs.EndValue-vs.StartValue );
+            } else {
+                return new Tuple<int, int>( 0, sizeOfList );
+            }
+            */
         }
 
         /// <summary>

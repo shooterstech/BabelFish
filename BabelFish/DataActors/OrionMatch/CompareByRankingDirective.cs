@@ -103,13 +103,25 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         private int CompareByTieBreakingRuleList( TieBreakRuleList tieBreakingRuleType, IEventScores x, IEventScores y ) {
 
             var compare = 0;
+            var maxNumberOfRulesToFollow = int.MaxValue;
             List<TieBreakingRule> tieBreakingRules;
             if (tieBreakingRuleType == TieBreakRuleList.RULES) {
-                //Skip all of the tie breaking rules if the Result Status is still FUTURE
-                if (this.ResultStatus == ResultStatus.FUTURE) {
-                    tieBreakingRules = new List<TieBreakingRule>();
-                } else {
-                    tieBreakingRules = this.RankingDirective.Rules;
+                switch( this.ResultStatus) {
+                    case ResultStatus.FUTURE:
+                        //Skip all of the tie breaking rules if the Result Status is still FUTURE
+                        tieBreakingRules = new List<TieBreakingRule>();
+                        break;
+                    case ResultStatus.INTERMEDIATE:
+                        //Only do the first 8 (which admittedly is an arbitrarily choosen number)
+                        tieBreakingRules = this.RankingDirective.Rules;
+                        maxNumberOfRulesToFollow = 8;
+                        break;
+                    case ResultStatus.UNOFFICIAL:
+                    case ResultStatus.OFFICIAL:
+                    default:
+                        //Do all of them
+                        tieBreakingRules = this.RankingDirective.Rules;
+                        break;
                 }
             } else {
                 // TieBreakRuleList.LISTONLY
@@ -140,6 +152,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         default:
                             throw new NotImplementedException( $"Received an unexpected TieBreakingRuleMethod, '{compiledTieBreakingRule.Method}'." );
                     }
+
+                    //The objective is not to go through all tie breaking rules while status is intermediate. as it's expected ot have many ties
+                    maxNumberOfRulesToFollow--;
+                    if (maxNumberOfRulesToFollow <= 0)
+                        return 0;
 
                     if (compare != 0)
                         return compare;
