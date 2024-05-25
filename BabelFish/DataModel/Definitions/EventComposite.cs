@@ -70,6 +70,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<EventComposite> GetAllSingulars() {
             return GetEvents(false,false,false,false,false,true);
         }
+
+        /// <summary>
+        /// Returns a list of EvenComposites, that are children of this, and that have an EventType equal to one of the values passed in.
+        /// </summary>
+        /// <param name="none">No EventType listed.</param>
+        /// <param name="event">EventType == EVENT</param>
+        /// <param name="stage">EventType == STAGE</param>
+        /// <param name="series">EventType == SERIES</param>
+        /// <param name="string">EventType == STRING</param>
+        /// <param name="singular">EventType == SINGULAR</param>
+        /// <returns></returns>
         public List<EventComposite> GetEvents(bool none = true, bool @event = true, bool stage = true, bool series = true, bool @string = true, bool singular = true) {
             //NONE, EVENT, STAGE, SERIES, STRING, SINGULAR
             List<EventComposite> descendants = new List<EventComposite>();
@@ -197,6 +208,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             cof.Singulars = generatedSingulars;
         }
 
+        private static Dictionary<string, EventComposite> eventCompositeCache = new Dictionary<string, EventComposite> ();
+
         /// <summary>
         /// Generates the Event tree as defined by the passed in Course of Fire definition. 
         /// the EventComposite that is passed back, is the top level Event in the tree.
@@ -205,6 +218,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         /// <exception cref="ScoposException"></exception>
         public static EventComposite GrowEventTree( CourseOfFire cofRef ) {
+
+            //Because growing the event tree can take time, and its an operation that's often repeated, we will try
+            //and store cache copies of it and return the cached value first, before growing a new one.
+            EventComposite ec;
+            if ( eventCompositeCache.TryGetValue( cofRef.SetName, out ec ) ) { 
+                return ec; 
+            }
 
             CourseOfFire cof = cofRef.Clone(); //dont modify passed in cof
             GenerateEvents(cof);
@@ -231,6 +251,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             };
             //this should be where we go through 
             GrowChildren( cof, top, 0 );
+
+            //Store in cache, so we can use later
+            eventCompositeCache.Add( cofRef.SetName, top );
 
             return top;
         }

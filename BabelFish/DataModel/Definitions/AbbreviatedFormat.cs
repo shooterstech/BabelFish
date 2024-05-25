@@ -51,8 +51,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<AbbreviatedFormat> Children { get; set; }
 
         /// <inheritdoc/>
-        [JsonProperty(Order = 99)]
-        public string Comment { get; set; }
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context) {

@@ -233,18 +233,6 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-        [Obsolete( "Spelling error. Use GetEventAndStageStyleMappingDefinitionAsync instead." )]
-        public async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyhleMappingDefinitionAsync( SetName setName ) {
-
-            var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
-
-            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
-
-            GetDefinitionPublicResponse<EventAndStageStyleMapping> response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
-
-            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
-		}
-
 		public virtual async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
 
 			var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;

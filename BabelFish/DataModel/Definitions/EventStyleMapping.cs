@@ -29,7 +29,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string EventAppellation { get; set; } = string.Empty;
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 100 )]
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
