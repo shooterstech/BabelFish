@@ -14,7 +14,7 @@ using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition {
+    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
@@ -191,17 +191,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <inheritdoc />
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        public int Limit { get; set; } = 50;
+        [DefaultValue(0)]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int Limit { get; set; } = 0;
 
         /// <inheritdoc />
+        [DefaultValue( false )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public bool HasMoreItems {
             get {
                 return !string.IsNullOrEmpty( NextToken );
             }
         }
+
+        /// <inheritdoc />
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public string PublishTransactionId { get; set; } = string.Empty;
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.
@@ -266,11 +277,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <inheritdoc />
         public override string ToString() {
-            StringBuilder foo = new StringBuilder();
-            foo.Append( "ResultList for " );
-            foo.Append( ResultName );
-            return foo.ToString();
+            return $"ResultList for {ResultName}" ;
         }
     }
 }

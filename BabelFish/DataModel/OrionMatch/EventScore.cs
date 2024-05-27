@@ -27,7 +27,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// OFFICIAL
         /// </summary>
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public ResultStatus Status { get; set; } = ResultStatus.INTERMEDIATE;
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Populate )]
+        [DefaultValue( ResultStatus.FUTURE ) ]
+        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
         /// <summary>
         /// If this Event matches with a defined EventStyle
