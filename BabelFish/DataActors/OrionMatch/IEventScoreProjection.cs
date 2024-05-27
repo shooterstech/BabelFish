@@ -17,5 +17,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// </summary>
         /// <param name="ps"></param>
         void ProjectScores( ProjectorOfScores ps );
+
+        //TODO: Come up with a better name.
+        List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection();
+
+        void SetTeamMembersFromIEventScoreProjection(  List<IEventScoreProjection> teamMembers );
     }
 }

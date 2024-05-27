@@ -7,9 +7,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     public interface IEventScores : IParticipant {
 
-        //TODO: Come up with a better name.
-        List<IEventScores> GetTeamMembersAsIEventScores();
-
         Dictionary<string, EventScore> EventScores { get; }
 
         Dictionary<string, Shot> Shots { get; }

@@ -14,13 +14,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire ) : base( courseOfFire ) {
         }
 
+        public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire, CompareByRankingDirective teamMemberComparer ) : base (courseOfFire, teamMemberComparer) {
+        }
+
         public override string ProjectionMadeBy {
             get {
                 return "BabelFish ProjectScoresByAverageShotFired";
             }
         }
 
-        //Projection and AvgShots exists as class variable to make recussion easier. They need to be cleared with each call to ProjectEventScores()
+        //Projection and AvgShots exists as class variable to make recussion easier. They need to be cleared with each call to ProjectAthleteScores()
         private IEventScoreProjection Projection { get; set; }
 
         //first key is stage style setname, second key is avgType [(I)INT, (D)DEC, (X)INNER] value is avg.
@@ -28,7 +31,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         /// <inheritdoc/>
         /// <param name="projection"></param>
-        public override void ProjectEventScores( IEventScoreProjection projection ) {
+        public override void ProjectAthleteScores( IEventScoreProjection projection ) {
+
+            if (projection.Participant is Team) {
+                //This is more of an Assert statement. We shouldn't get here if ProjectorOfScores.ProjectEventScores is written correctly.
+                throw new ArgumentException( "ProjectAthleteScores can not project scores if the .Participant is a Team." );
+            }
 
             this.Projection = projection;
             this.AvgShots.Clear();

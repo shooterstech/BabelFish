@@ -282,7 +282,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var mappingSetName = SetName.Parse("v1.0:ntparc:Air Rifle");
             var cofSetName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
 
-            var mappingResponse = client.GetEventAndStageStyhleMappingDefinitionAsync(mappingSetName);
+            var mappingResponse = client.GetEventAndStageStyleMappingDefinitionAsync(mappingSetName);
             var mappingResult = mappingResponse.Result;
             var mapping = mappingResult.Definition;
             Assert.AreEqual(HttpStatusCode.OK, mappingResult.StatusCode, $"Expecting and OK status code, instead received {mappingResult.StatusCode}.");
@@ -319,7 +319,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var mappingSetName = SetName.Parse( "v1.0:usas:Air Rifle" );
             var cofSetName = SetName.Parse( "v2.0:usas:Air Rifle Qualification 60 Shots" );
 
-            var mappingResponse = client.GetEventAndStageStyhleMappingDefinitionAsync( mappingSetName );
+            var mappingResponse = client.GetEventAndStageStyleMappingDefinitionAsync( mappingSetName );
             var mappingResult = mappingResponse.Result;
             var mapping = mappingResult.Definition;
             Assert.AreEqual( HttpStatusCode.OK, mappingResult.StatusCode, $"Expecting and OK status code, instead received {mappingResult.StatusCode}." );

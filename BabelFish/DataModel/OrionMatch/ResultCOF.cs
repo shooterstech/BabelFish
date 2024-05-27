@@ -229,9 +229,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public List<IEventScores> GetTeamMembersAsIEventScores() {
+        public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
             //Result COF does not have TeamMembers (not yet at least) so returning an empty list
-            return new List<IEventScores>();
+            return new List<IEventScoreProjection>();
+        }
+
+        /// <inheritdoc />
+        public void SetTeamMembersFromIEventScoreProjection( List<IEventScoreProjection> teamMembers ) {
+            //Result COF does not have TeamMembers (not yet at least) so doing nothing
+            ;
         }
     }
 }

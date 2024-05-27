@@ -50,12 +50,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		[DefaultValue(0)]
 		public int ProjectedRank { get; set; } = 0;
 
+
         /// <summary>
 		/// ProjectedRankOrder is very nearly the same as ProjectedRank. The difference is if there is an unbreakable tie. In an
 		/// unbreakable tie the two partjicipants are given the same ProjectedRank but different ProjectedRankOrder.
         /// </summary>
         [DefaultValue( 0 )]
         public int ProjectedRankOrder { get; set; } = 0;
+
 
         /// <summary>
         /// The Local Date that this score was shot. 
@@ -64,24 +66,35 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonConverter( typeof( DateConverter ) )]
 		public DateTime LocalDate { get; set; } = DateTime.Today;
 
-		/// <summary>
-		/// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
-		/// </summary>
-		public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
-		public List<IEventScores> GetTeamMembersAsIEventScores() {
+        /// <inheritdoc />
+		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
 			if (TeamMembers == null) {
-				return new List<IEventScores>();
+				return new List<IEventScoreProjection>();
 			}
 
-			return TeamMembers.ToList<IEventScores>();
-		}
+			return TeamMembers.ToList<IEventScoreProjection>();
+        }
 
-		/// <inheritdoc />
+        /// <inheritdoc />
+        public void SetTeamMembersFromIEventScoreProjection( List<IEventScoreProjection> teamMembers ) {
+            
+            if (TeamMembers == null) 
+                TeamMembers = new List<ResultEvent>();
+
+            TeamMembers.Clear();
+
+            foreach( var tm in teamMembers) {
+                TeamMembers.Add( (ResultEvent)tm );
+            }
+        }
+
+        /// <inheritdoc />
         public void ProjectScores( ProjectorOfScores ps ) {
             ps.ProjectEventScores( this );
         }
 
+        [JsonProperty( Order = 50)]
         public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
 
         /// <summary>
@@ -93,7 +106,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonIgnore]
 		[DefaultValue( null ) ]
-		public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
+
+
+        /// <summary>
+        /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
+        /// </summary>
+        [JsonProperty( Order = 52)]
+        public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
         /// <inheritdoc />
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
@@ -108,6 +128,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return shotsByEventName;
         }
-
     }
 }
