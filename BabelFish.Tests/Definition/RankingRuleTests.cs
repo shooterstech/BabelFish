@@ -373,7 +373,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024052711464077.0" ), "Team - All" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID("1.7.2024052814512643.0"), "Individual - Sporter" ); //
             var resultList = resultListResponse.ResultList;
             resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
             //resultList.Metadata.First().Value.EndDate = DateTime.Today;
@@ -395,7 +395,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             ResultEngine resultEngine = new ResultEngine( resultList );
 
-            ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
+            ProjectorOfScores ps = new ProjectScoresByScoreHistory( courseOfFire );
 
             await resultEngine.SortAsync( ps, true );
 

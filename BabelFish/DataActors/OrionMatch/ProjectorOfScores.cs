@@ -94,7 +94,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// Method to initialize internal parameters for the ProjectorOfScores. Default implementation is not to do anything.
         /// </summary>
         /// <param name="listOfParticipants"></param>
-        public virtual void PreInit( List<IEventScoreProjection> listOfParticipants ) { }
+        public virtual async Task PreInitAsync( List<IEventScoreProjection> listOfParticipants ) { }
 
         public virtual void ProjectTeamScores( IEventScoreProjection teamToProject, EventComposite eventToProject, int recusionDepth ) {
 
