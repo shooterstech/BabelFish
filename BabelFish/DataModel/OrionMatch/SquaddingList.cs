@@ -122,6 +122,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public string PublishTransactionId { get; set; } = string.Empty;
 
+        /// <inheritdoc />
+        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionSequence { get; set; } = 0;
+
+        /// <inheritdoc />
+        [DefaultValue( 1 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionCount { get; set; } = 1;
+
         public override string ToString() {
             return $"SquaddingList with {Items.Count} items";
         }

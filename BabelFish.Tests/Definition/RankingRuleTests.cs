@@ -400,6 +400,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
+                var inv = (Individual)re.Participant;
                 Console.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
                 Console.Write( $"{re.EventScores["Qualification"].Projected.I}  {re.EventScores["Qualification"].Score.I}" );

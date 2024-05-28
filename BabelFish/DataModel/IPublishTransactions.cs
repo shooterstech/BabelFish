@@ -21,6 +21,20 @@ namespace Scopos.BabelFish.DataModel {
         /// </summary>
         public string PublishTransactionId { get; set; }
 
+        /// <summary>
+        /// When a list has to be published over multiple messages, this is the 0 based index of the broken
+        /// up messages.
+        /// </summary>
+        public int TransactionSequence {  get; set; }
+
+        /// <summary>
+        /// When a list has to be published over multiple messages, this is the index value of the last
+        /// message that will be sent. When TransactionSequence == TransactionCount - 1 (assuming
+        /// in order receipt) this will be the last message for this transaction. 
+        /// </summary>
+        public int TransactionCount { get; set; }
+
+
 
     }
 }
