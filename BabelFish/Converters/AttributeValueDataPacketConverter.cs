@@ -45,8 +45,10 @@ namespace Scopos.BabelFish.Converters {
             o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
             o["AttributeValue"] = new JObject();
 
-            foreach ( var field in attrValueDataPacket.AttributeValue.GetDefintionFields() ) {
-                o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+            if (attrValueDataPacket.AttributeValue != null) {
+                foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
+                    o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+                }
             }
             
             o.WriteTo( writer );
