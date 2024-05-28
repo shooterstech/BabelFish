@@ -90,6 +90,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Method to initialize internal parameters for the ProjectorOfScores. Default implementation is not to do anything.
+        /// </summary>
+        /// <param name="listOfParticipants"></param>
+        public virtual void PreInit( List<IEventScoreProjection> listOfParticipants ) { }
+
         public virtual void ProjectTeamScores( IEventScoreProjection teamToProject, EventComposite eventToProject, int recusionDepth ) {
 
             //Calculate the .Projected score for the EventComposite we got called for.

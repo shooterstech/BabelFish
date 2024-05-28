@@ -189,8 +189,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL)
             if (this.ResultList.Status == ResultStatus.INTERMEDIATE) {
 
+
                 //Project (predict) the scores of athlets at the end of the match.
                 this.ResultList.ProjectionMadeBy = ps.ProjectionMadeBy;
+                ps.PreInit( this.ResultList.Items.ToList<IEventScoreProjection>() );
                 foreach (var item in this.ResultList.Items) {
                     item.ProjectScores( ps );
                 }
