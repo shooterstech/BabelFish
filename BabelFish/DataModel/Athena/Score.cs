@@ -80,5 +80,39 @@ namespace Scopos.BabelFish.DataModel.Athena {
             }
         }
 
+        [JsonIgnore]
+        public int NumShotsFired { get; set; } = 0;
+
+        public Score GetAvgShotFired()
+        {
+            if (NumShotsFired == 0) return new Score();
+            return new Score
+            {
+                X = X / NumShotsFired,
+                D = D / NumShotsFired,
+                I = I / NumShotsFired,
+                S = S / NumShotsFired,
+                J = J / NumShotsFired,
+                K = K / NumShotsFired,
+                L = L / NumShotsFired
+            };
+        }
+
+        public static Score operator +( Score left, Score right)
+        {
+            return new Score
+            {
+                X = left.X + right.X,
+                D = left.D + right.D,
+                I = left.I + right.I,
+                S = left.S + right.S,
+                J = left.J + right.J,
+                K = left.K + right.K,
+                L = left.L + right.L,
+                NumShotsFired = left.NumShotsFired + right.NumShotsFired,
+            };
+        }
+
+
     }
 }
