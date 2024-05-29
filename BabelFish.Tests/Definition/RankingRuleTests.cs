@@ -10,6 +10,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using System.Diagnostics;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
@@ -369,6 +370,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task EriksPlayground() {
 
+
             DefinitionFetcher.XApiKey = Constants.X_API_KEY;
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
@@ -396,14 +398,15 @@ namespace Scopos.BabelFish.Tests.Definition {
             ResultEngine resultEngine = new ResultEngine( resultList );
 
             ProjectorOfScores ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
+            //ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
 
             await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
-                Console.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
+                Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Console.Write( $"{re.EventScores["Qualification"].Projected.I}  {re.EventScores["Qualification"].Score.I}" );
-                Console.WriteLine();
+                Debug.Write( $"{re.EventScores["Qualification"].Projected.I}  {re.EventScores["Qualification"].Score.I}" );
+                Debug.WriteLine("\n");
             }
 
         }

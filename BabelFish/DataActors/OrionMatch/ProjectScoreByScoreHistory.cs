@@ -248,7 +248,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             }
             else if (shotsFired == 0)
             {
-                if (!string.IsNullOrEmpty(es.StageStyleDef) && StageStyleScores.TryGetValue(es.StageStyleDef, out Score stageScores))
+                if (!string.IsNullOrEmpty(es.StageStyleDef) && StageStyleScores.TryGetValue(es.StageStyleDef, out Score stageScores) && stageScores.NumShotsFired > 0)
                 {//If we have scores for the stage style, use that as our default 
                     projectedIntThisStage = (float)stageScores.I / (float)stageScores.NumShotsFired;
                     projectedDecThisStage = stageScores.D / stageScores.NumShotsFired;
