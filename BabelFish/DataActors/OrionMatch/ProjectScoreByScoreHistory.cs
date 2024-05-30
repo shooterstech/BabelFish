@@ -3,6 +3,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
+using System.Linq;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch
@@ -38,7 +39,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
          * }
          */
         private static Dictionary<string, Dictionary<string, ScoreAverageStageStyleEntry>> scoreHistoryCache = new Dictionary<string, Dictionary<string, ScoreAverageStageStyleEntry>>();
-
+        private static HashSet<string> userIDCache = new HashSet<string>();
+        private static HashSet<SetName> stageStylesCache = new HashSet<SetName>();
 
         private void AddOrUpdateScoreAvgEntry(string user, string stageStyle, ScoreAverageStageStyleEntry entry)
         {
@@ -50,7 +52,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             scoreHistoryCache[user][stageStyle] = entry;
         }
 
-        private AveragedScore RetrieveAvgScoreHistory(string user, string stageStyle) //TODO if not found, should attempt retrieve?
+        private AveragedScore RetrieveAvgScoreHistory(string user, string stageStyle)
         {
             if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(stageStyle) && scoreHistoryCache.ContainsKey(user))
             {
@@ -65,68 +67,65 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
         public override async Task PreInitAsync(List<IEventScoreProjection> listOfParticipants)
         {
-            List<string> uids = new List<string>();
-            HashSet<SetName> stageStyles = new HashSet<SetName>();
+            bool requestNeeded = false;
+
             foreach (var part in listOfParticipants) //get list of non-empty user ids
             {
                 var ind = (Individual)part.Participant;
-                if (!string.IsNullOrEmpty(ind.UserID))
+                if (!string.IsNullOrEmpty(ind.UserID) && !userIDCache.Contains(ind.UserID))
                 {
-                    uids.Add(ind.UserID);
+                    userIDCache.Add(ind.UserID);
+                    requestNeeded = true;
                 }
 
                 foreach (var ev in part.EventScores)
                 {
                     if (!string.IsNullOrEmpty(ev.Value.StageStyleDef))
                     {
-                        stageStyles.Add(SetName.Parse(ev.Value.StageStyleDef));
+                        SetName setName = SetName.Parse(ev.Value.StageStyleDef);
+                        if (!stageStylesCache.Contains(setName))
+                        {
+                            stageStylesCache.Add(setName);
+                            requestNeeded = true;
+                        }
                     }
                 }
 
             }
-
-            /*var scoreAverageRequest = new GetScoreAveragePublicRequest();
-            scoreAverageRequest.UserIds = uids;
-            scoreAverageRequest.StageStyleDefs = stageStyles.ToList();
-            var scoreHistoryClient = new ScoreHistoryAPIClient("uONGn6tHGw14kreLdqbfJ9rwR2C55uS8a9rGnmIf", APIStage.BETA); //TODO DONT HARD CODE!@!
-            var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
-            Console.WriteLine("")
-            if (System.Net.HttpStatusCode.OK == scoreAverageResponse.StatusCode)
-            {
-
-            }*/
 
             var scoreAverageRequest = new GetScoreAveragePublicRequest
             {
-                UserIds = uids,
-                StageStyleDefs = stageStyles.ToList()
+                UserIds = userIDCache.ToList(),
+                StageStyleDefs = stageStylesCache.ToList()
             };
 
-
-
-            try
+            if(requestNeeded)
             {
-                var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
-
-                if (scoreAverageResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                try
                 {
-                    foreach (ScoreAverageStageStyleEntry scoreAvg in scoreAverageResponse.ScoreAverageList.Items)
+                    var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
+
+                    if (scoreAverageResponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        AddOrUpdateScoreAvgEntry(scoreAvg.UserId, scoreAvg.StageStyleDef, scoreAvg);
-                    }
+                        foreach (ScoreAverageStageStyleEntry scoreAvg in scoreAverageResponse.ScoreAverageList.Items)
+                        {
+                            AddOrUpdateScoreAvgEntry(scoreAvg.UserId, scoreAvg.StageStyleDef, scoreAvg);
+                        }
 
+                    }
+                    else
+                    {
+                        // Handle non-successful response
+                        Console.WriteLine($"Error: {scoreAverageResponse.StatusCode}");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    // Handle non-successful response
-                    Console.WriteLine($"Error: {scoreAverageResponse.StatusCode}");
+                    // Handle exceptions
+                    Console.WriteLine($"Exception occurred: {ex.Message}");
                 }
             }
-            catch (Exception ex)
-            {
-                // Handle exceptions
-                Console.WriteLine($"Exception occurred: {ex.Message}");
-            }
+            
         }
 
 
