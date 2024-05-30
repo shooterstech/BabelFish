@@ -228,32 +228,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
         /*
          * Projects the score of a single event of type Stage
-         CREATE FUNCTION predict_score(
-		    current_score decimal(16, 8), 
-		    num_shots_taken int,
-		    num_shots_total int,
-		    history_avg_shot decimal(16, 8)
-	    ) 
-	        RETURNS decimal(6, 1) DETERMINISTIC
-        BEGIN
-	        DECLARE num_shots_left int DEFAULT num_shots_total - num_shots_taken;
-	        DECLARE match_avg_shot decimal(16, 8) DEFAULT IF(num_shots_taken>0, current_score / num_shots_taken, 0.0);
-	        DECLARE percentage_shots_taken decimal(16, 8) DEFAULT num_shots_taken/num_shots_total;
-	
-	        IF (ISNULL(history_avg_shot) OR history_avg_shot = 0) THEN
-		        RETURN current_score + (num_shots_left*match_avg_shot) ;
-	        END IF;avgIntThisStage
-    
-	        RETURN current_score 
-			        + (num_shots_left*match_avg_shot)*percentage_shots_taken 
-			        + (num_shots_left*history_avg_shot)*(1.0-percentage_shots_taken);#TODO IMPROVE
-	
-        END 
          */
         private Score ProjectStageScore(EventComposite stageEvent, EventScore es)
         {
-            //TODO project stage score
-
             //get singulars for stage I am in, then count those and that is how many shots to take total.
             var singulars = stageEvent.GetEvents(false, false, false, false, false, true);
             var shotsFired = es.NumShotsFired;
@@ -296,17 +273,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                
             }
 
-
-            AveragedScore scoreHistoryAvg = RetrieveAvgScoreHistory(((Individual)Projection).UserID, es.StageStyleDef);
-            if (true || scoreHistoryAvg.IsZero)
+            AveragedScore scoreHistoryAvg = RetrieveAvgScoreHistory(((Individual)Projection.Participant).UserID, es.StageStyleDef);
+            if (scoreHistoryAvg.IsZero)
             {
                 scoreHistoryAvg = avgScoreThisStage; //If no score history, then use avg shot fired
             }
             
             es.Projected.I = (int)PredictScore(es.Score.I, avgScoreThisStage.I, scoreHistoryAvg.I, shotsRemaining, percentageShotsTaken);
-
             es.Projected.D = PredictScore(es.Score.D, avgScoreThisStage.D, scoreHistoryAvg.D, shotsRemaining, percentageShotsTaken);
-
             es.Projected.X = (int)PredictScore(es.Score.X, avgScoreThisStage.X, scoreHistoryAvg.X, shotsRemaining, percentageShotsTaken);
 
             es.Projected.D = (float)Math.Round(es.Projected.D, 1);
@@ -319,10 +293,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
 
         /*   From SQL query
-             * RETURN current_score 
+         CREATE FUNCTION predict_score(
+		    current_score decimal(16, 8), 
+		    num_shots_taken int,
+		    num_shots_total int,
+		    history_avg_shot decimal(16, 8)
+	    ) 
+	        RETURNS decimal(6, 1) DETERMINISTIC
+        BEGIN
+	        DECLARE num_shots_left int DEFAULT num_shots_total - num_shots_taken;
+	        DECLARE match_avg_shot decimal(16, 8) DEFAULT IF(num_shots_taken>0, current_score / num_shots_taken, 0.0);
+	        DECLARE percentage_shots_taken decimal(16, 8) DEFAULT num_shots_taken/num_shots_total;
+	
+	        IF (ISNULL(history_avg_shot) OR history_avg_shot = 0) THEN
+		        RETURN current_score + (num_shots_left*match_avg_shot) ;
+	        END IF;avgIntThisStage
+    
+	        RETURN current_score 
 			        + (num_shots_left*match_avg_shot)*percentage_shots_taken 
 			        + (num_shots_left*history_avg_shot)*(1.0-percentage_shots_taken);#TODO IMPROVE
-             */
+	
+        END              */
         private float PredictScore(float currentScore, float avgScore, float historyAvg, int shotsRemaining, float percentageShotsTaken)
         {
             return currentScore + shotsRemaining * (
