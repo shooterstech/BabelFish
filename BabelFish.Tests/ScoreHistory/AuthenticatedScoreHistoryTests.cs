@@ -235,15 +235,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync(createRequestFromCoach);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, createResponse.StatusCode);
 
-            //athlete accepts coach request
-            var approveRequest = new ApproveRelationshipRoleAuthenticatedRequest(athleteAuthentication);
-            approveRequest.RelationshipName = SocialRelationshipName.COACH;
-            approveRequest.ActiveId = coachUserId;
-            var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync(approveRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, approveResponse.StatusCode);
-
-            //coach can now access athlete's protected scores in addition to their own
-            var scoreHistoryRequest = new GetScoreHistoryAuthenticatedRequest(userAuthentication);
+            //athlete hasn't approved, coach can't access athlete protected scores from history or avgs
+            var scoreHistoryRequest = new GetScoreHistoryAuthenticatedRequest(coachAuthentication);
             scoreHistoryRequest.StartDate = new DateTime(2023, 04, 15);
             scoreHistoryRequest.EndDate = new DateTime(2023, 04, 22);
             scoreHistoryRequest.UserIds = new List<string>() { coachUserId, athleteUserId };
@@ -252,10 +245,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreHistoryRequest.EventStyleDef = SetName.Parse(eventStyleDef);
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryAuthenticatedAsync(scoreHistoryRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, scoreHistoryResponse.StatusCode);
 
-
-            //coach can now access protected score averages of athlete
             var scoreAverageRequest = new GetScoreAverageAuthenticatedRequest(coachAuthentication);
             scoreAverageRequest.StartDate = new DateTime(2023, 04, 1);
             scoreAverageRequest.EndDate = new DateTime(2023, 04, 30);
@@ -270,6 +261,22 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             };
             scoreAverageRequest.Format = ScoreHistoryFormatOptions.DAY;
             var scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAuthenticatedAsync(scoreAverageRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, scoreAverageResponse.StatusCode);
+
+
+            //athlete accepts coach request
+            var approveRequest = new ApproveRelationshipRoleAuthenticatedRequest(athleteAuthentication);
+            approveRequest.RelationshipName = SocialRelationshipName.COACH;
+            approveRequest.ActiveId = coachUserId;
+            var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync(approveRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, approveResponse.StatusCode);
+
+            //coach can now access athlete's protected scores in addition to their own
+            scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryAuthenticatedAsync(scoreHistoryRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode);
+
+            //coach can now access protected score averages of athlete
+            scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAuthenticatedAsync(scoreAverageRequest);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreAverageResponse.StatusCode);
 
         }
