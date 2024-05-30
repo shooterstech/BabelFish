@@ -123,13 +123,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                     else
                     {
                         // Handle non-successful response
-                        Console.WriteLine($"Error: {scoreAverageResponse.StatusCode}");
+                        Console.WriteLine($"Error when retrieving score history: {scoreAverageResponse.StatusCode}");
                     }
                 }
                 catch (Exception ex)
                 {
                     // Handle exceptions
-                    Console.WriteLine($"Exception occurred: {ex.Message}");
+                    Console.WriteLine($"Exception occurred when retrieving score history: {ex.Message}");
                 }
             }
             
