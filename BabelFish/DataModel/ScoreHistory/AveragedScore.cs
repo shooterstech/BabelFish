@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scopos.BabelFish.DataModel.Athena;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,19 +15,45 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// </summary>
         public AveragedScore() { }
 
+        public AveragedScore(Score score) { 
+            X = (float)score.X;
+            D = score.D;
+            I = (float)score.I;
+        }
+
         /// <summary>
         /// Average number of inner tens.
         /// </summary>
-        public float X { get; set; }
+        public float X { get; set; } = 0.0f;
 
         /// <summary>
         /// Averaged decimal score value
         /// </summary>
-        public float D { get; set; }
+        public float D { get; set; } = 0.0f;
 
         /// <summary>
         /// Averaged integer score value
         /// </summary>
-        public float I { get; set; }
+        public float I { get; set; } = 0.0f;
+
+        public static AveragedScore operator +(AveragedScore left, AveragedScore right)
+        {
+            return new AveragedScore()
+            {
+                X = left.X + right.X,
+                D = left.D + right.D,
+                I = left.I + right.I
+            };
+        }
+
+        public static AveragedScore operator /(AveragedScore left, float right)
+        {
+            return new AveragedScore()
+            {
+                X = left.X / right,
+                D = left.D / right,
+                I = left.I / right
+            };
+        }
     }
 }

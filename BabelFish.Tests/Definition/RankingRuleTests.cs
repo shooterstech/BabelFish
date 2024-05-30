@@ -405,7 +405,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             foreach ( var re in resultList.Items ) {
                 Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Debug.Write( $"{re.EventScores["Qualification"].Projected.I}  {re.EventScores["Qualification"].Score.I}" );
+                Debug.Write( $"{re.EventScores["Qualification"].Projected.D}  {re.EventScores["Qualification"].Score.D}" );
                 Debug.WriteLine("\n");
             }
 

@@ -50,17 +50,17 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             scoreHistoryCache[user][stageStyle] = entry;
         }
 
-        private ScoreAverageStageStyleEntry RetrieveScoreAvgEntry(string user, string stageStyle, ScoreAverageStageStyleEntry entry) //TODO if not found, should retrieve
+        private AveragedScore RetrieveAvgScoreHistory(string user, string stageStyle, ScoreAverageStageStyleEntry entry) //TODO if not found, should retrieve
         {
             if (scoreHistoryCache.ContainsKey(user))
             {
                 if (scoreHistoryCache[user].ContainsKey(stageStyle))
                 {
-                    return scoreHistoryCache[user][stageStyle];
+                    return scoreHistoryCache[user][stageStyle].ScoreAverage;
                 }
             }
 
-            return new ScoreAverageStageStyleEntry(); // TODO look up? otherwise zero scores?
+            return new AveragedScore(); // TODO look up? otherwise zero scores?
         }
 
         public override async Task PreInitAsync(List<IEventScoreProjection> listOfParticipants)
@@ -218,6 +218,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                 eventScore.Projected += childScore; //RecurProjectScores(childEvent);
             }
 
+            eventScore.Projected.D = (float)Math.Round(eventScore.Projected.D, 1);
+            eventScore.Projected.S = (float)Math.Round(eventScore.Projected.S, 1);
             return eventScore.Projected;
 
 
@@ -226,6 +228,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
         /*
          * Projects the score of a single event of type Stage
+         CREATE FUNCTION predict_score(
+		    current_score decimal(16, 8), 
+		    num_shots_taken int,
+		    num_shots_total int,
+		    history_avg_shot decimal(16, 8)
+	    ) 
+	        RETURNS decimal(6, 1) DETERMINISTIC
+        BEGIN
+	        DECLARE num_shots_left int DEFAULT num_shots_total - num_shots_taken;
+	        DECLARE match_avg_shot decimal(16, 8) DEFAULT IF(num_shots_taken>0, current_score / num_shots_taken, 0.0);
+	        DECLARE percentage_shots_taken decimal(16, 8) DEFAULT num_shots_taken/num_shots_total;
+	
+	        IF (ISNULL(history_avg_shot) OR history_avg_shot = 0) THEN
+		        RETURN current_score + (num_shots_left*match_avg_shot) ;
+	        END IF;avgIntThisStage
+    
+	        RETURN current_score 
+			        + (num_shots_left*match_avg_shot)*percentage_shots_taken 
+			        + (num_shots_left*history_avg_shot)*(1.0-percentage_shots_taken);#TODO IMPROVE
+	
+        END 
          */
         private Score ProjectStageScore(EventComposite stageEvent, EventScore es)
         {
@@ -236,39 +259,50 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             var shotsFired = es.NumShotsFired;
             //we want to always project shots if we have ANY remaining.
             var shotsRemaining = singulars.Count - shotsFired;
-            var projectedIntThisStage = 0.0f;
-            var projectedDecThisStage = 0.0f;
-            var projectedXPerShot = 0.0f;
-            if (shotsFired > 0 && singulars.Count > 0)
+
+            float percentageShotsRemaining = shotsRemaining>0?(float)shotsFired / (float)shotsRemaining:0;
+            
+            es.Projected = new DataModel.Athena.Score();
+            if (singulars.Count <= 0)
+            {
+                //no expected shots for this stage, this shouldnt happen
+                return es.Projected;
+            }
+
+            AveragedScore avgScoreThisStage; 
+            if (shotsFired > 0 )
             { //if there are shots fired in this stage, and there should be, we should use those 
-                projectedIntThisStage = (float)es.Score.I / (float)shotsFired;
-                projectedDecThisStage = es.Score.D / shotsFired;
-                projectedXPerShot = (float)es.Score.X / (float)shotsFired;
+                avgScoreThisStage = new AveragedScore(es.Score);
+                avgScoreThisStage /= (float)shotsFired;
 
             }
-            else if (shotsFired == 0)
+            else //no shots fired
             {
                 if (!string.IsNullOrEmpty(es.StageStyleDef) && StageStyleScores.TryGetValue(es.StageStyleDef, out Score stageScores) && stageScores.NumShotsFired > 0)
                 {//If we have scores for the stage style, use that as our default 
-                    projectedIntThisStage = (float)stageScores.I / (float)stageScores.NumShotsFired;
-                    projectedDecThisStage = stageScores.D / stageScores.NumShotsFired;
-                    projectedXPerShot = (float)stageScores.X / (float)stageScores.NumShotsFired;
+                    avgScoreThisStage = new AveragedScore(stageScores);
+                    avgScoreThisStage /= (float)stageScores.NumShotsFired;
                 }
-                else
-                {//If we donn't, use the overall average shot fired
-                    projectedIntThisStage = (float)TopLevelEventScore.I / (float)TopLevelEventScore.NumShotsFired;
-                    projectedDecThisStage = TopLevelEventScore.D / TopLevelEventScore.NumShotsFired;
-                    projectedXPerShot = (float)TopLevelEventScore.X / (float)TopLevelEventScore.NumShotsFired;
+                else if (TopLevelEventScore.NumShotsFired > 0)
+                {//If we don't but have other shots in the match, use the overall average shot fired
+                    avgScoreThisStage = new AveragedScore(TopLevelEventScore);
+                    avgScoreThisStage /= (float)TopLevelEventScore.NumShotsFired;
+
                 }
+                else //otherwise no shots have been fired, predict 0
+                {
+                    avgScoreThisStage = new AveragedScore();
+                }
+               
             }
 
             //project the scores
-            es.Projected = new DataModel.Athena.Score();
-            es.Projected.I = es.Score.I + (int)(projectedIntThisStage * shotsRemaining);
-            es.Projected.D = es.Score.D + (projectedDecThisStage * shotsRemaining);
+            es.Projected.I = es.Score.I + (int)(avgScoreThisStage.I * shotsRemaining);
+            es.Projected.D = es.Score.D + (avgScoreThisStage.D * shotsRemaining);
+            es.Projected.X = (int)(es.Score.X + (avgScoreThisStage.X * shotsRemaining));
+
             es.Projected.D = (float)Math.Round(es.Projected.D, 1);
             es.Projected.S = es.Projected.D;
-            es.Projected.X = (int)(es.Score.X + (projectedXPerShot * shotsRemaining));
 
             return es.Projected;
 
