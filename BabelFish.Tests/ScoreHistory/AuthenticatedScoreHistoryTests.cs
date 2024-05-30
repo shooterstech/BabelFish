@@ -19,6 +19,9 @@ using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.DataModel.SocialNetwork;
+using Scopos.BabelFish.Requests.SocialNetworkAPI;
 
 namespace Scopos.BabelFish.Tests.ScoreHistory {
 
@@ -171,8 +174,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 			scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
 			//scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
 			
-			//var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
-			//scoreHistoryRequest.EventStyleDef = SetName.Parse( eventStyleDef );
+			var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
+			scoreHistoryRequest.EventStyleDef = SetName.Parse( eventStyleDef );
 
 			var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryAuthenticatedAsync( scoreHistoryRequest );
 
@@ -190,5 +193,87 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
 			Assert.IsTrue( hasAtLeastOneEventStyleEntry );
 		}
+
+        [TestMethod]
+        public async Task CoachAccessAthleteProtectedData()
+        {
+            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
+            var clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
+            var socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
+
+            //TestDev1 is a POC for licence 7
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev1Credentials.Username,
+                Constants.TestDev1Credentials.Password);
+            await userAuthentication.InitializeAsync();
+            int licenseNumber = 7;
+
+            var coachAuthentication = new UserAuthentication( //TestDev3 will act as coach 
+                Constants.TestDev3Credentials.Username,
+                Constants.TestDev3Credentials.Password);
+            await coachAuthentication.InitializeAsync();
+            var coachUserId = Constants.TestDev3UserId;
+
+            var athleteAuthentication = new UserAuthentication( //TestDev7 will act as athelete
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await athleteAuthentication.InitializeAsync();
+            var athleteUserId = Constants.TestDev7UserId;
+
+            //TestDev1 assigns TestDev3 as coach
+            var postRequest = new CreateCoachAssignmentAuthenticatedRequest(userAuthentication);
+            postRequest.LicenseNumber = licenseNumber;
+            postRequest.UserId.Add(coachUserId);
+            var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+
+            //coach requests to coach athlete
+            var createRequestFromCoach = new CreateRelationshipRoleAuthenticatedRequest(coachAuthentication);
+            createRequestFromCoach.RelationshipName = SocialRelationshipName.COACH;
+            createRequestFromCoach.ActiveId = coachUserId;
+            createRequestFromCoach.PassiveId = athleteUserId;
+            var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync(createRequestFromCoach);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, createResponse.StatusCode);
+
+            //athlete accepts coach request
+            var approveRequest = new ApproveRelationshipRoleAuthenticatedRequest(athleteAuthentication);
+            approveRequest.RelationshipName = SocialRelationshipName.COACH;
+            approveRequest.ActiveId = coachUserId;
+            var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync(approveRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, approveResponse.StatusCode);
+
+            //coach can now access athlete's protected scores in addition to their own
+            var scoreHistoryRequest = new GetScoreHistoryAuthenticatedRequest(userAuthentication);
+            scoreHistoryRequest.StartDate = new DateTime(2023, 04, 15);
+            scoreHistoryRequest.EndDate = new DateTime(2023, 04, 22);
+            scoreHistoryRequest.UserIds = new List<string>() { coachUserId, athleteUserId };
+
+            var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
+            scoreHistoryRequest.EventStyleDef = SetName.Parse(eventStyleDef);
+
+            var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryAuthenticatedAsync(scoreHistoryRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode);
+
+
+            //coach can now access protected score averages of athlete
+            var scoreAverageRequest = new GetScoreAverageAuthenticatedRequest(coachAuthentication);
+            scoreAverageRequest.StartDate = new DateTime(2023, 04, 1);
+            scoreAverageRequest.EndDate = new DateTime(2023, 04, 30);
+            scoreAverageRequest.UserIds = new List<string>() { athleteUserId };
+            const string kneelingDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
+            const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
+            const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
+            scoreAverageRequest.StageStyleDefs = new List<SetName>() {
+                SetName.Parse( kneelingDef ),
+                SetName.Parse( proneDef ),
+                SetName.Parse( standingDef )
+            };
+            scoreAverageRequest.Format = ScoreHistoryFormatOptions.DAY;
+            var scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAuthenticatedAsync(scoreAverageRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreAverageResponse.StatusCode);
+
+        }
+
+
 	}
 }
