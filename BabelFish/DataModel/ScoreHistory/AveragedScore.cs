@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Athena;
+﻿using Newtonsoft.Json;
+using Scopos.BabelFish.DataModel.Athena;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,6 +36,15 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// Averaged integer score value
         /// </summary>
         public float I { get; set; } = 0.0f;
+
+        [JsonIgnore]
+        public bool IsZero
+        {
+            get
+            {
+                return (X == 0 && D == 0 && I == 0);
+            }
+        }
 
         public static AveragedScore operator +(AveragedScore left, AveragedScore right)
         {

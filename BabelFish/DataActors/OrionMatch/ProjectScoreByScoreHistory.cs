@@ -50,9 +50,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             scoreHistoryCache[user][stageStyle] = entry;
         }
 
-        private AveragedScore RetrieveAvgScoreHistory(string user, string stageStyle, ScoreAverageStageStyleEntry entry) //TODO if not found, should retrieve
+        private AveragedScore RetrieveAvgScoreHistory(string user, string stageStyle) //TODO if not found, should attempt retrieve?
         {
-            if (scoreHistoryCache.ContainsKey(user))
+            if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(stageStyle) && scoreHistoryCache.ContainsKey(user))
             {
                 if (scoreHistoryCache[user].ContainsKey(stageStyle))
                 {
@@ -257,13 +257,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             //get singulars for stage I am in, then count those and that is how many shots to take total.
             var singulars = stageEvent.GetEvents(false, false, false, false, false, true);
             var shotsFired = es.NumShotsFired;
+            var numShotsInEvent = singulars.Count;
             //we want to always project shots if we have ANY remaining.
-            var shotsRemaining = singulars.Count - shotsFired;
+            var shotsRemaining = numShotsInEvent - shotsFired;
+            float percentageShotsTaken = (float)shotsFired / (float)numShotsInEvent;
 
-            float percentageShotsRemaining = shotsRemaining>0?(float)shotsFired / (float)shotsRemaining:0;
-            
             es.Projected = new DataModel.Athena.Score();
-            if (singulars.Count <= 0)
+            if (numShotsInEvent <= 0)
             {
                 //no expected shots for this stage, this shouldnt happen
                 return es.Projected;
@@ -296,10 +296,18 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                
             }
 
-            //project the scores
-            es.Projected.I = es.Score.I + (int)(avgScoreThisStage.I * shotsRemaining);
-            es.Projected.D = es.Score.D + (avgScoreThisStage.D * shotsRemaining);
-            es.Projected.X = (int)(es.Score.X + (avgScoreThisStage.X * shotsRemaining));
+
+            AveragedScore scoreHistoryAvg = RetrieveAvgScoreHistory(((Individual)Projection).UserID, es.StageStyleDef);
+            if (true || scoreHistoryAvg.IsZero)
+            {
+                scoreHistoryAvg = avgScoreThisStage; //If no score history, then use avg shot fired
+            }
+            
+            es.Projected.I = (int)PredictScore(es.Score.I, avgScoreThisStage.I, scoreHistoryAvg.I, shotsRemaining, percentageShotsTaken);
+
+            es.Projected.D = PredictScore(es.Score.D, avgScoreThisStage.D, scoreHistoryAvg.D, shotsRemaining, percentageShotsTaken);
+
+            es.Projected.X = (int)PredictScore(es.Score.X, avgScoreThisStage.X, scoreHistoryAvg.X, shotsRemaining, percentageShotsTaken);
 
             es.Projected.D = (float)Math.Round(es.Projected.D, 1);
             es.Projected.S = es.Projected.D;
@@ -307,6 +315,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             return es.Projected;
 
 
+        }
+
+
+        /*   From SQL query
+             * RETURN current_score 
+			        + (num_shots_left*match_avg_shot)*percentage_shots_taken 
+			        + (num_shots_left*history_avg_shot)*(1.0-percentage_shots_taken);#TODO IMPROVE
+             */
+        private float PredictScore(float currentScore, float avgScore, float historyAvg, int shotsRemaining, float percentageShotsTaken)
+        {
+            return currentScore + shotsRemaining * (
+                    avgScore * percentageShotsTaken +
+                    historyAvg * (1.0f - percentageShotsTaken)
+                );
         }
 
     }
