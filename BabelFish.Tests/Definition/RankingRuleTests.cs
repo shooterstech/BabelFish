@@ -397,7 +397,11 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             ResultEngine resultEngine = new ResultEngine( resultList );
 
-            ProjectorOfScores ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
+            ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
+            ps.HistoryAPIStage = APIStage.BETA;
+            ps.XAPIKey = Constants.X_API_KEY;
+
+
             //ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
 
             await resultEngine.SortAsync( ps, true );

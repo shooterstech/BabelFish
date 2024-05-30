@@ -10,15 +10,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 {
     public class ProjectScoresByScoreHistory : ProjectorOfScores
     {
-        private ScoreHistoryAPIClient scoreHistoryClient;
+        
+        
         public ProjectScoresByScoreHistory(CourseOfFire courseOfFire) : base(courseOfFire)
         {
-            scoreHistoryClient = new ScoreHistoryAPIClient("uONGn6tHGw14kreLdqbfJ9rwR2C55uS8a9rGnmIf", APIStage.BETA);
         }
 
         public ProjectScoresByScoreHistory(CourseOfFire courseOfFire, CompareByRankingDirective teamMemberComparer) : base(courseOfFire, teamMemberComparer)
         {
-            scoreHistoryClient = new ScoreHistoryAPIClient("uONGn6tHGw14kreLdqbfJ9rwR2C55uS8a9rGnmIf", APIStage.BETA);
         }
 
         public override string ProjectionMadeBy
@@ -28,6 +27,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                 return "BabelFish ProjectScoresByScoreHistory";
             }
         }
+
+        public string XAPIKey { get; set; } = "";
+        public APIStage HistoryAPIStage { get; set; } = APIStage.PRODUCTION;
 
         /* scoreHistoryCache 
          * {
@@ -101,8 +103,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
             if(requestNeeded)
             {
+                if (string.IsNullOrEmpty(XAPIKey))
+                {
+                    throw new Scopos.BabelFish.APIClients.XApiKeyNotSetException();
+                }
                 try
                 {
+                    ScoreHistoryAPIClient scoreHistoryClient = new ScoreHistoryAPIClient(XAPIKey, HistoryAPIStage); ;
                     var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
 
                     if (scoreAverageResponse.StatusCode == System.Net.HttpStatusCode.OK)
@@ -133,7 +140,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
 
 
-        //Projection and AvgShots exists as class variable to make recussion easier. They need to be cleared with each call to ProjectAthleteScores()
+        //Projection and StageStyleScores exists as class variable to make recussion easier. They need to be cleared with each call to ProjectAthleteScores()
         private IEventScoreProjection Projection { get; set; }
 
         //first key is stage style setname, second key is avgType [(I)INT, (D)DEC, (X)INNER] value is avg.
@@ -199,17 +206,17 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                 eventType = EventtType.NONE;
             }
 
-            if (eventType == EventtType.STAGE)
+            if (eventType == EventtType.STAGE) //leaf node
             {
                 return ProjectStageScore(eventComposite, eventScore);
-
             }
 
             eventScore.Projected = new Score();
             foreach (var childEvent in eventComposite.Children)
             {//To project the score for any stage, sum the projected scores of it's children
                 Score childScore = RecurProjectScores(childEvent);
-                if (eventComposite.Calculation != "SUM" && childEvent.Equals(eventComposite.Children[0])) //I am not entirely sure what this does but I am copying the logic from the AvgShotFiredProjector
+                if (eventComposite.Calculation != "SUM" && childEvent.Equals(eventComposite.Children[0])) 
+                //I am not entirely sure what this does but I am copying the logic from the AvgShotFiredProjector
                 {//SUM(i,d) ... of which yes, we really ought to be parsing it, but i ain't got tiem for that
                     childScore.S = childScore.I;
                 }
