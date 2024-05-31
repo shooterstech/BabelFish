@@ -180,5 +180,25 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
+        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync(GetCoachClubListPublicRequest request)
+        {
+            var response = new GetCoachClubListPublicResponse(request);
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            return response;
+        }
+
+        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync(string userId)
+        {
+            var request = new GetCoachClubListPublicRequest(userId);
+            return await GetCoachClubListPublicAsync(request);
+        }
+
+        public async Task<GetCoachClubListAuthenticatedResponse> GetCoachClubListAuthenticatedAsync(GetCoachClubListAuthenticatedRequest request)
+        {
+            var response = new GetCoachClubListAuthenticatedResponse(request);
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            return response;
+        }
+
     }
 }
