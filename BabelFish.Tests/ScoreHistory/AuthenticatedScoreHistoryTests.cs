@@ -1,29 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.Requests.ScoreHistoryAPI;
-using Scopos.BabelFish.Responses.ScoreHistoryAPI;
-using Scopos.BabelFish.DataModel.ScoreHistory;
-using Scopos.BabelFish.DataModel.Athena;
-using Newtonsoft.Json;
-using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Newtonsoft.Json.Linq;
-using NLog;
-using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.DataModel.SocialNetwork;
+using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
+using Scopos.BabelFish.Runtime.Authentication;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Tests.ScoreHistory {
+namespace Scopos.BabelFish.Tests.ScoreHistory
+{
 
     [TestClass]
     public class AuthenticatedScoreHistoryTests
@@ -197,9 +188,9 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task CoachAccessAthleteProtectedData()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
-            var clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
-            var socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            var clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            var socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.BETA);
 
             //TestDev1 is a POC for licence 7
             var userAuthentication = new UserAuthentication(
@@ -219,6 +210,23 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
                 Constants.TestDev7Credentials.Password);
             await athleteAuthentication.InitializeAsync();
             var athleteUserId = Constants.TestDev7UserId;
+
+            //Reset Relationships for test
+            //delete coach assignment
+            var deleteCoachRequest = new DeleteCoachAssignmentAuthenticatedRequest(userAuthentication);
+            deleteCoachRequest.LicenseNumber = licenseNumber;
+            deleteCoachRequest.UserId.Add(coachUserId);
+            var deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteCoachRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
+
+            //delete coach relationship (deleted by coach)
+            var deleteRelationshipRequest = new DeleteRelationshipRoleAuthenticatedRequest(coachAuthentication);
+            deleteRelationshipRequest.RelationshipName = SocialRelationshipName.COACH;
+            deleteRelationshipRequest.PassiveId = athleteUserId;
+            var deleteRelationshipResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRelationshipRequest);
+            Assert.IsTrue(System.Net.HttpStatusCode.OK == deleteRelationshipResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteRelationshipResponse.StatusCode);
+            
+            //END RESET RELATIONSHIPS
 
             //TestDev1 assigns TestDev3 as coach
             var postRequest = new CreateCoachAssignmentAuthenticatedRequest(userAuthentication);
@@ -276,6 +284,26 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode);
 
             //coach can now access protected score averages of athlete
+            scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAuthenticatedAsync(scoreAverageRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreAverageResponse.StatusCode);
+
+            //coach is removed as a coach from license
+            deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteCoachRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
+
+            //coach can no longer access scores
+            scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryAuthenticatedAsync(scoreHistoryRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, scoreHistoryResponse.StatusCode);
+            scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAuthenticatedAsync(scoreAverageRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, scoreAverageResponse.StatusCode);
+
+            //re-add coach to license
+            postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+
+            //coach can access scores without having to re-request coach relationship
+            scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryAuthenticatedAsync(scoreHistoryRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode);
             scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAuthenticatedAsync(scoreAverageRequest);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, scoreAverageResponse.StatusCode);
 

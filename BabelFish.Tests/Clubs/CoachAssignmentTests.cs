@@ -202,7 +202,7 @@ namespace Scopos.BabelFish.Tests.Clubs
             deleteRequest.LicenseNumber = licenseNumber;
             deleteRequest.UserId.Add(Constants.TestDev7UserId);
             var deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
             List<string> expected = new List<string> { Constants.TestDev3UserId, Constants.TestDev9UserId };
             expected.Sort();
             deleteResponse.CoachAssignmentList.Items.Sort();

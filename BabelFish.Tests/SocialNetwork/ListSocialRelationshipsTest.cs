@@ -146,6 +146,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
         [TestMethod]
         public async Task ListAllFollowRelationshipsWithTokens()
         {
+            //IF THIS TEST FAILS, TRY RUNNING RestAPI/scripts/DatabaseScripts/PopulateSocialRelationships.py to create dummy relationships
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
                 Constants.TestDev3Credentials.Password);
@@ -157,7 +158,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
             listRequest.AsActive = true;
             listRequest.IncomingRequests = true;
             listRequest.OutgoingRequests = true;
-            listRequest.Limit = 20;
+            listRequest.Limit = 14;
 
             ListSocialRelationshipsAuthenticatedResponse listResponse;
             List<SocialRelationship> myRelationships = new List<SocialRelationship>();
