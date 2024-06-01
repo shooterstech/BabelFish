@@ -5,7 +5,7 @@ using System.Text;
 using NLog;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
-namespace Scopos.BabelFish.ResultListFormatter.UserProfile {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
 
     /// <summary>
     /// An in memory only implementation of the IUserProfileLookup interface. 

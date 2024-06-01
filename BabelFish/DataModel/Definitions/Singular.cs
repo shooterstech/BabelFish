@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         ///  * Shot
         ///  * Test
         /// </summary>
-        public SingularType Type { get; set; }
+        public SingularType Type { get; set; } = SingularType.SHOT;
 
         /// <summary>
         /// The format for the EventName. The compiled EventName must be unique within the COURSE OF FIRE. 
@@ -49,7 +49,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Score Format to use when displaying the Singular event during a match. 
         /// </summary>
-        public string ScoreFormat { get; set; }
+        public string ScoreFormat { get; set; } = "Shots";
 
         /// <summary>
         /// A unique value that is used in the mapping process of shots to events. StageLabels are assigned to shots:
@@ -63,12 +63,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The method to use to map shots to events. Must be one of the following values:
         /// * Sequential
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ShotMappingMethodType ShotMappingMethod { get; set; }
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public ShotMappingMethodType ShotMappingMethod { get; set; } = ShotMappingMethodType.SEQUENTIAL;
 
         /// <inheritdoc/>
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
-        [JsonProperty( Order = 100 )]
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>

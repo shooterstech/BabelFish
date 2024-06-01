@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Definitions;
 
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     /// <summary>
     /// Cell Values represent the what and the how to display in a result list cell. A cell meaning

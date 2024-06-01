@@ -7,9 +7,9 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     /// <summary>
     /// ResultListFormatted is an intermediate formatted result list. It's like assembly code, half way 
@@ -167,6 +167,14 @@ namespace Scopos.BabelFish.ResultListFormatter {
         /// </summary>
         private ScoreConfig ScoreConfig { get; set; }
 
+        /// <summary>
+        /// Returns the score format to use when displayg scores of type 'scoreFormatName'.
+        /// Examples include Events => "{i} - {x}" or Shots => "{m}{d}{X}".
+        /// If a score format could not be found, based on the passed in scoreFormatName, then 
+        /// the default value of "{d}" is returned.
+        /// </summary>
+        /// <param name="scoreFormatName"></param>
+        /// <returns></returns>
         public string GetScoreFormat(string scoreFormatName) {
             string scoreFormat;
             if (ScoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))

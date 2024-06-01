@@ -139,14 +139,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<string> Tags { get; set; } = new List<string>();
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 100 )]
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
-		/// <summary>
-		/// If true, this Definition is no longer in use and should not be referenced.
-		/// </summary>
-		[JsonProperty( Order = 101 )]
+        /// <summary>
+        /// If true, this Definition is no longer in use and should not be referenced.
+        /// </summary>
+        [JsonProperty( Order = 101 )]
 		[DefaultValue( false )]
 		public bool Discontinued { get; set; }
 

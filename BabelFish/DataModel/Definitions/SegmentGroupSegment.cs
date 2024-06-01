@@ -256,8 +256,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         /// <inheritdoc/>
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
-        [JsonProperty( Order = 100 )]
         public string Comment { get; set; } = string.Empty;
 
 

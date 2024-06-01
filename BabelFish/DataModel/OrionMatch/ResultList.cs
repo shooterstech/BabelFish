@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,13 +8,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition {
+    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
+
+        private Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ResultList() {
             Items = new List<ResultEvent>();
@@ -24,7 +29,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public string MatchID { get; set; } = string.Empty;
 
         /// <summary>
-        /// Set name of the Ranking Rule definition
+        /// Set name of the Ranking Rule definition used to rank this result list.
         /// </summary>
         [JsonProperty( Order = 2 )]
         public string RankingRuleDef { get; set; } = string.Empty;
@@ -109,13 +114,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 6 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 7 )]
+        [JsonProperty( Order = 7, DefaultValueHandling = DefaultValueHandling.Include )]
+        [DefaultValue( false )]
         public bool Team { get; set; } = false;
 
         [JsonProperty( Order = 8 )]
         public string ParentID { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 10 )]
+        [JsonProperty( Order = 50 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 
         /// <summary>
@@ -129,7 +135,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         [JsonProperty( Order = 12 )]
-        [JsonConverter( typeof( DateTimeConverter ) )]
+        [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
 		public DateTime LastUpdated { get; set; } = new DateTime();
 
         [JsonProperty( Order = 13 )]
@@ -138,20 +144,44 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Set to true if this ResultList is considered one of the most important and should be featured
         /// </summary>
-        [JsonProperty( Order = 14 )]
+        [JsonProperty( Order = 14, DefaultValueHandling = DefaultValueHandling.Include )]
+        [DefaultValue( false )]
         public bool Primary { get; set; } = false;
 
         [JsonProperty( Order = 15 )]
         public string UniqueID { get; set; } = string.Empty;
 
+        /// <summary>
+        /// EventName is the name of the top level Event for this Result List.
+        /// </summary>
         [JsonProperty( Order = 16 )]
         public string EventName { get; set; } = string.Empty;
 
         [JsonProperty( Order = 17 )]
         public string ResultListID { get; set; } = string.Empty;
 
-        public bool Preliminary { get; set; } = false;
+        /// <summary>
+        /// If True, Participants are listed in order of their projected score. 
+        /// Should only ever be true if Status is FUTURE or INTERMEDIATE
+        /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
+        [DefaultValue(false)]
+        public bool Projected { get; set; } = false;
 
+        /// <summary>
+        /// Indicates if the Result List has been truncated. and the values in .Items are not all of the results.
+        /// 
+        /// Currently known to be set in the Reat API Get Result List lambda, when pulling result lists
+        /// from dynamo that are too large. There is some remaining question if this field is needed. In 
+        /// theory .Partial is the opposite of .HasMoreItems
+        /// </summary>
+        public bool Partial { get; set; } = false;
+
+        /// <summary>
+        /// If .Projected is true, .ProjectionMadeBy says who made the projection.
+        /// </summary>
+        [DefaultValue("")]
+        public string ProjectionMadeBy {  get; set; } = string.Empty;
 
         /// <summary>
         /// The SetName of the Course of Fire
@@ -161,60 +191,105 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <inheritdoc />
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        public int Limit { get; set; } = 50;
+        [DefaultValue(0)]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int Limit { get; set; } = 0;
 
         /// <inheritdoc />
+        [DefaultValue( false )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public bool HasMoreItems {
             get {
                 return !string.IsNullOrEmpty( NextToken );
             }
         }
 
-		/// <summary>
-		/// String holding the software (Orion Scoring System) and Version number of the software.
-		/// </summary>
-		[Obsolete( "Use .Metadata.Creator" )]
+        /// <inheritdoc />
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public string PublishTransactionId { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionSequence { get; set; } = 0;
+
+        /// <inheritdoc />
+        [DefaultValue( 1 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionCount { get; set; } = 1;
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        [Obsolete( "Use .Metadata.Creator" )]
 		public string Creator { get; set; }
 
-		/// <summary>
-		/// Key is the local match ID.
-		/// Value is the Metadate for the generative match.
-		/// When Orion generates a ResultList there will only be 1 value in Metadata.
-		/// When a Virtual Match is merged, each parent / child ID will be listed.
-		/// Local Matches will have exactly one value.
-		/// </summary>
-		public Dictionary<string, ResultListMetadata> Metadata { get; set; }
+        /// <summary>
+        /// Key is the local match ID.
+        /// Value is the Metadate for the generative match.
+        /// When Orion generates a ResultList there will only be 1 value in Metadata.
+        /// When a Virtual Match is merged, each parent / child ID will be listed.
+        /// Local Matches will have exactly one value.
+        /// </summary>
+        public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
 
-		/// <inheritdoc />
-		public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for CourseOfFireDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
             if (string.IsNullOrEmpty( CourseOfFireDef ))
-                return null;
+                throw new ScoposAPIException( $"The value for CourseOfFireDef is empty or null.", Logger );
 
             SetName cofSetName = SetName.Parse( CourseOfFireDef );
             var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( cofSetName );
-            return getDefiniitonResponse.Definition;
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetCourseOfFireDefinition could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
         }
 
         /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( RankingRuleDef ))
+                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+
+            SetName rrSetName = SetName.Parse( RankingRuleDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rrSetName );
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetRankingRuleDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
             if (string.IsNullOrEmpty( ResultListFormatDef ))
-                return null;
+                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( rlfSetName );
-            return getDefiniitonResponse.Definition;
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetResultListFormatDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
         }
 
+        /// <inheritdoc />
         public override string ToString() {
-            StringBuilder foo = new StringBuilder();
-            foo.Append( "ResultList for " );
-            foo.Append( ResultName );
-            return foo.ToString();
+            return $"ResultList for {ResultName}" ;
         }
     }
 }

@@ -11,7 +11,7 @@ using NLog;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public abstract class ResultListIntermediateFormattedRow {
 
         /// <summary>
@@ -72,8 +72,13 @@ namespace Scopos.BabelFish.ResultListFormatter {
                         break;
 
                     case ResultFieldMethod.SCORE:
-                        fields[fieldName] = GetScore( source );
+                        fields[fieldName] = GetScore( source, false );
                         break;
+
+                    case ResultFieldMethod.PROJECTED_SCORE:
+                        fields[fieldName] = GetScore( source, true );
+                        break;
+
                     default:
                         //Should never get here
                         break;
@@ -116,32 +121,25 @@ namespace Scopos.BabelFish.ResultListFormatter {
 
 			switch (source) {
 				case "Rank":
-					if (resultEvent.Rank > 0)
+                    if (this.resultListFormatted.ResultList.Projected 
+                        && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE 
+                        && resultEvent.ProjectedRank > 0)
+                        return resultEvent.ProjectedRank.ToString();
+					
+                    if (resultEvent.Rank > 0)
 						return resultEvent.Rank.ToString();
-					else
-						return "";
+					
+					return "";
 				
                 case "DisplayName":
-                    //Try the non depreciated field first
                     var dn = resultEvent.Participant.DisplayName;
-                    if (!string.IsNullOrEmpty( dn ))
-                        return dn;
-
-                    //If not there, try thedeprecated field
-                    dn = resultEvent.DisplayName;
                     if (!string.IsNullOrEmpty( dn ))
                         return dn;
 
                     return "Unknown";
 
                 case "DisplayNameShort":
-                    //Try the non depreciated field first
                     var dns = resultEvent.Participant.DisplayNameShort;
-                    if (!string.IsNullOrEmpty( dns ))
-                        return dns;
-
-                    //If not there, try thedeprecated field
-                    dns = resultEvent.DisplayName;
                     if (!string.IsNullOrEmpty( dns ))
                         return dns;
 
@@ -263,9 +261,7 @@ namespace Scopos.BabelFish.ResultListFormatter {
             foreach ( var av in resultEvent.Participant.AttributeValues ) { 
                 if (av.AttributeDef == source.Name) {
                     try {
-                        var fields = av.AttributeValue.GetDefintionFields();
-                        var firstField = fields[0];
-                        return av.AttributeValue.GetFieldValue( firstField.FieldName );
+                        return av.AttributeValue.GetFieldValue( );
                     } catch ( Exception ex ) {
                         logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
                         return "";
@@ -278,45 +274,37 @@ namespace Scopos.BabelFish.ResultListFormatter {
 
         }
 
-        private string GetScore( FieldSource source ) {
+        private string GetScore( FieldSource source, bool tryAndUseProjected = false ) {
             /*
-             * source is a dictionary. For an Attribute should be
-             * {
-                "Name": "Prone",
-                "ScoreFormat": "Event"
-                "ScoreConfigName" : "Integer" //If not listed, uses the variable scoreConfigDefaultName
-             * }
-             * Likely augmented later to support more than just simple attributes.
+             * source is a dictionary. For an Score or ProjectedScore should be
+                "Source": {
+                    "ScoreFormat": "Events",
+                    "Name": "Qualification"
+                }
              */
 
-            string scoreConfigName = resultListFormatted.ResultList.ScoreConfigName;
-
-            Score score = GetScore( (string)source.Name );
+            Score score = GetScore( (string)source.Name, tryAndUseProjected );
             string scoreFormat = resultListFormatted.GetScoreFormat( source.ScoreFormat );
 
             return Scopos.BabelFish.Helpers.StringFormatting.FormatScore( scoreFormat, score );
         }
 
-        private Score GetScore( string eventName ) {
+        private Score GetScore( string eventName, bool tryAndUseProjected = false ) {
 
-            //.EventScores is the updated way (as of Jan 2024) to learn about a competitors score. Try using it first.
             EventScore scoreToReturn;
-            if (resultEvent.EventScores != null && resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn)) {
-                return scoreToReturn.Score;
-            }
 
-            //.Score is the deprecated method, use it second.
-            if (eventName == resultListFormatted.ResultList.EventName)
-                return resultEvent.Score;
+            if (resultEvent.EventScores != null) {
+                if (resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
 
-            foreach (var childEvent in resultEvent.Children) {
-                if (childEvent.EventName == eventName) {
-                    return childEvent.Score;
+                    if (tryAndUseProjected && scoreToReturn.Projected != null) {
+                        //If the Projected Score is known, try and return it
+                        return scoreToReturn.Projected;
+                    } else {
+                        //Else return the regular,, good old fashion, .Score instance
+                        return scoreToReturn.Score;
+                    }
                 }
             }
-
-            //If we get here couldn't find it in the Result Event.
-            //TODO search the ResultCOF for the score. 
 
             //For now return an empty Score data object
             return new Score();

@@ -10,7 +10,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     public class ResultListFormatFactory {
 
@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.ResultListFormatter {
 
             SetName resultListFormatSetName;
 
-            //First priority, check if the ResultList includes a Ranking List Format definition to use. If it does, return it.
+            //First priority, check if the ResultList includes a Result List Format definition to use. If it does, return it.
             if (!string.IsNullOrEmpty( resultList.ResultListFormatDef)) {
                 if (SetName.TryParse( resultList.ResultListFormatDef, out resultListFormatSetName ) ) {
                     return resultListFormatSetName;

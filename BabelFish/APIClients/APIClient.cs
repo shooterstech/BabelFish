@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.APIClients {
             if (!IgnoreInMemoryCache && !request.IgnoreInMemoryCache && request.HttpMethod == HttpMethod.Get && ResponseCache.CACHE.TryGetResponse( request, out cachedResponse )) {
 
                 response.StatusCode = HttpStatusCode.OK;
-                response.MessageResponse = cachedResponse.MessageResponse.Clone();
+                response.MessageResponse = cachedResponse.MessageResponse.Copy();
                 response.MessageResponse.Message.Add( "In memory cached response" );
                 response.Body = cachedResponse.Body;
                 response.TimeToRun = DateTime.Now - startTime;
@@ -184,7 +184,7 @@ namespace Scopos.BabelFish.APIClients {
                     if (request.HttpMethod == HttpMethod.Get) {
                         cachedResponse = new ResponseIntermediateObject() {
                             StatusCode = response.StatusCode,
-                            MessageResponse = response.MessageResponse.Clone(),
+                            MessageResponse = response.MessageResponse.Copy(),
                             Request = request,
                             Body = response.Body,
                             ValidUntil = response.GetCacheValueExpiryTime()
@@ -200,7 +200,6 @@ namespace Scopos.BabelFish.APIClients {
 
                 response.StatusCode = HttpStatusCode.InternalServerError;
                 response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                response.MessageResponse.ResponseCodes.Add( HttpStatusCode.InternalServerError.ToString() );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
             }
         }

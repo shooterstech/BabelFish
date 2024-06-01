@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataActors.OrionMatch
+{
 
     /// <summary>
     /// Implements the IComparer interface to sort a list of Participants, such as one
@@ -11,9 +13,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// REST API call.
     /// </summary>
 
-    public class CompareParticipant : IComparer<IParticipant> {
+    public class CompareParticipant : IComparer<IParticipant>
+    {
 
-        public enum CompareMethod {
+        public enum CompareMethod
+        {
 
             /// <summary>
             /// Sort by Given/First Name
@@ -23,17 +27,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             /// <summary>
             /// Sort by Last name, then first name
             /// </summary>
-            FAMILYNAME_GIVENNAME, 
-            
+            FAMILYNAME_GIVENNAME,
+
             /// <summary>
             /// Sort by Display Name
             /// </summary>
-            DISPLAYNAME 
+            DISPLAYNAME
         };
 
-        public CompareParticipant( CompareMethod compareMethod, SortBy sortBy ) {
-            this.Method = compareMethod;
-            this.SortBy = sortBy;
+        public CompareParticipant(CompareMethod compareMethod, SortBy sortBy)
+        {
+            Method = compareMethod;
+            SortBy = sortBy;
         }
 
         public CompareMethod Method { get; private set; }
@@ -41,43 +46,45 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public SortBy SortBy { get; private set; }
 
         /// <inheritdoc/>
-        public int Compare( IParticipant x, IParticipant y ) {
+        public int Compare(IParticipant x, IParticipant y)
+        {
 
             int compare = 0;
 
             Individual X, Y;
 
-            switch ( Method ) {
+            switch (Method)
+            {
                 case CompareMethod.FAMILYNAME_GIVENNAME:
                     if (x.Participant is not Individual
                         || y.Participant is not Individual)
-                        throw new ArgumentException( "Hey hey hey, we need individuals, not teams" );
+                        throw new ArgumentException("Hey hey hey, we need individuals, not teams");
 
-                    X = (Individual) x.Participant;
-                    Y = (Individual) y.Participant; 
+                    X = (Individual)x.Participant;
+                    Y = (Individual)y.Participant;
 
-                    compare = X.LastName.CompareTo( Y.LastName );
+                    compare = X.LastName.CompareTo(Y.LastName);
                     if (compare == 0)
-                        compare = X.FirstName.CompareTo( Y.FirstName ); 
+                        compare = X.FirstName.CompareTo(Y.FirstName);
 
                     break;
 
                 case CompareMethod.GIVENNAME_FAMILYNAME:
                     if (x.Participant is not Individual
                         || y.Participant is not Individual)
-                        throw new ArgumentException( "Hey hey hey, we need individuals, not teams" );
+                        throw new ArgumentException("Hey hey hey, we need individuals, not teams");
 
                     X = (Individual)x.Participant;
                     Y = (Individual)y.Participant;
 
-                    compare = X.FirstName.CompareTo( Y.FirstName );
+                    compare = X.FirstName.CompareTo(Y.FirstName);
                     if (compare == 0)
-                        compare = X.LastName.CompareTo( Y.LastName );
+                        compare = X.LastName.CompareTo(Y.LastName);
 
                     break;
 
                 case CompareMethod.DISPLAYNAME:
-                    compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    compare = x.Participant.DisplayName.CompareTo(y.Participant.DisplayName);
                     break;
 
                 default:

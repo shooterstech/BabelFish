@@ -67,6 +67,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             Assert.AreEqual( "Christopher", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
             Assert.AreEqual( "Jones", (string)profileNameAttributeValue.GetFieldValue( "FamilyName" ) );
+
+            Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( profileNameAttributeValueDataPacket, new Scopos.BabelFish.Converters.AttributeValueDataPacketConverter() ) );
         }
 
         /// <summary>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class RowLinkToData {
 
 

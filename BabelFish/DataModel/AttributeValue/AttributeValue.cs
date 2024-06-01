@@ -99,6 +99,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// View the SetName of the AttributeValue.
         /// Assignment is done at instantiation.
         /// </summary>
+        [JsonIgnore]
         public SetName SetName {
             get {
                 return setName;
@@ -113,21 +114,13 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             }
         }
 
-        /*
-        /// <summary>
-        /// httpStatus (leave this as string in case we get an unexpected status not in an enum?)
-        /// </summary>
-        [JsonProperty( Order = 1 )]
-        public string StatusCode { get; set; } = string.Empty;
-
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
-
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public Helpers.AttributeValueActionEnums Action { get; set; } = Helpers.AttributeValueActionEnums.EMPTY;
-        */
-
         #region Definition
+
+        /// <summary>
+        /// Returns a copy of the Attributre that defines this Attribute Value
+        /// </summary>
+        [JsonIgnore]
+        public Scopos.BabelFish.DataModel.Definitions.Attribute Attribute {  get { return definition; } }
 
         /// <summary>
         /// Helper function, returnss a list of AttributeFields that are defined in the Attribute's definition.
@@ -178,6 +171,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// This is defined within the Attribute's definition.
         /// </summary>
         /// <returns>true or false</returns>
+        [JsonIgnore]
         public bool IsMultipleValue {
             get {
                 return definition.MultipleValues;
@@ -256,6 +250,21 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         /// <summary>
+        /// Special case for returning a field value when the Attribute is a Simple Attribute.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown when the Attribute is not a simple attribute.</exception>
+        public dynamic GetFieldValue() {
+
+            if (this.definition.SimpleAttribute) {
+                var firstField = this.definition.Fields[0];
+                return this.GetFieldValue( firstField.FieldName );
+            }
+
+            throw new ArgumentException( "Can not call .GetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );
+        }
+
+        /// <summary>
         /// If applicable, returns the AttributeValueAppellation for this AttributeValue.
         /// Only applicable if the underlying definition is a simple attribute, and the field
         /// type is CLOSED.
@@ -280,6 +289,23 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                     return "";
                 }
             }
+        }
+
+        /// <summary>
+        /// Special case for setting the field value on a Simple Attribute. Throws an exception if the Attribute is not simple.
+        /// </summary>
+        /// <param name="fieldValue"></param>
+        /// <exception cref="ArgumentException">Thrown when the Attribute is not a Simple Attribute.</exception>
+        public void SetFieldValue( dynamic fieldValue ) {
+
+
+            if (this.definition.SimpleAttribute) {
+                var firstField = this.definition.Fields[0];
+                this.SetFieldValue( firstField.FieldName, fieldValue );
+                return;
+            }
+
+            throw new ArgumentException( "Can not call .SetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );
         }
 
         /// <summary>

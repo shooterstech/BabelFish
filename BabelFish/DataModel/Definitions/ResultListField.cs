@@ -31,6 +31,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Specifies the type of data that will be displayed. At a high level where the data for this ResultField is coming from.
         /// </summary>
         [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public ResultFieldMethod Method { get; set; }
 
         /// <summary>

@@ -12,8 +12,10 @@ using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Tests;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
-namespace Scopos.BabelFish.Tests.OrionMatch {
+namespace Scopos.BabelFish.Tests.OrionMatch
+{
 
     [TestClass]
     public class CompareTests {
@@ -123,7 +125,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
-        public async Task CompareSquaddings() {
+        public async Task CompareSquaddingTests() {
 
             var sortByRelayFiringPointAsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
             SquaddingAssignmentFPList.Sort( sortByRelayFiringPointAsc );
@@ -145,6 +147,64 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual(JONES_MONIKA_R1_FP2, SquaddingAssignmentFPList[1].Participant.DisplayName);
             Assert.AreEqual(SMITH_DEREK_R2_FP1, SquaddingAssignmentFPList[2].Participant.DisplayName);
             Assert.AreEqual(SMITH_JANET_R2_FP2, SquaddingAssignmentFPList[3].Participant.DisplayName);
+        }
+
+        [TestMethod]
+        public async Task CompareResultStatusTests() {
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.FUTURE ) == 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.INTERMEDIATE ) < 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.UNOFFICIAL ) < 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.FUTURE, ResultStatus.OFFICIAL ) < 0 );
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.FUTURE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.INTERMEDIATE ) == 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL ) < 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.INTERMEDIATE, ResultStatus.OFFICIAL ) < 0);
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.FUTURE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.INTERMEDIATE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.UNOFFICIAL ) == 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL ) < 0 );
+
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.FUTURE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.INTERMEDIATE ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.UNOFFICIAL ) > 0 );
+            Assert.IsTrue( CompareResultStatus.COMPARER.Compare( ResultStatus.OFFICIAL, ResultStatus.OFFICIAL ) == 0 );
+        }
+
+        [TestMethod]
+        public async Task CompareResultProjectedRanksListTests()
+        {
+            var comparer = new CompareResultProjectedRank(CompareResultProjectedRank.CompareMethod.PROJECTED_RANK, Scopos.BabelFish.Helpers.SortBy.ASCENDING);
+            var resultEvent1 = new ResultEvent
+            {
+                ProjectedRank = 1,
+                Rank = 1
+            };
+            var resultEvent2 = new ResultEvent
+            {
+                ProjectedRank = 2,
+                Rank = 2
+            };
+            var resultEvent3 = new ResultEvent
+            {
+                ProjectedRank = 0,
+                Rank = 3
+            };
+            var resultEvent4 = new ResultEvent
+            {
+                ProjectedRank = 0,
+                Rank = 0
+            };
+
+            Assert.IsTrue(comparer.Compare(resultEvent1, resultEvent2) < 0 ); // -1 = 1 compareTo 2
+            Assert.IsTrue(comparer.Compare(resultEvent2, resultEvent3) < 0 ); // -1 = 2 compareTo 3 #3 is missing a Projected ranks, but it will use the Rank to place them then.
+            Assert.IsTrue(comparer.Compare(resultEvent3, resultEvent4) > 0 ); // 1 = 3 compareTo 0 since RE4 does not have anything set. I am not sure how else to write that...
+            Assert.IsTrue(comparer.Compare(resultEvent4, resultEvent1) < 0 ); // -1 = 0 compareTo 1 #4 again has nothing set, I don't think anything will let that happen, but it basically puts them at the bottom.
+
+            Assert.IsTrue(comparer.Compare(resultEvent2, resultEvent1) > 0);  // 1 = 2 compareTo 1
+            Assert.IsTrue(comparer.Compare(resultEvent1, resultEvent1) == 0); // 0 = 1 compareTo 1
         }
     }
 }

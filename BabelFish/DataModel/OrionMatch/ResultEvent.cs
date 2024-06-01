@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultEvent : IParticipant {
+    public class ResultEvent : IEventScoreProjection {
+
+        //Key is the Singular Event Name, Value is the Shot
+        private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
 
         public ResultEvent() {
-            Score = new Scopos.BabelFish.DataModel.Athena.Score();
-            Children = new List<ResultEventChild>();
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
 		}
@@ -27,70 +30,103 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// Information on that match may be looked up in the ResultList's Metadata field.
 		/// </summary>
 		public string MatchID { get; set; }
-
-		[Obsolete("Use .Participant.DisplayName instead.")]
-		public string DisplayName { get; set; }
-
-        [Obsolete("Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef")]
-        public string ScoreFormat { get; set; }
         
         public string ResultCOFID { get; set; }
 
-        /// <summary>
-        /// Score. If the Preliminary result list is requested, Score will be the predicted score based on the athlete's score history and shots taken in the current match.
-        /// </summary>
-        [Obsolete( "Replaced with EventScores" )]
-        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
-
+		/// <summary>
+		/// The absolute ranking of this competitor, using actual (and not projected) scores fired.
+		/// </summary>
         public int Rank { get; set; }
 
-        /// <summary>
-        /// Contains the participants scores for the child events directly under this event. This is not a complete tree, for a complete
-        /// tree look up the ResultCOF using the ResultCOFID.
-        /// </summary>
-        [Obsolete( "Replaced with EventScores" )]
-        [JsonIgnore]
-        public List<ResultEventChild> Children { get; set; } = new List<ResultEventChild>();
-
-        /// <summary>
-        /// The Orion User ID of the athlete. Is blank (empty string) if it is not known 
-        /// or the participant is not a person (and thus likely is a team),
-        /// </summary>
-        [Obsolete( "Use .Participant.UserID instead.")]
-        public string UserID { get; set; } = "";
-
-        [Obsolete( "Replaced with EventScores" )]
-        public string EventName { get; set; }
+		/// <summary>
+		/// RankOrder is very nearly the same as Rank. The difference is if there is an unbreakable tie. In an
+		/// unbreakable tie the two partjicipants are given the same Rank but different RankOrder.
+		/// </summary>
+		public int RankOrder {  get; set; }
 
 		/// <summary>
-		/// The Local Date that this score was shot. 
-		/// NOTE Local Date is not necessarily the same as the GMT date.
+		/// The projected rank of this competitor, using projected scores.
 		/// </summary>
-		[JsonConverter( typeof( DateConverter ) )]
+		[DefaultValue(0)]
+		public int ProjectedRank { get; set; } = 0;
+
+
+        /// <summary>
+		/// ProjectedRankOrder is very nearly the same as ProjectedRank. The difference is if there is an unbreakable tie. In an
+		/// unbreakable tie the two partjicipants are given the same ProjectedRank but different ProjectedRankOrder.
+        /// </summary>
+        [DefaultValue( 0 )]
+        public int ProjectedRankOrder { get; set; } = 0;
+
+
+        /// <summary>
+        /// The Local Date that this score was shot. 
+        /// NOTE Local Date is not necessarily the same as the GMT date.
+        /// </summary>
+        [JsonConverter( typeof( DateConverter ) )]
 		public DateTime LocalDate { get; set; } = DateTime.Today;
 
-		/// <summary>
-		/// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
-		/// </summary>
-		public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
-        public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
+        /// <inheritdoc />
+		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
+			if (TeamMembers == null) {
+				return new List<IEventScoreProjection>();
+			}
 
-    }
-
-    [Serializable]
-    public class ResultEventChild {
-
-        public ResultEventChild() {
-            Score = new Scopos.BabelFish.DataModel.Athena.Score();
+			return TeamMembers.ToList<IEventScoreProjection>();
         }
 
-        [Obsolete( "Field is being replaced with the ScoreFormatCollectionDef and ScoreConfigName values. ScoreFormatCollectionDef is found using the CoruseOfFireDef" )]
-        public string ScoreFormat { get; set; }
+        /// <inheritdoc />
+        public void SetTeamMembersFromIEventScoreProjection( List<IEventScoreProjection> teamMembers ) {
+            
+            if (TeamMembers == null) 
+                TeamMembers = new List<ResultEvent>();
 
-        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
+            TeamMembers.Clear();
 
-        public string EventName { get; set; }
+            foreach( var tm in teamMembers) {
+                TeamMembers.Add( (ResultEvent)tm );
+            }
+        }
 
+        /// <inheritdoc />
+        public void ProjectScores( ProjectorOfScores ps ) {
+            ps.ProjectEventScores( this );
+        }
+
+        [JsonProperty( Order = 50)]
+        public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
+
+        /// <summary>
+        /// Scores for each Singular Event (usually a Shot).
+        /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
+        /// To get a dictionary of Shots by their EventName, use GetShotsByEventName()
+        /// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
+        /// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
+        /// </summary>
+        [JsonIgnore]
+		[DefaultValue( null ) ]
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
+
+
+        /// <summary>
+        /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
+        /// </summary>
+        [JsonProperty( Order = 52)]
+        public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
+
+        /// <inheritdoc />
+        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
+            if (shotsByEventName != null)
+                return shotsByEventName;
+
+            shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
+
+            foreach (var t in Shots.Values)
+                if (!string.IsNullOrEmpty( t.EventName ))
+                    shotsByEventName.Add( t.EventName, t );
+
+            return shotsByEventName;
+        }
     }
 }

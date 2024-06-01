@@ -222,7 +222,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         FUTURE,
 
         /// <summary>
-        /// The underlying event has started but not yet complete. Only partial scores avalaible to report.
+        /// The underlying event has started but not yet complete. Only partial scores avalaible to report. The scores reported are the actual scores participants have shot.
         /// </summary>
         [Description("Intermediate")]
         [EnumMember(Value = "INTERMEDIATE")] 
