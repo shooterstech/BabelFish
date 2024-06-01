@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text;
 using Amazon.Util;
 using Scopos.BabelFish.Runtime;
@@ -208,7 +208,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             cof.Singulars = generatedSingulars;
         }
 
-        private static Dictionary<string, EventComposite> eventCompositeCache = new Dictionary<string, EventComposite> ();
+        private static ConcurrentDictionary<string, EventComposite> eventCompositeCache = new ConcurrentDictionary<string, EventComposite> ();
 
         /// <summary>
         /// Generates the Event tree as defined by the passed in Course of Fire definition. 
@@ -253,7 +253,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             GrowChildren( cof, top, 0 );
 
             //Store in cache, so we can use later
-            eventCompositeCache.Add( cofRef.SetName, top );
+            eventCompositeCache.TryAdd( cofRef.SetName, top );
 
             return top;
         }
