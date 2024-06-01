@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NLog.Filters;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -41,6 +42,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public CourseOfFire CourseOfFire { get; private set; }
 
         public EventComposite TopLevelEvent { get; private set; }
+
+        /// <summary>
+        /// The x-api-key to use when making scopos REST API calls.
+        /// </summary>
+        /// <see cref="https://support.scopos.tech/index.html?rest-api.html"/>
+        public string XAPIKey { get; set; } = "";
+
+        public APIStage APIStage { get; set; } = APIStage.PRODUCTION;
 
         /// <summary>
         /// The comparer instance to use when ranking team members within a team, which will decide which team members's 
@@ -94,7 +103,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// Method to initialize internal parameters for the ProjectorOfScores. Default implementation is not to do anything.
         /// </summary>
         /// <param name="listOfParticipants"></param>
-        public virtual void PreInit( List<IEventScoreProjection> listOfParticipants ) { }
+        public virtual async Task InitializeAsync( List<IEventScoreProjection> listOfParticipants ) { }
 
         public virtual void ProjectTeamScores( IEventScoreProjection teamToProject, EventComposite eventToProject, int recusionDepth ) {
 

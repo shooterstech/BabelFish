@@ -10,6 +10,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using System.Diagnostics;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
@@ -367,13 +368,15 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        [Ignore]
         public async Task EriksPlayground() {
+
 
             DefinitionFetcher.XApiKey = Constants.X_API_KEY;
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024052711464077.0" ), "Team - All" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID("1.7.2024052814512643.0"), "Individual - Sporter" ); //
             var resultList = resultListResponse.ResultList;
             resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
             //resultList.Metadata.First().Value.EndDate = DateTime.Today;
@@ -395,16 +398,20 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             ResultEngine resultEngine = new ResultEngine( resultList );
 
-            ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
+            ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
+            ps.APIStage = APIStage.BETA;
+            ps.XAPIKey = Constants.X_API_KEY;
+
+
+            //ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
 
             await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
-                var inv = (Individual)re.Participant;
-                Console.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
+                Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Console.Write( $"{re.EventScores["Qualification"].Projected.I}  {re.EventScores["Qualification"].Score.I}" );
-                Console.WriteLine();
+                Debug.Write( $"{re.EventScores["Qualification"].Projected.D}  {re.EventScores["Qualification"].Score.D}" );
+                Debug.WriteLine("\n");
             }
 
         }
