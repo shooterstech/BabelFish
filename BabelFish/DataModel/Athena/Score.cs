@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Scopos.BabelFish.DataModel.ScoreHistory;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -83,18 +84,14 @@ namespace Scopos.BabelFish.DataModel.Athena {
         [JsonIgnore]
         public int NumShotsFired { get; set; } = 0;
 
-        public Score GetAvgShotFired()
+        public AveragedScore GetAvgShotFired()
         {
-            if (NumShotsFired == 0) return new Score();
-            return new Score
+            if (NumShotsFired == 0) return new AveragedScore();
+            return new AveragedScore
             {
-                X = X / NumShotsFired,
+                X = ((float) X) / NumShotsFired,
                 D = D / NumShotsFired,
-                I = I / NumShotsFired,
-                S = S / NumShotsFired,
-                J = J / NumShotsFired,
-                K = K / NumShotsFired,
-                L = L / NumShotsFired
+                I = ((float)I) / NumShotsFired
             };
         }
 

@@ -368,6 +368,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        [Ignore]
         public async Task EriksPlayground() {
 
 
@@ -398,7 +399,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             ResultEngine resultEngine = new ResultEngine( resultList );
 
             ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
-            ps.HistoryAPIStage = APIStage.BETA;
+            ps.APIStage = APIStage.BETA;
             ps.XAPIKey = Constants.X_API_KEY;
 
 

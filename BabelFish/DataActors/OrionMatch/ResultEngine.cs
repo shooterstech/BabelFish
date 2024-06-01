@@ -192,7 +192,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                 //Project (predict) the scores of athlets at the end of the match.
                 this.ResultList.ProjectionMadeBy = ps.ProjectionMadeBy;
-                await ps.PreInitAsync( this.ResultList.Items.ToList<IEventScoreProjection>() );
+                await ps.InitializeAsync( this.ResultList.Items.ToList<IEventScoreProjection>() );
                 foreach (var item in this.ResultList.Items) {
                     item.ProjectScores( ps );
                 }

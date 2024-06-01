@@ -214,10 +214,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public string PublishTransactionId { get; set; } = string.Empty;
 
-		/// <summary>
-		/// String holding the software (Orion Scoring System) and Version number of the software.
-		/// </summary>
-		[Obsolete( "Use .Metadata.Creator" )]
+        /// <inheritdoc />
+        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionSequence { get; set; } = 0;
+
+        /// <inheritdoc />
+        [DefaultValue( 1 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionCount { get; set; } = 1;
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        [Obsolete( "Use .Metadata.Creator" )]
 		public string Creator { get; set; }
 
         /// <summary>

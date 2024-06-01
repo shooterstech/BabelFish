@@ -28,9 +28,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             }
         }
 
-        public string XAPIKey { get; set; } = "";
-        public APIStage HistoryAPIStage { get; set; } = APIStage.PRODUCTION;
-
         /* scoreHistoryCache 
          * {
          *      "userID":{
@@ -67,7 +64,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             return new AveragedScore(); // TODO look up? otherwise zero scores?
         }
 
-        public override async Task PreInitAsync(List<IEventScoreProjection> listOfParticipants)
+        public override async Task InitializeAsync( List<IEventScoreProjection> listOfParticipants)
         {
             bool requestNeeded = false;
 
@@ -109,7 +106,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                 }
                 try
                 {
-                    ScoreHistoryAPIClient scoreHistoryClient = new ScoreHistoryAPIClient(XAPIKey, HistoryAPIStage); ;
+                    ScoreHistoryAPIClient scoreHistoryClient = new ScoreHistoryAPIClient(XAPIKey, APIStage); ;
                     var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
 
                     if (scoreAverageResponse.StatusCode == System.Net.HttpStatusCode.OK)
