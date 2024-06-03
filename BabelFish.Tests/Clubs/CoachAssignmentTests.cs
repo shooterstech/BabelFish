@@ -16,12 +16,14 @@ namespace Scopos.BabelFish.Tests.Clubs
     public class CoachAssignmentTests
     {
         private ClubsAPIClient clubsClient;
+        private APIStage stage;
 
 
         [TestInitialize]
         public void InitClient()
         {
-            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.ALPHA);
+            stage = APIStage.PRODUCTION;
+            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, stage);
         }
 
         public async Task DeleteAllCoachAssignments(int licenseNumber, UserAuthentication userAuthentication)
@@ -75,7 +77,7 @@ namespace Scopos.BabelFish.Tests.Clubs
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password);
             await userAuthentication.InitializeAsync();
-            int licenseNumber = 2; //license 2 is expired in dev db
+            int licenseNumber = 8;//stage!=APIStage.PRODUCTION? 2:8 ; //license 2 is expired in dev db, 8 is expired in production
 
             //TestDev1 is a POC for license 2, but license 2 is expired, so none of the operations should succeed
             var getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);

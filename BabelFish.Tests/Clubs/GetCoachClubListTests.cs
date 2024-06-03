@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         [TestInitialize]
         public void InitClient()
         {
-            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
         }
 
         [TestMethod]
@@ -31,6 +31,14 @@ namespace Scopos.BabelFish.Tests.Clubs
                 Constants.TestDev1Credentials.Password);
             await userAuthentication.InitializeAsync();
 
+            //TestDev1 assigns themself a coach under license 7 (they are a POC)
+            var postRequest = new CreateCoachAssignmentAuthenticatedRequest(userAuthentication);
+            postRequest.LicenseNumber = 7; 
+            postRequest.UserId.Add(Constants.TestDev1UserId);//try to add new designated user
+            var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+
+            //TestDev1 retrieves the list of clubs that assign them as coach
             var getRequest = new GetCoachClubListAuthenticatedRequest(userAuthentication);
             var getResponse = await clubsClient.GetCoachClubListAuthenticatedAsync(getRequest);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
@@ -56,7 +64,19 @@ namespace Scopos.BabelFish.Tests.Clubs
         [TestMethod]
         public async Task PublicGetGoodTest()
         {
-            var getRequest = new GetCoachClubListPublicRequest(Constants.TestDev3UserId); //TestDev3 has public profile
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev1Credentials.Username,
+                Constants.TestDev1Credentials.Password);
+            await userAuthentication.InitializeAsync();
+            //TestDev1 assigns TestDev3 a coach under license 7 (they are a POC)
+            var postRequest = new CreateCoachAssignmentAuthenticatedRequest(userAuthentication);
+            postRequest.LicenseNumber = 7;
+            postRequest.UserId.Add(Constants.TestDev3UserId);//try to add new designated user
+            var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+
+
+            var getRequest = new GetCoachClubListPublicRequest(Constants.TestDev3UserId); //TestDev3 has public profile, no userAuthentication used
             var getResponse = await clubsClient.GetCoachClubListPublicAsync(getRequest);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
             Assert.IsTrue(getResponse.ClubList.Items.Count > 0);

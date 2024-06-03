@@ -188,9 +188,9 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
         [TestMethod]
         public async Task CoachAccessAthleteProtectedData()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
-            var clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.BETA);
-            var socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            var clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            var socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
 
             //TestDev1 is a POC for licence 7
             var userAuthentication = new UserAuthentication(
