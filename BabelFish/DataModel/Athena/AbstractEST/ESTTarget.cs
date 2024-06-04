@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -23,6 +24,16 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             Target = new Target();
             LiveView = new LiveView();
             CameraCalibration = new CameraCalibration();
+        }
+
+        [OnDeserialized]
+        internal void OnDeserialized(StreamingContext context)
+        {
+
+            //Providate default values if they were not read during deserialization
+
+            if (ExternalErrors == null)
+                ExternalErrors = new List<string>();
         }
 
         [JsonProperty(Order = 1)]

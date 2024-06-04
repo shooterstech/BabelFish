@@ -180,9 +180,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ResultFieldMethod {
+        /// <summary>
+        /// This is the absolute score the Participant has shot.
+        /// </summary>
         [Description( "Score" )]
         [EnumMember( Value = "Score" )]
         SCORE,
+
+        /// <summary>
+        /// This is the score the Participant is projected to have when they finish. If a Projected
+        /// score is nto known, then the absolute score is returned in its place.
+        /// </summary>
+        [Description( "ProjectedScore" )]
+        [EnumMember( Value = "ProjectedScore" )]
+        PROJECTED_SCORE,
 
         [Description( "ParticipantAttribute" )]
         [EnumMember( Value = "ParticipantAttribute" )]
@@ -287,5 +298,40 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "SET NAME" )]
         [EnumMember( Value = "SET NAME" )]
         SETNAME
+    }
+
+    /// <summary>
+    /// Specifies the method to use to compare two competitors.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum TieBreakingRuleMethod {
+
+        /// <summary>
+        /// Use a value from the Score class.
+        /// </summary>
+        [Description( "Score" )]
+        [EnumMember( Value = "Score" )]
+        SCORE,
+
+        /// <summary>
+        /// Counts the number of EventType=Singular with Integer score equal to Source.
+        /// </summary>
+        [Description( "CountOf" )]
+        [EnumMember( Value = "CountOf" )]
+        COUNT_OF,
+
+        /// <summary>
+        /// Use a value from the Participant class
+        /// </summary>
+        [Description( "ParticipantAttribute" )]
+        [EnumMember( Value = "ParticipantAttribute" )]
+        PARTICIPANT_ATTRIBUTE,
+
+        /// <summary>
+        /// Use a value from the Particiipant's Attributes. Attribute must be a Simple Attribute.
+        /// </summary>
+        [Description( "Attribute" )]
+        [EnumMember( Value = "Attribute" )]
+        ATTRIBUTE
     }
 }

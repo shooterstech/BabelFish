@@ -21,7 +21,8 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         }
 
         /// <summary>
-        /// If this is a public match and preliminary is true, then this GetResultList will return participants ranked and scored by their predictive results; the predictive scores are based on a participant's score history and shots taken in the current match. 
+        /// If this is a public match and preliminary is true, then this GetResultList will return participants ranked and scored by their predictive results; 
+        /// the predictive scores are based on a participant's score history and shots taken in the current match. 
         /// </summary>
         public bool Preliminary { get; set; }
 

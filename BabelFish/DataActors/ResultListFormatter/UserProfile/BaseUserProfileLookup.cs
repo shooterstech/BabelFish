@@ -5,7 +5,7 @@ using System.Text;
 using NLog;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
-namespace Scopos.BabelFish.ResultListFormatter.UserProfile {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
 
     /// <summary>
     /// An in memory only implementation of the IUserProfileLookup interface. 
@@ -15,12 +15,12 @@ namespace Scopos.BabelFish.ResultListFormatter.UserProfile {
     /// c) As a base class for a database implementatioon. 
     /// the User Profile data.
     /// </summary>
-    public class InMemoryUserProfileLookup : IUserProfileLookup {
+    public class BaseUserProfileLookup : IUserProfileLookup {
 
         //Key is the user's cognito user id
-        protected static ConcurrentDictionary<string, UserProfile> UserProfileByUserIdCache = new ConcurrentDictionary<string, UserProfile>();
+        protected ConcurrentDictionary<string, UserProfile> UserProfileByUserIdCache = new ConcurrentDictionary<string, UserProfile>();
         //Key is the user's account url, aka rezults url
-        protected static ConcurrentDictionary<string, UserProfile> UserProfileByAccountUrlCache = new ConcurrentDictionary<string, UserProfile>();
+        protected ConcurrentDictionary<string, UserProfile> UserProfileByAccountUrlCache = new ConcurrentDictionary<string, UserProfile>();
 
         protected Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -69,9 +69,17 @@ namespace Scopos.BabelFish.ResultListFormatter.UserProfile {
         }
 
         /// <inheritdoc/>
-        public Task RefreshUserProfileVisibilityAsync() {
+        public virtual Task RefreshUserProfileVisibilityAsync() {
             //As this is an in memory only implementation, there is nothing to refresh.
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Clears all records from the cache.
+        /// </summary>
+        public virtual void ClearCache() {
+            UserProfileByAccountUrlCache.Clear();
+            UserProfileByUserIdCache.Clear();
         }
 
         /// <inheritdoc/>

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scopos.BabelFish.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
+using Scopos.BabelFish.APIClients;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
     [TestClass]
@@ -13,28 +15,20 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestInitialize]
         public void InitializeTest() {
 
-            var rlf = ResultListFormatFactory.FACTORY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
-            
         }
 
         [TestMethod]
-        [Ignore]
-        public void ReadingResultListFormatFiles() {
+        public async Task EriksPlayground() {
             var rlf = ResultListFormatFactory.FACTORY;
-            /* Ignoring as these tests may no longer be valid
-            dynamic inv3PFormat = rlf.GetResultListFormatSetName( "v2.0:ntparc:Three-Position Air Rifle 3x10", "Individual" );
 
-            //Test that with a real COF and Event, we get back the expected Result List Format definition
-            Assert.AreEqual( "v1.0:orion:Default Individual", inv3PFormat.ToString() );
+            var matchClient = new OrionMatchAPIClient( "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1", APIStage.ALPHA );
 
-            //Test that with either a phoney COF or a phony Event, we get back the default ... and no exceptions are thrown.
-            var notARealCOF = rlf.GetResultListFormatSetName( "Not a real course of fire", "Individual" );
-            var notARealEvent = rlf.GetResultListFormatSetName( "v2.0:ntparc:Three-Position Air Rifle 3x10", "Not a real event" );
+            var getResultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024051811552792.0" ), "Kneeling - All" );
+            var resultList= getResultListResponse.ResultList;
 
-            Assert.AreEqual( "v1.0:orion:Not a real event Individual", notARealEvent.ToString() );
-            Assert.AreEqual( "v1.0:orion:Default Individual", notARealCOF.ToString() );
-            */
+            var rlfSetName = await rlf.GetResultListFormatSetNameAsync( resultList );
         }
     }
 }

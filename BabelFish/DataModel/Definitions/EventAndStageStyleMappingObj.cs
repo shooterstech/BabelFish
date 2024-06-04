@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<StageStyleSelection> StageStyleMappings { get; set; }
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 100 )]
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
     }

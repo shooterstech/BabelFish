@@ -57,12 +57,10 @@ namespace Scopos.BabelFish.Converters {
             throw new NotImplementedException( $"Unable to convert type '{type}' to an Abstract class SquaddingAssignment." );
         }
 
-        public override bool CanWrite {
-            get { return false; }
-        }
+        public override bool CanWrite { get { return false; } }
 
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
-            throw new NotImplementedException(); // won't be called because CanWrite returns false
+            //When CanWrite is false, which it is, the standard converter is used and not this custom converter
         }
     }
 

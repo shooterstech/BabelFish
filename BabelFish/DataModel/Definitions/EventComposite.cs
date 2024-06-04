@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Text;
 using Amazon.Util;
 using Scopos.BabelFish.Runtime;
@@ -9,7 +9,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class EventComposite {
+    public class EventComposite : IEquatable<EventComposite> {
 
         public EventComposite() {
             this.Children = new List<EventComposite>();
@@ -46,6 +46,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public string ScoreFormat { get; private set; }
 
+        /// <summary>
+        /// For an event composite, almost always "SUM"
+        /// For a singularity, which doesn't have children it will be an empty string ""
+        /// </summary>
+        public string Calculation { get; private set; } = "";
+
         public bool HasChildren {
             get {
                 return Children.Count > 0;
@@ -64,6 +70,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<EventComposite> GetAllSingulars() {
             return GetEvents(false,false,false,false,false,true);
         }
+
+        /// <summary>
+        /// Returns a list of EvenComposites, that are children of this, and that have an EventType equal to one of the values passed in.
+        /// </summary>
+        /// <param name="none">No EventType listed.</param>
+        /// <param name="event">EventType == EVENT</param>
+        /// <param name="stage">EventType == STAGE</param>
+        /// <param name="series">EventType == SERIES</param>
+        /// <param name="string">EventType == STRING</param>
+        /// <param name="singular">EventType == SINGULAR</param>
+        /// <returns></returns>
         public List<EventComposite> GetEvents(bool none = true, bool @event = true, bool stage = true, bool series = true, bool @string = true, bool singular = true) {
             //NONE, EVENT, STAGE, SERIES, STRING, SINGULAR
             List<EventComposite> descendants = new List<EventComposite>();
@@ -92,6 +109,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return descendants;
         }
+
+        /// <summary>
+        /// Searches the children of this Event Composite, for one with the passed in eventName and returns it.
+        /// Returns null, if it could not be found.
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
         public EventComposite FindEventComposite( string eventName ) {
 
             if ( this.EventName == eventName ) return this;
@@ -104,8 +128,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return null;
         }
 
+        /// <inheritdoc/>
         public override string ToString() {
             return $"{EventName} of {EventType}";
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode() {
+            //Within a COF definition EventName shold be unique and we could use it to singularly
+            //However, if we wanted it to me more universally unique, we need to include toher member fields ... of which is no guarantee
+            int hash = this.EventName.GetHashCode();
+            hash ^= this.EventType.GetHashCode();
+            foreach (var child in this.Children) 
+                hash ^= child.GetHashCode();
+            hash ^= this.ScoreFormat.GetHashCode();
+            hash ^= this.Calculation.GetHashCode();
+
+            return hash;
         }
 
         private static void GenerateChildStage(Event gEvent, int stageValue){
@@ -169,7 +208,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             cof.Singulars = generatedSingulars;
         }
 
+        private static ConcurrentDictionary<string, EventComposite> eventCompositeCache = new ConcurrentDictionary<string, EventComposite> ();
+
+        /// <summary>
+        /// Generates the Event tree as defined by the passed in Course of Fire definition. 
+        /// the EventComposite that is passed back, is the top level Event in the tree.
+        /// </summary>
+        /// <param name="cofRef"></param>
+        /// <returns></returns>
+        /// <exception cref="ScoposException"></exception>
         public static EventComposite GrowEventTree( CourseOfFire cofRef ) {
+
+            //Because growing the event tree can take time, and its an operation that's often repeated, we will try
+            //and store cache copies of it and return the cached value first, before growing a new one.
+            EventComposite ec;
+            if ( eventCompositeCache.TryGetValue( cofRef.SetName, out ec ) ) { 
+                return ec; 
+            }
 
             CourseOfFire cof = cofRef.Clone(); //dont modify passed in cof
             GenerateEvents(cof);
@@ -191,10 +246,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             top = new EventComposite() {
                 EventName = topLevelEvent.EventName,
 				EventStyleMapping = topLevelEvent.EventStyleMapping,
-                ScoreFormat = topLevelEvent.ScoreFormat
+                ScoreFormat = topLevelEvent.ScoreFormat,
+                Calculation = topLevelEvent.Calculation
             };
             //this should be where we go through 
             GrowChildren( cof, top, 0 );
+
+            //Store in cache, so we can use later
+            eventCompositeCache.TryAdd( cofRef.SetName, top );
 
             return top;
         }
@@ -209,6 +268,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 if (t.EventName == parent.EventName ) {
                     parent.EventType = t.EventType;
 					parent.ScoreFormat = t.ScoreFormat;
+                    parent.Calculation = t.Calculation;
+
                     if (t.EventType == EventtType.STAGE)
                         parent.StageStyleMapping = t.StageStyleMapping;
 					foreach ( var childName in t.GetChildrenEventNames() ) {
@@ -236,6 +297,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             foreach( Singular s in cof.Singulars ) {
 				parent.EventType = EventtType.SINGULAR;
                 parent.ScoreFormat = s.ScoreFormat;
+                parent.Calculation = "";
                 return;
 			}
 
@@ -243,6 +305,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             parent.EventType = EventtType.SINGULAR;
             parent.ScoreFormat = "Shot";
         }
+        
+        /// <inheritdoc/>
+        public bool Equals( EventComposite other ) {
+            return this.GetHashCode() == other.GetHashCode();
+        }
 
+        /// <inheritdoc/>
+        public override bool Equals( object obj ) {
+            if ( obj == null || obj is not EventComposite ) 
+                return false;
+
+            return Equals( obj as EventComposite );
+        }
     }
 }

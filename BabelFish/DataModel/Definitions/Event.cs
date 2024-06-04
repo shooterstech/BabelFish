@@ -17,11 +17,11 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
-    public class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition {
+    public class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
         private List<string> validationErrorList = new List<string>();
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        private Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
@@ -88,7 +88,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
                     }
                 }
             } catch (Exception ex) {
-                logger.Error( ex );
+                Logger.Error( ex );
             }
             return listOfEventNames;
         }
@@ -96,17 +96,16 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
-        /// * AVG
         /// </summary>
-        [JsonProperty(Order = 4)]
-        public string Calculation { get; set; }
+        [JsonProperty( Order = 4 )]
+        public string Calculation { get; set; } = "SUM";
 
         /// <summary>
         /// The score format to use to display scores for this Event.
         /// The possible values are learned from the Score Format Collection.
         /// </summary>
-        [JsonProperty(Order = 5)]
-        public string ScoreFormat { get; set; }
+        [JsonProperty( Order = 5 )]
+        public string ScoreFormat { get; set; } = "Events";
 
         /// <summary>
         /// Formatted as a ValueSeries
@@ -136,6 +135,9 @@ namespace Scopos.BabelFish.DataModel.Definitions
 
         /// <summary>
         /// The recommended Ranking Rules defintion to use when displaying a ranking list for this Event.
+        /// 
+        /// EKA NOTE: We may have to make this an object, as depending on the Score Formate (e.g. Integer
+        /// vs Decimal) we would have different RankingRuleDef. 
         /// </summary>
         [JsonProperty(Order = 15)]
         [DefaultValue("")]
@@ -152,13 +154,36 @@ namespace Scopos.BabelFish.DataModel.Definitions
             return $"{EventName} of {EventType}";
         }
 
-        /// <inheritdoc/>
-        /// <exception cref="ArgumentException">Thrown if the value of .ResultListFormatDef could not be parsed. Which shouldn't happen.</exception>
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( RankingRuleDef ))
+                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+
+            SetName rrSetName = SetName.Parse( RankingRuleDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rrSetName );
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetRankingRuleDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
-            SetName resultListFormatSetName = SetName.Parse( ResultListFormatDef );
-            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( resultListFormatSetName );
-            return getDefiniitonResponse.Definition;
+            if (string.IsNullOrEmpty( ResultListFormatDef ))
+                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
+
+            SetName rlfSetName = SetName.Parse( ResultListFormatDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( rlfSetName );
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetResultListFormatDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
         }
     }
 }

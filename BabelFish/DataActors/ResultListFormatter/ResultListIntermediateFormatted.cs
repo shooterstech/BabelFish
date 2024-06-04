@@ -7,15 +7,20 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 
-namespace Scopos.BabelFish.ResultListFormatter {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     /// <summary>
     /// ResultListFormatted is an intermediate formatted result list. It's like assembly code, half way 
     /// between a high livel language and binary code running on the CPU. In this case, it reads in the 
     /// raw result list data, and the result list format definition, to produce the ResultListIntermediateFormatted
     /// class.
+    /// 
+    /// The compiled ResultListFormat has a header row, footer row, and a body considting of 0 to n rows. 
+    /// Each header, footer, and body row has the same number of columns. The ResultListFormat has methods
+    /// to retreive either the textual value of each cell or a CallValue object that is the text value plus
+    /// css class list.
     /// </summary>
     public class ResultListIntermediateFormatted {
 
@@ -162,6 +167,14 @@ namespace Scopos.BabelFish.ResultListFormatter {
         /// </summary>
         private ScoreConfig ScoreConfig { get; set; }
 
+        /// <summary>
+        /// Returns the score format to use when displayg scores of type 'scoreFormatName'.
+        /// Examples include Events => "{i} - {x}" or Shots => "{m}{d}{X}".
+        /// If a score format could not be found, based on the passed in scoreFormatName, then 
+        /// the default value of "{d}" is returned.
+        /// </summary>
+        /// <param name="scoreFormatName"></param>
+        /// <returns></returns>
         public string GetScoreFormat(string scoreFormatName) {
             string scoreFormat;
             if (ScoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))
@@ -226,12 +239,29 @@ namespace Scopos.BabelFish.ResultListFormatter {
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
-            cellValues.Text = format.Header.ToString();
+            cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
             foreach (var c in format.HeaderClassList)
                 cellValues.ClassList.Add( c.ToString() );
 
             return cellValues;
+        }
+
+        /// <summary>
+        /// Returns the text value of the header cell, specified by the columnIndex.
+        /// Returns the same value as .GetColumnHeaderCell( columnIndex ).Text
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
+        /// <exception cref="InitializeAsyncNotCompletedException"></exception>
+        public string GetColumnHeaderValue( int columnIndex ) {
+            if (!initialized)
+                throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
+
+
+            var format = ResultListFormat.Format.Columns[columnIndex];
+
+            return format.Header;
         }
 
         /// <summary>
@@ -300,16 +330,29 @@ namespace Scopos.BabelFish.ResultListFormatter {
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
-            try {
-                cellValues.Text = format.Footer.ToString();
-                cellValues.ClassList = new List<string>();
-                foreach (var c in format.FooterClassList)
-                    cellValues.ClassList.Add( c.ToString() );
-            } catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex) {
-                ;
-            }
+            cellValues.Text = format.Footer.ToString();
+            cellValues.ClassList = new List<string>();
+            foreach (var c in format.FooterClassList)
+                cellValues.ClassList.Add( c.ToString() );
 
             return cellValues;
+        }
+
+        /// <summary>
+        /// Returns the text value of the footer cell, specified by the columnIndex.
+        /// Returns the same value as .GetColumnFooterCell( columnIndex ).Text
+        /// </summary>
+        /// <param name="columnIndex"></param>
+        /// <returns></returns>
+        /// <exception cref="InitializeAsyncNotCompletedException"></exception>
+        public string GetColumnFooterValue( int columnIndex ) {
+            if (!initialized)
+                throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
+
+
+            var format = ResultListFormat.Format.Columns[columnIndex];
+
+            return format.Footer;
         }
 
         /// <summary>

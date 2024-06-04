@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using NLog;
-using Scopos.BabelFish.Helpers;
+using Newtonsoft.Json;
+using Scopos.BabelFish.Converters;
+using DateTimeConverter = Scopos.BabelFish.Converters.DateTimeConverter;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Response object for a request of Squadding Assignments for a specified match and squadding event name.
     /// </summary>
-    public class SquaddingList : ITokenItems<SquaddingAssignment> {
+    public class SquaddingList : ITokenItems<SquaddingAssignment>, IPublishTransactions {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -34,7 +37,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Use GetLastUpdated() to return this value as a DateTime object.
         /// </summary>
         [Obsolete("LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole.")]
+        [JsonConverter( typeof( DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; }
+
+        /// <summary>
+        /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
+        /// need defaults?
+        /// </summary>
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime StartDate { get; set; } = DateTime.Today;
+
+        /// <summary>
+        /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
+        /// need defaults?
+        /// </summary>
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// Formatted as a string, the Match ID that this squadding list is from.
@@ -81,17 +99,38 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<SquaddingAssignment> Items { get; set; }
 
         /// <inheritdoc />
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        public int Limit { get; set; } = 50;
+        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int Limit { get; set; } = 0;
 
         /// <inheritdoc />
+        [DefaultValue( false )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public bool HasMoreItems {
             get {
                 return !string.IsNullOrEmpty( NextToken );
             }
         }
+
+        /// <inheritdoc />
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public string PublishTransactionId { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        [DefaultValue( 0 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionSequence { get; set; } = 0;
+
+        /// <inheritdoc />
+        [DefaultValue( 1 )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public int TransactionCount { get; set; } = 1;
 
         public override string ToString() {
             return $"SquaddingList with {Items.Count} items";

@@ -7,8 +7,8 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
 using System.Threading.Tasks;
-using Scopos.BabelFish.ResultListFormatter;
-using Scopos.BabelFish.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
             definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            userProfileLookup = new InMemoryUserProfileLookup();
+            userProfileLookup = new BaseUserProfileLookup();
         }
 
         [TestMethod]
@@ -360,6 +360,42 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             //End the footer row
             Debug.WriteLine( "" );
             Debug.WriteLine( $"</div>" );
+        }
+
+        [TestMethod]
+        [Ignore]
+        public async Task EriksPlayground() {
+
+            MatchID matchId = new MatchID( "1.1.2024050911254405.0" );
+            var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+            var match = matchDetailResponse.Match;
+            var resultListName = "Team - All";
+
+            //Get the Result List from the API Server
+            var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
+            var resultList = resultListResponse.ResultList;
+            var resultEventName = resultList.EventName;
+
+            //Get the ResultListFormat to use for formatting
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+            var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            var resultListFormat = resultListFormatResponse.Definition;
+            Assert.IsNotNull( resultListFormat );
+
+            //Test that the conversion was successful and has the same number of objects.
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, definitionClient, userProfileLookup );
+            await rlf.InitializeAsync();
+            Assert.IsNotNull( rlf );
+
+            CellValues tryCellValues, cellValues;
+            foreach (var row in rlf.Rows) {
+                for (int i = 0; i < rlf.GetColumnCount(); i++) {
+                    var cell = row.GetColumnBodyCell( i );
+
+                    Console.Write( $"{cell.Text}, " );
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
