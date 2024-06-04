@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using NLog;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
@@ -14,21 +17,16 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
-    public class Event
-    {
+    public class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
-        /// <summary>
-        /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
-        /// NOTE EventtType is purposefully misspelled.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
         private List<string> validationErrorList = new List<string>();
+
+        private Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
             //Children = new List<string>();
-            ScoreFormat = "d";
+            ScoreFormat = "Events";
             Calculation = "SUM";
             EventType = EventtType.NONE;
         }
@@ -65,19 +63,49 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [JsonProperty(Order = 3)]
         public dynamic Children { get; set; }
 
+        public List<string> GetChildrenEventNames() {
+            List<string> listOfEventNames = new List<string>();
+
+            try {
+                if (Children is JArray) {
+                    foreach (var childName in Children) {
+                        listOfEventNames.Add( (string)childName );
+                    }
+                } else {
+                    //It's a dictionary
+                    
+                    //var values = (string)Children["Values"];
+                    //var valueIndexes = values.Split( ".." );
+                    //int start = int.Parse( valueIndexes[0] );
+                    //int stop = int.Parse( valueIndexes[1] );
+
+                    ValueSeries vs = new ValueSeries((string)Children["Values"]);
+                    var valueList = vs.GetAsList();
+
+                    foreach (int i in valueList){
+                        var eventName = (string)Children["EventName"];
+                        listOfEventNames.Add( eventName.Replace( "{}", i.ToString() ) );
+                    }
+                }
+            } catch (Exception ex) {
+                Logger.Error( ex );
+            }
+            return listOfEventNames;
+        }
+
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
-        /// * AVG
         /// </summary>
-        [JsonProperty(Order = 4)]
-        public string Calculation { get; set; }
+        [JsonProperty( Order = 4 )]
+        public string Calculation { get; set; } = "SUM";
 
         /// <summary>
         /// The score format to use to display scores for this Event.
+        /// The possible values are learned from the Score Format Collection.
         /// </summary>
-        [JsonProperty(Order = 5)]
-        public string ScoreFormat { get; set; }
+        [JsonProperty( Order = 5 )]
+        public string ScoreFormat { get; set; } = "Events";
 
         /// <summary>
         /// Formatted as a ValueSeries
@@ -86,20 +114,76 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [DefaultValue("")]
         public string Values { get; set; }
 
-        [JsonProperty(Order = 10)]
-        public string StageStyle { get; set; }
-
+        /// <summary>
+        /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
+        /// </summary>
         [JsonProperty(Order = 11)]
-        public dynamic StageStyleSelection { get; set; }
+        public StageStyleMapping StageStyleMapping { get; set; }
 
-        [JsonProperty(Order = 12)]
-        public string EventStyle { get; set; }
-
+        /// <summary>
+        /// EventStyleSelection determines how the resulting Result COF is mapped to a EVENT STYLE.
+        /// </summary>
         [JsonProperty(Order = 13)]
-        public dynamic EventStyleSelection { get; set; }
+        public EventStyleMapping EventStyleMapping { get; set; }
 
-        [JsonProperty(Order = 14)]
+        /// <summary>
+        /// The recommended Result List Format defintion to use when displaying a result list for this Event.
+        /// </summary>
+        [JsonProperty( Order = 14 )]
+        [DefaultValue( "" )]
+        public string ResultListFormatDef { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The recommended Ranking Rules defintion to use when displaying a ranking list for this Event.
+        /// 
+        /// EKA NOTE: We may have to make this an object, as depending on the Score Formate (e.g. Integer
+        /// vs Decimal) we would have different RankingRuleDef. 
+        /// </summary>
+        [JsonProperty(Order = 15)]
+        [DefaultValue("")]
+        public string RankingRuleDef { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Internal documentation comments. All text is ignored by the system.
+        /// </summary>
+        [JsonProperty(Order = 99)]
         [DefaultValue("")]
         public string Comment { get; set; }
+
+        public override string ToString() {
+            return $"{EventName} of {EventType}";
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( RankingRuleDef ))
+                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+
+            SetName rrSetName = SetName.Parse( RankingRuleDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rrSetName );
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetRankingRuleDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( ResultListFormatDef ))
+                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
+
+            SetName rlfSetName = SetName.Parse( ResultListFormatDef );
+            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( rlfSetName );
+            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                return getDefiniitonResponse.Definition;
+            } else {
+                throw new ScoposAPIException( $"GetResultListFormatDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
+            }
+        }
     }
 }

@@ -4,14 +4,15 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using NLog;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Helpers;
+using Newtonsoft.Json;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    /// <summary>
-    /// A response object, describing a list of Match Participants in a match. Match Participants, in this API call, include athletes (competitors), match officials, and coaches. They do not include Teams.
-    /// </summary>
-    public class MatchParticipantList : ITokenItems<MatchParticipant> {
+	/// <summary>
+	/// A response object, describing a list of Match Participants in a match. Match Participants, in this API call, include athletes (competitors), match officials, and coaches. They do not include Teams.
+	/// </summary>
+	[Serializable]
+	public class MatchParticipantList : ITokenItems<MatchParticipant> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -30,6 +31,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Use GetMatchID() to return the value as a MatchID object.
         /// </summary>
         public string MatchID { get; set; }
+
+        /// <summary>
+        /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
+        /// need defaults?
+        /// </summary>
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime StartDate { get; set; } = DateTime.Today;
+
+        /// <summary>
+        /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
+        /// need defaults?
+        /// </summary>
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// The Match ID that this squadding list is from.
@@ -74,6 +89,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public int Limit { get; set; } = 50;
+
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
 
         public override string ToString() {
             return $"MatchParticipantList with {Items.Count} items";

@@ -4,7 +4,7 @@ using System.Text;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.Requests {
-    public class RequestException : ShootersTechException {
+    public class RequestException : ScoposException {
         public RequestException()
             : base( "Something bad happened!" ) {
         }

@@ -8,14 +8,10 @@ using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
 namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 
-    public class GetScoreAverageAuthenticatedResponse : Response<ScoreAverageWrapper> {
+    public class GetScoreAverageAuthenticatedResponse : GetScoreAverageAbstractResponse {
 
         public GetScoreAverageAuthenticatedResponse( GetScoreAverageAuthenticatedRequest request) {
             this.Request = request;
-        }
-
-        public ScoreAverage ScoreAverage {
-            get { return Value.ScoreAverage; }
         }
     }
 }

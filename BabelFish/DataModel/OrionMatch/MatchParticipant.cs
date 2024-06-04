@@ -12,7 +12,7 @@ using Newtonsoft.Json.Converters;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
-    public class MatchParticipant {
+    public class MatchParticipant : IParticipant {
 
         public MatchParticipant() {
             Participant = new Individual();
@@ -54,6 +54,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return "MatchParticipant for " + Participant.DisplayName;
         }
 
-        public string LastUpdated { get; set; }
-    }
+        public DateTime LastUpdated { get; set; }
+
+		/// <summary>
+		/// String holding the software (Orion Scoring System) and Version number of the software.
+		/// </summary>
+		public string Creator { get; set; }
+	}
 }

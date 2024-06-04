@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -18,10 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// * Mapping of shots to singular events.
     /// A COURSE OF FIRE should only describe an event that can be completed with one outing to the range. In other words, an athlete should be able to complete the course of fire with one trip to the range. A multi-day event is the combination of two or more COURSE OF FIRE, that is defined outside of this type.
     /// </summary>
-    public class CourseOfFire : Definition {
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
+    public class CourseOfFire : Definition, IGetTargetCollectionDefinition {
 
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
@@ -44,18 +43,46 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string CommonName { get; set; } = string.Empty;
 
         /// <summary>
-        /// A list of ATTRIBUTES that each competitor needs to have in order for the mapping to EVENT STYLE or STAGE STYLE to work. Used when a COURSE OF FIRE is defined for multiple equipment classes.
-        /// </summary>
-        [JsonProperty(Order = 11)]
-        public List<string> RequiredAttributes { get; set; } = new List<string>();
-
-        /// <summary>
         /// Formatted as a SetName, the TargetCollectionDef to use to score shots. The specific TARGET definition to use is calculated with the 
         /// SegementGroupSegment.TargetSetIndex.
         /// Required.
         /// </summary>
         [JsonProperty(Order = 12)]
-        public string TargetCollectionDef { get; set; } = string.Empty;
+        [DefaultValue( "v1.0:ntparc:Air Rifle" )]
+        public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
+
+        /// <inheritdoc/>
+        public async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync()
+        {
+            SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse(TargetCollectionDef);
+            var getDefiniitonResponse = await APIClients.DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync(targetCollectionDef);
+            return getDefiniitonResponse.Definition;
+        }
+
+        /// <summary>
+        /// Helper function to return the SetName of a DefaultTargetDefinition given a collectionName
+        /// </summary>
+        /// <param name="targetCollectionName"></param>
+        /// <returns></returns>
+        public async Task<SetName> GetDefaultTargetDefinition( string targetCollectionName )
+        {
+            var targetCollectionDef = await GetTargetCollectionDefinitionAsync();
+            foreach (var collection in targetCollectionDef.TargetCollections)
+            {
+                if(targetCollectionName == collection.TargetCollectionName)
+                {
+                    return Scopos.BabelFish.DataModel.Definitions.SetName.Parse(collection.TargetDefs.FirstOrDefault());
+                }
+            }
+            return Scopos.BabelFish.DataModel.Definitions.SetName.Parse(targetCollectionDef.TargetCollections[0].TargetDefs.FirstOrDefault());
+        }
+
+        [JsonProperty( Order = 12 )]
+        /// <summary>
+        /// The name of the Target Collection to use as the default when creating a new Course of Fire. 
+        /// Must be a value specified in the TargetCollectionDef.
+        /// </summary>
+        public string DefaultTargetCollectionName { get; set; }
 
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
@@ -75,7 +102,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
         [JsonProperty(Order = 15)]
-        public string ScoreFormatCollectionDef { get; set; } = string.Empty;
+        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
+        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
@@ -84,9 +112,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string ScoreConfigDefault { get; set; } = string.Empty;
 
         /// <summary>
-        /// Range command script with Paper Targets or EST Configuration. 
+        /// The default Event and Stage Style Mapping file to use. 
         /// </summary>
-        [JsonProperty(Order = 20)]
+        [JsonProperty( Order = 17 )]
+        [DefaultValue( "v1.0:orion:Default" )]
+        public string DefaultEventAndStageStyleMappingDef { get; set; } = "v1.0:orion:Default";
+
+		/// <summary>
+		/// The default Attribute Value to use to determine a user's Attribute Value Appellation when shooting this course of fire.
+		/// </summary>
+		[JsonProperty( Order = 18 )]
+		[DefaultValue( "v1.0:orion:Air Rifle Training Category" )]
+		public string DefaultAttributeDef { get; set; } = "v1.0:orion:Air Rifle Training Category";
+
+		/// <summary>
+		/// Range command script with Paper Targets or EST Configuration. 
+		/// </summary>
+		[JsonProperty(Order = 20)]
         public List<RangeScript> RangeScripts { get; set; } = new List<RangeScript>();
 
         /// <summary>

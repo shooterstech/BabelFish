@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.Tests {
         public static BasicUserCredentials TestDev7Credentials = new BasicUserCredentials() {
             Username = "test_dev_7@shooterstech.net",
             Password = "abcd1234",
-            DeviceKey = "us-east-1_28303d2c-8c58-49e5-a56f-9e3e736cdeb3",
+            DeviceKey = "us-east-1_2290d8e2-7574-4271-99c0-059f4d5563ee",
             DeviceGroupKey = "-X1RRYAQO"
         };
 
@@ -37,6 +37,7 @@ namespace Scopos.BabelFish.Tests {
         };
 
         public static string TestDev1UserId = "5a90fe66-17a6-4d92-9bfa-f3c7a05e2b95";
+        public static string TestDev2UserId = "04456a4e-902d-48eb-8914-ec413b37e314";
         public static string TestDev3UserId = "11d535ed-5bc2-43be-ac94-6776111c0eec";
         public static string TestDev7UserId = "26f32227-d428-41f6-b224-beed7b6e8850";
         public static string TestDev9UserId = "28489692-0a61-470e-aed8-c71b9cfbfe6e";

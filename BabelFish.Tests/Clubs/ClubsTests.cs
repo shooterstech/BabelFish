@@ -41,6 +41,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
             var request = new GetClubListAuthenticatedRequest( userAuthentication );
 
             var response = await client.GetClubListAuthenticatedAsync( request );
@@ -65,6 +66,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password );
+            await userAuthentication.InitializeAsync();
             var request1 = new GetClubListAuthenticatedRequest( userAuthentication );
 
             var response1 = await client.GetClubListAuthenticatedAsync( request1 );
@@ -87,7 +89,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
         }
 
         [TestMethod]
-        public async Task GetClubDetail() {
+        public async Task GetClubDetailAuthenticated() {
 
 
             var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
@@ -96,6 +98,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password );
+            await userAuthentication.InitializeAsync();
             var request = new GetClubDetailAuthenticatedRequest( ownerId, userAuthentication );
 
             var response = await client.GetClubDetailAuthenticatedAsync( request );
@@ -109,6 +112,68 @@ namespace Scopos.BabelFish.Tests.Clubs {
             Assert.IsTrue( clubDetail.LicenseList.Count > 0, "Expecting the length of the license list is greather than zero." );
 
             Assert.IsTrue( clubDetail.Options.Count > 0, "Expecting at least one ClubOption." );
+        }
+
+        [TestMethod]
+        public async Task GetClubDetailPublic() {
+
+
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+
+            var ownerId = "OrionAcct000001";
+            var request = new GetClubDetailPublicRequest( ownerId );
+
+            var response = await client.GetClubDetailPublicAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+
+            var clubDetail = response.ClubDetail;
+
+            Assert.AreEqual( ownerId, clubDetail.OwnerId, "Expecting the OwnerId to match, what was sent." );
+        }
+
+        [TestMethod]
+        public async Task GetClubListPublic() {
+
+            //Using production, to get more real values.
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            //Should return all clubs without any parameters ... or at least up to the token limit
+            var request = new GetClubListPublicRequest( );
+            request.CurrentlyShooting = false;
+
+            var getAllClubsResponse = await client.GetClubListPublicAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getAllClubsResponse.StatusCode );
+
+            var clubList = getAllClubsResponse.ClubList;
+
+            Assert.IsTrue( clubList.Items.Count == 50, "The response's ClubList should have 50 clubs." );
+            Assert.AreNotEqual( clubList.NextToken, "", "Expecting NextToken to be a non empty string." );
+
+        }
+
+        [TestMethod]
+        public async Task GetClubCurrentlyShooting() {
+
+            //Using production, to get more real values.
+            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            //as this call requires clubs to be shooting, the list may be empty (b/c no one is shooting)
+            var request = new GetClubListPublicRequest();
+            request.CurrentlyShooting = true;
+
+            var getClubCurrentlyShooting = await client.GetClubListPublicAsync( request );
+
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getClubCurrentlyShooting.StatusCode );
+
+            var clubList = getClubCurrentlyShooting.ClubList.Items;
+
+            //All clubs in the returned list (if there are any) should have a shot fired within the last 10 minutes.
+            foreach( var club in clubList ) {
+                Assert.IsTrue( (DateTime.UtcNow - club.LastPublicShot).TotalMinutes < 11.0);
+            }
+
         }
     }
 }

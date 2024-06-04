@@ -27,9 +27,31 @@ namespace Scopos.BabelFish.Converters {
             return (objectType == typeof( AttributeValue ));
         }
 
+        public override bool CanWrite { get { return true; } }
+
         /// <inheritdoc/>
         public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
-            throw new NotImplementedException();
+            /*
+            serializer.Converters.Remove( this );
+            JToken jToken = JToken.FromObject( value, serializer );
+            serializer.Converters.Add( this );
+            */
+
+            var attrValueDataPacket = (AttributeValueDataPacket)value;
+            JObject o = new JObject();
+
+            o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
+            o["Visibility"] = attrValueDataPacket.Visibility.ToString();
+            o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
+            o["AttributeValue"] = new JObject();
+
+            if (attrValueDataPacket.AttributeValue != null) {
+                foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
+                    o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+                }
+            }
+            
+            o.WriteTo( writer );
         }
 
         /// <inheritdoc/>
@@ -39,6 +61,16 @@ namespace Scopos.BabelFish.Converters {
 
             //first try using the ConcreteClassId, if it is a property of the json, as this will be a faster method.
             var id = jo["ConcreteClassId"]?.Value<int>();
+
+            //if id is null, then attempt to identify the type of AttributeValueDataPacket based on payload
+            if (id == null) {
+                if (jo.ContainsKey( "StatusCode" ))
+                    id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+                else if (jo.ContainsKey( "Message" ))
+                    id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+                else
+                    id = AttributeValueDataPacketMatch.CONCRETE_CLASS_ID;
+            }
 
             AttributeValueDataPacket attributeValueDataPacket;
             bool okToDeserialize = true;
@@ -78,7 +110,8 @@ namespace Scopos.BabelFish.Converters {
                 logger.Info( $"About to call AttributeValue.CreateAsync() for {attributeValueDataPacket.AttributeDef}." );
                 attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), jo.GetValue( "AttributeValue" ) );
                 logger.Info( $"Returned from calling AttributeValue.CreateAsync() for {attributeValueDataPacket.AttributeDef}." );
-                attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
+                if (jo.ContainsKey("Visibility"))
+                    attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
             }
 
             return attributeValueDataPacket;

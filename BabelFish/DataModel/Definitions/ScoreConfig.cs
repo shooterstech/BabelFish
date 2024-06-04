@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ScoreConfig {
+    public class ScoreConfig: IReconfigurableRulebookObject {
 
         public ScoreConfig() { }
 
@@ -16,5 +18,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Values are a Score Format, eg. "{i} - {x}"
         /// </summary>
         public Dictionary<string, string> ScoreFormats { get; set; } = new Dictionary<string, string>();
+
+        /// <inheritdoc/>
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
+
+        public override string ToString() {
+            return ScoreConfigName;
+        }
     }
 }

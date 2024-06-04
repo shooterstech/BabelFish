@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.Responses.ScoposData {
-    public class GetCupsOfCoffeePublicResponse :Response<CupsOfCoffee> {
+    public class GetCupsOfCoffeePublicResponse : Response<CupsOfCoffee> {
 
         public GetCupsOfCoffeePublicResponse( GetCupsOfCoffeePublicRequest request ) {
             this.Request = request;
@@ -17,6 +17,13 @@ namespace Scopos.BabelFish.Responses.ScoposData {
         /// </summary>
         public int CupsOfCoffeeConsumed {
             get { return Value.CupsOfCoffeeConsumed; }
+        }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            return DateTime.UtcNow.AddMinutes( 15 );
+
         }
     }
 }

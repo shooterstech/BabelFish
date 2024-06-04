@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class GetMatchPublicRequest : Request {
-        public GetMatchPublicRequest( string matchid = "" ) : base( "GetMatchDetail" ) {
-            MatchID = matchid;
-        }
+    public class GetMatchPublicRequest : GetMatchAbstractRequest {
 
-        public string MatchID { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        public override string RelativePath {
-            get { return $"/match/{MatchID}"; }
+        public GetMatchPublicRequest( MatchID matchId ) : base( "GetMatchDetail", matchId ) {
         }
     }
 }

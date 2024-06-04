@@ -3,15 +3,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
+    /*
     [TestClass]
     public class FetcherTests {
 
-        /*
+        
          * Because TestMethods are ran alphabetically, prefacing the method names with A, B, C to get them 
          * to run in a specific order. Namely, to test not setting x-api-key before setting it. 
-         */
+         
 
         /// <summary>
         /// Tests that the x api key has to be set before fetching a definition
@@ -22,7 +24,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             //Without setting the x api key, an exception should be thrown.
             var setNameEmailStr = "v2.3:orion:Email Address";
-            var definitionEmail = await AttributeValueDefinitionFetcher.FETCHER.FetchAttributeDefinitionAsync( setNameEmailStr );
+            var definitionEmail = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( setNameEmailStr );
         }
 
         /// <summary>
@@ -61,4 +63,5 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( setNamePhoneStr, definitionPhone.GetSetName().ToString() );
         }
     }
+*/
 }

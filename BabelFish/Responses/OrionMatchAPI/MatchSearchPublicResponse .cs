@@ -8,25 +8,10 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class MatchSearchPublicResponse : Response<MatchSearchWrapper>, ITokenResponse<MatchSearchPublicRequest> {
+    public class MatchSearchPublicResponse : MatchSearchAbstractResponse {
 
         public MatchSearchPublicResponse( MatchSearchPublicRequest request ) : base() {
             Request = request;
-        }
-
-        /// <summary>
-        /// Facade function that returns the same as this.Value
-        /// </summary>
-        public MatchSearchList MatchSearchList
-        {
-            get { return Value.MatchSearchList; }
-        }
-
-        /// <inheritdoc/>
-        public MatchSearchPublicRequest GetNextRequest() {
-            var nextRequest = (MatchSearchPublicRequest)Request.Copy();
-            nextRequest.Token = Value.MatchSearchList.NextToken;
-            return nextRequest;
         }
     }
 }

@@ -11,27 +11,60 @@ using Scopos.BabelFish.Responses.ScoreHistoryAPI;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
-    public class ScoreHistoryAPIClient : APIClient {
+    public class ScoreHistoryAPIClient : APIClient<ScoreHistoryAPIClient> {
 
         /// <summary>
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public ScoreHistoryAPIClient( string apiKey) : base(apiKey) { }
+        public ScoreHistoryAPIClient( string apiKey ) : base( apiKey ) {
 
-        public ScoreHistoryAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
+            //ScoreHistoryAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
 
-
-        public async Task<GetScoreHistoryAuthenticatedResponse> GetScoreHistoryAuthenticatedAsync( GetScoreHistoryAuthenticatedRequest requestParameters)
-        {
-            var response = new GetScoreHistoryAuthenticatedResponse( requestParameters );
-
-            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
-
-            return response;
+            //We do want (some) in memory cache. 
+            IgnoreInMemoryCache = false;
         }
 
-        public async Task<GetScoreAverageAuthenticatedResponse> GetScoreAverageAuthenticatedAsync( GetScoreAverageAuthenticatedRequest requestParameters ) {
+        public ScoreHistoryAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+
+            //ScoreHistoryAPIClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+
+            //We do want (some) in memory cache. 
+            IgnoreInMemoryCache = false;
+        }
+
+
+        public async Task<GetScoreHistoryAuthenticatedResponse> GetScoreHistoryAuthenticatedAsync( GetScoreHistoryAuthenticatedRequest requestParameters ) {
+            var response = new GetScoreHistoryAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+		}
+
+
+		public async Task<GetScoreHistoryPublicResponse> GetScoreHistoryPublicAsync( GetScoreHistoryPublicRequest requestParameters ) {
+			var response = new GetScoreHistoryPublicResponse( requestParameters );
+
+			await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+			return response;
+		}
+
+		public async Task<GetScoreHistoryAbstractResponse> GetScoreHistoryAsync( GetScoreHistoryAbstractRequest requestParameters ) {
+            if (requestParameters is GetScoreHistoryPublicRequest)
+                return await GetScoreHistoryPublicAsync( (GetScoreHistoryPublicRequest)requestParameters );
+            else if (requestParameters is GetScoreHistoryAuthenticatedRequest)
+                return await GetScoreHistoryAuthenticatedAsync( (GetScoreHistoryAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"Passed in argument requestParameters is of unexpected type ${requestParameters.GetType()}.");
+		}
+
+		public async Task<GetScoreAverageAuthenticatedResponse> GetScoreAverageAuthenticatedAsync( GetScoreAverageAuthenticatedRequest requestParameters ) {
 
             var response = new GetScoreAverageAuthenticatedResponse( requestParameters );
 
@@ -39,6 +72,73 @@ namespace Scopos.BabelFish.APIClients {
 
             return response;
         }
+
+		public async Task<GetScoreAveragePublicResponse> GetScoreAveragePublicAsync( GetScoreAveragePublicRequest requestParameters ) {
+
+            var response = new GetScoreAveragePublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+		}
+
+		public async Task<GetScoreAverageAbstractResponse> GetScoreAverageAsync( GetScoreHistoryAbstractRequest requestParameters ) {
+			if (requestParameters is GetScoreAveragePublicRequest)
+				return await GetScoreAveragePublicAsync( (GetScoreAveragePublicRequest)requestParameters );
+			else if (requestParameters is GetScoreAverageAuthenticatedRequest)
+				return await GetScoreAverageAuthenticatedAsync( (GetScoreAverageAuthenticatedRequest)requestParameters );
+			else
+				throw new ArgumentException( $"Passed in argument requestParameters is of unexpected type ${requestParameters.GetType()}." );
+		}
+
+		/// <summary>
+		/// Allows a user to manually enter a new score to be included in score history related calculations. User-entered 
+		/// score history will always have visibility protected.
+		/// NOTE: To edit an existing score use .PatchScoreHistoryAsync()
+		/// </summary>
+		/// <param name="requestParameters"></param>
+		/// <returns></returns>
+		public async Task<PostScoreHistoryResponse> PostScoreHistoryAsync( PostScoreHistoryRequest requestParameters ) {
+
+            var response = new PostScoreHistoryResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+		/// <summary>
+		/// Allows a user to modify an existing manually entered score.
+        /// NOTE: To create a new score use .PostScoreHistoryAsync()
+		/// </summary>
+		/// <param name="requestParameters"></param>
+		/// <returns></returns>
+		public async Task<PatchScoreHistoryResponse> PatchScoreHistoryAsync( PatchScoreHistoryRequest requestParameters ) {
+
+            var response = new PatchScoreHistoryResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+		/// <summary>
+		/// Removes the caller's User Id from the score identified by the passed in Result COF ID. This does not 
+        /// delete the score from a match, but rather only removes the link between the user Id and Result COF ID.
+		/// </summary>
+		/// <param name="requestParameters"></param>
+		/// <returns></returns>
+		public async Task<DeleteScoreHistoryResponse> DeleteScoreHistoryAsync(DeleteScoreHistoryRequest requestParameters)
+        {
+
+            var response = new DeleteScoreHistoryResponse(requestParameters);
+
+            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+
 
     }
 }

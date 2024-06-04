@@ -14,6 +14,7 @@ namespace Scopos.BabelFish.Helpers {
         /// <summary>
         /// Perform a deep Copy of the object, using Json as a serialization method. NOTE: Private members are not cloned using this method.
         /// Code copied from https://stackoverflow.com/questions/78536/deep-cloning-objects
+        /// NOTE: Use sparingly, Clone is known to take a long time (for a computer). For a faster copy, implement Scopos.BabelFish.DataModel.ICopy.
         /// </summary>
         /// <typeparam name="T">The type of object being copied.</typeparam>
         /// <param name="source">The object instance to copy.</param>

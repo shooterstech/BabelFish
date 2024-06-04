@@ -3,15 +3,32 @@ using Scopos.BabelFish.Responses.ScoposData;
 using Scopos.BabelFish.DataModel.ScoposData;
 
 namespace Scopos.BabelFish.APIClients {
-    public class ScoposDataClient : APIClient {
+    public class ScoposDataClient : APIClient<ScoposDataClient> {
 
         /// <summary>
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public ScoposDataClient( string apiKey ) : base( apiKey ) { }
+        public ScoposDataClient( string apiKey ) : base( apiKey ) {
 
-        public ScoposDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) { }
+            //ScoposDataClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+
+            //We do want in memory cache
+            IgnoreInMemoryCache = false;
+        }
+
+        public ScoposDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+
+            //ScoposDataClient does not support file system cache
+            LocalStoreDirectory = null;
+            IgnoreFileSystemCache = true;
+
+            //We do want in memory cache
+            IgnoreInMemoryCache = false;
+        }
+
 
         /// <summary>
         /// GetVersion API for multiple services

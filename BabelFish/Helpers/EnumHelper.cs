@@ -60,7 +60,19 @@ namespace Scopos.BabelFish.Helpers {
         XApiKey,
     }
 
+    /// <summary>
+    /// Common enum for classes that implement the IComparer interface.
+    /// Also used with the TieBreakingRule class.
+    /// </summary>
+    public enum SortBy {
+        [Description( "Ascending")]
+        [EnumMember( Value = "Ascending" )]
+        ASCENDING,
 
+        [Description( "Descending" )]
+        [EnumMember( Value = "Descending" )]
+        DESCENDING 
+    }
 
     public static class EnumHelper {
         /// <summary>

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
@@ -55,11 +56,35 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         public Request Request { get; protected set; }
 
+		/// <summary>
+		/// Returns the time that the response object is considered out of date and
+        /// should not longer be used in a cached response. 
+        /// 
+        /// To enable cache for a API call two things needs to happen. First the concrete
+        /// APIClient needs to enabled caching response by setting .IgnoreLocalCache to false.
+        /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
+        /// to a value in the future.
+		/// </summary>
+		/// <returns></returns>
+		protected internal virtual DateTime GetCacheValueExpiryTime() {
+            //Return a default value indicating the cahce value has already expired.
+            return DateTime.MinValue;
+		}
 
         /// <summary>
-        /// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
+        /// If true, indicates this response was from in memory cache, and not from an API call.
         /// </summary>
-        public MessageResponse MessageResponse
+        public bool InMemoryCachedResponse { get; protected internal set; } = false;
+
+        /// <summary>
+        /// If true, indicates this response was from file system local storage, and not from an API call.
+        /// </summary>
+        public bool FileSystemCachedResponse { get; protected internal set; } = false;
+
+		/// <summary>
+		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
+		/// </summary>
+		public MessageResponse MessageResponse
         {
             get;
             internal set;
@@ -100,7 +125,7 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = Body.ToObject<T>();
+            Value = Body.ToObject<T>( DefinitionAPIClient.DeSerializer );
         }
     }
 }

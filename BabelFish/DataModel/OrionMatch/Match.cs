@@ -1,21 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
     public class Match {
 
+        private string parentId = "";
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
         public Match() { }
 
+        
         /// <summary>
         /// After an object is deserialized form JSON,
         /// adds defaults to empty properties
@@ -36,7 +43,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
         [JsonProperty( Order = 2 )]
-        public string ParentID { get; set; } = string.Empty;
+        public string ParentID { 
+            get {
+                if (string.IsNullOrEmpty( parentId ))
+                    return MatchID;
+                else
+                    return parentId;
+            }
+            set {
+                parentId = value;
+            }
+        }
 
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
@@ -64,21 +81,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
-        /// Name of the Match
+        /// The name of the Match
         /// </summary>
-        [JsonProperty( Order = 7 )]
-        public string MatchName {
+        public string Name {
             get; set;
-        } = string.Empty;
-
-        /// <summary>
-        /// Name of the Match
-        /// </summary>
-        [Obsolete( "Use MatchName instead." )]
-        public string Name { 
-            get { return this.MatchName; }
-            set { this.MatchName = value; }
-        }
+        } = string.Empty; 
 
         /// <summary>
         /// Sets the public visibility for the match. Valid values are
@@ -106,6 +113,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 11 )]
         public string MatchID { get; set; } = string.Empty;
 
+        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.LOCAL_MATCH;
+
         /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to
         /// make change requests to the match, such as add athletes or teams, insert
@@ -121,23 +130,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonProperty( Order = 12 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Start Date of the Match. Formatted as YYYY-MM-dd
-        /// </summary>
-        [JsonProperty( Order = 10 )]
-        public string StartDate { get; set; } = string.Empty;
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime StartDate { get; set; }
 
-        /// <summary>
-        /// End Date of the Match. Formatted as YYYY-MM-dd
-        /// </summary>
-        [JsonProperty( Order = 13 )]
-        public string EndDate { get; set; } = string.Empty;
-
-        /// <summary>
-        /// A list of common Incident Reports that may occure during the competition.
-        /// </summary>
-        [JsonProperty( Order = 14 )]
-        public List<IncidentReportRuleDefinition> CommonIncidentReports { get; set; } = new List<IncidentReportRuleDefinition>();
+        [JsonConverter( typeof( DateConverter ) )]
+        public DateTime EndDate { get; set; }
 
         [JsonProperty( Order = 15 )]
         public string CourseOfFireDef { get; set; } = string.Empty;
@@ -163,26 +160,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// returned by the Rest API, but are not sent to the cloud. Instead 'AuthorizationList'
         /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
         /// </summary>
-        /// TODO: The list of Authorization is finite. Convert this property to be a list of enum values.
-        /// The optional values are:
-        /// Read Incident Reports
-        /// Create Incident Reports
-        /// Update Incident Reports
-        /// Close Incident Reports
-        /// Create Target Images
-        /// Create Entries
-        /// Update Entries
-        /// Delete Entries
-        /// Read Scores
-        /// Read Results
-        /// Read Squadding
-        /// Read Personal Scores
-        /// Read Personal Results
-        /// Read Personal Squadding
-        /// Read Personal Incident Reports
-        ///
         [JsonProperty( Order = 19 )]
-        public List<string> Authorization { get; set; } = new List<string>();
+        public List<MatchAuthorizationRole> Authorization { get; set; } = new List<MatchAuthorizationRole>();
 
         /// <summary>
         /// A list of Authorization roles participants in the match have.
@@ -224,11 +203,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
-        public override string ToString() {
+		/// <summary>
+		/// String holding the software (Orion Scoring System) and Version number of the software.
+		/// </summary>
+		public string Creator { get; set; }
+
+        /// <summary>
+        /// Helper function that indicates if this Match is currently going on. Which is 
+        /// determined by the Match's Start and End Date.
+        /// </summary>
+        [JsonIgnore]
+        public bool IsOnGoing {
+            get {
+                return StartDate <= DateTime.Today
+                    && EndDate >= DateTime.Today;
+            }
+        }
+
+		public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "MatchDetail for " );
             foo.Append( Name );
             return foo.ToString();
         }
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

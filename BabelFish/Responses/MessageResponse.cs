@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BabelFish.DataModel;
+using Scopos.BabelFish.DataModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,14 +11,25 @@ namespace Scopos.BabelFish.Responses {
     /// <summary>
     /// The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
     /// </summary>
-    public class MessageResponse : IResponse {
+    public class MessageResponse : IResponse, ICopy<MessageResponse> {
 
-        public List<String> Message { get; set; } = new List<string>();
+        /// <inheritdoc/>
+        public List<string> Message { get; set; } = new List<string>();
 
-        [Obsolete( "ResponseCodes is no longer being included in new API Requests, and will stop being included in existing ones as they are updated. Use the response' StatusCode instead." )]
-        public List<String> ResponseCodes { get; set; } = new List<string>();
+        /// <inheritdoc/>
+        public MessageResponse Copy() {
+            MessageResponse copy = new MessageResponse();
+            foreach( var item in Message) {
+                copy.Message.Add(item);
+            }
 
-        [Obsolete( "Title is no longer being included in new API Requests, and will stop being included in existing ones as they are updated." )]
-        public string Title { get; set; } = string.Empty;
+            return copy;
+        }
+
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return string.Join( ", ", Message );
+        }
     }
 }

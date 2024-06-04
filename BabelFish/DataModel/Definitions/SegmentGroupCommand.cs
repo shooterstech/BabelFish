@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class SegmentGroupCommand {
+    public class SegmentGroupCommand : IReconfigurableRulebookObject {
 
         private const int DEFAULT_INT = -9999;
         private const string DEFAULT_STR = "";
@@ -220,12 +220,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 13)]
         public int NextCommandIndex { get; set; }
 
-        /// <summary>
-        /// Authors internal comments for documentation. Value does not effect any functionality.
-        /// </summary>
-        [DefaultValue("")]
-        [JsonProperty(Order = 100)]
-        public string Comment { get; set; }
+        /// <inheritdoc/>
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
 
         public override string ToString() {
             var c = GetCommand();

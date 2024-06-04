@@ -28,19 +28,48 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public int Step { get; private set; }
 
+        /// <summary>
+        /// Interpres the Value Series, and returns a compiled and complete list of integers
+        /// as specified by the Value Series.
+        /// </summary>
+        /// <returns></returns>
         public List<int> GetAsList() {
             List<int> list = new List<int>();
 
-            for (int i = StartValue; i <= EndValue; i += Step)
-                list.Add(i);
+            if (StartValue > EndValue)
+                for (int i = StartValue; i >= EndValue; i -= Step)
+                    list.Add( i );
+            else
+                for (int i = StartValue; i <= EndValue; i += Step)
+                    list.Add( i );
+
+
+            return list;
+        }
+
+        /// <summary>
+        /// Interprets the Value Series and returns a list of compiled event names.
+        /// </summary>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown if the passed in eventName does not contain the place holder '{}'.</exception>
+        public List<string> GetAsList(string eventName) {
+            if (!eventName.Contains( "{}" ))
+                throw new ArgumentException( $"The passed in eventName '{eventName}' string must contain '{{}}' for its values to be replaced." );
+
+            List<string> list = new List<string>();
+
+            if (StartValue > EndValue)
+                for (int i = StartValue; i >= EndValue; i -= Step)
+                    list.Add( eventName.Replace( "{}", i.ToString() ) );
+            else
+                for (int i = StartValue; i <= EndValue; i += Step)
+                    list.Add( eventName.Replace( "{}", i.ToString() ) );
 
             return list;
         }
 
         private void Parse() {
-            //Check for a deprecated list option n-m
-            if (format.Contains("-") && !format.Contains(".."))
-                format = format.Replace("-", "..");
 
             var intStrings = format.Split(new string[] { "..", "," }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -71,13 +100,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 case 3:
                 default:
                     StartValue = list[0];
-                    EndValue = list[0];
-                    Step = list[1];
+                    EndValue = list[1];
+                    Step = Math.Abs( list[2] );
                     break;
             }
-
-            if (StartValue > EndValue && Step < 0)
-                Step *= -1;
         }
     }
 }

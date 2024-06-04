@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
-    public class Shot : IEquatable<Shot>, IPenalty
+	[Serializable]
+	public class Shot : IEquatable<Shot>, IPenalty
     {
+
+        float bulletDiameter = 0;
+        float scoringDiameter = 0;
 
         /// <summary>Shot Attribute to indicate the shot was a sighter.</summary>
         public const string SHOT_ATTRIBUTE_SIGHTER = "SIGHTER";
@@ -71,11 +76,60 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public DateTime TimeScored { get; set; }
 
+        /// <summary>
+        /// The value of the Range Clock when the shot was fired and scored. 
+        /// </summary>
         public string RangeTime { get; set; }
 
-        public float BulletDiameter { get; set; }
+        /// <summary>
+        /// The diamter of the bullet shot at the target. Measured in mm.
+        /// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
+        /// When getting, if the value is not set, the value of Scoring Diamter is instead returned. If Scoring Diamter is not set, then 4.5 is returned.
+        /// </summary>
+        public float BulletDiameter { 
+            get {
+                if (bulletDiameter > 0 )
+                    return bulletDiameter; 
 
-        public float ScoringDiameter { get; set; }
+                if (scoringDiameter > 0)
+                    return scoringDiameter;
+
+                return 4.5f;
+            }
+
+            set {
+                if ((value >= 4.0f && value <= 15.0f) || value == 0)
+                    bulletDiameter = value;
+
+                else 
+                    throw new ArgumentException( $"Can not set BulletDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+            }
+        }
+
+		/// <summary>
+		/// The diamter to use when scoring this shot against the scoring rings. Measured in mm.
+		/// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
+		/// When getting, if the value is not set, the value of Bullet Diamter is instead returned. If Bullet Diamter is not set, then 4.5 is returned.
+		/// </summary>
+		public float ScoringDiameter {
+			get {
+				if (scoringDiameter > 0)
+					return scoringDiameter;
+
+				if (bulletDiameter > 0)
+					return bulletDiameter;
+
+				return 4.5f;
+			}
+
+			set {
+				if ((value >= 4.0f && value <= 15.0f) || value == 0)
+					scoringDiameter = value;
+
+                else 
+				    throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+			}
+		}
 
         public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
 
@@ -90,9 +144,16 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public string StageLabel { get; set; }
 
+        /*
+         * NOTE We must maintain the possiblility of a Sequence value of 0, as some older version of
+         * Orion stored the first shot with Sequence == 0. However, any new implementations should
+         * use Sequence == 1 to represent the first scored shot.
+         */
         /// <summary>
-        /// An in order numbering of the shot, for the Result COF
+        /// An in order numbering of the shot, for the Result COF. 
+        /// Valid values are greater than zero (but not zero). Typically stored as integers.
         /// </summary>
+        [DefaultValue(-9999)]
         public float Sequence { get; set; }
 
         /// <summary>
@@ -108,6 +169,16 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public string MatchID { get; set; }
 
         public dynamic Meta { get; set; }
+
+        /// <summary>
+        /// EventName is only set when the shot is part of a Result COF .Shots dictionary
+        /// </summary>
+        public string EventName { get; set; }
+
+        /// <summary>
+        /// ScoreFormatted may only be set when the Shot is part of a Result COF .Shots dictrionary
+        /// </summary>
+        public string ScoreFormatted { get; set; }
 
         /// <summary>
         /// Returns the x and y coordinates, measured in pixels, of the aiming bull center in the verification photo.
@@ -175,8 +246,28 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         [JsonIgnore]
         public object DataObjectTag { get; set; }
 
-        public int Update { get; set; }
+        /// <summary>
+        /// A Shot is uniquely identified (and stored in a database) by the combination of its Result COF ID, 
+        /// Sequence number, and Update value. Each time a shot is updated, a ShotLog entry must be added.
+        /// By adding a ShotLog, the value for .Update is also updated.
+        /// NOTE: A Shot may not have a log entry with .Update == 0. This would be, for example, a manually 
+        /// added shot such as a MISS or Cross Fire. When adding a manual shot, it should come with a ShotLog,
+        /// which would be .Update == 1. 
+        /// </summary>
+        public int Update {
+            get {
+                if (UpdateLog == null)
+                    return 0;
+                else
+                    return UpdateLog.Count;
+            }
+        }
 
+        /// <summary>
+        /// A shot log entry is required for each Update to a shot.
+        /// the .Update value for a original (hasn't been changed) shot is 0. By adding 
+        /// a ShotLog, the value for .Update is also updated.
+        /// </summary>
         public List<ShotLog> UpdateLog { get; set; }
 
         /// <summary>

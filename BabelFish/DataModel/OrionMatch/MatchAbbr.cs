@@ -10,7 +10,8 @@ using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    public class MatchAbbr {
+	[Serializable]
+	public class MatchAbbr {
 
         public MatchAbbr() {
 
@@ -41,13 +42,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Name of the Match
         /// </summary>
-        public string MatchName {get; set;      }
+        public string MatchName { get; set; } = string.Empty;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
         public string OwnerId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Human readable name of the Owner, usually a school or club name.
+        /// </summary>
+        public string OwnerName { get; set;} = string.Empty;
 
 
         /// <summary>
@@ -70,6 +76,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A list of scoring systems used in this match.
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
+
+        /// <summary>
+        /// The high level shooting style that this match was conducted under.
+        /// </summary>
+        public string ShootingStyle { get; set; } = string.Empty;
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

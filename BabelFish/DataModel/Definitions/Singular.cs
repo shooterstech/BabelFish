@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,16 +14,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// one Singular object define the shots fired in kneeling, a second Singular object defines the shots 
     /// fired in prone, and a third object defines the shots fired in standing.
     /// </summary>
-    public class Singular {
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum ShotMappingMethodType { SEQUENTIAL }
+    public class Singular : IReconfigurableRulebookObject {
 
         private List<string> validationErrorList = new List<string>();
 
         public Singular () {
 
-            Type = "Shot";
+            Type = SingularType.SHOT;
             EventName = "";
             Values = "";
             ScoreFormat = "d";
@@ -33,8 +31,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The type of singular event this is. Must be one of the following:
         ///  * Shot
+        ///  * Test
         /// </summary>
-        public string Type { get; set; }
+        public SingularType Type { get; set; } = SingularType.SHOT;
 
         /// <summary>
         /// The format for the EventName. The compiled EventName must be unique within the COURSE OF FIRE. 
@@ -50,7 +49,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Score Format to use when displaying the Singular event during a match. 
         /// </summary>
-        public string ScoreFormat { get; set; }
+        public string ScoreFormat { get; set; } = "Shots";
 
         /// <summary>
         /// A unique value that is used in the mapping process of shots to events. StageLabels are assigned to shots:
@@ -64,8 +63,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The method to use to map shots to events. Must be one of the following values:
         /// * Sequential
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public ShotMappingMethodType ShotMappingMethod { get; set; }
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public ShotMappingMethodType ShotMappingMethod { get; set; } = ShotMappingMethodType.SEQUENTIAL;
+
+        /// <inheritdoc/>
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
 
         /// <summary>
         /// Generates a list of Events based on the definition of this Singular

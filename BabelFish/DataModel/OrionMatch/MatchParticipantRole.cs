@@ -10,7 +10,8 @@ using Newtonsoft.Json.Converters;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum MatchParticipantRole {
+	[Serializable]
+	public enum MatchParticipantRole {
 
         /// <summary>
         /// An athlete or competitor

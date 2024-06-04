@@ -18,14 +18,15 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     public class SetAttributeValueTests {
 
         [TestMethod]
-        public void SetAttributeValue_SingleAttribute() {
+        public async Task SetAttributeValue_SingleAttribute() {
 
             var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            AttributeValueDefinitionFetcher.FETCHER.XApiKey = Constants.X_API_KEY;
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
             var setNameTestAttriubte = "v1.0:orion:Test Attribute";
@@ -68,6 +69,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttributeValue1.SetFieldValue( "ABoolean", newBoolean );
             testAttributeValue1.SetFieldValue( "ADate", newDate );
             testAttributeValue1.SetFieldValue( "ADateTime", newDateTime );
+            testAttriubuteAttributeValueDataPacket1.Visibility = VisibilityOption.PROTECTED;
 
             //Generate a set attribute value request
             var setRequest = new SetAttributeValueAuthenticatedRequest( userAuthentication );
@@ -101,6 +103,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( newBoolean, (bool)testAttributeValue2.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( newDate, (DateTime)testAttributeValue2.GetFieldValue( "ADate" ) );
             Assert.IsTrue( Math.Abs((((DateTime)testAttributeValue2.GetFieldValue( "ADateTime" )).ToUniversalTime()- newDateTime).TotalSeconds) < .001D );
+            Assert.AreEqual( VisibilityOption.PROTECTED, testAttriubuteAttributeValueDataPacket2.Visibility );
         }
     }
 }

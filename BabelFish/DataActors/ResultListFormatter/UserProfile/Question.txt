@@ -1,0 +1,3 @@
+EKA March 2024
+
+I'm not sure if UserProfile belongs under Scopos.BabelFish.ResultListFormatter, but I don't know of a better place for it. 

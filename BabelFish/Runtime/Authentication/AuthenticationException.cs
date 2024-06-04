@@ -5,7 +5,7 @@ using System.Text;
 using NLog;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
-    public class AuthenticationException : ShootersTechException {
+    public class AuthenticationException : ScoposException {
         public AuthenticationException()
             : base( "Something bad happened!" ) {
         }

@@ -1,65 +1,138 @@
-﻿using System.Reflection;
-using System.IO;
+﻿using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Helpers;
+using System;
+using System.Collections.Concurrent;
+using System.Text;
 
-namespace Scopos.BabelFish.APIClients
-{
-    public class DefinitionCache
-    {
-        private const string DEFINITION_FILE_EXT = ".json";
-        private const string DEFINITION_DIR = "DEFINITIONS";
-        private const int DEFINITION_EXPIRE = 14;
+namespace Scopos.BabelFish.APIClients {
+    public static class DefinitionCache {
 
-        private TimeSpan prefCacheExpireTime = TimeSpan.FromDays(DEFINITION_EXPIRE);
+        private static ConcurrentDictionary<SetName, CourseOfFire> CourseOfFireCache = new ConcurrentDictionary<SetName, CourseOfFire>();
 
-        private DirectoryInfo localDefinitionDirectory;
+        private static ConcurrentDictionary<SetName, EventAndStageStyleMapping> EventAndStageStyleMappingCache = new ConcurrentDictionary<SetName, EventAndStageStyleMapping>();
 
-        //This is where previously read definitions will be stored in memory. The Key is a combination of set name and definition type. Teh value is the Definition object.
-        private Dictionary< string, Definition> cachedDefinitions = new Dictionary< string, Definition>();
+        private static ConcurrentDictionary<SetName, RankingRule> RankingRuleCache = new ConcurrentDictionary<SetName, RankingRule>();
 
-        public static DefinitionCache CACHE= new DefinitionCache();
+        private static ConcurrentDictionary<SetName, ResultListFormat> ResultListFormatCache = new ConcurrentDictionary<SetName, ResultListFormat>();
 
-        private DefinitionCache() {
-            string appDataDirectory = Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData );
-            string definitionDirectory = $"{appDataDirectory}\\{DEFINITION_DIR}";
+        private static ConcurrentDictionary<SetName, ScoreFormatCollection> ScoreFormatCollectionCache = new ConcurrentDictionary<SetName, ScoreFormatCollection>();
 
-            localDefinitionDirectory = new DirectoryInfo( definitionDirectory );
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
+
+            if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) { return c; }
+
+            var response = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( setName );
+            if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                var definition = response.Definition;
+
+                CourseOfFireCache.TryAdd( setName, definition );
+                return definition;
+            } else {
+                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+            }
+
         }
 
         /// <summary>
-        /// Attempts to retreive a definition from memory. Returns true if there was a cache hit, false otherwise
+        /// 
         /// </summary>
-        /// <param name="definitionType"></param>
         /// <param name="setName"></param>
-        /// <param name="definition"></param>
         /// <returns></returns>
-        public bool TryGetDefinition<T>( DefinitionType definitionType, SetName setName, out T definition ) where T : Definition {
-            var key = Key( definitionType, setName );
-            Definition d;
-            if (cachedDefinitions.TryGetValue( key, out d)) {
-                definition = (T) d;
-                return true;
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+            if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) { return c; }
+
+            var response = await DefinitionFetcher.FETCHER.GetEventAndStageStyleMappingDefinitionAsync( setName );
+            if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                var definition = response.Definition;
+
+                EventAndStageStyleMappingCache.TryAdd( setName, definition );
+                return definition;
             } else {
-                definition = default(T);
-                return false;
+                throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="definition"></param>
-        public void SaveDefinition<T>(  SetName setName, T definition ) where T : Definition {
-            var definitionType = definition.Type;
-            var key = Key( definitionType, setName );
-            //todo only save to cache, if we dont have a copy, or this is a newer version
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
+            if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) { return c; }
 
-            cachedDefinitions[ key ] = definition;
+            var response = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( setName );
+            if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+
+                var definition = response.Definition;
+
+                RankingRuleCache.TryAdd( setName, definition );
+                return definition;
+            } else {
+                throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+            }
         }
 
-        private string Key( DefinitionType definitionType, SetName setName ) {
-            return $"{definitionType}:{setName}";
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
+            if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) { return c; }
+
+            var response = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( setName );
+            if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+
+                var definition = response.Definition;
+
+                ResultListFormatCache.TryAdd( setName, definition );
+                return definition;
+            } else {
+                throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
+            if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) { return c; }
+
+            var response = await DefinitionFetcher.FETCHER.GetScoreFormatCollectionDefinitionAsync( setName );
+            if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+
+                var definition = response.Definition;
+
+                ScoreFormatCollectionCache.TryAdd( setName, definition );
+                return definition;
+            } else {
+                throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+            }
+        }
+
+        public static void ClearCaches() {
+            CourseOfFireCache.Clear();
+            EventAndStageStyleMappingCache.Clear();
+            RankingRuleCache.Clear();
+            ResultListFormatCache.Clear();
+            ScoreFormatCollectionCache.Clear();
         }
     }
 }
