@@ -142,5 +142,63 @@ namespace Scopos.BabelFish.APIClients {
             return await GetClubDetailPublicAsync( request );
         }
 
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync(GetCoachAssignmentAuthenticatedRequest request)
+        {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync(int licenseNumber, UserAuthentication credentials)
+        {
+
+            var request = new GetCoachAssignmentAuthenticatedRequest(licenseNumber, credentials);
+
+            return await GetCoachAssignmentAuthenticatedAsync(request);
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> CreateCoachAssignmentAuthenticatedAsync(CreateCoachAssignmentAuthenticatedRequest request)
+        {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> DeleteCoachAssignmentAuthenticatedAsync(DeleteCoachAssignmentAuthenticatedRequest request)
+        {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync(GetCoachClubListPublicRequest request)
+        {
+            var response = new GetCoachClubListPublicResponse(request);
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            return response;
+        }
+
+        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync(string userId)
+        {
+            var request = new GetCoachClubListPublicRequest(userId);
+            return await GetCoachClubListPublicAsync(request);
+        }
+
+        public async Task<GetCoachClubListAuthenticatedResponse> GetCoachClubListAuthenticatedAsync(GetCoachClubListAuthenticatedRequest request)
+        {
+            var response = new GetCoachClubListAuthenticatedResponse(request);
+            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            return response;
+        }
+
     }
 }
