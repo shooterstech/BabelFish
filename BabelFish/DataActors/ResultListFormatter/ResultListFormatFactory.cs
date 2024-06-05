@@ -88,6 +88,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 //K-P-S Format
                 case "v3.0:ntparc:Three-Position Air Rifle 3x10":
                 case "v3.0:ntparc:Three-Position Air Rifle 3x20":
+                case "v3.0:ntparc:Three-Position Air Rifle 3x40":
                 case "v1.0:cmp:Smallbore Rifle 3x10":
                 case "v1.0:cmp:Smallbore Rifle 3x20":
                 case "v1.0:cmp:Smallbore Rifle 3x40":
