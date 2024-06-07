@@ -82,5 +82,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonConverter( typeof( DateConverter ) )]
         public DateTime EndDate { get; set; } = DateTime.Today;
+
+        /// <summary>
+        /// If projected scores are included, ProjectionMadeBy says who made the projection.
+        /// </summary>
+        [DefaultValue( "" )]
+        public string ProjectionMadeBy { get; set; } = string.Empty;
     }
 }
