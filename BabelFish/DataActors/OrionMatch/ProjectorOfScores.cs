@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //The top level event should (better be) the only Event Type == EVENT.
             this.TopLevelEvent = EventComposite.GrowEventTree( this.CourseOfFire );
 
-            this.TeamMemberComparer = new CompareByRankingDirective( this.CourseOfFire, RankingDirective.GetDefault( this.TopLevelEvent.EventName ) );
+            this.TeamMemberComparer = new CompareByRankingDirective( this.CourseOfFire, RankingDirective.GetDefault( this.TopLevelEvent.EventName, this.CourseOfFire.ScoreConfigDefault ) );
         }
 
         public ProjectorOfScores( CourseOfFire courseOfFire, CompareByRankingDirective teamMemberComparer ) {

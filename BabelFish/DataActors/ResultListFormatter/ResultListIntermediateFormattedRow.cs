@@ -95,6 +95,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			/*
 			//Fields that are unique to the Participant 
             "Rank", 
+            "RankOrder",
             "DisplayName", 
             "DisplayNameShort", 
             "FamilyName",
@@ -130,7 +131,18 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 						return resultEvent.Rank.ToString();
 					
 					return "";
-				
+
+                case "RankOrder":
+                    if (this.resultListFormatted.ResultList.Projected
+                        && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
+                        && resultEvent.ProjectedRankOrder > 0)
+                        return resultEvent.ProjectedRankOrder.ToString();
+
+                    if (resultEvent.RankOrder > 0)
+                        return resultEvent.RankOrder.ToString();
+
+                    return "";
+
                 case "DisplayName":
                     var dn = resultEvent.Participant.DisplayName;
                     if (!string.IsNullOrEmpty( dn ))

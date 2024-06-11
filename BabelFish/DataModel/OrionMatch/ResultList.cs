@@ -49,24 +49,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultStatus Status {
             get {
                 if (Metadata == null || Metadata.Count == 0)
-                    return ResultStatus.UNOFFICIAL;
+                    return ResultStatus.OFFICIAL;
+
+                if (this.EndDate < DateTime.Today)
+                    return ResultStatus.OFFICIAL;
 
                 bool allFuture = true;
-                bool allUnofficial = true;
-                bool allOfficial = true;
+                bool oneIsIntermediate = false;
+                bool oneIsUnofficial = false;
                 foreach (var rlmd in Metadata.Values) {
                     allFuture &= rlmd.Status == ResultStatus.FUTURE;
-                    allUnofficial &= rlmd.Status == ResultStatus.UNOFFICIAL;
-                    allOfficial &= rlmd.Status == ResultStatus.OFFICIAL;
+                    oneIsIntermediate |= rlmd.Status == ResultStatus.INTERMEDIATE;
+                    oneIsUnofficial |= rlmd.Status == ResultStatus.UNOFFICIAL;
                 }
 
                 if (allFuture)
                     return ResultStatus.FUTURE;
-                if (allUnofficial)
+                if (oneIsIntermediate)
+                    return ResultStatus.INTERMEDIATE;
+                if (oneIsUnofficial)
                     return ResultStatus.UNOFFICIAL;
-                if (allOfficial)
-                    return ResultStatus.OFFICIAL;
-                return ResultStatus.INTERMEDIATE;
+                return ResultStatus.OFFICIAL;
             }
         }
 
@@ -176,12 +179,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// theory .Partial is the opposite of .HasMoreItems
         /// </summary>
         public bool Partial { get; set; } = false;
-
-        /// <summary>
-        /// If .Projected is true, .ProjectionMadeBy says who made the projection.
-        /// </summary>
-        [DefaultValue("")]
-        public string ProjectionMadeBy {  get; set; } = string.Empty;
 
         /// <summary>
         /// The SetName of the Course of Fire

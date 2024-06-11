@@ -14,6 +14,11 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class GetResultListTests {
 
+        [TestInitialize]
+        public async Task InitializeTest() {
+            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+
+        }
 
         [TestMethod]
         public async Task GetResultListBasicPublicTest() {
@@ -97,6 +102,21 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( resultListName, resultListNext.ResultName );
             Assert.IsTrue( resultListNext.Items.Count > 0 );
             Assert.AreNotEqual( "", resultListNext.NextToken );
+        }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+
+            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+
+            //This match id has three relays of 20 athletes
+            var matchId = new MatchID( "1.1.2024050109193283.1" );
+            var resultListName = "Individual - All";
+
+            var request = new GetResultListPublicRequest( matchId, resultListName );
+            var response = await client.GetResultListPublicAsync( request );
+
+            Assert.AreEqual( ResultStatus.OFFICIAL, response.Value.ResultList.Status );
         }
     }
 }

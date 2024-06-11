@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BabelFish.DataModel.Definitions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -141,7 +142,11 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// </summary>
         [JsonProperty(Order = 15)]
         [DefaultValue("")]
+        [Obsolete( "Use RankingRuleMapping instead." )]
         public string RankingRuleDef { get; set; } = string.Empty;
+
+        [JsonProperty(Order = 16)]
+        public RankingRuleMapping RankingRuleMapping { get; set;}
 
         /// <summary>
         /// Internal documentation comments. All text is ignored by the system.

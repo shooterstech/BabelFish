@@ -191,7 +191,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
 
                 //Project (predict) the scores of athlets at the end of the match.
-                this.ResultList.ProjectionMadeBy = ps.ProjectionMadeBy;
+
+                //There should be exactly 1 .metadata in the Result list. But will guard against errors.
+                if (this.ResultList.Metadata.Count > 0)
+                    this.ResultList.Metadata.Values.First().ProjectionMadeBy = ps.ProjectionMadeBy;
+
                 await ps.InitializeAsync( this.ResultList.Items.ToList<IEventScoreProjection>() );
                 foreach (var item in this.ResultList.Items) {
                     item.ProjectScores( ps );
@@ -253,7 +257,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             } else {
                 //If the results are UNOFFICIAL or OFFICIAL, use the ProjectScoreByNull to clear our any residue projected scores.
                 var nullProjectorOfScores = new ProjectScoresByNull( this.CourseOfFire );
-                this.ResultList.ProjectionMadeBy = nullProjectorOfScores.ProjectionMadeBy;
+                if (this.ResultList.Metadata.Count > 0)
+                    this.ResultList.Metadata.Values.First().ProjectionMadeBy = nullProjectorOfScores.ProjectionMadeBy;
+
                 this.ResultList.Projected = false;
                 foreach (var item in this.ResultList.Items) {
                     item.ProjectScores( nullProjectorOfScores );
