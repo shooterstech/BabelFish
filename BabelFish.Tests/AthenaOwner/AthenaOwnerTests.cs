@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Tests.AthenaOwner
         [TestInitialize]
         public void InitClient()
         {
-            athenaOwnerClient = new AthenaOwnerAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            athenaOwnerClient = new AthenaOwnerAPIClient(Constants.X_API_KEY, APIStage.PRODTEST);
         }
 
         [TestMethod]
