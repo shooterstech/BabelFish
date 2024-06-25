@@ -68,19 +68,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             }
 
-            foreach (var re in ResultList.Items) {
-                var rei = new ResultListIntermediateFormattedBodyRow( this, re );
+            lock (rows) { //rows needs to be thread safe
+                foreach (var re in ResultList.Items) {
+                    var rei = new ResultListIntermediateFormattedBodyRow( this, re );
 
-                rows.Add( rei );
+                    rows.Add( rei );
 
-                if (re.TeamMembers != null) {
-                    foreach (var child in re.TeamMembers) {
-                        var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
+                    if (re.TeamMembers != null) {
+                        foreach (var child in re.TeamMembers) {
+                            var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
-                        rows.Add( reiChild );
+                            rows.Add( reiChild );
+                        }
                     }
-                }
 
+                }
             }
 
             initialized = true;
@@ -94,18 +96,30 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="tokenizedResultList"></param>
         public void AppendTokenizedResultList( ResultList tokenizedResultList ) {
 
-            foreach (var re in tokenizedResultList.Items) {
-                var rei = new ResultListIntermediateFormattedBodyRow( this, re );
+            lock (rows) {
+                foreach (var re in tokenizedResultList.Items) {
+                    var rei = new ResultListIntermediateFormattedBodyRow( this, re );
 
-                rows.Add( rei );
+                    rows.Add( rei );
 
-                if (re.TeamMembers != null) {
-                    foreach (var child in re.TeamMembers) {
-                        var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
+                    if (re.TeamMembers != null) {
+                        foreach (var child in re.TeamMembers) {
+                            var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
-                        rows.Add( reiChild );
+                            rows.Add( reiChild );
+                        }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Clears the existing Rows of this ResultListIntermediateFormatted. Likely becuase the Result List is
+        /// going to be reloaded (using AppendTokenizedResultList).
+        /// </summary>
+        public void Clear() {
+            lock (rows) {
+                rows.Clear();
             }
         }
 
@@ -127,7 +141,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             get {
                 if (!initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
-                return rows; }
+
+                lock (rows) {
+                    List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>( rows );
+                    return copyOfRows;
+                }
+            }
         }
 
         /// <summary>
