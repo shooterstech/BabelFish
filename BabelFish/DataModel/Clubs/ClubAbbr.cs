@@ -6,7 +6,7 @@ using System.Text;
 using NLog;
 using Newtonsoft.Json;
 using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
@@ -115,12 +115,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [DefaultValue( "" )]
         public string URLPath { get; set; } = String.Empty;
 
-        /// <summary>
-        /// NOT IMPLEMENTED GPS coords
-        /// </summary>
-        /// <example>northeast</example>
-        [DefaultValue("")]
-        public string GPS_Location { get; set; } = String.Empty;
+        public Location Location { get; set; }
 
         public override string ToString() {
             return $"{Name} {OwnerId}";
