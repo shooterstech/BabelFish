@@ -65,6 +65,9 @@ namespace Scopos.BabelFish.DataActors.Clubs
 
                     compare = x.IsCurrentlyShooting.CompareTo(y.IsCurrentlyShooting);
 
+                    if (compare == 0)
+                        compare = x.Name.CompareTo( y.Name );
+
                     break;
 
                 default:
