@@ -10,6 +10,8 @@ using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.DataActors.OrionMatch;
+using System.Collections;
 
 namespace Scopos.BabelFish.Tests.Clubs {
 
@@ -175,5 +177,57 @@ namespace Scopos.BabelFish.Tests.Clubs {
             }
 
         }
+
+        [TestMethod]
+        public async Task CompareGetClubAbbr()
+        {
+
+            var comparerAcctNum = new CompareClubAbbr(CompareClubAbbr.CompareMethod.ACCOUNT_NUMBER, Scopos.BabelFish.Helpers.SortBy.ASCENDING);
+
+            var comparerName = new CompareClubAbbr(CompareClubAbbr.CompareMethod.NAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING);
+
+            var comparerShooting = new CompareClubAbbr(CompareClubAbbr.CompareMethod.IS_SHOOTING, Scopos.BabelFish.Helpers.SortBy.ASCENDING);
+            var clubAbbr1 = new ClubAbbr
+            {
+                AccountNumber = 1,
+                Name = "AAAA",
+                LastPublicShot = DateTime.UtcNow.AddMinutes(-30) //isCurrentlyShooting = false
+            };
+            var clubAbbr2 = new ClubAbbr
+            {
+                AccountNumber = 15,
+                Name = "BBBB",
+                LastPublicShot = DateTime.UtcNow.AddMinutes(-2) //isCurrentlyShooting = true
+            };
+            var clubAbbr3 = new ClubAbbr
+            {
+                AccountNumber = 2035,
+                Name = "CCCC",
+                LastPublicShot = DateTime.UtcNow.AddMinutes(-120) //isCurrentlyShooting = false
+            };
+            var clubAbbr4 = new ClubAbbr
+            {
+                AccountNumber = 3,
+                Name = "DDDD",
+                LastPublicShot = DateTime.UtcNow.AddMinutes(-0) //isCurrentlyShooting = true
+            };
+
+            Assert.IsTrue(comparerAcctNum.Compare(clubAbbr1, clubAbbr2) < 0); // -1 = 1 compareTo 2
+            Assert.IsTrue(comparerAcctNum.Compare(clubAbbr1, clubAbbr3) < 0); // -1 = 1 compareTo 3
+            Assert.IsTrue(comparerAcctNum.Compare(clubAbbr1, clubAbbr4) < 0); // -1 = 1 compareTo 4
+            Assert.IsTrue(comparerAcctNum.Compare(clubAbbr3, clubAbbr2) > 0); // 1 = 3 compareTo 2
+
+            Assert.IsTrue(comparerName.Compare(clubAbbr1, clubAbbr2) < 0); // -1 = 1 compareTo 2
+            Assert.IsTrue(comparerName.Compare(clubAbbr1, clubAbbr3) < 0); // -1 = 1 compareTo 3
+            Assert.IsTrue(comparerName.Compare(clubAbbr1, clubAbbr4) < 0); // -1 = 1 compareTo 4
+            Assert.IsTrue(comparerName.Compare(clubAbbr3, clubAbbr2) > 0); // 1 = 3 compareTo 2
+
+            Assert.IsTrue(comparerShooting.Compare(clubAbbr1, clubAbbr2) < 0); // -1 = 1 compareTo 2
+            Assert.IsTrue(comparerShooting.Compare(clubAbbr1, clubAbbr3) == 0); // -1 = 1 compareTo 3
+            Assert.IsTrue(comparerShooting.Compare(clubAbbr1, clubAbbr4) < 0); // -1 = 1 compareTo 4
+            Assert.IsTrue(comparerShooting.Compare(clubAbbr3, clubAbbr2) < 0); // 1 = 3 compareTo 2
+
+        }
+
     }
 }

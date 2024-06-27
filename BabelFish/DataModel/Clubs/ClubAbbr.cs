@@ -12,7 +12,24 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Abbreviated data about an Orion club account.
     /// </summary>
-    public class ClubAbbr {
+    public class ClubAbbr : IComparable<ClubAbbr>
+    {
+        public int CompareTo(ClubAbbr other)
+        {
+            int compare = this.AccountNumber.CompareTo(other.AccountNumber);
+            if (compare != 0)
+                return compare;
+
+            compare = this.Name.CompareTo(other.Name);
+            if (compare != 0)
+                return compare;
+
+            compare = this.IsCurrentlyShooting.CompareTo(other.IsCurrentlyShooting);
+            if (compare != 0)
+                return compare;
+
+            return this.AccountNumber.CompareTo(other.AccountNumber);
+        }
 
         private Logger logger = LogManager.GetCurrentClassLogger();
         private DateTime memberSince = DateTime.Today;
@@ -85,11 +102,25 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public DateTime LastPublicShot { get; set; }
 
         /// <summary>
+        /// bool set by LastPublicShot, if shot within the last 15 minutes, it is true.
+        /// </summary>
+        /// <example>false</example>
+        [DefaultValue(false)]
+        public bool IsCurrentlyShooting { get { return LastPublicShot.AddMinutes(15) >= DateTime.UtcNow; }  }
+
+        /// <summary>
         /// The URL path in www.Scopos.net/clubs/{path} linking to their team page.
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]
         public string URLPath { get; set; } = String.Empty;
+
+        /// <summary>
+        /// NOT IMPLEMENTED GPS coords
+        /// </summary>
+        /// <example>northeast</example>
+        [DefaultValue("")]
+        public string GPS_Location { get; set; } = String.Empty;
 
         public override string ToString() {
             return $"{Name} {OwnerId}";
