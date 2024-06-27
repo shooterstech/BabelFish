@@ -10,10 +10,11 @@ using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataActors.OrionMatch;
 using System.Collections;
+using Scopos.BabelFish.DataActors.Clubs;
 
-namespace Scopos.BabelFish.Tests.Clubs {
+namespace Scopos.BabelFish.Tests.Clubs
+{
 
     [TestClass]
     public class ClubsTests {

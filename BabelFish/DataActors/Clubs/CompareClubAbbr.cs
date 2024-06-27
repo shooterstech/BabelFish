@@ -6,7 +6,7 @@ using Scopos.BabelFish.Helpers.Extensions;
 using System.Text;
 using Scopos.BabelFish.DataModel.Clubs;
 
-namespace Scopos.BabelFish.DataActors.OrionMatch
+namespace Scopos.BabelFish.DataActors.Clubs
 {
     public class CompareClubAbbr : IComparer<ClubAbbr>
     {
