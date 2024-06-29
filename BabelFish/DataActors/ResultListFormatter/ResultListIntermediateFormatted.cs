@@ -27,8 +27,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         private readonly List<ResultListIntermediateFormattedRow> rows = new();
         private bool initialized = false;
 
-        private DefinitionAPIClient DefinitionApiClient;
-
         /// <summary>
         /// Converts a list of ResultEvents, that is returned by the GetResultList API, to
         /// a list of ResultEventIntermediates. 
@@ -39,12 +37,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public ResultListIntermediateFormatted( 
             ResultList resultList, 
             ResultListFormat resultListFormat, 
-            DefinitionAPIClient definitionApiClient, 
             IUserProfileLookup userProfileLookup ) {
 
             this.ResultList = resultList;
             this.ResultListFormat = resultListFormat;
-            this.DefinitionApiClient = definitionApiClient;
             this.UserProfileLookup = userProfileLookup;
         }
 
@@ -58,8 +54,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //NOTE: Don't need to wait for the profile visibility initialization. 
             this.UserProfileLookup.RefreshUserProfileVisibilityAsync();
 
-            var response = await DefinitionApiClient.GetScoreFormatCollectionDefinition( ScoreFormatCollectionSetName );
-            ScoreFormatCollection = response.Definition;
+            ScoreFormatCollection = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionSetName );
 
             foreach (var sConfig in ScoreFormatCollection.ScoreConfigs) {
                 if (sConfig.ScoreConfigName == ScoreConfigName) {

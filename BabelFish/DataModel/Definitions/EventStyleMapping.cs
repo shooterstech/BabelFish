@@ -38,8 +38,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public async Task<EventStyle> GetEventStyleDefinitionAsync() {
 
             SetName eventStyleSetName = SetName.Parse( DefaultDef );
-            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetEventStyleDefinitionAsync( eventStyleSetName );
-            return getDefiniitonResponse.Definition;
+            return await DefinitionCache.GetEventStyleDefinitionAsync( eventStyleSetName );
 
         }
     }
