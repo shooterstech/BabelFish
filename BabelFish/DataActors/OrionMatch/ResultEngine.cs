@@ -51,13 +51,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             //Load the Course of Fire definition
             if (SetName.TryParse( this.ResultList.CourseOfFireDef, out cofSetName )) {
-                var getCofResponse = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( cofSetName );
-                if (getCofResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                    this.CourseOfFire = getCofResponse.Value;
-                } else {
-                    string msg = $"Unable to retreive Course of Fire '{cofSetName}'. Received status code '{getCofResponse.StatusCode}'.";
-                    throw new ScoposException( msg, logger );
-                }
+                this.CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
             } else {
                 string msg = $"Could not parse the Course of Fire SetName '{this.ResultList.CourseOfFireDef}'.";
                 throw new ScoposException( msg, logger );
@@ -69,32 +63,19 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             //First try and use the RankingRule that's listed in the ResultList
             if (!string.IsNullOrEmpty( this.ResultList.RankingRuleDef ) && SetName.TryParse( this.ResultList.RankingRuleDef, out rankingRuleSetName )) {
-                var getRankingRuleResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                if (getRankingRuleResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                    logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Result List." );
-                    //If we get here, this is basically the happiest path we could of hoped for.
-                    this.RankingRule = getRankingRuleResponse.Value;
-                    return;
-                } else {
-                    string msg = $"Unable to retreive Ranking Rule '{rankingRuleSetName}'. Received status code '{getRankingRuleResponse.StatusCode}'.";
-                    throw new ScoposException( msg, logger );
-                }
+                this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
+                logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Result List." );
+                return;
             }
 
             //If that didn't work, try and use the RankingRule that's listed in the Coruse of fire's Event
-
             foreach (var @event in this.CourseOfFire.Events) {
                 if (@event.EventName == this.ResultList.EventName) {
                     if (!string.IsNullOrEmpty( @event.RankingRuleDef ) && SetName.TryParse( @event.RankingRuleDef, out rankingRuleSetName )) {
-                        var getRankingRuleResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                        if (getRankingRuleResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                            logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
-                            this.RankingRule = getRankingRuleResponse.Value;
-                            return;
-                        } else {
-                            string msg = $"Unable to retreive Ranking Rule '{rankingRuleSetName}'. Received status code '{getRankingRuleResponse.StatusCode}'.";
-                            throw new ScoposException( msg, logger );
-                        }
+                        this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
+                        logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
+
+                        return;
                     }
                 }
             }
