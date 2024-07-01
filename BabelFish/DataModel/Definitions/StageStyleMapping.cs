@@ -39,8 +39,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public async Task<StageStyle> GetStageStyleDefinitionAsync() {
 
             SetName stageStyleSetName = SetName.Parse( DefaultDef );
-            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetStageStyleDefinitionAsync( stageStyleSetName );
-            return getDefiniitonResponse.Definition;
+
+            return await DefinitionCache.GetStageStyleDefinitionAsync( stageStyleSetName );
 
         }
     }
