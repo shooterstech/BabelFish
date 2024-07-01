@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var rlfSetName = await rlf.GetResultListFormatSetNameAsync( resultList );
             var rlfDefinition = await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
 
-            ResultListIntermediateFormatted rlif = new ResultListIntermediateFormatted( resultList, rlfDefinition, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlif = new ResultListIntermediateFormatted( resultList, rlfDefinition, userProfileLookup );
             await rlif.InitializeAsync();
         }
     }

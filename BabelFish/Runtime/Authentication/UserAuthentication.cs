@@ -52,12 +52,11 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         public EventHandler<EventArgs<UserAuthentication>> OnGenerateIAMCredentialsFailed;
 
         //Create a Cognito Identify Provider using anonymous credentials
-        private static AmazonCognitoIdentityProviderClient cognitoProvider = new AmazonCognitoIdentityProviderClient( new AnonymousAWSCredentials() );
+        private static AmazonCognitoIdentityProviderClient cognitoProvider = new AmazonCognitoIdentityProviderClient( new AnonymousAWSCredentials(), Amazon.RegionEndpoint.USEast1 );
 
         private static CognitoUserPool cognitoUserPool = new CognitoUserPool( AuthenticationConstants.AWSPoolID, AuthenticationConstants.AWSClientID, cognitoProvider );
 
-        private static AmazonCognitoIdentityClient identityClient =
-            new AmazonCognitoIdentityClient( new AnonymousAWSCredentials() );
+        private static AmazonCognitoIdentityClient identityClient = new AmazonCognitoIdentityClient( new AnonymousAWSCredentials(), Amazon.RegionEndpoint.USEast1 );
 
         private DeviceSecretVerifierConfigType deviceVerifier = null;
 
@@ -210,15 +209,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                             throw new NotImplementedException();
                         }
 
-                    } catch (AggregateException ae) {
-                        ae.Handle( ( x ) => {
-                            if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
-                                throw new NotAuthorizedException( x.Message, x, logger );
-                            } else {
-                                //Not sure what would cause us to get here
-                                throw new AuthenticationException( x.Message, x, logger );
-                            }
-                        } );
+                    } catch (Amazon.CognitoIdentityProvider.Model.NotAuthorizedException nae) {
+                        //Repackage the error to be mroe friendly to our code
+                        throw new Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException( nae.Message, nae, logger );
+                    } catch (Exception e) {
+                        //Not sure what would cause us to get here
+                        throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
                     }
 
                     //After authentication, confirm this device (which is assumed to be a new device) and associated it with the cognito user
@@ -266,15 +262,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                             throw new NotImplementedException();
                         }
 
-                    } catch (AggregateException ae) {
-                        ae.Handle( ( x ) => {
-                            if (x is Amazon.CognitoIdentityProvider.Model.NotAuthorizedException) {
-                                throw new NotAuthorizedException( x.Message, x, logger );
-                            } else {
-                                //Not sure what would cause us to get here
-                                throw new AuthenticationException( x.Message, x, logger );
-                            }
-                        } );
+                    } catch (Amazon.CognitoIdentityProvider.Model.NotAuthorizedException nae) {
+                        //Repackage the error to be mroe friendly to our code
+                        throw new Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException( nae.Message, nae, logger );
+                    } catch (Exception e) {
+                        //Not sure what would cause us to get here
+                        throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
                     }
 
                     //Oddly, the flow above allows the user to authenticate even when the device is not associated with te user. Howerver, the code below which tries and associates the device with the user will throw an exception if it is not known.
@@ -290,19 +283,16 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                         await device.GetDeviceAsync();
                         this.CognitoUser.Device = device;
-                    } catch (AggregateException ae) {
-                        ae.Handle( ( x ) => {
-                            if (x is Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException) {
-                                //Thrown if the device is not known to be associated with the user.
-                                throw new DeviceNotKnownException( x.Message, x, logger );
-                            } else {
-                                //Not sure what would cause us to get here
-                                throw new AuthenticationException( x.Message, x, logger );
-                            }
-                        } );
                     } catch (Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException rnfe) {
-                        throw new DeviceNotKnownException( rnfe.Message, rnfe, logger );
-                    } 
+                        //Repackage the error to be mroe friendly to our code
+                        throw new Scopos.BabelFish.Runtime.Authentication.DeviceNotKnownException( rnfe.Message, rnfe, logger );
+                    } catch (Amazon.CognitoIdentityProvider.Model.NotAuthorizedException nae) {
+                        //Repackage the error to be mroe friendly to our code
+                        throw new Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException( nae.Message, nae, logger );
+                    } catch (Exception e) {
+                        //Not sure what would cause us to get here
+                        throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
+                    }
 
                     break;
 
@@ -319,16 +309,15 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                         await device.GetDeviceAsync();
                         this.CognitoUser.Device = device;
-                    } catch (AggregateException ae) {
-                        ae.Handle( ( x ) => {
-                            if (x is Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException) {
-                                //Thrown if the device is not known to be associated with the user.
-                                throw new DeviceNotKnownException( x.Message, x, logger );
-                            } else {
-                                //Not sure what would cause us to get here
-                                throw new AuthenticationException( x.Message, x, logger );
-                            }
-                        } );
+                    } catch (Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException rnfe) {
+                        //Repackage the error to be mroe friendly to our code
+                        throw new Scopos.BabelFish.Runtime.Authentication.DeviceNotKnownException( rnfe.Message, rnfe, logger );
+                    } catch (Amazon.CognitoIdentityProvider.Model.NotAuthorizedException nae) {
+                        //Repackage the error to be mroe friendly to our code
+                        throw new Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException( nae.Message, nae, logger );
+                    } catch (Exception e) {
+                        //Not sure what would cause us to get here
+                        throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
                     }
 
                     break ;
