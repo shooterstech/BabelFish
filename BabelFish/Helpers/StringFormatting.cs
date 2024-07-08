@@ -37,8 +37,53 @@ namespace Scopos.BabelFish.Helpers {
 
         }
 
+        /// <summary>
+        /// Formats a span of dates, a start and end date, to a common formatted string.
+        /// If either input variable can not be parsed as a DateTime, then today's date is used.
+        /// </summary>
+        /// <param name="startDateStr"></param>
+        /// <param name="endDateStr"></param>
+        /// <returns></returns>
+        public static string SpanOfDates( string startDateStr, string endDateStr ) {
+            DateTime startDate, endDate;
+            try {
+                startDate = DateTime.ParseExact( startDateStr, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch {
+                startDate = DateTime.Today;
+            }
+
+            try {
+                endDate = DateTime.ParseExact( endDateStr, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch {
+                endDate = DateTime.Today;
+            }
+
+            return SpanOfDates(startDate, endDate);
+        }
+
+        /// <summary>
+        /// Formats the passed in DateTime into a standard method of displaying dates.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static string SingleDate( DateTime date ) {
             return date.ToString( "ddd, dd MMM yyyy" );
+        }
+
+        /// Formats the passed in DateTime string into a standard method of displaying dates.
+        /// If the passed in dateStr can not be parsed, today's date is used.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public static string SingleDate( string dateStr ) {
+            DateTime date;
+            try {
+                date = DateTime.ParseExact( dateStr, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+            } catch {
+                date = DateTime.Today;
+            }
+
+            return SingleDate( date );
         }
 
         public static string Location( string city, string state, string country="" ) {

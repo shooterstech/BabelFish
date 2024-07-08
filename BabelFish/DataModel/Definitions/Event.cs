@@ -167,12 +167,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
 
             SetName rrSetName = SetName.Parse( RankingRuleDef );
-            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( rrSetName );
-            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                return getDefiniitonResponse.Definition;
-            } else {
-                throw new ScoposAPIException( $"GetRankingRuleDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
-            }
+            return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
         }
 
         /// <inheritdoc />
@@ -183,12 +178,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
-            var getDefiniitonResponse = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( rlfSetName );
-            if (getDefiniitonResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                return getDefiniitonResponse.Definition;
-            } else {
-                throw new ScoposAPIException( $"GetResultListFormatDefinitionAsync could not be completed. Returned status code {getDefiniitonResponse.StatusCode}.", Logger );
-            }
+            return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
         }
     }
 }

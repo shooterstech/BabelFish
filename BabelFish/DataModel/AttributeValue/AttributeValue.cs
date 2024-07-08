@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         private async Task InitializeAsync() {
 
             var getDefinitionResponse = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( SetName );
-            definition = getDefinitionResponse.Definition;
+            definition = await DefinitionCache.GetAttributeDefinitionAsync( SetName );
 
             SetDefaultFieldValues();
         }

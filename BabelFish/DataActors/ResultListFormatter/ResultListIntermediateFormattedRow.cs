@@ -39,6 +39,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "TargetCollectionName"
         } );
 
+        public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
+            {"Qualifcation", "Individual" },
+            {"Individual", "Qualification" },
+            {"Team", "Qualification" },
+        };
+
         protected readonly Dictionary<string, string> fields = new Dictionary<string, string>();
         protected readonly ResultEvent resultEvent;
         protected readonly ResultListIntermediateFormatted resultListFormatted; //This row's parent container
@@ -314,6 +320,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     } else {
                         //Else return the regular,, good old fashion, .Score instance
                         return scoreToReturn.Score;
+                    }
+                }
+
+                /*
+                 * EKA Note June 2024: As we migrate more and more orion events over to the Reconfigurable Rulebook COFs
+                 * there is a mix of old and new event names. The idea behind using the .aliasEventNames is to address this
+                 * changing of event names. Hopefully, this chunk of code can be removed soon.
+                 */
+                var aliasEventName = "";
+                if (AliasEventNames.TryGetValue( eventName , out aliasEventName )) {
+                    if (resultEvent.EventScores.TryGetValue( aliasEventName, out scoreToReturn )) {
+                        if (tryAndUseProjected && scoreToReturn.Projected != null) {
+                            //If the Projected Score is known, try and return it
+                            return scoreToReturn.Projected;
+                        } else {
+                            //Else return the regular,, good old fashion, .Score instance
+                            return scoreToReturn.Score;
+                        }
                     }
                 }
             }

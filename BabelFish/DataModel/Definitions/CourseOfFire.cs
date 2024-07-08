@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -55,8 +56,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync()
         {
             SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse(TargetCollectionDef);
-            var getDefiniitonResponse = await APIClients.DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync(targetCollectionDef);
-            return getDefiniitonResponse.Definition;
+            return await DefinitionCache.GetTargetCollectionDefinitionAsync(targetCollectionDef);
         }
 
         /// <summary>

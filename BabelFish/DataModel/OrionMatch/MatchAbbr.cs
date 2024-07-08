@@ -55,6 +55,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string OwnerName { get; set;} = string.Empty;
 
+        public string ClubURL {  get; set; } = string.Empty;
+
+        /// <summary>
+        /// The full URL for the owner's club URL.
+        /// </summary>
+        /// <example>https://rezults.scopos.tech/Club/westpotomac/</example>
+        public string ClubURLRezults {
+            get {
+                return $"https://rezults.scopos.tech/Club/{ClubURL}/";
+            }
+        }
+
 
         /// <summary>
         /// Start Date of the Match. Formatted as YYYY-MM-dd
