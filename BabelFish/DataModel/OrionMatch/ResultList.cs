@@ -51,8 +51,49 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 if (Metadata == null || Metadata.Count == 0)
                     return ResultStatus.OFFICIAL;
 
-                if (this.EndDate < DateTime.Today)
-                    return ResultStatus.OFFICIAL;
+                if (Metadata.Count == 1) {
+                    //This is likely a local match
+                    var meta = Metadata.First().Value;
+
+                    if (meta.EndDate < DateTime.Today)
+                        return ResultStatus.OFFICIAL;
+
+                    return meta.Status;
+                }
+
+                //If we get here, this would be a virtual match
+                //Find the parent's meta data
+                ResultListMetadata parentMetaData = null;
+                MatchID matchId;
+                foreach( var meta in Metadata) {
+                    //The Key is the match id in string form
+                    try {
+                        matchId = new MatchID( meta.Key );
+                        if ( matchId.VirtualMatchParent) {
+                            parentMetaData = meta.Value;
+                            break;
+                        }
+                    } catch (FormatException fe) {
+                        ; //Assume this is not the parent
+                    }
+                }
+
+                /*
+                # The rules of determining the status of the merged Result List is as follows
+                # OFFICIAL if parent says its official, or today's date is past the end date set by the parent
+                # FUTURE if parent and all children are FUTURE
+                # INTERMEDIATE if the parent or one child says INTERMEDIATE
+                # UNOFFICIAL if the parent and all children say UNOFFICIAL or OFFICIAL or in the past
+                */
+
+                //If the parent's end date is in the past, or it's status is official, then the VM status is official
+                if (parentMetaData != null) {
+                    if (parentMetaData.EndDate < DateTime.Today)
+                        return ResultStatus.OFFICIAL; 
+
+                    if (parentMetaData.Status == ResultStatus.OFFICIAL)
+                        return ResultStatus.OFFICIAL;
+                }
 
                 bool allFuture = true;
                 bool oneIsIntermediate = false;
@@ -60,7 +101,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 foreach (var rlmd in Metadata.Values) {
                     allFuture &= rlmd.Status == ResultStatus.FUTURE;
                     oneIsIntermediate |= rlmd.Status == ResultStatus.INTERMEDIATE;
-                    oneIsUnofficial |= rlmd.Status == ResultStatus.UNOFFICIAL;
+                    oneIsUnofficial |= (rlmd.Status == ResultStatus.UNOFFICIAL || rlmd.Status == ResultStatus.OFFICIAL || rlmd.EndDate < DateTime.Today);
                 }
 
                 if (allFuture)
@@ -69,6 +110,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     return ResultStatus.INTERMEDIATE;
                 if (oneIsUnofficial)
                     return ResultStatus.UNOFFICIAL;
+
+                //Theoretically, should never get here
                 return ResultStatus.OFFICIAL;
             }
         }
