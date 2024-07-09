@@ -39,6 +39,23 @@ namespace Scopos.BabelFish.Tests.Authentication {
 
         }
 
+        [TestMethod]
+        public async Task TestAuthenticationFromCognitoUser()
+        {
+            var goodAuth = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await goodAuth.InitializeAsync();
+
+            var userAuthentication = new UserAuthentication(goodAuth.CognitoUser);
+            Assert.IsFalse(string.IsNullOrEmpty(userAuthentication.RefreshToken));
+            Assert.IsFalse(string.IsNullOrEmpty(userAuthentication.AccessToken));
+            Assert.IsFalse(string.IsNullOrEmpty(userAuthentication.IdToken));
+            Assert.IsNotNull(userAuthentication.CognitoUser);
+
+            await userAuthentication.GenerateIAMCredentialsAsync(); //no init call needed
+        }
+
         /// <summary>
         /// Tests that an exception is thrown if the wrong password is used.
         /// </summary>
