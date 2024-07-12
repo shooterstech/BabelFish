@@ -49,7 +49,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Assert.IsNotNull( resultListFormat );
 
             //Test that the conversion was successful and has the same number of objects.
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
             Assert.AreEqual( resultList.Items.Count, rlf.Rows.Count );
@@ -108,7 +108,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
 
             //Convert the result list into the result event intermediate list that we can use
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
 
             //Test the header row
@@ -175,7 +175,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
 
             //Convert the result list into the result event intermediate list that we can use
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync(  );
 
             //Test the header row
@@ -236,7 +236,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
 
             //Convert the result list into the result event intermediate list that we can use
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
 
             //Test the header row
@@ -300,7 +300,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
 
             //Convert the result list into the result event intermediate list that we can use
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted(resultList, resultListFormat, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted(resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
 
             //Start the header row
@@ -383,7 +383,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Assert.IsNotNull( resultListFormat );
 
             //Test that the conversion was successful and has the same number of objects.
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, definitionClient, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
 

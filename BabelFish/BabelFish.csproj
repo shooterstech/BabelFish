@@ -5,9 +5,9 @@
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-    <AssemblyVersion>2.0</AssemblyVersion>
+    <AssemblyVersion>2.1</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
-	<Version>2.0</Version>
+	<Version>2.1</Version>
 	<Authors>Scopos</Authors>
 	<Company>Scopos</Company>
 	<PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
@@ -21,11 +21,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.5.2" />
-    <PackageReference Include="AwsSignatureVersion4" Version="4.0.1" />
+    <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.5.4" />
+    <PackageReference Include="AwsSignatureVersion4" Version="4.0.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.2.7" />
+    <PackageReference Include="NLog" Version="5.3.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
 
