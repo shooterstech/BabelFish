@@ -10,6 +10,7 @@ using Amazon.CognitoIdentityProvider.Model;
 using Amazon.CognitoIdentity.Model;
 using NLog;
 using Scopos.BabelFish.Runtime;
+using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
 
@@ -63,7 +64,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         private Logger logger = LogManager.GetCurrentClassLogger();
 
 
-        private enum ConstructorType { EMAIL_PASSWORD, EMAIL_PASSWORD_DEVICE, REFRESH_TOKEN };
+        private enum ConstructorType { EMAIL_PASSWORD, EMAIL_PASSWORD_DEVICE, REFRESH_TOKEN, COGNITO_USER };
         private ConstructorType constructorType;
         private bool initCalled = false;
         private InitiateSrpAuthRequest authRequest;
@@ -165,6 +166,23 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
             initCalled = false;
             constructorType = ConstructorType.REFRESH_TOKEN;
+        }
+
+        public UserAuthentication(CognitoUser cognitoUser)
+        {
+            this.CognitoUser = cognitoUser;
+            
+            CognitoUser.Attributes.TryGetValue("email", out string email);
+            this.Email = email;
+            this.RefreshToken = CognitoUser.SessionTokens.RefreshToken;
+            this.AccessToken = CognitoUser.SessionTokens.AccessToken;
+            this.IdToken = CognitoUser.SessionTokens.IdToken;
+            this.ExpirationTime = CognitoUser.SessionTokens.ExpirationTime;
+            this.IssuedTime = CognitoUser.SessionTokens.IssuedTime;
+            this.DeviceKey = ""; //no device for this user
+            this.DeviceGroupKey = "";
+            initCalled = true;
+            constructorType = ConstructorType.COGNITO_USER;
         }
 
         /// <summary>
@@ -321,6 +339,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     }
 
                     break ;
+                case ConstructorType.COGNITO_USER:
+                    break; // no init needed, fully initialized cognito user was passed in
             }
 
             //Mark that this instance has finished the initalization process
