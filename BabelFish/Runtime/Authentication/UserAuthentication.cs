@@ -435,7 +435,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 return $"{Email}-{DeviceKey}";
             }
         }
-        public DateTime IamCredentialsExpiration { get; private set; } = DateTime.MaxValue;
+        public DateTime IamCredentialsExpiration { get; private set; } = DateTime.MinValue;
         public string AccessKey { get; private set; }
         public string SecretKey { get; private set; }
         public string SessionToken { get; private set; }
@@ -480,10 +480,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             await this.RefreshTokensAsync();
 
             //Only generate if the IAM credentials are empty or its been over an hour, which is when they expire.
-            if (IamCredentialsExpiration < DateTime.UtcNow)
+            if (IamCredentialsExpiration > DateTime.UtcNow.AddMinutes( 1) )
                 return;
 
             try {
+                //logger.Info( $"Refreshing IAM credentials for {this.Email}" );
+
                 //Using the idToken, obtain the access key, secret access key, and session token
                 //First step get the Id of the Cognito User
                 var logins = new Dictionary<string, string>() {
@@ -512,6 +514,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
 
                 ImmutableCredentials = new ImmutableCredentials( AccessKey, SecretKey, SessionToken );
+                logger.Info( $"Refreshed IAM credentials for {this.Email}, now with expiration time {IamCredentialsExpiration}" );
 
                 if (OnGenerateIAMCredentialsSuccessful != null)
                     OnGenerateIAMCredentialsSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
