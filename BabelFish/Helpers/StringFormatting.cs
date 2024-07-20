@@ -233,12 +233,29 @@ namespace Scopos.BabelFish.Helpers {
 
 
 		/// <summary>
-		/// Returns the input string in Title Case
+		/// Returns the input string in Title Case, and converts ordinals to lower case.
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
 		public static string TitleCase( string input ) {
-            return textInfo.ToTitleCase( input );
+            var titleCase = textInfo.ToTitleCase( input );
+            return ConvertOrdinalsToLowerCase( titleCase );
+        }
+
+        /// <summary>
+        /// Converts the ordinal values to lower case.
+        /// 1ST => 1st, or 2ND => 2nd
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ConvertOrdinalsToLowerCase( string input ) {
+            // Define a regex pattern to match ordinals (e.g., 1st, 2nd, 3rd, 4th)
+            var pattern = @"\b(\d+)(st|nd|rd|th)\b";
+
+            // Use regex replace to convert matched ordinals to lowercase
+            var output = Regex.Replace( input, pattern, m => m.Value.ToLower(), RegexOptions.IgnoreCase );
+
+            return output;
         }
     }
 }

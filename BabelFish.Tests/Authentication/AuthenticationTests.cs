@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Authentication {
 
@@ -212,6 +214,45 @@ namespace Scopos.BabelFish.Tests.Authentication {
 
                 int count = await userAuthenticationInit.CleanUpOldDevicesAsync();
             }
+        }
+
+        /// <summary>
+        /// The place where Erik will test code, but is not a unit test.
+        /// </summary>
+        [TestMethod]
+        public async Task EriksPlayground() {
+
+            var userAuthentication1 = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication1.InitializeAsync();
+
+            var email = userAuthentication1.Email;
+            var refreshToken = userAuthentication1.RefreshToken;
+            var accessToken = userAuthentication1.AccessToken;
+            var idToken = userAuthentication1.IdToken;
+            var deviceKey = userAuthentication1.DeviceKey;
+            var deviceGroupKey = userAuthentication1.DeviceGroupKey;
+            var deviceName = userAuthentication1.DeviceName;
+            var expirationTime = userAuthentication1.ExpirationTime;
+            var issuedTime = userAuthentication1.IssuedTime;
+
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
+            var getMatch1 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2038.2024071609575863.0" ), userAuthentication1 );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch1.StatusCode );
+
+            userAuthentication1.RefreshTokensAsync( true );
+            var getMatch2 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.1.2024061414175605.0" ), userAuthentication1 );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch2.StatusCode );
+
+            var userAuthentication2 = new UserAuthentication( email, refreshToken, accessToken, idToken, expirationTime, issuedTime, deviceKey, deviceGroupKey );
+            await userAuthentication2.InitializeAsync();
+            var getMatch3 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2138.2024061413535429.0" ), userAuthentication2 );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch3.StatusCode );
+
+            Assert.AreNotEqual( userAuthentication1.AccessToken, userAuthentication2.AccessToken );
+            Assert.AreNotEqual( userAuthentication1.IdToken, userAuthentication2.IdToken );
+            Assert.AreNotEqual( userAuthentication1.RefreshToken, userAuthentication2.RefreshToken );
         }
     }
 }

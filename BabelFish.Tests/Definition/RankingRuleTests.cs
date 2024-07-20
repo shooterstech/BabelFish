@@ -373,15 +373,15 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 
             DefinitionFetcher.XApiKey = Constants.X_API_KEY;
-            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.ALPHA );
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID("1.7.2024052814512643.0"), "Individual - Sporter" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024071913112845.0" ), "Individual - All" ); //
             var resultList = resultListResponse.ResultList;
-            resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
+            //resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
             //resultList.Metadata.First().Value.EndDate = DateTime.Today;
             // resultList.RankingRuleDef = "";
-            var eventName = resultList.EventName;
+            //var eventName = resultList.EventName;
 
             var courseOfFireResponse = await definitionClient.GetCourseOfFireDefinitionAsync( SetName.Parse( resultList.CourseOfFireDef ) );
             var courseOfFire = courseOfFireResponse.Value;
@@ -390,27 +390,28 @@ namespace Scopos.BabelFish.Tests.Definition {
             //var rankingRules = rankingRuleResponse.Value;
 
             //Clear all the existing Projected Scores out
-            foreach( var part in resultList.Items) {
-                foreach( var eventScore in part.EventScores.Values ) {
-                    eventScore.Projected = null;
-                }
-            }
+            //foreach( var part in resultList.Items) {
+            //    foreach( var eventScore in part.EventScores.Values ) {
+            //        eventScore.Projected = null;
+            //    }
+            //}
 
             ResultEngine resultEngine = new ResultEngine( resultList );
 
-            ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
-            ps.APIStage = APIStage.BETA;
-            ps.XAPIKey = Constants.X_API_KEY;
+            //ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
+            //ps.APIStage = APIStage.BETA;
+            //ps.XAPIKey = Constants.X_API_KEY;
 
 
             //ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
+            ProjectorOfScores ps = new ProjectScoresByNull( courseOfFire );
 
-            await resultEngine.SortAsync( ps, true );
+            await resultEngine.SortAsync( ps, false );
 
             foreach ( var re in resultList.Items ) {
                 Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Debug.Write( $"{re.EventScores["Qualification"].Projected.D}  {re.EventScores["Qualification"].Score.D}" );
+                Debug.Write( $"{re.EventScores["Qualification"].Score.D}  {re.EventScores["Qualification"].Score.D}" );
                 Debug.WriteLine("\n");
             }
 

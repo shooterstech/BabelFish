@@ -363,13 +363,12 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         }
 
         [TestMethod]
-        [Ignore]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.1.2024050911254405.0" );
+            MatchID matchId = new MatchID( "1.1.2024071913112845.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Team - All";
+            var resultListName = "Individual - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );

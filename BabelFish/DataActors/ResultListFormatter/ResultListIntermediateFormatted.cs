@@ -144,6 +144,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
+        public ResultListIntermediateFormattedRow GetRowAtRankOrder(int rankOrder) {
+            lock (rows) {
+                foreach( var row in rows) {
+                    if (row.IsChildRow)
+                        continue;
+
+                    if (row.GetRankOrder() == rankOrder)
+                        return row;
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Gets the Orion ResultList used in this translation.
         /// </summary>
@@ -255,6 +269,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
+            foreach (var c in format.ClassList)
+                cellValues.ClassList.Add( c.ToString() );
+
+            //NOTE .HeaderClassList is deprecated
             foreach (var c in format.HeaderClassList)
                 cellValues.ClassList.Add( c.ToString() );
 
@@ -301,19 +319,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
-            foreach (var c in DisplayPartitions.Header.RowClass)
+            foreach (var c in DisplayPartitions.Header.ClassList)
                 l.Add( c.ToString() );
-            return l;
-        }
 
-        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
-        [Obsolete( "Use .GetClassList() from the ResultListIntermediateFormattedRow instance instead.")]
-        public List<string> GetBodyRowClassList() {
-            if (!initialized)
-                throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
-
-            List<string> l = new();
-            foreach (var c in DisplayPartitions.Body.RowClass)
+            //.RowClass is obsolete
+            foreach (var c in DisplayPartitions.Header.RowClass)
                 l.Add( c.ToString() );
             return l;
         }
@@ -324,6 +334,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
+            foreach (var c in DisplayPartitions.Footer.ClassList)
+                l.Add( c.ToString() );
+
+            //.RowClass is obsolete
             foreach (var c in DisplayPartitions.Footer.RowClass)
                 l.Add( c.ToString() );
             return l;
@@ -346,6 +360,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             cellValues.Text = format.Footer.ToString();
             cellValues.ClassList = new List<string>();
+            foreach (var c in format.ClassList)
+                cellValues.ClassList.Add( c.ToString() );
+
+            //NOTE .FooterClassList is deprecated
             foreach (var c in format.FooterClassList)
                 cellValues.ClassList.Add( c.ToString() );
 

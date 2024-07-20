@@ -361,9 +361,11 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the UserAuthentication constructor. Can not proceed until after this call is successful." );
 
             if ( !refreshNow && this.CognitoUser.SessionTokens.ExpirationTime > DateTime.UtcNow.AddMinutes( 1 ) ) {
-                logger.Info( $"Purposefully not refreshing tokens for {this.Email} as the ExpirationTime is in the future." );
+                logger.Info( $"Purposefully not refreshing tokens for {this.Email} as the ExpirationTime is in the future, {CognitoUser.SessionTokens.ExpirationTime}." );
                 return;
             }
+
+            logger.Info( $"Attempting a token refresh for {this.Email}" );
 
             try {
                 //We dont' know the actual experation date of the token, so setting it to 1 hour and then will re-fresh them regardless.
@@ -402,7 +404,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 if (OnRefreshTokensFailed != null)
                     OnRefreshTokensFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
-                throw new ScoposException( $"Unable to perform a token refresh for {this.Email}.", logger );
+                throw new ScoposException( $"Unable to perform a token refresh for {this.Email}. The SessionToken expiration time is {CognitoUser.SessionTokens.ExpirationTime}.", ex, logger );
 
             }
         }
@@ -489,7 +491,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 //Using the idToken, obtain the access key, secret access key, and session token
                 //First step get the Id of the Cognito User
                 var logins = new Dictionary<string, string>() {
-                    { $"cognito-idp.{AuthenticationConstants.AWSRegion}.amazonaws.com/{AuthenticationConstants.AWSPoolID}", this.IdToken }
+                    { $"cognito-idp.{AuthenticationConstants.AWSRegion}.amazonaws.com/{AuthenticationConstants.AWSPoolID}", CognitoUser.SessionTokens.IdToken }
                 };
 
                 var getIDRequest = new Amazon.CognitoIdentity.Model.GetIdRequest() {
@@ -525,7 +527,8 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 if (OnGenerateIAMCredentialsFailed != null)
                     OnGenerateIAMCredentialsFailed.Invoke( this, new EventArgs<UserAuthentication>( this ) );
 
-                throw new ScoposException( $"Unable to get IAM credentials for {this.Email}", ex, logger );
+                    throw new ScoposException( $"Unable to get IAM credentials for {this.Email}, will not try again. The SessionToken expiration time is {CognitoUser.SessionTokens.ExpirationTime}.", ex, logger );
+                
             }
         }
 

@@ -18,7 +18,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// List of feild values that are always included (the user doesn't have to define these in their definition).
         /// these values are pulled from the .Participant dictionary within the Result COF.
         /// </summary>
-        public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { "Rank", 
+        public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
+            "Rank", 
             "DisplayName", 
             "DisplayNameShort", 
             "FamilyName",
@@ -85,6 +86,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         fields[fieldName] = GetScore( source, true );
                         break;
 
+                    case ResultFieldMethod.GAP:
+                        fields[fieldName] = GetGap( source );
+                        break;
+
                     default:
                         //Should never get here
                         break;
@@ -128,14 +133,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 			switch (source) {
 				case "Rank":
-                    if (this.resultListFormatted.ResultList.Projected 
-                        && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE 
-                        && resultEvent.ProjectedRank > 0)
-                        return resultEvent.ProjectedRank.ToString();
-					
-                    if (resultEvent.Rank > 0)
-						return resultEvent.Rank.ToString();
-					
+                    int rank = GetRank();
+
+                    if (rank > 0)
+                        return rank.ToString();
+
 					return "";
 
                 case "RankOrder":
@@ -244,7 +246,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					else
 						return "";
 
-				default:
+
+                default:
                     return "UNKNOWN";
             }
         }
@@ -346,6 +349,86 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return new Score();
         }
 
+        private string GetGap( FieldSource source ) {
+            if (IsChildRow) {
+                return "";
+            }
+
+            int myRank = GetRankOrder();
+
+            //Determine the rank of the participant to compare against
+            int otherRank = source.Value;
+            if (otherRank < 0)
+                otherRank = myRank - 1;
+
+            //If the other participant is lower ranked than this participant, then there is no gap and we return an empty string
+            if (otherRank > myRank)
+                return "";
+
+            //Retreive the other Result Event (Row). Test to make sure it exists.
+            var otherRow = this.resultListFormatted.GetRowAtRankOrder( otherRank );
+            if (otherRow == null)
+                return "";
+
+            //Calculate the difference between this score and the score to compare against
+            Score myScore = GetScore( source.Name, true );
+            Score otherScore = otherRow.GetScore( source.Name, true );
+
+            if (myScore.IsZero)
+                return "";
+
+            Score scoreDifference = new() {
+                I = otherScore.I - myScore.I,
+                D = otherScore.D - myScore.D,
+                X = otherScore.X - myScore.X,
+                S = otherScore.S - myScore.S,
+                NumShotsFired = otherScore.NumShotsFired - myScore.NumShotsFired
+                //Choosing not to include J, K, L, as they are special purpose and hard to know what to do with them
+            };
+
+            //Format the score
+            string scoreFormat = resultListFormatted.GetScoreFormat( source.ScoreFormat );
+            return StringFormatting.FormatScore( scoreFormat, scoreDifference );
+        }
+
+        /// <summary>
+        /// Returns the value of the Rank field for this Result Event. If the Result List
+        /// is in the INTERMEDIATE status, then the Projected Rank is returned.
+        /// </summary>
+        /// <returns></returns>
+        public int GetRank() {
+            if (this.resultListFormatted.ResultList.Projected
+                && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
+                && resultEvent.ProjectedRank > 0)
+                return resultEvent.ProjectedRank;
+
+            if (resultEvent.Rank > 0)
+                return resultEvent.Rank;
+
+            return 0;
+        }
+
+
+        /// <summary>
+        /// Returns the value of the Rank sort order field for this Result Event. If the Result List
+        /// is in the INTERMEDIATE status, then the Projected Rank sort order is returned.
+        /// </summary>
+        /// <returns></returns>
+        public int GetRankOrder() {
+            if (this.resultListFormatted.ResultList.Projected
+                && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE) {
+                if (resultEvent.ProjectedRankOrder > 0)
+                    return resultEvent.ProjectedRankOrder;
+                if (resultEvent.ProjectedRank > 0)
+                    return resultEvent.ProjectedRank;
+            }
+
+            if (resultEvent.RankOrder > 0)
+                return resultEvent.RankOrder;
+
+            return 0;
+        }
+
         /// <summary>
         /// Returns the field value for the passed in field name.
         /// </summary>
@@ -388,6 +471,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             var value = source.Replace( fields );
 
             var classes = new List<string>();
+            foreach (var c in column.ClassList)
+                classes.Add( (string)c );
+
+            //NOTE .BodyClassList is deprecated
             foreach (var c in column.BodyClassList)
                 classes.Add( (string)c );
 

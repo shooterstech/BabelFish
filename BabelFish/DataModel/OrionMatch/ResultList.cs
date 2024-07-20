@@ -184,6 +184,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
 		public DateTime LastUpdated { get; set; } = new DateTime();
 
+        /// <summary>
+        /// The orion account or at home account who owns this match.
+        /// </summary>
+        /// <example>OrionAcct000001 or AtHomeAcct123456</example>
+        [Obsolete( "Use .MetaData.OwnerId")]
         [JsonProperty( Order = 13 )]
         public string OwnerId { get; set; } = string.Empty;
 
