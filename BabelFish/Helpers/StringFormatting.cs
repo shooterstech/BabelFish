@@ -215,6 +215,42 @@ namespace Scopos.BabelFish.Helpers {
 
             string formattedScore = format;
             int numOfErrors = 0;
+
+            //Look for conditional operators
+            //{?i} if score.I == 0, Process only the right half of the string. If score.I != 0, process the left half
+            //{?x} if score.X == 0, Process only the right half of the string. If score.X != 0, process the left half
+            //{?d} if score.D == 0, Process only the right half of the string. If score.D != 0, process the left half
+            //Will build in others, as necessary
+            int conditionalIndex = formattedScore.IndexOf( "{?i}" );
+            if (conditionalIndex >= 0) {
+                
+                if (score.I == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
+            conditionalIndex = formattedScore.IndexOf( "{?x}" );
+            if (conditionalIndex >= 0) {
+
+                if (score.X == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
+            conditionalIndex = formattedScore.IndexOf( "{?d}" );
+            if (conditionalIndex >= 0) {
+
+                if (score.D == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
             foreach ( var replacement in listOfReplacements ) {
                 try {
                     formattedScore = formattedScore.Replace( replacement.Item1, replacement.Item2 );
