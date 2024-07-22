@@ -478,7 +478,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             foreach (var c in column.BodyClassList)
                 classes.Add( (string)c );
 
-            var cellValues = new CellValues( value, classes );
+            var cellValues = new CellValues( this.resultListFormatted, value, classes );
 
             //Check if the Column definition requires us to link to another page.
             switch (column.BodyLinkTo.ToString()) {
@@ -521,7 +521,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 returnValue = GetColumnBodyCell( index );
                 return true;
             } catch (Exception ex) {
-                returnValue = new CellValues();
+                returnValue = new CellValues( this.resultListFormatted );
                 return false;
             }
         }
@@ -578,5 +578,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public abstract List<string> GetClassList();
+
+        /// <summary>
+        /// Boolean, indicating that this Cell should not be displayed, because it contains a CSS Class (in .ClassList)
+        /// that the user has asked to hide using the ResultListIntermedateFormatted.HideRowsWithTheseClasses
+        /// </summary>
+        public bool Hide { 
+            get { 
+                foreach( var c in GetClassList() ) {
+                    if (this.resultListFormatted.HideRowsWithTheseClasses.Contains( c ) ) { 
+                        return true; 
+                    }
+                }
+
+                return false;
+            }
+        }
     }
 }

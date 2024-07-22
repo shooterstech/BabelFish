@@ -18,12 +18,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// </summary>
     public class CellValues {
 
-        public CellValues() {
+        protected readonly ResultListIntermediateFormatted ResultListFormatted;
+
+        public CellValues( ResultListIntermediateFormatted rlf ) {
+            this.ResultListFormatted = rlf;
             Text = "";
             ClassList = new List<string>();
         }
 
-        public CellValues( string text, List<string> cellClasses ) {
+        public CellValues( ResultListIntermediateFormatted rlf, string text, List<string> cellClasses ) {
+            this.ResultListFormatted = rlf;
             ClassList = cellClasses;
             Text = text;
         }
@@ -38,6 +42,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// The list of CSS Classes to assign to the cell's class attribute.
         /// </summary>
         public List<string> ClassList { get; set; }
+
+        /// <summary>
+        /// Boolean, indicating that this Cell should not be displayed, because it contains a CSS Class (in .ClassList)
+        /// that the user has asked to hide using the ResultListIntermedateFormatted.HideColumnsWithTheseClasses.
+        /// </summary>
+        public bool Hide {
+            get {
+                foreach( var c in this.ResultListFormatted.HideColumnsWithTheseClasses) {
+                    if ( ClassList.Contains( c) ) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
 
         /// <summary>
         /// Indicates what page or view this Cell should link to.

@@ -144,7 +144,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
+        /// <summary>
+        /// Returns the ResultListIntermediateFormattedRow who has the rankOrder provided.
+        /// If no row is found, null is returned.
+        /// </summary>
+        /// <param name="rankOrder"></param>
+        /// <returns></returns>
         public ResultListIntermediateFormattedRow GetRowAtRankOrder(int rankOrder) {
+            //NOTE: This does a linear search, could be improved by using a dictionary lookup.
             lock (rows) {
                 foreach( var row in rows) {
                     if (row.IsChildRow)
@@ -244,12 +251,35 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
 
+        public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
+
+        public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
+
         /// <summary>
-        /// Returns the number of defined columns. 
+        /// Returns the total number of defined columns. Does not factor in hidden columns (from .HideColumnsWithTheseClasses).
         /// </summary>
         /// <returns></returns>
         public int GetColumnCount() {
             return ResultListFormat.Format.Columns.Count;
+        }
+
+        /// <summary>
+        /// Returns a list of columnIndex values, Each columnIndex is shown (e.g. not .Hide), as it 
+        /// will not contain a CSS Class that's listed in .HideColumnsWithTheseClasses.
+        /// </summary>
+        /// <returns></returns>
+        public List<int> GetShownColumnIndexes() {
+            List<int> shownColumnIndexes = new List<int>();
+            for (int i = 0; i < ResultListFormat.Format.Columns.Count; i++) {
+                var format = ResultListFormat.Format.Columns[i];
+                foreach( var c in format.ClassList ) {
+                    if (! HideColumnsWithTheseClasses.Contains( c ) ) { 
+                        shownColumnIndexes.Add( i );
+                    }
+                }
+            }
+
+            return shownColumnIndexes;
         }
 
         /// <summary>
@@ -263,18 +293,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-            CellValues cellValues = new CellValues();
+            CellValues cellValues = new CellValues( this );
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
-            foreach (var c in format.ClassList)
+            foreach (var c in format.ClassList) {
                 cellValues.ClassList.Add( c.ToString() );
+            }
 
             //NOTE .HeaderClassList is deprecated
-            foreach (var c in format.HeaderClassList)
+            foreach (var c in format.HeaderClassList) { 
                 cellValues.ClassList.Add( c.ToString() );
+            }
 
             return cellValues;
         }
@@ -289,7 +321,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public string GetColumnHeaderValue( int columnIndex ) {
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
-
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
@@ -354,7 +385,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-            CellValues cellValues = new();
+            CellValues cellValues = new CellValues( this );
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 

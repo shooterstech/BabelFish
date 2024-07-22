@@ -365,7 +365,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.1.2024071913112845.0" );
+            MatchID matchId = new MatchID( "1.1.2024072017000432.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - All";
@@ -389,6 +389,18 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             CellValues tryCellValues, cellValues;
             foreach (var row in rlf.Rows) {
                 for (int i = 0; i < rlf.GetColumnCount(); i++) {
+                    var cell = row.GetColumnBodyCell( i );
+
+                    Console.Write( $"{cell.Text}, " );
+                }
+                Console.WriteLine();
+            }
+
+            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-series" );
+            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-gap" );
+            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-profile" );
+            foreach (var row in rlf.Rows) {
+                foreach (int i in rlf.GetShownColumnIndexes()) {
                     var cell = row.GetColumnBodyCell( i );
 
                     Console.Write( $"{cell.Text}, " );
