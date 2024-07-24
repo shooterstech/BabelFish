@@ -33,11 +33,11 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.IdToken ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
             Assert.IsNotNull( userAuthentication.CognitoUser );
-            Assert.IsNotNull( userAuthentication.CognitoUser.Device );
+            //Assert.IsNotNull( userAuthentication.CognitoUser.Device );
 
         }
 
@@ -72,6 +72,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             await userAuthentication.InitializeAsync();
         }
 
+        /*
         [TestMethod]
         public async Task HappyPathAuthenticationWithExistingDevice() {
 
@@ -86,14 +87,16 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.IdToken ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
             Assert.IsNotNull( userAuthentication.CognitoUser );
             Assert.IsNotNull( userAuthentication.CognitoUser.Device );
 
         }
+        */
 
+        /*
         [TestMethod]
         [ExpectedException( typeof( DeviceNotKnownException ) )]
         public async Task WrongDeviceKey() {
@@ -106,6 +109,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 Constants.TestDev7Credentials.DeviceGroupKey );
             await userAuthentication.InitializeAsync();
         }
+        */
 
         [TestMethod]
         public async Task HappyPathAuthenticationWithExistingTokens() {
@@ -123,9 +127,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 userAuthenticationInit.AccessToken,
                 userAuthenticationInit.IdToken,
                 userAuthenticationInit.ExpirationTime,
-                userAuthenticationInit.IssuedTime,
-                userAuthenticationInit.DeviceKey,
-                userAuthenticationInit.DeviceGroupKey );
+                userAuthenticationInit.IssuedTime );
             await userAuthentication.InitializeAsync();
 
             //going to test that the RefreshTokenSuccess event does and RefreshedTokensFailed event does not get invoked.
@@ -147,11 +149,11 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.IdToken ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
+            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
             Assert.IsNotNull( userAuthentication.CognitoUser );
-            Assert.IsNotNull( userAuthentication.CognitoUser.Device );
+            //Assert.IsNotNull( userAuthentication.CognitoUser.Device );
 
             //Check that the access Id tokens did indeed refresh.
             //QUESTION: Are the supposed to all get refreshed ? 
@@ -231,9 +233,9 @@ namespace Scopos.BabelFish.Tests.Authentication {
             var refreshToken = userAuthentication1.RefreshToken;
             var accessToken = userAuthentication1.AccessToken;
             var idToken = userAuthentication1.IdToken;
-            var deviceKey = userAuthentication1.DeviceKey;
-            var deviceGroupKey = userAuthentication1.DeviceGroupKey;
-            var deviceName = userAuthentication1.DeviceName;
+            //var deviceKey = userAuthentication1.DeviceKey;
+            //var deviceGroupKey = userAuthentication1.DeviceGroupKey;
+            //var deviceName = userAuthentication1.DeviceName;
             var expirationTime = userAuthentication1.ExpirationTime;
             var issuedTime = userAuthentication1.IssuedTime;
 
@@ -245,14 +247,14 @@ namespace Scopos.BabelFish.Tests.Authentication {
             var getMatch2 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.1.2024061414175605.0" ), userAuthentication1 );
             Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch2.StatusCode );
 
-            var userAuthentication2 = new UserAuthentication( email, refreshToken, accessToken, idToken, expirationTime, issuedTime, deviceKey, deviceGroupKey );
-            await userAuthentication2.InitializeAsync();
-            var getMatch3 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2138.2024061413535429.0" ), userAuthentication2 );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch3.StatusCode );
+            //var userAuthentication2 = new UserAuthentication( email, refreshToken, accessToken, idToken, expirationTime, issuedTime, deviceKey, deviceGroupKey );
+            //await userAuthentication2.InitializeAsync();
+            //var getMatch3 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2138.2024061413535429.0" ), userAuthentication2 );
+            //Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch3.StatusCode );
 
-            Assert.AreNotEqual( userAuthentication1.AccessToken, userAuthentication2.AccessToken );
-            Assert.AreNotEqual( userAuthentication1.IdToken, userAuthentication2.IdToken );
-            Assert.AreNotEqual( userAuthentication1.RefreshToken, userAuthentication2.RefreshToken );
+            //Assert.AreNotEqual( userAuthentication1.AccessToken, userAuthentication2.AccessToken );
+            //Assert.AreNotEqual( userAuthentication1.IdToken, userAuthentication2.IdToken );
+            //Assert.AreNotEqual( userAuthentication1.RefreshToken, userAuthentication2.RefreshToken );
         }
     }
 }

@@ -59,12 +59,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
         private static AmazonCognitoIdentityClient identityClient = new AmazonCognitoIdentityClient( new AnonymousAWSCredentials(), Amazon.RegionEndpoint.USEast1 );
 
-        private DeviceSecretVerifierConfigType deviceVerifier = null;
+        //private DeviceSecretVerifierConfigType deviceVerifier = null;
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
 
-        private enum ConstructorType { EMAIL_PASSWORD, EMAIL_PASSWORD_DEVICE, REFRESH_TOKEN, COGNITO_USER };
+        private enum ConstructorType { EMAIL_PASSWORD, REFRESH_TOKEN, COGNITO_USER };
         private ConstructorType constructorType;
         private bool initCalled = false;
         private InitiateSrpAuthRequest authRequest;
@@ -97,6 +97,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             constructorType = ConstructorType.EMAIL_PASSWORD;
         }
 
+        /*
         /// <summary>
         /// Creates a new instance of UserAuthentication and attempts to authenticate
         /// the user (identified by their email) using their password, deviceKey
@@ -133,6 +134,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             initCalled = false;
             constructorType = ConstructorType.EMAIL_PASSWORD_DEVICE;
         }
+        */
 
         /// <summary>
         /// Constructs a new User Authentication instance. To complete the re-authentication process, user should call .RefreshedTokens().
@@ -149,17 +151,17 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         /// <param name="deviceGroupKey"></param>
         /// <exception cref="DeviceNotKnownException">Thrown if the device is not known to be assciated with the user.</exception>
         /// <exception cref="AuthenticationException">Thrown if the user could not be re-authenticated.</exception>
-        public UserAuthentication( string email, string refreshToken, string accessToken, string idToken, DateTime expirationTime, DateTime issuedTime, string deviceKey, string deviceGroupKey) {
+        public UserAuthentication( string email, string refreshToken, string accessToken, string idToken, DateTime expirationTime, DateTime issuedTime) {
 
-            logger.Info( $"About to try and re-authenticate user with email {email} with an existing device {deviceKey}." );
+            logger.Info( $"About to try and re-authenticate user with email {email}." );
             this.Email = email;
-            this.RefreshToken = refreshToken;
-            this.AccessToken = accessToken;
-            this.IdToken = idToken;
-            this.ExpirationTime = expirationTime;
-            this.IssuedTime = issuedTime;
-            this.DeviceKey = deviceKey;
-            this.DeviceGroupKey = deviceGroupKey;
+            //this.RefreshToken = refreshToken;
+            //this.AccessToken = accessToken;
+            //this.IdToken = idToken;
+            //this.ExpirationTime = expirationTime;
+            //this.IssuedTime = issuedTime;
+            //this.DeviceKey = deviceKey;
+            //this.DeviceGroupKey = deviceGroupKey;
             this.CognitoUser = new CognitoUser( this.Email, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
 
             this.CognitoUser.SessionTokens = new CognitoUserSession( idToken, accessToken, refreshToken, issuedTime, expirationTime );
@@ -174,13 +176,13 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             
             CognitoUser.Attributes.TryGetValue("email", out string email);
             this.Email = email;
-            this.RefreshToken = CognitoUser.SessionTokens.RefreshToken;
-            this.AccessToken = CognitoUser.SessionTokens.AccessToken;
-            this.IdToken = CognitoUser.SessionTokens.IdToken;
-            this.ExpirationTime = CognitoUser.SessionTokens.ExpirationTime;
-            this.IssuedTime = CognitoUser.SessionTokens.IssuedTime;
-            this.DeviceKey = ""; //no device for this user
-            this.DeviceGroupKey = "";
+            //this.RefreshToken = CognitoUser.SessionTokens.RefreshToken;
+            //this.AccessToken = CognitoUser.SessionTokens.AccessToken;
+            //this.IdToken = CognitoUser.SessionTokens.IdToken;
+            //this.ExpirationTime = CognitoUser.SessionTokens.ExpirationTime;
+            //this.IssuedTime = CognitoUser.SessionTokens.IssuedTime;
+            //this.DeviceKey = ""; //no device for this user
+            //this.DeviceGroupKey = "";
             initCalled = true;
             constructorType = ConstructorType.COGNITO_USER;
         }
@@ -209,13 +211,13 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                         if (authFlowResponse.AuthenticationResult != null) {
                             //If we get here authentication was successful.
-                            this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
-                            this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
-                            this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
-                            this.DeviceKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
-                            this.DeviceGroupKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
-                            this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
-                            this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
+                            //this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
+                            //this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
+                            //this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
+                            //this.DeviceKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+                            //this.DeviceGroupKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
+                            //this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                            //this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                             logger.Info( $"Successfully authenticated user with email {this.Email}." );
                             if (OnUserAuthenticationSuccessful != null)
@@ -235,6 +237,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                         throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
                     }
 
+                    /*
                     //After authentication, confirm this device (which is assumed to be a new device) and associated it with the cognito user
                     var confirmDeviceResponse =  await this.CognitoUser.ConfirmDeviceAsync(
                         this.AccessToken,
@@ -253,9 +256,11 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                     await device.GetDeviceAsync();
                     this.CognitoUser.Device = device;
+                    */
 
                     break;
 
+                    /*
                 case ConstructorType.EMAIL_PASSWORD_DEVICE:
 
                     //Try and authenticate with cognito
@@ -313,9 +318,10 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     }
 
                     break;
+                    */
 
                 case ConstructorType.REFRESH_TOKEN:
-
+                    /*
                     try {
                         device = new CognitoDevice(
                             this.DeviceKey,
@@ -339,6 +345,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                     }
 
                     break ;
+                    */
                 case ConstructorType.COGNITO_USER:
                     break; // no init needed, fully initialized cognito user was passed in
             }
@@ -381,10 +388,10 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                 //Now we have a new accessToken and a new refreshToken, both of which need to be re-saved
                 if (authFlowResponse.AuthenticationResult != null) {
-                    this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
-                    this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
-                    this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
-                    this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
+                    //this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
+                    //this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
+                    //this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
+                    //this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                     if (OnRefreshTokensSuccessful != null)
                         OnRefreshTokensSuccessful.Invoke( this, new EventArgs<UserAuthentication>( this ) );
@@ -424,19 +431,44 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
         //NOTE: Purposefully not even keeping a variable for password
 
-        public string RefreshToken { get; private set; }
-        public string AccessToken { get; private set; }
-        //The expiration time of the access token .. I think
-        public DateTime ExpirationTime { get; private set; }
-        public DateTime IssuedTime { get; private set; }
-        public string IdToken { get; private set; }
-        public string DeviceKey { get; private set; }
-        public string DeviceGroupKey { get; private set; }
-        public string DeviceName {
+        public string RefreshToken {
             get {
-                return $"{Email}-{DeviceKey}";
+                return CognitoUser.SessionTokens.RefreshToken;
             }
         }
+
+        public string AccessToken {
+            get {
+                return CognitoUser.SessionTokens.AccessToken;
+            }
+        }
+
+        //The expiration time of the access token .. I think
+        public DateTime ExpirationTime {
+            get {
+                return CognitoUser.SessionTokens.ExpirationTime;
+            }
+        }
+
+        public DateTime IssuedTime {
+            get {
+                return CognitoUser.SessionTokens.IssuedTime;
+            }
+        }
+
+        public string IdToken {
+            get {
+                return CognitoUser.SessionTokens.IdToken;
+            }
+        }
+
+        //public string DeviceKey { get; private set; }
+        //public string DeviceGroupKey { get; private set; }
+        //public string DeviceName {
+        //    get {
+        //        return $"{Email}-{DeviceKey}";
+        //    }
+        //}
         public DateTime IamCredentialsExpiration { get; private set; } = DateTime.MinValue;
         public string AccessKey { get; private set; }
         public string SecretKey { get; private set; }
@@ -445,7 +477,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
         public CognitoUser CognitoUser { get; private set; }
 
-
+        /*
         /// <summary>
         /// Internal function to generate and return a device verifier.
         /// </summary>
@@ -467,6 +499,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
             return deviceVerifier;
         }
+        */
 
         /// <summary>
         /// Generates the temporary IAM credentials for the logged in user. These would be 
