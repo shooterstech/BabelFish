@@ -293,5 +293,42 @@ namespace Scopos.BabelFish.Helpers {
 
             return output;
         }
+
+        /// <summary>
+        /// Formats city, state and country is a standard format.
+        /// </summary>
+        /// <param name="hometown"></param>
+        /// <returns></returns>
+        public static string Hometown( string city, string state, string country ) {
+            if (string.IsNullOrWhiteSpace( country ) || country == "USA" || country == "US") {
+                if (!string.IsNullOrWhiteSpace( state )) {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return $"{city}, {state}";
+                    } else {
+                        return city;
+                    }
+                } else {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return city;
+                    } else {
+                        return "UNKNOWN";
+                    }
+                }
+            } else {
+                if (!string.IsNullOrWhiteSpace( state )) {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return "{city}, {country}";
+                    } else {
+                        return "{state}, {country}";
+                    }
+                } else {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return "{city}, {country}";
+                    } else {
+                        return country;
+                    }
+                }
+            }
+        }
     }
 }
