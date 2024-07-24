@@ -8,6 +8,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
+using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -270,13 +271,18 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public List<int> GetShownColumnIndexes() {
             List<int> shownColumnIndexes = new List<int>();
+            bool include = true;
             for (int i = 0; i < ResultListFormat.Format.Columns.Count; i++) {
                 var format = ResultListFormat.Format.Columns[i];
-                foreach( var c in format.ClassList ) {
-                    if (! HideColumnsWithTheseClasses.Contains( c ) ) { 
-                        shownColumnIndexes.Add( i );
+                include = true;
+                foreach (var c in format.ClassList) {
+                    if (HideColumnsWithTheseClasses.Contains( c )) {
+                        include = false;
+                        break;
                     }
                 }
+                if (include)
+                    shownColumnIndexes.Add( i );
             }
 
             return shownColumnIndexes;
