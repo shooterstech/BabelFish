@@ -201,7 +201,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [Description( "Attribute" )]
         [EnumMember( Value = "Attribute" )]
-        ATTRIBUTE
+        ATTRIBUTE,
+
+        /// <summary>
+        /// The score difference between the current participant and the leader (rank == 1) within the Result List.
+        /// </summary>
+        [Description( "Gap" )]
+        [EnumMember( Value = "Gap" )]
+        GAP
     }
 
 

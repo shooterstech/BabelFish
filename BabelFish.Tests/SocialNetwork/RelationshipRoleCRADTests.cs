@@ -20,8 +20,8 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
 
         [TestInitialize] 
         public void InitClient() {
-            socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
-            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.PRODTEST);
+            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.PRODTEST);
         }
 
         [TestMethod]
@@ -372,10 +372,69 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
 
         }
 
+
+        [TestMethod]
+        public async Task TestFollowsProcess()
+        {
+            var user7Authentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password);
+            await user7Authentication.InitializeAsync();
+
+            //ensure role doesnt exist already
+            var deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest(user7Authentication);
+            deleteRequest.RelationshipName = SocialRelationshipName.FOLLOW;
+            deleteRequest.PassiveId = Constants.TestDev3UserId;
+
+            var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest);
+
+            Assert.IsTrue(System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode);
+
+            //user 7 requests to follow user 3
+            var createRequest = new CreateRelationshipRoleAuthenticatedRequest(user7Authentication);
+            createRequest.RelationshipName = SocialRelationshipName.FOLLOW;
+            createRequest.PassiveId = Constants.TestDev3UserId;
+
+            var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync(createRequest);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, createResponse.StatusCode);
+
+            var expectedRelationship = new SocialRelationship();
+            expectedRelationship.RelationshipName = createRequest.RelationshipName;
+            expectedRelationship.ActiveId = Constants.TestDev7UserId;
+            expectedRelationship.PassiveId = createRequest.PassiveId;
+            expectedRelationship.ActiveApproved = true;
+            expectedRelationship.PassiveApproved = false;
+            expectedRelationship.DateCreated = DateTime.Today.ToString("yyyy-MM-dd");
+
+            Assert.IsTrue(createResponse.SocialRelationship.Equals(expectedRelationship));
+
+            expectedRelationship.PassiveApproved = true;
+
+            //user 7 reads the approved relationship
+            var readRequest = new ReadRelationshipRoleAuthenticatedRequest(user7Authentication);
+            readRequest.RelationshipName = SocialRelationshipName.FOLLOW;
+            readRequest.PassiveId = Constants.TestDev3UserId;
+
+            var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync(readRequest);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, readResponse.StatusCode);
+
+            Assert.IsTrue(readResponse.SocialRelationship.Equals(expectedRelationship));
+
+            //user 7 unfollows user 3
+            deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
+
+            deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync(deleteRequest); //make sure role was actually deleted
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, deleteResponse.StatusCode);
+
+        }
+
         [TestMethod]
         public async Task TestFollowsApprovalProcess()
         {
-            
+            return; //CURRENTLY APPROVAL IS NOT REQUIRED FOR FOLLOWING
             var user7Authentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password);

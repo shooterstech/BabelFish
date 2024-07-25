@@ -39,6 +39,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             this.TeamMemberComparer = teamMemberComparer;
         }
 
+        /// <summary>
+        /// Method to initialize internal parameters for the ProjectorOfScores. Default implementation is not to do anything.
+        /// </summary>
+        /// <param name="listOfParticipants"></param>
+        public virtual async Task InitializeAsync( List<IEventScoreProjection> listOfParticipants ) { }
+
         public CourseOfFire CourseOfFire { get; private set; }
 
         public EventComposite TopLevelEvent { get; private set; }
@@ -49,6 +55,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <see cref="https://support.scopos.tech/index.html?rest-api.html"/>
         public string XAPIKey { get; set; } = "";
 
+        /// <summary>
+        /// The API Stage to use when making Scopos REST API calls.
+        /// Default value is Production.
+        /// </summary>
         public APIStage APIStage { get; set; } = APIStage.PRODUCTION;
 
         /// <summary>
@@ -99,11 +109,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
-        /// <summary>
-        /// Method to initialize internal parameters for the ProjectorOfScores. Default implementation is not to do anything.
-        /// </summary>
-        /// <param name="listOfParticipants"></param>
-        public virtual async Task InitializeAsync( List<IEventScoreProjection> listOfParticipants ) { }
 
         public virtual void ProjectTeamScores( IEventScoreProjection teamToProject, EventComposite eventToProject, int recusionDepth ) {
 

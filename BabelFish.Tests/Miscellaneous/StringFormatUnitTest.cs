@@ -174,5 +174,26 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
             formattedScore = StringFormatting.FormatScore( "ABCDEFGHIJKLMNOP", scoreEventObj );
             Assert.AreEqual( "ABCDEFGHIJKLMNOP", formattedScore );
         }
+
+        [TestMethod]
+        public async Task ConditionalStringFormatting() {
+
+
+            var scoreEventObj = new Scopos.BabelFish.DataModel.Athena.Score();
+            scoreEventObj.X = 2; 
+            scoreEventObj.I = 0;
+            scoreEventObj.D = .5f;
+
+            var formattedScore = StringFormatting.FormatScore( "{i}{?i}{x}x", scoreEventObj );
+            Assert.AreEqual( "2x", formattedScore );
+
+            scoreEventObj.X = 2; 
+            scoreEventObj.I = 1;
+            scoreEventObj.D = .5f;
+
+            formattedScore = StringFormatting.FormatScore( "{i}{?i}{x}x", scoreEventObj );
+            Assert.AreEqual( "1", formattedScore );
+
+        }
     }
 }
