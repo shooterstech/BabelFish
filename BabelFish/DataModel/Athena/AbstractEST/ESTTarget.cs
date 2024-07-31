@@ -24,6 +24,7 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             Target = new Target();
             LiveView = new LiveView();
             CameraCalibration = new CameraCalibration();
+            MenuInterface = new MenuInterface();
         }
 
         [OnDeserialized]
@@ -74,6 +75,9 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 
         [JsonProperty(Order = 11)]
         public CameraCalibration CameraCalibration { get; set; }
+
+        [JsonProperty(Order = 12)]
+        public MenuInterface MenuInterface { get; set; }
 
     }
 }
