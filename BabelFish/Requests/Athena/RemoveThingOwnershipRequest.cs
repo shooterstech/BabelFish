@@ -4,21 +4,22 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Requests;
 
-namespace Scopos.BabelFish.Requests.AthenaOwnership
+namespace   Scopos.BabelFish.Requests.Athena
 {
-    public class RemoveThingOwnershipRequest: Request
+    public class RemoveThingOwnershipRequest : Request
     {
         public RemoveThingOwnershipRequest() : base("RemoveThingOwnership")
         {
-            this.RequiresCredentials = false;
-            this.SubDomain = APISubDomain.INTERNAL;
+            RequiresCredentials = false;
+            SubDomain = APISubDomain.INTERNAL;
             HttpMethod = HttpMethod.Delete;
         }
 
         public string OwnerId { get; set; }
 
-        public string CpuSerial { get; set; }   
+        public string CpuSerial { get; set; }
 
         public string SharedKey { get; set; }
 

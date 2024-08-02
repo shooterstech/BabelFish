@@ -1,15 +1,16 @@
-﻿using Scopos.BabelFish.Requests.AthenaOwnership;
+﻿using Scopos.BabelFish.Requests.Athena;
+using Scopos.BabelFish.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.Responses.AthenaOwnership
+namespace Scopos.BabelFish.Responses.Athena
 {
     public class RemoveThingOwnershipResponse : Response<RemoveThingOwnershipWrapper>
     {
         public RemoveThingOwnershipResponse(RemoveThingOwnershipRequest request) : base()
         {
-            this.Request = request;
+            Request = request;
         }
 
         public Dictionary<string, object> ThingData => Value.ThingData;

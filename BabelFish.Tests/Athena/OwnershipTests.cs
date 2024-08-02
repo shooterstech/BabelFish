@@ -1,13 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Scopos.BabelFish.Requests.Athena;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.AthenaOwnership;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Tests.AthenaOwnership
+namespace Scopos.BabelFish.Tests.Athena
 {
     [TestClass]
     public class OwnershipTests
@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.Tests.AthenaOwnership
         [TestMethod]
         public async Task TestRemoveOwnership()
         {
-            var ownershipClient = new AthenaOwnershipAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            var ownershipClient = new AthenaAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
             RemoveThingOwnershipRequest request = new RemoveThingOwnershipRequest();
             request.OwnerId = "AtHomeAcct000046"; //test_dev_9
             request.SharedKey = "";

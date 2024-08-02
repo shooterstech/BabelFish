@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.Responses.AthenaOwnership
+namespace Scopos.BabelFish.Responses.Athena
 {
     public class RemoveThingOwnershipWrapper : BaseClass
     {
