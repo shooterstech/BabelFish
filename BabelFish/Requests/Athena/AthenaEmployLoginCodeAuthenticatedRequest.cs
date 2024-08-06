@@ -4,7 +4,7 @@ using System.Text;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Requests.AthenaLogin {
+namespace Scopos.BabelFish.Requests.Athena {
     public class AthenaEmployLoginCodeAuthenticatedRequest : Request {
 
 
