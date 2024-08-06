@@ -17,9 +17,11 @@ namespace Scopos.BabelFish.Tests.Clubs
 
 
         [TestInitialize]
-        public void InitClient()
+        public void InitClient()            
         {
-            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+
+            clubsClient = new ClubsAPIClient(APIStage.PRODUCTION);
         }
 
         [TestMethod]

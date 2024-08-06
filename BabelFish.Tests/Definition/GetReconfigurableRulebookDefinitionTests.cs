@@ -15,26 +15,29 @@ namespace Scopos.BabelFish.Tests.Definition
     [TestClass]
     public class GetReconfigurableRulebookDefinitionTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
         /// </summary>
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new DefinitionAPIClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new DefinitionAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new DefinitionAPIClient();
+            var apiStageConstructorClient = new DefinitionAPIClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public void GetAttributeAirRifleTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:ntparc:Three-Position Air Rifle Type");
 
             var taskResponse = client.GetAttributeDefinitionAsync(setName);
@@ -56,7 +59,7 @@ namespace Scopos.BabelFish.Tests.Definition
         [TestMethod]
         public void GetCourseOfFireTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
             var taskResponse = client.GetCourseOfFireDefinition( setName );
@@ -80,7 +83,7 @@ namespace Scopos.BabelFish.Tests.Definition
         [TestMethod]
         public void GetEventStyleTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" );
 
             var taskResponse = client.GetEventStyleDefinition( setName );
@@ -103,7 +106,7 @@ namespace Scopos.BabelFish.Tests.Definition
         public void GetRankingRuleTest()
         {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:nra:BB Gun Qualification");
 
             var taskResponse = client.GetRankingRuleDefinition( setName );
@@ -135,7 +138,7 @@ namespace Scopos.BabelFish.Tests.Definition
         public void GetStageStyleTest()
         {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:ntparc:Sporter Air Rifle Standing");
 
             var taskResponse = client.GetStageStyleDefinition( setName );
@@ -158,7 +161,7 @@ namespace Scopos.BabelFish.Tests.Definition
         public void GetTargetCollectionTest()
         {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:ntparc:Air Rifle");
 
             var taskResponse = client.GetTargetCollectionDefinition( setName );
@@ -180,7 +183,7 @@ namespace Scopos.BabelFish.Tests.Definition
         public void GetTargetTest()
         {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:issf:10m Air Rifle");
 
             var taskResponse = client.GetTargetDefinition( setName );
@@ -203,7 +206,7 @@ namespace Scopos.BabelFish.Tests.Definition
         public void GetScoreFormatCollectionType()
         {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
 
             var taskResponse = client.GetScoreFormatCollectionDefinition( setName );
@@ -225,7 +228,7 @@ namespace Scopos.BabelFish.Tests.Definition
         [TestMethod]
         public void GetResultListFormatTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:orion:3P Individual" );
 
             var taskResponse = client.GetResultListFormatDefinitionAsync( setName );
@@ -247,7 +250,7 @@ namespace Scopos.BabelFish.Tests.Definition
         [TestMethod]
         public void GetAppellationTest() {
 
-            var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
 
             var taskResponse = client.GetCourseOfFireDefinitionAsync(setName);
@@ -278,7 +281,7 @@ namespace Scopos.BabelFish.Tests.Definition
         [TestMethod]
         public void GetEventAndStageMappingTest() {
 
-            var client = new DefinitionAPIClient(Constants.X_API_KEY) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var mappingSetName = SetName.Parse("v1.0:ntparc:Air Rifle");
             var cofSetName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
 
@@ -315,7 +318,7 @@ namespace Scopos.BabelFish.Tests.Definition
         [TestMethod]
         public void GetUSASAirRifleMappingTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var mappingSetName = SetName.Parse( "v1.0:usas:Air Rifle" );
             var cofSetName = SetName.Parse( "v2.0:usas:Air Rifle Qualification 60 Shots" );
 

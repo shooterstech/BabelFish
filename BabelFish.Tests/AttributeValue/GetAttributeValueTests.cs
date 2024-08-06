@@ -14,19 +14,22 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
     public class GetSetAttributeValueTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
         /// </summary>
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new AttributeValueAPIClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new AttributeValueAPIClient( );
+            var apiStageConstructorClient = new AttributeValueAPIClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
@@ -36,8 +39,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         public async Task GetAttributeValue_SingleValue() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -77,8 +79,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             [TestMethod]
         public async Task GetAttributeValue_MultipleValue() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -146,8 +147,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         public async Task GetAttributeValue_MultipleValueRepeated() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -201,8 +201,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         public async Task GetAttributeValue_DoesNotExist() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -231,7 +230,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
         [TestMethod]
         public async Task AttributeValueAppellationTest() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
             var rifleType = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
 

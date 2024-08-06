@@ -16,26 +16,29 @@ namespace Scopos.BabelFish.Tests.Athena {
     [TestClass]
     public class LoginTest {
 
+        [TestInitialize]
+        public async Task InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+        
         /// <summary>
-        /// Unit test to confirm the Constructors set the api key and API stage as expected.
-        /// </summary>
+         /// Unit test to confirm the Constructors set the api key and API stage as expected.
+         /// </summary>
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new AthenaAPIClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new AthenaAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new AthenaAPIClient( );
+            var apiStageConstructorClient = new AthenaAPIClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public async Task LoginToTargetHappyPath() {
 
-            var client = new AthenaAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -62,7 +65,7 @@ namespace Scopos.BabelFish.Tests.Athena {
         [TestMethod]
         public async Task LoginToTargetSadPath() {
 
-            var client = new AthenaAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -88,7 +91,7 @@ namespace Scopos.BabelFish.Tests.Athena {
         [TestMethod]
         public async Task ActiveLoginSessions() {
 
-            var client = new AthenaAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -108,7 +111,7 @@ namespace Scopos.BabelFish.Tests.Athena {
         [TestMethod]
         public async Task LogoutSessions() {
 
-            var client = new AthenaAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(

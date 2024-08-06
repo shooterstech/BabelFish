@@ -16,6 +16,11 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
     [TestClass]
     public class StringFormatUnitTest {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Tests Format Score of String Formatting works as expected.
         /// Using the happy path, with expected values
@@ -23,7 +28,7 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
         [TestMethod]
         public async Task StringFormattingStandardScoreFormats() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient( ) { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
@@ -70,7 +75,7 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
         [TestMethod]
         public async Task StringFormattingStandardScoreFormatsUnexpectedValues() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY ) { IgnoreInMemoryCache = true };
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );

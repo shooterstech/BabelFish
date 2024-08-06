@@ -20,10 +20,15 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 	[TestClass]
 	public class MatchObjectCacheTests {
 
-		[TestMethod]
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
+        [TestMethod]
 		public async Task MatchObjectCacheTest() {
 
-			var client = new OrionMatchAPIClient( Constants.X_API_KEY );
+			var client = new OrionMatchAPIClient();
 			var matchId = new MatchID( "1.2899.2023061619492879.0" );
 
 			//The initial request should cache the response.

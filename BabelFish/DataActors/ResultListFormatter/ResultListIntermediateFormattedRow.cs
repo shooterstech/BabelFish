@@ -20,6 +20,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
             "Rank", 
+            "RankOrder",
             "DisplayName", 
             "DisplayNameShort", 
             "FamilyName",
@@ -141,13 +142,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					return "";
 
                 case "RankOrder":
-                    if (this.resultListFormatted.ResultList.Projected
-                        && this.resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
-                        && resultEvent.ProjectedRankOrder > 0)
-                        return resultEvent.ProjectedRankOrder.ToString();
+                    int rankOrder = GetRankOrder();
 
-                    if (resultEvent.RankOrder > 0)
-                        return resultEvent.RankOrder.ToString();
+                    if (rankOrder > 0)
+                        return rankOrder.ToString();
 
                     return "";
 

@@ -3,6 +3,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Concurrent;
 using System.Text;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
@@ -32,7 +33,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<Scopos.BabelFish.DataModel.Definitions.Attribute> GetAttributeDefinitionAsync( SetName setName ) {
 
@@ -54,7 +55,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
@@ -76,7 +77,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
             if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) { return c; }
@@ -97,7 +98,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventStyle> GetEventStyleDefinitionAsync( SetName setName ) {
             if (EventStyleCache.TryGetValue( setName, out EventStyle c )) { return c; }
@@ -118,7 +119,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
             if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) { return c; }
@@ -140,7 +141,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
             if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) { return c; }
@@ -162,7 +163,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
             if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) { return c; }
@@ -184,7 +185,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<StageStyle> GetStageStyleDefinitionAsync( SetName setName ) {
             if (StageStyleCache.TryGetValue( setName, out StageStyle c )) { return c; }
@@ -205,7 +206,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync( SetName setName ) {
             if (TargetCollectionCache.TryGetValue( setName, out TargetCollectionDefinition c )) { return c; }
@@ -227,7 +228,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
-        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<Target> GetTargetDefinitionAsync( SetName setName ) {
             if (TargetCache.TryGetValue( setName, out Target t )) { return t; }

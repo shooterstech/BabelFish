@@ -8,6 +8,9 @@ using Scopos.BabelFish.DataModel.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.DataModel.Athena.Shot;
+using Scopos.BabelFish.Helpers;
+using System.Globalization;
+using System.Linq.Expressions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 	[Serializable]
@@ -69,14 +72,46 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
 
         /// <summary>
-        /// Start Date of the Match. Formatted as YYYY-MM-dd
+        /// Start Date of the Match. Formatted as YYYY-MM-dd.
+        /// To retreive the Start Date as a DateTime use SetEndDate().
         /// </summary>
         public string StartDate { get; set; } = string.Empty;
 
         /// <summary>
-        /// End Date of the Match. Formatted as YYYY-MM-dd
+        /// Returns the value of .StartDate as a DateTime instnace.
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetStartDate() {
+
+            try {
+                DateTime startDate = DateTime.ParseExact( StartDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+                return startDate;
+            } catch {
+                //Shouldn't ever reach here. Choosing not to throw an exception as it's really unlikely.
+                return DateTime.Today;
+            }
+        }
+
+        /// <summary>
+        /// End Date of the Match. Formatted as YYYY-MM-dd.
+        /// To retreive the End Date as a DateTime use GetEndDate().
         /// </summary>
         public string EndDate { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Returns the value of .EndDate as a DateTime instance.
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetEndDate() {
+
+            try {
+                DateTime endDate = DateTime.ParseExact( EndDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
+                return endDate;
+            } catch {
+                //Shouldn't ever reach here. Choosing not to throw an exception as it's really unlikely.
+                return DateTime.Today;
+            }
+        }
 
         public string CourseOfFireDef { get; set; } = string.Empty;
 
@@ -93,6 +128,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The high level shooting style that this match was conducted under.
         /// </summary>
         public string ShootingStyle { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Returns a boolean indicating if the match is scheduled to take place in the future. Is based off of the match's .StartDate
+        /// </summary>
+        public bool IsInFuture {
+            get {
+                return GetStartDate() > DateTime.Today;
+            }
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the match schedule is in the past (has completed). Is based off of the match's .EndDate
+        /// </summary>
+        public bool IsInThePast {
+            get {
+                return GetEndDate() < DateTime.Today;
+            }
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the match is scheduled to be going on today. Is based off of both the .StartDate and .EndDate.
+        /// </summary>
+        public bool IsGoingOnNow {
+            get {
+                return !IsInFuture && !IsInThePast;
+            }
+        }
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

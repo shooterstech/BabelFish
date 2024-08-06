@@ -84,7 +84,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     //project the scores
                     es.Projected = new DataModel.Athena.Score();
-                    es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining);
+                    es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining + .49f); //The +.49 is for rounding, instead of truncating.
                     es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
                     es.Projected.D = (float)Math.Round( es.Projected.D, 1 );
                     es.Projected.S = es.Projected.D;

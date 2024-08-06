@@ -100,13 +100,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
 
             if(requestNeeded)
             {
-                if (string.IsNullOrEmpty(XAPIKey))
-                {
-                    throw new Scopos.BabelFish.APIClients.XApiKeyNotSetException();
-                }
                 try
                 {
-                    ScoreHistoryAPIClient scoreHistoryClient = new ScoreHistoryAPIClient(XAPIKey, APIStage); ;
+                    ScoreHistoryAPIClient scoreHistoryClient = new ScoreHistoryAPIClient(APIStage); ;
                     var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
 
                     if (scoreAverageResponse.StatusCode == System.Net.HttpStatusCode.OK)

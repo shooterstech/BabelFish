@@ -21,14 +21,17 @@ namespace Scopos.BabelFish.APIClients
         /// Instantiate client
         /// </summary>
         /// <param name="xapikey"></param>
-        public AthenaAPIClient( string xapikey) : base(xapikey) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public AthenaAPIClient( ) : base() {
 
             //AthenaLoginAPIClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
         }
 
-        public AthenaAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public AthenaAPIClient( APIStage apiStage ) : base( apiStage ) {
 
             //AthenaLoginAPIClient does not support file system cache
             LocalStoreDirectory = null;

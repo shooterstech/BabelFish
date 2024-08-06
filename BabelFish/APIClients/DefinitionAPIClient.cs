@@ -25,12 +25,14 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public DefinitionAPIClient( string apiKey ) : base( apiKey ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public DefinitionAPIClient( ) : base( ) {
             IgnoreInMemoryCache = false;
             IgnoreFileSystemCache = false;
         }
 
-        public DefinitionAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public DefinitionAPIClient( APIStage apiStage ) : base( apiStage ) {
 			IgnoreInMemoryCache = false;
             IgnoreFileSystemCache = false;
         }

@@ -19,26 +19,29 @@ namespace Scopos.BabelFish.Tests.Clubs
     [TestClass]
     public class ClubsTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
         /// </summary>
         [TestMethod]
         public void BasicConstructorTests() {
           
-            var defaultConstructorClient = new ClubsAPIClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new ClubsAPIClient();
+            var apiStageConstructorClient = new ClubsAPIClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public async Task GetClubListSmallList() {
 
-            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ClubsAPIClient( APIStage.BETA );
 
             //Test Dev 7 is associated with two clubs.
             var userAuthentication = new UserAuthentication(
@@ -63,7 +66,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         public async Task GetClubListLargeList() {
 
             //Test Dev 1 is associated with a whole lot of clubs.
-            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ClubsAPIClient( APIStage.BETA );
 
             //Perform the initial request. The default consgruction sets Token to an empty string.
             var userAuthentication = new UserAuthentication(
@@ -95,7 +98,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         public async Task GetClubDetailAuthenticated() {
 
 
-            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ClubsAPIClient( APIStage.BETA );
 
             var ownerId = "OrionAcct002001";
             var userAuthentication = new UserAuthentication(
@@ -121,7 +124,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         public async Task GetClubDetailPublic() {
 
 
-            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ClubsAPIClient( APIStage.BETA );
 
             var ownerId = "OrionAcct000001";
             var request = new GetClubDetailPublicRequest( ownerId );
@@ -139,7 +142,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         public async Task GetClubListPublic() {
 
             //Using production, to get more real values.
-            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new ClubsAPIClient( APIStage.PRODUCTION );
 
             //Should return all clubs without any parameters ... or at least up to the token limit
             var request = new GetClubListPublicRequest( );
@@ -160,7 +163,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         public async Task GetClubCurrentlyShooting() {
 
             //Using production, to get more real values.
-            var client = new ClubsAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new ClubsAPIClient( APIStage.PRODUCTION );
 
             //as this call requires clubs to be shooting, the list may be empty (b/c no one is shooting)
             var request = new GetClubListPublicRequest();
