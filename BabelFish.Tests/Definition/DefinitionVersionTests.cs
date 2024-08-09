@@ -10,6 +10,11 @@ namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
     public class DefinitionVersionTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         [TestMethod]
         public void DefinitionVersion() {
             var v1_1 = new DefinitionVersion( "1.1" );

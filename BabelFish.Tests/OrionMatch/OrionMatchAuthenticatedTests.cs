@@ -15,10 +15,15 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class OrionMatchAuthenticatedUnitTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         [TestMethod]
         public async Task OrionMatchAPI_GetAMatch() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );

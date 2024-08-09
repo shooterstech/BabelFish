@@ -20,9 +20,13 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
     public class SettingFieldValueTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         [TestMethod]
         public void HappyPathSingleAttributeFieldDataTypes() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
             var testAttrValue =  Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
@@ -59,7 +63,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
         [TestMethod]
         public void HappyPathListAttributeFieldDataTypes() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
             var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
@@ -87,7 +90,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         [ExpectedException( typeof( AttributeValueValidationException ) )]
         public void WrongDataTypeForString() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
             var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
@@ -101,7 +103,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         [ExpectedException( typeof( AttributeValueValidationException ) )]
         public void WrongDataTypeForInt() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
             var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
@@ -115,7 +116,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         [ExpectedException( typeof( AttributeValueException ) )]
         public void WrongUseOfSetFieldValue1() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
             var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;

@@ -5,12 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.Common {
     /// <summary>
     /// Represents a physical location on the globe. Usually city and state with longitude and latitude.
     /// </summary>
     [Serializable]
     public class Location {
+
+        /// <summary>
+        /// Boolean indicatingif the location is truly known. If the value is false, then that data in this 
+        /// instance should not be trusted.
+        /// </summary>
+        public bool IsKnown { get; set; } = true;
 
         /// <summary>
         /// The name of the City. And empty string means the name of the City is not know.

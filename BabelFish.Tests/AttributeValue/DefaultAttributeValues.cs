@@ -17,6 +17,10 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     /// </summary>
     [TestClass]
     public class DefaultAttributeValues {
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
 
         /// <summary>
         /// As of Feb 2023 AttributeField is *NOT* reading the default values as specified by the definition. The class is instead using 
@@ -25,8 +29,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         /// </summary>
         [TestMethod]
         public async Task DefaultValuesTest() {
-
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
@@ -59,8 +61,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         [ExpectedException( typeof( AttributeValueValidationException ) )]
         public async Task FieldsTest() {
-
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );

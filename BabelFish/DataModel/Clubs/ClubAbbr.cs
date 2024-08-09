@@ -7,6 +7,7 @@ using NLog;
 using Newtonsoft.Json;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Location = Scopos.BabelFish.DataModel.Common.Location;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>

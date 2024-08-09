@@ -17,56 +17,30 @@ namespace Scopos.BabelFish.APIClients {
 	/// 
 	/// Protected internal access to the class is through the static class variable FETCHER
 	/// 
-	/// To use this class, the FETCHER's .XApiKey property must be set first.
-	/// 
 	/// NOTE: Choosing to override only the non-obsolte funciton sin the base DefinitionAPIClient
 	/// </summary>
 	public class DefinitionFetcher : DefinitionAPIClient  {
 
-		/*
-		 * By setting FETCHER to a empty string, if a user tries to access it, FETCHER will not be null, but will
-		 * throw a XApiKeyNotSetException, with an explaination as to why an exception was thrown.
-		 */
-		protected internal static DefinitionFetcher FETCHER { get; private set; } = new DefinitionFetcher( "" );
+		private static DefinitionFetcher _fetcher = null;
 
-		private static string xApiKey = "";
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        protected internal static DefinitionFetcher FETCHER {
+			get {
+				if (_fetcher == null) {
+					_fetcher = new DefinitionFetcher();
+				}
+				return _fetcher;
+			}
+		}
 
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
-		private DefinitionFetcher(string apiKey) : base(apiKey) { }
-
-		/// <summary>
-		/// Sets the x-api-key to use when making calls to read new attribute definitions.
-		/// Also reinstntiates the definition api client, using the new x-api-key.
-		/// </summary>
-		public static string XApiKey {
-			get {
-				return xApiKey;
-			}
-			set {
-				if (xApiKey != value && !string.IsNullOrEmpty( value )) {
-					xApiKey = value;
-					FETCHER = new DefinitionFetcher( xApiKey );
-				}
-			}
-		}
-
-		/// <summary>
-		/// Returns a boolean indicating if the X API Key has been set.
-		/// This only validates that it's been set, not that the value is a good one.
-		/// </summary>
-		public static bool IsXApiKeySet {
-			get {
-				return !string.IsNullOrEmpty( xApiKey );
-			}
-		}
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        private DefinitionFetcher() : base() { }
 		
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetAttributeDefinitionAsync( setName );
 		}
@@ -74,9 +48,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetCourseOfFireDefinitionAsync( setName );
 		}
@@ -84,9 +55,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetEventAndStageStyleMappingDefinitionAsync( setName );
 		}
@@ -94,9 +62,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetEventStyleDefinitionAsync( setName );
 		}
@@ -104,9 +69,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetRankingRuleDefinitionAsync( setName );
 		}
@@ -114,9 +76,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetResultListFormatDefinitionAsync( setName );
 		}
@@ -124,9 +83,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetScoreFormatCollectionDefinitionAsync( setName );
 		}
@@ -134,9 +90,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetStageStyleDefinitionAsync( setName );
 		}
@@ -144,9 +97,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetTargetCollectionDefinitionAsync( setName );
 		}
@@ -154,9 +104,6 @@ namespace Scopos.BabelFish.APIClients {
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
 		public override Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
-			if (string.IsNullOrEmpty( xApiKey )) {
-				throw new XApiKeyNotSetException();
-			}
 
 			return base.GetTargetDefinitionAsync( setName );
 		}

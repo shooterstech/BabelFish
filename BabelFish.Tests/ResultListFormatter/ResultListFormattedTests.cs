@@ -21,10 +21,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
         [TestInitialize]
         public async Task InitializeTest() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
 
-            matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
-            definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
+            matchClient = new OrionMatchAPIClient( );
+            definitionClient = new DefinitionAPIClient( );
 
             userProfileLookup = new BaseUserProfileLookup();
         }
@@ -363,13 +363,12 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         }
 
         [TestMethod]
-        [Ignore]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.1.2024050911254405.0" );
+            MatchID matchId = new MatchID( "1.1.2024072017000432.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Team - All";
+            var resultListName = "Individual - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -390,6 +389,18 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             CellValues tryCellValues, cellValues;
             foreach (var row in rlf.Rows) {
                 for (int i = 0; i < rlf.GetColumnCount(); i++) {
+                    var cell = row.GetColumnBodyCell( i );
+
+                    Console.Write( $"{cell.Text}, " );
+                }
+                Console.WriteLine();
+            }
+
+            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-series" );
+            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-gap" );
+            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-profile" );
+            foreach (var row in rlf.Rows) {
+                foreach (int i in rlf.GetShownColumnIndexes()) {
                     var cell = row.GetColumnBodyCell( i );
 
                     Console.Write( $"{cell.Text}, " );

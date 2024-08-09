@@ -13,6 +13,11 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class MatchSearchUnitTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Conducts a default search and checks that soemthing comes back.
         /// </summary>
@@ -20,7 +25,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task BasicTestSearchPublic() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var request = new MatchSearchPublicRequest();
 
@@ -37,7 +42,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task BasicTestSearchAuthenticated() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -62,7 +67,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task MatchSearchInputMatchesOutput() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var distance = 325;
             var startDate = new DateTime( 2022, 01, 01 );
@@ -117,7 +122,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public void NextTokenTest() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var distance = 500;
             var startDate = new DateTime( 2022, 01, 01 );

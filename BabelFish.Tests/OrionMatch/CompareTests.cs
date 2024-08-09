@@ -176,7 +176,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
         [TestMethod]
         public async Task CompareResultProjectedRanksListTests()
         {
-            var comparer = new CompareResultProjectedRank(CompareResultProjectedRank.CompareMethod.PROJECTED_RANK, Scopos.BabelFish.Helpers.SortBy.ASCENDING);
+            var comparer = new CompareResultByRank(CompareResultByRank.CompareMethod.PROJECTED_RANK_ORDER, Scopos.BabelFish.Helpers.SortBy.ASCENDING);
             var resultEvent1 = new ResultEvent
             {
                 ProjectedRank = 1,

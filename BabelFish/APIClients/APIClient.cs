@@ -9,6 +9,7 @@ using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Helpers;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
 
@@ -37,26 +38,32 @@ namespace Scopos.BabelFish.APIClients {
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public HttpClient httpClient = new HttpClient();
 
-        protected APIClient( string xapikey ) {
-            this.XApiKey = xapikey;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        protected APIClient() {
+
+            Settings.CheckXApiKey();
+
             this.ApiStage = APIStage.PRODUCTION;
 
             logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
 
-        protected APIClient( string xapikey, APIStage apiStage ) {
-            this.XApiKey = xapikey;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        protected APIClient( APIStage apiStage ) {
+            Settings.CheckXApiKey();
+
             this.ApiStage = apiStage;
 
             logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
 
         #region properties
-
-        /// <summary>
-        /// Users x-api-key for valid AWS access
-        /// </summary>
-        public string XApiKey { get; set; }
 
         /// <summary>
         /// ApiStage may be used to test in different development stages, e.g. production, beta, alpha.
@@ -113,8 +120,8 @@ namespace Scopos.BabelFish.APIClients {
                 HttpRequestMessage requestMessage;
                 using (requestMessage = new HttpRequestMessage( request.HttpMethod, uri )) {
                     //Add in the x-api-key. Note that the request object *could* override it's value
-                    if (!string.IsNullOrEmpty( this.XApiKey ))
-                        requestMessage.Headers.Add( "x-api-key", XApiKey );
+                    if (!string.IsNullOrEmpty( Settings.XApiKey ))
+                        requestMessage.Headers.Add( "x-api-key", Settings.XApiKey );
 
                     //Add in the headers to the request
                     if (request.HeaderKeyValuePairs != null)

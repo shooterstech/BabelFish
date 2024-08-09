@@ -17,10 +17,14 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
     public class SetMultipleValuesTest {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
 
         [TestMethod]
         public async Task SetMultiplePhoneNumbers() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
             var setNamePhoneNumber = "v2.0:orion:Phone Number";
 
@@ -33,7 +37,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
              */
 
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
+            var client = new AttributeValueAPIClient( APIStage.PRODTEST );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -100,11 +104,10 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
 		[TestMethod]
 		public async Task SetMultipleSocialMediaAccounts() {
-			DefinitionFetcher.XApiKey = Constants.X_API_KEY;
 
 			var setNameSocialMedia = "v1.0:orion:Social Media Accounts";
 
-			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
+			var client = new AttributeValueAPIClient( APIStage.PRODTEST );
 
 			var userAuthentication = new UserAuthentication(
 				Constants.TestDev7Credentials.Username,

@@ -14,19 +14,22 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class OrionMatchPublicUnitTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
         /// </summary>
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new OrionMatchAPIClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new OrionMatchAPIClient( );
+            var apiStageConstructorClient = new OrionMatchAPIClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
@@ -36,7 +39,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public void OrionMatchExpectedFailuresUnitTests() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             //Pass in a fake match id
             var taskNotFound = client.GetMatchPublicAsync( new MatchID("1.2345.6789012345678901.0") );
 
@@ -57,7 +60,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task OrionMatchAPI_GetAMatch() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchPublicAsync( matchId );
 

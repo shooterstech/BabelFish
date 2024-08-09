@@ -11,15 +11,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
     /// This class does not calculate their Projected Score or tries to sort them based on their
     /// Projected Score, rather, or only sorts the existing values.
     /// </summary>
-    public class CompareResultProjectedRank : IComparer<ResultEvent> {
+    public class CompareResultByRank : IComparer<ResultEvent> {
         public enum CompareMethod {
             /// <summary>
-            /// Sort by PROJECTED RANK
+            /// Sort by PROJECTED RANK ORDER
             /// </summary>
-            PROJECTED_RANK
+            PROJECTED_RANK_ORDER,
+
+            /// <summary>
+            /// Sort by RANK ORDER
+            /// </summary>
+            RANK_ORDER
         };
 
-        public CompareResultProjectedRank( CompareMethod method = CompareMethod.PROJECTED_RANK, SortBy sortBy = SortBy.DESCENDING ) {
+        public CompareResultByRank( CompareMethod method = CompareMethod.PROJECTED_RANK_ORDER, SortBy sortBy = SortBy.DESCENDING ) {
             Method = method;
             SortBy = sortBy;
         }
@@ -33,12 +38,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             int compare = 0;
 
             switch (Method) {
-                case CompareMethod.PROJECTED_RANK:
+                case CompareMethod.PROJECTED_RANK_ORDER:
                     //not sure if that is the safe way I should do it, but it is technically effective.
                     if (x.ProjectedRankOrder <= 0) x.ProjectedRankOrder = x.RankOrder;
                     if (y.ProjectedRankOrder <= 0) y.ProjectedRankOrder = y.RankOrder;
                     compare = x.ProjectedRankOrder.CompareTo( y.ProjectedRankOrder );
 
+                    break;
+
+                case CompareMethod.RANK_ORDER:
+                    compare = x.RankOrder.CompareTo( y.RankOrder );
                     break;
 
                 default:

@@ -17,7 +17,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Assumes Production stage level.
         /// </summary>
         /// <param name="xapikey"></param>
-        public OrionMatchAPIClient( string xapikey ) : base( xapikey ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public OrionMatchAPIClient() : base() {
             //enable in memory cache
 			IgnoreInMemoryCache = false;
 
@@ -26,7 +27,8 @@ namespace Scopos.BabelFish.APIClients {
             IgnoreFileSystemCache = true;
         }
 
-        public OrionMatchAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public OrionMatchAPIClient( APIStage apiStage ) : base( apiStage ) {
             //enable in memory cache
             IgnoreInMemoryCache = false;
 

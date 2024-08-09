@@ -19,14 +19,18 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
     public class GetPublicAttributeValueTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Tests the retreival of a single Attribute Value who's visibility is PUBLIC
         /// </summary>
         [TestMethod]
         public async Task GetAttributeValue_SingleValue() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
 
 			//We're first going to make an authenticated call to set the values we expect to later read.
 			var userAuthentication = new UserAuthentication(
@@ -82,8 +86,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 		[TestMethod]
 		public async Task GetAttributeValue_PRIVATE_Visibility() {
 
-			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
-			DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+			var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
 
 			//We're first going to make an authenticated call to set the values we expect to later read.
 			var userAuthentication = new UserAuthentication(
@@ -134,8 +137,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 		[TestMethod]
         public async Task GetAttributeValue_DoesNotExist() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.BETA );
 
             var setNameNotARealAttribute = "v1.0:orion:Not a Real Attribute";
             List<string> myAttributes = new List<string>()
@@ -164,8 +166,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 		[TestMethod]
 		public async Task GetAttributeValue_MultipleValueAttributeValue() {
 
-			var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-			DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+			var client = new AttributeValueAPIClient( APIStage.BETA );
 
             //We're first going to make an authenticated call to set the values we expect to later read.
             var userAuthentication = new UserAuthentication(

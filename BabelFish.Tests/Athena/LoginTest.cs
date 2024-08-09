@@ -6,36 +6,39 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Tests;
-using Scopos.BabelFish.Requests.AthenaLogin;
+using Scopos.BabelFish.Requests.Athena;
 using Scopos.BabelFish.DataModel.AthenaLogin;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Tests.AthenaLogin {
+namespace Scopos.BabelFish.Tests.Athena {
 
     [TestClass]
     public class LoginTest {
 
+        [TestInitialize]
+        public async Task InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+        
         /// <summary>
-        /// Unit test to confirm the Constructors set the api key and API stage as expected.
-        /// </summary>
+         /// Unit test to confirm the Constructors set the api key and API stage as expected.
+         /// </summary>
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new AthenaLoginAPIClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new AthenaAPIClient( );
+            var apiStageConstructorClient = new AthenaAPIClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public async Task LoginToTargetHappyPath() {
 
-            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -62,7 +65,7 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
         [TestMethod]
         public async Task LoginToTargetSadPath() {
 
-            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -88,7 +91,7 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
         [TestMethod]
         public async Task ActiveLoginSessions() {
 
-            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -108,7 +111,7 @@ namespace Scopos.BabelFish.Tests.AthenaLogin {
         [TestMethod]
         public async Task LogoutSessions() {
 
-            var client = new AthenaLoginAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new AthenaAPIClient( APIStage.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(

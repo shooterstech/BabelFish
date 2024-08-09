@@ -9,7 +9,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public ScoposDataClient( string apiKey ) : base( apiKey ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public ScoposDataClient() : base() {
 
             //ScoposDataClient does not support file system cache
             LocalStoreDirectory = null;
@@ -19,7 +20,8 @@ namespace Scopos.BabelFish.APIClients {
             IgnoreInMemoryCache = false;
         }
 
-        public ScoposDataClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public ScoposDataClient( APIStage apiStage ) : base( apiStage ) {
 
             //ScoposDataClient does not support file system cache
             LocalStoreDirectory = null;

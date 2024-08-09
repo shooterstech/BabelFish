@@ -17,13 +17,17 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
 {
 
     [TestClass]
-    public class AuthenticatedScoreHistoryTests
-    {
+    public class AuthenticatedScoreHistoryTests {
+
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
 
         [TestMethod]
         public async Task PostScoreHistory()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.BETA);
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -71,7 +75,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
         [TestMethod]
         public async Task PatchScoreHistory()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.BETA);
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -117,7 +121,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
         [TestMethod]
         public async Task DeleteScoreHistory()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.BETA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.BETA);
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -153,7 +157,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
 		[TestMethod]
 		public async Task GetEventStyleScoreHistory() {
 
-			var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.BETA );
+			var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
 			var userAuthentication = new UserAuthentication(
 				Constants.TestDev7Credentials.Username,
@@ -188,9 +192,9 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
         [TestMethod]
         public async Task CoachAccessAthleteProtectedData()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
-            var clubsClient = new ClubsAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
-            var socialNetworkClient = new SocialNetworkAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.PRODUCTION);
+            var clubsClient = new ClubsAPIClient(APIStage.PRODUCTION);
+            var socialNetworkClient = new SocialNetworkAPIClient(APIStage.PRODUCTION);
 
             //TestDev1 is a POC for licence 7
             var userAuthentication = new UserAuthentication(

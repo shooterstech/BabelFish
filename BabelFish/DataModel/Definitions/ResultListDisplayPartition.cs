@@ -9,16 +9,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public ResultListDisplayPartition() {
             RowClass = new List<string>();
-
-            CellDefaultClass = new List<string>();
         }
 
-        public ResultListDisplayPartition( string rowClassDefault, string cellClassDefault ) {
+        public ResultListDisplayPartition( string rowClassDefault ) {
             if (!string.IsNullOrEmpty( rowClassDefault ))
                 RowClass.Add( rowClassDefault );
 
-            if (!string.IsNullOrEmpty( cellClassDefault ))
-                CellDefaultClass.Add( cellClassDefault );
+            if (!string.IsNullOrEmpty( rowClassDefault ))
+                ClassList.Add( rowClassDefault );
 
         }
 
@@ -27,19 +25,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (RowClass == null)
                 RowClass = new List<string>();
 
-            if (CellDefaultClass == null)
-                CellDefaultClass = new List<string>();
+            if (ClassList == null)
+                ClassList = new List<string>();
         }
 
         /// <summary>
         /// The list of css classes to assign to the rows within this Partition.
         /// </summary>
-        public List<string> RowClass { get; set; } = new List<string>();
+        public List<string> ClassList { get; set; } = new List<string>();
 
         /// <summary>
-        /// The list of css classes to assign, by default, to the cells within this partition.
+        /// The list of css classes to assign to the rows within this Partition.
         /// </summary>
-        public List<string> CellDefaultClass { get; set; } = new List<string>();
+        [Obsolete( "Use .ClassList instead." )]
+        public List<string> RowClass { get; set; } = new List<string>();
     }
 
     /// <summary>
@@ -52,7 +51,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             RowLinkTo = new List<LinkToOption>();
         }
 
-        public ResultListDisplayPartitionExtended( string rowClassDefault, string cellClassDefault ) : base( rowClassDefault, cellClassDefault ) {
+        public ResultListDisplayPartitionExtended( string rowClassDefault ) : base( rowClassDefault ) {
             ;
         }
 
@@ -61,8 +60,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (RowClass == null)
                 RowClass = new List<string>();
 
-            if (CellDefaultClass == null)
-                CellDefaultClass = new List<string>();
+            if (ClassList == null)
+                ClassList = new List<string>();
 
             if (RowLinkTo == null)
                 RowLinkTo = new List<LinkToOption>();
