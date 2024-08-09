@@ -60,6 +60,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     var shotsFired = es.NumShotsFired;
                     //we want to always project shots if we have ANY remaining.
                     var shotsRemaining = singulars.Count - shotsFired;
+                    shotsRemaining = (shotsRemaining < 0) ? 0 : shotsRemaining;
                     var avgIntThisStage = 0.0f;
                     var avgDecThisStage = 0.0f;
                     var avgXPerShot = 0.0f;
@@ -88,7 +89,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
                     es.Projected.D = (float)Math.Round( es.Projected.D, 1 );
                     es.Projected.S = es.Projected.D;
-                    es.Projected.X = (int)(es.Score.X + (avgXPerShot * shotsRemaining));
+                    es.Projected.X = (int)(es.Score.X + (avgXPerShot * shotsRemaining + .49));
 
                 }
 
@@ -124,11 +125,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     //project the scores
                     es.Projected = new DataModel.Athena.Score();
-                    es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining);
+                    es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining + .49f); //The +.49 is for rounding, instead of truncating.
                     es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
                     es.Projected.D = (float)Math.Round( es.Projected.D, 1 );
                     es.Projected.S = es.Projected.D;
-                    es.Projected.X = (int)(es.Score.X + (avgXPerShot * shotsRemaining));
+                    es.Projected.X = (int)(es.Score.X + (avgXPerShot * shotsRemaining + .49f));
                 }
 
                 //Make the bold and wildly incorrect assumption that the topLevelEvent is the sum of the stages

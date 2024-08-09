@@ -278,9 +278,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                 scoreHistoryAvg = avgScoreThisStage; //If no score history, then use avg shot fired
             }
             
-            es.Projected.I = (int)PredictScore(es.Score.I, avgScoreThisStage.I, scoreHistoryAvg.I, shotsRemaining, percentageShotsTaken);
+            es.Projected.I = (int) (PredictScore(es.Score.I, avgScoreThisStage.I, scoreHistoryAvg.I, shotsRemaining, percentageShotsTaken) + .49f); //The +.49 is for rounding instead of truncating
             es.Projected.D = PredictScore(es.Score.D, avgScoreThisStage.D, scoreHistoryAvg.D, shotsRemaining, percentageShotsTaken);
-            es.Projected.X = (int)PredictScore(es.Score.X, avgScoreThisStage.X, scoreHistoryAvg.X, shotsRemaining, percentageShotsTaken);
+            es.Projected.X = (int) (PredictScore(es.Score.X, avgScoreThisStage.X, scoreHistoryAvg.X, shotsRemaining, percentageShotsTaken) + .49f);
 
             es.Projected.D = (float)Math.Round(es.Projected.D, 1);
             es.Projected.S = es.Projected.D;
@@ -315,6 +315,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
         END              */
         private float PredictScore(float currentScore, float avgScore, float historyAvg, int shotsRemaining, float percentageShotsTaken)
         {
+            if (shotsRemaining < 0)
+                shotsRemaining = 0;
+
             return currentScore + shotsRemaining * (
                     avgScore * percentageShotsTaken +
                     historyAvg * (1.0f - percentageShotsTaken)

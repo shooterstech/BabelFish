@@ -11,6 +11,7 @@ using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.Helpers;
 using System.Globalization;
 using System.Linq.Expressions;
+using Location = Scopos.BabelFish.DataModel.Common.Location;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 	[Serializable]
