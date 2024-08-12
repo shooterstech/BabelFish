@@ -195,10 +195,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "ProjectedScore" )]
         PROJECTED_SCORE,
 
+        /// <summary>
+        /// A value from one of the many common fields for the participant. For example Display Name, Country, or Hometown
+        /// </summary>
         [Description( "ParticipantAttribute" )]
         [EnumMember( Value = "ParticipantAttribute" )]
         PARTICIPANT_ATTRIBUTE,
 
+        /// <summary>
+        /// Value from this participant's Attribute Values
+        /// </summary>
         [Description( "Attribute" )]
         [EnumMember( Value = "Attribute" )]
         ATTRIBUTE,
@@ -208,7 +214,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "Gap" )]
         [EnumMember( Value = "Gap" )]
-        GAP
+        GAP,
+
+        /// <summary>
+        /// Information about any record this score may represent for  the participant. For example "PR" for personal record, 
+        /// "RR" for Range Record, "SH" for Season High.
+        /// </summary>
+        [Description( "Record" )]
+        [EnumMember( Value = "Record" )]
+        RECORD
+
     }
 
 
