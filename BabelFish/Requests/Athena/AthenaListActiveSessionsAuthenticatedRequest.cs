@@ -4,23 +4,26 @@ using System.Text;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Requests.AthenaLogin
+namespace Scopos.BabelFish.Requests.Athena
 {
-    public class AthenaLogoutSessionAuthenticatedRequest : Request
+    public class AthenaListActiveSessionsAuthenticatedRequest : Request
     {
 
 
 
-        public AthenaLogoutSessionAuthenticatedRequest(UserAuthentication credentials) : base( "AthenaLogoutSession", credentials)
+        public AthenaListActiveSessionsAuthenticatedRequest(UserAuthentication credentials) : base( "AthenaListActiveSessions", credentials)
         {
             //NOTE: Because this request requires user credentials and a authcode, we're only writing one constructor that includes these two requirements.
             this.RequiresCredentials = true;
             this.SubDomain = APISubDomain.AUTHAPI;
-            this.HttpMethod = HttpMethod.Delete;
+            this.HttpMethod = HttpMethod.Get;
         }
 
-        public List<string> ThingNames { get; set; }
+        /// <inheritdoc />
+        public string Token { get; set; } = string.Empty;
 
+        /// <inheritdoc />
+        public int Limit { get; set; }
 
         /// <inheritdoc />
         public override string RelativePath
@@ -36,9 +39,14 @@ namespace Scopos.BabelFish.Requests.AthenaLogin
             {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
-                if (ThingNames != null && ThingNames.Count > 0)
-                    parameterList.Add("thing-name", ThingNames);
 
+                if (!string.IsNullOrEmpty(Token))
+                {
+                    parameterList.Add("token", new List<string> { Token });
+                }
+
+                if (Limit > 0)
+                    parameterList.Add("limit", new List<string> { Limit.ToString() });
 
                 return parameterList;
             }

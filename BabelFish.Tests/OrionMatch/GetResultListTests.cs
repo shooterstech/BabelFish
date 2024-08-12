@@ -15,15 +15,14 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     public class GetResultListTests {
 
         [TestInitialize]
-        public async Task InitializeTest() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
-
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
         }
 
         [TestMethod]
         public async Task GetResultListBasicPublicTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023011915575119.0" );
@@ -43,7 +42,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetResultListBasicAuthenticatedTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -68,7 +67,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public void GetResultListTokenizedTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023011915575119.0" ); 
@@ -107,7 +106,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2024050109193283.1" );

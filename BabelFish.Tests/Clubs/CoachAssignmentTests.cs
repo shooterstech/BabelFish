@@ -16,14 +16,14 @@ namespace Scopos.BabelFish.Tests.Clubs
     public class CoachAssignmentTests
     {
         private ClubsAPIClient clubsClient;
-        private APIStage stage;
 
 
         [TestInitialize]
         public void InitClient()
         {
-            stage = APIStage.PRODUCTION;
-            clubsClient = new ClubsAPIClient(Constants.X_API_KEY, stage);
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+
+            clubsClient = new ClubsAPIClient(APIStage.PRODUCTION);
         }
 
         public async Task DeleteAllCoachAssignments(int licenseNumber, UserAuthentication userAuthentication)

@@ -15,11 +15,16 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class GetSquaddingListTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
 
         [TestMethod]
         public void GetSquaddingListBasicPublicTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );
@@ -40,7 +45,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetSquaddingListBasicAuthenticatedTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -68,8 +73,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public void GetSquaddingListLimitToRelay() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );
@@ -99,7 +103,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public void GetSquaddingListTokenizedCalls() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );

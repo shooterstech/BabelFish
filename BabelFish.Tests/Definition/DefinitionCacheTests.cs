@@ -19,13 +19,18 @@ namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
     public class DefinitionCacheTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Testing that the first request, that is not using cache, is faster than the second test that is. 
         /// </summary>
         [TestMethod]
         public async Task InMemoryCacheTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"g:\My Drive\Definitions" );
@@ -64,7 +69,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task FileSystemCacheTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
             //TODO figure out how to read the value of the definition directory from a config file.
@@ -105,7 +110,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task GetCourseOfFireTest() {
 
-            var client = new DefinitionAPIClient( Constants.X_API_KEY );
+            var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
             var requestNoCache = new GetDefinitionPublicRequest( setName, DefinitionType.COURSEOFFIRE );
@@ -139,7 +144,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task RequestsThatShouldNotGetCached() {
 
-			var client = new DefinitionAPIClient( Constants.X_API_KEY );
+			var client = new DefinitionAPIClient();
 			var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
             //The first request should cache it's value

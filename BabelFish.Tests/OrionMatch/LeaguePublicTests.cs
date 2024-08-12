@@ -13,6 +13,11 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class LeaguePublicTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Pass in a league id and check the response contains expected data.
         /// Uses a production league id, as these are more complete. 
@@ -20,7 +25,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetLeagueDetailPublicTests() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Pass in a fake match id
             var leagueDetailResponse = await client.GetLeagueDetailPublicAsync( "1.1.2023091512010588.3" );
@@ -46,7 +51,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetByeWeeksForLeagueTeam() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
             var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" ) {
@@ -86,7 +91,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task GetLeagueGamesFilterByConference() {
 
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
             var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" ) {
@@ -120,7 +125,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task GetLeagueGamesFilterByDivision() {
 
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
             var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" ) {
@@ -155,7 +160,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task GetLeagueGamesTokenization() {
 
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var request = new GetLeagueGamesPublicRequest( "1.1.2023091512052862.3" ); // 1.1.2023091512010588.3" );
 
@@ -197,7 +202,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetLeagueTeamsBasicTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var request = new GetLeagueTeamsPublicRequest( "1.1.2023091512010588.3" );
 
@@ -229,7 +234,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task GetLeagueTeamsTokenization() {
 
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var request = new GetLeagueTeamsPublicRequest( "1.1.2023091512010588.3" ) {
                 Limit = 10 //Set a small limit so there will be a token on the first call.
@@ -273,7 +278,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetLeagueTeamDetailBasicTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             var request = new GetLeagueTeamDetailPublicRequest( "1.1.2023091512010588.3", 2213 );
 
@@ -305,7 +310,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task GetLeagueConfAndDivLists()
         {
 
-            var client = new OrionMatchAPIClient(Constants.X_API_KEY, APIStage.PRODUCTION);
+            var client = new OrionMatchAPIClient(APIStage.PRODUCTION);
 
             var requestTeamDetail = new GetLeagueTeamDetailPublicRequest("1.1.2023091512010588.3", 2213);
             var requestGames = new GetLeagueGamesPublicRequest("1.1.2023091512010588.3");

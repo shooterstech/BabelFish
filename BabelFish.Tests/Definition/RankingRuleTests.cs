@@ -17,6 +17,11 @@ namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
     public class RankingRuleTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Basic Unit Tests for when TieBreakingRules.Method is "Score".
         /// </summary>
@@ -371,10 +376,8 @@ namespace Scopos.BabelFish.Tests.Definition {
         [Ignore]
         public async Task EriksPlayground() {
 
-
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
-            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
-            DefinitionAPIClient definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            DefinitionAPIClient definitionClient = new DefinitionAPIClient();
 
             var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024071913112845.0" ), "Individual - All" ); //
             var resultList = resultListResponse.ResultList;

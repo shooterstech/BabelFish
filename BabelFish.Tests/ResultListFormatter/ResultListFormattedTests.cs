@@ -21,10 +21,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
         [TestInitialize]
         public async Task InitializeTest() {
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
 
-            matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
-            definitionClient = new DefinitionAPIClient( Constants.X_API_KEY );
+            matchClient = new OrionMatchAPIClient( );
+            definitionClient = new DefinitionAPIClient( );
 
             userProfileLookup = new BaseUserProfileLookup();
         }

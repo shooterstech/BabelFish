@@ -15,11 +15,16 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
     public class GetMatchParticipantListTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
 
         [TestMethod]
         public void GetMatchParticipantListPublicTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );
@@ -38,7 +43,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetMatchParticipantListAuthenteicatedTest() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -64,7 +69,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public void GetMatchParticipantListLimitToRelay() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );
@@ -91,7 +96,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public void GetMatchParticipantListTokenizedCalls() {
 
-            var client = new OrionMatchAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );

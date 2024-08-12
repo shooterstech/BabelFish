@@ -18,6 +18,11 @@ namespace Scopos.BabelFish.Tests.Authentication {
     [TestClass]
     public class AuthenticationTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         /// <summary>
         /// Tests the happy path, correct username and password using a new device. The user should be logged in and the device attached to the user.
         /// </summary>
@@ -239,7 +244,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             var expirationTime = userAuthentication1.ExpirationTime;
             var issuedTime = userAuthentication1.IssuedTime;
 
-            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( Constants.X_API_KEY );
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( );
             var getMatch1 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2038.2024071609575863.0" ), userAuthentication1 );
             Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch1.StatusCode );
 
