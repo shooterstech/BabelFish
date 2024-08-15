@@ -32,6 +32,11 @@ namespace Scopos.BabelFish.DataModel.Common {
         public string State { get; set; }
 
         /// <summary>
+        /// Postal code. Format is a string, and dependent on the country it comes from.
+        /// </summary>
+        public string PostalCode { get; set; }
+
+        /// <summary>
         /// May either be the full name of Country, or the three letter abbreviation.
         /// An empty string means the name of the country is not known.
         /// </summary>
