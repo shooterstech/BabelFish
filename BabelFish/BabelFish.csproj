@@ -5,9 +5,10 @@
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-    <AssemblyVersion>2.1.1</AssemblyVersion>
+
+    <AssemblyVersion>1.6.7.1</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
-	<Version>2.1.1</Version>
+	<Version>1.6.7.1</Version>
 	<Authors>Scopos</Authors>
 	<Company>Scopos</Company>
 	<PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
@@ -25,7 +26,7 @@
     <PackageReference Include="AwsSignatureVersion4" Version="4.0.5" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.3.2" />
+    <PackageReference Include="NLog" Version="5.3.3" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
   </ItemGroup>
 
