@@ -5,7 +5,6 @@
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-
     <AssemblyVersion>1.6.7.1</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
 	<Version>1.6.7.1</Version>
