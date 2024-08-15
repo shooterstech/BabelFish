@@ -17,7 +17,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         public override List<string> GetClassList() {
-            return resultListFormatted.DisplayPartitions.Body.RowClass;
+            //NOTE .RowClass is deprecated
+            return resultListFormatted.DisplayPartitions.Body.ClassList.Concat( resultListFormatted.DisplayPartitions.Body.RowClass ).ToList<string>();
         }
 
         public override List<LinkToOption> GetLinkToList() {

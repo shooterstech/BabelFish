@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
@@ -25,11 +26,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// 
         /// </summary>
         /// <param name="setName"></param>
-        /// <exception cref="XApiKeyNotSetException">Thrown if the x-api-key has not yet been set on AttributeValueDefinitionFetcher.FETCHER.</exception>
         private AttributeValue( SetName setName ) {
-
-            if (!DefinitionFetcher.IsXApiKeySet)
-                throw new XApiKeyNotSetException();
 
             this.SetName= setName;
         }
@@ -62,6 +59,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <returns></returns>
         /// <exception cref="AttributeNotFoundException">Thrown if the attribute def, identified by the SetName, could not be found.</exception>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         private async Task InitializeAsync() {
 
             var getDefinitionResponse = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( SetName );

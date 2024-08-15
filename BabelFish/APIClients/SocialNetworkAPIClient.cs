@@ -12,9 +12,10 @@ using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients
 {
-    public class SocialNetworkAPIClient : APIClient<SocialNetworkAPIClient>
-    {
-        public SocialNetworkAPIClient(string apiKey) : base(apiKey)
+    public class SocialNetworkAPIClient : APIClient<SocialNetworkAPIClient> {
+
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public SocialNetworkAPIClient() : base()
         {
 
             //SocialNetworkAPIClient does not support file system cache
@@ -22,7 +23,8 @@ namespace Scopos.BabelFish.APIClients
             IgnoreFileSystemCache = true;
         }
 
-        public SocialNetworkAPIClient(string apiKey, APIStage apiStage) : base(apiKey, apiStage)
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public SocialNetworkAPIClient( APIStage apiStage ) : base( apiStage )
         {
 
             //SocialNetworkAPIClient does not support file system cache

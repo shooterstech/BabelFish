@@ -17,7 +17,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public ScoreHistoryAPIClient( string apiKey ) : base( apiKey ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public ScoreHistoryAPIClient() : base() {
 
             //ScoreHistoryAPIClient does not support file system cache
             LocalStoreDirectory = null;
@@ -27,7 +28,8 @@ namespace Scopos.BabelFish.APIClients {
             IgnoreInMemoryCache = false;
         }
 
-        public ScoreHistoryAPIClient( string apiKey, APIStage apiStage ) : base( apiKey, apiStage ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public ScoreHistoryAPIClient( APIStage apiStage ) : base( apiStage ) {
 
             //ScoreHistoryAPIClient does not support file system cache
             LocalStoreDirectory = null;

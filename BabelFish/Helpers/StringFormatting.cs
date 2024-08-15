@@ -215,6 +215,42 @@ namespace Scopos.BabelFish.Helpers {
 
             string formattedScore = format;
             int numOfErrors = 0;
+
+            //Look for conditional operators
+            //{?i} if score.I == 0, Process only the right half of the string. If score.I != 0, process the left half
+            //{?x} if score.X == 0, Process only the right half of the string. If score.X != 0, process the left half
+            //{?d} if score.D == 0, Process only the right half of the string. If score.D != 0, process the left half
+            //Will build in others, as necessary
+            int conditionalIndex = formattedScore.IndexOf( "{?i}" );
+            if (conditionalIndex >= 0) {
+                
+                if (score.I == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
+            conditionalIndex = formattedScore.IndexOf( "{?x}" );
+            if (conditionalIndex >= 0) {
+
+                if (score.X == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
+            conditionalIndex = formattedScore.IndexOf( "{?d}" );
+            if (conditionalIndex >= 0) {
+
+                if (score.D == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
             foreach ( var replacement in listOfReplacements ) {
                 try {
                     formattedScore = formattedScore.Replace( replacement.Item1, replacement.Item2 );
@@ -233,12 +269,66 @@ namespace Scopos.BabelFish.Helpers {
 
 
 		/// <summary>
-		/// Returns the input string in Title Case
+		/// Returns the input string in Title Case, and converts ordinals to lower case.
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
 		public static string TitleCase( string input ) {
-            return textInfo.ToTitleCase( input );
+            var titleCase = textInfo.ToTitleCase( input );
+            return ConvertOrdinalsToLowerCase( titleCase );
+        }
+
+        /// <summary>
+        /// Converts the ordinal values to lower case.
+        /// 1ST => 1st, or 2ND => 2nd
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ConvertOrdinalsToLowerCase( string input ) {
+            // Define a regex pattern to match ordinals (e.g., 1st, 2nd, 3rd, 4th)
+            var pattern = @"\b(\d+)(st|nd|rd|th)\b";
+
+            // Use regex replace to convert matched ordinals to lowercase
+            var output = Regex.Replace( input, pattern, m => m.Value.ToLower(), RegexOptions.IgnoreCase );
+
+            return output;
+        }
+
+        /// <summary>
+        /// Formats city, state and country is a standard format.
+        /// </summary>
+        /// <param name="hometown"></param>
+        /// <returns></returns>
+        public static string Hometown( string city, string state, string country ) {
+            if (string.IsNullOrWhiteSpace( country ) || country == "USA" || country == "US") {
+                if (!string.IsNullOrWhiteSpace( state )) {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return $"{city}, {state}";
+                    } else {
+                        return city;
+                    }
+                } else {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return city;
+                    } else {
+                        return "UNKNOWN";
+                    }
+                }
+            } else {
+                if (!string.IsNullOrWhiteSpace( state )) {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return "{city}, {country}";
+                    } else {
+                        return "{state}, {country}";
+                    }
+                } else {
+                    if (!string.IsNullOrWhiteSpace( city )) {
+                        return "{city}, {country}";
+                    } else {
+                        return country;
+                    }
+                }
+            }
         }
     }
 }

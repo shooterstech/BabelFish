@@ -17,11 +17,15 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
     public class SetAttributeValueTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
         [TestMethod]
         public async Task SetAttributeValue_SingleAttribute() {
 
-            var client = new AttributeValueAPIClient( Constants.X_API_KEY, APIStage.BETA );
-            DefinitionFetcher.XApiKey = Constants.X_API_KEY;
+            var client = new AttributeValueAPIClient( APIStage.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,

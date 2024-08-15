@@ -16,11 +16,15 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
     [TestClass]
     public class PublicScoreAverageTests {
 
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
 
         [TestMethod]
         public async Task GetScoreAverageUsingEventStyle() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
             var scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 04, 1 );
@@ -70,7 +74,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetScoreAverageUsingStageStyle() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
             var scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 04, 1 );
@@ -123,7 +127,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetScoreAverageUsingEventStyleWithTokens() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
 
             GetScoreHistoryAbstractRequest scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 05, 1 );
@@ -153,7 +157,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
         [TestMethod]
         public async Task Getsomething() {
-            var scoreHistoryClient = new ScoreHistoryAPIClient( Constants.X_API_KEY, APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 25 );

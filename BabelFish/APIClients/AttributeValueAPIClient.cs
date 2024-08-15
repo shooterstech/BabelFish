@@ -11,14 +11,16 @@ namespace Scopos.BabelFish.APIClients {
         /// Instantiate client
         /// </summary>
         /// <param name="apiKey"></param>
-        public AttributeValueAPIClient( string xapikey ) : base( xapikey ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public AttributeValueAPIClient( ) : base() {
 
             //AttributeValueAPIClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
         }
 
-        public AttributeValueAPIClient( string xapikey, APIStage apiStage ) : base( xapikey, apiStage ) {
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        public AttributeValueAPIClient( APIStage apiStage ) : base( apiStage ) {
 
             //AttributeValueAPIClient does not support file system cache
             LocalStoreDirectory = null;

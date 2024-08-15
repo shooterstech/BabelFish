@@ -158,9 +158,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             get { return properName; }
         }
 
-        private StringBuilder sb = new StringBuilder();
         public override string ToString() {
-            sb.Clear();
+            StringBuilder sb = new StringBuilder();
             sb.Append('v');
             sb.Append(majorVersion);
             sb.Append('.');
@@ -174,7 +173,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public string FileName {
             get {
-                sb.Clear();
+                StringBuilder sb = new StringBuilder();
                 sb.Append('v');
                 sb.Append(majorVersion);
                 sb.Append('.');
@@ -190,7 +189,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public string ToMostRecentString() {
-            sb.Clear();
+            StringBuilder sb = new StringBuilder();
             sb.Append('v');
             sb.Append(0);
             sb.Append('.');
@@ -203,7 +202,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public string ToMostRecentMajorVersionString() {
-            sb.Clear();
+            StringBuilder sb = new StringBuilder();
             sb.Append('v');
             sb.Append(majorVersion);
             sb.Append('.');
@@ -216,7 +215,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public string ToHierarchicalNameString() {
-            sb.Clear();
+            StringBuilder sb = new StringBuilder();
             sb.Append(nameSpace);
             sb.Append(':');
             sb.Append(properName);

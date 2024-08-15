@@ -4,13 +4,13 @@ using System.Text;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.AthenaLogin;
 
-namespace Scopos.BabelFish.Responses.AthenaLogin
+namespace Scopos.BabelFish.Responses.Athena
 {
     public class ESTUnitLogoutWrapper : BaseClass
     {
 
 
-        public ESTUnitLogout ESTUnitLogout = new ESTUnitLogout();  
+        public ESTUnitLogout ESTUnitLogout = new ESTUnitLogout();
 
         public override string ToString()
         {

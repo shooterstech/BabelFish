@@ -8,6 +8,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
+using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -145,6 +146,27 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
+        /// Returns the ResultListIntermediateFormattedRow who has the rankOrder provided.
+        /// If no row is found, null is returned.
+        /// </summary>
+        /// <param name="rankOrder"></param>
+        /// <returns></returns>
+        public ResultListIntermediateFormattedRow GetRowAtRankOrder(int rankOrder) {
+            //NOTE: This does a linear search, could be improved by using a dictionary lookup.
+            lock (rows) {
+                foreach( var row in rows) {
+                    if (row.IsChildRow)
+                        continue;
+
+                    if (row.GetRankOrder() == rankOrder)
+                        return row;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Gets the Orion ResultList used in this translation.
         /// </summary>
         public ResultList ResultList { get; private set; }
@@ -230,12 +252,40 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
 
+        public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
+
+        public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
+
         /// <summary>
-        /// Returns the number of defined columns. 
+        /// Returns the total number of defined columns. Does not factor in hidden columns (from .HideColumnsWithTheseClasses).
         /// </summary>
         /// <returns></returns>
         public int GetColumnCount() {
             return ResultListFormat.Format.Columns.Count;
+        }
+
+        /// <summary>
+        /// Returns a list of columnIndex values, Each columnIndex is shown (e.g. not .Hide), as it 
+        /// will not contain a CSS Class that's listed in .HideColumnsWithTheseClasses.
+        /// </summary>
+        /// <returns></returns>
+        public List<int> GetShownColumnIndexes() {
+            List<int> shownColumnIndexes = new List<int>();
+            bool include = true;
+            for (int i = 0; i < ResultListFormat.Format.Columns.Count; i++) {
+                var format = ResultListFormat.Format.Columns[i];
+                include = true;
+                foreach (var c in format.ClassList) {
+                    if (HideColumnsWithTheseClasses.Contains( c )) {
+                        include = false;
+                        break;
+                    }
+                }
+                if (include)
+                    shownColumnIndexes.Add( i );
+            }
+
+            return shownColumnIndexes;
         }
 
         /// <summary>
@@ -249,14 +299,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-            CellValues cellValues = new CellValues();
+            CellValues cellValues = new CellValues( this );
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
-            foreach (var c in format.HeaderClassList)
+            foreach (var c in format.ClassList) {
                 cellValues.ClassList.Add( c.ToString() );
+            }
+
+            //NOTE .HeaderClassList is deprecated
+            foreach (var c in format.HeaderClassList) { 
+                cellValues.ClassList.Add( c.ToString() );
+            }
 
             return cellValues;
         }
@@ -271,7 +327,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public string GetColumnHeaderValue( int columnIndex ) {
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
-
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
@@ -301,19 +356,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
-            foreach (var c in DisplayPartitions.Header.RowClass)
+            foreach (var c in DisplayPartitions.Header.ClassList)
                 l.Add( c.ToString() );
-            return l;
-        }
 
-        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
-        [Obsolete( "Use .GetClassList() from the ResultListIntermediateFormattedRow instance instead.")]
-        public List<string> GetBodyRowClassList() {
-            if (!initialized)
-                throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
-
-            List<string> l = new();
-            foreach (var c in DisplayPartitions.Body.RowClass)
+            //.RowClass is obsolete
+            foreach (var c in DisplayPartitions.Header.RowClass)
                 l.Add( c.ToString() );
             return l;
         }
@@ -324,6 +371,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
+            foreach (var c in DisplayPartitions.Footer.ClassList)
+                l.Add( c.ToString() );
+
+            //.RowClass is obsolete
             foreach (var c in DisplayPartitions.Footer.RowClass)
                 l.Add( c.ToString() );
             return l;
@@ -340,12 +391,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-            CellValues cellValues = new();
+            CellValues cellValues = new CellValues( this );
 
             var format = ResultListFormat.Format.Columns[columnIndex];
 
             cellValues.Text = format.Footer.ToString();
             cellValues.ClassList = new List<string>();
+            foreach (var c in format.ClassList)
+                cellValues.ClassList.Add( c.ToString() );
+
+            //NOTE .FooterClassList is deprecated
             foreach (var c in format.FooterClassList)
                 cellValues.ClassList.Add( c.ToString() );
 

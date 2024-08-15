@@ -4,7 +4,7 @@ using System.Text;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.AthenaLogin;
 
-namespace Scopos.BabelFish.Responses.AthenaLogin
+namespace Scopos.BabelFish.Responses.Athena
 {
     public class ESTUnitActiveSessionsWrapper : BaseClass
     {

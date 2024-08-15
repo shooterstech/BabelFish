@@ -14,9 +14,14 @@ namespace Scopos.BabelFish.Tests.Definition {
 	[TestClass]
 	public class DefinitionListTests {
 
-		[TestMethod]
+        [TestInitialize]
+        public void InitializeTest() {
+            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
+        [TestMethod]
 		public async Task BasicGetRest() {
-			var client = new DefinitionAPIClient( Constants.X_API_KEY );
+			var client = new DefinitionAPIClient();
 
 			var getDefinitionListResponse = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE );
 
@@ -37,7 +42,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 		[TestMethod]
 		public async Task CachedResponseTest() {
 
-			var client = new DefinitionAPIClient( Constants.X_API_KEY );
+			var client = new DefinitionAPIClient();
 
 			var getDefinitionListResponse1 = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE );
 
@@ -60,7 +65,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 		public async Task SearchTermTest() {
 
 
-			var client = new DefinitionAPIClient( Constants.X_API_KEY, APIStage.PRODTEST );
+			var client = new DefinitionAPIClient( APIStage.PRODTEST );
 
 			var getDefinitionListResponse = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE, "Air Rifle Category" );
 

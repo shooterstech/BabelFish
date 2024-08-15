@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.AthenaLogin;
-using Scopos.BabelFish.Requests.AthenaLogin;
+using Scopos.BabelFish.Requests.Athena;
+using Scopos.BabelFish.Responses;
 
-namespace Scopos.BabelFish.Responses.AthenaLogin
+namespace Scopos.BabelFish.Responses.Athena
 {
     public class AthenaLogoutSessionAuthenticatedResponse : Response<ESTUnitLogoutWrapper>
     {
 
         public AthenaLogoutSessionAuthenticatedResponse(AthenaLogoutSessionAuthenticatedRequest request) : base()
         {
-            this.Request = request;
+            Request = request;
         }
 
         /// <summary>

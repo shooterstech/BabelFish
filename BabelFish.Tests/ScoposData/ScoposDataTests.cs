@@ -17,19 +17,17 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new ScoposDataClient( Constants.X_API_KEY );
-            var apiStageConstructorClient = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
+            var defaultConstructorClient = new ScoposDataClient( );
+            var apiStageConstructorClient = new ScoposDataClient( APIStage.BETA );
 
-            Assert.AreEqual( Constants.X_API_KEY, defaultConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( Constants.X_API_KEY, apiStageConstructorClient.XApiKey );
             Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public void GetOrionServiceProductionLevel() {
-            var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ScoposDataClient( APIStage.BETA );
 
             VersionService service = VersionService.ORION;
             VersionLevel level = VersionLevel.PRODUCTION;
@@ -44,7 +42,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
         [TestMethod]
         public void GetAthenaServiceAlphaLevel() {
-            var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ScoposDataClient( APIStage.BETA );
 
             VersionService service = VersionService.ATHENA;
             VersionLevel level = VersionLevel.ALPHA;
@@ -59,7 +57,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
         [TestMethod]
         public void GetMultipleServicesProductionLevel() {
-            var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ScoposDataClient( APIStage.BETA );
 
             GetVersionPublicRequest request = new GetVersionPublicRequest() {
                 Services = new List<VersionService>() { VersionService.ORION, VersionService.ATHENA },
@@ -77,7 +75,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
         [TestMethod]
         public void GetCupsOfCoffeeConsumedWithRequestObject() {
-            var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ScoposDataClient( APIStage.BETA );
 
             GetCupsOfCoffeePublicRequest request = new GetCupsOfCoffeePublicRequest();
 
@@ -94,7 +92,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
         [TestMethod]
         public void GetCupsOfCoffeeConsumedWithoutRequestObject() {
-            var client = new ScoposDataClient( Constants.X_API_KEY, APIStage.BETA );
+            var client = new ScoposDataClient( APIStage.BETA );
 
             var response = client.GetCuposOfCoffeePublicAsync();
             var result = response.Result;
