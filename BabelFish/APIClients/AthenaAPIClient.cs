@@ -9,8 +9,7 @@ using Scopos.BabelFish.Requests.Athena;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.APIClients
-{
+namespace Scopos.BabelFish.APIClients {
 
     /// <summary>
     /// API Client to access and update information about Athena EST Units.
@@ -22,7 +21,7 @@ namespace Scopos.BabelFish.APIClients
         /// </summary>
         /// <param name="xapikey"></param>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public AthenaAPIClient( ) : base() {
+        public AthenaAPIClient() : base() {
 
             //AthenaLoginAPIClient does not support file system cache
             LocalStoreDirectory = null;
@@ -48,32 +47,37 @@ namespace Scopos.BabelFish.APIClients
             return response;
         }
 
-        public async Task<AthenaLogoutSessionAuthenticatedResponse> AthenaLogoutSessionAuthenticatedAsync(AthenaLogoutSessionAuthenticatedRequest request)
-        {
+        public async Task<AthenaLogoutSessionAuthenticatedResponse> AthenaLogoutSessionAuthenticatedAsync( AthenaLogoutSessionAuthenticatedRequest request ) {
 
-            var response = new AthenaLogoutSessionAuthenticatedResponse(request);
+            var response = new AthenaLogoutSessionAuthenticatedResponse( request );
 
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
-
-            return response;
-        }
-
-        public async Task<AthenaListActiveSessionsAuthenticatedResponse> AthenaListActiveSessionsAuthenticatedAsync(AthenaListActiveSessionsAuthenticatedRequest request)
-        {
-
-            var response = new AthenaListActiveSessionsAuthenticatedResponse(request);
-
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }
 
-        public async Task<RemoveThingOwnershipResponse> RemoveThingOwnershipAsync(RemoveThingOwnershipRequest request)
-        {
+        public async Task<AthenaListActiveSessionsAuthenticatedResponse> AthenaListActiveSessionsAuthenticatedAsync( AthenaListActiveSessionsAuthenticatedRequest request ) {
 
-            var response = new RemoveThingOwnershipResponse(request);
+            var response = new AthenaListActiveSessionsAuthenticatedResponse( request );
 
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        public async Task<RemoveThingOwnershipResponse> RemoveThingOwnershipAsync( RemoveThingOwnershipRequest request ) {
+
+            var response = new RemoveThingOwnershipResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        public async Task<GetUserOwnershipValuesAuthenticatedResponse> GetUserOwnershipValuesAuthenticatedAsync( GetUserOwnershipValuesAuthenticatedRequest request ) {
+            var response = new GetUserOwnershipValuesAuthenticatedResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }

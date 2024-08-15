@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.Requests.AthenaOwnerAPI
+namespace Scopos.BabelFish.Requests.Athena
 {
     public class GetUserOwnershipValuesAuthenticatedRequest : Request
     {

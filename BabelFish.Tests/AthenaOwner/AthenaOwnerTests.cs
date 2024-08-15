@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.AthenaOwnerAPI;
+using Scopos.BabelFish.Requests.Athena;
 using Scopos.BabelFish.Runtime.Authentication;
 using System.Threading.Tasks;
 
@@ -9,12 +9,12 @@ namespace Scopos.BabelFish.Tests.AthenaOwner
     [TestClass]
     public class AthenaOwnerTests
     {
-        private AthenaOwnerAPIClient athenaOwnerClient;
+        private AthenaAPIClient athenaOwnerClient;
 
         [TestInitialize]
         public void InitClient()
         {
-            athenaOwnerClient = new AthenaOwnerAPIClient(Constants.X_API_KEY, APIStage.PRODTEST);
+            athenaOwnerClient = new AthenaAPIClient(APIStage.PRODTEST);
         }
 
         [TestMethod]

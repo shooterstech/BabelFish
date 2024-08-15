@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Scopos.BabelFish.Requests.AthenaOwnerAPI;
+using Scopos.BabelFish.Requests.Athena;
 using Scopos.BabelFish.DataModel.AthenaOwner;
 
-namespace Scopos.BabelFish.Responses.AthenaOwnerAPI
+namespace Scopos.BabelFish.Responses.Athena
 {
     public class GetUserOwnershipValuesAuthenticatedResponse : Response<AthenaOwnerValuesWrapper>
     {
