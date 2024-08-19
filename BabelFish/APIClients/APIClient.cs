@@ -90,7 +90,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
 
-                logger.Trace( $"Returning a in-memory cached Response for {request}." );
+                logger.Info( $"Returning a in-memory cached Response for {request}." );
                 return;
             }
 

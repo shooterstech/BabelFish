@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.APIClients {
                     string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
                     string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
 
-                    logger.Info( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
+                    logger.Trace( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
 
                     FileInfo fileInfo = new FileInfo( filename );
                     if (fileInfo.Exists) {

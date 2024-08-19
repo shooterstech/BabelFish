@@ -249,9 +249,11 @@ namespace Scopos.BabelFish.APIClients {
             AttributeCache.Clear();
             CourseOfFireCache.Clear();
             EventAndStageStyleMappingCache.Clear();
+            EventStyleCache.Clear();
             RankingRuleCache.Clear();
             ResultListFormatCache.Clear();
             ScoreFormatCollectionCache.Clear();
+            StageStyleCache.Clear();
             TargetCache.Clear();
             TargetCollectionCache.Clear();
         }
