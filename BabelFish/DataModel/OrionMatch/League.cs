@@ -12,6 +12,7 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
+using BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -78,6 +79,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public string Creator { get; set; }
 
 		public string Boilerplate { get; set; } = string.Empty;
+
+        public List<LeagueWeek> LeagueWeeks {
+            get {
+                List<LeagueWeek> weeks = new List<LeagueWeek>();
+
+                DateTime beginingOfWeek = StartDate;
+                DateTime endOfWeek = beginingOfWeek.AddDays( 6 );
+                int weekNumber = 1;
+                do {
+                    LeagueWeek lw = new LeagueWeek() {
+                        Name = $"Week {weekNumber}",
+                        StartOfWeek = beginingOfWeek,
+                        EndOfWeek = endOfWeek
+                    };
+                    weeks.Add( lw );
+
+                    weekNumber++;
+                    beginingOfWeek = endOfWeek.AddDays( 1 );
+                    endOfWeek = beginingOfWeek.AddDays( 6 );
+                } while ( beginingOfWeek <= EndDate );
+
+                return weeks;
+            }
+        }
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

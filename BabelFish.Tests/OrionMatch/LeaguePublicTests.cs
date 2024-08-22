@@ -351,5 +351,27 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             CollectionAssert.AreEqual(divList, leagueGame.DivisionList);
             CollectionAssert.AreEqual(divList, leagueDetail.DivisionList);
         }
+
+        [TestMethod]
+        public async Task GenerateLeagueWeeksTest() {
+
+
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            //2024 National Air Pistol League
+            var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
+            var league = response.League;
+
+            var leagueWeeks = league.LeagueWeeks;
+
+            //Should have 10 weeks
+            Assert.IsTrue( leagueWeeks.Count == 10 );
+
+            int weekNumber = 1;
+            foreach( var lw in leagueWeeks ) {
+                Assert.AreEqual( $"Week {weekNumber}", lw.Name );
+                weekNumber++;
+            }
+
+        }
     }
 }
