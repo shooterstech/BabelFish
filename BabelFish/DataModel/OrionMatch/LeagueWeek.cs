@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.Helpers;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     
     /// <summary>
     /// A LeagueWeek represents one week during a League's season.
@@ -19,6 +19,31 @@ namespace BabelFish.DataModel.OrionMatch {
 
         public override string ToString() {
             return $"Week {Name}: {StringFormatting.SpanOfDates( StartOfWeek, EndOfWeek )}";
+        }
+    }
+
+    public static class LeagueWeekExtensions {
+
+        public static LeagueWeek Default(this List<LeagueWeek> leagueWeeks) {
+            return  leagueWeeks.Default( DateTime.Today );
+        }
+
+        public static LeagueWeek Default( this List<LeagueWeek> leagueWeeks, DateTime date ) {
+            if ( date < leagueWeeks.First().StartOfWeek )
+                return leagueWeeks.First();
+
+            foreach( var leagueWeek in leagueWeeks ) {
+                if ( date >= leagueWeek.StartOfWeek && date <= leagueWeek.EndOfWeek  ) {
+                    return leagueWeek;
+                }
+            }
+
+            if (date > leagueWeeks.Last().EndOfWeek)
+                return leagueWeeks.Last();
+
+            //We really should not ever get here, and not sure what to do if we did.
+            return leagueWeeks.First();
+
         }
     }
 }

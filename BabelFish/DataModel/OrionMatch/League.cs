@@ -12,7 +12,6 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
-using BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 

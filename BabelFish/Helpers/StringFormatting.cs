@@ -330,5 +330,21 @@ namespace Scopos.BabelFish.Helpers {
                 }
             }
         }
+
+        private static string GetNumberWithOrdinal( int number ) {
+            string suffix = "th";
+            switch (number % 10) {
+                case 1 when number % 100 != 11:
+                    suffix = "st";
+                    break;
+                case 2 when number % 100 != 12:
+                    suffix = "nd";
+                    break;
+                case 3 when number % 100 != 13:
+                    suffix = "rd";
+                    break;
+            }
+            return $"{number}{suffix}";
+        }
     }
 }
