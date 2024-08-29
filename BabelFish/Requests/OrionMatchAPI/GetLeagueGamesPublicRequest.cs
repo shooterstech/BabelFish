@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 				if (TeamId > 0)
 					parameterList.Add( "team-id", new List<string> { TeamId.ToString() } );
 
-				if ( Limit > 0 )
+				if (!string.IsNullOrEmpty( GameId ))
+                    parameterList.Add( "game-id", new List<string>() { GameId } );
+
+                if ( Limit > 0 )
 					parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
 
 				if (!string.IsNullOrEmpty( Token ))
@@ -113,6 +117,11 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 		/// specified TeamId are returned. Check GetLeagueTeams for a list of valid teams and team ids.
 		/// </summary>
 		public int TeamId { get; set; } = 0;
+
+		/// <summary>
+		/// Returns only the League Game specified by GameId.
+		/// </summary>
+		public string GameId { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Adds a filter to the returned list. Will include games that have not yet been set to Virtual, Local, or Cancelled.

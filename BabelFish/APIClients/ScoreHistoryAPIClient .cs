@@ -22,7 +22,9 @@ namespace Scopos.BabelFish.APIClients {
 
             //ScoreHistoryAPIClient does not support file system cache
             LocalStoreDirectory = null;
-            IgnoreFileSystemCache = true;
+
+            //EKA NOTE 8/2024: We have experienced problems with using file system caching with score history. Turning off for now, until we can learn more about it.
+            IgnoreFileSystemCache = false;
 
             //We do want (some) in memory cache. 
             IgnoreInMemoryCache = false;
@@ -33,10 +35,12 @@ namespace Scopos.BabelFish.APIClients {
 
             //ScoreHistoryAPIClient does not support file system cache
             LocalStoreDirectory = null;
-            IgnoreFileSystemCache = true;
 
-            //We do want (some) in memory cache. 
-            IgnoreInMemoryCache = false;
+			//EKA NOTE 8/2024: We have experienced problems with using file system caching with score history. Turning off for now, until we can learn more about it.
+			IgnoreFileSystemCache = false;
+
+			//We do want (some) in memory cache. 
+			IgnoreInMemoryCache = false;
         }
 
 
