@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime EndOfWeek { get; set; }
 
         public override string ToString() {
-            return $"Week {Name}: {StringFormatting.SpanOfDates( StartOfWeek, EndOfWeek )}";
+            return $"{Name}: {StringFormatting.SpanOfDates( StartOfWeek, EndOfWeek )}";
         }
     }
 

@@ -29,6 +29,38 @@ namespace Scopos.BabelFish.APIClients {
         private static ConcurrentDictionary<SetName, TargetCollectionDefinition> TargetCollectionCache = new ConcurrentDictionary<SetName, TargetCollectionDefinition>();
 
         /// <summary>
+        /// Preloads the Definiiton Cache with commmon definitions. If used, should help with some start up time.
+        /// </summary>
+        /// <returns></returns>
+        public static async Task PreLoad() {
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Profile Name" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Date of Birth" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v2.0:orion:Email Address" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v2.0:orion:Phone Number" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Address" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:High School Graduating Class" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Pronouns" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Gender" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Collegiate Class" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:NCAA ID" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Air Rifle Training Category" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Air Pistol Training Category" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Hometown" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Account URL" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Score History Public" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Score History Personal" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Score History Coach" ) );
+            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:usas:Paralympic") );
+
+            await GetScoreFormatCollectionDefinitionAsync( SetName.Parse( "v1.0:orion:Standard Score Formats" ) );
+            await GetScoreFormatCollectionDefinitionAsync( SetName.Parse( "v1.0:orion:Standard Averaged Score Formats" ) );
+
+            await GetTargetDefinitionAsync( SetName.Parse( "v1.0:issf:10m Air Rifle" ) );
+            await GetTargetDefinitionAsync( SetName.Parse( "v1.0:issf:10m Air Pistol" ) );
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
