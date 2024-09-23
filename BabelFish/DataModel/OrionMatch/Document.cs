@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Describes the name, location (url), and a description of a document. 
     /// Usually PDFs or similiar.
     /// </summary>
-    public class Document {
+    public class Document : ITelerikBindModel {
 
         /// <summary>
         /// Unique key value for this document
@@ -36,5 +36,42 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Description { get; set; } = string.Empty;
 
+        /// <inheritdoc/>
+        public string TextField {
+            get {
+                return DocumentName;
+            }
+        }
+
+        /// <inheritdoc/>
+        public string ValueField {
+            get {
+                return DocumentName;
+            }
+        }
+    }
+
+    public static class DocumentListExstensions {
+
+        /// <summary>
+        /// Returns a subset of the List of Documents, of those whose file enstension
+        /// matches that passed in value.
+        /// </summary>
+        /// <param name="documents"></param>
+        /// <param name="fileExstension"></param>
+        /// <returns></returns>
+        public static List<Document> GetDocumentsOfType( this List<Document> documents, string fileExstension ) {
+
+            fileExstension = fileExstension.Trim().ToLower();
+
+            List<Document> list = new List<Document>();
+            foreach ( Document document in documents ) {
+                if ( document.FileName.ToLower().EndsWith( fileExstension ) ) {
+                    list.Add( document );
+                }
+            }
+
+            return list;
+        }
     }
 }
