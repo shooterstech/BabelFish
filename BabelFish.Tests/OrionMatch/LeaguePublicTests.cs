@@ -399,5 +399,47 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( "Week 2", leagueWeeks.Default( new DateTime( 2024, 2, 11 ) ).Name );
 
         }
+
+        [TestMethod]
+        public async Task TestShowLeaderboardLink()
+        {
+            var league = new LeagueGame();
+            league.Virtual = LeagueVirtualType.VIRTUAL;
+            league.HomeTeam = new LeagueTeamResult();
+            league.AwayTeam = new LeagueTeamResult();
+            league.HomeTeam.Result = "";
+            league.AwayTeam.Result = "";
+            Assert.AreEqual(true, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "";
+            league.AwayTeam.Result = "";
+            Assert.AreEqual(true, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.BYE_WEEK;
+            league.HomeTeam.Result = "";
+            league.AwayTeam.Result = "";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.VIRTUAL;
+            league.HomeTeam.Result = "WIN";
+            league.AwayTeam.Result = "LOSE";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "WIN";
+            league.AwayTeam.Result = "LOSE";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "CANCELLED";
+            league.AwayTeam.Result = "CANCELLED";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "DNS";
+            league.AwayTeam.Result = "WIN";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+        }
     }
 }
