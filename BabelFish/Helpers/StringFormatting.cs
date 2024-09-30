@@ -8,6 +8,7 @@ using Newtonsoft;
 using NLog;
 using System.Runtime.CompilerServices;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Helpers {
     /// <summary>
@@ -268,12 +269,31 @@ namespace Scopos.BabelFish.Helpers {
 		}
 
 
-		/// <summary>
-		/// Returns the input string in Title Case, and converts ordinals to lower case.
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		public static string TitleCase( string input ) {
+        /// <summary>
+        /// Formats the score for the passed in LeagueTeamResult.
+        /// Special case for if the resutl if a DNS, DSQ, or LATE
+        /// </summary>
+        /// <param name="scoreFormat"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static string FormatScore( string scoreFormat, LeagueTeamResult result ) {
+            if (result.Result == "DNS") {
+                return "DNS";
+            } else if (result.Result == "DSQ") {
+                return "DSQ";
+            } else if (result.Result == "LATE") {
+                return "LATE";
+            } else {
+                return StringFormatting.FormatScore( scoreFormat, result.Score );
+            }
+        }
+
+        /// <summary>
+        /// Returns the input string in Title Case, and converts ordinals to lower case.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string TitleCase( string input ) {
             var titleCase = textInfo.ToTitleCase( input );
             return ConvertOrdinalsToLowerCase( titleCase );
         }
