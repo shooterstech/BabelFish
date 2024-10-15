@@ -16,11 +16,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
 		/// </summary>
 		public string UserId { get; set; }
 
-		/// <summary>
-		/// The user's choosen Account URL.
-		/// A value of null means they do not have a public profile.
-		/// </summary>
-		public string ?AccountURL { get; set; } = null;
+        /// <summary>
+        /// The user's defined DisplayName
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// The user's choosen Account URL.
+        /// A value of null means they do not have a public profile.
+        /// </summary>
+        public string ?AccountURL { get; set; } = null;
 
 		/// <summary>
 		/// The user's choosen profile account visibility.
