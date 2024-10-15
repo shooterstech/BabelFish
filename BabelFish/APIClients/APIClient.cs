@@ -90,7 +90,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
 
-                logger.Trace( $"Returning a in-memory cached Response for {request}." );
+                logger.Info( $"Returning a in-memory cached Response for {request}." );
                 return;
             }
 
@@ -235,7 +235,7 @@ namespace Scopos.BabelFish.APIClients {
         /// 
         /// To enable cache for a API call two things needs to happen. First the concrete
         /// APIClient needs to enabled caching response by setting .IgnoreInMemoryCache to false.
-        /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
+        /// Second, each response object must enable it by overridding GetCacheValueExpiryTime
         /// to a value in the future.
         /// </summary>
         public bool IgnoreInMemoryCache { get; set; } = true;

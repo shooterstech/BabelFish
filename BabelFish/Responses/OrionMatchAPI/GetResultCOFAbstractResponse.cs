@@ -56,14 +56,24 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
             try
             {
-                //if today is between start/end then timeout is 30 sec, else, make is 5 min
-                if (ResultCOF.Status == ResultStatus.INTERMEDIATE)
-                {
-                    return DateTime.UtcNow.AddSeconds(30);
-                }
-                else
-                {
-                    return DateTime.UtcNow.AddMinutes(5);
+                //NOTE: The cache refresh time on the the REST API is 10 seconds. By making the cache expiry tme slightly above that
+                //We can avoide getting a cache hit and potentially old data.
+
+                switch( ResultCOF.Status) {
+                    case ResultStatus.FUTURE:
+                    case ResultStatus.UNOFFICIAL:
+
+                        //32s is 30s (3 * time of rest api cache) + 2 seconds
+                        return DateTime.UtcNow.AddSeconds( 32 );
+
+                    case ResultStatus.INTERMEDIATE:
+                        //12s is 10s (time of rest api cache) + 2 seconds
+                        return DateTime.UtcNow.AddSeconds( 12 );
+
+                    case ResultStatus.OFFICIAL:
+                    default:
+                        //Official results shouldn't ever be changing ... in theory at least
+                        return DateTime.UtcNow.AddMinutes( 5 );
                 }
             }
             catch (Exception ex)

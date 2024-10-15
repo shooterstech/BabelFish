@@ -129,7 +129,16 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
                 else 
 				    throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
 			}
-		}
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize ScoringDiameter when it is different from BulletDiameter.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeScoringDiameter() {
+            return (ScoringDiameter != BulletDiameter);
+        }
 
         public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
 
@@ -141,6 +150,15 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public string FiringPoint { get; set; }
 
         public List<string> Attributes { get; set; }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Attributes when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAttributes() {
+            return (Attributes != null && Attributes.Count > 0);
+        }
 
         public string StageLabel { get; set; }
 
@@ -271,6 +289,15 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public List<ShotLog> UpdateLog { get; set; }
 
         /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize UpdateLog when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeUpdateLog() {
+            return (UpdateLog != null && UpdateLog.Count > 0);                
+        }
+
+        /// <summary>
         /// URL of the image showing the scored shot
         /// </summary>
         public string ValidationPhoto { get; set; }
@@ -318,6 +345,15 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         /// <inheritdoc/>
         public List<Penalty> Penalties { get; set; }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Penalties when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializePenalties() {
+            return (Penalties != null && Penalties.Count > 0);
+        }
 
         public override string ToString()
         {

@@ -47,5 +47,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override string ToString() {
 			return GameName;
         }
+
+		/// <summary>
+		/// logical boolean for if we show the leaderboard link
+		/// </summary>
+		public bool ShowLeaderboard { 
+			get {
+				if ( (Virtual == LeagueVirtualType.VIRTUAL || Virtual == LeagueVirtualType.LOCAL) && (HomeTeam.Result == "" && AwayTeam.Result == "") ) 
+					return true; 
+				return false; 
+			} 
+		}
     }
 }

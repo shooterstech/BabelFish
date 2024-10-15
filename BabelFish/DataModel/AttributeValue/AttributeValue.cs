@@ -62,7 +62,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         private async Task InitializeAsync() {
 
-            var getDefinitionResponse = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( SetName );
+            var getDefinitionResponse = await DefinitionCache.GetAttributeDefinitionAsync( SetName );
             definition = await DefinitionCache.GetAttributeDefinitionAsync( SetName );
 
             SetDefaultFieldValues();

@@ -64,10 +64,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The full URL for the owner's club URL.
         /// </summary>
-        /// <example>https://rezults.scopos.tech/Club/westpotomac/</example>
+        /// <example>https://rezults.scopos.tech/club/westpotomac/</example>
         public string ClubURLRezults {
             get {
-                return $"https://rezults.scopos.tech/Club/{ClubURL}/";
+                return $"https://rezults.scopos.tech/club/{ClubURL}/";
             }
         }
 

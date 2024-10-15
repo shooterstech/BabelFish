@@ -23,6 +23,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         public ClubsAPIClient() : base() {
 
+            IgnoreInMemoryCache = false;
+
             //ClubsAPIClient does not support file system cache
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
@@ -30,6 +32,8 @@ namespace Scopos.BabelFish.APIClients {
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         public ClubsAPIClient( APIStage apiStage ) : base( apiStage ) {
+
+            IgnoreInMemoryCache = false;
 
             //ClubsAPIClient does not support file system cache
             LocalStoreDirectory = null;
@@ -137,7 +141,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="ownerId"></param>
         /// <returns></returns>
-        public async Task<GetClubDetailPublicResponse> GetClubDetailPublicAsync( string ownerId, UserAuthentication credentials ) {
+        public async Task<GetClubDetailPublicResponse> GetClubDetailPublicAsync( string ownerId ) {
 
             var request = new GetClubDetailPublicRequest( ownerId );
 

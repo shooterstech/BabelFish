@@ -37,6 +37,45 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         POSTSEASTON
     }
 
+    [JsonConverter( typeof( StringEnumConverter ) ) ]
+    public enum LeagueRankingRuleType {
+
+        /// <summary>
+        /// Rank teams by their wins and losses
+        /// </summary>
+        [Description( "Win Loss Record" )]
+        [EnumMember( Value = "Win Loss Record" )]
+        WIN_LOSS_RECORD,
+
+        /// <summary>
+        /// Rank teams by their seasonal average
+        /// </summary>
+        [Description( "Season Average" )]
+        [EnumMember( Value = "Season Average" )]
+        SEASON_AVERAGE,
+
+        /// <summary>
+        /// Rank teams by their league points, a combination wins and losses with seasonal average
+        /// </summary>
+        [Description( "League Points" )]
+        [EnumMember( Value = "League Points" )]
+        LEAGUE_POINTS,
+
+        /// <summary>
+        /// Rank teams alphabetically
+        /// </summary>
+        [Description( "Alphabetical" )]
+        [EnumMember( Value = "Alphabetical" )]
+        ALPHABETICAL,
+
+        /// <summary>
+        /// Rank teams by their hightest score
+        /// </summary>
+        [Description( "Highest Score" )]
+        [EnumMember( Value = "Highest Score" )]
+        HIGHEST_SCORE
+    }
+
     /// <summary>
     /// 
     /// </summary>
