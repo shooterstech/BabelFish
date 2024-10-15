@@ -90,7 +90,7 @@ namespace Scopos.BabelFish.Converters {
                     if (jo.ContainsKey( "StatusCode" ))
                         ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), (string)jo["StatusCode"] );
 
-                    if (jo.ContainsKey( "Message" )) {
+                    if (jo.ContainsKey( "Message" ) && jo.GetValue( "Message" ).HasValues ) {
                         try {
                             ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message = (string)jo.GetValue( "Message" )[0];
                         } catch (Exception ex) {
