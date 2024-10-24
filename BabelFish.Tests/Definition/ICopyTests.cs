@@ -15,11 +15,32 @@ using System.Diagnostics;
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    internal class ICopyTests {
+    public class ICopyTests {
 
         [TestInitialize]
         public void InitializeTest() {
             Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
+        [TestMethod]
+        public async Task CopyAEvent() {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v2.0:orion:Informal Practice Air Rifle" );
+            var cof = (await client.GetCourseOfFireDefinitionAsync( setName )).Value;
+
+            foreach (var @event in cof.Events) {
+                var copyOfEvent = @event.Copy();
+                Assert.AreEqual( @event.EventName, copyOfEvent.EventName );
+                Assert.AreEqual( @event.EventType, copyOfEvent.EventType );
+
+                var copyEventNames = copyOfEvent.GetChildrenEventNames();
+                var origEventNames = @event.GetChildrenEventNames();
+
+                for (var i = 0; i < origEventNames.Count; i++) {
+                    Assert.AreEqual( origEventNames[i], copyEventNames[i] );
+                }
+            }
         }
 
         /* Belongs in ICopyTests */
@@ -55,27 +76,6 @@ namespace Scopos.BabelFish.Tests.Definition {
             swClone.Stop();
 
             Assert.IsTrue( swClone.ElapsedTicks > swCopy.ElapsedTicks );
-        }
-
-        [TestMethod]
-        public async Task CopyAEvent() {
-
-            var client = new DefinitionAPIClient();
-            var setName = SetName.Parse( "v2.0:orion:Informal Practice Air Rifle" );
-            var cof = (await client.GetCourseOfFireDefinitionAsync( setName )).Value;
-
-            foreach (var @event in cof.Events) {
-                var copyOfEvent = @event.Copy();
-                Assert.AreEqual( @event.EventName, copyOfEvent.EventName );
-                Assert.AreEqual( @event.EventType, copyOfEvent.EventType );
-
-                var copyEventNames = copyOfEvent.GetChildrenEventNames();
-                var origEventNames = @event.GetChildrenEventNames();
-
-                for (var i = 0; i < origEventNames.Count; i++) {
-                    Assert.AreEqual( origEventNames[i], copyEventNames[i] );
-                }
-            }
         }
 
         [TestMethod]
