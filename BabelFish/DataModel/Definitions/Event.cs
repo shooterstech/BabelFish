@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
-    public class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
+    public class Event : IReconfigurableRulebookObject, ICopy<Event>, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
         private List<string> validationErrorList = new List<string>();
 
@@ -30,6 +30,41 @@ namespace Scopos.BabelFish.DataModel.Definitions
             ScoreFormat = "Events";
             Calculation = "SUM";
             EventType = EventtType.NONE;
+        }
+
+        /// <inheritdoc/>
+        public Event Copy() {
+            Event e = new Event();
+            e.EventName = this.EventName;
+            e.EventType = this.EventType;
+            e.ScoreFormat = this.ScoreFormat;
+            e.Calculation = this.Calculation;
+            e.EventType = this.EventType;
+            e.Values = this.Values;
+            if (this.StageStyleMapping != null) 
+                e.StageStyleMapping = this.StageStyleMapping.Copy();
+            if (this.EventStyleMapping != null) 
+                e.EventStyleMapping = this.EventStyleMapping.Copy();
+            e.ResultListFormatDef = this.ResultListFormatDef;
+            e.RankingRuleDef = this.RankingRuleDef;
+            if (this.RankingRuleMapping != null)
+                e.RankingRuleMapping = this.RankingRuleMapping.Copy();
+            e.Comment = this.Comment;
+
+            var typeOfChildren = this.Children.GetType();
+            if (this.Children is JArray) {
+                e.Children = new JArray();
+                foreach( var c in this.Children) {
+                    e.Children.Add(c);
+                }
+            } else {
+                //Is an dictionary
+                e.Children = new JObject();
+                foreach( var c in this.Children) {
+                    e.Children[c.Name] = c.Value;
+                }
+            }
+            return e;
         }
 
         /// <summary>

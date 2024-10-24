@@ -170,7 +170,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     var valueList = vs.GetAsList();
 
                     foreach (int i in valueList) { //i is stageValue
-                        Event newEvent = t.Clone();
+                        Event newEvent = t.Copy();
                         newEvent.EventName = newEvent.EventName.Replace("{}", i.ToString());
                         newEvent.Values = "";
                         //makes the "K1" "K2" "K3" (...) events
@@ -194,7 +194,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     ValueSeries vs = new ValueSeries((string) s.Values);
                     var valueList = vs.GetAsList();
                     foreach( int i in valueList ) {
-                        Singular newSingular = s.Clone();
+                        Singular newSingular = s.Copy();
                         s.EventName = s.EventName.Replace("{}", i.ToString());
                         s.Values = "";
 
@@ -226,7 +226,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return ec; 
             }
 
-            CourseOfFire cof = cofRef.Clone(); //dont modify passed in cof
+            CourseOfFire cof = cofRef.Copy(); //dont modify passed in cof
             GenerateEvents(cof);
 
             EventComposite top;

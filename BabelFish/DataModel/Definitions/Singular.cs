@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// one Singular object define the shots fired in kneeling, a second Singular object defines the shots 
     /// fired in prone, and a third object defines the shots fired in standing.
     /// </summary>
-    public class Singular : IReconfigurableRulebookObject {
+    public class Singular : IReconfigurableRulebookObject, ICopy<Singular> {
 
         private List<string> validationErrorList = new List<string>();
 
@@ -26,6 +26,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ScoreFormat = "d";
             StageLabel = "";
             ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL;
+        }
+
+        /// <inheritdoc/>
+        public Singular Copy() {
+            Singular s = new Singular();
+            s.Type = this.Type;
+            s.EventName = this.EventName;
+            s.Values = this.Values;
+            s.ScoreFormat = this.ScoreFormat;
+            s.StageLabel = this.StageLabel;
+            s.ShotMappingMethod = this.ShotMappingMethod;
+            s.Comment = this.Comment;
+
+            return s;
         }
 
         /// <summary>
