@@ -10,9 +10,22 @@ using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public class TieBreakingRule {
+    public class TieBreakingRule : ICopy<TieBreakingRule> {
 
         public TieBreakingRule() { }
+
+        /// <inheritdoc />
+        public TieBreakingRule Copy() {
+            TieBreakingRule copy = new TieBreakingRule();
+            copy.EventName = this.EventName;
+            copy.Values = this.Values;
+            copy.Method = this.Method;
+            copy.SortOrder = this.SortOrder;
+            copy.ResultStatus = this.ResultStatus;
+            copy.Source = this.Source;
+
+            return copy;
+        }
 
         /// <summary>
         /// The EventName to apply this rule to that is defined by the Course of Fire and found in the participant’s ResultCOF. 
@@ -74,14 +87,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 List<TieBreakingRule> list = new List<TieBreakingRule>();
                 ValueSeries vs = new ValueSeries( this.Values );
                 foreach (var eventName in vs.GetAsList( this.EventName )) {
-                    var newTieBreakingRule = this.Clone();
+                    var newTieBreakingRule = this.Copy();
                     newTieBreakingRule.EventName = eventName;
                     newTieBreakingRule.Values = "";
                     list.Add( newTieBreakingRule );
                 }
                 return list;
             }
+        }
 
+        public override string ToString() {
+            return $"{Method} {SortOrder} {Source}";
         }
 
     }

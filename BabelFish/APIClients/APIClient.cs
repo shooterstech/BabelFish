@@ -171,8 +171,16 @@ namespace Scopos.BabelFish.APIClients {
                     try {
 
                         //TODO: Do something with invalid data format from Forbidden....
-                        if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
-                            response.MessageResponse = apiReturnJson.ToObject<MessageResponse>( DeSerializer );
+                        response.MessageResponse = new MessageResponse();
+                        if (apiReturnJson is JObject) {
+                            JObject jo = (JObject)apiReturnJson;
+                            if (jo.ContainsKey( "Message" ) && jo["Message"] is JArray) {
+                                JArray m = (JArray)jo["Message"];
+                                foreach (var message in m) {
+                                    response.MessageResponse.Message.Add( (string)message );
+                                }
+                            }
+                        }
 
                         if (responseMessage.IsSuccessStatusCode)
                             response.Body = apiReturnJson;

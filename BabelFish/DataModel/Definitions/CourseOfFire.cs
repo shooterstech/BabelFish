@@ -21,12 +21,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// * Mapping of shots to singular events.
     /// A COURSE OF FIRE should only describe an event that can be completed with one outing to the range. In other words, an athlete should be able to complete the course of fire with one trip to the range. A multi-day event is the combination of two or more COURSE OF FIRE, that is defined outside of this type.
     /// </summary>
-    public class CourseOfFire : Definition, IGetTargetCollectionDefinition {
+    public class CourseOfFire : Definition, IGetTargetCollectionDefinition, ICopy<CourseOfFire> {
 
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
         }
+        /// <inheritdoc />
+        public CourseOfFire Copy() {
+            throw new NotImplementedException();
 
+        }
 
         [OnDeserialized]
         internal new void OnDeserializedMethod(StreamingContext context) {
