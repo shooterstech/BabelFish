@@ -43,6 +43,61 @@ namespace Scopos.BabelFish.Tests.Definition {
             }
         }
 
+        [TestMethod]
+        public async Task CopyEventAndStageStyleMappingObj()
+        {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:orion:Air Rifle");
+            var esm = (await client.GetEventAndStageStyleMappingDefinitionAsync(setName)).Value;
+
+            EventAndStageStyleMapping CopyOfesm = new EventAndStageStyleMapping();
+            CopyOfesm = esm.Copy();
+
+            Assert.AreEqual(esm.DefaultMapping.DefaultEventStyleDef, CopyOfesm.DefaultMapping.DefaultEventStyleDef);
+            Assert.AreEqual(esm.DefaultMapping.DefaultStageStyleDef, CopyOfesm.DefaultMapping.DefaultStageStyleDef);
+            for (var i = 0; i < esm.DefaultMapping.AttributeValueAppellation.Count(); i++)
+            {
+                Assert.AreEqual(esm.DefaultMapping.AttributeValueAppellation[i], CopyOfesm.DefaultMapping.AttributeValueAppellation[i]);
+            }
+            for (var i = 0; i < esm.DefaultMapping.AttributeValueAppellation.Count(); i++)
+            {
+                Assert.AreEqual(esm.DefaultMapping.AttributeValueAppellation[i], CopyOfesm.DefaultMapping.AttributeValueAppellation[i]);
+            }
+
+            //This object also contains EventStyleSelection and StageStyleSelection, tests below
+        }
+
+        [TestMethod]
+        public async Task CopyEventStyleSelection()
+        {
+            //part of EventAndStageStyleMappingObj
+            EventStyleSelection es = new EventStyleSelection();
+            es.EventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
+            es.EventAppellation = "Qualification3P";
+
+            EventStyleSelection CopyOfes = new EventStyleSelection();
+            CopyOfes = es.Copy();
+
+            Assert.AreEqual(es.EventAppellation, CopyOfes.EventAppellation);
+            Assert.AreEqual(es.EventStyleDef, CopyOfes.EventStyleDef);
+        }
+
+        [TestMethod]
+        public async Task CopyStageStyleSelection()
+        {
+            //part of EventAndStageStyleMappingObj
+            StageStyleSelection es = new StageStyleSelection();
+            es.StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Final Kneeling 5-Shot Series";
+            es.StageAppellation = "FiveShotFinalKneeling";
+
+            StageStyleSelection CopyOfes = new StageStyleSelection();
+            CopyOfes = es.Copy();
+
+            Assert.AreEqual(es.StageAppellation, CopyOfes.StageAppellation);
+            Assert.AreEqual(es.StageStyleDef, CopyOfes.StageStyleDef);
+        }
+
         /* Belongs in ICopyTests */
         [TestMethod]
         public void CopyASingular() {

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -8,7 +10,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Given the Target Collection Name, AttributeValueAppellation, and EventAppellation / StageAppellation, the Event and Stage Style Mapping
     /// defines how to map these inputs to an EventStyle or StageStyle. This is then used in the generation of a ResultCOF data structure.
     /// </summary>
-    public class EventAndStageStyleMapping : Definition {
+    public class EventAndStageStyleMapping : Definition, ICopy<EventAndStageStyleMapping>
+    {
 
         public EventAndStageStyleMapping() : base() {
             Type = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
@@ -22,8 +25,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Mappings = new List<EventAndStageStyleMappingObj>();
         }
 
-        public EventAndStageStyleMappingObj DefaultMapping { get; set; }
+        /// <inheritdoc />
+        public EventAndStageStyleMapping Copy()
+        {
+            EventAndStageStyleMapping esm = new EventAndStageStyleMapping();
+            this.Copy(esm);
+            esm.DefaultMapping = this.DefaultMapping.Copy();
+            if (this.Mappings != null)
+            {
+                foreach (var map in this.Mappings)
+                {
+                    esm.Mappings.Add(map.Copy());
+                }
+            }
+            return esm;
+        }
 
-        public List<EventAndStageStyleMappingObj> Mappings { get; set; }
+        public EventAndStageStyleMappingObj DefaultMapping { get; set; } = new EventAndStageStyleMappingObj();
+
+        public List<EventAndStageStyleMappingObj> Mappings { get; set; } = new List<EventAndStageStyleMappingObj> { };
     }
 }
