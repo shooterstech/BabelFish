@@ -46,6 +46,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
     [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum BarcodeLabelSize { OL385, OL161 }
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
 
     [JsonConverter( typeof( StringEnumConverter ) )]

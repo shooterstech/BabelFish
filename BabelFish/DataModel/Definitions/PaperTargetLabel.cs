@@ -13,6 +13,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class PaperTargetLabel : IReconfigurableRulebookObject, ICopy<PaperTargetLabel> {
 
+        /// <summary>
+        /// Public constructor
+        /// </summary>
         public PaperTargetLabel() {
             PaperTargetLabelName = "";
             Labels = new List<BarcodeLabel>();
