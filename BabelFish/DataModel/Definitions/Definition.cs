@@ -27,6 +27,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Discontinued = false;
         }
 
+		/// <summary>
+		/// Copies the Definition base class properties into the passed in copy instance.
+		/// </summary>
+		/// <param name="copy"></param>
+		protected void Copy( Definition copy ) {
+			copy.CommonName = this.CommonName;
+			copy.SetName = this.SetName;
+			copy.HierarchicalName = this.HierarchicalName;
+			copy.JSONVersion = this.JSONVersion;
+			copy.Type = this.Type;
+			copy.Version = this.Version;
+			copy.Description = this.Description;
+			copy.Owner = this.Owner;
+			copy.Discipline = this.Discipline;
+			copy.Subdiscipline = this.Subdiscipline;
+			copy.Discontinued = this.Discontinued;
+			copy.Comment = this.Comment;
+			copy.Tags.AddRange( this.Tags );
+		}
+
         internal void OnDeserializedMethod(StreamingContext context) {
 			//Note, each subclass of Definition will have to call base.OnSerializedMethod
 

@@ -26,10 +26,44 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
         }
+
         /// <inheritdoc />
         public CourseOfFire Copy() {
-            throw new NotImplementedException();
+            CourseOfFire copy = new CourseOfFire();
+            base.Copy( copy );
 
+            copy.COFType = this.COFType;
+            copy.CommonName = this.CommonName;
+            copy.TargetCollectionDef = this.TargetCollectionDef;
+            copy.DefaultTargetCollectionName = this.DefaultTargetCollectionName;
+            copy.DefaultExpectedDiameter = this.DefaultExpectedDiameter;
+            copy.DefaultScoringDiameter = this.DefaultScoringDiameter;
+            copy.ScoreFormatCollectionDef = this.ScoreFormatCollectionDef;
+            copy.DefaultEventAndStageStyleMappingDef = this.DefaultEventAndStageStyleMappingDef;
+            copy.DefaultAttributeDef = this.DefaultAttributeDef;
+            copy.ScoreConfigDefault = this.ScoreConfigDefault;
+            if (this.RangeScripts != null) {
+                foreach (var rs in this.RangeScripts) {
+                    copy.RangeScripts.Add(rs.Copy());
+                }
+            }
+            if (this.Events != null) {
+                foreach (var e in this.Events) {
+                    copy.Events.Add(e.Copy());
+                }
+            }
+            if (this.Singulars != null) {
+                foreach( var s in this.Singulars) {
+                    copy.Singulars.Add(s.Copy());
+                }
+            }
+            if (this.AbbreviatedFormats != null) {
+                foreach( var af in this.AbbreviatedFormats ) {
+                    copy.AbbreviatedFormats.Add( af.Copy() );
+                }
+            }
+
+            return copy;
         }
 
         [OnDeserialized]
