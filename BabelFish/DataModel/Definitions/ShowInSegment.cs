@@ -25,6 +25,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ShowInSegment copy = new ShowInSegment();
             copy.Competition = this.Competition;
             copy.ShotPresentation = this.ShotPresentation;
+            copy.Comment = this.Comment;
             if (this.StageLabel != null) {
                 copy.StageLabel.AddRange(this.StageLabel);
             }

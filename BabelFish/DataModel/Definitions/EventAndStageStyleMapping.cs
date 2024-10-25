@@ -41,8 +41,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return esm;
         }
 
+        /// <summary>
+        /// The default Event Style and Stage Styles to use, when no matches can be found with in the .Mappings array. 
+        /// </summary>
         public EventAndStageStyleMappingObj DefaultMapping { get; set; } = new EventAndStageStyleMappingObj();
 
+        /// <summary>
+        /// Lists the Event Styles and Stage Styles to use, for a specific set of Target Collection Names, Attribute Value Appelations,
+        /// Event Appelations and Stage Appelations.
+        /// </summary>
         public List<EventAndStageStyleMappingObj> Mappings { get; set; } = new List<EventAndStageStyleMappingObj> { };
     }
 }

@@ -27,6 +27,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             copy.Series = this.Series;
             copy.TargetName = this.TargetName;
             copy.LabelSize = this.LabelSize;
+            copy.Comment = this.Comment;
 
             return copy;
         }

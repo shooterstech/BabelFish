@@ -53,6 +53,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 copy.DefaultSegment = this.DefaultSegment.Copy();
             }
 
+            foreach( var copySegmentGroup in copy.SegmentGroups) {
+                copySegmentGroup.DefaultCommand.Parent = copy.DefaultCommand;
+                copySegmentGroup.DefaultSegment.Parent = copy.DefaultSegment;
+            }
+
             return copy;
         }
 

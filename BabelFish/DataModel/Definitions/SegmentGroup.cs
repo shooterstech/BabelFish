@@ -26,15 +26,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             copy.SegmentGroupName = this.SegmentGroupName;
             copy.DefaultCommand = this.DefaultCommand.Copy();
             copy.DefaultSegment = this.DefaultSegment.Copy();
+            copy.Comment = this.Comment;
 
             if (this.Commands != null ) {
                 foreach( var c in this.Commands ) {
                     copy.Commands.Add( c.Copy() );
                 }
+                foreach( var copyOfCommand in copy.Commands ) {
+                    copyOfCommand.Parent = copy.DefaultCommand;
+                }
             }
             if (this.Segments != null ) {
                 foreach( var s in this.Segments ) {
                     copy.Segments.Add( s.Copy() );
+                }
+                foreach( var copyOfSegment in copy.Segments ) {
+                    copyOfSegment.Parent = copy.DefaultSegment;
                 }
             }
 
