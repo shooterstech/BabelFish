@@ -166,6 +166,23 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyEventStyle()
+        {
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:ntparc:Precision Air Rifle Standing");
+            var esd = (await client.GetEventStyleDefinitionAsync(setName)).Value;
+
+            //copy of EventStyle
+            EventStyle Copyesd = new EventStyle();
+            Copyesd = esd.Copy();
+
+            CollectionAssert.AreEquivalent(esd.EventStyles, Copyesd.EventStyles);
+            CollectionAssert.AreEquivalent(esd.StageStyles, Copyesd.StageStyles);
+            CollectionAssert.AreEquivalent(esd.RelatedEventStyles, Copyesd.RelatedEventStyles);
+            //CopySimpleCOF should also be tested for functionality
+        }
+
+        [TestMethod]
         public async Task CopyEventStyleSelection()
         {
             //part of EventAndStageStyleMappingObj
@@ -343,6 +360,41 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopySimpleCOF()
+        {
+            // part of CopyEventStyle
+            SimpleCOF sc = new SimpleCOF();
+            sc.Name = "Something here";
+            sc.CourseOfFireDef = "Somethingelse:here";
+
+            //copy scof
+            SimpleCOF Copysc = new SimpleCOF();
+            Copysc = sc.Copy();
+
+            Assert.AreEqual(sc.Name, Copysc.Name);
+            Assert.AreEqual(sc.CourseOfFireDef, Copysc.CourseOfFireDef);
+            //CopySimpleCOFComponent should also be tested for functionality
+        }
+
+        [TestMethod]
+        public async Task CopySimpleCOFComponent()
+        {
+            // part of CopySimpleCOF
+            SimpleCOFComponent scc = new SimpleCOFComponent();
+            scc.StageStyle = "Something here";
+            scc.Shots = 15;
+            scc.ScoreFormat = "{d}";
+
+            //copy scofc
+            SimpleCOFComponent Copysc = new SimpleCOFComponent();
+            Copysc = scc.Copy();
+
+            Assert.AreEqual(scc.StageStyle, Copysc.StageStyle);
+            Assert.AreEqual(scc.Shots, Copysc.Shots);
+            Assert.AreEqual(scc.ScoreFormat, Copysc.ScoreFormat);
+        }
+
+        [TestMethod]
         public async Task CopyStageStyleSelection()
         {
             //part of EventAndStageStyleMappingObj
@@ -358,7 +410,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public async Task CopyTieBreakingRule() {
+        public async Task CopyATieBreakingRule() {
 
 
             var client = new DefinitionAPIClient();
@@ -376,6 +428,22 @@ namespace Scopos.BabelFish.Tests.Definition {
                     Assert.AreEqual( tbr.SortOrder, copy.SortOrder );
                 }
             }
+        }
+
+        [TestMethod] 
+        public async Task EriksPlayground() {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
+            var orig = (await client.GetCourseOfFireDefinitionAsync( setName )).Value;
+
+            var swCopy = Stopwatch.StartNew();
+            var copy = orig.Copy();
+            swCopy.Stop();
+
+            var swClone = Stopwatch.StartNew();
+            var clone = orig.Clone();
+            swClone.Stop();
         }
     }
 }

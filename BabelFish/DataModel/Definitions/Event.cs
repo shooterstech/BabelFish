@@ -20,8 +20,6 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// </summary>
     public class Event : IReconfigurableRulebookObject, ICopy<Event>, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
-        private List<string> validationErrorList = new List<string>();
-
         private Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Event()
@@ -52,7 +50,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
             e.Comment = this.Comment;
 
             var typeOfChildren = this.Children.GetType();
-            if (this.Children is JArray) {
+            if (this.Children is JArray || this.Children is List<string> || this.Children is string[] ) {
                 e.Children = new JArray();
                 foreach( var c in this.Children) {
                     e.Children.Add(c);
