@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.APIClients;
+using Newtonsoft.Json;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -14,17 +16,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// etc. 
     /// </summary>
     [Serializable]
-    public class SimpleCOF :ITelerikBindModel {
+    public class SimpleCOF :ITelerikBindModel, ICopy<SimpleCOF>, IReconfigurableRulebookObject
+    {
 
         public SimpleCOF() { }
 
         [Obsolete( "Use CourseOfFireDef instead." )]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The set name of the Course of Fire definition that this simple COF is emulating.
         /// </summary>
-        public string CourseOfFireDef { get; set; }
+        public string CourseOfFireDef { get; set; } = string.Empty;
 
         public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
 
@@ -32,8 +35,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			return $"SimpleCOF for {CourseOfFireDef}";
 		}
 
-		/// <inheritdoc/>
-		public string TextField {
+        public SimpleCOF Copy()
+        {
+            SimpleCOF scof = new SimpleCOF();
+            scof.Name = this.Name;
+            scof.CourseOfFireDef = this.CourseOfFireDef;
+            if (this.Components != null)
+            {
+                foreach (var c in this.Components)
+                {
+                    scof.Components.Add(c.Copy());
+                }
+            }
+            scof.Comment = this.Comment;
+            return scof;
+        }
+
+        /// <inheritdoc/>
+        public string TextField {
             get {
 				SetName setName;
 				if (SetName.TryParse( CourseOfFireDef, out setName )) {
@@ -55,9 +74,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 				}
 			}
 		}
-	}
 
-    public class SimpleCOFComponent: IGetStageStyleDefinition {
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
+    }
+
+    public class SimpleCOFComponent: IGetStageStyleDefinition, ICopy<SimpleCOFComponent>, IReconfigurableRulebookObject
+    {
 		/// <summary>
 		/// SetName of a StageStyle to include. Value must be a memember of the parent EventStyle
 		/// objects .StageStyles list. 
@@ -82,8 +107,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 		}
 
+        public SimpleCOFComponent Copy()
+        {
+            SimpleCOFComponent scofc = new SimpleCOFComponent();
+			scofc.StageStyle = this.StageStyle;
+            scofc.Shots = this.Shots;
+            scofc.ScoreFormat = this.ScoreFormat;
+            scofc.Comment = this.Comment;
+            return scofc;
+        }
 
-		[Obsolete("Potentially obsolute, as we are allowing the user to specify the score format outside of the definition.")]
+        [Obsolete("Potentially obsolute, as we are allowing the user to specify the score format outside of the definition.")]
         public string ScoreFormat { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

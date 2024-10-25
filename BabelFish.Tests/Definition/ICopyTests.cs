@@ -69,6 +69,23 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyEventStyle()
+        {
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:ntparc:Precision Air Rifle Standing");
+            var esd = (await client.GetEventStyleDefinitionAsync(setName)).Value;
+
+            //copy of EventStyle
+            EventStyle Copyesd = new EventStyle();
+            Copyesd = esd.Copy();
+
+            CollectionAssert.AreEquivalent(esd.EventStyles, Copyesd.EventStyles);
+            CollectionAssert.AreEquivalent(esd.StageStyles, Copyesd.StageStyles);
+            CollectionAssert.AreEquivalent(esd.RelatedEventStyles, Copyesd.RelatedEventStyles);
+            //CopySimpleCOF should also be tested for functionality
+        }
+
+        [TestMethod]
         public async Task CopyEventStyleSelection()
         {
             //part of EventAndStageStyleMappingObj
@@ -81,21 +98,6 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual(es.EventAppellation, CopyOfes.EventAppellation);
             Assert.AreEqual(es.EventStyleDef, CopyOfes.EventStyleDef);
-        }
-
-        [TestMethod]
-        public async Task CopyStageStyleSelection()
-        {
-            //part of EventAndStageStyleMappingObj
-            StageStyleSelection es = new StageStyleSelection();
-            es.StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Final Kneeling 5-Shot Series";
-            es.StageAppellation = "FiveShotFinalKneeling";
-
-            StageStyleSelection CopyOfes = new StageStyleSelection();
-            CopyOfes = es.Copy();
-
-            Assert.AreEqual(es.StageAppellation, CopyOfes.StageAppellation);
-            Assert.AreEqual(es.StageStyleDef, CopyOfes.StageStyleDef);
         }
 
         /* Belongs in ICopyTests */
@@ -131,6 +133,56 @@ namespace Scopos.BabelFish.Tests.Definition {
             swClone.Stop();
 
             Assert.IsTrue( swClone.ElapsedTicks > swCopy.ElapsedTicks );
+        }
+
+        [TestMethod]
+        public async Task CopySimpleCOF()
+        {
+            // part of CopyEventStyle
+            SimpleCOF sc = new SimpleCOF();
+            sc.Name = "Something here";
+            sc.CourseOfFireDef = "Somethingelse:here";
+
+            //copy scof
+            SimpleCOF Copysc = new SimpleCOF();
+            Copysc = sc.Copy();
+
+            Assert.AreEqual(sc.Name, Copysc.Name);
+            Assert.AreEqual(sc.CourseOfFireDef, Copysc.CourseOfFireDef);
+            //CopySimpleCOFComponent should also be tested for functionality
+        }
+
+        [TestMethod]
+        public async Task CopySimpleCOFComponent()
+        {
+            // part of CopySimpleCOF
+            SimpleCOFComponent scc = new SimpleCOFComponent();
+            scc.StageStyle = "Something here";
+            scc.Shots = 15;
+            scc.ScoreFormat = "{d}";
+
+            //copy scofc
+            SimpleCOFComponent Copysc = new SimpleCOFComponent();
+            Copysc = scc.Copy();
+
+            Assert.AreEqual(scc.StageStyle, Copysc.StageStyle);
+            Assert.AreEqual(scc.Shots, Copysc.Shots);
+            Assert.AreEqual(scc.ScoreFormat, Copysc.ScoreFormat);
+        }
+
+        [TestMethod]
+        public async Task CopyStageStyleSelection()
+        {
+            //part of EventAndStageStyleMappingObj
+            StageStyleSelection es = new StageStyleSelection();
+            es.StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Final Kneeling 5-Shot Series";
+            es.StageAppellation = "FiveShotFinalKneeling";
+
+            StageStyleSelection CopyOfes = new StageStyleSelection();
+            CopyOfes = es.Copy();
+
+            Assert.AreEqual(es.StageAppellation, CopyOfes.StageAppellation);
+            Assert.AreEqual(es.StageStyleDef, CopyOfes.StageStyleDef);
         }
 
         [TestMethod]
