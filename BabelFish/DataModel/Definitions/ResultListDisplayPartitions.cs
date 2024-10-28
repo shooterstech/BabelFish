@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ResultListDisplayPartitions {
+    public class ResultListDisplayPartitions : IReconfigurableRulebookObject, ICopy<ResultListDisplayPartitions>
+    {
 
         public ResultListDisplayPartition Header { get; set; } = new ResultListDisplayPartition();
 
@@ -12,5 +15,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public ResultListDisplayPartition Footer { get; set; } = new ResultListDisplayPartition();
 
         public ResultListDisplayPartitionExtended Children { get; set; } = new ResultListDisplayPartitionExtended();
+
+        public ResultListDisplayPartitions Copy()
+        {
+            ResultListDisplayPartitions rldp = new ResultListDisplayPartitions();
+            rldp.Header = this.Header.Copy();
+            rldp.Body = this.Body.Copy();
+            rldp.Footer = this.Footer.Copy();
+            rldp.Children = this.Children.Copy();
+            return rldp;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

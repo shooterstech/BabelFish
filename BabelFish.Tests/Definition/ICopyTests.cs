@@ -363,6 +363,62 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyResultListFormat()
+        {
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:orion:3P Individual");
+            var rlf = (await client.GetResultListFormatDefinitionAsync(setName)).Value;
+
+            var copy = rlf.Copy();
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual(rlf.HierarchicalName, copy.HierarchicalName);
+            Assert.AreEqual(rlf.Description, copy.Description);
+            Assert.AreEqual(rlf.Comment, copy.Comment);
+            Assert.AreEqual(rlf.Version, copy.Version);
+            Assert.AreEqual(rlf.Type, copy.Type);
+            Assert.AreEqual(rlf.SetName, copy.SetName);
+            Assert.AreEqual(rlf.Owner, copy.Owner);
+            Assert.AreEqual(rlf.Discipline, copy.Discipline);
+            Assert.AreEqual(rlf.Discontinued, copy.Discontinued);
+            Assert.AreEqual(rlf.Subdiscipline, copy.Subdiscipline);
+            CollectionAssert.AreEqual(rlf.Tags, copy.Tags);
+            Assert.AreEqual(rlf.JSONVersion, copy.JSONVersion);
+
+            Assert.AreEqual(rlf.ScoreFormatCollectionDef, copy.ScoreFormatCollectionDef);
+            Assert.AreEqual(rlf.ScoreConfigDefault, copy.ScoreConfigDefault);
+
+            for (int i = 0; i < rlf.Fields.Count(); i++)
+            {
+                Assert.AreEqual(rlf.Fields[i].FieldName, copy.Fields[i].FieldName);
+                Assert.AreEqual(rlf.Fields[i].Method, copy.Fields[i].Method);
+
+                Assert.AreEqual(rlf.Fields[i].Source.Name, copy.Fields[i].Source.Name);
+                Assert.AreEqual(rlf.Fields[i].Source.ScoreFormat, copy.Fields[i].Source.ScoreFormat);
+                Assert.AreEqual(rlf.Fields[i].Source.Value, copy.Fields[i].Source.Value);
+            }
+            //choosing only to do Display and not DisplayForTeam (same thing)
+            CollectionAssert.AreEqual(rlf.Format.Display.Header.ClassList, copy.Format.Display.Header.ClassList);
+            CollectionAssert.AreEqual(rlf.Format.Display.Header.RowClass, copy.Format.Display.Header.RowClass);
+
+            CollectionAssert.AreEqual(rlf.Format.Display.Body.ClassList, copy.Format.Display.Header.ClassList);
+            CollectionAssert.AreEqual(rlf.Format.Display.Body.RowClass, copy.Format.Display.Body.RowClass);
+            CollectionAssert.AreEqual(rlf.Format.Display.Body.RowLinkTo, copy.Format.Display.Body.RowLinkTo);
+
+            for (int i = 0; i < rlf.Format.Columns.Count(); i++)
+            {
+                Assert.AreEqual(rlf.Format.Columns[i].Header, copy.Format.Columns[i].Header);
+                CollectionAssert.AreEqual(rlf.Format.Columns[i].ClassList, copy.Format.Columns[i].ClassList);
+                Assert.AreEqual(rlf.Format.Columns[i].Body, copy.Format.Columns[i].Body);
+                Assert.AreEqual(rlf.Format.Columns[i].BodyLinkTo, copy.Format.Columns[i].BodyLinkTo);
+                Assert.AreEqual(rlf.Format.Columns[i].Footer, copy.Format.Columns[i].Footer);
+                CollectionAssert.AreEqual(rlf.Format.Columns[i].HeaderClassList, copy.Format.Columns[i].HeaderClassList);
+                CollectionAssert.AreEqual(rlf.Format.Columns[i].BodyClassList, copy.Format.Columns[i].BodyClassList);
+                CollectionAssert.AreEqual(rlf.Format.Columns[i].FooterClassList, copy.Format.Columns[i].FooterClassList);
+            }
+        }
+
+        [TestMethod]
         public async Task CopySegmentGroup() {
             var orig = new SegmentGroup();
             orig.SegmentGroupName = "Bob";

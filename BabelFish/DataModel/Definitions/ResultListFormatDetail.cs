@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,7 +12,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// Describes the intermediate format for cells of data within a Result List. 
     /// </summary>
-    public class ResultListFormatDetail {
+    public class ResultListFormatDetail : IReconfigurableRulebookObject, ICopy<ResultListFormatDetail>
+    {
 
         public ResultListFormatDetail() {
             Display = new ResultListDisplayPartitions();
@@ -28,6 +30,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Columns = new List<ResultListDisplayColumn>();
         }
 
+        public ResultListFormatDetail Copy()
+        {
+            ResultListFormatDetail rlfd = new ResultListFormatDetail();
+            //Display and Display for team gonna be weird.
+            rlfd.Display = this.Display.Copy();
+            rlfd.DisplayForTeam = this.DisplayForTeam.Copy();
+            if (this.Columns != null)
+            {
+                foreach (var rlfdc in this.Columns)
+                {
+                    rlfd.Columns.Add(rlfdc.Copy());
+                }
+            }
+            return rlfd;
+        }
+
         public ResultListDisplayPartitions Display {  get; set; }
 
         /// <summary>
@@ -38,5 +56,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         public List<ResultListDisplayColumn> Columns { get; set; }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }
