@@ -324,7 +324,21 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             var copy = rr.Copy();
 
-            for(int i = 0; i<rr.RankingRules.Count(); i++)
+            //Common fields for all top level Definition objects
+            Assert.AreEqual(rr.HierarchicalName, copy.HierarchicalName);
+            Assert.AreEqual(rr.Description, copy.Description);
+            Assert.AreEqual(rr.Comment, copy.Comment);
+            Assert.AreEqual(rr.Version, copy.Version);
+            Assert.AreEqual(rr.Type, copy.Type);
+            Assert.AreEqual(rr.SetName, copy.SetName);
+            Assert.AreEqual(rr.Owner, copy.Owner);
+            Assert.AreEqual(rr.Discipline, copy.Discipline);
+            Assert.AreEqual(rr.Discontinued, copy.Discontinued);
+            Assert.AreEqual(rr.Subdiscipline, copy.Subdiscipline);
+            CollectionAssert.AreEqual(rr.Tags, copy.Tags);
+            Assert.AreEqual(rr.JSONVersion, copy.JSONVersion);
+
+            for (int i = 0; i<rr.RankingRules.Count(); i++)
             {
                 Assert.AreEqual(rr.RankingRules[i].AppliesTo, copy.RankingRules[i].AppliesTo);
                 for(int j = 0; j < rr.RankingRules[i].Rules.Count(); j++)
