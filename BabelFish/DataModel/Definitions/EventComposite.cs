@@ -226,7 +226,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return ec; 
             }
 
-            CourseOfFire cof = cofRef.Copy(); //dont modify passed in cof
+            CourseOfFire cof = cofRef.Copy(true); //dont modify passed in cof
             GenerateEvents(cof);
 
             EventComposite top;

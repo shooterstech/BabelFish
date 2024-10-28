@@ -11,14 +11,106 @@ using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// An AttributeField describes one field of an Attribute
+    /// </summary>
     [Serializable]
-    public class AttributeField {
+    public class AttributeField: ICopy<AttributeField>, IReconfigurableRulebookObject {
 
         private static Logger logger= LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
         public AttributeField() {
             Required = false;
             Key = false;
+        }
+
+        public AttributeField Copy() {
+            AttributeField copy = new AttributeField();
+
+            copy.FieldName = this.FieldName;
+            copy.DisplayName = this.DisplayName;
+            copy.FieldType = this.FieldType;
+            copy.MultipleValues = this.MultipleValues;
+            copy.Required = this.Required;
+            copy.Key = this.Key;
+            copy.Description = this.Description;
+            copy.Validation = this.Validation.Copy();
+            foreach( var v in this.Values )
+                copy.Values.Add(v.Copy());
+            copy.ValueType = this.ValueType;
+            copy.Comment = this.Comment;
+
+            //Copy the Default value based on its type
+            //NOTE for the copy, i'm using lowercase (private variable) defaultValue
+            //  for the original, i'm using uppercase (public variable with defaults) defaultValue
+            switch (ValueType) {
+                case ValueType.STRING:
+                    if (MultipleValues) {
+                        copy.defaultValue = new List<string>();
+                        copy.defaultValue.AddRange( this.DefaultValue );
+                    } else {
+                        copy.defaultValue = this.DefaultValue;
+                    }
+                    break;
+
+                case ValueType.INTEGER:
+                    if (MultipleValues) {
+                        copy.defaultValue = new List<int>();
+                        copy.defaultValue.AddRange( this.DefaultValue );
+                    } else {
+                        copy.defaultValue = this.DefaultValue;
+                    }
+                    break;
+
+                case ValueType.FLOAT:
+                    if (MultipleValues) {
+                        copy.defaultValue = new List<float>();
+                        copy.defaultValue.AddRange( this.DefaultValue );
+                    } else {
+                        copy.defaultValue = this.DefaultValue;
+                    }
+                    break;
+
+                case ValueType.BOOLEAN:
+                    //Booleans can not be multivalues
+                    copy.defaultValue = this.DefaultValue;
+                    break;
+
+                case ValueType.DATE:
+                case ValueType.DATE_TIME:
+                    if (MultipleValues) {
+                        copy.defaultValue = new List<DateTime>();
+                        copy.defaultValue.AddRange( this.DefaultValue );
+                    } else {
+                        copy.defaultValue = this.DefaultValue;
+                    }
+                    break;
+
+                case ValueType.TIME:
+                    if (MultipleValues) {
+                        copy.defaultValue = new List<TimeSpan>();
+                        copy.defaultValue.AddRange( this.DefaultValue );
+                    } else {
+                        copy.defaultValue = this.DefaultValue;
+                    }
+                    break;
+
+                case ValueType.SETNAME:
+                    if (MultipleValues) {
+                        copy.defaultValue = new List<SetName>();
+                        foreach (var sn in this.DefaultValue)
+                            copy.defaultValue.Add( sn.Copy() );
+                    } else {
+                        copy.defaultValue = this.DefaultValue;
+                    }
+                    break;
+            }
+
+            return copy;
         }
 
         /// <summary>
@@ -139,6 +231,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The type of data that this field will hold.
         /// </summary>
         public ValueType ValueType { get; set; } = ValueType.STRING;
+
+
+        /// <inheritdoc/>
+        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
 
         public override string ToString() {
             if (MultipleValues)
