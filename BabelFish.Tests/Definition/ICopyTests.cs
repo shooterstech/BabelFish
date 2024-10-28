@@ -257,6 +257,30 @@ namespace Scopos.BabelFish.Tests.Definition {
             CollectionAssert.AreEquivalent(esd.EventStyles, Copyesd.EventStyles);
             CollectionAssert.AreEquivalent(esd.StageStyles, Copyesd.StageStyles);
             CollectionAssert.AreEquivalent(esd.RelatedEventStyles, Copyesd.RelatedEventStyles);
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual(esd.HierarchicalName, Copyesd.HierarchicalName);
+            Assert.AreEqual(esd.Description, Copyesd.Description);
+            Assert.AreEqual(esd.Comment, Copyesd.Comment);
+            Assert.AreEqual(esd.Version, Copyesd.Version);
+            Assert.AreEqual(esd.Type, Copyesd.Type);
+            Assert.AreEqual(esd.SetName, Copyesd.SetName);
+            Assert.AreEqual(esd.Owner, Copyesd.Owner);
+            Assert.AreEqual(esd.Discipline, Copyesd.Discipline);
+            Assert.AreEqual(esd.Discontinued, Copyesd.Discontinued);
+            Assert.AreEqual(esd.Subdiscipline, Copyesd.Subdiscipline);
+            CollectionAssert.AreEqual(esd.Tags, Copyesd.Tags);
+            Assert.AreEqual(esd.JSONVersion, Copyesd.JSONVersion);
+
+            for( int i = 0; i < esd.SimpleCOFs.Count(); i++)
+            {
+                Assert.AreEqual(esd.SimpleCOFs[i].Name, Copyesd.SimpleCOFs[i].Name);
+                Assert.AreEqual(esd.SimpleCOFs[i].CourseOfFireDef, Copyesd.SimpleCOFs[i].CourseOfFireDef);
+                for(int j = 0; j < esd.SimpleCOFs[i].Components.Count(); j++)
+                {
+                    Assert.AreEqual(esd.SimpleCOFs[i].Components[j].StageStyle, Copyesd.SimpleCOFs[i].Components[j].StageStyle);
+                }
+            }
             //CopySimpleCOF should also be tested for functionality
         }
 
