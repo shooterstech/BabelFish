@@ -23,6 +23,84 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyAttribute() {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v1.0:orion:Address" );
+            var orig = (await client.GetAttributeDefinitionAsync( setName )).Value;
+
+            var copy = orig.Copy();
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual( orig.HierarchicalName, copy.HierarchicalName );
+            Assert.AreEqual( orig.Description, copy.Description );
+            Assert.AreEqual( orig.Comment, copy.Comment );
+            Assert.AreEqual( orig.Version, copy.Version );
+            Assert.AreEqual( orig.Type, copy.Type );
+            Assert.AreEqual( orig.SetName, copy.SetName );
+            Assert.AreEqual( orig.Owner, copy.Owner );
+            Assert.AreEqual( orig.Discipline, copy.Discipline );
+            Assert.AreEqual( orig.Discontinued, copy.Discontinued );
+            Assert.AreEqual( orig.Subdiscipline, copy.Subdiscipline );
+            CollectionAssert.AreEqual( orig.Tags, copy.Tags );
+            Assert.AreEqual( orig.JSONVersion, copy.JSONVersion );
+
+            //Attribute Specific fields
+            Assert.AreEqual( orig.DisplayName, copy.DisplayName );
+            CollectionAssert.AreEqual( orig.Designation, copy.Designation );
+            Assert.AreEqual( orig.MultipleValues, copy.MultipleValues );
+            Assert.AreEqual( orig.MaxVisibility, copy.MaxVisibility );
+            Assert.AreEqual( orig.DefaultVisibility, copy.DefaultVisibility );
+
+            for (int i = 0; i < orig.Fields.Count; i++) {
+                Assert.AreEqual( orig.Fields[i].FieldName, copy.Fields[i].FieldName );
+                Assert.AreEqual( orig.Fields[i].MultipleValues, copy.Fields[i].MultipleValues );
+                Assert.AreEqual( orig.Fields[i].Required, copy.Fields[i].Required );
+                Assert.AreEqual( orig.Fields[i].ValueType, copy.Fields[i].ValueType );
+                Assert.AreEqual( orig.Fields[i].Key, copy.Fields[i].Key );
+                Assert.AreEqual( orig.Fields[i].FieldType, copy.Fields[i].FieldType );
+                Assert.AreEqual( orig.Fields[i].Comment, copy.Fields[i].Comment );
+
+                //test AttributeValueOption
+                for (int j = 0; j < orig.Fields[i].Values.Count; j++) {
+                    Assert.AreEqual( orig.Fields[i].Values[j].Value, copy.Fields[i].Values[j].Value );
+                    Assert.AreEqual( orig.Fields[i].Values[j].Name, copy.Fields[i].Values[j].Name );
+                }
+
+                //test AttributeValidation 
+                if (orig.Fields[i].Validation != null) {
+                    Assert.AreEqual( orig.Fields[i].Validation.Regex, copy.Fields[i].Validation.Regex );
+                    Assert.AreEqual( orig.Fields[i].Validation.ErrorMessage, copy.Fields[i].Validation.ErrorMessage );
+                    Assert.AreEqual( orig.Fields[i].Validation.Comment, copy.Fields[i].Validation.Comment );
+                    if (orig.Fields[i].Validation.MinValue != null) {
+                        Assert.AreEqual( orig.Fields[i].Validation.MinValue, copy.Fields[i].Validation.MinValue );
+                    } else {
+                        Assert.IsNull( copy.Fields[i].Validation.MinValue );
+                    }
+                    if (orig.Fields[i].Validation.MaxValue != null) {
+                        Assert.AreEqual( orig.Fields[i].Validation.MaxValue, copy.Fields[i].Validation.MaxValue );
+                    } else {
+                        Assert.IsNull( copy.Fields[i].Validation.MaxValue );
+                    }
+                } else {
+                    Assert.IsNull( copy.Fields[i].Validation );
+                }
+            }
+        }
+
+        [TestMethod]
+        [Ignore]
+        public async Task CopyAttributeValidation() {
+            //Choosing not to write a seperate unit test for AttributeValidation, as the unit test for Attribute is comprehensive and covers this class
+        }
+
+        [TestMethod]
+        [Ignore]
+        public async Task CopyAttributeValueOption() {
+            //Choosing not to write a seperate unit test for AttributeValueOption, as the unit test for Attribute is comprehensive and covers this class
+        }
+
+        [TestMethod]
         public async Task CopyBarcodeLabel() {
             var orig = new BarcodeLabel();
             orig.StageLabel = "I";
@@ -498,9 +576,17 @@ namespace Scopos.BabelFish.Tests.Definition {
             var copy = orig.Copy();
             swCopy.Stop();
 
+            var swCopyEventsOnly = Stopwatch.StartNew();
+            var copyEventsOnly = orig.Copy();
+            swCopyEventsOnly.Stop();
+
             var swClone = Stopwatch.StartNew();
             var clone = orig.Clone();
             swClone.Stop();
+
+            Console.WriteLine( $"Copy took {swCopy.ElapsedTicks} ticks" );
+            Console.WriteLine( $"Copy Events Only took {swCopyEventsOnly.ElapsedTicks} ticks" );
+            Console.WriteLine( $"Clone took {swClone.ElapsedTicks} ticks" );
         }
     }
 }
