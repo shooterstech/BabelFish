@@ -559,6 +559,43 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyTargetCollection() {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v1.0:cmp:Smallbore Rifle Prone" );
+            var orig = (await client.GetTargetCollectionDefinitionAsync( setName )).Value;
+
+            var copy = orig.Copy();
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual( orig.HierarchicalName, copy.HierarchicalName );
+            Assert.AreEqual( orig.Description, copy.Description );
+            Assert.AreEqual( orig.Comment, copy.Comment );
+            Assert.AreEqual( orig.Version, copy.Version );
+            Assert.AreEqual( orig.Type, copy.Type );
+            Assert.AreEqual( orig.SetName, copy.SetName );
+            Assert.AreEqual( orig.Owner, copy.Owner );
+            Assert.AreEqual( orig.Discipline, copy.Discipline );
+            Assert.AreEqual( orig.Discontinued, copy.Discontinued );
+            Assert.AreEqual( orig.Subdiscipline, copy.Subdiscipline );
+            CollectionAssert.AreEqual( orig.Tags, copy.Tags );
+            Assert.AreEqual( orig.JSONVersion, copy.JSONVersion );
+
+            for (int i = 0; i < orig.TargetCollections.Count; i++) {
+                Assert.AreEqual( orig.TargetCollections[i].TargetCollectionName, copy.TargetCollections[i].TargetCollectionName );
+                Assert.AreEqual( orig.TargetCollections[i].RangeDistance, copy.TargetCollections[i].RangeDistance );
+                Assert.AreEqual( orig.TargetCollections[i].Comment, copy.TargetCollections[i].Comment );
+                CollectionAssert.AreEqual( orig.TargetCollections[i].TargetDefs, copy.TargetCollections[i].TargetDefs );
+            }
+        }
+
+        [TestMethod]
+        [Ignore]
+        public async Task CopyTargetCollectionModal() {
+            //Choosing not to write a seperate unit test for TargetCollectionModal, as the unit test for TargetCollection is comprehensive and covers this class
+        }
+
+        [TestMethod]
         public async Task CopyATieBreakingRule() {
 
 

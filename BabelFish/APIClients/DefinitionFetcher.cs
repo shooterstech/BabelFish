@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.APIClients {
 
 		/// <inheritdoc/>
 		/// <exception cref="XApiKeyNotSetException"></exception>
-		public override Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
+		public override Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
 			return base.GetTargetCollectionDefinitionAsync( setName );
 		}
