@@ -10,7 +10,7 @@ using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public class TieBreakingRule : ICopy<TieBreakingRule> {
+    public class TieBreakingRule : IReconfigurableRulebookObject, ICopy<TieBreakingRule> {
 
         public TieBreakingRule() { }
 
@@ -99,6 +99,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public override string ToString() {
             return $"{Method} {SortOrder} {Source}";
         }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
 
     }
 }

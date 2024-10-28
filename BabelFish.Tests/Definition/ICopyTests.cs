@@ -234,7 +234,40 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.AreEqual( orig.RangeScriptName, copy.RangeScriptName );
             Assert.AreEqual( orig.DesignedForEST, copy.DesignedForEST );
             Assert.AreEqual( orig.DesignedForPaper, copy.DesignedForPaper );
-            Assert.AreEqual( orig.Comment, copy.Comment ); 
+            Assert.AreEqual( orig.Comment, copy.Comment );
+        }
+
+        [TestMethod]
+        public async Task CopyRankingRules()
+        {
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:orion:Generic Qualification");
+            var rr = (await client.GetRankingRuleDefinitionAsync(setName)).Value;
+
+            var copy = rr.Copy();
+
+            for(int i = 0; i<rr.RankingRules.Count(); i++)
+            {
+                Assert.AreEqual(rr.RankingRules[i].AppliesTo, copy.RankingRules[i].AppliesTo);
+                for(int j = 0; j < rr.RankingRules[i].Rules.Count(); j++)
+                {
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j].EventName, copy.RankingRules[i].Rules[j].EventName);
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j].Values, copy.RankingRules[i].Rules[j].Values);
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j].Method, copy.RankingRules[i].Rules[j].Method);
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j].SortOrder, copy.RankingRules[i].Rules[j].SortOrder);
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j].ResultStatus, copy.RankingRules[i].Rules[j].ResultStatus);
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j].Source, copy.RankingRules[i].Rules[j].Source);
+                }
+                for(int j = 0; j < rr.RankingRules[i].ListOnly.Count(); j++)
+                {
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].EventName, copy.RankingRules[i].ListOnly[j].EventName);
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].Values, copy.RankingRules[i].ListOnly[j].Values);
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].Method, copy.RankingRules[i].ListOnly[j].Method);
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].SortOrder, copy.RankingRules[i].ListOnly[j].SortOrder);
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].ResultStatus, copy.RankingRules[i].ListOnly[j].ResultStatus);
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].Source, copy.RankingRules[i].ListOnly[j].Source);
+                }
+            }
         }
 
         [TestMethod]

@@ -9,7 +9,8 @@ using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public class RankingRule : Definition {
+    public class RankingRule : Definition, ICopy<RankingRule>
+    {
 
         public RankingRule() : base() {
             Type = DefinitionType.RANKINGRULES;
@@ -37,5 +38,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return rankingRule;
         }
+
+        public RankingRule Copy()
+        {
+            RankingRule rr = new RankingRule();
+            this.Copy(rr);
+            if (this.RankingRules != null)
+            {
+                foreach (var ori in this.RankingRules)
+                {
+                    rr.RankingRules.Add(ori.Copy());
+                }
+            }
+            return rr;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

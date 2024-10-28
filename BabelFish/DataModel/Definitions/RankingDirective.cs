@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -6,7 +7,8 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public class RankingDirective {
+    public class RankingDirective : IReconfigurableRulebookObject, ICopy<RankingDirective>
+    {
 
         private enum STATE { NOTHING_IS_SET, START_IS_SET, END_IS_SET };
 
@@ -180,5 +182,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return directive;
         }
+
+        public RankingDirective Copy()
+        {
+            RankingDirective rd = new RankingDirective();
+            rd.AppliesTo = this.AppliesTo;
+            if (this.Rules != null)
+            {
+                foreach (var ori in this.Rules)
+                {
+                    rd.Rules.Add(ori.Copy());
+                }
+            }
+            if (this.ListOnly != null)
+            {
+                foreach (var ori in this.ListOnly)
+                {
+                    rd.ListOnly.Add(ori.Copy());
+                }
+            }
+            return rd;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }
