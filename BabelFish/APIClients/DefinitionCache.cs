@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.APIClients {
 
         private static ConcurrentDictionary<SetName, Target> TargetCache = new ConcurrentDictionary<SetName, Target>();
 
-        private static ConcurrentDictionary<SetName, TargetCollectionDefinition> TargetCollectionCache = new ConcurrentDictionary<SetName, TargetCollectionDefinition>();
+        private static ConcurrentDictionary<SetName, TargetCollection> TargetCollectionCache = new ConcurrentDictionary<SetName, TargetCollection>();
 
         /// <summary>
         /// Preloads the Definiiton Cache with commmon definitions. If used, should help with some start up time.
@@ -240,8 +240,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         /// <exception cref="ScoposAPIException" />
-        public static async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync( SetName setName ) {
-            if (TargetCollectionCache.TryGetValue( setName, out TargetCollectionDefinition c )) { return c; }
+        public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
+            if (TargetCollectionCache.TryGetValue( setName, out TargetCollection c )) { return c; }
 
             var response = await DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {

@@ -188,17 +188,17 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         [Obsolete( "User GetTargetCollectionDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinition( SetName setName ) {
+        public async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinition( SetName setName ) {
             return await GetTargetCollectionDefinitionAsync( setName );
         }
 
-        public virtual async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGETCOLLECTION;
 
             GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
 
-            GetDefinitionPublicResponse<TargetCollectionDefinition> response = new GetDefinitionPublicResponse<TargetCollectionDefinition>( request );
+            GetDefinitionPublicResponse<TargetCollection> response = new GetDefinitionPublicResponse<TargetCollection>( request );
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }

@@ -15,6 +15,6 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// Retreives the Target Collection Definition referenced by the instantiating class.
         /// </summary>
         /// <returns></returns>
-        Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync();
+        Task<TargetCollection> GetTargetCollectionDefinitionAsync();
     }
 }

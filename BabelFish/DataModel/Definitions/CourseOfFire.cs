@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
 
         /// <inheritdoc/>
-        public async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync()
+        public async Task<TargetCollection> GetTargetCollectionDefinitionAsync()
         {
             SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse(TargetCollectionDef);
             return await DefinitionCache.GetTargetCollectionDefinitionAsync(targetCollectionDef);
