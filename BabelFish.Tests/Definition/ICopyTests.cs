@@ -419,6 +419,39 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyScoreFormatCollection()
+        {
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
+            var call = await client.GetScoreFormatCollectionDefinitionAsync(setName);
+            var sfc = call.Value;
+
+            var copy = sfc.Copy();
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual(sfc.HierarchicalName, copy.HierarchicalName);
+            Assert.AreEqual(sfc.Description, copy.Description);
+            Assert.AreEqual(sfc.Comment, copy.Comment);
+            Assert.AreEqual(sfc.Version, copy.Version);
+            Assert.AreEqual(sfc.Type, copy.Type);
+            Assert.AreEqual(sfc.SetName, copy.SetName);
+            Assert.AreEqual(sfc.Owner, copy.Owner);
+            Assert.AreEqual(sfc.Discipline, copy.Discipline);
+            Assert.AreEqual(sfc.Discontinued, copy.Discontinued);
+            Assert.AreEqual(sfc.Subdiscipline, copy.Subdiscipline);
+            CollectionAssert.AreEqual(sfc.Tags, copy.Tags);
+            Assert.AreEqual(sfc.JSONVersion, copy.JSONVersion);
+
+            CollectionAssert.AreEqual(sfc.ScoreFormats, copy.ScoreFormats);
+            
+            for (int i = 0; i < sfc.ScoreConfigs.Count(); i++)
+            {
+                Assert.AreEqual(sfc.ScoreConfigs[i].ScoreConfigName, sfc.ScoreConfigs[i].ScoreConfigName);
+                CollectionAssert.AreEqual(sfc.ScoreConfigs[i].ScoreFormats, copy.ScoreConfigs[i].ScoreFormats);
+            }
+        }
+
+        [TestMethod]
         public async Task CopySegmentGroup() {
             var orig = new SegmentGroup();
             orig.SegmentGroupName = "Bob";
