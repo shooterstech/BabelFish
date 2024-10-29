@@ -7,21 +7,34 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// 
+    /// </summary>
+
     [Serializable]
-    public class AimingMark : ScoringShape {
+    public class AimingMark : ScoringShapeDimension, ICopy<AimingMark> {
 
-        //TODO turn these string consts into Enum
-        public const string COLOR_BLACK = "BLACK";
-        public const string COLOR_WHITE = "WHITE";
-
+        /// <summary>
+        /// Public constructor
+        /// </summary>
         public AimingMark() { }
 
-        public AimingMark(float dimension, string shape, string color) {
-            this.Dimension = dimension;
-            this.Shape = shape;
-            this.Color = color;
+        /// <inheritdoc/>
+        public AimingMark Copy() {
+            AimingMark copy = new AimingMark();
+            copy.Color = this.Color;
+            copy.Comment = this.Comment;
+            copy.Shape = this.Shape;
+            copy.Dimension = this.Dimension;
+
+            return copy;
         }
 
-        public string Color { get; set; } = COLOR_BLACK;
+        /// <summary>
+        /// the color of the aiming mark
+        /// </summary>
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        public AimingMarkColor Color { get; set; } = AimingMarkColor.BLACK;
     }
 }

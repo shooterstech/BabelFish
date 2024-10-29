@@ -13,6 +13,26 @@ using System.Runtime.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
+
+    /// <summary>
+    /// The color of the aiming mark.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum AimingMarkColor {
+        /// <summary>
+        /// The color white.
+        /// </summary>
+        WHITE,
+
+        /// <summary>
+        /// The color black
+        /// </summary>
+        BLACK
+    }
+
+    /// <summary>
+    /// Defines what type of entity an attribute can be assigned to.
+    /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum AttributeDesignation {
 
@@ -45,8 +65,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "HIDDEN" )] HIDDEN
     }
 
+    /// <summary>
+    /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product.
+    /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum BarcodeLabelSize { OL385, OL161 }
+    public enum BarcodeLabelSize { 
+        /// <summary>
+        /// "Small barcode labels"
+        /// </summary>
+        OL385, 
+        
+        /// <summary>
+        /// "Large barcode labels"
+        /// </summary>
+        OL161 
+    }
 
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
@@ -227,6 +260,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "Record" )]
         RECORD
 
+    }
+
+    /// <summary>
+    /// Describes the shape of an aiming mark.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ScoringShape {
+        /// <summary>
+        /// Circle
+        /// </summary>
+        CIRCLE,
+
+        /// <summary>
+        /// Square
+        /// </summary>
+        SQUARE
     }
 
 

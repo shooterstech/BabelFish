@@ -23,6 +23,12 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        [Ignore]
+        public async Task CopyAimingMark() {
+            //Choosing not to write a seperate unit test for AimingMark, as the unit test for Target is comprehensive and covers this class
+        }
+
+        [TestMethod]
         public async Task CopyAttribute() {
 
             var client = new DefinitionAPIClient();
@@ -363,6 +369,12 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        [Ignore]
+        public async Task CopyScoringRing() {
+            //Choosing not to write a seperate unit test for ScoringRing, as the unit test for Target is comprehensive and covers this class
+        }
+
+        [TestMethod]
         public async Task CopySegmentGroup() {
             var orig = new SegmentGroup();
             orig.SegmentGroupName = "Bob";
@@ -559,6 +571,52 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
+        public async Task CopyTarget() {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v1.0:issf:25m Precision Pistol" );
+            var orig = (await client.GetTargetDefinitionAsync( setName )).Value;
+
+            var copy = orig.Copy();
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual( orig.HierarchicalName, copy.HierarchicalName );
+            Assert.AreEqual( orig.Description, copy.Description );
+            Assert.AreEqual( orig.Comment, copy.Comment );
+            Assert.AreEqual( orig.Version, copy.Version );
+            Assert.AreEqual( orig.Type, copy.Type );
+            Assert.AreEqual( orig.SetName, copy.SetName );
+            Assert.AreEqual( orig.Owner, copy.Owner );
+            Assert.AreEqual( orig.Discipline, copy.Discipline );
+            Assert.AreEqual( orig.Discontinued, copy.Discontinued );
+            Assert.AreEqual( orig.Subdiscipline, copy.Subdiscipline );
+            CollectionAssert.AreEqual( orig.Tags, copy.Tags );
+            Assert.AreEqual( orig.JSONVersion, copy.JSONVersion );
+
+            Assert.AreEqual( orig.BackgroundColor, copy.BackgroundColor );
+            Assert.AreEqual( orig.Distance, copy.Distance );
+            Assert.AreEqual( orig.InnerTen.Dimension, copy.InnerTen.Dimension );
+            Assert.AreEqual( orig.InnerTen.Comment, copy.InnerTen.Comment );
+            Assert.AreEqual( orig.InnerTen.Value, copy.InnerTen.Value );
+            Assert.AreEqual( orig.InnerTen.Shape, copy.InnerTen.Shape );
+
+            for (int i = 0; i < orig.ScoringRings.Count; i++) {
+                Assert.AreEqual( orig.ScoringRings[i].Dimension, copy.ScoringRings[i].Dimension );
+                Assert.AreEqual( orig.ScoringRings[i].Value, copy.ScoringRings[i].Value );
+                Assert.AreEqual( orig.ScoringRings[i].Shape, copy.ScoringRings[i].Shape );
+                Assert.AreEqual( orig.ScoringRings[i].Comment, copy.ScoringRings[i].Comment );
+            }
+
+            for (int i = 0; i < orig.AimingMarks.Count; i++) {
+                Assert.AreEqual( orig.AimingMarks[i].Dimension, copy.AimingMarks[i].Dimension );
+                Assert.AreEqual( orig.AimingMarks[i].Color, copy.AimingMarks[i].Color );
+                Assert.AreEqual( orig.AimingMarks[i].Shape, copy.AimingMarks[i].Shape );
+                Assert.AreEqual( orig.AimingMarks[i].Comment, copy.AimingMarks[i].Comment );
+            }
+
+        }
+
+        [TestMethod]
         public async Task CopyTargetCollection() {
 
             var client = new DefinitionAPIClient();
@@ -596,7 +654,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public async Task CopyATieBreakingRule() {
+        public async Task CopyTieBreakingRule() {
 
 
             var client = new DefinitionAPIClient();
