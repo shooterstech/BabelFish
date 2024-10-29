@@ -251,11 +251,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-
-        public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
-
-        public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
-
         /// <summary>
         /// Returns the total number of defined columns. Does not factor in hidden columns (from .HideColumnsWithTheseClasses).
         /// </summary>
@@ -453,5 +448,29 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return ResultListFormat.Format.Display;
             }
         }
+
+        /// <summary>
+        /// The width of the screen that this Result List Formatted will be displayeed on. Depending on the width
+        /// some columsn may, or may not, be displayed. The Result List Fromatted uses the same breakpoints as
+        /// Bootstrap 5. 
+        /// <para>The default value is int.MaxValue, which basically means a screen width of infinite width.</para>
+        /// <para>Values of less than 0, are interpreted as being 0.</para>
+        /// </summary>
+        public int ResolutionWidth { get; set; } = int.MaxValue;
+
+        /// <summary>
+        /// Limits the number of child rows to show under a main body row.
+        /// <para>The default value is int.MaxValue, which means to show all children.</para>
+        /// <para>Values of less than 0, are interpreted as being 0.</para>
+        /// </summary>
+        public int ChildrenToShow {  get; set; } = int.MaxValue;
+
+        /// <summary>
+        /// Gets or sets the engagable variable. Which indicates if the Result List Format will be displayed
+        /// on a screen that supports human interaction, such as a desktop browser or mobile phone. A leaderboard
+        /// or MM100 would not support human interaction.
+        /// <para>The default value is true.</para>
+        /// </summary>
+        public bool Engagable { get; set; } = true;
     }
 }

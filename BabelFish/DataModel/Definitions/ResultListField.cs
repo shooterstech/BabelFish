@@ -9,9 +9,20 @@ using Newtonsoft.Json.Converters;
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class ResultListField : IReconfigurableRulebookObject, ICopy<ResultListField>
     {
-
+        /// <summary>
+        /// Public constructor
+        /// </summary>
         public ResultListField() {
             Source = new FieldSource();
+        }
+
+        /// <inheritdoc/>
+        public ResultListField Copy() {
+            ResultListField rlf = new ResultListField();
+            rlf.FieldName = this.FieldName;
+            rlf.Method = this.Method;
+            rlf.Source = this.Source.Copy();
+            return rlf;
         }
 
         [OnDeserialized]
@@ -42,17 +53,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public FieldSource Source { get; set; }
 
+        /// <inheritdoc/>
         public override string ToString() {
             return $"{FieldName} for {Method}";
-        }
-
-        public ResultListField Copy()
-        {
-            ResultListField rlf = new ResultListField();
-            rlf.FieldName = this.FieldName;
-            rlf.Method = this.Method;
-            rlf.Source = this.Source.Copy();
-            return rlf;
         }
 
         /// <inheritdoc/>

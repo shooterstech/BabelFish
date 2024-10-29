@@ -282,6 +282,110 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShotMappingMethodType { SEQUENTIAL }
 
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ShowWhenBoolean {
+        /// <summary>
+        /// AND operation
+        /// </summary>
+        AND,
+
+        /// <summary>
+        /// OR operation
+        /// </summary>
+        OR,
+
+        /// <summary>
+        /// XOR operation
+        /// </summary>
+        XOR
+    }
+
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ShowWhenCondition {
+        /// <summary>
+        /// Always display.
+        /// </summary>
+        TRUE,
+
+        /// <summary>
+        /// Never display.
+        /// </summary>
+        FALSE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Status is FUTURE.
+        /// </summary>
+        RESULT_STATUS_FUTURE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Status is INTERMEDIATE.
+        /// </summary>
+        RESULT_STATUS_INTERMEDIATE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Status is UNOFFICIAL.
+        /// </summary>
+        RESULT_STATUS_UNOFFICIAL,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Status is OFFICIAL.
+        /// </summary>
+        RESULT_STATUS_OFFICIAL,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 576.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_SMALL,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 768.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_MEDIUM,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 992.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_LARGE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 1200.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_EXTRA_LARGE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 1400.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_EXTRA_EXTRA_LARGE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Local Match.
+        /// </summary>
+        MATCH_TYPE_LOCAL,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Virtual Match.
+        /// </summary>
+        MATCH_TYPE_VIRTUAL,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Tournament.
+        /// </summary>
+        MATCH_TYPE_TOURNAMENT
+    }
+
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ShowWhenOperation {
+        VARIABLE,
+
+        EQUATION
+    }
+
 
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum SingularType {
