@@ -446,7 +446,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             
             for (int i = 0; i < sfc.ScoreConfigs.Count(); i++)
             {
-                Assert.AreEqual(sfc.ScoreConfigs[i].ScoreConfigName, sfc.ScoreConfigs[i].ScoreConfigName);
+                Assert.AreEqual(sfc.ScoreConfigs[i].ScoreConfigName, copy.ScoreConfigs[i].ScoreConfigName);
                 CollectionAssert.AreEqual(sfc.ScoreConfigs[i].ScoreFormats, copy.ScoreConfigs[i].ScoreFormats);
             }
         }
@@ -630,6 +630,41 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.AreEqual(scc.StageStyle, Copysc.StageStyle);
             Assert.AreEqual(scc.Shots, Copysc.Shots);
             Assert.AreEqual(scc.ScoreFormat, Copysc.ScoreFormat);
+        }
+
+        [TestMethod]
+        public async Task CopyStageStyle()
+        {
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse("v1.0:ntparc:Precision Air Rifle Standing");
+            var call = await client.GetStageStyleDefinitionAsync(setName);
+            var ss = call.Value;
+
+            var copy = ss.Copy();
+
+            //Common fields for all top level Definition objects
+            Assert.AreEqual(ss.HierarchicalName, copy.HierarchicalName);
+            Assert.AreEqual(ss.Description, copy.Description);
+            Assert.AreEqual(ss.Comment, copy.Comment);
+            Assert.AreEqual(ss.Version, copy.Version);
+            Assert.AreEqual(ss.Type, copy.Type);
+            Assert.AreEqual(ss.SetName, copy.SetName);
+            Assert.AreEqual(ss.Owner, copy.Owner);
+            Assert.AreEqual(ss.Discipline, copy.Discipline);
+            Assert.AreEqual(ss.Discontinued, copy.Discontinued);
+            Assert.AreEqual(ss.Subdiscipline, copy.Subdiscipline);
+            CollectionAssert.AreEqual(ss.Tags, copy.Tags);
+            Assert.AreEqual(ss.JSONVersion, copy.JSONVersion);
+
+            CollectionAssert.AreEqual(ss.RelatedStageStyles, copy.RelatedStageStyles);
+            Assert.AreEqual(ss.ShotsInSeries, copy.ShotsInSeries);
+            for (int i = 0; i < ss.DisplayScoreFormats.Count(); i++)
+            {
+                Assert.AreEqual(ss.DisplayScoreFormats[i].Name, copy.DisplayScoreFormats[i].Name);
+                Assert.AreEqual(ss.DisplayScoreFormats[i].ScoreFormat, copy.DisplayScoreFormats[i].ScoreFormat);
+                Assert.AreEqual(ss.DisplayScoreFormats[i].MaxShotValue, copy.DisplayScoreFormats[i].MaxShotValue);
+            }
+
         }
 
         [TestMethod]
