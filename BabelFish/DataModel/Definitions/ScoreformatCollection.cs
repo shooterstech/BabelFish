@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -9,7 +10,8 @@ using Newtonsoft.Json;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     [Serializable]
-    public class ScoreFormatCollection : Definition {
+    public class ScoreFormatCollection : Definition, ICopy<ScoreFormatCollection>
+    {
         
         public ScoreFormatCollection() : base() {
             Type = DefinitionType.SCOREFORMATCOLLECTION;
@@ -44,5 +46,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return false;
         }
+
+        public ScoreFormatCollection Copy()
+        {
+            ScoreFormatCollection sfc = new ScoreFormatCollection();
+            this.Copy(sfc);
+            if (this.ScoreFormats != null)
+            {
+                foreach (var sf in this.ScoreFormats)
+                {
+                    sfc.ScoreFormats.Add(sf);
+                }
+            }
+            if (this.ScoreConfigs != null)
+            {
+                foreach (var sc in this.ScoreConfigs)
+                {
+                    sfc.ScoreConfigs.Add(sc.Copy());
+                }
+            }
+            return sfc;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

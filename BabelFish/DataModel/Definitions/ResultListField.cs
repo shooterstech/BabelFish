@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ResultListField {
+    public class ResultListField : IReconfigurableRulebookObject, ICopy<ResultListField>
+    {
 
         public ResultListField() {
             Source = new FieldSource();
@@ -43,5 +45,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public override string ToString() {
             return $"{FieldName} for {Method}";
         }
+
+        public ResultListField Copy()
+        {
+            ResultListField rlf = new ResultListField();
+            rlf.FieldName = this.FieldName;
+            rlf.Method = this.Method;
+            rlf.Source = this.Source.Copy();
+            return rlf;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

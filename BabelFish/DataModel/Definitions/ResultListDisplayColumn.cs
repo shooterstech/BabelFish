@@ -5,7 +5,8 @@ using System.ComponentModel;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ResultListDisplayColumn {
+    public class ResultListDisplayColumn : IReconfigurableRulebookObject, ICopy<ResultListDisplayColumn>
+    {
 
         public ResultListDisplayColumn() { }
 
@@ -50,5 +51,48 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [Obsolete( "Use .ClassList instead." )]
         public List<string> FooterClassList { get; set; } = new List<string>();
+
+        public ResultListDisplayColumn Copy()
+        {
+            ResultListDisplayColumn rlfdc = new ResultListDisplayColumn();
+            rlfdc.Header = this.Header;
+            if (this.ClassList != null)
+            {
+                foreach (var cl in this.ClassList)
+                {
+                    rlfdc.ClassList.Add(cl);
+                }
+            }
+            rlfdc.Body = this.Body;
+            rlfdc.BodyLinkTo = this.BodyLinkTo;
+            rlfdc.Footer = this.Footer;
+            if (this.HeaderClassList != null)
+            {
+                foreach (var cl in this.HeaderClassList)
+                {
+                    rlfdc.HeaderClassList.Add(cl);
+                }
+            }
+            if (this.BodyClassList != null)
+            {
+                foreach (var cl in this.BodyClassList)
+                {
+                    rlfdc.BodyClassList.Add(cl);
+                }
+            }
+            if (this.FooterClassList != null)
+            {
+                foreach (var cl in this.FooterClassList)
+                {
+                    rlfdc.FooterClassList.Add(cl);
+                }
+            }
+            return rlfdc;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

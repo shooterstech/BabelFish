@@ -6,7 +6,8 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class FieldSource {
+    public class FieldSource : IReconfigurableRulebookObject, ICopy<FieldSource>
+    {
 
         /// <summary>
         /// When the ResultField.Method == Score, Name is the name 
@@ -30,5 +31,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue( 0 )]
         public int Value { get; set; } = 0;
+
+        public FieldSource Copy()
+        {
+            FieldSource fs = new FieldSource();
+            fs.Name = this.Name;
+            fs.ScoreFormat = this.ScoreFormat;
+            fs.Value = this.Value;
+            return fs;
+        }
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

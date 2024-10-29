@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public EventAndStageStyleMappingObj Copy()
         {
             EventAndStageStyleMappingObj e = new EventAndStageStyleMappingObj();
-
+            
             e.DefaultEventStyleDef = this.DefaultEventStyleDef;
             e.DefaultStageStyleDef = this.DefaultStageStyleDef;
 

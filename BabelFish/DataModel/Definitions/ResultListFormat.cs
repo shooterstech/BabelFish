@@ -15,7 +15,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// 
     /// The ResultListFormat will describes in a 2D fashion the data from the ResultList to display.
     /// </summary>
-    public class ResultListFormat : Definition {
+    public class ResultListFormat : Definition, ICopy<ResultListFormat>
+    {
 
         public ResultListFormat() : base() {
             Type = DefinitionType.RESULTLISTFORMAT;
@@ -34,6 +35,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             if (Format == null)
                 Format = new ResultListFormatDetail();
+        }
+
+        public ResultListFormat Copy()
+        {
+            ResultListFormat rlf = new ResultListFormat();
+            this.Copy( rlf );
+            rlf.ScoreFormatCollectionDef = this.ScoreFormatCollectionDef;
+            rlf.ScoreConfigDefault = this.ScoreConfigDefault;
+            if (this.Fields != null)
+            {
+                foreach (var rlfield in this.Fields)
+                {
+                    rlf.Fields.Add(rlfield.Copy());
+                }
+            }
+            //unsure if this should be nullable....
+            rlf.Format = this.Format.Copy();
+            return rlf;
         }
 
         /// <summary>
