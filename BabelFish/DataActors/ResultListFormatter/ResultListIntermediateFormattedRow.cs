@@ -574,6 +574,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Returns a list of CSS classes that should be applied to the row.
         /// These values are defined in the RESULT LIST FORMAT definition. 
         /// </summary>
+        /// <remarks>
+        /// Common values include:
+        /// <list type="bullet">
+        /// <item>rlf-row-header</item>
+        /// <item>rlf-row-athlete</item>
+        /// <item>rlf-row-team</item>
+        /// <item>rlf-row-child</item>
+        /// <item>rlf-row-footer</item>
+        /// </list>
+        /// </remarks>
         /// <returns></returns>
         public abstract List<string> GetClassList();
 

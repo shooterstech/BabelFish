@@ -251,6 +251,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
+
+        public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
+
+        public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
+
         /// <summary>
         /// Returns the total number of defined columns. Does not factor in hidden columns (from .HideColumnsWithTheseClasses).
         /// </summary>

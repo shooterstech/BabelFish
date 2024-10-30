@@ -376,7 +376,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Tournament.
         /// </summary>
-        MATCH_TYPE_TOURNAMENT
+        MATCH_TYPE_TOURNAMENT,
+
+        /// <summary>
+        /// Displayed when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
+        /// </summary>
+        ENGAGEABLE
     }
 
     [JsonConverter( typeof( StringEnumConverter ) )]

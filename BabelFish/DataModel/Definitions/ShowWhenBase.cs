@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,10 @@ using System.ComponentModel;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+
+    [JsonConverter( typeof( ShowWhenBaseConverter ) )]
+    [Serializable]
     public abstract class ShowWhenBase: IReconfigurableRulebookObject {
 
         public abstract ShowWhenBase Copy();
