@@ -31,5 +31,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [JsonConverter( typeof( StringEnumConverter ) )]
         public ShowWhenCondition Condition { get; set; }
+
+        public override string ToString() {
+            var not = Not ? "NOT " : "";
+            return $"{not}{Condition}";
+        }
     }
 }

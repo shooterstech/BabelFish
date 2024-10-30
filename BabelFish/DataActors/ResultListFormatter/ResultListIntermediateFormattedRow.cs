@@ -72,11 +72,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 switch (field.Method) {
                     case ResultFieldMethod.PARTICIPANT_ATTRIBUTE :
-                        fields[fieldName] = GetParticipantAttribute( source.Name.ToString() );
+                        fields[fieldName] = GetTruncatedValue( source, GetParticipantAttribute( source.Name.ToString() ) );
                         break;
 
                     case ResultFieldMethod.ATTRIBUTE:
-                        fields[fieldName] = GetAttributeValue( source );
+                        fields[fieldName] = GetTruncatedValue( source, GetAttributeValue( source ) );
                         break;
 
                     case ResultFieldMethod.SCORE:
@@ -95,6 +95,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         //Should never get here
                         break;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Method is responsible for implementing the .TrucateAt rule in the FieldSource.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="untruncatedValue"></param>
+        /// <returns></returns>
+        private string GetTruncatedValue( FieldSource source , string untruncatedValue ) {
+            if ( source.TruncateAt > 3 && untruncatedValue.Length > source.TruncateAt)
+            {
+                return $"{untruncatedValue.Substring( 0, source.TruncateAt - 3 )}...";
+            } else {
+                return untruncatedValue;
             }
         }
 

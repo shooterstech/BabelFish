@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// If the length of the returned string is longer than .TruncateAt, then the string 
         /// is truncated at this length and has a set of ellipsis ("...") added to the end.
-        /// A value of < 1, means never to truncate.
+        /// A value of < 3, means never to truncate.
         /// </summary>
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( 0 )]

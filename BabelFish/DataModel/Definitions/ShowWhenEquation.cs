@@ -34,6 +34,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public List<ShowWhenBase> Arguments { get; set; } = new List<ShowWhenBase>();
 
-        
+        public override string ToString() {
+            var not = Not ? "NOT " : "";
+            return $"{not}{Boolean} {Arguments.Count} arguments";
+        }
+
     }
 }

@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormatted {
 
         private readonly List<ResultListIntermediateFormattedRow> rows = new();
+        private ShowWhenCalculator ShowWhenCalculator;
         private bool initialized = false;
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             this.ResultList = resultList;
             this.ResultListFormat = resultListFormat;
             this.UserProfileLookup = userProfileLookup;
+            this.ShowWhenCalculator = new ShowWhenCalculator( this );
         }
 
         /// <summary>
@@ -130,7 +132,39 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Gets the list of rows to display in the formatted results.
+        /// Gets the list of rows to display in the formatted results. This lists excludes Rows hidden by the .ChildrenToShow parameter.
+        /// </summary>
+        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
+        public List<ResultListIntermediateFormattedRow> ShownRows {
+            get {
+                if (!initialized)
+                    throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
+
+                int childRowsRemaining = this.ChildrenToShow;
+                lock (rows) {
+                    List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>();
+                    foreach( var row in rows) {
+                        if (!row.IsChildRow) {
+                            //Thsi is a parent row, we can reset the count of child rows to show
+                            childRowsRemaining = this.ChildrenToShow;
+                            copyOfRows.Add( row );
+                        } else {
+                            //This is a child row, check if we can show any more
+                            if (childRowsRemaining > 0) {
+                                childRowsRemaining--;
+                                copyOfRows.Add( row );
+                            }
+                            //else, don't add it
+                        }
+
+                    }
+                    return copyOfRows;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of all rows to display in the formatted results. This lists includes Rows hidden by the .ChildrenToShow parameter.
         /// </summary>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<ResultListIntermediateFormattedRow> Rows {
@@ -138,6 +172,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (!initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
+                int childRowsRemaining = this.ChildrenToShow;
                 lock (rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>( rows );
                     return copyOfRows;
@@ -251,9 +286,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-
+        [Obsolete]
         public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
 
+        [Obsolete]
         public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
 
         /// <summary>
@@ -273,14 +309,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             List<int> shownColumnIndexes = new List<int>();
             bool include = true;
             for (int i = 0; i < ResultListFormat.Format.Columns.Count; i++) {
-                var format = ResultListFormat.Format.Columns[i];
+                var column = ResultListFormat.Format.Columns[i];
                 include = true;
-                foreach (var c in format.ClassList) {
+
+                if (!ShowWhenCalculator.Show( column.ShowWhen )) {
+                    include = false;
+                }
+
+                //Check against the class lists ... which is deprecated
+                foreach (var c in column.ClassList) {
                     if (HideColumnsWithTheseClasses.Contains( c )) {
                         include = false;
                         break;
                     }
                 }
+
                 if (include)
                     shownColumnIndexes.Add( i );
             }
