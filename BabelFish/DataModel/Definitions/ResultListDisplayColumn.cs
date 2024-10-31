@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
             rlfdc.Body = this.Body;
+            rlfdc.Child = this.Child;
             rlfdc.BodyLinkTo = this.BodyLinkTo;
             rlfdc.Footer = this.Footer;
             if (this.HeaderClassList != null) {
@@ -80,9 +81,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Text, with interpolation, to display in each cell.
-        /// Interpolation fields are defined in the ResultListFormat's Fields section.
+        /// <para>The value of .Body will always be displayed in a body row. If .Child is null, the value of .Body is always displayed in the child rows.</para>
+        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
         /// </summary>
         public string Body { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Text, with interpolation, to display in each cell in a child row.
+        /// <para>If .Child is null, the value of .Body is displayed in its place. An empty string indicates not to display any values in the child rows.</para>
+        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
+        /// </summary>
+        [DefaultValue( "" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public string Child { get; set; } = string.Empty;
 
         /// <summary>
         /// What, if anything, the text in this cell should link to.

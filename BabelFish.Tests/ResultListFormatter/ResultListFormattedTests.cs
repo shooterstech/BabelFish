@@ -365,10 +365,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.1001.2024102112223595.1" );
+            MatchID matchId = new MatchID( "1.2457.2024103114463283.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Team - All";
+            var resultListName = "Individual - Sporter";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -387,9 +387,9 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
 
-            rlf.Engagable = false;
-            rlf.ResolutionWidth = 300;
-            rlf.ChildrenToShow = int.MaxValue;
+            rlf.Engagable = true;
+            rlf.ResolutionWidth = 1800;
+            rlf.ChildrenToShow = 4000;
 
             CellValues tryCellValues, cellValues;
             foreach (int i in rlf.GetShownColumnIndexes()) {

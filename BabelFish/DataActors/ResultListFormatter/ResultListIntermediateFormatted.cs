@@ -286,12 +286,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-        [Obsolete]
-        public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
-
-        [Obsolete]
-        public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
-
         /// <summary>
         /// Returns the total number of defined columns. Does not factor in hidden columns (from .HideColumnsWithTheseClasses).
         /// </summary>
@@ -314,14 +308,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 if (!ShowWhenCalculator.Show( column.ShowWhen )) {
                     include = false;
-                }
-
-                //Check against the class lists ... which is deprecated
-                foreach (var c in column.ClassList) {
-                    if (HideColumnsWithTheseClasses.Contains( c )) {
-                        include = false;
-                        break;
-                    }
                 }
 
                 if (include)

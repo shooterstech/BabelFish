@@ -21,8 +21,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
             "Rank", 
             "RankOrder",
+            "Empty",
             "DisplayName", 
             "DisplayNameShort", 
+            "DisplayNameAbbreviated",
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -114,6 +116,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
+        /// Static version of GetRuncatedValue. Truncates a string at 24 characters.
+        /// </summary>
+        /// <param name="untruncatedValue"></param>
+        /// <returns></returns>
+        private string GetTruncatedValue( string untruncatedValue ) {
+            if (untruncatedValue.Length > 23) {
+                return $"{untruncatedValue.Substring( 0, 20 )}...";
+            } else {
+                return untruncatedValue;
+            }
+
+        }
+
+        /// <summary>
         /// Returns the specified ParticipantAttribute
         /// </summary>
         /// <param name="source">The name of the ParticipantAttribute to return.</param>
@@ -123,8 +139,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			//Fields that are unique to the Participant 
             "Rank", 
             "RankOrder",
+            "Empty",
             "DisplayName", 
             "DisplayNameShort", 
+            "DisplayNameAbbreviated",
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -164,10 +182,31 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     return "";
 
+                case "Empty":
+                    return "";
+
                 case "DisplayName":
                     var dn = resultEvent.Participant.DisplayName;
                     if (!string.IsNullOrEmpty( dn ))
                         return dn;
+
+                    return "Unknown";
+
+                case "DisplayNameAbbreviated":
+                    //First try the regular display name
+                    var dna = resultEvent.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
+                        return dna;
+
+                    //if that's too long, try the display name short, if it exists
+                    dna = resultEvent.Participant.DisplayNameShort;
+                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
+                        return dna;
+                    
+                    //If that's too long, go back to the regular display name and truncate it
+                    dna = resultEvent.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dna ))
+                        return GetTruncatedValue( dna );
 
                     return "Unknown";
 
@@ -480,8 +519,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             var column = resultListFormatted.ResultListFormat.Format.Columns[index];
 
-            var source = (string)column.Body;
-            var value = source.Replace( fields );
+            string source = column.Body;
+            if (this.IsChildRow && ! string.IsNullOrEmpty( column.Child ))
+                source = column.Child;
+            string value = source.Replace( fields );
 
             var classes = new List<string>();
             foreach (var c in column.ClassList)
@@ -492,32 +533,40 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 classes.Add( (string)c );
 
             var cellValues = new CellValues( this.resultListFormatted, value, classes );
+            cellValues.Body = column.Body;
+            cellValues.Child = column.Child;
 
             //Check if the Column definition requires us to link to another page.
-            switch (column.BodyLinkTo.ToString()) {
-                case "ResultCOF":
-                    cellValues.LinkTo = LinkToOption.ResultCOF;
-                    cellValues.LinkToData = fields["ResultCOFID"];
-                    break;
+            if (this.resultListFormatted.Engagable) {
+                switch (column.BodyLinkTo.ToString()) {
+                    case "ResultCOF":
+                        cellValues.LinkTo = LinkToOption.ResultCOF;
+                        cellValues.LinkToData = fields["ResultCOFID"];
+                        break;
 
-                case "PublicProfile":
-					var userId = fields["UserID"];
+                    case "PublicProfile":
+                        var userId = fields["UserID"];
 
-					if (!string.IsNullOrEmpty( userId ) && resultListFormatted.UserProfileLookup.HasPublicProfile( userId )) {
-                        //User had a public profile
-						cellValues.LinkTo = LinkToOption.PublicProfile; 
-						cellValues.LinkToData = resultListFormatted.UserProfileLookup.AccountURLLookUp( userId );
-					} else {
-						//This is the case the user does not have a profile, or the profile is marked private
-						cellValues.LinkTo = LinkToOption.None;
-						cellValues.LinkToData = "";
-					}
-                    break;
+                        if (!string.IsNullOrEmpty( userId ) && resultListFormatted.UserProfileLookup.HasPublicProfile( userId )) {
+                            //User had a public profile
+                            cellValues.LinkTo = LinkToOption.PublicProfile;
+                            cellValues.LinkToData = resultListFormatted.UserProfileLookup.AccountURLLookUp( userId );
+                        } else {
+                            //This is the case the user does not have a profile, or the profile is marked private
+                            cellValues.LinkTo = LinkToOption.None;
+                            cellValues.LinkToData = "";
+                        }
+                        break;
 
-                default:
-                    cellValues.LinkTo = LinkToOption.None;
-                    cellValues.LinkToData = "";
-                    break;
+                    default:
+                        cellValues.LinkTo = LinkToOption.None;
+                        cellValues.LinkToData = "";
+                        break;
+                }
+            } else {
+                //If the RLF is not engagable, don't include the links
+                cellValues.LinkTo = LinkToOption.None;
+                cellValues.LinkToData = "";
             }
 
             return cellValues;
@@ -601,21 +650,5 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </remarks>
         /// <returns></returns>
         public abstract List<string> GetClassList();
-
-        /// <summary>
-        /// Boolean, indicating that this Cell should not be displayed, because it contains a CSS Class (in .ClassList)
-        /// that the user has asked to hide using the ResultListIntermedateFormatted.HideRowsWithTheseClasses
-        /// </summary>
-        public bool Hide { 
-            get { 
-                foreach( var c in GetClassList() ) {
-                    if (this.resultListFormatted.HideRowsWithTheseClasses.Contains( c ) ) { 
-                        return true; 
-                    }
-                }
-
-                return false;
-            }
-        }
     }
 }
