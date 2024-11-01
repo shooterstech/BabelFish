@@ -16,5 +16,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns></returns>
         Dictionary<string, Shot> GetShotsByEventName();
+
+        /// <summary>
+        /// Returns the last shot fired, if no shots have been fired, will return NULL
+        /// </summary>
+        /// <returns></returns>
+        Shot? GetLastShot();
     }
 }

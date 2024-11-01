@@ -64,5 +64,21 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue( cofResponse1.TimeToRun > cofResponse2.TimeToRun * 10 );
 
         }
+
+        [TestMethod]
+        public async Task GetRCOFLastShot()
+        {
+
+            var client = new OrionMatchAPIClient(APIStage.PRODUCTION);
+            var cofResponse = await client.GetResultCourseOfFireDetailPublicAsync("91eafa91-6569-434f-85ca-4d99a2f9bc74");
+            var resultCof = cofResponse.ResultCOF;
+
+            var shots = resultCof.Shots;
+
+            var lastShot = resultCof.GetLastShot();
+
+            Assert.AreEqual(shots["60.0"].TimeScored, lastShot.TimeScored);
+
+        }
     }
 }

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -221,6 +222,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( ": " );
             foo.Append( MatchName );
             return foo.ToString();
+        }
+
+        /// <inheritdoc />
+        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastShot()
+        {
+            Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = Shots;
+            Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot = null;
+            foreach(var shot in shots)
+            {
+                if (lastShot == null || shot.Value.TimeScored > lastShot.TimeScored)
+                {
+                    lastShot = shot.Value;
+                    continue;
+                }
+            }
+            return lastShot;
         }
 
         /// <inheritdoc />
