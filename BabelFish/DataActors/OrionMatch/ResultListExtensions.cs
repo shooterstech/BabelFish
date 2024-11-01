@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public static ResultStatus CalculateResultListStatus( this ResultList resultList, ResultStatus matchStatus ) {
 
-            if (matchStatus == ResultStatus.OFFICIAL)
+            if (matchStatus == ResultStatus.OFFICIAL || (DateTime.Now - resultList.LastUpdated).TotalHours < 1)
                 return ResultStatus.OFFICIAL;
 
             if (resultList.Items.Count == 0)
