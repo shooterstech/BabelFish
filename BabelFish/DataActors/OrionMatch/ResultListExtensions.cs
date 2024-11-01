@@ -36,13 +36,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             EventScore eventScore;
             foreach( var re in  resultList.Items ) {
                 if ( re.EventScores.TryGetValue( resultList.EventName, out eventScore ) ) {
-                    if(re.GetLastShot() != null)
-                    {
-                        if ((DateTime.Now - re.GetLastShot().TimeScored).TotalHours < 1)
-                        {
-                            eventScore.Status = ResultStatus.OFFICIAL;
-                        }
-                    }
                     allAreFuture &= (eventScore.Status == ResultStatus.FUTURE);
                     oneIsIntermediate |= (eventScore.Status == ResultStatus.INTERMEDIATE);
                     oneIsUnofficial |= (eventScore.Status == ResultStatus.UNOFFICIAL);
@@ -63,11 +56,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// </summary>
         /// <param name="eventScore"></param>
         /// <param name="matchStatus"></param>
+        /// <param name="lastShot"></param>
         /// <param name="numberOfShotsFired"></param>
         /// <param name="topLevelEvent"></param>
         /// <param name="eventName"></param>
         /// <returns></returns>
-        private static void GetEventStatus( this EventScore eventScore, ResultStatus matchStatus, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName)
+        private static void GetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName)
         {
 
             //If the match's status is official, then so to are all evetns
@@ -75,6 +69,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             {
                 eventScore.Status = ResultStatus.OFFICIAL;
                 return;
+            }
+
+            if ((DateTime.Now - lastShot.TimeScored).TotalHours < 1)
+            {
+                eventScore.Status = ResultStatus.UNOFFICIAL;
             }
 
             //If shots have not been fired yet, then status if future
