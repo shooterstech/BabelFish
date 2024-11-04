@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="topLevelEvent"></param>
         /// <param name="eventName"></param>
         /// <returns></returns>
-        private static void GetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName)
+        public static void GetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName)
         {
 
             //If the match's status is official, then so to are all evetns
