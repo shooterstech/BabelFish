@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public static ResultStatus CalculateResultListStatus( this ResultList resultList, ResultStatus matchStatus ) {
 
-            if (matchStatus == ResultStatus.OFFICIAL)
+            if (matchStatus == ResultStatus.OFFICIAL)// || (DateTime.Now - resultList.LastUpdated).TotalHours < 1)
                 return ResultStatus.OFFICIAL;
 
             if (resultList.Items.Count == 0)
@@ -49,6 +49,61 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (oneIsUnofficial) {  return ResultStatus.UNOFFICIAL; }
 
             return resultList.Status;
+        }
+
+        /// <summary>
+        /// Determines the status of an Event for an Athlete. This method does not work for Teams
+        /// </summary>
+        /// <param name="eventScore"></param>
+        /// <param name="matchStatus"></param>
+        /// <param name="lastShot"></param>
+        /// <param name="numberOfShotsFired"></param>
+        /// <param name="topLevelEvent"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        private static void GetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName)
+        {
+
+            //If the match's status is official, then so to are all evetns
+            if (matchStatus == ResultStatus.OFFICIAL)
+            {
+                eventScore.Status = ResultStatus.OFFICIAL;
+                return;
+            }
+
+            if ((DateTime.Now - lastShot.TimeScored).TotalHours < 1)
+            {
+                eventScore.Status = ResultStatus.UNOFFICIAL;
+            }
+
+            //If shots have not been fired yet, then status if future
+            if (numberOfShotsFired == 0)
+            {
+                eventScore.Status = ResultStatus.FUTURE;
+                return;
+            }
+
+            var @event = topLevelEvent.FindEventComposite(eventName);
+            if (@event != null)
+            {
+                var numberOfShots = @event.GetAllSingulars().Count();
+
+                //if the number of shots fired is equal to expected number of shots
+                if (numberOfShotsFired >= numberOfShots)
+                {
+                    eventScore.Status = ResultStatus.UNOFFICIAL;
+                    return;
+                }
+                else if (numberOfShotsFired > 0)
+                {
+                    //if shots have been fired, but not yet complete
+                    eventScore.Status = ResultStatus.INTERMEDIATE;
+                    return;
+                }
+            }
+
+            eventScore.Status = matchStatus;
+            return;
         }
     }
 }
