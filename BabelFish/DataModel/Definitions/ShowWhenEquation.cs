@@ -18,7 +18,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public override ShowWhenBase Copy() {
             ShowWhenEquation copy = new ShowWhenEquation();
             copy.Comment = this.Comment;
-            copy.Not = this.Not;
             copy.Boolean = this.Boolean;
             foreach( var arg in Arguments)
                 copy.Arguments.Add(arg.Copy());
@@ -35,8 +34,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<ShowWhenBase> Arguments { get; set; } = new List<ShowWhenBase>();
 
         public override string ToString() {
-            var not = Not ? "NOT " : "";
-            return $"{not}{Boolean} {Arguments.Count} arguments";
+            return $"{Boolean} {Arguments.Count} arguments";
         }
 
     }

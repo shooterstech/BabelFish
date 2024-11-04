@@ -47,6 +47,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = RLF.Engagable;
                     break;
 
+                case ShowWhenCondition.NOT_ENGAGEABLE:
+                    answer = ! RLF.Engagable;
+                    break;
+
                 case ShowWhenCondition.DIMENSION_SMALL:
                     answer = RLF.ResolutionWidth >= 576;
                     break;
@@ -65,6 +69,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 case ShowWhenCondition.DIMENSION_EXTRA_EXTRA_LARGE:
                     answer = RLF.ResolutionWidth >= 1400;
+                    break;
+
+                case ShowWhenCondition.DIMENSION_LT_SMALL:
+                    answer = RLF.ResolutionWidth < 576;
+                    break;
+
+                case ShowWhenCondition.DIMENSION_LT_MEDIUM:
+                    answer = RLF.ResolutionWidth < 768;
+                    break;
+
+                case ShowWhenCondition.DIMENSION_LT_LARGE:
+                    answer = RLF.ResolutionWidth < 992;
+                    break;
+
+                case ShowWhenCondition.DIMENSION_LT_EXTRA_LARGE:
+                    answer = RLF.ResolutionWidth < 1200;
+                    break;
+
+                case ShowWhenCondition.DIMENSION_LT_EXTRA_EXTRA_LARGE:
+                    answer = RLF.ResolutionWidth < 1400;
                     break;
 
                 case ShowWhenCondition.MATCH_TYPE_LOCAL:
@@ -101,14 +125,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
             }
 
-            //Invert the answer if .Not is true (which means to apply a boolean NOT ) 
-            return answer ^ showWhen.Not;
+            return answer;
         }
 
         public bool Show( ShowWhenEquation showWhen ) {
 
             bool answer = true;
             bool first = true;
+            bool apployNot = false;
 
             foreach (var argument in showWhen.Arguments) {
                 if (first) {
@@ -125,12 +149,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         case ShowWhenBoolean.XOR:
                             answer ^= Show( argument );
                             break;
+                        case ShowWhenBoolean.NAND:
+                            answer &= Show( argument );
+                            apployNot = true;
+                            break;
+                        case ShowWhenBoolean.NOR:
+                            answer |= Show( argument );
+                            apployNot = true;
+                            break;
+                        case ShowWhenBoolean.NXOR:
+                            answer ^= Show( argument );
+                            apployNot = true;
+                            break;
                     }
                 }
             }
 
-            //Invert the answer if .Not is true (which means to apply a boolean NOT ) 
-            return answer ^ showWhen.Not;
+            return answer ^ apployNot;
         }
     }
 }

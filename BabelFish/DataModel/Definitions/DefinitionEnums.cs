@@ -297,7 +297,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// XOR operation
         /// </summary>
-        XOR
+        XOR,
+
+        /// <summary>
+        /// NAND operation
+        /// </summary>
+        NAND,
+
+        /// <summary>
+        /// NOR operation
+        /// </summary>
+        NOR,
+
+        /// <summary>
+        /// NXOR operation
+        /// </summary>
+        NXOR
     }
 
 
@@ -364,6 +379,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         DIMENSION_EXTRA_EXTRA_LARGE,
 
         /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 576.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_LT_SMALL,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 768.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_LT_MEDIUM,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 992.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_LT_LARGE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 1200.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_LT_EXTRA_LARGE,
+
+        /// <summary>
+        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 1400.
+        /// </summary>
+        /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
+        DIMENSION_LT_EXTRA_EXTRA_LARGE,
+
+        /// <summary>
         /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Local Match.
         /// </summary>
         MATCH_TYPE_LOCAL,
@@ -381,7 +426,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Displayed when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
         /// </summary>
-        ENGAGEABLE
+        ENGAGEABLE,
+
+        /// <summary>
+        /// Displayed when the Result List Intermediate Format will be displayed on an interface that is not considered user interface engageable. 
+        /// </summary>
+        NOT_ENGAGEABLE
     }
 
     [JsonConverter( typeof( StringEnumConverter ) )]

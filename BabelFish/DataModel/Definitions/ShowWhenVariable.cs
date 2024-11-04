@@ -8,7 +8,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class ShowWhenVariable : ShowWhenBase {
 
         public static readonly ShowWhenVariable ALWAYS_SHOW = new ShowWhenVariable() {
-            Not = false,
             Condition = ShowWhenCondition.TRUE
         };
 
@@ -23,7 +22,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public override ShowWhenBase Copy() {
             ShowWhenVariable copy = new ShowWhenVariable();
             copy.Comment = this.Comment;
-            copy.Not = this.Not;
             copy.Condition = this.Condition;
 
             return copy;
@@ -33,8 +31,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public ShowWhenCondition Condition { get; set; }
 
         public override string ToString() {
-            var not = Not ? "NOT " : "";
-            return $"{not}{Condition}";
+            return $"{Condition}";
         }
     }
 }
