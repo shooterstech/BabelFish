@@ -6,6 +6,9 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+    /// <summary>
+    /// Within a ResultListField the Method property describes the type of data, and the Source property describes where the data is coming from.
+    /// </summary>
     public class FieldSource : IReconfigurableRulebookObject, ICopy<FieldSource> {
 
         /// <inheritdoc/>

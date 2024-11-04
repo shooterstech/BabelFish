@@ -35,13 +35,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// The unique name for this ResultField. Must be unique within the Fields list
-        /// of a ResultLitFormat.
-        /// FieldNames of Rank, DisplayName, ResultCOFID, and UserID may not be used, as these are always implicitly added.
+        /// of a RESULT LIST FORMAT, including the common (pre-defined) fields.
         /// </summary>
         public string FieldName { get; set; }
 
         /// <summary>
-        /// Specifies the type of data that will be displayed. At a high level where the data for this ResultField is coming from.
+        /// Defines the type of data to be displayed.
         /// </summary>
         [JsonConverter( typeof( StringEnumConverter ) )]
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
