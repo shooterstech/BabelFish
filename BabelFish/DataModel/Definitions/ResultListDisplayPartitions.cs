@@ -18,13 +18,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return rldp;
         }
 
+        [JsonProperty( Order = 11 )]
         public ResultListDisplayPartition Header { get; set; } = new ResultListDisplayPartition();
 
-        public ResultListDisplayPartitionExtended Body { get; set; } = new ResultListDisplayPartitionExtended();
+        [JsonProperty( Order = 12 )]
+        public ResultListDisplayPartition Body { get; set; } = new ResultListDisplayPartition();
 
+        [JsonProperty( Order = 13 )]
+        public ResultListDisplayPartition Children { get; set; } = new ResultListDisplayPartition();
+
+        [JsonProperty( Order = 14 )]
         public ResultListDisplayPartition Footer { get; set; } = new ResultListDisplayPartition();
-
-        public ResultListDisplayPartitionExtended Children { get; set; } = new ResultListDisplayPartitionExtended();
 
         /// <inheritdoc/>
         [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]

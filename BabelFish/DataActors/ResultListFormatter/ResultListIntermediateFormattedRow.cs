@@ -589,52 +589,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Returns a list of RowLinkToData instances. Each instance references an external pages to link to from this row.
-        /// Currently supports ResultCOF and PublicProfile. 
-        /// NOTE: Event if the definition specifiefes PublciProfiel, if the user (represented
-        /// in this row) does not have a PublicProfile then the option will not be included.
-        /// </summary>
-        public List<RowLinkToData> GetLinkToDataList() {
-
-            List<RowLinkToData> list = new List<RowLinkToData>();
-
-            foreach( var rowLinkTo in GetLinkToList() ) {
-                var rowLinkToData = new RowLinkToData();
-                switch( rowLinkTo ) {
-                    case LinkToOption.ResultCOF:
-                        rowLinkToData.LinkTo = rowLinkTo;
-                        rowLinkToData.LinkToData = fields["ResultCOFID"];
-                        list.Add( rowLinkToData );
-                        break;
-
-                    case LinkToOption.PublicProfile:
-                        var userId = fields["UserID"];
-
-                        if (!string.IsNullOrEmpty( userId ) && resultListFormatted.UserProfileLookup.HasPublicProfile( userId )) {
-                            rowLinkToData.LinkTo = rowLinkTo;
-                            rowLinkToData.LinkToData = resultListFormatted.UserProfileLookup.AccountURLLookUp( userId );
-                            list.Add( rowLinkToData );
-                        }
-
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// Returns a list of LinkToOption, which references external pages that this row should link to.
-        /// Detaisl of the data can be learned from the function GetLinkToDataList()
-        /// These values are defined in the RESULT LIST FORMAT definition. 
-        /// </summary>
-        /// <returns></returns>
-        public abstract List<LinkToOption> GetLinkToList();
-
-        /// <summary>
         /// Returns a list of CSS classes that should be applied to the row.
         /// These values are defined in the RESULT LIST FORMAT definition. 
         /// </summary>
