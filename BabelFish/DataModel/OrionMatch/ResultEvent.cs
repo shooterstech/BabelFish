@@ -143,5 +143,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
             return lastShot;
         }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return $"ResultEvent for {this.Participant.DisplayName}";
+        }
     }
 }

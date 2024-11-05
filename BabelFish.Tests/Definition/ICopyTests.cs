@@ -409,7 +409,6 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             CollectionAssert.AreEqual(rlf.Format.Display.Body.ClassList, copy.Format.Display.Header.ClassList);
             CollectionAssert.AreEqual(rlf.Format.Display.Body.RowClass, copy.Format.Display.Body.RowClass);
-            CollectionAssert.AreEqual(rlf.Format.Display.Body.RowLinkTo, copy.Format.Display.Body.RowLinkTo);
 
             for (int i = 0; i < rlf.Format.Columns.Count(); i++)
             {

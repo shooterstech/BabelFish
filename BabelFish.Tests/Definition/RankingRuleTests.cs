@@ -373,48 +373,45 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        [Ignore]
         public async Task EriksPlayground() {
 
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient();
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024071913112845.0" ), "Individual - All" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024110515200904.0" ), "Team - All" ); //
             var resultList = resultListResponse.ResultList;
-            //resultList.Metadata.First().Value.Status = ResultStatus.INTERMEDIATE;
-            //resultList.Metadata.First().Value.EndDate = DateTime.Today;
-            // resultList.RankingRuleDef = "";
-            //var eventName = resultList.EventName;
-
-            var courseOfFireResponse = await definitionClient.GetCourseOfFireDefinitionAsync( SetName.Parse( resultList.CourseOfFireDef ) );
-            var courseOfFire = courseOfFireResponse.Value;
-
-            //var rankingRuleResponse = await definitionClient.GetRankingRuleDefinitionAsync( SetName.Parse( resultList.RankingRuleDef ) );
-            //var rankingRules = rankingRuleResponse.Value;
+            var rankingRuleDef = await resultList.GetRankingRuleDefinitionAsync();
+            var courseOfFireDef = await resultList.GetCourseOfFireDefinitionAsync();
 
             //Clear all the existing Projected Scores out
-            //foreach( var part in resultList.Items) {
-            //    foreach( var eventScore in part.EventScores.Values ) {
-            //        eventScore.Projected = null;
-            //    }
-            //}
+            foreach( var part in resultList.Items) {
+                foreach( var eventScore in part.EventScores.Values ) {
+                    eventScore.Projected = null;
+                }
+            }
 
-            ResultEngine resultEngine = new ResultEngine( resultList );
+            ResultEngine resultEngine = new ResultEngine( resultList, rankingRuleDef );
 
-            //ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);//new ProjectScoresByAverageShotFired( courseOfFire );
+            //ProjectScoresByScoreHistory ps = new ProjectScoresByScoreHistory(courseOfFire);
+            //new ProjectScoresByAverageShotFired( courseOfFire );
             //ps.APIStage = APIStage.BETA;
             //ps.XAPIKey = Constants.X_API_KEY;
 
+            var teamMemberComparer = new CompareByRankingDirective( courseOfFireDef, RankingDirective.GetDefault( resultList.EventName, resultList.ScoreConfigName ) );
+            teamMemberComparer.ResultStatus = resultList.Status;
+            teamMemberComparer.Projected = resultList.Projected;
+
 
             //ProjectorOfScores ps = new ProjectScoresByAverageShotFired( courseOfFire );
-            ProjectorOfScores ps = new ProjectScoresByNull( courseOfFire );
+            ProjectorOfScores ps = ProjectorOfScoresFactory.Create( ProjectorOfScoresType.AVERAGE_SHOT_FIRED, courseOfFireDef, teamMemberComparer );
+            ps.NumberOfTeamMembers = 3;
 
-            await resultEngine.SortAsync( ps, false );
+            await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
-                Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
+                Debug.Write( $"{re.ProjectedRank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Debug.Write( $"{re.EventScores["Qualification"].Score.D}  {re.EventScores["Qualification"].Score.D}" );
+                Debug.Write( $"{re.EventScores["Standing"].Score.I}  {re.EventScores["Standing"].Projected.I}" );
                 Debug.WriteLine("\n");
             }
 

@@ -105,8 +105,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-col-profile</item>
         /// <item>rlf-col-participant</item>
         /// <item>rlf-col-matchinfo</item>
-        /// <item>rlf-col-stage</item>
         /// <item>rlf-col-event</item>
+        /// <item>rlf-col-stage</item>
+        /// <item>rlf-col-series</item>
         /// <item>rlf-col-shot</item>
         /// <item>rlf-col-gap</item>
         /// </list>

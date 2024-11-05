@@ -211,8 +211,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
     /// <summary>
-    /// In a Result List Format, Fields describe the data to dispaly. The ResultFieldMethod
-    /// specifies where the data is coming from.
+    /// Specifies where the data is coming from for a Result List Field.
     /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ResultFieldMethod {
@@ -225,7 +224,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// This is the score the Participant is projected to have when they finish. If a Projected
-        /// score is nto known, then the absolute score is returned in its place.
+        /// score is not known, then the absolute score is returned in its place.
         /// </summary>
         [Description( "ProjectedScore" )]
         [EnumMember( Value = "ProjectedScore" )]

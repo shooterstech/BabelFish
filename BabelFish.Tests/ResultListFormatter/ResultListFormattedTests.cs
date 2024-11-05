@@ -137,12 +137,6 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
                         Assert.AreNotEqual( "", cell.LinkToData );
                 }
 
-                var linkToList = rei.GetLinkToDataList();
-                foreach( var link in linkToList) {
-                    Debug.Write( link.LinkTo );
-                    Debug.Write( link.LinkToData );
-                }
-
                 Debug.WriteLine( "" );
             }
 
