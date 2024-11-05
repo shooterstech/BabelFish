@@ -14,6 +14,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class ResultListDisplayColumn : IReconfigurableRulebookObject, ICopy<ResultListDisplayColumn>
     {
 
+        /// <summary>
+        /// Public consructor.
+        /// </summary>
         public ResultListDisplayColumn() { }
 
         /// <inheritdoc />
@@ -59,8 +62,39 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Text, with out interpolation, to display in the header cell.
         /// </summary>
         [DefaultValue( "" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonProperty( Order = 11, DefaultValueHandling = DefaultValueHandling.Ignore )]
         public string Header { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Text, with field interpolation, to display in each cell.
+        /// <para>The value of .Body will always be displayed in a body row. If .Child is null, the value of .Body is always displayed in the child rows.</para>
+        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
+        /// </summary>
+        [JsonProperty( Order = 12 )]
+        public string Body { get; set; } = string.Empty;
+
+        /// <summary>
+        /// What, if anything, the text in this cell should link to.
+        /// </summary>
+        [DefaultValue( LinkToOption.None )]
+        [JsonProperty( Order = 13, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
+
+        /// <summary>
+        /// Text, with field interpolation, to display in each cell in a child row.
+        /// <para>If .Child is null or an empty stirng, the value of .Body is displayed in its place. </para>
+        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
+        /// </summary>
+        [DefaultValue( "" )]
+        [JsonProperty( Order = 14, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        public string Child { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Text, without interpolation, to display in the footer cell.
+        /// </summary>
+        [DefaultValue( "" )]
+        [JsonProperty( Order = 15, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        public string Footer { get; set; } = string.Empty;
 
         /// <summary>
         /// A list of css classes to decorate each cell within this column.
@@ -77,52 +111,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-col-gap</item>
         /// </list>
         /// </remarks>
+        [JsonProperty( Order = 16 )]
         public List<string> ClassList { get; set; } = new List<string>();
-
-        /// <summary>
-        /// Text, with interpolation, to display in each cell.
-        /// <para>The value of .Body will always be displayed in a body row. If .Child is null, the value of .Body is always displayed in the child rows.</para>
-        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
-        /// </summary>
-        public string Body { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Text, with interpolation, to display in each cell in a child row.
-        /// <para>If .Child is null, the value of .Body is displayed in its place. An empty string indicates not to display any values in the child rows.</para>
-        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
-        /// </summary>
-        [DefaultValue( "" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
-        public string Child { get; set; } = string.Empty;
-
-        /// <summary>
-        /// What, if anything, the text in this cell should link to.
-        /// </summary>
-        [DefaultValue( LinkToOption.None )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Ignore )]
-        public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
 
         /// <summary>
         /// Logic to determine when this column should be shown.
         /// <para>Default is to always show the column.</para>
         /// </summary>
+        [JsonProperty( Order = 17 )]
         public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Copy();
-
-        /// <summary>
-        /// Text, without interpolation, to display in the footer cell.
-        /// </summary>
-        [DefaultValue( "" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Ignore )]
-        public string Footer { get; set; } = string.Empty;
 
 
         [Obsolete( "Use .ClassList instead." )]
+        [JsonProperty( Order = 21 )]
         public List<string> HeaderClassList { get; set; } = new List<string>();
 
         [Obsolete( "Use .ClassList instead." )]
+        [JsonProperty( Order = 22 )]
         public List<string> BodyClassList { get; set; } = new List<string>();
 
         [Obsolete( "Use .ClassList instead." )]
+        [JsonProperty( Order = 23 )]
         public List<string> FooterClassList { get; set; } = new List<string>();
 
         /// <inheritdoc/>

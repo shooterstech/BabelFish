@@ -189,21 +189,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum LinkToOption {
         /// <summary>
-        /// Indicates that the Cell or Row should link to the ResultCOF Page (sometimes called Individual Score Page). 
+        /// Indicates that the Cell should link to the ResultCOF Page (sometimes called Individual Score Page). 
         /// </summary>
         [Description( "ResultCOF" )]
         [EnumMember( Value = "ResultCOF" )]
         ResultCOF,
 
         /// <summary>
-        /// Indicates that the Cell or Row should link to the athletes or team's public profile page, if they have one. 
+        /// Indicates that the Cell should link to the athletes or team's public profile page, if they have one. 
         /// </summary>
         [Description( "PublicProfile" )]
         [EnumMember( Value = "PublicProfile" )]
         PublicProfile,
 
         /// <summary>
-        /// Indicates that the Cell or Row should not link to any other page. Which is the default option. 
+        /// Indicates that the Cell should not link to any page. Which is the default option. 
         /// </summary>
         [Description( "None" )]
         [EnumMember( Value = "None" )]
@@ -282,6 +282,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShotMappingMethodType { SEQUENTIAL }
 
+    /// <summary>
+    /// The type of Boolean operation to apply in a ShowWhenEquation instance.
+    /// </summary>
+
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShowWhenBoolean {
         /// <summary>
@@ -315,129 +319,140 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         NXOR
     }
 
-
+    /// <summary>
+    /// Conditional variables that evaluate to true or false at runtime, to help decide if a column should be displayed or not.
+    /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShowWhenCondition {
         /// <summary>
-        /// Always display.
+        /// Always evaluates to true.
         /// </summary>
         TRUE,
 
         /// <summary>
-        /// Never display.
+        /// Always evalutes to false.
         /// </summary>
         FALSE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Status is FUTURE.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Status is FUTURE.
         /// </summary>
         RESULT_STATUS_FUTURE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Status is INTERMEDIATE.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Status is INTERMEDIATE.
         /// </summary>
         RESULT_STATUS_INTERMEDIATE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Status is UNOFFICIAL.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Status is UNOFFICIAL.
         /// </summary>
         RESULT_STATUS_UNOFFICIAL,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Status is OFFICIAL.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Status is OFFICIAL.
         /// </summary>
         RESULT_STATUS_OFFICIAL,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 576.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 576.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_SMALL,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 768.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 768.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_MEDIUM,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 992.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 992.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_LARGE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 1200.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 1200.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_EXTRA_LARGE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth >= 1400.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 1400.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_EXTRA_EXTRA_LARGE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 576.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth < 576.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_LT_SMALL,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 768.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth < 768.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_LT_MEDIUM,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 992.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth < 992.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_LT_LARGE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 1200.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth < 1200.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_LT_EXTRA_LARGE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Fromat .ResolutionWidth < 1400.
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth < 1400.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>
         DIMENSION_LT_EXTRA_EXTRA_LARGE,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Local Match.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Match's Type is a Local Match.
         /// </summary>
         MATCH_TYPE_LOCAL,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Virtual Match.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Match's Type is a Virtual Match.
         /// </summary>
         MATCH_TYPE_VIRTUAL,
 
         /// <summary>
-        /// Display when the Result List Intermedaite Format's Result List's Match's Type is a Tournament.
+        /// Evaluates to true when the Result List Intermedaite Format's Result List's Match's Type is a Tournament.
         /// </summary>
         MATCH_TYPE_TOURNAMENT,
 
         /// <summary>
-        /// Displayed when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
         /// </summary>
         ENGAGEABLE,
 
         /// <summary>
-        /// Displayed when the Result List Intermediate Format will be displayed on an interface that is not considered user interface engageable. 
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is not considered user interface engageable. 
         /// </summary>
         NOT_ENGAGEABLE
     }
 
+    /// <summary>
+    /// Concrete class id for a ShowWhenBase. Indicates if the ShowWhenBase abstract class is of concrete class ShowWhenVariable or ShowWhenEquation.
+    /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShowWhenOperation {
+        /// <summary>
+        /// ShowWhenBased class is of concrete type ShowWhenVariable
+        /// </summary>
         VARIABLE,
 
+        /// <summary>
+        /// ShowWhenBased class is of concrete type ShowWhenEquation
+        /// </summary>
         EQUATION
     }
 

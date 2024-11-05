@@ -8,16 +8,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class ResultListDisplayPartitions : IReconfigurableRulebookObject, ICopy<ResultListDisplayPartitions>
     {
 
-        public ResultListDisplayPartition Header { get; set; } = new ResultListDisplayPartition();
-
-        public ResultListDisplayPartitionExtended Body { get; set; } = new ResultListDisplayPartitionExtended();
-
-        public ResultListDisplayPartition Footer { get; set; } = new ResultListDisplayPartition();
-
-        public ResultListDisplayPartitionExtended Children { get; set; } = new ResultListDisplayPartitionExtended();
-
-        public ResultListDisplayPartitions Copy()
-        {
+        /// <inheritdoc />
+        public ResultListDisplayPartitions Copy() {
             ResultListDisplayPartitions rldp = new ResultListDisplayPartitions();
             rldp.Header = this.Header.Copy();
             rldp.Body = this.Body.Copy();
@@ -25,6 +17,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             rldp.Children = this.Children.Copy();
             return rldp;
         }
+
+        public ResultListDisplayPartition Header { get; set; } = new ResultListDisplayPartition();
+
+        public ResultListDisplayPartitionExtended Body { get; set; } = new ResultListDisplayPartitionExtended();
+
+        public ResultListDisplayPartition Footer { get; set; } = new ResultListDisplayPartition();
+
+        public ResultListDisplayPartitionExtended Children { get; set; } = new ResultListDisplayPartitionExtended();
 
         /// <inheritdoc/>
         [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]

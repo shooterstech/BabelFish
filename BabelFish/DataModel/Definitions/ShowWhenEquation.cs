@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -26,13 +27,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// The type of boolean operatino that should be applied to all of the Arguments.
+        /// The type of boolean operation that should be applied to all of the Arguments.
         /// </summary>
         [JsonConverter( typeof( StringEnumConverter ) )]
-        public ShowWhenBoolean Boolean { get; set; }
+        [DefaultValue( ShowWhenBoolean.AND )]
+        public ShowWhenBoolean Boolean { get; set; } = ShowWhenBoolean.AND;
 
         public List<ShowWhenBase> Arguments { get; set; } = new List<ShowWhenBase>();
 
+        /// <inheritdoc/>
         public override string ToString() {
             return $"{Boolean} {Arguments.Count} arguments";
         }
