@@ -39,8 +39,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "UserID",
             "Creator",
             "Owner",
-            "Status",
-            "TargetCollectionName"
+            "TargetCollectionName",
+            "Status"
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -153,13 +153,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			"ResultCOFID", 
             "UserID",
             "LocalDate", 
+            "Status",
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
             "MatchID", 
             "Creator", //"Orion Scoring System version 2.20.5.2"
             "Owner", //"OrionAcct000001"
-            "Status", //"INTERMEDIATE"
             "TargetCollectionName"
             */
 
@@ -286,18 +286,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					else
 						return "";
 
-				case "Status":
-					if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
-						return metadata.Status.Description();
-					else
-						return "";
-
 				case "TargetCollectionName":
 					if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
 						return metadata.TargetCollectionName;
 					else
 						return "";
 
+                case "Status":
+                    return GetStatus().Description();
 
                 default:
                     return "UNKNOWN";
@@ -369,7 +365,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (resultEvent.EventScores != null) {
                 if (resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
 
-                    if (tryAndUseProjected && scoreToReturn.Projected != null) {
+                    if (tryAndUseProjected 
+                        && scoreToReturn.Projected != null
+                        && ( scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE) ) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -386,7 +384,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 var aliasEventName = "";
                 if (AliasEventNames.TryGetValue( eventName , out aliasEventName )) {
                     if (resultEvent.EventScores.TryGetValue( aliasEventName, out scoreToReturn )) {
-                        if (tryAndUseProjected && scoreToReturn.Projected != null) {
+                        if (tryAndUseProjected 
+                            && scoreToReturn.Projected != null
+                            && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
                             //If the Projected Score is known, try and return it
                             return scoreToReturn.Projected;
                         } else {
@@ -479,6 +479,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return resultEvent.RankOrder;
 
             return 0;
+        }
+
+        public ResultStatus GetStatus() {
+
+            EventScore topLevelScore;
+            string topLevelEventName = this.resultListFormatted.ResultList.EventName;
+
+            if (resultEvent.EventScores != null) {
+                if (resultEvent.EventScores.TryGetValue( topLevelEventName, out topLevelScore )) {
+
+                    return topLevelScore.Status;
+                }
+            }
+
+            ResultListMetadata metadata;
+            if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
+                return metadata.Status;
+
+            //Shouldn't ever get here
+            return ResultStatus.FUTURE;
         }
 
         /// <summary>

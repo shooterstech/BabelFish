@@ -123,10 +123,17 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 foreach( var tm in teamToProject.GetTeamMembersAsIEventScoreProjection() ) {
 
                     if (teamMemberCount < NumberOfTeamMembers && tm.EventScores.TryGetValue( eventToProject.EventName, out teamMemberEventScore) ) {
-                        teamEventScore.Projected.I += teamMemberEventScore.Projected.I;
-                        teamEventScore.Projected.X += teamMemberEventScore.Projected.X;
-                        teamEventScore.Projected.D += teamMemberEventScore.Projected.D;
-                        teamEventScore.Projected.S += teamMemberEventScore.Projected.S;
+                        if (teamMemberEventScore.Status == ResultStatus.FUTURE || teamMemberEventScore.Status == ResultStatus.INTERMEDIATE) {
+                            teamEventScore.Projected.I += teamMemberEventScore.Projected.I;
+                            teamEventScore.Projected.X += teamMemberEventScore.Projected.X;
+                            teamEventScore.Projected.D += teamMemberEventScore.Projected.D;
+                            teamEventScore.Projected.S += teamMemberEventScore.Projected.S;
+                        } else {
+                            teamEventScore.Projected.I += teamMemberEventScore.Score.I;
+                            teamEventScore.Projected.X += teamMemberEventScore.Score.X;
+                            teamEventScore.Projected.D += teamMemberEventScore.Score.D;
+                            teamEventScore.Projected.S += teamMemberEventScore.Score.S;
+                        }
                     }
 
                     teamMemberCount++;
