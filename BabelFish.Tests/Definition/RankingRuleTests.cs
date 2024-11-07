@@ -378,7 +378,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient();
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024110515200904.0" ), "Team - All" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024110715090340.0" ), "Individual - Sporter" ); //
             var resultList = resultListResponse.ResultList;
             var rankingRuleDef = await resultList.GetRankingRuleDefinitionAsync();
             var courseOfFireDef = await resultList.GetCourseOfFireDefinitionAsync();
@@ -409,9 +409,9 @@ namespace Scopos.BabelFish.Tests.Definition {
             await resultEngine.SortAsync( ps, true );
 
             foreach ( var re in resultList.Items ) {
-                Debug.Write( $"{re.ProjectedRank} {re.Participant.DisplayName}  " );
+                Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
                 //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Debug.Write( $"{re.EventScores["Standing"].Score.I}  {re.EventScores["Standing"].Projected.I}" );
+                Debug.Write( $"{re.EventScores["Qualification"].Score.I}  {re.EventScores["Final"].Score.D}  {re.EventScores["Individual"].Score.S}" );
                 Debug.WriteLine("\n");
             }
 
