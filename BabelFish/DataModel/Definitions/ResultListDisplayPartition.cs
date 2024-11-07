@@ -6,10 +6,16 @@ using Newtonsoft.Json;
 using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    
+
+    /// <summary>
+    /// Specifies how a row, in a ResultListIntermediatFormat should be decorated for styling.
+    /// </summary>
     public class ResultListDisplayPartition : IReconfigurableRulebookObject, ICopy<ResultListDisplayPartition>
     {
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public ResultListDisplayPartition() {
             RowClass = new List<string>();
         }
@@ -57,6 +63,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The list of css classes to assign to the rows within this Partition.
         /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <listheader>While any css calss values may be used, the common values are:</listheader>
+        /// <item>rlf-row-header</item>
+        /// <item>rlf-row-athlete</item>
+        /// <item>rlf-row-team</item>
+        /// <item>rlf-row-child</item>
+        /// <item>rlf-row-footer</item>
+        /// </list>"
+        /// </remarks>
         public List<string> ClassList { get; set; } = new List<string>();
 
         /// <summary>

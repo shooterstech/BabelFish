@@ -498,7 +498,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return metadata.Status;
 
             //Shouldn't ever get here
-            return ResultStatus.FUTURE;
+            return ResultStatus.OFFICIAL;
         }
 
         /// <summary>
