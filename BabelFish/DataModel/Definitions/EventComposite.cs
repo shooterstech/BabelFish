@@ -303,7 +303,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             //We shouldn't get here if the cof is defined correctly.
             parent.EventType = EventtType.SINGULAR;
-            parent.ScoreFormat = "Shot";
+            parent.ScoreFormat = "Shots";
         }
         
         /// <inheritdoc/>

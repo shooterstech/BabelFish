@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Type = SingularType.SHOT;
             EventName = "";
             Values = "";
-            ScoreFormat = "d";
+            ScoreFormat = "Shots";
             StageLabel = "";
             ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL;
         }
