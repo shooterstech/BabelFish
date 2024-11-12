@@ -452,7 +452,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// ShowWhenBased class is of concrete type ShowWhenEquation
         /// </summary>
-        EQUATION
+        EQUATION,
+
+        /// <summary>
+        /// ShowWhenBase class is of concrete type ShowWhenSegmentGroup
+        /// </summary>
+        SEGMENT_GROUP
     }
 
 

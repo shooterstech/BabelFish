@@ -26,6 +26,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (showWhen is ShowWhenVariable)
                 return Show( (ShowWhenVariable)showWhen );
 
+            if (showWhen is ShowWhenSegmentGroup)
+                return Show( (ShowWhenSegmentGroup)showWhen );
+
             //else showWhen is a ShowWhenEquation
 
             return Show( (ShowWhenEquation)showWhen );
@@ -166,6 +169,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
             return answer ^ apployNot;
+        }
+
+        public bool Show( ShowWhenSegmentGroup showWhen ) {
+
+            ResultListMetadata metadata;
+            if ( this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata ) ) {
+                return showWhen.SegmentGroupName.Equals( metadata.SegmentGroupName );
+            }
+
+            return false;
         }
     }
 }

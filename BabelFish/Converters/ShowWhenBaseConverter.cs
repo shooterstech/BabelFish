@@ -36,6 +36,8 @@ namespace Scopos.BabelFish.Converters {
                     return JsonConvert.DeserializeObject<ShowWhenEquation>( jo.ToString(), SpecifiedSubclassConversion );
                 case "VARIABLE" :
                     return JsonConvert.DeserializeObject<ShowWhenVariable>( jo.ToString(), SpecifiedSubclassConversion );
+                case "SEGMENT_GROUP":
+                    return JsonConvert.DeserializeObject<ShowWhenSegmentGroup>( jo.ToString(), SpecifiedSubclassConversion );
                 default:
                     break;
             }
