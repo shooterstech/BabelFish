@@ -21,8 +21,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
             "Rank", 
             "RankOrder",
+            "Empty",
             "DisplayName", 
             "DisplayNameShort", 
+            "DisplayNameAbbreviated",
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -37,8 +39,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "UserID",
             "Creator",
             "Owner",
-            "Status",
-            "TargetCollectionName"
+            "TargetCollectionName",
+            "Status"
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -72,11 +74,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 switch (field.Method) {
                     case ResultFieldMethod.PARTICIPANT_ATTRIBUTE :
-                        fields[fieldName] = GetParticipantAttribute( source.Name.ToString() );
+                        fields[fieldName] = GetTruncatedValue( source, GetParticipantAttribute( source.Name.ToString() ) );
                         break;
 
                     case ResultFieldMethod.ATTRIBUTE:
-                        fields[fieldName] = GetAttributeValue( source );
+                        fields[fieldName] = GetTruncatedValue( source, GetAttributeValue( source ) );
                         break;
 
                     case ResultFieldMethod.SCORE:
@@ -99,6 +101,35 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
+        /// Method is responsible for implementing the .TrucateAt rule in the FieldSource.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="untruncatedValue"></param>
+        /// <returns></returns>
+        private string GetTruncatedValue( FieldSource source , string untruncatedValue ) {
+            if ( source.TruncateAt > 3 && untruncatedValue.Length > source.TruncateAt)
+            {
+                return $"{untruncatedValue.Substring( 0, source.TruncateAt - 3 )}...";
+            } else {
+                return untruncatedValue;
+            }
+        }
+
+        /// <summary>
+        /// Static version of GetRuncatedValue. Truncates a string at 24 characters.
+        /// </summary>
+        /// <param name="untruncatedValue"></param>
+        /// <returns></returns>
+        private string GetTruncatedValue( string untruncatedValue ) {
+            if (untruncatedValue.Length > 23) {
+                return $"{untruncatedValue.Substring( 0, 20 )}...";
+            } else {
+                return untruncatedValue;
+            }
+
+        }
+
+        /// <summary>
         /// Returns the specified ParticipantAttribute
         /// </summary>
         /// <param name="source">The name of the ParticipantAttribute to return.</param>
@@ -108,8 +139,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			//Fields that are unique to the Participant 
             "Rank", 
             "RankOrder",
+            "Empty",
             "DisplayName", 
             "DisplayNameShort", 
+            "DisplayNameAbbreviated",
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -120,13 +153,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			"ResultCOFID", 
             "UserID",
             "LocalDate", 
+            "Status",
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
             "MatchID", 
             "Creator", //"Orion Scoring System version 2.20.5.2"
             "Owner", //"OrionAcct000001"
-            "Status", //"INTERMEDIATE"
             "TargetCollectionName"
             */
 
@@ -149,10 +182,31 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     return "";
 
+                case "Empty":
+                    return "";
+
                 case "DisplayName":
                     var dn = resultEvent.Participant.DisplayName;
                     if (!string.IsNullOrEmpty( dn ))
                         return dn;
+
+                    return "Unknown";
+
+                case "DisplayNameAbbreviated":
+                    //First try the regular display name
+                    var dna = resultEvent.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
+                        return dna;
+
+                    //if that's too long, try the display name short, if it exists
+                    dna = resultEvent.Participant.DisplayNameShort;
+                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
+                        return dna;
+                    
+                    //If that's too long, go back to the regular display name and truncate it
+                    dna = resultEvent.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dna ))
+                        return GetTruncatedValue( dna );
 
                     return "Unknown";
 
@@ -232,18 +286,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					else
 						return "";
 
-				case "Status":
-					if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
-						return metadata.Status.Description();
-					else
-						return "";
-
 				case "TargetCollectionName":
 					if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
 						return metadata.TargetCollectionName;
 					else
 						return "";
 
+                case "Status":
+                    return GetStatus().Description();
 
                 default:
                     return "UNKNOWN";
@@ -315,7 +365,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (resultEvent.EventScores != null) {
                 if (resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
 
-                    if (tryAndUseProjected && scoreToReturn.Projected != null) {
+                    if (tryAndUseProjected 
+                        && scoreToReturn.Projected != null
+                        && ( scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE) ) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -332,7 +384,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 var aliasEventName = "";
                 if (AliasEventNames.TryGetValue( eventName , out aliasEventName )) {
                     if (resultEvent.EventScores.TryGetValue( aliasEventName, out scoreToReturn )) {
-                        if (tryAndUseProjected && scoreToReturn.Projected != null) {
+                        if (tryAndUseProjected 
+                            && scoreToReturn.Projected != null
+                            && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
                             //If the Projected Score is known, try and return it
                             return scoreToReturn.Projected;
                         } else {
@@ -427,6 +481,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return 0;
         }
 
+        public ResultStatus GetStatus() {
+
+            EventScore topLevelScore;
+            string topLevelEventName = this.resultListFormatted.ResultList.EventName;
+
+            if (resultEvent.EventScores != null) {
+                if (resultEvent.EventScores.TryGetValue( topLevelEventName, out topLevelScore )) {
+
+                    return topLevelScore.Status;
+                }
+            }
+
+            ResultListMetadata metadata;
+            if (TryGetResultListMetadata( resultEvent.MatchID, out metadata ))
+                return metadata.Status;
+
+            //Shouldn't ever get here
+            return ResultStatus.OFFICIAL;
+        }
+
         /// <summary>
         /// Returns the field value for the passed in field name.
         /// </summary>
@@ -465,8 +539,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             var column = resultListFormatted.ResultListFormat.Format.Columns[index];
 
-            var source = (string)column.Body;
-            var value = source.Replace( fields );
+            string source = column.Body;
+            if (this.IsChildRow && ! string.IsNullOrEmpty( column.Child ))
+                source = column.Child;
+            string value = source.Replace( fields );
 
             var classes = new List<string>();
             foreach (var c in column.ClassList)
@@ -477,32 +553,40 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 classes.Add( (string)c );
 
             var cellValues = new CellValues( this.resultListFormatted, value, classes );
+            cellValues.Body = column.Body;
+            cellValues.Child = column.Child;
 
             //Check if the Column definition requires us to link to another page.
-            switch (column.BodyLinkTo.ToString()) {
-                case "ResultCOF":
-                    cellValues.LinkTo = LinkToOption.ResultCOF;
-                    cellValues.LinkToData = fields["ResultCOFID"];
-                    break;
+            if (this.resultListFormatted.Engagable) {
+                switch (column.BodyLinkTo.ToString()) {
+                    case "ResultCOF":
+                        cellValues.LinkTo = LinkToOption.ResultCOF;
+                        cellValues.LinkToData = fields["ResultCOFID"];
+                        break;
 
-                case "PublicProfile":
-					var userId = fields["UserID"];
+                    case "PublicProfile":
+                        var userId = fields["UserID"];
 
-					if (!string.IsNullOrEmpty( userId ) && resultListFormatted.UserProfileLookup.HasPublicProfile( userId )) {
-                        //User had a public profile
-						cellValues.LinkTo = LinkToOption.PublicProfile; 
-						cellValues.LinkToData = resultListFormatted.UserProfileLookup.AccountURLLookUp( userId );
-					} else {
-						//This is the case the user does not have a profile, or the profile is marked private
-						cellValues.LinkTo = LinkToOption.None;
-						cellValues.LinkToData = "";
-					}
-                    break;
+                        if (!string.IsNullOrEmpty( userId ) && resultListFormatted.UserProfileLookup.HasPublicProfile( userId )) {
+                            //User had a public profile
+                            cellValues.LinkTo = LinkToOption.PublicProfile;
+                            cellValues.LinkToData = resultListFormatted.UserProfileLookup.AccountURLLookUp( userId );
+                        } else {
+                            //This is the case the user does not have a profile, or the profile is marked private
+                            cellValues.LinkTo = LinkToOption.None;
+                            cellValues.LinkToData = "";
+                        }
+                        break;
 
-                default:
-                    cellValues.LinkTo = LinkToOption.None;
-                    cellValues.LinkToData = "";
-                    break;
+                    default:
+                        cellValues.LinkTo = LinkToOption.None;
+                        cellValues.LinkToData = "";
+                        break;
+                }
+            } else {
+                //If the RLF is not engagable, don't include the links
+                cellValues.LinkTo = LinkToOption.None;
+                cellValues.LinkToData = "";
             }
 
             return cellValues;
@@ -525,72 +609,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Returns a list of RowLinkToData instances. Each instance references an external pages to link to from this row.
-        /// Currently supports ResultCOF and PublicProfile. 
-        /// NOTE: Event if the definition specifiefes PublciProfiel, if the user (represented
-        /// in this row) does not have a PublicProfile then the option will not be included.
-        /// </summary>
-        public List<RowLinkToData> GetLinkToDataList() {
-
-            List<RowLinkToData> list = new List<RowLinkToData>();
-
-            foreach( var rowLinkTo in GetLinkToList() ) {
-                var rowLinkToData = new RowLinkToData();
-                switch( rowLinkTo ) {
-                    case LinkToOption.ResultCOF:
-                        rowLinkToData.LinkTo = rowLinkTo;
-                        rowLinkToData.LinkToData = fields["ResultCOFID"];
-                        list.Add( rowLinkToData );
-                        break;
-
-                    case LinkToOption.PublicProfile:
-                        var userId = fields["UserID"];
-
-                        if (!string.IsNullOrEmpty( userId ) && resultListFormatted.UserProfileLookup.HasPublicProfile( userId )) {
-                            rowLinkToData.LinkTo = rowLinkTo;
-                            rowLinkToData.LinkToData = resultListFormatted.UserProfileLookup.AccountURLLookUp( userId );
-                            list.Add( rowLinkToData );
-                        }
-
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// Returns a list of LinkToOption, which references external pages that this row should link to.
-        /// Detaisl of the data can be learned from the function GetLinkToDataList()
-        /// These values are defined in the RESULT LIST FORMAT definition. 
-        /// </summary>
-        /// <returns></returns>
-        public abstract List<LinkToOption> GetLinkToList();
-
-        /// <summary>
         /// Returns a list of CSS classes that should be applied to the row.
         /// These values are defined in the RESULT LIST FORMAT definition. 
         /// </summary>
+        /// <remarks>
+        /// Common values include:
+        /// <list type="bullet">
+        /// <item>rlf-row-header</item>
+        /// <item>rlf-row-athlete</item>
+        /// <item>rlf-row-team</item>
+        /// <item>rlf-row-child</item>
+        /// <item>rlf-row-footer</item>
+        /// </list>
+        /// </remarks>
         /// <returns></returns>
         public abstract List<string> GetClassList();
-
-        /// <summary>
-        /// Boolean, indicating that this Cell should not be displayed, because it contains a CSS Class (in .ClassList)
-        /// that the user has asked to hide using the ResultListIntermedateFormatted.HideRowsWithTheseClasses
-        /// </summary>
-        public bool Hide { 
-            get { 
-                foreach( var c in GetClassList() ) {
-                    if (this.resultListFormatted.HideRowsWithTheseClasses.Contains( c ) ) { 
-                        return true; 
-                    }
-                }
-
-                return false;
-            }
-        }
     }
 }

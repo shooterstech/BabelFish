@@ -44,22 +44,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public List<string> ClassList { get; set; }
 
         /// <summary>
-        /// Boolean, indicating that this Cell should not be displayed, because it contains a CSS Class (in .ClassList)
-        /// that the user has asked to hide using the ResultListIntermedateFormatted.HideColumnsWithTheseClasses.
-        /// </summary>
-        public bool Hide {
-            get {
-                foreach( var c in this.ResultListFormatted.HideColumnsWithTheseClasses) {
-                    if ( ClassList.Contains( c) ) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Indicates what page or view this Cell should link to.
         /// The data to link to this page is found in the LinkToData property.
         /// The default value is None, indicating no link.
@@ -72,5 +56,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public override string ToString() {
             return $"CellValues: {Text}";
         }
+
+        public string Body { get; set; } = "";
+        public string Child { get; set; } = "";
     }
 }

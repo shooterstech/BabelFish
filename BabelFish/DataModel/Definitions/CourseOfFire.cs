@@ -58,11 +58,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         copy.RangeScripts.Add( rs.Copy() );
                     }
                 }
-                if (this.Singulars != null) {
-                    foreach (var s in this.Singulars) {
-                        copy.Singulars.Add( s.Copy() );
-                    }
-                }
                 if (this.AbbreviatedFormats != null) {
                     foreach (var af in this.AbbreviatedFormats) {
                         copy.AbbreviatedFormats.Add( af.Copy() );
@@ -73,6 +68,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (this.Events != null) {
                 foreach (var e in this.Events) {
                     copy.Events.Add( e.Copy() );
+                }
+            }
+            if (this.Singulars != null) {
+                foreach (var s in this.Singulars) {
+                    copy.Singulars.Add( s.Copy() );
                 }
             }
 

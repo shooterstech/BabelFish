@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
         [TestInitialize]
         public async Task InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+            Scopos.BabelFish.Runtime.Settings.XApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1"; // Constants.X_API_KEY;
 
             matchClient = new OrionMatchAPIClient( );
             definitionClient = new DefinitionAPIClient( );
@@ -52,10 +52,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
-            Assert.AreEqual( resultList.Items.Count, rlf.Rows.Count );
+            Assert.AreEqual( resultList.Items.Count, rlf.ShownRows.Count );
 
             //Use the first item in the resultEventIntermediateList for closer inspection
-            var rei = rlf.Rows[0];
+            var rei = rlf.ShownRows[0];
 
             List<string> fieldNameList = rlf.FieldNames;
 
@@ -122,7 +122,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Debug.WriteLine( "" );
 
             //For each participant
-            foreach (var rei in rlf.Rows) {
+            foreach (var rei in rlf.ShownRows) {
 
                 //For each column to display
                 //NOTE: You can also get the column count via the resultListFormat, using: resultListFormat.Format.Columns.Count
@@ -135,12 +135,6 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
                     if (cell.LinkTo != LinkToOption.None)
                         Assert.AreNotEqual( "", cell.LinkToData );
-                }
-
-                var linkToList = rei.GetLinkToDataList();
-                foreach( var link in linkToList) {
-                    Debug.Write( link.LinkTo );
-                    Debug.Write( link.LinkToData );
                 }
 
                 Debug.WriteLine( "" );
@@ -189,7 +183,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Debug.WriteLine( "" );
 
             //For each participant
-            foreach (var rei in rlf.Rows) {
+            foreach (var rei in rlf.ShownRows) {
 
                 //For each column to display
                 //NOTE: You can also get the column count via the resultListFormat, using: resultListFormat.Format.Columns.Count
@@ -250,7 +244,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Debug.WriteLine( "" );
 
             //For each participant
-            foreach (var rei in rlf.Rows) {
+            foreach (var rei in rlf.ShownRows) {
 
                 //For each column to display
                 //NOTE: You can also get the column count via the resultListFormat, using: resultListFormat.Format.Columns.Count
@@ -320,7 +314,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
 
             //For each row, each row represents on Competitor and their scores
-            foreach (var rei in rlf.Rows) {
+            foreach (var rei in rlf.ShownRows) {
 
                 //Start the Competitor row
                 Debug.WriteLine( $"<div class=\"{string.Join( ',', rei.GetClassList() )}\">" );
@@ -365,10 +359,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.1.2024072017000432.0" );
+            MatchID matchId = new MatchID( "1.2457.2024103114463283.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - All";
+            var resultListName = "Individual - Sporter";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -376,7 +370,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultEventName = resultList.EventName;
 
             //Get the ResultListFormat to use for formatting
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+            //var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+            var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
             var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             var resultListFormat = resultListFormatResponse.Definition;
             Assert.IsNotNull( resultListFormat );
@@ -386,20 +381,17 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
 
+            rlf.Engagable = true;
+            rlf.ResolutionWidth = 1800;
+            rlf.ChildrenToShow = 4000;
+
             CellValues tryCellValues, cellValues;
-            foreach (var row in rlf.Rows) {
-                for (int i = 0; i < rlf.GetColumnCount(); i++) {
-                    var cell = row.GetColumnBodyCell( i );
-
-                    Console.Write( $"{cell.Text}, " );
-                }
-                Console.WriteLine();
+            foreach (int i in rlf.GetShownColumnIndexes()) {
+                Console.Write( $"{i}, " );
             }
+            Console.WriteLine();
 
-            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-series" );
-            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-gap" );
-            rlf.HideColumnsWithTheseClasses.Add( "rlf-col-profile" );
-            foreach (var row in rlf.Rows) {
+            foreach (var row in rlf.ShownRows) {
                 foreach (int i in rlf.GetShownColumnIndexes()) {
                     var cell = row.GetColumnBodyCell( i );
 

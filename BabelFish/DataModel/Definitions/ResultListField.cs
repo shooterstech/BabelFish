@@ -7,11 +7,52 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+    /// <summary>
+    /// A ResultListField describes data, called a field, that will be displayed in the Resut List Intermediate Format. 
+    /// Including specifying where the data will come from. For example, the score the athlete shot in the Prone event.
+    /// </summary>
+    /// <remarks> The following are common fields that are always defined.
+    /// <list type="bullet">
+    /// <item>Rank</item> 
+    /// <item>RankOrder</item>
+    /// <item>Empty</item>
+    /// <item>DisplayName</item> 
+    /// <item>DisplayNameShort</item> 
+    /// <item>DisplayNameAbbreviated</item>
+    /// <item>FamilyName</item>
+    /// <item>GivenName</item>
+    /// <item>MiddleName</item>
+    /// <item>HomeTown</item>
+    /// <item>Country</item> 
+    /// <item>Club</item>
+    /// <item>CompetitorNumber</item> 
+    /// <item>MatchLocation</item> 
+    /// <item>MatchID</item> 
+    /// <item>LocalDate</item> 
+    /// <item>ResultCOFID</item> 
+    /// <item>UserID</item>
+    /// <item>Creator</item>
+    /// <item>Owner</item>
+    /// <item>Status</item>
+    /// <item>TargetCollectionName</item>
+    /// </list>"
+    /// </remarks>
     public class ResultListField : IReconfigurableRulebookObject, ICopy<ResultListField>
     {
-
+        /// <summary>
+        /// Public constructor
+        /// </summary>
         public ResultListField() {
             Source = new FieldSource();
+        }
+
+        /// <inheritdoc/>
+        public ResultListField Copy() {
+            ResultListField rlf = new ResultListField();
+            rlf.FieldName = this.FieldName;
+            rlf.Method = this.Method;
+            rlf.Source = this.Source.Copy();
+            return rlf;
         }
 
         [OnDeserialized]
@@ -24,13 +65,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// The unique name for this ResultField. Must be unique within the Fields list
-        /// of a ResultLitFormat.
-        /// FieldNames of Rank, DisplayName, ResultCOFID, and UserID may not be used, as these are always implicitly added.
+        /// of a RESULT LIST FORMAT, including the common (pre-defined) fields.
         /// </summary>
         public string FieldName { get; set; }
 
         /// <summary>
-        /// Specifies the type of data that will be displayed. At a high level where the data for this ResultField is coming from.
+        /// Defines the type of data to be displayed.
         /// </summary>
         [JsonConverter( typeof( StringEnumConverter ) )]
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
@@ -42,17 +82,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public FieldSource Source { get; set; }
 
+        /// <inheritdoc/>
         public override string ToString() {
             return $"{FieldName} for {Method}";
-        }
-
-        public ResultListField Copy()
-        {
-            ResultListField rlf = new ResultListField();
-            rlf.FieldName = this.FieldName;
-            rlf.Method = this.Method;
-            rlf.Source = this.Source.Copy();
-            return rlf;
         }
 
         /// <inheritdoc/>

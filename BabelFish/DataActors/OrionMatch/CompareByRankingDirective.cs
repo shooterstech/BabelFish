@@ -381,7 +381,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             if (eventScores.EventScores != null && eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
                 //Try and get the Projected Score instance first, if and only if we're told to use it
-                if (Projected && eventScore.Projected != null) {
+                if (Projected && eventScore.Projected != null && 
+                    (eventScore.Status == ResultStatus.FUTURE || eventScore.Status == ResultStatus.INTERMEDIATE)) {
                     score = eventScore.Projected;
                     return true;
                 }
