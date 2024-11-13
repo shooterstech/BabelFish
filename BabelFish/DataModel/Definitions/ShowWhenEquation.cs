@@ -31,6 +31,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonConverter( typeof( StringEnumConverter ) )]
         [DefaultValue( ShowWhenBoolean.AND )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public ShowWhenBoolean Boolean { get; set; } = ShowWhenBoolean.AND;
 
         public List<ShowWhenBase> Arguments { get; set; } = new List<ShowWhenBase>();

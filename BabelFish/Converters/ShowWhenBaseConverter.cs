@@ -39,11 +39,9 @@ namespace Scopos.BabelFish.Converters {
                 case "SEGMENT_GROUP":
                     return JsonConvert.DeserializeObject<ShowWhenSegmentGroup>( jo.ToString(), SpecifiedSubclassConversion );
                 default:
-                    break;
+                    //If we get here, it is probable because of ill-formed json
+                    return ShowWhenVariable.ALWAYS_SHOW.Copy();
             }
-
-            //If we get here, give up. 
-            throw new NotImplementedException( $"Unable to convert type '{id}' to an Abstract class ShowWhenBase." );
         }
 
         public override bool CanWrite { get { return false; } }

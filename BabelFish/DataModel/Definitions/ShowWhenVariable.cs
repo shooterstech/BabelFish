@@ -17,6 +17,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Condition = ShowWhenCondition.TRUE
         };
 
+        public static readonly ShowWhenVariable NEVER_SHOW = new ShowWhenVariable() {
+            Condition = ShowWhenCondition.FALSE
+        };
+
         /// <summary>
         /// Public constructor.
         /// </summary>

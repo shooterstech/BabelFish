@@ -17,6 +17,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public abstract ShowWhenBase Copy();
 
         [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public ShowWhenOperation Operation { get; protected set; } = ShowWhenOperation.VARIABLE;
 
         /// <inheritdoc/>
