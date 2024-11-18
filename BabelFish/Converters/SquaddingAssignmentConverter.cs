@@ -19,6 +19,7 @@ namespace Scopos.BabelFish.Converters {
     /// Recipe comes from https://stackoverflow.com/questions/20995865/deserializing-json-to-abstract-class
     /// </summary>
     public class SquaddingAssignmentConverter : JsonConverter {
+
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new SquaddingAssignmentSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {

@@ -88,5 +88,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [DefaultValue( "" )]
         public string ProjectionMadeBy { get; set; } = string.Empty;
+
+		/// <summary>
+		/// The name of the SegmentGroup that the competition is currently in (based on the Course of Fire's Range Script).
+		/// </summary>
+		[DefaultValue( "" )]
+		public string SegmentGroupName { get; set; } = string.Empty;
     }
 }

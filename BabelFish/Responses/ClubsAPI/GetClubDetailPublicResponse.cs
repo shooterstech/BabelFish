@@ -17,6 +17,12 @@ namespace Scopos.BabelFish.Responses.ClubsAPI {
 		/// 
 		public ClubDetail ClubDetail {
 			get { return Value.ClubDetail; }
-		}
-	}
+        }
+
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
+
+            return DateTime.UtcNow.AddMinutes( 10 );
+        }
+    }
 }

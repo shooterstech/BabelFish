@@ -12,15 +12,40 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// A SegmentGroup is a series of Segments and Commands for one portion of a COURSE OF FIRE. A Segment 
     /// defines the controls the athlete and target have. Commands define the Range Officer script and the controls over the targets.
     /// </summary>
-    public class SegmentGroup {
+    public class SegmentGroup: IReconfigurableRulebookObject, ICopy<SegmentGroup> {
 
-        private List<string> validationErrorList = new List<string>();
-        private bool defaultCommandMissing = false;
-        private bool defaultSegmentMissing = false;
-
+        /// <summary>
+        /// Public constructor
+        /// </summary>
         public SegmentGroup() {
-            Commands = new List<SegmentGroupCommand>();
-            Segments = new List<SegmentGroupSegment>();
+        }
+
+        /// <inheritdoc />
+        public SegmentGroup Copy() {
+            SegmentGroup copy = new SegmentGroup();
+            copy.SegmentGroupName = this.SegmentGroupName;
+            copy.DefaultCommand = this.DefaultCommand.Copy();
+            copy.DefaultSegment = this.DefaultSegment.Copy();
+            copy.Comment = this.Comment;
+
+            if (this.Commands != null ) {
+                foreach( var c in this.Commands ) {
+                    copy.Commands.Add( c.Copy() );
+                }
+                foreach( var copyOfCommand in copy.Commands ) {
+                    copyOfCommand.Parent = copy.DefaultCommand;
+                }
+            }
+            if (this.Segments != null ) {
+                foreach( var s in this.Segments ) {
+                    copy.Segments.Add( s.Copy() );
+                }
+                foreach( var copyOfSegment in copy.Segments ) {
+                    copyOfSegment.Parent = copy.DefaultSegment;
+                }
+            }
+
+            return copy;
         }
 
         [OnDeserialized]
@@ -28,12 +53,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             if (DefaultSegment == null) {
                 DefaultSegment = new SegmentGroupSegment();
-                defaultSegmentMissing = true;
             }
 
             if (DefaultCommand == null) {
                 DefaultCommand = new SegmentGroupCommand();
-                defaultCommandMissing = true;
             }
 
             if (Commands != null)
@@ -51,35 +74,40 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A unique short human readable name given to this SegmentGroup.
         /// </summary>
         [JsonProperty(Order = 1)]
-        public string SegmentGroupName { get; set; }
+        public string SegmentGroupName { get; set; } = string.Empty;
 
         /// <summary>
         /// The list of Commands. A Command object specifies the state of the EST Targets and Monitors for the 
         /// current command. It also lists the text of the range officer's commands and notes for the ROs.
         /// </summary>
         [JsonProperty(Order = 4)]
-        public List<SegmentGroupCommand> Commands { get; set; }
+        public List<SegmentGroupCommand> Commands { get; set; } = new List<SegmentGroupCommand>();
 
         /// <summary>
         /// The list of Segments. A Segment object controls how shots are labeled and scored during the segment of the match. It also specifies 
         /// what capabilities the athlete has over the EST Target.
         /// </summary>
         [JsonProperty(Order = 5)]
-        public List<SegmentGroupSegment> Segments { get; set; }
-
-        [JsonProperty(Order = 2)]
-        public SegmentGroupCommand DefaultCommand { get; set; }
-
-        [JsonProperty(Order = 3)]
-        public SegmentGroupSegment DefaultSegment { get; set; }
+        public List<SegmentGroupSegment> Segments { get; set; } = new List<SegmentGroupSegment>();
 
         /// <summary>
-        /// Authors internal comments for documentation
+        /// Default values to use when fields are not included in objects in the Commands list.
         /// </summary>
+        [JsonProperty( Order = 2 )]
+        public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
+
+        /// <summary>
+        /// Default values to use when fields are not included in objects in the Segments list.
+        /// </summary>
+        [JsonProperty( Order = 3 )]
+        public SegmentGroupSegment DefaultSegment { get; set; } = new SegmentGroupSegment();
+
+        /// <inheritdoc />
         [DefaultValue("")]
         [JsonProperty(Order = 100)]
-        public string Comment { get; set; }
+        public string Comment { get; set; } = string.Empty ;
 
+        /// <inheritdoc />
         public override string ToString() {
             return SegmentGroupName;
         }

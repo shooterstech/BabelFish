@@ -6,7 +6,19 @@ using System.Runtime.Serialization;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class FieldSource {
+    /// <summary>
+    /// Within a ResultListField the Method property describes the type of data, and the Source property describes where the data is coming from.
+    /// </summary>
+    public class FieldSource : IReconfigurableRulebookObject, ICopy<FieldSource> {
+
+        /// <inheritdoc/>
+        public FieldSource Copy() {
+            FieldSource fs = new FieldSource();
+            fs.Name = this.Name;
+            fs.ScoreFormat = this.ScoreFormat;
+            fs.Value = this.Value;
+            return fs;
+        }
 
         /// <summary>
         /// When the ResultField.Method == Score, Name is the name 
@@ -30,5 +42,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue( 0 )]
         public int Value { get; set; } = 0;
+
+        /// <summary>
+        /// If the length of the returned string is longer than .TruncateAt, then the string 
+        /// is truncated at this length and has a set of ellipsis ("...") added to the end.
+        /// A value of < 3, means never to truncate.
+        /// </summary>
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [DefaultValue( 0 )]
+        public int TruncateAt { get; set; } = 0;
+
+        /// <inheritdoc/>
+        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }

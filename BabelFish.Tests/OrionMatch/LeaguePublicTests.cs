@@ -351,5 +351,95 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             CollectionAssert.AreEqual(divList, leagueGame.DivisionList);
             CollectionAssert.AreEqual(divList, leagueDetail.DivisionList);
         }
+
+        [TestMethod]
+        public async Task GenerateLeagueWeeksTest() {
+
+
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            //2024 National Air Pistol League
+            var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
+            var league = response.League;
+
+            var leagueWeeks = league.LeagueWeeks;
+
+            //Should have 10 weeks
+            Assert.IsTrue( leagueWeeks.Count == 10 );
+
+            int weekNumber = 1;
+            foreach( var lw in leagueWeeks ) {
+                Assert.AreEqual( $"Week {weekNumber}", lw.Name );
+                weekNumber++;
+            }
+        }
+
+        [TestMethod]
+        public async Task DefaultValuesForListOfLeagueWeeksTest( ) {
+
+
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            //2024 National Air Pistol League
+            var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
+            var league = response.League;
+
+            var leagueWeeks = league.LeagueWeeks;
+
+            //Today should be well after week 10
+            Assert.AreEqual( "Week 10", leagueWeeks.Default().Name );
+
+            //A date before the league
+            Assert.AreEqual( "Week 1", leagueWeeks.Default( new DateTime(2020, 1, 1 ) ).Name );
+
+            //Dates within the first and second week
+            Assert.AreEqual( "Week 1", leagueWeeks.Default( new DateTime( 2024, 1, 29 ) ).Name );
+            Assert.AreEqual( "Week 1", leagueWeeks.Default( new DateTime( 2024, 2, 3 ) ).Name );
+            Assert.AreEqual( "Week 1", leagueWeeks.Default( new DateTime( 2024, 2, 4 ) ).Name );
+            Assert.AreEqual( "Week 2", leagueWeeks.Default( new DateTime( 2024, 2, 5 ) ).Name );
+            Assert.AreEqual( "Week 2", leagueWeeks.Default( new DateTime( 2024, 2, 6 ) ).Name );
+            Assert.AreEqual( "Week 2", leagueWeeks.Default( new DateTime( 2024, 2, 11 ) ).Name );
+
+        }
+
+        [TestMethod]
+        public async Task TestShowLeaderboardLink()
+        {
+            var league = new LeagueGame();
+            league.Virtual = LeagueVirtualType.VIRTUAL;
+            league.HomeTeam = new LeagueTeamResult();
+            league.AwayTeam = new LeagueTeamResult();
+            league.HomeTeam.Result = "";
+            league.AwayTeam.Result = "";
+            Assert.AreEqual(true, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "";
+            league.AwayTeam.Result = "";
+            Assert.AreEqual(true, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.BYE_WEEK;
+            league.HomeTeam.Result = "";
+            league.AwayTeam.Result = "";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.VIRTUAL;
+            league.HomeTeam.Result = "WIN";
+            league.AwayTeam.Result = "LOSE";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "WIN";
+            league.AwayTeam.Result = "LOSE";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "CANCELLED";
+            league.AwayTeam.Result = "CANCELLED";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+
+            league.Virtual = LeagueVirtualType.LOCAL;
+            league.HomeTeam.Result = "DNS";
+            league.AwayTeam.Result = "WIN";
+            Assert.AreEqual(false, league.ShowLeaderboard);
+        }
     }
 }

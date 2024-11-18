@@ -90,7 +90,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
 
-                logger.Trace( $"Returning a in-memory cached Response for {request}." );
+                logger.Info( $"Returning a in-memory cached Response for {request}." );
                 return;
             }
 
@@ -171,8 +171,16 @@ namespace Scopos.BabelFish.APIClients {
                     try {
 
                         //TODO: Do something with invalid data format from Forbidden....
-                        if (responseMessage.StatusCode != HttpStatusCode.Forbidden)
-                            response.MessageResponse = apiReturnJson.ToObject<MessageResponse>( DeSerializer );
+                        response.MessageResponse = new MessageResponse();
+                        if (apiReturnJson is JObject) {
+                            JObject jo = (JObject)apiReturnJson;
+                            if (jo.ContainsKey( "Message" ) && jo["Message"] is JArray) {
+                                JArray m = (JArray)jo["Message"];
+                                foreach (var message in m) {
+                                    response.MessageResponse.Message.Add( (string)message );
+                                }
+                            }
+                        }
 
                         if (responseMessage.IsSuccessStatusCode)
                             response.Body = apiReturnJson;
@@ -235,7 +243,7 @@ namespace Scopos.BabelFish.APIClients {
         /// 
         /// To enable cache for a API call two things needs to happen. First the concrete
         /// APIClient needs to enabled caching response by setting .IgnoreInMemoryCache to false.
-        /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
+        /// Second, each response object must enable it by overridding GetCacheValueExpiryTime
         /// to a value in the future.
         /// </summary>
         public bool IgnoreInMemoryCache { get; set; } = true;

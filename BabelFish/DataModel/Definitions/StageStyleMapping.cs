@@ -14,7 +14,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// When doing so, these Events may be mapped to an EVENT STYLE or STAGE STYLE respectively. 
     /// An EventStyleSelection or StageStyleSelection define how that mapping is to occur.
     /// </summary>
-    public class StageStyleMapping : IReconfigurableRulebookObject, IGetStageStyleDefinition {
+    public class StageStyleMapping : IReconfigurableRulebookObject, ICopy<StageStyleMapping>, IGetStageStyleDefinition {
+
+
+        /// <inheritdoc/>
+        public StageStyleMapping Copy() {
+            StageStyleMapping s = new StageStyleMapping();
+            s.DefaultDef = this.DefaultDef;
+            s.StageAppellation = this.StageAppellation;
+            s.Comment = this.Comment;
+
+            return s;
+        }
 
         /// <summary>
         /// The default STAGE STYLE to use, if no mapping could be found. 

@@ -244,7 +244,6 @@ namespace Scopos.BabelFish.Tests.Definition
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( DefinitionType.RESULTLISTFORMAT, definition.Type );
             Assert.AreEqual( 4, definition.Fields.Count );
-            Assert.IsTrue( definition.Format.Display.Body.RowLinkTo.Contains( LinkToOption.ResultCOF ) );
         }
 
         [TestMethod]

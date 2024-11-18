@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +14,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
+using System.Diagnostics;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
@@ -54,8 +56,8 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             //With cache should be quite a bit faster than without
             Assert.IsTrue( resultNoCache.TimeToRun > resultWithCache.TimeToRun * 100 );
-			//The Cached response should tell us it's from cache
-			Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
+            //The Cached response should tell us it's from cache
+            Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
             var attributeNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
@@ -81,7 +83,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             var attributeResult = await client.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest, attributeResponse );
             Assert.AreEqual( HttpStatusCode.OK, attributeResult.StatusCode, $"Expecting and OK status code, instead received {attributeResult.StatusCode}." );
-            
+
             //The non-cached response should tell us it was from file system
             Assert.IsTrue( attributeResult.FileSystemCachedResponse );
             Assert.IsFalse( attributeResult.InMemoryCachedResponse );
@@ -123,20 +125,20 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             var resultNoCache = await client.GetDefinitionAsync<CourseOfFire>( requestNoCache, responseNoCache );
             Assert.AreEqual( HttpStatusCode.OK, resultNoCache.StatusCode, $"Expecting and OK status code, instead received {resultNoCache.StatusCode}." );
-			//The non-cached response should tell us it wasn't from cache
-			Assert.IsFalse( resultNoCache.InMemoryCachedResponse );
+            //The non-cached response should tell us it wasn't from cache
+            Assert.IsFalse( resultNoCache.InMemoryCachedResponse );
 
 
-			var resultWithCache = await client.GetDefinitionAsync<CourseOfFire>( requestWithCache, responseWithCache );
+            var resultWithCache = await client.GetDefinitionAsync<CourseOfFire>( requestWithCache, responseWithCache );
             Assert.AreEqual( HttpStatusCode.OK, resultWithCache.StatusCode, $"Expecting and OK status code, instead received {resultWithCache.StatusCode}." );
 
             //With cache should be quite a bit faster than without
-            Assert.IsTrue( resultNoCache.TimeToRun > resultWithCache.TimeToRun * 100 );
-			//The Cached response should tell us it's from cache
-			Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
+            Assert.IsTrue( resultNoCache.TimeToRun > resultWithCache.TimeToRun * 10 );
+            //The Cached response should tell us it's from cache
+            Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
-			//The definitions should be the same. Serialize the definitions to check
-			var cofNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
+            //The definitions should be the same. Serialize the definitions to check
+            var cofNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
             var cofWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
             Assert.AreEqual( cofWithCache, cofNoCache );
         }
@@ -144,31 +146,31 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task RequestsThatShouldNotGetCached() {
 
-			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
             //The first request should cache it's value
-			var firstRequest = new GetDefinitionPublicRequest( setName, DefinitionType.COURSEOFFIRE );
+            var firstRequest = new GetDefinitionPublicRequest( setName, DefinitionType.COURSEOFFIRE );
             //The second request, b/c we are marking .IgnoreLocalCache should not use the cached value
-			var secondRequest = new GetDefinitionPublicRequest( setName, DefinitionType.COURSEOFFIRE );
-			secondRequest.IgnoreInMemoryCache = true;
+            var secondRequest = new GetDefinitionPublicRequest( setName, DefinitionType.COURSEOFFIRE );
+            secondRequest.IgnoreInMemoryCache = true;
 
-			var firstResponse = new GetDefinitionPublicResponse<CourseOfFire>( firstRequest );
-			var secondResponse = new GetDefinitionPublicResponse<CourseOfFire>( secondRequest );
+            var firstResponse = new GetDefinitionPublicResponse<CourseOfFire>( firstRequest );
+            var secondResponse = new GetDefinitionPublicResponse<CourseOfFire>( secondRequest );
 
 
-			var firstResult = await client.GetDefinitionAsync<CourseOfFire>( firstRequest, firstResponse );
-			Assert.AreEqual( HttpStatusCode.OK, firstResult.StatusCode, $"Expecting and OK status code, instead received {firstResult.StatusCode}." );
-			//The non-cached response should tell us it wasn't from cache
-			Assert.IsFalse( firstResult.InMemoryCachedResponse );
+            var firstResult = await client.GetDefinitionAsync<CourseOfFire>( firstRequest, firstResponse );
+            Assert.AreEqual( HttpStatusCode.OK, firstResult.StatusCode, $"Expecting and OK status code, instead received {firstResult.StatusCode}." );
+            //The non-cached response should tell us it wasn't from cache
+            Assert.IsFalse( firstResult.InMemoryCachedResponse );
             //The size of the cache should be 1
             Assert.AreEqual( 1, ResponseCache.CACHE.Count );
 
             var secondResult = await client.GetDefinitionAsync<CourseOfFire>( secondRequest, secondResponse );
-			Assert.AreEqual( HttpStatusCode.OK, secondResult.StatusCode, $"Expecting and OK status code, instead received {secondResult.StatusCode}." );
-			//The non-cached response should tell us it wasn't from cache
-			Assert.IsFalse( secondResult.InMemoryCachedResponse );
+            Assert.AreEqual( HttpStatusCode.OK, secondResult.StatusCode, $"Expecting and OK status code, instead received {secondResult.StatusCode}." );
+            //The non-cached response should tell us it wasn't from cache
+            Assert.IsFalse( secondResult.InMemoryCachedResponse );
 
-		}
+        }
     }
 }

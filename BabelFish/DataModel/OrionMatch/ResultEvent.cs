@@ -128,5 +128,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return shotsByEventName;
         }
+
+        /// <inheritdoc />
+        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastShot()
+        {
+            Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = Shots;
+            Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot = null;
+            foreach (var shot in shots)
+            {
+                if (shot.Value.TimeScored > lastShot.TimeScored)
+                {
+                    lastShot = shot.Value;
+                }
+            }
+            return lastShot;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return $"ResultEvent for {this.Participant.DisplayName}";
+        }
     }
 }

@@ -21,12 +21,63 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// * Mapping of shots to singular events.
     /// A COURSE OF FIRE should only describe an event that can be completed with one outing to the range. In other words, an athlete should be able to complete the course of fire with one trip to the range. A multi-day event is the combination of two or more COURSE OF FIRE, that is defined outside of this type.
     /// </summary>
-    public class CourseOfFire : Definition, IGetTargetCollectionDefinition {
+    public class CourseOfFire : Definition, IGetTargetCollectionDefinition, ICopy<CourseOfFire> {
 
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
         }
 
+        /// <inheritdoc />
+        public CourseOfFire Copy() {
+            return this.Copy( false );
+        }
+
+        /// <summary>
+        /// Special versin of Copy, that when onlyCopyEvnets is true, only copies the 
+        /// Events. Is intended for use in the EventComposite class' GrowEventTree.
+        /// </summary>
+        /// <param name="onlyCopyEvents"></param>
+        /// <returns></returns>
+        public CourseOfFire Copy(bool onlyCopyEvents = false) {
+            CourseOfFire copy = new CourseOfFire();
+            base.Copy( copy );
+
+            if (!onlyCopyEvents) {
+                copy.COFType = this.COFType;
+                copy.CommonName = this.CommonName;
+                copy.TargetCollectionDef = this.TargetCollectionDef;
+                copy.DefaultTargetCollectionName = this.DefaultTargetCollectionName;
+                copy.DefaultExpectedDiameter = this.DefaultExpectedDiameter;
+                copy.DefaultScoringDiameter = this.DefaultScoringDiameter;
+                copy.ScoreFormatCollectionDef = this.ScoreFormatCollectionDef;
+                copy.DefaultEventAndStageStyleMappingDef = this.DefaultEventAndStageStyleMappingDef;
+                copy.DefaultAttributeDef = this.DefaultAttributeDef;
+                copy.ScoreConfigDefault = this.ScoreConfigDefault;
+                if (this.RangeScripts != null) {
+                    foreach (var rs in this.RangeScripts) {
+                        copy.RangeScripts.Add( rs.Copy() );
+                    }
+                }
+                if (this.AbbreviatedFormats != null) {
+                    foreach (var af in this.AbbreviatedFormats) {
+                        copy.AbbreviatedFormats.Add( af.Copy() );
+                    }
+                }
+            }
+
+            if (this.Events != null) {
+                foreach (var e in this.Events) {
+                    copy.Events.Add( e.Copy() );
+                }
+            }
+            if (this.Singulars != null) {
+                foreach (var s in this.Singulars) {
+                    copy.Singulars.Add( s.Copy() );
+                }
+            }
+
+            return copy;
+        }
 
         [OnDeserialized]
         internal new void OnDeserializedMethod(StreamingContext context) {
@@ -53,7 +104,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string TargetCollectionDef { get; set; } = "v1.0:ntparc:Air Rifle";
 
         /// <inheritdoc/>
-        public async Task<TargetCollectionDefinition> GetTargetCollectionDefinitionAsync()
+        public async Task<TargetCollection> GetTargetCollectionDefinitionAsync()
         {
             SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse(TargetCollectionDef);
             return await DefinitionCache.GetTargetCollectionDefinitionAsync(targetCollectionDef);

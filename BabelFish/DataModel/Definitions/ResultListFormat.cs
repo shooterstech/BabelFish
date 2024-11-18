@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// 
     /// The ResultListFormat will describes in a 2D fashion the data from the ResultList to display.
     /// </summary>
-    public class ResultListFormat : Definition {
+    public class ResultListFormat : Definition, ICopy<ResultListFormat>
+    {
 
         public ResultListFormat() : base() {
             Type = DefinitionType.RESULTLISTFORMAT;
@@ -23,6 +25,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Fields = new List<ResultListField>();
 
             Format = new ResultListFormatDetail();
+        }
+
+        /// <inheritdoc/>
+        public ResultListFormat Copy() {
+            ResultListFormat rlf = new ResultListFormat();
+            this.Copy( rlf );
+            rlf.ScoreFormatCollectionDef = this.ScoreFormatCollectionDef;
+            rlf.ScoreConfigDefault = this.ScoreConfigDefault;
+            if (this.Fields != null) {
+                foreach (var rlfield in this.Fields) {
+                    rlf.Fields.Add( rlfield.Copy() );
+                }
+            }
+            //unsure if this should be nullable....
+            rlf.Format = this.Format.Copy();
+            return rlf;
         }
 
         [OnDeserialized]
@@ -41,24 +59,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// the default value is v1.0:orion:Standard Score Formats.
         /// </summary>
+        [JsonProperty( Order = 11 )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The name of the ScoreConfig to use if none other is specified.
         /// </summary>
+        /// <remarks>The ScoreConfigName is usually specified by the Result List.</remarks>
+        [JsonProperty( Order = 12 )]
         public string ScoreConfigDefault { get; set; } = string.Empty;
 
         /// <summary>
-        /// A Field describes data that will be displayed in the resut lIst. Is 
-        /// specifies where the data will come from. 
-        /// 
-        /// the following Fields are implicitly added: Rank, DisplayName, ResultCOFID, UserID
+        /// A list of ResultListFields that define field values that will be used in the text output of the 
+        /// Result List Intermediate Fromat cell values. 
         /// </summary>
+        [JsonProperty( Order = 13 )]
         public List<ResultListField> Fields { get; set; }
 
         /// <summary>
         /// Describes the intermediate format for cells of data within a Result List. 
         /// </summary>
+        [JsonProperty( Order = 14 )]
         public ResultListFormatDetail Format { get; set; }
     }
 }

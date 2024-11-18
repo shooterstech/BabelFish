@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormatted {
 
         private readonly List<ResultListIntermediateFormattedRow> rows = new();
+        private ShowWhenCalculator ShowWhenCalculator;
         private bool initialized = false;
 
         /// <summary>
@@ -43,6 +44,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             this.ResultList = resultList;
             this.ResultListFormat = resultListFormat;
             this.UserProfileLookup = userProfileLookup;
+            this.ShowWhenCalculator = new ShowWhenCalculator( this );
         }
 
         /// <summary>
@@ -130,7 +132,39 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Gets the list of rows to display in the formatted results.
+        /// Gets the list of rows to display in the formatted results. This lists excludes Rows hidden by the .ChildrenToShow parameter.
+        /// </summary>
+        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
+        public List<ResultListIntermediateFormattedRow> ShownRows {
+            get {
+                if (!initialized)
+                    throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
+
+                int childRowsRemaining = this.ChildrenToShow;
+                lock (rows) {
+                    List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>();
+                    foreach( var row in rows) {
+                        if (!row.IsChildRow) {
+                            //Thsi is a parent row, we can reset the count of child rows to show
+                            childRowsRemaining = this.ChildrenToShow;
+                            copyOfRows.Add( row );
+                        } else {
+                            //This is a child row, check if we can show any more
+                            if (childRowsRemaining > 0) {
+                                childRowsRemaining--;
+                                copyOfRows.Add( row );
+                            }
+                            //else, don't add it
+                        }
+
+                    }
+                    return copyOfRows;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the list of all rows to display in the formatted results. This lists includes Rows hidden by the .ChildrenToShow parameter.
         /// </summary>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<ResultListIntermediateFormattedRow> Rows {
@@ -138,6 +172,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (!initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
+                int childRowsRemaining = this.ChildrenToShow;
                 lock (rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>( rows );
                     return copyOfRows;
@@ -251,11 +286,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-
-        public List<string> HideColumnsWithTheseClasses { get; set; } = new List<string>();
-
-        public List<string> HideRowsWithTheseClasses { get; set; } = new List<string>();
-
         /// <summary>
         /// Returns the total number of defined columns. Does not factor in hidden columns (from .HideColumnsWithTheseClasses).
         /// </summary>
@@ -273,14 +303,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             List<int> shownColumnIndexes = new List<int>();
             bool include = true;
             for (int i = 0; i < ResultListFormat.Format.Columns.Count; i++) {
-                var format = ResultListFormat.Format.Columns[i];
+                var column = ResultListFormat.Format.Columns[i];
                 include = true;
-                foreach (var c in format.ClassList) {
-                    if (HideColumnsWithTheseClasses.Contains( c )) {
-                        include = false;
-                        break;
-                    }
+
+                if (!ShowWhenCalculator.Show( column.ShowWhen )) {
+                    include = false;
                 }
+
                 if (include)
                     shownColumnIndexes.Add( i );
             }
@@ -453,5 +482,29 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return ResultListFormat.Format.Display;
             }
         }
+
+        /// <summary>
+        /// The width of the screen that this Result List Formatted will be displayeed on. Depending on the width
+        /// some columsn may, or may not, be displayed. The Result List Fromatted uses the same breakpoints as
+        /// Bootstrap 5. 
+        /// <para>The default value is int.MaxValue, which basically means a screen width of infinite width.</para>
+        /// <para>Values of less than 0, are interpreted as being 0.</para>
+        /// </summary>
+        public int ResolutionWidth { get; set; } = int.MaxValue;
+
+        /// <summary>
+        /// Limits the number of child rows to show under a main body row.
+        /// <para>The default value is int.MaxValue, which means to show all children.</para>
+        /// <para>Values of less than 0, are interpreted as being 0.</para>
+        /// </summary>
+        public int ChildrenToShow {  get; set; } = int.MaxValue;
+
+        /// <summary>
+        /// Gets or sets the engagable variable. Which indicates if the Result List Format will be displayed
+        /// on a screen that supports human interaction, such as a desktop browser or mobile phone. A leaderboard
+        /// or MM100 would not support human interaction.
+        /// <para>The default value is true.</para>
+        /// </summary>
+        public bool Engagable { get; set; } = true;
     }
 }

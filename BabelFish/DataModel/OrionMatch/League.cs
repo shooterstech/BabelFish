@@ -12,6 +12,7 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using NLog;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -32,6 +33,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [OnDeserialized()]
         public void OnDeserialized( StreamingContext context ) {
 
+            if (ResultEvents == null)
+                ResultEvents = new List<ResultEventAbbr>();
+
+            if (Documents == null)
+                Documents = new List<Document>();
         }
 
         /// <summary>
@@ -72,12 +78,63 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonConverter( typeof( DateConverter ) )]
         public DateTime EndDate { get; set; }
 
-		/// <summary>
-		/// String holding the software (Orion Scoring System) and Version number of the software.
-		/// </summary>
-		public string Creator { get; set; }
+        /// <summary>
+        /// The full URL where the League's (small) icon image may be loaded from. 
+        /// </summary>
+        [DefaultValue( "" )]
+        public string IconURL { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The full URL where the League's (large) logo image may be loaded from. 
+        /// </summary>
+        [DefaultValue( "" )]
+        public string LogoURL { get; set; } = string.Empty;
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        public string Creator { get; set; }
 
 		public string Boilerplate { get; set; } = string.Empty;
+
+        /// <summary>
+        /// A list of documents associated with thsi league. Common documents might include
+        /// the league program, or a range script. 
+        /// </summary>
+        public List<Document> Documents { get; set; } = new List<Document>();
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Documents when it has one or more Document objects
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeDocuments() {
+            return (Documents != null && Documents.Count > 0);
+        }
+
+        public List<LeagueWeek> LeagueWeeks {
+            get {
+                List<LeagueWeek> weeks = new List<LeagueWeek>();
+
+                DateTime beginingOfWeek = StartDate;
+                DateTime endOfWeek = beginingOfWeek.AddDays( 6 );
+                int weekNumber = 1;
+                do {
+                    LeagueWeek lw = new LeagueWeek() {
+                        Name = $"Week {weekNumber}",
+                        StartOfWeek = beginingOfWeek,
+                        EndOfWeek = endOfWeek
+                    };
+                    weeks.Add( lw );
+
+                    weekNumber++;
+                    beginingOfWeek = endOfWeek.AddDays( 1 );
+                    endOfWeek = beginingOfWeek.AddDays( 6 );
+                } while ( beginingOfWeek <= EndDate );
+
+                return weeks;
+            }
+        }
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.APIClients {
                     string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
                     string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
 
-                    logger.Info( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
+                    logger.Trace( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
 
                     FileInfo fileInfo = new FileInfo( filename );
                     if (fileInfo.Exists) {
@@ -188,17 +188,17 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         [Obsolete( "User GetTargetCollectionDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinition( SetName setName ) {
+        public async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinition( SetName setName ) {
             return await GetTargetCollectionDefinitionAsync( setName );
         }
 
-        public virtual async Task<GetDefinitionPublicResponse<TargetCollectionDefinition>> GetTargetCollectionDefinitionAsync( SetName setName ) {
+        public virtual async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.TARGETCOLLECTION;
 
             GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
 
-            GetDefinitionPublicResponse<TargetCollectionDefinition> response = new GetDefinitionPublicResponse<TargetCollectionDefinition>( request );
+            GetDefinitionPublicResponse<TargetCollection> response = new GetDefinitionPublicResponse<TargetCollection>( request );
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }

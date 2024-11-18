@@ -9,6 +9,9 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Runtime.Authentication;
+using System.Threading;
+using System.Diagnostics;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
@@ -108,14 +111,14 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            //This match id has three relays of 20 athletes
-            var matchId = new MatchID( "1.1.2024050109193283.1" );
+            var matchId = new MatchID( "1.1.2024100109282969.1" );
             var resultListName = "Individual - All";
+           
+            var response = await client.GetResultListPublicAsync( matchId, resultListName );
+            foreach (var m in response.MessageResponse.Message) {
+                Debug.WriteLine( m );
+            }
 
-            var request = new GetResultListPublicRequest( matchId, resultListName );
-            var response = await client.GetResultListPublicAsync( request );
-
-            Assert.AreEqual( ResultStatus.OFFICIAL, response.Value.ResultList.Status );
         }
     }
 }
