@@ -136,6 +136,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             bool answer = true;
             bool first = true;
             bool apployNot = false;
+            bool breakForeach = false;
 
             foreach (var argument in showWhen.Arguments) {
                 if (first) {
@@ -145,9 +146,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     switch (showWhen.Boolean) {
                         case ShowWhenBoolean.AND:
                             answer &= Show( argument );
+                            //If the answer is already false, we can stop evaluating
+                            if (!answer)
+                                breakForeach = true;
                             break;
                         case ShowWhenBoolean.OR:
                             answer |= Show( argument );
+                            //If the answer is already true, we can stop evaluating
+                            if (answer)
+                                breakForeach = true;
                             break;
                         case ShowWhenBoolean.XOR:
                             answer ^= Show( argument );
@@ -166,6 +173,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             break;
                     }
                 }
+
+                if (breakForeach)
+                    break;
             }
 
             return answer ^ apployNot;
