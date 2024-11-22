@@ -104,12 +104,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var compare = 0;
             var maxNumberOfRulesToFollow = int.MaxValue;
-            List<TieBreakingRule> tieBreakingRules;
+            List<TieBreakingRuleBase> tieBreakingRules;
             if (tieBreakingRuleType == TieBreakRuleList.RULES) {
                 switch( this.ResultStatus) {
                     case ResultStatus.FUTURE:
                         //Skip all of the tie breaking rules if the Result Status is still FUTURE
-                        tieBreakingRules = new List<TieBreakingRule>();
+                        tieBreakingRules = new List<TieBreakingRuleBase>();
                         break;
                     case ResultStatus.INTERMEDIATE:
                         //Only do the first 8 (which admittedly is an arbitrarily choosen number)
@@ -135,18 +135,18 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     switch (compiledTieBreakingRule.Method) {
                         case TieBreakingRuleMethod.SCORE:
-                            compare = CompareScore( compiledTieBreakingRule, x, y );
+                            compare = CompareScore( (TieBreakingRuleScore) compiledTieBreakingRule, x, y );
                             break;
                         case TieBreakingRuleMethod.COUNT_OF:
-                            compare = CompareCountOf( compiledTieBreakingRule, x, y );
+                            compare = CompareCountOf( (TieBreakingRuleCountOf) compiledTieBreakingRule, x, y );
                             break;
 
                         case TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE:
-                            compare = CompareParticipantAttribute( compiledTieBreakingRule, x, y );
+                            compare = CompareParticipantAttribute( (TieBreakingRuleParticipantAttribute) compiledTieBreakingRule, x, y );
                             break;
 
                         case TieBreakingRuleMethod.ATTRIBUTE:
-                            compare = CompareAttribute( compiledTieBreakingRule, x, y );
+                            compare = CompareAttribute( (TieBreakingRuleAttribute) compiledTieBreakingRule, x, y );
                             break;
 
                         default:
@@ -167,161 +167,99 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             return compare;
         }
 
-        private int CompareScore( TieBreakingRule rule, IEventScores x, IEventScores y ) {
+        private int CompareScore( TieBreakingRuleScore rule, IEventScores x, IEventScores y ) {
 
             Score xScore, yScore;
 
             int compare = 0;
 
-            if ( TryGetScore( x, rule.EventName, out xScore) &&  TryGetScore( y, rule.EventName, out yScore ) ) {
+            if (TryGetScore( x, rule.EventName, out xScore ) && TryGetScore( y, rule.EventName, out yScore )) {
                 //When the rule's .Method is "Score" the .Source shold always be a string. However, checking for it to prevent exceptions being thrown.
-                if (rule.Source is string) {
-                    string source = (string)rule.Source;
-                    switch( source ) {
-                        case "I":
-                        case "i":
-                            compare = xScore.I - yScore.I;
-                            break;
-                        case "X":
-                        case "x":
-                            compare = xScore.X - yScore.X;
-                            break;
-                        case "IX":
-                        case "Ix":
-                        case "iX":
-                        case "ix":
-                            compare = xScore.I - yScore.I;
-                            if (compare != 0)
-                                break;
-                            compare = xScore.X - yScore.X;
-                            break;
-                        case "D":
-                        case "d":
-                            //To avoid floating point errors, need to evalute jus the first decimal place
-                            compare = (int) (( xScore.D - yScore.D ) * 100);
-                            break;
-                        case "S":
-                        case "s":
-                            //To avoid floating point errors, need to evalute jus the first decimal place
-                            compare = (int)((xScore.S - yScore.S ) * 100);
-                            break;
-                        case "J":
-                        case "j":
-                            //To avoid floating point errors, need to evalute jus the first three decimal place
-                            compare = (int)((xScore.J - yScore.J ) * 10000);
-                            break;
-                        case "K":
-                        case "k":
-                            //To avoid floating point errors, need to evalute jus the first three decimal place
-                            compare = (int)((xScore.K - yScore.K ) * 10000);
-                            break;
-                        case "L":
-                        case "l":
-                            //To avoid floating point errors, need to evalute jus the first three decimal place
-                            compare = (int)((xScore.L - yScore.L ) * 10000);
-                            break;
-                    }
-                }
-            }
 
-            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
-                return -1 * compare;
-
-            //Else if sort order is Ascending
-            return compare;
-
-        }
-
-        private int CompareCountOf( TieBreakingRule rule, IEventScores x, IEventScores y ) {
-
-            int compare = 0;
-            if (rule.Source is int) {
-                int scoreToLookFor = (int)rule.Source;
-
-                Score xScore = null, yScore = null;
-
-                var @event = this.EventTree.FindEventComposite( rule.EventName );
-                if (@event != null) {
-
-
-                    var singularities = @event.GetAllSingulars();
-
-                    int xCount = 0, yCount = 0;
-                    foreach (var singularity in singularities) {
-                        if (TryGetScore( x, singularity.EventName, out xScore )) {
-                            if (xScore.I == scoreToLookFor)
-                                xCount++;
-                        }
-                        if (TryGetScore( y, singularity.EventName, out yScore )) {
-                            if (yScore.I == scoreToLookFor)
-                                yCount++;
-                        }
-                    }
-
-                    compare = xCount - yCount;
-                }
-            }
-
-            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
-                return -1 * compare;
-
-            //Else if sort order is Ascending
-            return compare;
-        }
-
-        private int CompareParticipantAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
-
-            int compare = 0;
-            if (rule.Source is string) {
-                string source = ((string)rule.Source).ToUpper();
+                string source = rule.Source;
                 switch (source) {
-                    case "FAMILYNAME":
-                        if (x.Participant is Individual && y.Participant is Individual)
-                            compare = ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
+                    case "I":
+                    case "i":
+                        compare = xScore.I - yScore.I;
                         break;
-
-                    case "GIVENNAME":
-                        if (x.Participant is Individual && y.Participant is Individual)
-                            compare = ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
+                    case "X":
+                    case "x":
+                        compare = xScore.X - yScore.X;
                         break;
-
-                    case "MIDDLENAME":
-                        if (x.Participant is Individual && y.Participant is Individual)
-                            compare = ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
+                    case "IX":
+                    case "Ix":
+                    case "iX":
+                    case "ix":
+                        compare = xScore.I - yScore.I;
+                        if (compare != 0)
+                            break;
+                        compare = xScore.X - yScore.X;
                         break;
-
-                    case "COMPETITORNUMBER":
-                        if (x.Participant is Individual && y.Participant is Individual)
-                            compare = ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
+                    case "D":
+                    case "d":
+                        //To avoid floating point errors, need to evalute jus the first decimal place
+                        compare = (int)((xScore.D - yScore.D) * 100);
                         break;
-
-                    case "DISPLAYNAME":
-                        compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    case "S":
+                    case "s":
+                        //To avoid floating point errors, need to evalute jus the first decimal place
+                        compare = (int)((xScore.S - yScore.S) * 100);
                         break;
-
-                    case "DISPLAYNAMESHORT":
-                        compare = x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
+                    case "J":
+                    case "j":
+                        //To avoid floating point errors, need to evalute jus the first three decimal place
+                        compare = (int)((xScore.J - yScore.J) * 10000);
                         break;
-
-                    case "HOMETOWN":
-                        compare = x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
+                    case "K":
+                    case "k":
+                        //To avoid floating point errors, need to evalute jus the first three decimal place
+                        compare = (int)((xScore.K - yScore.K) * 10000);
                         break;
-
-                    case "COUNTRY":
-                        compare = x.Participant.Country.CompareTo( y.Participant.Country );
+                    case "L":
+                    case "l":
+                        //To avoid floating point errors, need to evalute jus the first three decimal place
+                        compare = (int)((xScore.L - yScore.L) * 10000);
                         break;
-
-                    case "CLUB":
-                        compare = x.Participant.Club.CompareTo( y.Participant.Club );
-                        break;
-
-                    default:
-                        logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
-                        compare = 0;
-                        break;
-
                 }
+
             }
+
+            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
+                return -1 * compare;
+
+            //Else if sort order is Ascending
+            return compare;
+
+        }
+
+        private int CompareCountOf( TieBreakingRuleCountOf rule, IEventScores x, IEventScores y ) {
+
+            int compare = 0;
+            int scoreToLookFor = rule.Source;
+
+            Score xScore = null, yScore = null;
+
+            var @event = this.EventTree.FindEventComposite( rule.EventName );
+            if (@event != null) {
+
+
+                var singularities = @event.GetAllSingulars();
+
+                int xCount = 0, yCount = 0;
+                foreach (var singularity in singularities) {
+                    if (TryGetScore( x, singularity.EventName, out xScore )) {
+                        if (xScore.I == scoreToLookFor)
+                            xCount++;
+                    }
+                    if (TryGetScore( y, singularity.EventName, out yScore )) {
+                        if (yScore.I == scoreToLookFor)
+                            yCount++;
+                    }
+                }
+
+                compare = xCount - yCount;
+            }
+
 
             if (rule.SortOrder == Helpers.SortBy.DESCENDING)
                 return -1 * compare;
@@ -330,40 +268,99 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             return compare;
         }
 
-        private int CompareAttribute( TieBreakingRule rule, IEventScores x, IEventScores y ) {
+        private int CompareParticipantAttribute( TieBreakingRuleParticipantAttribute rule, IEventScores x, IEventScores y ) {
 
             int compare = 0;
-            if (rule.Source is string) {
-                string setName = ((string)rule.Source).ToUpper();
+            string source = rule.Source.ToUpper();
+            switch (source) {
+                case "FAMILYNAME":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        compare = ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
+                    break;
 
-                dynamic xAttrValue = null;
-                dynamic yAttrValue = null;
+                case "GIVENNAME":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        compare = ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
+                    break;
 
-                foreach (var av in x.Participant.AttributeValues) {
-                    if (av.AttributeDef == setName) {
-                        try {
-                            xAttrValue = av.AttributeValue.GetFieldValue();
-                        } catch (Exception ex) {
-                            logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
-                            return 0;
-                        }
-                    }
-                }
+                case "MIDDLENAME":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        compare = ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
+                    break;
 
-                foreach (var av in y.Participant.AttributeValues) {
-                    if (av.AttributeDef == setName) {
-                        try {
-                            xAttrValue = av.AttributeValue.GetFieldValue();
-                        } catch (Exception ex) {
-                            logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
-                            return 0;
-                        }
-                    }
-                }
+                case "COMPETITORNUMBER":
+                    if (x.Participant is Individual && y.Participant is Individual)
+                        compare = ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
+                    break;
 
-                if (xAttrValue != null && yAttrValue != null) 
-                    compare = xAttrValue.CompareTo( yAttrValue );
+                case "DISPLAYNAME":
+                    compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
+                    break;
+
+                case "DISPLAYNAMESHORT":
+                    compare = x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
+                    break;
+
+                case "HOMETOWN":
+                    compare = x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
+                    break;
+
+                case "COUNTRY":
+                    compare = x.Participant.Country.CompareTo( y.Participant.Country );
+                    break;
+
+                case "CLUB":
+                    compare = x.Participant.Club.CompareTo( y.Participant.Club );
+                    break;
+
+                default:
+                    logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
+                    compare = 0;
+                    break;
+
             }
+
+
+            if (rule.SortOrder == Helpers.SortBy.DESCENDING)
+                return -1 * compare;
+
+            //Else if sort order is Ascending
+            return compare;
+        }
+
+        private int CompareAttribute( TieBreakingRuleAttribute rule, IEventScores x, IEventScores y ) {
+
+            int compare = 0;
+            string setName = rule.Source.ToUpper();
+
+            dynamic xAttrValue = null;
+            dynamic yAttrValue = null;
+
+            foreach (var av in x.Participant.AttributeValues) {
+                if (av.AttributeDef == setName) {
+                    try {
+                        xAttrValue = av.AttributeValue.GetFieldValue();
+                    } catch (Exception ex) {
+                        logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
+                        return 0;
+                    }
+                }
+            }
+
+            foreach (var av in y.Participant.AttributeValues) {
+                if (av.AttributeDef == setName) {
+                    try {
+                        xAttrValue = av.AttributeValue.GetFieldValue();
+                    } catch (Exception ex) {
+                        logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
+                        return 0;
+                    }
+                }
+            }
+
+            if (xAttrValue != null && yAttrValue != null)
+                compare = xAttrValue.CompareTo( yAttrValue );
+
 
             if (rule.SortOrder == Helpers.SortBy.DESCENDING)
                 return compare;

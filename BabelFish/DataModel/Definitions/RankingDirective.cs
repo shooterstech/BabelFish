@@ -19,10 +19,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         internal void OnDeserialized( StreamingContext context ) {
 
             if (Rules == null)
-                this.Rules = new List<TieBreakingRule>();
+                this.Rules = new List<TieBreakingRuleBase>();
 
             if (ListOnly == null)
-                this.ListOnly = new List<TieBreakingRule>();
+                this.ListOnly = new List<TieBreakingRuleBase>();
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// This attribute is required and must have one or more elements in the list.
         /// </summary>
-        public List<TieBreakingRule> Rules { get; set; } = new List<TieBreakingRule>();
+        public List<TieBreakingRuleBase> Rules { get; set; } = new List<TieBreakingRuleBase>();
 
         /// <summary>
         /// In the event that tie between two participants can not be broken, the TieBreakingRules in ListOnly are used to sort participants for display purposes only.
@@ -124,7 +124,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// This attribute is not required.
         /// </summary>
-        public List<TieBreakingRule> ListOnly { get; set; } = new List<TieBreakingRule>();
+        public List<TieBreakingRuleBase> ListOnly { get; set; } = new List<TieBreakingRuleBase>();
 
         /// <summary>
         /// Generates a default RankingDirective based on the passed in top level event name.
@@ -144,7 +144,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 case "DEC":
                 case "D":
                 default:
-                    directive.Rules.Add( new TieBreakingRule() {
+                    directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
@@ -158,14 +158,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 case "CONVENTIONAL":
                 case "CONV":
                 case "C":
-                    directive.Rules.Add( new TieBreakingRule() {
+                    directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
                         Source = "I"
                     } );
 
-                    directive.Rules.Add( new TieBreakingRule() {
+                    directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
@@ -174,7 +174,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     break;
             }
 
-            directive.ListOnly.Add( new TieBreakingRule() {
+            directive.ListOnly.Add( new TieBreakingRuleParticipantAttribute() {
                 Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
                 Source = "DisplayName",
                 SortOrder = Helpers.SortBy.ASCENDING
