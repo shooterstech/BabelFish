@@ -30,6 +30,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         /// <remarks>Method is also the Concrete class differentiator.</remarks>
         [JsonConverter( typeof( StringEnumConverter ) )]
+        [DefaultValue( TieBreakingRuleMethod.SCORE )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public TieBreakingRuleMethod Method { get; set; }
 
         /// <summary>

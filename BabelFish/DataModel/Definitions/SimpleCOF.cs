@@ -16,39 +16,53 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// etc. 
     /// </summary>
     [Serializable]
-    public class SimpleCOF :ITelerikBindModel, ICopy<SimpleCOF>, IReconfigurableRulebookObject
+    public class SimpleCOF :ITelerikBindModel, ICopy<SimpleCOF>, IReconfigurableRulebookObject, IGetCourseOfFireDefinition
     {
-
+        /// <summary>
+        /// Public constructor
+        /// </summary>
         public SimpleCOF() { }
 
-        [Obsolete( "Use CourseOfFireDef instead." )]
-        public string Name { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The set name of the Course of Fire definition that this simple COF is emulating.
-        /// </summary>
-        public string CourseOfFireDef { get; set; } = string.Empty;
-
-        public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
-
-		public override string ToString() {
-			return $"SimpleCOF for {CourseOfFireDef}";
-		}
-
-        public SimpleCOF Copy()
-        {
+        /// <inheritdoc/>
+        public SimpleCOF Copy() {
             SimpleCOF scof = new SimpleCOF();
             scof.Name = this.Name;
             scof.CourseOfFireDef = this.CourseOfFireDef;
-            if (this.Components != null)
-            {
-                foreach (var c in this.Components)
-                {
-                    scof.Components.Add(c.Copy());
+            if (this.Components != null) {
+                foreach (var c in this.Components) {
+                    scof.Components.Add( c.Copy() );
                 }
             }
             scof.Comment = this.Comment;
             return scof;
+        }
+
+        /// <summary>
+        /// The set name of the Course of Fire definition that this simple COF is emulating.
+        /// </summary>
+        [JsonProperty( Order = 11)]
+        public string CourseOfFireDef { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Components, roughly, describe the stages of this SimpleCOF.
+        /// </summary>
+        [JsonProperty( Order = 12 )]
+        public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
+
+
+        [Obsolete( "Use CourseOfFireDef instead." )]
+        public string Name { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        public override string ToString() {
+			return $"SimpleCOF for {CourseOfFireDef}";
+		}
+
+        /// <inheritdoc/>
+        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+
+            SetName cofSetName = SetName.Parse( CourseOfFireDef );
+            return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
         }
 
         /// <inheritdoc/>
@@ -81,32 +95,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Comment { get; set; } = string.Empty;
     }
 
+    /// <summary>
+    /// A SimpleCOFComponent is one Stage make up of a SimpleCOF. 
+    /// </summary>
     public class SimpleCOFComponent: IGetStageStyleDefinition, ICopy<SimpleCOFComponent>, IReconfigurableRulebookObject
     {
-		/// <summary>
-		/// SetName of a StageStyle to include. Value must be a memember of the parent EventStyle
-		/// objects .StageStyles list. 
-		/// </summary>
-		public string StageStyle { get; set; } = string.Empty;
-
-		/// <summary>
-		/// The number of shots that are fired for this stage of a event.
-		/// </summary>
-        public int Shots { get; set; } = 0;
-
-		public override string ToString() {
-			return $"SimpleCOFComponent for {StageStyle}";
-		}
-
-		/// <inheritdoc/>
-		/// <exception cref="ArgumentException">Thrown if the value of .StageStyle could not be parsed. Which shouldn't happen.</exception>
-		public async Task<StageStyle> GetStageStyleDefinitionAsync() {
-
-			SetName stageStyleSetName = SetName.Parse( StageStyle );
-			return await DefinitionCache.GetStageStyleDefinitionAsync( stageStyleSetName );
-
-		}
-
+        /// <inheritdoc/>
         public SimpleCOFComponent Copy()
         {
             SimpleCOFComponent scofc = new SimpleCOFComponent();
@@ -117,7 +111,41 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return scofc;
         }
 
-        [Obsolete("Potentially obsolute, as we are allowing the user to specify the score format outside of the definition.")]
+        /// <summary>
+        /// SetName of a StageStyle to include. Value must be a memember of the parent EventStyle
+        /// objects .StageStyles list. 
+        /// </summary>
+        [JsonProperty( Order = 11 )]
+        public string StageStyle { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The number of shots that are fired for this stage of a event.
+        /// </summary>
+        [JsonProperty( Order = 12 )]
+        public int Shots { get; set; } = 10;
+
+        /// <summary>
+        /// The ScoreConfigName to use, that is defined by the parent's .ScoreFormatCollectionDef, to use when displaying scores with this SimpleCOFComponent.
+        /// </summary>
+        [DefaultValue( "Integer" )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include, Order = 13 )]
+        public string ScoreConfigName { get; set; } = "Integer";
+
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentException">Thrown if the value of .StageStyle could not be parsed. Which shouldn't happen.</exception>
+        public async Task<StageStyle> GetStageStyleDefinitionAsync() {
+
+            SetName stageStyleSetName = SetName.Parse( StageStyle );
+            return await DefinitionCache.GetStageStyleDefinitionAsync( stageStyleSetName );
+
+        }
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return $"SimpleCOFComponent for {StageStyle}";
+        }
+
+        [Obsolete("Removed in favor of ScoreConfigDefault.")]
         public string ScoreFormat { get; set; } = string.Empty;
 
         /// <inheritdoc/>

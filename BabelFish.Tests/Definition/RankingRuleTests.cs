@@ -367,7 +367,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient();
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024112116271732.0" ), "Slow Fire - All" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024112116271732.0" ), "Individual - All" ); //
             var resultList = resultListResponse.ResultList;
             var rankingRuleDef = await resultList.GetRankingRuleDefinitionAsync();
             var courseOfFireDef = await resultList.GetCourseOfFireDefinitionAsync();

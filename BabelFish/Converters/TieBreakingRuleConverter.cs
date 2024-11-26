@@ -21,32 +21,42 @@ namespace Scopos.BabelFish.Converters {
     /// </summary>
     public class TieBreakingRuleConverter : JsonConverter {
 
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ShowWhenBaseSpecifiedConcreteClassConverter() };
+        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new TieBreakingRuleBaseSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
             return (objectType == typeof( ShowWhenBase ));
         }
 
         public override object ReadJson( JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer ) {
-            JObject jo = JObject.Load( reader );
+            try {
+                JObject jo = JObject.Load( reader );
 
-            var id = jo["Operation"]?.Value<string>();
+                var id = jo["Method"]?.Value<string>();
 
-            switch (id) {
-                case "Score":
-                    return JsonConvert.DeserializeObject<TieBreakingRuleScore>( jo.ToString(), SpecifiedSubclassConversion );
-                case "CountOf":
-                    return JsonConvert.DeserializeObject<TieBreakingRuleCountOf>( jo.ToString(), SpecifiedSubclassConversion );
-                case "ParticipantAttribute":
-                    return JsonConvert.DeserializeObject<TieBreakingRuleParticipantAttribute>( jo.ToString(), SpecifiedSubclassConversion );
-                case "Attribute":
-                    return JsonConvert.DeserializeObject<TieBreakingRuleAttribute>( jo.ToString(), SpecifiedSubclassConversion );
-                default:
-                    //If we get here, it is probable because of ill-formed json
-                    return new TieBreakingRuleParticipantAttribute() {
-                        Source = "DisplayName",
-                        Comment = "Default TieBreakingRule because the value read in could not be deserialized."
-                    };
+                switch (id) {
+                    case "Score":
+                    case "":
+                    case null:
+                        return JsonConvert.DeserializeObject<TieBreakingRuleScore>( jo.ToString(), SpecifiedSubclassConversion );
+                    case "CountOf":
+                        return JsonConvert.DeserializeObject<TieBreakingRuleCountOf>( jo.ToString(), SpecifiedSubclassConversion );
+                    case "ParticipantAttribute":
+                        return JsonConvert.DeserializeObject<TieBreakingRuleParticipantAttribute>( jo.ToString(), SpecifiedSubclassConversion );
+                    case "Attribute":
+                        return JsonConvert.DeserializeObject<TieBreakingRuleAttribute>( jo.ToString(), SpecifiedSubclassConversion );
+                    default:
+                        //If we get here, it is probable because of ill-formed json
+                        return new TieBreakingRuleParticipantAttribute() {
+                            Source = "DisplayName",
+                            Comment = "Default TieBreakingRule because the value read in could not be deserialized."
+                        };
+                }
+            } catch (Exception ex) {
+                ;
+                return new TieBreakingRuleParticipantAttribute() {
+                    Source = "DisplayName",
+                    Comment = "Default TieBreakingRule because the value read in could not be deserialized."
+                };
             }
         }
 
