@@ -157,6 +157,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// TargetLift(min, max)
         /// TargetLift('PosOne(height)', 'PosTwo(height)', 'PosThree(height)')
         /// ShotPresentation
+        /// Pause (Need to figure out what this does on the Monitor.)
+        /// Series (Need to figure out what this does on the Monitor, might be a function, e.g. Series() .)
+        /// Group (Need to figure out what this does on the Monitor.)
+        /// AdvancedSettings (Need to figure out what this does on the Monitor.)
+        /// !AdvancedSettings (Need to figure out what this does on the Monitor.)
         /// Commands: Not required, missing or null uses DefaultCommand.AthleteHasControl
         /// DefaultCommand: Required with default value of [ ]
         /// </summary>
