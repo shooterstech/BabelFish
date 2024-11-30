@@ -7,12 +7,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
     /// <summary>
-    /// Classes that reference CoruseOfFire Definitions should implement this interface.
+    /// Classes that reference COURSE OF FIRE Definitions should implement this interface.
     /// </summary>
     public interface IGetCourseOfFireDefinition {
 
         /// <summary>
-        /// Retreives the EventStyle Definition referenced by the instantiating class.
+        /// Retreives the COURSE OF FIRE Definition referenced by the instantiating class.
         /// </summary>
         /// <returns></returns>
 		Task<CourseOfFire> GetCourseOfFireDefinitionAsync();

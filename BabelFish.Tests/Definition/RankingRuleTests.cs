@@ -77,45 +77,39 @@ namespace Scopos.BabelFish.Tests.Definition {
                 }
             } );
 
-            var integerDescending = new TieBreakingRule() {
+            var integerDescending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.DESCENDING,
                 EventName = "Qualification",
-                Method = TieBreakingRuleMethod.SCORE,
                 Source = "I"
             };
 
-            var integerAscending = new TieBreakingRule() {
+            var integerAscending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.ASCENDING,
                 EventName = "Qualification",
-                Method = TieBreakingRuleMethod.SCORE,
                 Source = "I"
             };
 
-            var decimalDescending = new TieBreakingRule() {
+            var decimalDescending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.DESCENDING,
                 EventName = "Qualification",
-                Method = TieBreakingRuleMethod.SCORE,
                 Source = "D"
             };
 
-            var decimalAscending = new TieBreakingRule() {
+            var decimalAscending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.ASCENDING,
                 EventName = "Qualification",
-                Method = TieBreakingRuleMethod.SCORE,
                 Source = "D"
             };
 
-            var xDescending = new TieBreakingRule() {
+            var xDescending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.DESCENDING,
                 EventName = "Qualification",
-                Method = TieBreakingRuleMethod.SCORE,
                 Source = "X"
             };
 
-            var xAscending = new TieBreakingRule() {
+            var xAscending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.ASCENDING,
                 EventName = "Qualification",
-                Method = TieBreakingRuleMethod.SCORE,
                 Source = "X"
             };
 
@@ -207,33 +201,28 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventScores = new Dictionary<string, EventScore>()
             };
 
-            var familyName = new TieBreakingRule() {
+            var familyName = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
                 Source = "FamilyName"
             };
 
-            var givenName = new TieBreakingRule() {
+            var givenName = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
                 Source = "GivenName"
             };
 
-            var familyNameDesc = new TieBreakingRule() {
+            var familyNameDesc = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.DESCENDING,
-                Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
                 Source = "FamilyName"
             };
 
-            var compeNumber = new TieBreakingRule() {
+            var compeNumber = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
                 Source = "CompetitorNumber"
             };
 
-            var country = new TieBreakingRule() {
+            var country = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
                 Source = "Country"
             };
 
@@ -378,7 +367,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient();
 
-            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024110715090340.0" ), "Individual - Sporter" ); //
+            var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2024112116271732.0" ), "Individual - All" ); //
             var resultList = resultListResponse.ResultList;
             var rankingRuleDef = await resultList.GetRankingRuleDefinitionAsync();
             var courseOfFireDef = await resultList.GetCourseOfFireDefinitionAsync();
@@ -410,8 +399,8 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             foreach ( var re in resultList.Items ) {
                 Debug.Write( $"{re.Rank} {re.Participant.DisplayName}  " );
-                //Console.Write( $"{re.EventScores[eventName].Score.I}  {re.EventScores[eventName].Score.X}" );
-                Debug.Write( $"{re.EventScores["Qualification"].Score.I}  {re.EventScores["Final"].Score.D}  {re.EventScores["Individual"].Score.S}" );
+                Debug.Write( $"{re.EventScores["Slow Fire"].Score.I}  {re.EventScores["Slow Fire"].Score.X}" );
+                //Debug.Write( $"{re.EventScores["Qualification"].Score.I}  {re.EventScores["Final"].Score.D}  {re.EventScores["Individual"].Score.S}" );
                 Debug.WriteLine("\n");
             }
 

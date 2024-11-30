@@ -349,21 +349,11 @@ namespace Scopos.BabelFish.Tests.Definition {
                 Assert.AreEqual(rr.RankingRules[i].AppliesTo, copy.RankingRules[i].AppliesTo);
                 for(int j = 0; j < rr.RankingRules[i].Rules.Count(); j++)
                 {
-                    Assert.AreEqual(rr.RankingRules[i].Rules[j].EventName, copy.RankingRules[i].Rules[j].EventName);
-                    Assert.AreEqual(rr.RankingRules[i].Rules[j].Values, copy.RankingRules[i].Rules[j].Values);
-                    Assert.AreEqual(rr.RankingRules[i].Rules[j].Method, copy.RankingRules[i].Rules[j].Method);
-                    Assert.AreEqual(rr.RankingRules[i].Rules[j].SortOrder, copy.RankingRules[i].Rules[j].SortOrder);
-                    Assert.AreEqual(rr.RankingRules[i].Rules[j].ResultStatus, copy.RankingRules[i].Rules[j].ResultStatus);
-                    Assert.AreEqual(rr.RankingRules[i].Rules[j].Source, copy.RankingRules[i].Rules[j].Source);
+                    Assert.AreEqual(rr.RankingRules[i].Rules[j], copy.RankingRules[i].Rules[j] );
                 }
                 for(int j = 0; j < rr.RankingRules[i].ListOnly.Count(); j++)
                 {
-                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].EventName, copy.RankingRules[i].ListOnly[j].EventName);
-                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].Values, copy.RankingRules[i].ListOnly[j].Values);
-                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].Method, copy.RankingRules[i].ListOnly[j].Method);
-                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].SortOrder, copy.RankingRules[i].ListOnly[j].SortOrder);
-                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].ResultStatus, copy.RankingRules[i].ListOnly[j].ResultStatus);
-                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j].Source, copy.RankingRules[i].ListOnly[j].Source);
+                    Assert.AreEqual(rr.RankingRules[i].ListOnly[j], copy.RankingRules[i].ListOnly[j] );
                 }
             }
         }
@@ -787,12 +777,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             foreach (var rr in rankingRule.RankingRules) {
                 foreach (var tbr in rr.Rules) {
                     var copy = tbr.Copy();
-                    Assert.AreEqual( tbr.EventName, copy.EventName );
-                    Assert.AreEqual( tbr.Values, copy.Values );
-                    Assert.AreEqual( tbr.Source, copy.Source );
-                    Assert.AreEqual( tbr.ResultStatus, copy.ResultStatus );
-                    Assert.AreEqual( tbr.Method, copy.Method );
-                    Assert.AreEqual( tbr.SortOrder, copy.SortOrder );
+                    Assert.AreEqual( tbr, copy );
                 }
             }
         }
