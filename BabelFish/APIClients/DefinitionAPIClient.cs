@@ -271,7 +271,27 @@ namespace Scopos.BabelFish.APIClients {
 
             return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
 
-		}
+        }
+
+        public async Task<GetDefinitionVersionPublicResponse> GetDefinitionVersionPublicAsync(
+            GetDefinitionVersionPublicRequest request ) {
+
+            GetDefinitionVersionPublicResponse response = new GetDefinitionVersionPublicResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait ( false );
+
+            return response;
+        }
+
+        public async Task<GetDefinitionVersionPublicResponse> GetDefinitionVersionPublicAsync( 
+            DefinitionType type, SetName setName ) {
+            GetDefinitionVersionPublicRequest request = new GetDefinitionVersionPublicRequest( setName, type );
+            //as we always want to return the latest version number, we will turn off cache
+            request.IgnoreFileSystemCache = true;
+            request.IgnoreInMemoryCache = true;
+
+            return await this.GetDefinitionVersionPublicAsync(request ).ConfigureAwait( false );
+        }
 
         /// <summary>
         /// Retreives a list of SparseDefinitions in order or relavancy to the provided searchTerm. Maximum 20 items are returned.

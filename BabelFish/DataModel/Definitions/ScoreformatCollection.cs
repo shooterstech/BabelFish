@@ -26,6 +26,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ScoreConfigs = new List<ScoreConfig>();
         }
 
+        public ScoreFormatCollection Copy() {
+            ScoreFormatCollection sfc = new ScoreFormatCollection();
+            this.Copy( sfc );
+            if (this.ScoreFormats != null) {
+                foreach (var sf in this.ScoreFormats) {
+                    sfc.ScoreFormats.Add( sf );
+                }
+            }
+            if (this.ScoreConfigs != null) {
+                foreach (var sc in this.ScoreConfigs) {
+                    sfc.ScoreConfigs.Add( sc.Copy() );
+                }
+            }
+            return sfc;
+        }
+
         public List<string> ScoreFormats { get; set; } = new List<string>();
 
         public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
@@ -38,6 +54,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return "";
         }
 
+        /// <summary>
+        /// Helper function that returns a list of the names of the ScoreConfigs
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetScoreConfigNames() {
+            List<string> names = new List<string>();
+            foreach( var sc in ScoreConfigs) {
+                names.Add(sc.ScoreConfigName);
+            }
+
+            return names;
+        }
+
         public bool IsValidScoreConfigName( string scoreConfigName ) {
             foreach (var sc in ScoreConfigs) {
                 if (sc.ScoreConfigName == scoreConfigName)
@@ -45,27 +74,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return false;
-        }
-
-        public ScoreFormatCollection Copy()
-        {
-            ScoreFormatCollection sfc = new ScoreFormatCollection();
-            this.Copy(sfc);
-            if (this.ScoreFormats != null)
-            {
-                foreach (var sf in this.ScoreFormats)
-                {
-                    sfc.ScoreFormats.Add(sf);
-                }
-            }
-            if (this.ScoreConfigs != null)
-            {
-                foreach (var sc in this.ScoreConfigs)
-                {
-                    sfc.ScoreConfigs.Add(sc.Copy());
-                }
-            }
-            return sfc;
         }
 
         /// <inheritdoc/>

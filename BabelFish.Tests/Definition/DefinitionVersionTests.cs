@@ -5,14 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Requests.DefinitionAPI;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
     public class DefinitionVersionTests {
 
+
         [TestInitialize]
         public void InitializeTest() {
             Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        }
+
+        [TestMethod]
+        public async Task GetDefinitionVersionTests() {
+
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v1.0:colorado4h:Air Rifle 4x10" );
+            var request = new GetDefinitionVersionPublicRequest( setName, DefinitionType.COURSEOFFIRE );
+
+            var response = await client.GetDefinitionVersionPublicAsync( request );
+            Assert.IsNotNull( response );
+
+            var sd = response.SparseDefinition;
+            Assert.IsNotNull( sd );
+            var minVersion = new DefinitionVersion( "1.1" );
+            Assert.IsTrue( sd.GetDefinitionVersion() >= minVersion );
+
         }
 
         [TestMethod]
