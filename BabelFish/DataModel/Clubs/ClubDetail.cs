@@ -36,6 +36,8 @@ namespace Scopos.BabelFish.DataModel.Clubs
                 LicenseList = new List<ClubLicense>();
             if (Options == null)
                 Options = new List<ClubOptions>();
+            if (NamespaceList == null)
+                NamespaceList = new List<NamespaceDetail>();
         }
 
         /// <summary>
@@ -179,6 +181,8 @@ namespace Scopos.BabelFish.DataModel.Clubs
         /// A list of optional services this club has subscribed to.
         /// </summary>
         public List<ClubOptions> Options { get; set; } = new List<ClubOptions> { };
+
+        public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
 
         /// <inheritdoc />
         [JsonIgnore]

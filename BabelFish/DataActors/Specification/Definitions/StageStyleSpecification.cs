@@ -13,12 +13,65 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         /// <inheritdoc />
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
 
-            var shotsInSeries = new IsShotsInSeriesValid();
-            var scoreFormatCollectionDef = new IsScoreFormatCollectionDefValid();
-            var scoreConfigDefault = new IsScoreConfigDefaultValid();
-            var relatedStageStyles = new IsRelatedStageStylesValid();
-
             var valid = true;
+
+            //Common fields
+            var hierarchicalName = new IsDefinitionHierarchicalNameValid();
+            var commonName = new IsDefiniitonCommonNameValid();
+            var description = new IsDefiniitonDescriptionValid();
+            var subdiscipline = new IsDefiniitonSubdisciplineValid();
+            var tags = new IsDefiniitonTagsValid();
+            var comment = new IsCommentValid();
+            var owner = new IsDefiniitonOwnerValid();
+            var version = new IsDefiniitonVersionValid();
+
+            if (!await hierarchicalName.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( hierarchicalName.Messages );
+            } else {
+                if (!await owner.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( owner.Messages );
+                }
+            }
+
+            if (!await version.IsSatisfiedByAsync( candidate ) )
+            {
+                valid = false;
+                Messages.AddRange( version.Messages );
+            }
+
+            if (!await commonName.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( commonName.Messages );
+            }
+
+            if (!await description.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( description.Messages );
+            }
+
+            if (!await subdiscipline.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( subdiscipline.Messages );
+            }
+
+            if (!await tags.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( tags.Messages );
+            }
+
+            if (!await comment.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( comment.Messages );
+            }
+
+
+            //StageStyle specific fields
+            var shotsInSeries = new IsStageStyleShotsInSeriesValid();
+            var scoreFormatCollectionDef = new IsStageStyleScoreFormatCollectionDefValid();
+            var scoreConfigDefault = new IsStageStyleScoreConfigDefaultValid();
+            var relatedStageStyles = new IsStageStyleRelatedStageStylesValid();
 
             if ( ! await shotsInSeries.IsSatisfiedByAsync( candidate ) ) {
                 valid = false;
@@ -49,7 +102,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// <summary>
     /// Tests whether the ShotsInSeries property is valid in the passed in StageStyle instance.
     /// </summary>
-    public class IsShotsInSeriesValid : CompositeSpecification<StageStyle> {
+    public class IsStageStyleShotsInSeriesValid : CompositeSpecification<StageStyle> {
             
         /// <inheritdoc />
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
@@ -73,7 +126,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// <summary>
     /// Tests whether the ScoreFormatCollectionDef property is valid in the passed in StageStyle instance.
     /// </summary>
-    public class IsScoreFormatCollectionDefValid : CompositeSpecification<StageStyle> {
+    public class IsStageStyleScoreFormatCollectionDefValid : CompositeSpecification<StageStyle> {
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
             Messages.Clear();
 
@@ -93,7 +146,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// <summary>
     /// Tests whether the ScoreConfigDefault property is valid in the passed in StageStyle instance.
     /// </summary>
-    public class IsScoreConfigDefaultValid : CompositeSpecification<StageStyle> {
+    public class IsStageStyleScoreConfigDefaultValid : CompositeSpecification<StageStyle> {
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
             Messages.Clear();
             //Generally assumes ScoreFormatCollection is valid
@@ -122,7 +175,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// <summary>
     /// Tests whether the RelatedStageStyles property is valid in the passed in StageStyle instance.
     /// </summary>
-    public class IsRelatedStageStylesValid : CompositeSpecification<StageStyle> {
+    public class IsStageStyleRelatedStageStylesValid : CompositeSpecification<StageStyle> {
 
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
             Messages.Clear();

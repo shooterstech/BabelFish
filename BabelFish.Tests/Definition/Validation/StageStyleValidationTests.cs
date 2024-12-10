@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Threading.Tasks;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -38,7 +37,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var valid = await stageStyleValidation.IsSatisfiedByAsync( stageStyle );
 
-            Assert.IsTrue( valid );
+            Assert.IsTrue( valid, string.Join(", ", stageStyleValidation.Messages ) );
         }
 
         [TestMethod]
@@ -49,7 +48,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var stageStyle = (await client.GetStageStyleDefinitionAsync( setName )).Value;
 
-            var validation = new IsShotsInSeriesValid();
+            var validation = new IsStageStyleShotsInSeriesValid();
 
             //The unaltered should pass
             Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
@@ -71,7 +70,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var stageStyle = (await client.GetStageStyleDefinitionAsync( setName )).Value;
 
-            var validation = new IsScoreFormatCollectionDefValid();
+            var validation = new IsStageStyleScoreFormatCollectionDefValid();
 
             //The unaltered should pass
             Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
@@ -101,7 +100,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var stageStyle = (await client.GetStageStyleDefinitionAsync( setName )).Value;
 
-            var validation = new IsScoreConfigDefaultValid();
+            var validation = new IsStageStyleScoreConfigDefaultValid();
 
             //The unaltered should pass
             Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
@@ -127,7 +126,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var stageStyle = (await client.GetStageStyleDefinitionAsync( setName )).Value;
 
-            var validation = new IsRelatedStageStylesValid();
+            var validation = new IsStageStyleRelatedStageStylesValid();
 
             //The unaltered should pass
             Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );

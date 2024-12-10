@@ -10,6 +10,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     public static class DefinitionValidationHelper {
 
         private static DefinitionAPIClient definitionAPIClient = new DefinitionAPIClient();
+        public static ClubsAPIClient ClubsAPIClient = new ClubsAPIClient();
 
         public static ValidationModel IsValidNonEmptyString( string propertyName, string value ) {
 
