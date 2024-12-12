@@ -262,6 +262,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
     /// <summary>
+    /// The Score Components from a Score object.
+    /// </summary>
+    [JsonConverter( typeof( StringEnumConverter ) )]
+    public enum ScoreComponent {
+        X,
+        I,
+        D,
+        S,
+        J,
+        K,
+        L
+    }
+
+    /// <summary>
     /// Describes the shape of an aiming mark.
     /// </summary>
     [JsonConverter( typeof( StringEnumConverter ) )]

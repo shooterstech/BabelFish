@@ -284,7 +284,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 Assert.AreEqual(esd.SimpleCOFs[i].CourseOfFireDef, Copyesd.SimpleCOFs[i].CourseOfFireDef);
                 for(int j = 0; j < esd.SimpleCOFs[i].Components.Count(); j++)
                 {
-                    Assert.AreEqual(esd.SimpleCOFs[i].Components[j].StageStyle, Copyesd.SimpleCOFs[i].Components[j].StageStyle);
+                    Assert.AreEqual(esd.SimpleCOFs[i].Components[j].StageStyleDef, Copyesd.SimpleCOFs[i].Components[j].StageStyleDef );
                 }
             }
             //CopySimpleCOF should also be tested for functionality
@@ -620,17 +620,17 @@ namespace Scopos.BabelFish.Tests.Definition {
         {
             // part of CopySimpleCOF
             SimpleCOFComponent scc = new SimpleCOFComponent();
-            scc.StageStyle = "Something here";
+            scc.StageStyleDef = "Something here";
             scc.Shots = 15;
-            scc.ScoreFormat = "{d}";
+            scc.ScoreConfigName = "Integer";
 
             //copy scofc
             SimpleCOFComponent Copysc = new SimpleCOFComponent();
             Copysc = scc.Copy();
 
-            Assert.AreEqual(scc.StageStyle, Copysc.StageStyle);
+            Assert.AreEqual(scc.StageStyleDef, Copysc.StageStyleDef );
             Assert.AreEqual(scc.Shots, Copysc.Shots);
-            Assert.AreEqual(scc.ScoreFormat, Copysc.ScoreFormat);
+            Assert.AreEqual(scc.ScoreConfigName, Copysc.ScoreConfigName );
         }
 
         [TestMethod]

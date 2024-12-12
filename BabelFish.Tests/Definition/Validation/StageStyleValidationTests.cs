@@ -33,11 +33,11 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var stageStyle = (await client.GetStageStyleDefinitionAsync( setName )).Value;
 
-            var stageStyleValidation = new IsStageStyleValid();
+            var validation = new IsStageStyleValid();
 
-            var valid = await stageStyleValidation.IsSatisfiedByAsync( stageStyle );
+            var valid = await validation.IsSatisfiedByAsync( stageStyle );
 
-            Assert.IsTrue( valid, string.Join(", ", stageStyleValidation.Messages ) );
+            Assert.IsTrue( valid, string.Join(", ", validation.Messages ) );
         }
 
         [TestMethod]

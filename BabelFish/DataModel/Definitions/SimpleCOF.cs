@@ -104,10 +104,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public SimpleCOFComponent Copy()
         {
             SimpleCOFComponent scofc = new SimpleCOFComponent();
-			scofc.StageStyle = this.StageStyle;
+			scofc.StageStyleDef = this.StageStyleDef;
             scofc.Shots = this.Shots;
-            scofc.ScoreFormat = this.ScoreFormat;
+            scofc.ScoreConfigName = this.ScoreConfigName;
             scofc.Comment = this.Comment;
+            scofc.ScoreFormat = this.ScoreFormat;
             return scofc;
         }
 
@@ -116,7 +117,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// objects .StageStyles list. 
         /// </summary>
         [JsonProperty( Order = 11 )]
-        public string StageStyle { get; set; } = string.Empty;
+        public string StageStyleDef { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Same as StageStyleDef property. 
+        /// </summary>
+        [JsonProperty( Order = 11 )]
+        [Obsolete( "Use StageStyleDef instead.")]
+        public string StageStyle { 
+            get {
+                return this.StageStyleDef;
+            }
+            set {
+                if (string.IsNullOrEmpty( this.StageStyleDef) ) {
+                    this.StageStyleDef = value;
+                }
+            }
+        } 
 
         /// <summary>
         /// The number of shots that are fired for this stage of a event.
@@ -125,24 +142,32 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public int Shots { get; set; } = 10;
 
         /// <summary>
-        /// The ScoreConfigName to use, that is defined by the parent's .ScoreFormatCollectionDef, to use when displaying scores with this SimpleCOFComponent.
+        /// The ScoreConfigName to use, that is defined by the parent's COF's .ScoreFormatCollectionDef, to use when displaying scores with this SimpleCOFComponent.
         /// </summary>
         [DefaultValue( "Integer" )]
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include, Order = 13 )]
         public string ScoreConfigName { get; set; } = "Integer";
 
+        /// <summary>
+        /// The ScoreComponent to use, from the score of this StageStyle, to calculate the 
+        /// special sum score of the EventStyle. 
+        /// </summary>
+        [DefaultValue( ScoreComponent.S )]
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate, Order = 13 )]
+        public ScoreComponent ScoreComponent { get; set; } = ScoreComponent.S;
+
         /// <inheritdoc/>
         /// <exception cref="ArgumentException">Thrown if the value of .StageStyle could not be parsed. Which shouldn't happen.</exception>
         public async Task<StageStyle> GetStageStyleDefinitionAsync() {
 
-            SetName stageStyleSetName = SetName.Parse( StageStyle );
+            SetName stageStyleSetName = SetName.Parse( StageStyleDef );
             return await DefinitionCache.GetStageStyleDefinitionAsync( stageStyleSetName );
 
         }
 
         /// <inheritdoc/>
         public override string ToString() {
-            return $"SimpleCOFComponent for {StageStyle}";
+            return $"SimpleCOFComponent for {StageStyleDef}";
         }
 
         [Obsolete("Removed in favor of ScoreConfigDefault.")]
