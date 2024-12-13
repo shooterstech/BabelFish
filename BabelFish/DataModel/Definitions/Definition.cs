@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
@@ -44,15 +44,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		}
 
         internal void OnDeserializedMethod(StreamingContext context) {
-            //Note, each subclass of Definition will have to call base.OnSerializedMethod
+			//Note, each subclass of Definition will have to call base.OnSerializedMethod
 
-            //Assures that Tags won't be null and as a default will be an empty list.
-        }
+			//Assures that Tags won't be null and as a default will be an empty list.
+		}
 
-        /// <summary>
-        /// HierarchicalName is namespace:properName
-        /// </summary>
-        [JsonProperty( Order = 3 )]
+		/// <summary>
+		/// HierarchicalName is namespace:properName
+		/// </summary>
+		[JsonProperty( Order = 3 )]
         public string HierarchicalName { get; set; } = string.Empty;
 
         /// <summary>
@@ -116,17 +116,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 10 )]
         public List<string> Tags { get; set; } = new List<string>();
 
-        /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+		/// <summary>
+		/// The Version string of the JSON document.
+		/// </summary>
+		[JsonProperty( Order = 10, DefaultValueHandling = DefaultValueHandling.Include )]
+		[DefaultValue( "2020-03-31" )]
+		public string JSONVersion { get; set; } = "2020-03-31";
+
+		/// <inheritdoc/>
+		[JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The Version string of the JSON document
-        /// </summary>
-        [JsonProperty( Order = 2 )]
-        [DefaultValue( "2020-03-31" )]
-        public string JSONVersion { get; set; } = string.Empty;
 
         /// <summary>
         /// Returns a SetName object based on the Definitions Version and HierrchcialName
@@ -143,5 +143,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return sn;
         }
 
+        /// <summary>
+        /// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
+        /// </summary>
+        /// <returns></returns>
+        public string GetFileName(bool useDevelopmentVersioning = false) {
+            if (! useDevelopmentVersioning) 
+                return $"{SetName.ToString().Replace( ':', ' ' )}.json";
+
+            return $"d0.0 {HierarchicalName.ToString().Replace( ':', ' ' )}.json";
+        }
+
+        public string SaveToFile( DirectoryInfo definitionDirectory ) {
+
+            string filePath = $"{definitionDirectory.FullName}\\{Type.Description()}\\{GetFileName(true)}";
+
+            DirectoryInfo typeDirectory = new DirectoryInfo( $"{definitionDirectory.FullName}\\{Type.Description()}" );
+
+            if (!typeDirectory.Exists)
+                typeDirectory.Create();
+
+			string json = JsonConvert.SerializeObject( this, Formatting.Indented );
+
+            File.WriteAllText( filePath, json );
+
+            return filePath ;
+        }
     }
 }
