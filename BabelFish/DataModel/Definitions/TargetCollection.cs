@@ -6,17 +6,21 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-    /// <summary>
-    /// A TARGET COLLECTION defines a set of TARGET definitions that are used together for multiple COURSE OF FIRE scripts.  with each other during competitions or practice. It may only list one TARGET definition, or it may list multiple TARGET definitions. Each index is then used as part of a COURSE OF FIRE script.
-    /// 
-    /// For example, in high power, one TARGET COLLECTION could include the 200yds. SR target, the 300yds SR-3, and the 600yds MR-1 target for the National Match Course. Another TARGET SET, for the same style of shooting could define the 200yds. SR target, the 300yds reduced for 200yds SR-42, and the 600yds reduced for 200yds MR-2. 
-    /// 
-    /// In another example, for smallbore three position, one TARGET COLLECTION could include the 50m Rifle target. Another the 50m Rifle reduced for 50yds. And yet another the 50m Rifle reduced for 50ft. 
-    /// </summary>
-    public class TargetCollection : Definition, ICopy<TargetCollection> {
+	/// <summary>
+	/// <para>A TARGET COLLECTION defines a set of TARGET definitions that are used together for multiple COURSE OF FIRE scripts.  with each other during competitions or practice. 
+	/// It may only list one TARGET definition, or it may list multiple TARGET definitions. Each index is then used as part of a COURSE OF FIRE script.</para>
+	/// 
+	/// <para>For example, in high power, one TARGET COLLECTION could include the 200yds. SR target, the 300yds SR-3, and the 600yds MR-1 target for the National Match Course. 
+	/// Another TARGET SET, for the same style of shooting could define the 200yds. SR target, the 300yds reduced for 200yds SR-42, and the 600yds reduced for 200yds MR-2. </para>
+	/// 
+	/// <para>In another example, for smallbore three position, one TARGET COLLECTION could include the 50m Rifle target. Another the 50m Rifle reduced for 50yds. 
+	/// And yet another the 50m Rifle reduced for 50ft. </para>
+	/// </summary>
+	public class TargetCollection : Definition, ICopy<TargetCollection> {
         
         /// <summary>
         /// Public constructor
@@ -63,6 +67,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return false;
-        }
-    }
+		}
+
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsTargetCollectionValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+	}
 }

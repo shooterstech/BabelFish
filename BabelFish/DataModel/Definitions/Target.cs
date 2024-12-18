@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -76,5 +77,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 14 )]
         [DefaultValue( 10000 )]
         public int Distance { get; set; } = 10000;
-    }
+
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsTargetValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+	}
 }

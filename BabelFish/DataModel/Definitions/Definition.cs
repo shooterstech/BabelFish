@@ -7,10 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataActors.Specification;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    [Serializable]
+
+	[JsonConverter( typeof( DefinitionConverter ) )]
+	[Serializable]
     public abstract class Definition : SparseDefinition, IReconfigurableRulebookObject {
 
         private string commonName = string.Empty;
@@ -143,11 +147,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return sn;
         }
 
-        /// <summary>
-        /// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
-        /// </summary>
-        /// <returns></returns>
-        public string GetFileName(bool useDevelopmentVersioning = false) {
+        public abstract Task<bool> GetMeetsSpecificationAsync();
+
+        [JsonIgnore]
+        public List<string> SpecificationMessages { get; protected set; }
+
+		/// <summary>
+		/// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
+		/// </summary>
+		/// <returns></returns>
+		public string GetFileName(bool useDevelopmentVersioning = false) {
             if (! useDevelopmentVersioning) 
                 return $"{SetName.ToString().Replace( ':', ' ' )}.json";
 

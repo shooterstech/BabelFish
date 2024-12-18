@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.Specification;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -98,5 +100,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 90 )]
         public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
-    }
+        /// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+                var validation = new IsStageStyleValid();
+
+                var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+                SpecificationMessages = validation.Messages;
+            
+            return meetsSpecification;
+        }
+	}
 }

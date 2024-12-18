@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
@@ -57,5 +58,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
-    }
+
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsRankingRulesValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+	}
 }

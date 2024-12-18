@@ -67,11 +67,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// TARGET COLLECTION Definition
         /// </summary>
-        [Description( "TARGET COLLECTION" )] [EnumMember( Value = "TARGET COLLECTION" )] TARGETCOLLECTION,
-
-        /// <summary>
-        /// TARGET SCHEME Collection
-        /// </summary>
-        [Description( "TARGET SCHEME" )] [EnumMember( Value = "TARGET SCHEME" )] TARGETSCHEME
+        [Description( "TARGET COLLECTION" )] [EnumMember( Value = "TARGET COLLECTION" )] TARGETCOLLECTION
     }
 }

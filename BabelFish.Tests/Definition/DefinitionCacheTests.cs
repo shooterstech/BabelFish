@@ -187,5 +187,17 @@ namespace Scopos.BabelFish.Tests.Definition {
             DirectoryInfo temp = new DirectoryInfo( @"c:\temp" );
             stageStyle.SaveToFile( temp );
 		}
+
+        [TestMethod] 
+        public async Task ReadFromFileTest() {
+
+            string path = @"G:\My Drive\Definitions\COURSE OF FIRE\v1.0 usas Smallbore Rifle 60 Prone.json";
+
+            string json = File.ReadAllText( path );
+
+            var definition = JsonConvert.DeserializeObject<Scopos.BabelFish.DataModel.Definitions.Definition> ( json );
+
+            Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
+		}
     }
 }

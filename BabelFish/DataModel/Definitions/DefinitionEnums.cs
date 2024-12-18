@@ -143,9 +143,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "SHOTGUN" )][EnumMember( Value = "SHOTGUN" )] SHOTGUN,
 
         /// <summary>
-        /// Not Applicable
+        /// Silhouette
         /// </summary>
-        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
+        [Description( "SILHOUETTE" )]
+        [EnumMember( Value = "SILHOUETTE" )]
+		SILHOUETTE,
+
+		/// <summary>
+		/// Not Applicable
+		/// </summary>
+		[Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
 
 		/// <summary>
 		/// Benchrest

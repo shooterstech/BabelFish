@@ -6,10 +6,20 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-    [Serializable]
+	/// <summary>
+	/// <para>A SCORE FORMAT COLLECTION defines a set of Score Config. Each Score Config consists of one or more Score Format key value pairs where the 
+	/// key is the name of the Score Format and the value is a Score Format string. Each SCORE FORMAT COLLECTION may be used for any number of COURSE OF FIRE 
+	/// scripts during competitions or practice. Each Score Format name included in the SCORE FORMAT COLLECTION may be used in the COURSE OF FIRE script 
+	/// Event or Singular Definition Objects (under ScoreFormat).</para>
+	/// 
+	/// <para>A SCORE FORMAT COLLECTION may contain any number of ScoreConfigs, but each ScoreConfig must contain the same number of Score Format key value pairs.
+    /// The Score Format keys must be the same across all ScoreConfigs.</para>
+	/// </summary>
+	[Serializable]
     public class ScoreFormatCollection : Definition, ICopy<ScoreFormatCollection>
     {
         
@@ -42,9 +52,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return sfc;
         }
 
+        [JsonProperty( Order = 11  )]
         public List<string> ScoreFormats { get; set; } = new List<string>();
 
-        public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
+		[JsonProperty( Order = 12 )]
+		public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
 
         public string GetDefaultScoreConfigName() {
             if (ScoreConfigs.Count > 0)
@@ -80,5 +92,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
-    }
+
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsScoreFormatCollectionValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+	}
 }

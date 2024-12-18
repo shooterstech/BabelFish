@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -92,7 +93,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     && Fields.Count == 1
                     && !Fields[0].MultipleValues;
             }
-        }
+		}
 
-    }
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+			var validation = new IsAttributeValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+
+	}
 }

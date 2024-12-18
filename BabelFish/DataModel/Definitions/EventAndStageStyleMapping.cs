@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,5 +52,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Event Appelations and Stage Appelations.
         /// </summary>
         public List<EventAndStageStyleMappingObj> Mappings { get; set; } = new List<EventAndStageStyleMappingObj> { };
-    }
+
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsEventAndStageStyleMappingValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+            
+		}
+	}
 }

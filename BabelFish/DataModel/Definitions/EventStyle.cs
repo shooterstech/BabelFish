@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,5 +98,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 14 )]
         public List<SimpleCOF> SimpleCOFs { get; set; } = new List<SimpleCOF>();
 
-    }
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+			var validation = new IsEventStyleValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+
+	}
 }

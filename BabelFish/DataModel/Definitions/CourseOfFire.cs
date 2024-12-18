@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -217,5 +218,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty(Order = 23)]
         public List<AbbreviatedFormat> AbbreviatedFormats { get; set; } = new List<AbbreviatedFormat>();
 
-    }
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+			var validation = new IsCourseOfFireValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+
+	}
 }
