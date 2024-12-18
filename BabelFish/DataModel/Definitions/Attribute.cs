@@ -32,8 +32,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod(context);
 
             //Designation is not required, but if the user doesn't include it, set it to all values except HIDDEN
-            if (Designation == null || Designation.Count() == 0)
-                Designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
+            if (designation == null || designation.Count() == 0)
+                designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
         }
 
         /// <inheritdoc />
@@ -71,7 +71,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     }
                 }
 
-                return "";
+                return displayName;
             }
             set {
                 displayName = value;
@@ -88,16 +88,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             get {
                 if (designation == null)
                     designation = new List<AttributeDesignation>();
-
-                if (designation.Count == 0) {
-                    //If no designationare are listed, assume all except hidden.
-                    designation.Add( AttributeDesignation.ATHLETE );
-					designation.Add( AttributeDesignation.CLUB );
-					designation.Add( AttributeDesignation.MATCH_OFFICIAL );
-					designation.Add( AttributeDesignation.TEAM );
-					designation.Add( AttributeDesignation.TEAM_OFFICIAL );
-					designation.Add( AttributeDesignation.USER );
-				}
 
                 return designation;
             }
@@ -121,8 +111,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// </summary>
 		[JsonProperty( Order = 12 )]
         [JsonConverter( typeof( StringEnumConverter ) )]
-        [DefaultValue( VisibilityOption.PRIVATE )]
-        public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PRIVATE;
+        [DefaultValue( VisibilityOption.PUBLIC )]
+        public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PUBLIC;
 
 		/// <summary>
 		/// The default visibility for a new ATTRIBUTE VALUE. 

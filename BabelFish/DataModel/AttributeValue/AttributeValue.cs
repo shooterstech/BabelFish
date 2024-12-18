@@ -175,15 +175,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 return definition.MultipleValues;
             }
         }
-
-        /// <summary>
-        /// Checks Field's Required flag from AttributeDefinition
-        /// </summary>
-        /// <param name="fieldName">Field Name string from GetDefintionFields()</param>
-        /// <returns>true or false</returns>
-        public bool? IsFieldNameRequired( string fieldName ) {
-            return definition.RequiredAttributes.Contains( fieldName );
-        }
         #endregion Definition
 
         #region Attribute

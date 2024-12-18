@@ -67,6 +67,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 			var displayName = new IsAttributeDisplayNameValid();
 			var designation = new IsAttributeDesignationValid();
 			var defaultVisibility = new IsAttributeDefaultVisibilityValid();
+			var fieldNameUnique = new IsAttributeFieldNameUnique();
+			var fieldNotEmpty = new IsAttributeFieldNotEmpty();
+			var fieldDefaultValue = new IsAttributeFieldDefaultValueValid();
 
 			if (!await displayName.IsSatisfiedByAsync( candidate )) {
 				valid = false;
@@ -83,6 +86,21 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 				Messages.AddRange( defaultVisibility.Messages );
 			}
 
+			if (!await fieldNameUnique.IsSatisfiedByAsync( candidate )) {
+				valid = false; 
+				Messages.AddRange( fieldNameUnique.Messages );
+			}
+
+			if (!await fieldNotEmpty.IsSatisfiedByAsync( candidate )) {
+				valid = false; 
+				Messages.AddRange( fieldNotEmpty.Messages );
+			}
+
+			if (!await fieldDefaultValue.IsSatisfiedByAsync( candidate )) {
+				valid = false;
+				Messages.AddRange( fieldDefaultValue.Messages );
+			}
+
 			return valid;
 		}
 	}
@@ -96,14 +114,16 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 		public override async Task<bool> IsSatisfiedByAsync( Attribute candidate ) {
 
 			Messages.Clear();
+			bool valid = true;
 
 			var vm = DefinitionValidationHelper.IsValidNonEmptyString( "DisplayName", candidate.DisplayName );
 
 			if (!vm.Valid) {
 				Messages.Add( vm.Message );
+				valid = false;
 			}
 
-			return vm.Valid;
+			return valid;
 		}
 	}
 
@@ -240,6 +260,42 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 				valid = false;
 				Messages.Add( "Fields must contain at least one AttributeField. Currently it is empty." );
 			}
+
+			return valid;
+		}
+	}
+
+	/// <summary>
+	/// Tests whether the Default Value on each AttributeField is valid.
+	/// </summary>
+	public class IsAttributeFieldDefaultValueValid : CompositeSpecification<Attribute> {
+
+		/// <inheritdoc/>
+		public override async Task<bool> IsSatisfiedByAsync( Attribute candidate ) {
+
+			Messages.Clear();
+			bool valid = true;
+
+			if (candidate.Fields != null) {
+				foreach (var field in candidate.Fields) {
+					if ( field.FieldType == DataModel.Definitions.FieldType.CLOSED
+						|| field.FieldType == DataModel.Definitions.FieldType.SUGGEST ) {
+						bool isAValueOption = false;
+
+						foreach (var option in field.Values) {
+							if (option.Value == field.DefaultValue) {
+								isAValueOption = true;
+							}
+						}
+
+						if ( !isAValueOption) {
+							valid = false;
+							Messages.Add( $"The AttributeField '{field.FieldName}' DefaultValue is not listed as one of the optional Values. Instead have '{field.DefaultValue}.'" );
+						}
+					}
+				}
+			}
+			//Not catching if Fields is null, as IsAttributeFieldNotEmpty does this.
 
 			return valid;
 		}

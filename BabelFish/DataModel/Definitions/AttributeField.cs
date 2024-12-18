@@ -211,8 +211,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
             set {
                 if (value is JToken)
-                    value = DeserializeFromJTokens( value );
-            }
+                    defaultValue = DeserializeFromJTokens( value );
+                else
+                    defaultValue = value;
+
+			}
         }
 
         /// <summary>
