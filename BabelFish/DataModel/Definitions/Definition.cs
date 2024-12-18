@@ -60,6 +60,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string HierarchicalName { get; set; } = string.Empty;
 
         /// <summary>
+        /// Returns the value of .HierarchicalName as an HierarchicalName object.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidDataException">Thrown if the value of .HierarchicalName can not be parsed.</exception>
+        public HierarchicalName GetHierarchicalName() {
+            HierarchicalName hierarchicalName;
+            if (!Scopos.BabelFish.DataModel.Definitions.HierarchicalName.TryParse( this.HierarchicalName, out hierarchicalName )) {
+                return hierarchicalName;
+            }
+
+            throw new InvalidDataException( $"Unable to parse '{HierarchicalName}' into a HierarchicalName." );
+        }
+
+        /// <summary>
         /// A human readable short name for this Definition. If no specific value
         /// is given, then the ProperName portion of the SetName is returned instead.
         /// </summary>

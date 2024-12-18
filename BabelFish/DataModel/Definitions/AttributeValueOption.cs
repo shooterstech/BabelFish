@@ -8,7 +8,8 @@ using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
-    /// AttributeValueOption are the choices presented to the user with the AttributeField FieldType is SUGGEST or CLOSED.
+    /// AttributeValueOption are the choices presented to the user with the 
+    /// AttributeField FieldType is SUGGEST or CLOSED.
     /// </summary>
     [Serializable]
     public class AttributeValueOption: ICopy<AttributeValueOption>, IReconfigurableRulebookObject {

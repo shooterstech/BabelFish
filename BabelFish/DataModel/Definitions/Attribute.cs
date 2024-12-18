@@ -44,7 +44,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             copy.DisplayName = this.DisplayName;
             copy.MaxVisibility = this.MaxVisibility;
             copy.MultipleValues = this.MultipleValues;
-            copy.RequiredAttributes.AddRange( this.RequiredAttributes );
             foreach( var f in this.Fields )
             copy.Fields.Add( f.Copy() );
 
@@ -55,30 +54,95 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return copy;
         }
 
+        private string displayName = string.Empty;
+
+        /// <summary>
+        /// DisplayName is the name displayed to the user for this ATTRIBUTE.
+        /// </summary>
         [JsonProperty(Order = 10)]
-        [DefaultValue("")]
-        public string DisplayName { get; set; } = string.Empty;
+        public string DisplayName {
+            get {
+                if (string.IsNullOrEmpty( displayName )) {
+                    try {
+                        var hn = this.GetHierarchicalName();
+                        return hn.ProperName;
+                    } catch (Exception ex) {
+                        ; //Do nothing, just let it fall through
+                    }
+                }
 
-        [JsonProperty(Order = 11)]
-        public List<AttributeDesignation> Designation { get; set; } = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
+                return "";
+            }
+            set {
+                displayName = value;
+            }
+        }
 
-        [JsonProperty(Order = 12)]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public VisibilityOption MaxVisibility { get; set; }
+		private List<AttributeDesignation> designation = new List<AttributeDesignation>();
 
-        [JsonProperty( Order = 13 )]
-        [DefaultValue( false )]
-        public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
+		/// <summary>
+		/// The type of participant, teams, or clubs that this Attribute may be applied to.
+		/// </summary>
+		[JsonProperty(Order = 11)]
+        public List<AttributeDesignation> Designation {
+            get {
+                if (designation == null)
+                    designation = new List<AttributeDesignation>();
 
-        [JsonProperty(Order = 13)]
+                if (designation.Count == 0) {
+                    //If no designationare are listed, assume all except hidden.
+                    designation.Add( AttributeDesignation.ATHLETE );
+					designation.Add( AttributeDesignation.CLUB );
+					designation.Add( AttributeDesignation.MATCH_OFFICIAL );
+					designation.Add( AttributeDesignation.TEAM );
+					designation.Add( AttributeDesignation.TEAM_OFFICIAL );
+					designation.Add( AttributeDesignation.USER );
+				}
+
+                return designation;
+            }
+            set {
+                if (value.Count == 0) {
+                    //In essence the reset condition. 
+                    designation.Clear();
+                } else {
+                    //Avoid adding duplicates
+                    designation.Clear();
+                    foreach( var d in value ) {
+                        if (!designation.Contains( d ))
+                            designation.Add( d ); 
+                    }
+                }
+            }
+        }
+
+		/// <summary>
+		/// The maximum visibility the user can set for the ATTRIBUTE VALUE.
+		/// </summary>
+		[JsonProperty( Order = 12 )]
+        [JsonConverter( typeof( StringEnumConverter ) )]
+        [DefaultValue( VisibilityOption.PRIVATE )]
+        public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PRIVATE;
+
+		/// <summary>
+		/// The default visibility for a new ATTRIBUTE VALUE. 
+        /// Must be a Privacy value equal to or greater than the MaxVisibility.
+		/// </summary>
+		[JsonProperty( Order = 13 )]
+		[DefaultValue( VisibilityOption.PUBLIC )]
+		public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
+
+		/// <summary>
+		/// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
+		/// </summary>
+		[JsonProperty(Order = 13)]
         [DefaultValue(false)]
         public bool MultipleValues { get; set; } = false;
 
-        [JsonProperty(Order = 14)]
-        [DefaultValue(null)]
-        public List<string> RequiredAttributes { get; set; } = new List<string>();
-
-        [JsonProperty(Order = 15)]
+		/// <summary>
+		/// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
+		/// </summary>
+		[JsonProperty(Order = 15)]
         [DefaultValue(null)]
         public List<AttributeField> Fields { get; set; } = new List<AttributeField>();
 

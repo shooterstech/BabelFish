@@ -118,21 +118,39 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public string FieldName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Human readable name for the field. This is the value that is displayed to users in a form entering ATTRIBUTE VALUES. In a Simple Attribute, it is customarily the same value as the ATTRIBUTE's DisplayName.
-        /// </summary>
-        public string DisplayName { get; set; } = string.Empty;
+        private string displayName = string.Empty;
 
         /// <summary>
-        /// Indicates if the value of the attribute must be chosen from a list, may be any value, of the there is a suggested list of values.
+        /// Human readable name for the field. This is the value that is displayed to users in a form 
+        /// entering ATTRIBUTE VALUES. In a Simple Attribute, it is customarily the same value as 
+        /// the parent's (ATTRIBUTE's) DisplayName.
         /// </summary>
+        public string DisplayName {
+            get {
+                if (string.IsNullOrEmpty( displayName )) {
+                    return this.FieldName;
+                } else {
+                    return displayName;
+                }
+            }
+
+            set {
+                displayName = value;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the value of the attribute must be chosen from a list, 
+        /// may be any value, of the there is a suggested list of values.
+        /// </summary>
+        [DefaultValue( FieldType.OPEN )]
         public FieldType FieldType { get; set; } = FieldType.OPEN;
 
         private dynamic defaultValue = null;
         /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one. 
+        /// The default value for this field. It is the value assigned to the field 
+        /// if the user does not enter one. 
         /// </summary>
-        [JsonIgnore]
         public dynamic DefaultValue { 
             get {
                 //If defaultValue is null, it means it wasn't set as part of the definition. instead return a default value based on the value type
@@ -198,8 +216,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// True if the user may enter multiple values in this field (in other words, its a list). False if the user may only enter one value.
+        /// True if the user may enter multiple values in this field (in other words, its a list). 
+        /// False if the user may only enter one value.
         /// </summary>
+        [DefaultValue( false )]
         public bool MultipleValues { get; set; } = false;
 
         /// <summary>

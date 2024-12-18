@@ -184,8 +184,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public enum FieldType {
         OPEN,
         CLOSED,
-        SUGGEST,
-        DERIVED
+        SUGGEST
     }
 
 
