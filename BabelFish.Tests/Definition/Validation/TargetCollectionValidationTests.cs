@@ -11,7 +11,7 @@ using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition.Validation {
 	[TestClass]
-	public class AttributeValidationTests {
+	public class TargetCollectionValidationTests {
 
 		[TestInitialize]
 		public void InitializeTest() {
@@ -22,11 +22,11 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 		public async Task HappyPathAttributeValid() {
 
 			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+			var setName = SetName.Parse( "v1.0:ntparc:Air Rifle" );
 
-			var candidate = (await client.GetAttributeDefinitionAsync( setName )).Value;
+			var candidate = (await client.GetTargetCollectionDefinitionAsync( setName )).Value;
 
-			var validation = new IsAttributeValid();
+			var validation = new IsTargetCollectionValid();
 
 			var valid = await validation.IsSatisfiedByAsync( candidate );
 

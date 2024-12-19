@@ -5,13 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Scopos.BabelFish;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Requests.DefinitionAPI;
+using Scopos.BabelFish.Responses.DefinitionAPI;
+using System.Diagnostics;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition.Validation {
 	[TestClass]
-	public class AttributeValidationTests {
+	public class ResultListFormatValidationTests {
 
 		[TestInitialize]
 		public void InitializeTest() {
@@ -22,11 +28,11 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 		public async Task HappyPathAttributeValid() {
 
 			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+			var setName = SetName.Parse( "v1.0:orion:3P Qualification" );
 
-			var candidate = (await client.GetAttributeDefinitionAsync( setName )).Value;
+			var candidate = (await client.GetResultListFormatDefinitionAsync( setName )).Value;
 
-			var validation = new IsAttributeValid();
+			var validation = new IsResultListFormatValid();
 
 			var valid = await validation.IsSatisfiedByAsync( candidate );
 

@@ -5,13 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using Scopos.BabelFish;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Requests.DefinitionAPI;
+using Scopos.BabelFish.Responses.DefinitionAPI;
+using System.Diagnostics;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition.Validation {
 	[TestClass]
-	public class AttributeValidationTests {
+	public class CourseOfFireValidationTests {
 
 		[TestInitialize]
 		public void InitializeTest() {
@@ -19,14 +25,14 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 		}
 
 		[TestMethod]
-		public async Task HappyPathAttributeValid() {
+		public async Task HappyPathCourseOfFireValid() {
 
 			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+			var setName = SetName.Parse( "v1.0:cmp:Smallbore Rifle 3x20" );
 
-			var candidate = (await client.GetAttributeDefinitionAsync( setName )).Value;
+			var candidate = (await client.GetCourseOfFireDefinitionAsync( setName )).Value;
 
-			var validation = new IsAttributeValid();
+			var validation = new IsCourseOfFireValid();
 
 			var valid = await validation.IsSatisfiedByAsync( candidate );
 
