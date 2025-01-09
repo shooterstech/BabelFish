@@ -39,21 +39,19 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
             const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
             const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
 
-
-
             var postRequest = new PostScoreHistoryRequest(userAuthentication);
             var body = new ScoreHistoryPostEntry();
             postRequest.ScoreHistoryPost = body;
 
-            body.LocalDate = new DateTime(2023, 04, 1);
-            body.CourseOfFireDef = "cofdef";
-            body.MatchType = "PRACTICE";
+            body.LocalDate = DateTime.Today;
+            body.CourseOfFireDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
+            body.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
             body.EventStyleDef = "evstyledef";
             body.Visibility = VisibilityOption.PUBLIC;
 
-
+            //NOTE normally the Score dictionary would be populated with scores, but for this test it is not necessary.
             var scoreA = new Score();
             var entryA = new PostStageStyleScore("stageStyle_a", scoreA);
 
@@ -70,7 +68,12 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
             
             Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
 
-        }
+            var newScoreHistory = postResponse.ScoreHistoryPost;
+
+            Assert.IsFalse( string.IsNullOrEmpty( newScoreHistory.MatchID ) );
+			Assert.IsFalse( string.IsNullOrEmpty( newScoreHistory.ResultCOFID ) );
+
+		}
 
         [TestMethod]
         public async Task PatchScoreHistory()
@@ -103,7 +106,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
             patchRequest.ScoreHistoryPatch = body;
             body.LocalDate = new DateTime(2012, 04, 1);
             body.CourseOfFireDef = "newcofdef";
-            body.MatchType = "newPRACTICE";
+            body.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
             body.MatchLocation = "newmosby";
             body.MatchName = "newmatchname";
             body.Visibility = VisibilityOption.PUBLIC;

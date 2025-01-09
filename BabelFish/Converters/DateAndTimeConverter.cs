@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Converters {
 
+    /*
     public class DateConverter  : IsoDateTimeConverter {
 
         public DateConverter() {
@@ -26,4 +26,5 @@ namespace Scopos.BabelFish.Converters {
             base.DateTimeFormat = DateTimeFormats.TIME_FORMAT;
         }
     }
+    */
 }

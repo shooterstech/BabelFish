@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Converters {
@@ -11,15 +10,10 @@ namespace Scopos.BabelFish.Converters {
     /// <summary>
     /// Custom converter class to deserialize the abstract class ShowWhenBase into one of its
     /// Concrete classes.
-    ///
-    /// Typeically can rely on the standard JsonConverter that looks at the $type variable to know
-    /// what Concrete class to deserialize to. However, the value from $type is specific to a Media
-    /// class, and not BabelFish, so the values don't match. Thus, we need to write our own converter.
-    ///
-    /// Recipe comes from https://stackoverflow.com/questions/20995865/deserializing-json-to-abstract-class
     /// </summary>
-    public class ShowWhenBaseConverter : JsonConverter {
+    public class ShowWhenBaseConverter : JsonConverter<ShowWhenBase> {
 
+        /*
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ShowWhenBaseSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
@@ -49,13 +43,29 @@ namespace Scopos.BabelFish.Converters {
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
             //When CanWrite is false, which it is, the standard converter is used and not this custom converter
         }
-    }
+        */
+        public override ShowWhenBase? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
-    public class ShowWhenBaseSpecifiedConcreteClassConverter : DefaultContractResolver {
-        protected override JsonConverter ResolveContractConverter( Type objectType ) {
-            if (typeof( ShowWhenBase ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
-                return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
-            return base.ResolveContractConverter( objectType );
+            using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
+                JsonElement root = doc.RootElement;
+                string operation = root.GetProperty( "Operation" ).GetString();
+
+                switch (operation) {
+                    case "EQUATION":
+                        return JsonSerializer.Deserialize<ShowWhenEquation>( root.GetRawText(), options );
+                    case "VARIABLE":
+                        return JsonSerializer.Deserialize<ShowWhenVariable>( root.GetRawText(), options );
+                    case "SEGMENT_GROUP":
+                        return JsonSerializer.Deserialize<ShowWhenSegmentGroup>( root.GetRawText(), options );
+                    default:
+                        //If we get here, it is probable because of ill-formed json
+                        return ShowWhenVariable.ALWAYS_SHOW.Copy();
+                }
+            }
+        }
+
+        public override void Write( Utf8JsonWriter writer, ShowWhenBase value, JsonSerializerOptions options ) {
+            JsonSerializer.Serialize( writer, value, value.GetType(), options );
         }
     }
 }

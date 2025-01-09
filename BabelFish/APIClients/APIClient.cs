@@ -2,16 +2,15 @@
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Helpers;
-using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -33,7 +32,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Standard json serializer settings intended for use while deserializing json to object model.
         /// Will ignore any json values that are null, and instead use the default value of the property.
         /// </summary>
-        public static JsonSerializer DeSerializer = new JsonSerializer(  ) { NullValueHandling = NullValueHandling.Ignore };
+        /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
+        public static JsonSerializerOptions DeserializerOptions = new JsonSerializerOptions();
 
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public HttpClient httpClient = new HttpClient();
@@ -45,6 +45,7 @@ namespace Scopos.BabelFish.APIClients {
         protected APIClient() {
 
             Settings.CheckXApiKey();
+            SerializerOptions.InitAPIClientDeserializer();
 
             this.ApiStage = APIStage.PRODUCTION;
 
@@ -57,6 +58,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         protected APIClient( APIStage apiStage ) {
             Settings.CheckXApiKey();
+            SerializerOptions.InitAPIClientDeserializer();
 
             this.ApiStage = apiStage;
 
@@ -84,8 +86,8 @@ namespace Scopos.BabelFish.APIClients {
             if (!IgnoreInMemoryCache && !request.IgnoreInMemoryCache && request.HttpMethod == HttpMethod.Get && ResponseCache.CACHE.TryGetResponse( request, out cachedResponse )) {
 
                 response.StatusCode = HttpStatusCode.OK;
-                response.MessageResponse = cachedResponse.MessageResponse.Copy();
-                response.MessageResponse.Message.Add( "In memory cached response" );
+                //response.MessageResponse = cachedResponse.MessageResponse.Copy();
+                //response.MessageResponse.Message.Add( "In memory cached response" );
                 response.Body = cachedResponse.Body;
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
@@ -101,7 +103,7 @@ namespace Scopos.BabelFish.APIClients {
 
                 if (fileSystemReadResponse.Item1) {
                     response.StatusCode = HttpStatusCode.OK;
-                    response.MessageResponse.Message.Add( "Read from file system response" );
+                    //response.MessageResponse.Message.Add( "Read from file system response" );
                     response.Body = fileSystemReadResponse.Item2.Body;
                     response.TimeToRun = DateTime.Now - startTime;
                     response.FileSystemCachedResponse = true;
@@ -165,33 +167,38 @@ namespace Scopos.BabelFish.APIClients {
                 response.StatusCode = responseMessage.StatusCode;
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
-                using (StreamReader sr = new StreamReader( s ))
-                using (JsonReader reader = new JsonTextReader( sr )) {
-                    var apiReturnJson = JObject.ReadFrom( reader );
-                    try {
+                using (StreamReader sr = new StreamReader( s )) {
+                        response.Body = JsonDocument.Parse( sr.ReadToEnd() );
 
-                        //TODO: Do something with invalid data format from Forbidden....
-                        response.MessageResponse = new MessageResponse();
-                        if (apiReturnJson is JObject) {
-                            JObject jo = (JObject)apiReturnJson;
-                            if (jo.ContainsKey( "Message" ) && jo["Message"] is JArray) {
-                                JArray m = (JArray)jo["Message"];
-                                foreach (var message in m) {
-                                    response.MessageResponse.Message.Add( (string)message );
+                    /*
+                    using (JsonReader reader = new JsonTextReader( sr )) {
+                        var apiReturnJson = JObject.ReadFrom( reader );
+                        try {
+
+                            //TODO: Do something with invalid data format from Forbidden....
+                            response.MessageResponse = new MessageResponse();
+                            if (apiReturnJson is JObject) {
+                                JObject jo = (JObject)apiReturnJson;
+                                if (jo.ContainsKey( "Message" ) && jo["Message"] is JArray) {
+                                    JArray m = (JArray)jo["Message"];
+                                    foreach (var message in m) {
+                                        response.MessageResponse.Message.Add( (string)message );
+                                    }
                                 }
                             }
+
+                            if (responseMessage.IsSuccessStatusCode)
+                                response.Body = apiReturnJson;
+
+                            //Log errors set in calls
+                            if (response.MessageResponse.Message.Count > 0)
+                                logger.Error( "Processing Call Error {processingerror}", string.Join( "; ", response.MessageResponse.Message ) );
+
+                        } catch (Exception ex) {
+                            throw new Exception( $"Error parsing return json: {ex.ToString()}" );
                         }
-
-                        if (responseMessage.IsSuccessStatusCode)
-                            response.Body = apiReturnJson;
-
-                        //Log errors set in calls
-                        if (response.MessageResponse.Message.Count > 0)
-                            logger.Error( "Processing Call Error {processingerror}", string.Join( "; ", response.MessageResponse.Message ) );
-
-                    } catch (Exception ex) {
-                        throw new Exception( $"Error parsing return json: {ex.ToString()}" );
                     }
+                    */
                 }
 
                 if (responseMessage.IsSuccessStatusCode) {
@@ -199,7 +206,7 @@ namespace Scopos.BabelFish.APIClients {
                     if (request.HttpMethod == HttpMethod.Get) {
                         cachedResponse = new ResponseIntermediateObject() {
                             StatusCode = response.StatusCode,
-                            MessageResponse = response.MessageResponse.Copy(),
+                            //MessageResponse = response.MessageResponse.Copy(),
                             Request = request,
                             Body = response.Body,
                             ValidUntil = response.GetCacheValueExpiryTime()
@@ -214,7 +221,7 @@ namespace Scopos.BabelFish.APIClients {
             } catch (Exception ex) {
 
                 response.StatusCode = HttpStatusCode.InternalServerError;
-                response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
+                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
             }
         }

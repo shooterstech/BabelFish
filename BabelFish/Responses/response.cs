@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using BabelFish.Converters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel;
@@ -21,9 +20,6 @@ namespace Scopos.BabelFish.Responses
     /// <typeparam name="T"></typeparam>
     public abstract class Response<T>
         where T : BaseClass {
-
-
-        protected JToken body = new JObject();
 
         /// <summary>
         /// Base constructor.
@@ -81,14 +77,17 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         public bool FileSystemCachedResponse { get; protected internal set; } = false;
 
+        /*
 		/// <summary>
-		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
+		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard 
+        /// fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
 		/// </summary>
 		public MessageResponse MessageResponse
         {
             get;
             internal set;
         } = new MessageResponse();
+        */
 
         /// <summary>
         /// Gets or sets the data object returned by the Rest API Call.
@@ -105,9 +104,14 @@ namespace Scopos.BabelFish.Responses
         public HttpStatusCode StatusCode { get; internal set; }
 
         /// <summary>
+        /// Raw body returned by the Rest API Call.
+        /// </summary>
+        private JsonDocument body = null;
+
+        /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.
         /// </summary>
-        public JToken Body {
+        public JsonDocument Body {
             get { return body; }
             internal set {
                 body = value;
@@ -125,7 +129,7 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = Body.ToObject<T>( DefinitionAPIClient.DeSerializer );
+            Value = JsonSerializer.Deserialize<T>( Body, SerializerOptions.APIClientDeserializer );
         }
     }
 }

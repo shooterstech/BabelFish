@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Converters {
@@ -11,15 +10,10 @@ namespace Scopos.BabelFish.Converters {
     /// <summary>
     /// Custom converter class to deserialize the abstract class SquaddingAssignment into one of its
     /// Concrete classes.
-    ///
-    /// Typeically can rely on the standard JsonConverter that looks at the $type variable to know
-    /// what Concrete class to deserialize to. However, the value from $type is specific to a Media
-    /// class, and not BabelFish, so the values don't match. Thus, we need to write our own converter.
-    ///
-    /// Recipe comes from https://stackoverflow.com/questions/20995865/deserializing-json-to-abstract-class
     /// </summary>
-    public class SquaddingAssignmentConverter : JsonConverter {
+    public class SquaddingAssignmentConverter : JsonConverter<SquaddingAssignment> {
 
+        /*
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new SquaddingAssignmentSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
@@ -63,13 +57,31 @@ namespace Scopos.BabelFish.Converters {
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
             //When CanWrite is false, which it is, the standard converter is used and not this custom converter
         }
-    }
+        */
 
-    public class SquaddingAssignmentSpecifiedConcreteClassConverter : DefaultContractResolver {
-        protected override JsonConverter ResolveContractConverter( Type objectType ) {
-            if (typeof( SquaddingAssignment ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
-                return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
-            return base.ResolveContractConverter( objectType );
+        public override SquaddingAssignment? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+
+            using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
+                JsonElement root = doc.RootElement;
+                var id = root.GetProperty( "ConcreteClassId" ).GetInt32();
+
+                switch (id) {
+                    case SquaddingAssignmentFiringPoint.CONCRETE_CLASS_ID:
+                        return JsonSerializer.Deserialize<SquaddingAssignmentFiringPoint>( root.GetRawText(), options );
+                    case SquaddingAssignmentBank.CONCRETE_CLASS_ID:
+                        return JsonSerializer.Deserialize<SquaddingAssignmentBank>( root.GetRawText(), options );
+                    case SquaddingAssignmentSquad.CONCRETE_CLASS_ID:
+                        return JsonSerializer.Deserialize<SquaddingAssignmentSquad>( root.GetRawText(), options );
+                    default:
+                        break;
+                }
+
+                throw new NotImplementedException( $"Unable to convert type '{type}' to an Abstract class SquaddingAssignment." );
+            }
+        }
+
+        public override void Write( Utf8JsonWriter writer, SquaddingAssignment value, JsonSerializerOptions options ) {
+            JsonSerializer.Serialize( writer, value, value.GetType(), options );
         }
     }
 }

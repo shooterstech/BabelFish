@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Converters {
@@ -12,14 +10,10 @@ namespace Scopos.BabelFish.Converters {
     /// <summary>
     /// Custom converter class to deserialize the abstract class Participant into one of its
     /// Concrete classes.
-    ///
-    /// Typeically can rely on the standard JsonConverter that looks at the $type variable to know
-    /// what Concrete class to deserialize to. However, the value from $type is specific to a Media
-    /// class, and not BabelFish, so the values don't match. Thus, we need to write our own converter.
-    ///
-    /// Recipe comes from https://stackoverflow.com/questions/20995865/deserializing-json-to-abstract-class
     /// </summary>
-    public class ParticipantConverter : JsonConverter {
+    public class ParticipantConverter : JsonConverter<Participant> {
+
+        /*
         static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ParticipantSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert( Type objectType ) {
@@ -60,14 +54,30 @@ namespace Scopos.BabelFish.Converters {
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
             //When CanWrite is false, which it is, the standard converter is used and not this custom converter
         }
-    }
+        */
 
+        public override Participant? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
-    public class ParticipantSpecifiedConcreteClassConverter : DefaultContractResolver {
-        protected override JsonConverter ResolveContractConverter( Type objectType ) {
-            if (typeof( Participant ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
-                return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
-            return base.ResolveContractConverter( objectType );
+            using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
+                JsonElement root = doc.RootElement;
+                int id = root.GetProperty( "ConcreteClassId" ).GetInt32();
+
+                switch (id) {
+                    case Individual.CONCRETE_CLASS_ID:
+                        return JsonSerializer.Deserialize<Individual>( root.GetRawText(), options );
+                    case Team.CONCRETE_CLASS_ID:
+                        return JsonSerializer.Deserialize<Team>( root.GetRawText(), options );
+                    default:
+                        break;
+                }
+
+                //If we get here, give up. 
+                throw new NotImplementedException( $"Unable to convert type '{id}' to an Abstract class Participant." );
+            }
+        }
+
+        public override void Write( Utf8JsonWriter writer, Participant value, JsonSerializerOptions options ) {
+            JsonSerializer.Serialize( writer, value, value.GetType(), options );
         }
     }
 }

@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Scopos.BabelFish.Helpers;
 using NLog;
-using Newtonsoft.Json;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using System.Configuration;
-using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {

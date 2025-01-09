@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Converters {
-	public class DefinitionConverter : JsonConverter {
+    public class DefinitionConverter : JsonConverter<Definition> {
+
+        /*
 
 		static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new DefinitionConcreteClassConverter() };
 
@@ -52,13 +53,43 @@ namespace Scopos.BabelFish.Converters {
 		public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
 			//When CanWrite is false, which it is, the standard converter is used and not this custom converter
 		}
-	}
 
-	public class DefinitionConcreteClassConverter : DefaultContractResolver {
-		protected override JsonConverter ResolveContractConverter( Type objectType ) {
-			if (typeof( Definition ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
-				return null; 
-			return base.ResolveContractConverter( objectType );
-		}
-	}
+		*/
+        public override Definition? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+
+            using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
+                JsonElement root = doc.RootElement;
+                string type = root.GetProperty( "Type" ).GetString();
+
+                switch (type) {
+                    case "ATTRIBUTE":
+                        return JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Attribute>( root.GetRawText(), options );
+                    case "COURSE OF FIRE":
+                        return JsonSerializer.Deserialize<CourseOfFire>( root.GetRawText(), options );
+                    case "EVENT STYLE":
+                        return JsonSerializer.Deserialize<EventStyle>( root.GetRawText(), options );
+                    case "EVENT AND STAGE STYLE MAPPING":
+                        return JsonSerializer.Deserialize<EventAndStageStyleMapping>( root.GetRawText(), options );
+                    case "RANKING RULES":
+                        return JsonSerializer.Deserialize<RankingRule>( root.GetRawText(), options );
+                    case "RESULT LIST FORMAT":
+                        return JsonSerializer.Deserialize<ResultListFormat>( root.GetRawText(), options );
+                    case "SCORE FORMAT COLLECTION":
+                        return JsonSerializer.Deserialize<ScoreFormatCollection>( root.GetRawText(), options );
+                    case "STAGE STYLE":
+                        return JsonSerializer.Deserialize<StageStyle>( root.GetRawText(), options );
+                    case "TARGET":
+                        return JsonSerializer.Deserialize<Target>( root.GetRawText(), options );
+                    case "TARGET COLLECTION":
+                        return JsonSerializer.Deserialize<TargetCollection>( root.GetRawText(), options );
+                    default:
+                        throw new NotImplementedException( $"Have no idea what definition type '{type}' is." );
+                }
+            }
+        }
+
+        public override void Write( Utf8JsonWriter writer, Definition value, JsonSerializerOptions options ) {
+            JsonSerializer.Serialize( writer, value, value.GetType(), options );
+        }
+    }
 }
