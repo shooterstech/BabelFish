@@ -561,15 +561,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "BOOLEAN" )]
         [EnumMember( Value = "BOOLEAN" )]
-        BOOLEAN,
-
-
-        /// <summary>
-        /// C# implementations should use SetName objects.
-        /// </summary>
-        [Description( "SET NAME" )]
-        [EnumMember( Value = "SET NAME" )]
-        SETNAME
+        BOOLEAN
     }
 
     /// <summary>

@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// AttributeValidation are rules that are applied to entered data in an ATTRIBUTE VALUE to determine if the value is acceptable.
     /// </summary>
-    public class AttributeValidation : ICopy<AttributeValidation>, IReconfigurableRulebookObject {
+    public abstract class AttributeValidation : IReconfigurableRulebookObject {
 
         /// <summary>
         /// Default constructor.
@@ -20,8 +20,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc />
-        public AttributeValidation Copy() {
-            AttributeValidation copy = new AttributeValidation();  
+        public AttributeValidation Copy(AttributeValidation copy) {
+
             copy.MinValue = MinValue;
             copy.MaxValue = MaxValue;
             copy.Regex = Regex;

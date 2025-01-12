@@ -20,6 +20,7 @@ namespace Scopos.BabelFish.Converters {
             if (APIClientDeserializer == null) {
                 APIClientDeserializer = new JsonSerializerOptions();
                 lock( APIClientDeserializer ) {
+                    APIClientDeserializer.Converters.Add( new AttributerFieldConverter() );
                     APIClientDeserializer.Converters.Add( new DefinitionConverter() );
                     APIClientDeserializer.Converters.Add( new EnumConverterByDescription<FieldType>() );
                     APIClientDeserializer.Converters.Add( new EnumConverterByDescription<SortBy>() );
