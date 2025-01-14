@@ -6,32 +6,33 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldBoolean : AttributeField {
+    public class AttributeFieldTimeSpan : AttributeField {
 
         /// <summary>
         /// Public default constructor
         /// </summary>
-        public AttributeFieldBoolean() {
+        public AttributeFieldTimeSpan() {
             MultipleValues = false;
-            ValueType = ValueType.BOOLEAN;
-            Validation = new AttributeValidationBoolean();
+            ValueType = ValueType.TIME_SPAN;
+            Validation = new AttributeValidationTimeSpan();
         }
 
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
-        public bool DefaultValue { get; set; } = false;
+        /// <remarks>Time span value represented in seconds.</remarks>
+        public float DefaultValue { get; set; } = 0;
 
-        private AttributeValidationBoolean validation = new AttributeValidationBoolean();
+        private AttributeValidationTimeSpan validation = new AttributeValidationTimeSpan();
 
         /// <inheritdoc />
         public override AttributeValidation Validation {
             get { return validation; }
             set {
-                if (value is AttributeValidationBoolean) {
-                    validation = (AttributeValidationBoolean)value;
+                if (value is AttributeValidationTimeSpan) {
+                    validation = (AttributeValidationTimeSpan)value;
                 } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationBoolean, instead received {value.GetType()}" );
+                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationTimeSpan, instead received {value.GetType()}" );
                 }
             }
         }

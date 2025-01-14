@@ -512,7 +512,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// The type of data that is stored within an AttributeField. 
     /// C# Implementations should store and cast data as the following types.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ValueType {
         /// <summary>
         /// C# implementations should use DateTime objects. The time portion of the DateTime instance is ignored.
@@ -522,18 +521,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         DATE,
 
         /// <summary>
-        /// C# implementations should use DateTime objects.
-        /// </summary>
-        [Description( "DATE TIME" )]
-        [EnumMember( Value = "DATE TIME" )]
-        DATE_TIME,
-
-        /// <summary>
         /// C# implementations should use TimeSpan objects.
         /// </summary>
-        [Description( "TIME" )]
-        [EnumMember( Value = "TIME" )]
-        TIME,
+        [Description( "TIME_SPAN" )]
+        [EnumMember( Value = "TIME_SPAN" )]
+        TIME_SPAN,
 
         /// <summary>
         /// C# implementations should use strings.

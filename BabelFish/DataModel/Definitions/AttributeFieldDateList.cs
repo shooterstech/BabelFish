@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldDateList : AttributeField, ICopy<AttributeFieldDateList> {
+    public class AttributeFieldDateList : AttributeField {
 
         /// <summary>
         /// Public default constructor
@@ -14,22 +14,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldDateList() {
             MultipleValues = true;
             ValueType = ValueType.DATE;
-        }
-
-        /// <inheritdoc />
-        public AttributeFieldDateList Copy() {
-
-            var copy = new AttributeFieldDateList();
-            base.Copy( copy );
-
-            copy.DefaultValue = this.DefaultValue;
-
-            return copy;
+            Validation = new AttributeValidationDate();
         }
 
         /// <summary>
         /// The default value for this field, which is always an empty list.
         /// </summary>
         public List<DateTime> DefaultValue { get; private set; } = new List<DateTime>();
+
+        private AttributeValidationDate validation = new AttributeValidationDate();
+
+        /// <inheritdoc />
+        public override AttributeValidation Validation {
+            get { return validation; }
+            set {
+                if (value is AttributeValidationDate) {
+                    validation = (AttributeValidationDate)value;
+                } else {
+                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationDate, instead received {value.GetType()}" );
+                }
+            }
+        }
     }
 }

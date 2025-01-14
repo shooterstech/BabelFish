@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldBooleanList : AttributeField, ICopy<AttributeFieldBooleanList> {
+    public class AttributeFieldBooleanList : AttributeField {
 
         /// <summary>
         /// Public default constructor
@@ -14,22 +14,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldBooleanList() {
             MultipleValues = true;
             ValueType = ValueType.BOOLEAN;
-        }
-
-        /// <inheritdoc />
-        public AttributeFieldBooleanList Copy() {
-
-            var copy = new AttributeFieldBooleanList();
-            base.Copy( copy );
-
-            copy.DefaultValue = this.DefaultValue;
-
-            return copy;
+            Validation = new AttributeValidationBoolean();
         }
 
         /// <summary>
         /// The default value for this field, which is always a empty list.
         /// </summary>
         public List<bool> DefaultValue { get; private set; } = new List<bool>();
+
+        private AttributeValidationBoolean validation = new AttributeValidationBoolean();
+
+        /// <inheritdoc />
+        public override AttributeValidation Validation {
+            get { return validation; }
+            set {
+                if (value is AttributeValidationBoolean) {
+                    validation = (AttributeValidationBoolean)value;
+                } else {
+                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationBoolean, instead received {value.GetType()}" );
+                }
+            }
+        }
     }
 }

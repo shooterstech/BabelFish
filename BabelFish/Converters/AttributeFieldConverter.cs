@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.Converters {
-    public class AttributerFieldConverter : JsonConverter<AttributeField> {
+    public class AttributeFieldConverter : JsonConverter<AttributeField> {
         public override AttributeField? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
@@ -21,17 +21,11 @@ namespace Scopos.BabelFish.Converters {
                         else
                             return JsonSerializer.Deserialize<AttributeFieldDate>( root.GetRawText(), options );
 
-                    case "DATE TIME":
+                    case "TIME SPAN":
                         if (multipleValues)
-                            return JsonSerializer.Deserialize<AttributeFieldDateTimeList>( root.GetRawText(), options );
-                        else
-                            return JsonSerializer.Deserialize<AttributeFieldDateTime>( root.GetRawText(), options );
-
-                    case "TIME":
-                        if (multipleValues)
-                            return JsonSerializer.Deserialize<AttributeFieldTimeList>( root.GetRawText(), options );
+                            return JsonSerializer.Deserialize<AttributeFieldTimeSpanList>( root.GetRawText(), options );
                         else 
-                            return JsonSerializer.Deserialize<AttributeFieldTime>( root.GetRawText(), options );
+                            return JsonSerializer.Deserialize<AttributeFieldTimeSpan>( root.GetRawText(), options );
 
                     case "STRING":
                         if (multipleValues)

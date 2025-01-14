@@ -8,7 +8,7 @@ using Scopos.BabelFish.Converters;
 
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldStringList : AttributeField, ICopy<AttributeFieldStringList> {
+    public class AttributeFieldStringList : AttributeField {
 
         /// <summary>
         /// Public default constructor
@@ -16,19 +16,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldStringList() {
             MultipleValues = true;
             ValueType = ValueType.STRING;
-        }
-
-        /// <inheritdoc />
-        public AttributeFieldStringList Copy() {
-            
-            var copy = new AttributeFieldStringList();
-            base.Copy(copy);
-
-            copy.FieldType = this.FieldType;
-            foreach( var option in this.Values ) 
-                copy.Values.Add( option.Copy() );
-
-            return copy;
+            Validation = new AttributeValidationString();
         }
 
         /// <summary>
@@ -48,5 +36,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// List of possible values, when FieldType is CLOSED or SUGGEST
         /// </summary>
         public List<AttributeValueOption> Values { get; set; } = new List<AttributeValueOption>();
+
+        private AttributeValidationString validation = new AttributeValidationString();
+
+        /// <inheritdoc />
+        public override AttributeValidation Validation {
+            get { return validation; }
+            set {
+                if (value is AttributeValidationString) {
+                    validation = (AttributeValidationString)value;
+                } else {
+                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationString, instead received {value.GetType()}" );
+                }
+            }
+        }
     }
 }

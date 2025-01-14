@@ -27,21 +27,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Key = false;
         }
 
-        public AttributeField Copy( AttributeField copy ) {
-
-            copy.FieldName = this.FieldName;
-            copy.DisplayName = this.DisplayName;
-            copy.MultipleValues = this.MultipleValues;
-            copy.Required = this.Required;
-            copy.Key = this.Key;
-            copy.Description = this.Description;
-            copy.Validation = this.Validation.Copy();
-            copy.ValueType = this.ValueType;
-            copy.Comment = this.Comment;
-
-            return copy;
-        }
-
         /// <summary>
         /// Name given to this field. It is unique within the parent ATTRIBUTE.
         /// </summary>
@@ -95,7 +80,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Validation rule that all must be true in order for the value to pass validation.
         /// </summary>
-        public AttributeValidation Validation { get; set; } = new AttributeValidation();
+        public abstract AttributeValidation Validation { get; set; }
 
         /// <summary>
         /// The type of data that this field will hold.

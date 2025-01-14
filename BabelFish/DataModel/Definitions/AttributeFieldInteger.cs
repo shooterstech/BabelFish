@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldInteger : AttributeField, ICopy<AttributeFieldInteger> {
+    public class AttributeFieldInteger : AttributeField {
 
         /// <summary>
         /// Public default constructor
@@ -14,22 +14,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldInteger() {
             MultipleValues = false;
             ValueType = ValueType.INTEGER;
-        }
-
-        /// <inheritdoc />
-        public AttributeFieldInteger Copy() {
-
-            var copy = new AttributeFieldInteger();
-            base.Copy( copy );
-
-            copy.DefaultValue = this.DefaultValue;
-
-            return copy;
+            Validation = new AttributeValidationInteger();
         }
 
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
         public int DefaultValue { get; set; } = 0;
+
+        private AttributeValidationInteger validation = new AttributeValidationInteger();
+
+        /// <inheritdoc />
+        public override AttributeValidation Validation {
+            get { return validation; }
+            set {
+                if (value is AttributeValidationInteger) {
+                    validation = (AttributeValidationInteger)value;
+                } else {
+                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationInteger, instead received {value.GetType()}" );
+                }
+            }
+        }
     }
 }

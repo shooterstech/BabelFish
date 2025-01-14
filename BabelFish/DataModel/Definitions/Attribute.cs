@@ -4,10 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-//using System.Text.Json; //COMMENT OUT FOR .NET Standard 2.0
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Attributes are highly configurable.  Each Attribute will have one or more fields. Each field may be configured to be any value the user types in, a value from a pre-configured list, or a combination.
     /// </summary>
     [Serializable]
-    public class Attribute : Definition, ICopy<Attribute> {
+    public class Attribute : Definition {
 
         /// <summary>
         /// Public constructor
@@ -36,30 +36,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
         }
 
-        /// <inheritdoc />
-        public Attribute Copy() {
-            Attribute copy = new Attribute();
-            base.Copy(copy);
-
-            copy.DisplayName = this.DisplayName;
-            copy.MaxVisibility = this.MaxVisibility;
-            copy.MultipleValues = this.MultipleValues;
-            foreach( var f in this.Fields )
-            copy.Fields.Add( f.Copy() );
-
-            copy.Designation = new List<AttributeDesignation>();
-            copy.Designation.Clear();
-            copy.Designation.AddRange( this.Designation );
-
-            return copy;
-        }
-
         private string displayName = string.Empty;
 
         /// <summary>
         /// DisplayName is the name displayed to the user for this ATTRIBUTE.
         /// </summary>
-        [JsonProperty(Order = 10)]
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty( displayName )) {
@@ -83,7 +64,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// <summary>
 		/// The type of participant, teams, or clubs that this Attribute may be applied to.
 		/// </summary>
-		[JsonProperty(Order = 11)]
         public List<AttributeDesignation> Designation {
             get {
                 if (designation == null)
@@ -109,8 +89,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// <summary>
 		/// The maximum visibility the user can set for the ATTRIBUTE VALUE.
 		/// </summary>
-		[JsonProperty( Order = 12 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
         [DefaultValue( VisibilityOption.PUBLIC )]
         public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PUBLIC;
 
@@ -118,21 +96,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// The default visibility for a new ATTRIBUTE VALUE. 
         /// Must be a Privacy value equal to or greater than the MaxVisibility.
 		/// </summary>
-		[JsonProperty( Order = 13 )]
 		[DefaultValue( VisibilityOption.PUBLIC )]
 		public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
 
 		/// <summary>
 		/// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
 		/// </summary>
-		[JsonProperty(Order = 13)]
         [DefaultValue(false)]
         public bool MultipleValues { get; set; } = false;
 
-		/// <summary>
-		/// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
-		/// </summary>
-		[JsonProperty(Order = 15)]
+        /// <summary>
+        /// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
+        /// </summary>
         [DefaultValue(null)]
         public List<AttributeField> Fields { get; set; } = new List<AttributeField>();
 

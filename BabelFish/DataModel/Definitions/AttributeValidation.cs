@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -19,31 +20,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeValidation() {
         }
 
-        /// <inheritdoc />
-        public AttributeValidation Copy(AttributeValidation copy) {
-
-            copy.MinValue = MinValue;
-            copy.MaxValue = MaxValue;
-            copy.Regex = Regex;
-            copy.ErrorMessage = ErrorMessage;
-
-            return copy;
-        }
-
         /// <summary>
-        /// Minimum accepted value.
+        /// The type of data that this field will hold.
         /// </summary>
-        public dynamic MinValue { get; set; }
-
-        /// <summary>
-        /// Maximum accepted value.
-        /// </summary>
-        public dynamic MaxValue { get; set; }
-
-        /// <summary>
-        /// Regular expression to check the value.
-        /// </summary>
-        public string Regex { get; set; } = string.Empty;
+        [JsonInclude]
+        public ValueType ValueType { get; protected set; } = ValueType.STRING;
 
         /// <summary>
         /// Message to be displayed to user when validation fails.
@@ -52,7 +33,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingDefault )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
