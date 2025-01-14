@@ -50,18 +50,4 @@ namespace Scopos.BabelFish.Converters {
             base.DateTimeFormat = Helpers.DateTimeFormats.DATETIME_FORMAT;
         }
     }
-
-    /// <summary>
-    /// JsonConverter to serialize / deserialize DateTime properties with the format "hh\\:mm\\:ss\\.ffffff"
-    /// </summary>
-    [Obsolete("Time should be serialized to a float, representing the number of seconds.")]
-    public class ScoposTimeOnlyConverter : JsonDateTimeConverter {
-
-        /// <summary>
-        /// Public constructor
-        /// </summary>
-        public ScoposTimeOnlyConverter() {
-            base.DateTimeFormat = Helpers.DateTimeFormats.TIME_FORMAT;
-        }
-    }
 }

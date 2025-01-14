@@ -50,5 +50,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
         }
+
+        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
+            List<string> list = new List<string>();
+
+            if (value.ValueKind == JsonValueKind.Array) {
+                foreach( var v in value.EnumerateArray()) {
+                    if (v.ValueKind == JsonValueKind.String) {
+                        list.Add( v.GetString() );
+                    } else {
+                        Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                        //Ignore adding anything to the list
+                    }
+                }
+                return list;
+            } else {
+                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                return DefaultValue;
+            }
+        }
+
+        /// <inheritdoc />
+        public override dynamic GetDefaultValue() {
+            return DefaultValue;
+        }
     }
 }

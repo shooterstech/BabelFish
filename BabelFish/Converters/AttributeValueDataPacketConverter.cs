@@ -15,18 +15,81 @@ namespace Scopos.BabelFish.Converters {
     /// Custom converter for AttributeValues. 
     /// Which is needed because AttributeValues have a dynamic structure.
     /// </summary>
-    public class AttributeValueDataPacketConverter : JsonConverter {
+    public class AttributeValueDataPacketConverter : JsonConverter<AttributeValueDataPacket> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new AttributeValueDataPacketSpecifiedConcreteClassConverter() };
+        public override AttributeValueDataPacket? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException(); 
+            
+            JsonElement temp;
 
-        /// <inheritdoc/>
-        public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( AttributeValue ));
+            using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
+                JsonElement root = doc.RootElement;
+
+                int id = 0;
+                try {
+                    id = root.GetProperty( "ConcreteClassId" ).GetInt32();
+                } catch (KeyNotFoundException) {
+                    //On some older serializations, the ConcreteClassId was not included. Infer the value based on what else is in the json
+                    if (root.TryGetProperty( "StatusCode", out temp) )
+                        id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+                    else if (root.TryGetProperty( "StatusCode", out temp ))
+                        id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+                    else
+                        id = AttributeValueDataPacketMatch.CONCRETE_CLASS_ID;
+                }
+
+                AttributeValueDataPacket attributeValueDataPacket;
+                bool okToDeserialize = true;
+
+                switch (id) {
+                    case AttributeValueDataPacketMatch.CONCRETE_CLASS_ID:
+                        attributeValueDataPacket = new AttributeValueDataPacketMatch();
+
+                        if (root.TryGetProperty( "ReentryTag", out temp ))
+                            ((AttributeValueDataPacketMatch)attributeValueDataPacket).ReentryTag = temp.GetString();
+                        break;
+
+                    case AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID:
+                    default:
+                        attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
+
+                        if (root.TryGetProperty( "StatusCode", out temp ))
+                            ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), temp.GetString() );
+
+                        //EKA Note Jan 2025 the Message property is deprecated, and will soon be removed.
+                        if (root.TryGetProperty( "Message", out temp ) && temp.ValueKind == JsonValueKind.Array && temp.GetArrayLength() > 0 ) {
+                            try {
+                                ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message = temp[0].GetString();
+                            } catch (Exception ex) {
+                                logger.Error( ex, $"Unable to read the Message property." );
+                            }
+                        }
+
+                        if (((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode != HttpStatusCode.OK) {
+                            okToDeserialize = false;
+                            logger.Info( $"Unable to deserialize, received message '{((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message}'." );
+                        }
+                        break;
+                }
+
+                if (okToDeserialize) {
+                    attributeValueDataPacket.AttributeDef = root.GetProperty( "AttributeDef" ).GetString();
+                    attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), root.GetProperty( "AttributeValue" ) );
+                    if (root.TryGetProperty( "Visibility", out temp ))
+                        attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), temp.GetString() );
+                }
+
+                return attributeValueDataPacket;
+            }
         }
 
-        public override bool CanWrite { get { return true; } }
+        public override void Write( Utf8JsonWriter writer, AttributeValueDataPacket value, JsonSerializerOptions options ) {
+            throw new NotImplementedException();
+        }
+
 
         /// <inheritdoc/>
         public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
@@ -114,14 +177,6 @@ namespace Scopos.BabelFish.Converters {
             }
 
             return attributeValueDataPacket;
-        }
-    }
-
-    public class AttributeValueDataPacketSpecifiedConcreteClassConverter : DefaultContractResolver {
-        protected override JsonConverter ResolveContractConverter( Type objectType ) {
-            if (typeof( AttributeValue ).IsAssignableFrom( objectType ) && !objectType.IsAbstract)
-                return null; // pretend TableSortRuleConvert is not specified (thus avoiding a stack overflow)
-            return base.ResolveContractConverter( objectType );
         }
     }
 }

@@ -36,5 +36,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
         }
+
+        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
+            if (value.ValueKind == JsonValueKind.Array) {
+                return JsonSerializer.Deserialize<List<float>>( value );
+            } else {
+                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                return DefaultValue;
+            }
+        }
+
+        /// <inheritdoc />
+        public override dynamic GetDefaultValue() {
+            return DefaultValue;
+        }
     }
 }

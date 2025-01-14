@@ -36,5 +36,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
         }
+
+        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
+            if (value.ValueKind == JsonValueKind.String) {
+                //EKA NOTE Jan 2025: May need a JsonSerializerOptions specifying a custom DateTiem format
+                return JsonSerializer.Deserialize<DateTime>( value );
+            } else {
+                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                return DefaultValue;
+            }
+        }
+
+        /// <inheritdoc />
+        public override dynamic GetDefaultValue() {
+            return DefaultValue;
+        }
     }
 }

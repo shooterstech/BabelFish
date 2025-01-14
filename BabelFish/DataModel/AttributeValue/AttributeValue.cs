@@ -1,17 +1,14 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NLog;
-using Newtonsoft.Json.Linq;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
+using System.Text.Json;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
-    [JsonConverter( typeof( AttributeValueDataPacketConverter ) )]
     public class AttributeValue {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
@@ -39,16 +36,19 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
         
         /// <exception cref="AttributeNotFoundException">Thrown if the attribute def, identified by the SetName, could not be found.</exception>
-        public static async Task<AttributeValue> CreateAsync( SetName setName, JToken attributeValueAsJToken ) {
+        public static async Task<AttributeValue> CreateAsync( SetName setName, JsonElement attributeValueAsJsonElement ) {
             AttributeValue av = new AttributeValue( setName );
             await av.InitializeAsync();
 
+            // attributeValueAsJsonElement should either be 
+            // Array of Objects
+            // Object
             if (av.definition.MultipleValues) {
-                foreach (var avAsJToken in (JArray)attributeValueAsJToken) {
-                    av.ParseJObject( (JObject)avAsJToken );
+                foreach (var avAsJsonElement in attributeValueAsJsonElement.EnumerateArray() ) {
+                    av.ParseJsonElement( avAsJsonElement );
                 }
             } else {
-                av.ParseJObject( (JObject)attributeValueAsJToken );
+                av.ParseJsonElement( attributeValueAsJsonElement );
             }
 
             return av;
@@ -68,17 +68,20 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             SetDefaultFieldValues();
         }
 
-        private void ParseJObject( JObject attributeValueAsJObject ) {
+        private void ParseJsonElement( JsonElement attributeValueAsJsonElement ) {
+
+            JsonElement temp;
 
             var keyFieldName = GetDefinitionKeyFieldName();
             var keyFieldValue = "";
-            if (!string.IsNullOrEmpty( keyFieldName ))
-                keyFieldValue = (string) attributeValueAsJObject[keyFieldName];
+            if (!string.IsNullOrEmpty( keyFieldName )) {
+                keyFieldValue = attributeValueAsJsonElement.GetProperty( keyFieldName ).GetString();
+            }
 
             foreach( var field in definition.Fields) {
                 var fieldName = field.FieldName;
-                if (attributeValueAsJObject.ContainsKey( fieldName )) {
-                    dynamic fieldValue = field.DeserializeFromJTokens( attributeValueAsJObject[fieldName] );
+                if (attributeValueAsJsonElement.TryGetProperty( fieldName, out temp ) ) {
+                    dynamic fieldValue = field.DeserializeFromJsonElement( temp );
 
                     if (definition.MultipleValues) {
                         this.SetFieldValue( fieldName, fieldValue, keyFieldValue );
@@ -97,7 +100,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// View the SetName of the AttributeValue.
         /// Assignment is done at instantiation.
         /// </summary>
-        [JsonIgnore]
         public SetName SetName {
             get {
                 return setName;
@@ -117,7 +119,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// Returns a copy of the Attributre that defines this Attribute Value
         /// </summary>
-        [JsonIgnore]
         public Scopos.BabelFish.DataModel.Definitions.Attribute Attribute {  get { return definition; } }
 
         /// <summary>
@@ -169,7 +170,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// This is defined within the Attribute's definition.
         /// </summary>
         /// <returns>true or false</returns>
-        [JsonIgnore]
         public bool IsMultipleValue {
             get {
                 return definition.MultipleValues;

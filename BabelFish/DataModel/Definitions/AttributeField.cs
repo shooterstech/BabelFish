@@ -83,6 +83,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public abstract AttributeValidation Validation { get; set; }
 
         /// <summary>
+        /// This is a helper function to return the value of .DefaultValue as a dynamic.
+        /// </summary>
+        /// <returns></returns>
+        public abstract dynamic GetDefaultValue();
+
+        /// <summary>
         /// The type of data that this field will hold.
         /// </summary>
         [JsonInclude]
@@ -102,6 +108,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             else
                 return $"'{FieldName}' of type {ValueType}";
         }
+
+        internal abstract dynamic DeserializeFromJsonElement( JsonElement value ); 
 
     }
 }
