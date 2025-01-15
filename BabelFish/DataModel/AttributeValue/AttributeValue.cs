@@ -410,7 +410,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             return foo.ToString();
         }
 
-        public JToken ToJToken() {
+        public JsonElement ToJsonElement() {
             
             JArray multiPartValues = new JArray();
             foreach (var multiPartValue in attributeValues) {

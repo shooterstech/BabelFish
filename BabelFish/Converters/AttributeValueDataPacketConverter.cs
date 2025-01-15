@@ -87,17 +87,52 @@ namespace Scopos.BabelFish.Converters {
         }
 
         public override void Write( Utf8JsonWriter writer, AttributeValueDataPacket value, JsonSerializerOptions options ) {
-            throw new NotImplementedException();
+
+            writer.WriteStartArray();
+
+            writer.WriteString( "AttributeDef", value.AttributeDef.ToString() );
+            writer.WriteString( "Visibility", value.Visibility.ToString() );
+            writer.WriteNumber( "ConcreteClassId", value.ConcreteClassId );
+            writer.WritePropertyName( "AttributeValue" );
+            if (value.AttributeValue.IsMultipleValue) {
+                writer.WriteStartArray();
+                foreach (var fieldKey in value.AttributeValue.GetAttributeFieldKeys()) {
+
+                    writer.WriteStartObject();
+                    foreach (var field in value.AttributeValue.GetDefintionFields()) {
+                        writer.WritePropertyName( field.FieldName );
+                        if (field.MultipleValues) {
+                            writer.WriteStartArray();
+                            value.AttributeValue.GetFieldValue( field.FieldName, fieldKey );
+                            writer.WriteEndArray();
+                        } else {
+                            value.AttributeValue.GetFieldValue( field.FieldName, fieldKey );
+                        }
+                    }
+                    writer.WriteEndObject();
+                }
+                writer.WriteEndArray();
+
+            } else {
+                writer.WriteStartObject();
+                foreach (var field in value.AttributeValue.GetDefintionFields()) {
+                    writer.WritePropertyName( field.FieldName );
+                    if (field.MultipleValues) {
+                        writer.WriteStartArray();
+                        value.AttributeValue.GetFieldValue( field.FieldName );
+                        writer.WriteEndArray();
+                    } else {
+                        value.AttributeValue.GetFieldValue( field.FieldName );
+                    }
+                }
+                writer.WriteEndObject();
+            }
         }
 
 
+        /*
         /// <inheritdoc/>
         public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
-            /*
-            serializer.Converters.Remove( this );
-            JToken jToken = JToken.FromObject( value, serializer );
-            serializer.Converters.Add( this );
-            */
 
             var attrValueDataPacket = (AttributeValueDataPacket)value;
             JObject o = new JObject();
@@ -178,5 +213,6 @@ namespace Scopos.BabelFish.Converters {
 
             return attributeValueDataPacket;
         }
+        */
     }
 }
