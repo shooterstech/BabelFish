@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// UTC time of last update
         /// </summary>
-        [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
+        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
 		/// <summary>
@@ -47,9 +47,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// <summary>
 		/// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
 		/// </summary>
-		[JsonConverter( typeof( StringEnumConverter ) )]
+		
 		[DefaultValue( ResultStatus.FUTURE )]
-		[JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
+		[JsonInclude]
 		public ResultStatus Status {
 			get {
 				if (EndDate < DateTime.Today) {
@@ -73,14 +73,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
         /// need defaults?
         /// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime StartDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
         /// need defaults?
         /// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>

@@ -10,7 +10,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Tests;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System.ComponentModel;
 using Scopos.BabelFish.DataActors.OrionMatch;
 

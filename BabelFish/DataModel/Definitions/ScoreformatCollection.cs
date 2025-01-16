@@ -5,8 +5,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -20,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// The Score Format keys must be the same across all ScoreConfigs.</para>
 	/// </summary>
 	[Serializable]
-    public class ScoreFormatCollection : Definition, ICopy<ScoreFormatCollection>
+    public class ScoreFormatCollection : Definition
     {
         
         public ScoreFormatCollection() : base() {
@@ -36,26 +37,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ScoreConfigs = new List<ScoreConfig>();
         }
 
-        public ScoreFormatCollection Copy() {
-            ScoreFormatCollection sfc = new ScoreFormatCollection();
-            this.Copy( sfc );
-            if (this.ScoreFormats != null) {
-                foreach (var sf in this.ScoreFormats) {
-                    sfc.ScoreFormats.Add( sf );
-                }
-            }
-            if (this.ScoreConfigs != null) {
-                foreach (var sc in this.ScoreConfigs) {
-                    sfc.ScoreConfigs.Add( sc.Copy() );
-                }
-            }
-            return sfc;
-        }
-
-        [JsonProperty( Order = 11  )]
+        [JsonPropertyOrder ( 11  )]
         public List<string> ScoreFormats { get; set; } = new List<string>();
 
-		[JsonProperty( Order = 12 )]
+		[JsonPropertyOrder ( 12 )]
 		public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
 
         public string GetDefaultScoreConfigName() {
@@ -89,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc/>
-        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyOrder( 99 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
 

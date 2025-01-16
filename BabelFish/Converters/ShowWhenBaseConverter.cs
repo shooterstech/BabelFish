@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Converters {
 
@@ -44,6 +45,7 @@ namespace Scopos.BabelFish.Converters {
             //When CanWrite is false, which it is, the standard converter is used and not this custom converter
         }
         */
+
         public override ShowWhenBase? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
@@ -59,7 +61,7 @@ namespace Scopos.BabelFish.Converters {
                         return JsonSerializer.Deserialize<ShowWhenSegmentGroup>( root.GetRawText(), options );
                     default:
                         //If we get here, it is probable because of ill-formed json
-                        return ShowWhenVariable.ALWAYS_SHOW.Copy();
+                        return ShowWhenVariable.ALWAYS_SHOW.Clone();
                 }
             }
         }

@@ -1,73 +1,98 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.Athena;
+using System.Net;
+using Scopos.BabelFish.DataModel.Clubs;
+using Scopos.BabelFish.DataModel.SocialNetwork;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters
+{
     public static class SerializerOptions {
 
         /// <summary>
         /// Serializer options for the APIClient.
         /// </summary>
-        public static JsonSerializerOptions APIClientDeserializer = null;
+        public static JsonSerializerOptions APIClientSerializer = null;
 
         /// <summary>
         /// Initializes the static instance for the JsonSerializerOptions. Should be used by the APIClient.
         /// </summary>
         public static void InitAPIClientDeserializer() {
 
-            if (APIClientDeserializer == null) {
-                APIClientDeserializer = new JsonSerializerOptions();
-                lock( APIClientDeserializer ) {
-                    APIClientDeserializer.Converters.Add( new AttributeFieldConverter() );
-                    APIClientDeserializer.Converters.Add( new AttributeValidationConverter() );
-                    APIClientDeserializer.Converters.Add( new DefinitionConverter() );
-                    APIClientDeserializer.Converters.Add( new ParticipantConverter() );
-                    APIClientDeserializer.Converters.Add( new ScoposDateTimeConverter() );
-                    APIClientDeserializer.Converters.Add( new ScoposDateOnlyConverter() );
-                    APIClientDeserializer.Converters.Add( new ScoreAverageBaseConverter() );
-                    APIClientDeserializer.Converters.Add( new ScoreHistoryBaseConverter() );
-                    APIClientDeserializer.Converters.Add( new ShowWhenBaseConverter() );
-                    APIClientDeserializer.Converters.Add( new SquaddingAssignmentConverter() );
-                    APIClientDeserializer.Converters.Add( new TieBreakingRuleConverter() );
+            if (APIClientSerializer == null) {
+                APIClientSerializer = new JsonSerializerOptions();
+                lock( APIClientSerializer ) {
+
+                    //Don't write a property if the value is equal to the default
+                    //NOTE: Add the [JsonInclude] decorate on properties to always write to json
+                    //APIClientSerializer.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault;
+
+                    //Write indented
+                    APIClientSerializer.WriteIndented = true;
+
+                    APIClientSerializer.Converters.Add( new AttributeFieldConverter() );
+                    APIClientSerializer.Converters.Add( new AttributeValidationConverter() );
+                    APIClientSerializer.Converters.Add( new DefinitionConverter() );
+                    APIClientSerializer.Converters.Add( new ParticipantConverter() );
+                    APIClientSerializer.Converters.Add( new ScoposDateTimeConverter() );
+                    APIClientSerializer.Converters.Add( new ScoposDateOnlyConverter() );
+                    APIClientSerializer.Converters.Add( new ScoreAverageBaseConverter() );
+                    APIClientSerializer.Converters.Add( new ScoreHistoryBaseConverter() );
+                    APIClientSerializer.Converters.Add( new ShowWhenBaseConverter() );
+                    APIClientSerializer.Converters.Add( new SquaddingAssignmentConverter() );
+                    APIClientSerializer.Converters.Add( new TieBreakingRuleConverter() );
 
                     //Definition Enums
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<AimingMarkColor>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<AttributeDesignation>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<BarcodeLabelSize>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<COFTypeOptions>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<CompetitionType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<DisciplineType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<DisplayEventOptions>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<EventtType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<FieldType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<LightIllumination>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<LinkToOption>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ResultFieldMethod>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ScoreComponent>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ScoringShape>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ShotMappingMethodType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ShowWhenBoolean>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ShowWhenCondition>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ShowWhenOperation>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<SingularType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<SpecialOptions>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<SortBy>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<TieBreakingRuleMethod>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<TimerCommandOptions>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<DataModel.Definitions.ValueType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<VisibilityOption>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<AimingMarkColor>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<AttributeDesignation>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<BarcodeLabelSize>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<COFTypeOptions>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<CompetitionType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<DisciplineType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<DisplayEventOptions>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<EventtType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<FieldType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<LightIllumination>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<LinkToOption>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ResultFieldMethod>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ScoreComponent>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ScoringShape>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ShotMappingMethodType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ShowWhenBoolean>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ShowWhenCondition>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ShowWhenOperation>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<SingularType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<SpecialOptions>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<SortBy>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<TieBreakingRuleMethod>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<TimerCommandOptions>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<DataModel.Definitions.ValueType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<VisibilityOption>() );
 
                     //Match Enums
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<LeagueRankingRuleType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<LeagueSeasonType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<LeagueVirtualType>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<MatchAuthorizationRole>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<MatchTypeOptions>() );
-                    APIClientDeserializer.Converters.Add( new EnumConverterByDescription<ResultStatus>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<LeagueRankingRuleType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<LeagueSeasonType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<LeagueVirtualType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<MatchAuthorizationRole>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<MatchTypeOptions>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ResultStatus>() );
+
+                    //Other Enums
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<APIStage>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<APISubDomain>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<HttpStatusCode>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ClubLicenseCapability>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<SocialRelationshipName>() );
+
+                    //AbstractEST
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ESTUnitCommand>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<ReplaceVariableOptions>() );
                 }
             }
         }

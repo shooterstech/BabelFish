@@ -101,13 +101,7 @@ namespace Scopos.BabelFish.Converters {
                     writer.WriteStartObject();
                     foreach (var field in value.AttributeValue.GetDefintionFields()) {
                         writer.WritePropertyName( field.FieldName );
-                        if (field.MultipleValues) {
-                            writer.WriteStartArray();
-                            value.AttributeValue.GetFieldValue( field.FieldName, fieldKey );
-                            writer.WriteEndArray();
-                        } else {
-                            value.AttributeValue.GetFieldValue( field.FieldName, fieldKey );
-                        }
+                        JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName, fieldKey ) );
                     }
                     writer.WriteEndObject();
                 }
@@ -117,13 +111,7 @@ namespace Scopos.BabelFish.Converters {
                 writer.WriteStartObject();
                 foreach (var field in value.AttributeValue.GetDefintionFields()) {
                     writer.WritePropertyName( field.FieldName );
-                    if (field.MultipleValues) {
-                        writer.WriteStartArray();
-                        value.AttributeValue.GetFieldValue( field.FieldName );
-                        writer.WriteEndArray();
-                    } else {
-                        value.AttributeValue.GetFieldValue( field.FieldName );
-                    }
+                    JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName ) );
                 }
                 writer.WriteEndObject();
             }

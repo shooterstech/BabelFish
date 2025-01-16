@@ -4,16 +4,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataActors.Specification;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-	[JsonConverter( typeof( DefinitionConverter ) )]
 	[Serializable]
     public abstract class Definition : SparseDefinition, IReconfigurableRulebookObject {
 
@@ -27,26 +26,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Discontinued = false;
         }
 
-		/// <summary>
-		/// Copies the Definition base class properties into the passed in copy instance.
-		/// </summary>
-		/// <param name="copy"></param>
-		protected void Copy( Definition copy ) {
-			copy.CommonName = this.CommonName;
-			copy.SetName = this.SetName;
-			copy.HierarchicalName = this.HierarchicalName;
-			copy.JSONVersion = this.JSONVersion;
-			copy.Type = this.Type;
-			copy.Version = this.Version;
-			copy.Description = this.Description;
-			copy.Owner = this.Owner;
-			copy.Discipline = this.Discipline;
-			copy.Subdiscipline = this.Subdiscipline;
-			copy.Discontinued = this.Discontinued;
-			copy.Comment = this.Comment;
-			copy.Tags.AddRange( this.Tags );
-		}
-
         internal void OnDeserializedMethod(StreamingContext context) {
 			//Note, each subclass of Definition will have to call base.OnSerializedMethod
 
@@ -56,7 +35,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// <summary>
 		/// HierarchicalName is namespace:properName
 		/// </summary>
-		[JsonProperty( Order = 3 )]
+		[JsonPropertyOrder( 3 )]
         public string HierarchicalName { get; set; } = string.Empty;
 
         /// <summary>
@@ -77,7 +56,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A human readable short name for this Definition. If no specific value
         /// is given, then the ProperName portion of the SetName is returned instead.
         /// </summary>
-        [JsonProperty( Order = 5 )]
+        [JsonPropertyOrder( 5 )]
         public string CommonName {
             get {
                 if (string.IsNullOrEmpty( commonName )) {
@@ -101,7 +80,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// A human readable description of this Definition. May be verbose.
         /// </summary>
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder( 6 )]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
@@ -109,21 +88,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// There is often a one to one relationship between the Owner and namespace of a Definition.
         /// </summary>
         /// <example>OrionAcct001234</example>
-        [JsonProperty( Order = 7 )]
+        [JsonPropertyOrder( 7 )]
         public string Owner { get; set; } = string.Empty;
 
         /// <summary>
         /// The high level shooting discipline that uses this Definition.
         /// </summary>
-        [JsonProperty( Order = 8 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder( 8 )]
         public DisciplineType Discipline { get; set; }
 
         /// <summary>
         /// The subdiscipline (under the value of Discipline) to categorize this Definition.
         /// The value of a "Subdiscipline" field may be any text string. However, there is a list of common subdisciplines and tags that should be used as appropriate.
         /// </summary>
-        [JsonProperty( Order = 9 )]
+        [JsonPropertyOrder( 9 )]
         [DefaultValue( "" )]
         public string Subdiscipline { get; set; } = string.Empty;
 
@@ -131,18 +109,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The tag or tags to categorize this Definition with.
         /// The value of a "Tags" field may be any text string. However, there is a list of common subdisciplines and tags that should be used as appropriate.
         /// </summary>
-        [JsonProperty( Order = 10 )]
+        [JsonPropertyOrder( 10 )]
         public List<string> Tags { get; set; } = new List<string>();
 
 		/// <summary>
 		/// The Version string of the JSON document.
 		/// </summary>
-		[JsonProperty( Order = 10, DefaultValueHandling = DefaultValueHandling.Include )]
+		[JsonPropertyOrder (10)]
+        [JsonInclude]
 		[DefaultValue( "2020-03-31" )]
 		public string JSONVersion { get; set; } = "2020-03-31";
 
-		/// <inheritdoc/>
-		[JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        /// <inheritdoc/>
+        [JsonPropertyOrder( 99 )]
+        [JsonInclude]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
@@ -186,7 +166,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (!typeDirectory.Exists)
                 typeDirectory.Create();
 
-			string json = JsonConvert.SerializeObject( this, Formatting.Indented );
+			string json = JsonSerializer.Serialize(this, SerializerOptions.APIClientSerializer );
 
             File.WriteAllText( filePath, json );
 

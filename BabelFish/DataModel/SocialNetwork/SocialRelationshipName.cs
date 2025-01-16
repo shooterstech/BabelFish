@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.SocialNetwork
 {
@@ -12,7 +12,6 @@ namespace Scopos.BabelFish.DataModel.SocialNetwork
     /// <summary>
     /// The Reconfigurable Rulebook Definition types.
     /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
     public enum SocialRelationshipName
     {
         /*

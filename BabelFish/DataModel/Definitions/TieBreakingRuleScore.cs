@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -12,18 +13,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public TieBreakingRuleScore() {
             this.Method = TieBreakingRuleMethod.SCORE;
-        }
-
-
-        /// <inheritdoc />
-        public override TieBreakingRuleBase Copy() {
-            TieBreakingRuleScore copy = new TieBreakingRuleScore();
-            copy.EventName = this.EventName;
-            copy.Values = this.Values;
-            copy.SortOrder = this.SortOrder;
-            copy.Source = this.Source;
-
-            return copy;
         }
 
         /// <summary>
@@ -73,7 +62,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 List<TieBreakingRuleBase> list = new List<TieBreakingRuleBase>();
                 ValueSeries vs = new ValueSeries( this.Values );
                 foreach (var eventName in vs.GetAsList( this.EventName )) {
-                    var newTieBreakingRule = (TieBreakingRuleScore) this.Copy();
+                    var newTieBreakingRule = this.Clone();
                     newTieBreakingRule.EventName = eventName;
                     newTieBreakingRule.Values = "";
                     list.Add( newTieBreakingRule );

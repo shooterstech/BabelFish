@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="source">The object instance to copy.</param>
         /// <returns>The copied object.</returns>
 
-        public static T Clone<T>( T source ) {
+        public static T Clone<T>( this T source ) {
             if (source == null) {
                 return default;
             }

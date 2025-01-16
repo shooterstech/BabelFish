@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
     /// The Reconfigurable Rulebook Definition types.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
+    
     public enum DefinitionType {
         /*
          * In order to get an Enum to serialize / deserialize to values with spaces have to do a couple of things.

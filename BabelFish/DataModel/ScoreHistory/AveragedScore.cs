@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using Scopos.BabelFish.DataModel.Athena;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 

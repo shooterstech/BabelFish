@@ -203,7 +203,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is a multi-value attribute.</exception>
         public dynamic GetFieldValue( string fieldName ) {
             AttributeField attributeField = GetAttributeField( fieldName );
-            dynamic returnValue = attributeField.DefaultValue;
+            dynamic returnValue = attributeField.GetDefaultValue();
 
             if (this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", logger );
@@ -212,7 +212,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                     returnValue = attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName];
             }
 
-            return attributeField.DeserializeFieldValue( returnValue );
+            return returnValue;
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is not a multi-value attribute.</exception>
         public dynamic GetFieldValue( string fieldName, string fieldKey ) {
             AttributeField attributeField = GetAttributeField( fieldName );
-            dynamic returnValue = attributeField.DefaultValue;
+            dynamic returnValue = attributeField.GetDefaultValue();
 
             if (!this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' with key '{fieldKey}' in {SetName}", logger );
@@ -235,7 +235,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                     returnValue = attributeValues[fieldKey][fieldName];
             }
 
-            return attributeField.DeserializeFieldValue( returnValue );
+            return returnValue;
         }
 
         /// <summary>
@@ -256,17 +256,20 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// If applicable, returns the AttributeValueAppellation for this AttributeValue.
         /// Only applicable if the underlying definition is a simple attribute, and the field
-        /// type is CLOSED.
+        /// type is CLOSED, and the AttributeField is a string
         /// </summary>
         public string AttributeValueAppellation {
             get {
                 try {
-                    if (definition.SimpleAttribute && GetDefintionFields()[0].FieldType == FieldType.CLOSED ) {
+                    if (definition.SimpleAttribute ) {
                         var field = GetDefintionFields()[0];
-                        var value = GetFieldValue( field.FieldName );
-                        foreach (var foo in field.Values ) {
-                            if (foo.Value == value) {
-                                return foo.AttributeValueAppellation;
+                        if (field is AttributeFieldString) {
+                            AttributeFieldString attributeFieldString = (AttributeFieldString)field;
+                            var value = GetFieldValue( field.FieldName );
+                            foreach (var foo in attributeFieldString.Values) {
+                                if (foo.Value == value) {
+                                    return foo.AttributeValueAppellation;
+                                }
                             }
                         }
                         return "";
@@ -313,14 +316,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (!attributeField.ValidateFieldValue( fieldValue )) {
                 throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             } else {
-                //If the ValueType is a DATE, TIME, or DATETIIME, convert it to a string before storing.
-                dynamic valueToStore = attributeField.SerializeFieldValue( fieldValue );
                 
                 SetDefaultFieldValues( KEY_FOR_SINGLE_ATTRIBUTES );
                 if (attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].ContainsKey( fieldName ))
-                    attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName] = valueToStore;
+                    attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName] = fieldValue;
                 else
-                    attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].Add( fieldName, valueToStore );
+                    attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].Add( fieldName, fieldValue );
             }
         }
 
@@ -341,14 +342,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (!attributeField.ValidateFieldValue( fieldValue ))
                 throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             else {
-                //If the ValueType is a DATE, TIME, or DATETIIME, convert it to a string before storing.
-                dynamic valueToStore = attributeField.SerializeFieldValue( fieldValue );
 
                 SetDefaultFieldValues( fieldKey );
                 if (attributeValues[fieldKey].ContainsKey( fieldName ))
-                    attributeValues[fieldKey][fieldName] = valueToStore;
+                    attributeValues[fieldKey][fieldName] = fieldValue;
                 else
-                    attributeValues[fieldKey].Add( fieldName, valueToStore );
+                    attributeValues[fieldKey].Add( fieldName, fieldValue );
             }
         }
 
@@ -393,9 +392,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                         if (field.Key)
                             SetFieldValue( field.FieldName, keyField, keyField );
                         else if (definition.MultipleValues)
-                            SetFieldValue( field.FieldName, field.DefaultValue, keyField );
+                            SetFieldValue( field.FieldName, field.GetDefaultValue(), keyField );
                         else
-                            SetFieldValue( field.FieldName, field.DefaultValue );
+                            SetFieldValue( field.FieldName, field.GetDefaultValue() );
                     }
                 }
             } catch (Exception ex) {
@@ -404,36 +403,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
         #endregion Attribute
 
+        /// <inheritdoc />
         public override string ToString() {
-            StringBuilder foo = new StringBuilder();
-            foo.Append( $"{this.SetName} Attribute Value" );
-            return foo.ToString();
-        }
-
-        public JsonElement ToJsonElement() {
-            
-            JArray multiPartValues = new JArray();
-            foreach (var multiPartValue in attributeValues) {
-                if (IsMultipleValue && multiPartValue.Key == KEY_FOR_SINGLE_ATTRIBUTES)
-                    continue;
-
-                JObject attributeValueJObject = new JObject();
-                foreach (var av in multiPartValue.Value) {
-                    AttributeField field = GetAttributeField( av.Key );
-                    if (field.MultipleValues)
-                        attributeValueJObject.Add( av.Key, JArray.FromObject( av.Value ) );
-                    else
-                        attributeValueJObject.Add( av.Key, av.Value );
-                }
-                multiPartValues.Add( attributeValueJObject );
-            }
-
-            if ( this.IsMultipleValue) {
-                return multiPartValues;
-            } else {
-                return multiPartValues[0];
-            }
-
+            return $"{this.SetName} Attribute Value";
         }
     }
 }

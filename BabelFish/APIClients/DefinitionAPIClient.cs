@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using Newtonsoft.Json.Linq;
-using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Runtime.CompilerServices;
-using Newtonsoft.Json;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.APIClients {
@@ -68,20 +62,10 @@ namespace Scopos.BabelFish.APIClients {
                     FileInfo fileInfo = new FileInfo( filename );
                     if (fileInfo.Exists) {
 
-                        using (StreamReader sr = File.OpenText( filename ))
-                        using (JsonTextReader reader = new JsonTextReader( sr )) {
-                            var jsonFromFile = await JObject.ReadFromAsync( reader );
+                        //TODO:Implement
+                        throw new NotImplementedException();
 
-                            var response = new ResponseIntermediateObject();
-                            response.Request = request;
-                            response.MessageResponse = new MessageResponse();
-                            //Format the JObject response as if it was read from the REST API
-                            response.Body = new JObject();
-                            response.Body[definitionRequest.SetName.ToString()] = jsonFromFile;
-                            response.ValidUntil = DateTime.UtcNow.AddDays( 1 ); //UMMMM, what's a good value to set here?
-
-                            return new Tuple<bool, ResponseIntermediateObject?>( true, response );
-                        }
+                        
                     } else {
                         logger.Warn( $"Can't read definition '{filename}' because the file does not exist." );
                     }

@@ -5,8 +5,9 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using Scopos.BabelFish.DataModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 using NLog;
 using Scopos.BabelFish.Helpers;
 

@@ -32,9 +32,10 @@ namespace Scopos.BabelFish.Converters {
 
         /// <inheritdoc />
         public override void Write( Utf8JsonWriter writer, T value, JsonSerializerOptions options ) {
-            
+
             var field = value.GetType().GetField( value.ToString() );
             var description = field.GetCustomAttribute<DescriptionAttribute>()?.Description ?? value.ToString();
-            writer.WriteStringValue(description );
+            writer.WriteStringValue( description );
+        }
     }
 }

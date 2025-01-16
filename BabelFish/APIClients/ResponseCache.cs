@@ -5,9 +5,8 @@ using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Requests;
 using System.Net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog.LayoutRenderers;
+using System.Text.Json;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.APIClients
 {
@@ -24,13 +23,6 @@ namespace Scopos.BabelFish.APIClients
         private object mutex = new object();
 
         public static ResponseCache CACHE= new ResponseCache();
-
-        private static readonly JsonSerializerSettings JSETTINGS_WITHOUT_DEFAULTS = new JsonSerializerSettings() {
-			TypeNameHandling = TypeNameHandling.Auto,
-			NullValueHandling = NullValueHandling.Ignore,
-			Formatting = Formatting.Indented,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
-		};
 
 		private ResponseCache() {
 
@@ -88,7 +80,7 @@ namespace Scopos.BabelFish.APIClients
 						FileInfo file = new FileInfo( filename );
                         file.Directory.Create();
 
-                        var json = JsonConvert.SerializeObject( response, JSETTINGS_WITHOUT_DEFAULTS );
+                        var json = JsonSerializer.Serialize( response, SerializerOptions.APIClientSerializer );
 
 						using (StreamWriter sw = File.CreateText( file.FullName )) {
 							sw.WriteLine( json );
@@ -145,7 +137,7 @@ namespace Scopos.BabelFish.APIClients
 
         public MessageResponse MessageResponse { get; set; }
 
-        public JToken Body { get; set; }
+        public JsonDocument Body { get; set; }
 
         public DateTime ValidUntil { get; set; }
     }

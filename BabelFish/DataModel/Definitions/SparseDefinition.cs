@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Scopos.BabelFish.DataModel;
+﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -19,14 +11,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Definition Type
         /// </summary>
-        [JsonProperty( Order = 1 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 1 )]
+        
         public DefinitionType Type { get; set; }
 
         /// <summary>
         /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
         /// </summary>
-        [JsonProperty( Order = 4 )]
+        [JsonPropertyOrder ( 4 )]
         public string SetName { get; set; } = string.Empty;
 
         /// <summary>
@@ -34,13 +26,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// a reference to either the latest Major release. Version always provides both the Major and Minor release numbers and is not a reference.
         /// </summary>
         /// <example>1.5</example>
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         public string Version { get; set; } = string.Empty;
 
         /// <summary>
         /// If true, this Definition is no longer in use and should not be referenced.
         /// </summary>
-        [JsonProperty( Order = 101 )]
+        [JsonPropertyOrder ( 101 )]
         [DefaultValue( false )]
         public bool Discontinued { get; set; }
 

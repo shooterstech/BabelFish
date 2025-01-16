@@ -11,21 +11,10 @@ namespace Scopos.BabelFish.Responses {
     /// <summary>
     /// The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
     /// </summary>
-    [Obsolete]
-    public class MessageResponse : IResponse, ICopy<MessageResponse> {
+    public class MessageResponse : IResponse {
 
         /// <inheritdoc/>
         public List<string> Message { get; set; } = new List<string>();
-
-        /// <inheritdoc/>
-        public MessageResponse Copy() {
-            MessageResponse copy = new MessageResponse();
-            foreach( var item in Message) {
-                copy.Message.Add(item);
-            }
-
-            return copy;
-        }
 
 
         /// <inheritdoc/>

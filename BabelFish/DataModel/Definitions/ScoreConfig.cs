@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ScoreConfig: IReconfigurableRulebookObject, ICopy<ScoreConfig>
+    public class ScoreConfig: IReconfigurableRulebookObject
     {
 
         public ScoreConfig() { }
@@ -22,24 +22,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public Dictionary<string, string> ScoreFormats { get; set; } = new Dictionary<string, string>();
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonPropertyOrder ( 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
-        public ScoreConfig Copy()
-        {
-            ScoreConfig sc = new ScoreConfig();
-            sc.ScoreConfigName = this.ScoreConfigName;
-            if (this.ScoreFormats != null)
-            {
-                foreach (KeyValuePair<string, string> pair in this.ScoreFormats)
-                {
-                    sc.ScoreFormats.Add(pair.Key, pair.Value);
-                }
-            }
-            return sc;
-        }
-
+        /// <inheritdoc/>
         public override string ToString() {
             return ScoreConfigName;
         }

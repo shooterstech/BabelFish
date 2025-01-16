@@ -4,8 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -14,7 +15,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// one Singular object define the shots fired in kneeling, a second Singular object defines the shots 
     /// fired in prone, and a third object defines the shots fired in standing.
     /// </summary>
-    public class Singular : IReconfigurableRulebookObject, ICopy<Singular> {
+    public class Singular : IReconfigurableRulebookObject {
 
         private List<string> validationErrorList = new List<string>();
 
@@ -26,20 +27,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ScoreFormat = "Shots";
             StageLabel = "";
             ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL;
-        }
-
-        /// <inheritdoc/>
-        public Singular Copy() {
-            Singular s = new Singular();
-            s.Type = this.Type;
-            s.EventName = this.EventName;
-            s.Values = this.Values;
-            s.ScoreFormat = this.ScoreFormat;
-            s.StageLabel = this.StageLabel;
-            s.ShotMappingMethod = this.ShotMappingMethod;
-            s.Comment = this.Comment;
-
-            return s;
         }
 
         /// <summary>
@@ -77,11 +64,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The method to use to map shots to events. Must be one of the following values:
         /// * Sequential
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        
         public ShotMappingMethodType ShotMappingMethod { get; set; } = ShotMappingMethodType.SEQUENTIAL;
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonPropertyOrder ( 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

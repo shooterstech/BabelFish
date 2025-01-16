@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.Clubs {
 
     /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ClubLicenseCapability {
 
         /// <summary>

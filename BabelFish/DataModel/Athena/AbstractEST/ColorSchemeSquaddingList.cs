@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -16,12 +15,16 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             */
         }
 
-        [JsonProperty("squaddinglanes", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Squadding lanes color.")]
+        /// <summary>
+        /// Squadding lanes color.
+        /// </summary>
+        [JsonPropertyName( "squaddinglanes" )]
         public String SquaddingLanes { set; get; } = "#5d84bc";
 
-        [JsonProperty("squaddinglanestext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Squadding lanes text color.")]
+        /// <summary>
+        /// Squadding lanes text color.
+        /// </summary>
+        [JsonPropertyName( "squaddinglanestext" )]
         public String SquaddingLanesText { set; get; } = "#ececec";
     }
 }

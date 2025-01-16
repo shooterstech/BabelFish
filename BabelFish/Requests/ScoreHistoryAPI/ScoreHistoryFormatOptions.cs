@@ -5,15 +5,15 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
 
     /// <summary>
     /// Time span format options when requestion Score History or Score Average.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
+    
     public enum ScoreHistoryFormatOptions {
         /*
          * In order to get an Enum to serialize / deserialize to values with spaces have to do a couple of things.

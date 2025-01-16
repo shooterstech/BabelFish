@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.Range
 {
@@ -80,49 +79,51 @@ namespace Scopos.BabelFish.DataModel.Athena.Range
         /// <summary>
         /// The human readable name given to the range
         /// </summary>
-        [JsonProperty(Order = 1)]
+        [JsonPropertyOrder( 1 )]
         public string RangeName { get; set; }
 
         /// <summary>
         /// Unique identifier within the Orion Acccount given to this range. Usually denoted with a single character, 'A', 'B', 'C', etc
         /// </summary>
-        [JsonProperty(Order = 2)]
+        [JsonPropertyOrder( 2 )]
         public string RangeID { get; set; }
 
         /// <summary>
         /// The Orion Account Owner, formatted as OriionAccout000001
         /// </summary>
-        [JsonProperty(Order = 3)]
+        [JsonPropertyOrder( 3 )]
         public string Owner { get; set; }
 
         /// <summary>
         /// A list of FiringLines that this Range has. Most ranges will only have one. As a counter example though, a high power range may have three, 200yd., 300yd. and 600yd. 
         /// </summary>
-        [JsonProperty(Order = 4)]
+        [JsonPropertyOrder( 4 )]
         public List<FiringLine> FiringLines { get; set; }
 
         /// <summary>
         /// A list of TargetLines that this range has. Most ranges will only have one. As a counter example though, a Bullseye pistol range would have two, 25yd. and 50yd.
         /// </summary>
-        [JsonProperty(Order = 5)]
+        [JsonPropertyOrder( 5 )]
         public List<TargetLine> TargetLines { get; set; }
 
         /// <summary>
         /// A list of Target Groups. Typically only used in an ISSF 25m pistol range.
         /// </summary>
-        [JsonProperty(Order = 6)]
+        [JsonPropertyOrder( 6 )]
         public List<Group> Groups { get; set; }
 
 
-        [JsonProperty(Order = 7)] public NetworkManager NetworkManager { get; set; }
+        [JsonPropertyOrder( 7 )] 
+        public NetworkManager NetworkManager { get; set; }
 
         /// <summary>
         /// A list of Firing Points 
         /// </summary>
-        [JsonProperty(Order = 10)]
+        [JsonPropertyOrder( 10 )]
         public List<FiringPoint> FiringPoints { get; set; }
 
-        [JsonProperty(Order = 11)] public List<Display> Displays { get; set; }
+        [JsonPropertyOrder( 11 )] 
+        public List<Display> Displays { get; set; }
 
         /// <summary>
         /// Helper function to get the state address (aka thing name) for the passed in nickname.

@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 	public class SparseDefinitionList : ITokenItems<SparseDefinitionSearchResult> {

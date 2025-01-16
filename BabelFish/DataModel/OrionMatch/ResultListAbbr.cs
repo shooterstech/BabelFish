@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Indicates the completion status of this Result List
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        
         public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
     }

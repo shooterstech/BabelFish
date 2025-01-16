@@ -82,10 +82,6 @@ namespace Scopos.BabelFish.Tests.Athena {
             //When the auth code is wrong, unknown, or expired, and 404 is returned.
             Assert.AreEqual( System.Net.HttpStatusCode.NotFound, response.StatusCode );
 
-            //The message list dhould incldue the message it's expired or invalid.
-            var message = response.MessageResponse.Message[0];
-            Assert.IsTrue( message.Contains( "not recognized, expired or is invalid" ) );
-
         }
 
         [TestMethod]

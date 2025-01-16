@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.APIClients;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using NLog;
 
 
@@ -30,7 +29,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
                 try {
-                    return new StringContent( JsonConvert.SerializeObject( ScoreHistoryPatch ), Encoding.UTF8, "application/json" );
+                    return new StringContent( JsonSerializer.Serialize( ScoreHistoryPatch ), Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
                     //logger.Error( ex );
                     return new StringContent( "" );

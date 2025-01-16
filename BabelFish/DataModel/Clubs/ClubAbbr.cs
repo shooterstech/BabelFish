@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text;
+using System.Text.Json.Serialization;
 using NLog;
-using Newtonsoft.Json;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Location = Scopos.BabelFish.DataModel.Common.Location;
@@ -92,14 +92,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The date the orion account was created. 
         /// </summary>
         /// <example>2001-01-01</example>
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime MemberSince { get; set; }
 
         /// <summary>
         /// The date and time of the last shot this club fired that was publicly displayed.
         /// </summary>
         /// <example>2001-01-01</example>
-        [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
+        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
         public DateTime LastPublicShot { get; set; }
 
         /// <summary>

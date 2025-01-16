@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /*

@@ -69,8 +69,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             Assert.AreEqual( "Christopher", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
             Assert.AreEqual( "Jones", (string)profileNameAttributeValue.GetFieldValue( "FamilyName" ) );
-
-            Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( profileNameAttributeValueDataPacket, new Scopos.BabelFish.Converters.AttributeValueDataPacketConverter() ) );
         }
 
         /// <summary>
@@ -129,13 +127,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             var addressAttributeValueDataPacket = attributeValueDataPackets[setNameAddress];
             Assert.IsTrue( addressAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
-
-            var addresses = addressAttributeValueDataPacket.AttributeValue;
-            var stateField = addresses.GetAttributeField( "State" );
-            foreach( var value in stateField.Values ) {
-                var stateCode = value.Value; //2 letter state code, which is what should get saved back to the attribute value
-                var stateName = value.Name;  //Fully spelled out state name for display purposes.
-            }
         }
 
         /// <summary>

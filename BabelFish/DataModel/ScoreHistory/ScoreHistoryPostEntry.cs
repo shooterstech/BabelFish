@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -35,10 +35,10 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
-		[JsonConverter( typeof( StringEnumConverter ) )]
+		
 		public VisibilityOption Visibility { get; set; } = VisibilityOption.PROTECTED;
 
-		[JsonConverter( typeof( StringEnumConverter ) )]
+		
 		public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.PRACTICE;
 
         public string MatchName { get; set; } = "";

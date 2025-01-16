@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -14,18 +15,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public TieBreakingRuleCountOf() {
             this.Method = TieBreakingRuleMethod.COUNT_OF;
-        }
-
-
-        /// <inheritdoc />
-        public override TieBreakingRuleBase Copy() {
-            TieBreakingRuleCountOf copy = new TieBreakingRuleCountOf();
-            copy.EventName = this.EventName;
-            copy.Values = this.Values;
-            copy.SortOrder = this.SortOrder;
-            copy.Source = this.Source;
-
-            return copy;
         }
 
         /// <summary>
@@ -63,7 +52,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 List<TieBreakingRuleBase> list = new List<TieBreakingRuleBase>();
                 ValueSeries vs = new ValueSeries( this.Values );
                 foreach (var eventName in vs.GetAsList( this.EventName )) {
-                    var newTieBreakingRule = (TieBreakingRuleCountOf) this.Copy();
+                    var newTieBreakingRule = this.Clone();
                     newTieBreakingRule.EventName = eventName;
                     newTieBreakingRule.Values = "";
                     list.Add( newTieBreakingRule );

@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -13,8 +13,10 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             //Background[0] = "#5d84bc";
         }
 
-        [JsonProperty("background", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Background color of image screen.")]
+        /// <summary>
+        /// Background color of image screen
+        /// </summary>
+        [JsonPropertyName( "background" )]
         public String Background { set; get; } = "#5d84bc";
     }
 }

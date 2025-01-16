@@ -4,8 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -26,8 +27,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// UNOFFICIAL
         /// OFFICIAL
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Populate )]
+        
+        [JsonInclude]
         [DefaultValue( ResultStatus.FUTURE ) ]
         public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 

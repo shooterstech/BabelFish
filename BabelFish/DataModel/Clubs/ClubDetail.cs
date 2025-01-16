@@ -6,10 +6,10 @@ using System.Runtime.Serialization;
 using System.Text;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using NLog;
 using Scopos.BabelFish.Helpers;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Clubs
 {
@@ -114,38 +114,8 @@ namespace Scopos.BabelFish.DataModel.Clubs
         /// To get/set MemberSince date as a DateTime object use GetMemberSince() or SetMemberSince().
         /// </summary>
         /// <example>2001-01-01</example>
-        public string MemberSince {
-            get {
-                return memberSince.ToString( DateTimeFormats.DATE_FORMAT );
-            }
-            set {
-                try {
-                    //Test if we can parse the input without throwing an error.
-                    var parsedDate = DateTime.ParseExact( value, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-                    //If the input can be parsed, we can go ahead and set the value.
-                    memberSince = parsedDate;
-                } catch (Exception ex) {
-                    var msg = $"Unable to parse the input Date {value}.";
-                    logger.Error( msg, ex );
-                }
-            }
-        }
-
-        /// <summary>
-        /// Returns the date that this Club held an Orion License
-        /// </summary>
-        /// <returns></returns>
-        public DateTime GetMemberSince() {
-            return memberSince;
-        }
-
-        /// <summary>
-        /// Sets the date that this Club has helf an Orion License
-        /// </summary>
-        /// <param name="memberSince"></param>
-        public void SetMemberSince( DateTime memberSince ) {
-            this.memberSince = memberSince;
-        }
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        public DateTime MemberSince { get; set; }
 
         /// <summary>
         /// The URL path in www.Scopos.net/clubs/{path} linking to their team page.

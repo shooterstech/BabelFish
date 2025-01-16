@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using Scopos.BabelFish.Responses;
+﻿using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 

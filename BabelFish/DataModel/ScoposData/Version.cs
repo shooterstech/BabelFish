@@ -1,8 +1,5 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.ScoposData {
     public class VersionsList : BaseClass {
@@ -19,28 +16,28 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// c = bug fix version
         /// d = internal build
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder ( 1 )]
         public string Version { get; set; } = string.Empty;
 
 
-        [JsonProperty( Order = 2 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 2 )]
+        
         public VersionService Service { get; set; }
 
-        [JsonProperty( Order = 3 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 3 )]
+        
         public VersionLevel Level { get; set; }
 
-        [JsonProperty( Order = 4 )]
+        [JsonPropertyOrder ( 4 )]
         public List<string> ReleaseNotes { get; set; } = new List<string>();
 
-        [JsonProperty( Order = 5 )]
+        [JsonPropertyOrder ( 5 )]
         public List<string> Enhancements { get; set; } = new List<string>();
 
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder ( 6 )]
         public List<string> BugFixes { get; set; } = new List<string>();
 
-        [JsonProperty( Order = 7 )]
+        [JsonPropertyOrder ( 7 )]
         public DateTime Datetime { get; set; } = new DateTime();
 
         public override string ToString() {

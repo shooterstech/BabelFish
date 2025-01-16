@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Scopos.BabelFish;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;

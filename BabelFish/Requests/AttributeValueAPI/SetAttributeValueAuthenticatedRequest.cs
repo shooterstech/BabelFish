@@ -1,10 +1,9 @@
 ﻿using System.Text;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
-using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace Scopos.BabelFish.Requests.AttributeValueAPI {
@@ -29,6 +28,8 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
                 try {
+                    throw new NotImplementedException();
+                    /*
                     JObject json = new JObject();
                     JObject attributeValuesJson = new JObject();
                     json.Add( "attribute-values", attributeValuesJson );
@@ -37,6 +38,7 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
                     }
 
                     return new StringContent( JsonConvert.SerializeObject( json ), Encoding.UTF8, "application/json" );
+                    */
                 } catch (Exception ex) {
                     logger.Error( ex );
                     return new StringContent( "" );

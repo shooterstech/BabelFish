@@ -1,6 +1,5 @@
 ﻿using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
-using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI
 {
@@ -36,6 +35,9 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
             List<SetAttributeValue> returnAttributes = new List<SetAttributeValue>();
             List<string> CaptureErrors = new List<string>();
 
+            throw new NotImplementedException();
+
+            /*
             try
             {
                 JObject o = JObject.Parse(Body.ToString());
@@ -80,6 +82,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
             Value = returnList;
             if (CaptureErrors.Count > 0)
                 CaptureErrors.ForEach(x => this.MessageResponse.Message.Add(x.ToString()));
+            */
         }
     }
 }

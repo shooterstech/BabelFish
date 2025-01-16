@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum VisibilityOption { 
         /// <summary>
         /// Only the owner of the data may see this value.

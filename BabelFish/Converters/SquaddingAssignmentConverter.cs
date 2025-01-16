@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.Converters {
                         break;
                 }
 
-                throw new NotImplementedException( $"Unable to convert type '{type}' to an Abstract class SquaddingAssignment." );
+                throw new NotImplementedException( $"Unable to convert type '{id}' to an Abstract class SquaddingAssignment." );
             }
         }
 

@@ -2,8 +2,7 @@
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.Definitions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using NLog;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI {

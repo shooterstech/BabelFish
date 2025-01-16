@@ -5,8 +5,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// <summary>
         /// NOTE: Current this field is TypeOfMatch, but it will soon be renmaed int eh API
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         public string MatchName { get; set; } = "";
@@ -52,7 +52,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         public Athena.Score Score { get; set; }
 
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
     }
 }

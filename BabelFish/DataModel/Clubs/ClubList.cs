@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace  Scopos.BabelFish.DataModel.Clubs {
     /// <summary>

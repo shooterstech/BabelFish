@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
-using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {

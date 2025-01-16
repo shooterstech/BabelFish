@@ -78,7 +78,7 @@ namespace Scopos.BabelFish.APIClients {
                 AttributeCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -100,7 +100,7 @@ namespace Scopos.BabelFish.APIClients {
                 CourseOfFireCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -121,7 +121,7 @@ namespace Scopos.BabelFish.APIClients {
                 EventAndStageStyleMappingCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -142,7 +142,7 @@ namespace Scopos.BabelFish.APIClients {
                 EventStyleCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -164,7 +164,7 @@ namespace Scopos.BabelFish.APIClients {
                 RankingRuleCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -186,7 +186,7 @@ namespace Scopos.BabelFish.APIClients {
                 ResultListFormatCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -208,7 +208,7 @@ namespace Scopos.BabelFish.APIClients {
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -229,7 +229,7 @@ namespace Scopos.BabelFish.APIClients {
                 StageStyleCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -251,7 +251,7 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCollectionCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -273,7 +273,7 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCache.TryAdd( setName, definition );
                 return definition;
             } else {
-                throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.StatusCode} -> {response.MessageResponse.ToString()}" );
+                throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
             }
         }
 

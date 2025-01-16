@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.Helpers;

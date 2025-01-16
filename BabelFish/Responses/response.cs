@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using BabelFish.Converters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel;
@@ -77,7 +76,6 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         public bool FileSystemCachedResponse { get; protected internal set; } = false;
 
-        /*
 		/// <summary>
 		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard 
         /// fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
@@ -86,8 +84,7 @@ namespace Scopos.BabelFish.Responses
         {
             get;
             internal set;
-        } = new MessageResponse();
-        */
+        } = new MessageResponse();        
 
         /// <summary>
         /// Gets or sets the data object returned by the Rest API Call.
@@ -129,7 +126,15 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = JsonSerializer.Deserialize<T>( Body, SerializerOptions.APIClientDeserializer );
+            Value = JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.APIClientSerializer );
+
+            /*
+            var nameOfClass = typeof( T ).Name;
+            JsonElement body;
+            if (Body.RootElement.TryGetProperty( nameOfClass, out body )) {
+                Value = JsonSerializer.Deserialize<T>( body, SerializerOptions.APIClientSerializer );
+            }
+            */
         }
     }
 }

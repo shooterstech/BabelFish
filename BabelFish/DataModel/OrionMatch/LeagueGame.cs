@@ -4,7 +4,8 @@ using System.Security.Permissions;
 using System.Text;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -31,13 +32,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// <summary>
 		/// The date this league game started.
 		/// </summary>
-		[JsonConverter(typeof(DateConverter))]
-		public DateTime StartDate { get; set; }
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        public DateTime StartDate { get; set; }
 
 		/// <summary>
 		/// The date this league game ended.
 		/// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime EndDate { get; set; }
 
 		public LeagueTeamResult HomeTeam { get; set; }

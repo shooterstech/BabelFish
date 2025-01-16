@@ -11,25 +11,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// AttributeField FieldType is SUGGEST or CLOSED.
     /// </summary>
     [Serializable]
-    public class AttributeValueOption: ICopy<AttributeValueOption>, IReconfigurableRulebookObject {
+    public class AttributeValueOption: IReconfigurableRulebookObject {
 
         /// <summary>
         /// Public constructor
         /// </summary>
         public AttributeValueOption() {
 
-        }
-
-        /// <inheritdoc/>
-        public AttributeValueOption Copy() {
-            AttributeValueOption copy = new AttributeValueOption();
-            copy.Name = Name;
-            copy.Value = Value; //Value is a dynamic field, so not sure a straight copy is correct.
-            copy.Description = Description;
-            copy.AttributeValueAppellation = AttributeValueAppellation;
-            copy.Comment = Comment;
-
-            return copy;
         }
 
         /// <summary>

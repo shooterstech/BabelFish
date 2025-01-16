@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using NLog;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using NLog;
-using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -43,7 +37,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
         /// </summary>
-        [JsonProperty( Order = 3 )]
+        [JsonPropertyOrder ( 3 )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
@@ -53,15 +47,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
-        [JsonProperty( Order = 8 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 8 )]
+        
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
-        [JsonProperty( Order = 9 )]
+        [JsonPropertyOrder ( 9 )]
         public string OwnerId { get; set; } = string.Empty;
 
 
@@ -72,10 +66,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public Contact LeagueAdministrator { get; set; } = new Contact();
 
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime StartDate { get; set; }
 
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime EndDate { get; set; }
 
         /// <summary>

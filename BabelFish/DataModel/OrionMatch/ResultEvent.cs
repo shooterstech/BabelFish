@@ -4,9 +4,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
@@ -63,8 +64,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Local Date that this score was shot. 
         /// NOTE Local Date is not necessarily the same as the GMT date.
         /// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
-		public DateTime LocalDate { get; set; } = DateTime.Today;
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        public DateTime LocalDate { get; set; } = DateTime.Today;
 
 
         /// <inheritdoc />
@@ -94,7 +95,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             ps.ProjectEventScores( this );
         }
 
-        [JsonProperty( Order = 50)]
+        [JsonPropertyOrder ( 50)]
         public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
 
         /// <summary>
@@ -112,7 +113,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
         /// </summary>
-        [JsonProperty( Order = 52)]
+        [JsonPropertyOrder ( 52)]
         public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
         /// <inheritdoc />

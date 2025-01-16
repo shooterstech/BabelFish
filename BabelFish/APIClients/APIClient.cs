@@ -168,37 +168,14 @@ namespace Scopos.BabelFish.APIClients {
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
                 using (StreamReader sr = new StreamReader( s )) {
-                        response.Body = JsonDocument.Parse( sr.ReadToEnd() );
+                    response.Body = JsonDocument.Parse( sr.ReadToEnd() );
 
-                    /*
-                    using (JsonReader reader = new JsonTextReader( sr )) {
-                        var apiReturnJson = JObject.ReadFrom( reader );
-                        try {
-
-                            //TODO: Do something with invalid data format from Forbidden....
-                            response.MessageResponse = new MessageResponse();
-                            if (apiReturnJson is JObject) {
-                                JObject jo = (JObject)apiReturnJson;
-                                if (jo.ContainsKey( "Message" ) && jo["Message"] is JArray) {
-                                    JArray m = (JArray)jo["Message"];
-                                    foreach (var message in m) {
-                                        response.MessageResponse.Message.Add( (string)message );
-                                    }
-                                }
-                            }
-
-                            if (responseMessage.IsSuccessStatusCode)
-                                response.Body = apiReturnJson;
-
-                            //Log errors set in calls
-                            if (response.MessageResponse.Message.Count > 0)
-                                logger.Error( "Processing Call Error {processingerror}", string.Join( "; ", response.MessageResponse.Message ) );
-
-                        } catch (Exception ex) {
-                            throw new Exception( $"Error parsing return json: {ex.ToString()}" );
+                    JsonElement messageArray;
+                    if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == JsonValueKind.Array ) {
+                        foreach (var message in messageArray.EnumerateArray()) {
+                            response.MessageResponse.Message.Add( message.GetString() );
                         }
                     }
-                    */
                 }
 
                 if (responseMessage.IsSuccessStatusCode) {

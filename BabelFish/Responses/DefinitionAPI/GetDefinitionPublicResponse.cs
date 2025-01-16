@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
         protected override void ConvertBodyToValue() {
             JsonElement root = Body.RootElement;
             JsonElement definition = root.GetProperty( SetName.ToString() );
-            Value = JsonSerializer.Deserialize<T>( definition, SerializerOptions.APIClientDeserializer );
+            Value = JsonSerializer.Deserialize<T>( definition, SerializerOptions.APIClientSerializer );
         }
 
         /// <inheritdoc />

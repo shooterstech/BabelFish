@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
+    
     public enum ClubOptions {
 
         /// <summary>

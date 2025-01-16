@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
@@ -23,46 +23,46 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// <summary>
         /// Unique LeagueID for this League. Takes the form of a MatchID
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder ( 1 )]
         public string LeagueID { get; set; } = string.Empty;
 
         /// <summary>
         /// Human readable name of the league.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         public string LeagueName { get; set; } = string.Empty;
 
         /// <summary>
         /// Unigue identifier of the LeagueNetworkID. A value of 0 indicates this League is not a member of a League Network.
         /// </summary>
         [DefaultValue(0)]
-        [JsonProperty( Order = 3 )]
+        [JsonPropertyOrder ( 3 )]
         public int LeagueNetworkID { get; set; } = 0;
 
         /// <summary>
         /// The name of the League Network. An empty string indicates this league is not functioning within a League Network.
         /// </summary>
-        [JsonProperty( Order = 4 )]
+        [JsonPropertyOrder ( 4 )]
         public string LeagueNetworkName { get; set; }
 
         [DefaultValue( 0 )]
-        [JsonProperty( Order = 5 )]
+        [JsonPropertyOrder ( 5 )]
         public int SeasonID { get; set; }
 
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder ( 6 )]
         public string SeasonName { get; set; }
 
-        [JsonProperty( Order = 7 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 7 )]
+        
         public LeagueSeasonType SeasonType { get; set; }
 
-        [JsonProperty( Order = 8 )]
+        [JsonPropertyOrder ( 8 )]
         public LeagueConfiguration Configuration { get; set; }
 
-        [JsonProperty(Order = 9)]
+        [JsonPropertyOrder( 9)]
         public List<string> ConferenceList { get; set; } = new List<string>();
 
-        [JsonProperty(Order = 10)]
+        [JsonPropertyOrder( 10)]
         public List<string> DivisionList { get; set; } = new List<string>();
     }
 }

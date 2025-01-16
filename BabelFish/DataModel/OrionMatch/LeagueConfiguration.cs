@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// <summary>
 		/// Indicates how league teams are ranked.
 		/// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        
         public LeagueRankingRuleType LeagueRankingRules { get; set; } = LeagueRankingRuleType.WIN_LOSS_RECORD;
 
 		/// <summary>

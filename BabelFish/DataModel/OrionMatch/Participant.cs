@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -15,7 +15,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 	/// PostResponseProcessingAsync()
 	/// </summary>
 	[Serializable]
-    [JsonConverter( typeof( ParticipantConverter ) )]
     public abstract class Participant : IDeserializableAbstractClass {
 
         /*

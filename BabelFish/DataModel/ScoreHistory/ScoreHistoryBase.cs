@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
@@ -30,8 +29,10 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// </summary>
         public string UserId { get; set; } = string.Empty;
 
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime StartDate { get; set; }
 
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         public DateTime EndDate { get; set; }
 
         /// <summary>

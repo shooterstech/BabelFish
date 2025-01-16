@@ -4,12 +4,12 @@ using System.Text;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
+    
 	[Serializable]
 	public enum MatchParticipantRole {
 

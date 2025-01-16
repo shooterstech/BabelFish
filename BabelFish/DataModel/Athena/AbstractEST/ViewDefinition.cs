@@ -5,15 +5,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using BabelFish.DataModel.Athena;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     public class ViewDefinition
     {
-
-        public enum ReplaceVariableOptions { ResultList, ResultLists };
 
         public ViewDefinition()
         {
@@ -37,19 +34,15 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             this.ShowBottomStrip = vd.ShowBottomStrip;
         }
 
-        [JsonProperty(Order = 1)]
         public string ViewName { get; set; }
 
-        [JsonProperty(Order = 2)]
         public string Description { get; set; }
 
-        [JsonProperty(Order = 3)]
         public string EntityName { get; set; }
 
         /// <summary>
         /// EntityName specific configurations.
         /// </summary>
-        [JsonProperty(Order = 4)]
         public dynamic Config { get; set; }
 
         /// <summary>
@@ -59,13 +52,10 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         /// ResultLists: Which is a list of strings
         /// ResultList: Which is a string
         /// </summary>
-        [JsonProperty(Order = 5, ItemConverterType = typeof(StringEnumConverter))]
         public List<ReplaceVariableOptions> ReplaceAttributes { get; set; }
 
-        [JsonProperty(Order = 6)]
         public bool ShowTopStrip { get; set; }
 
-        [JsonProperty(Order = 7)]
         public bool ShowBottomStrip { get; set; }
 
         public override string ToString()

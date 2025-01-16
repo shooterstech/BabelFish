@@ -83,6 +83,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public abstract AttributeValidation Validation { get; set; }
 
         /// <summary>
+        /// Returns a boolean indicating if the passed in value passes all validation tests for thei field.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public virtual bool ValidateFieldValue( dynamic value ) {
+            //TODO: Actually validate the field value
+            return true;
+        }
+
+        /// <summary>
         /// This is a helper function to return the value of .DefaultValue as a dynamic.
         /// </summary>
         /// <returns></returns>

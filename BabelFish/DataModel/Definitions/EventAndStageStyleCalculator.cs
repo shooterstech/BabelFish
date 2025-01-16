@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft;
 using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions {

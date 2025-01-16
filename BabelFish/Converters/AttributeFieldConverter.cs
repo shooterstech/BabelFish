@@ -34,10 +34,8 @@ namespace Scopos.BabelFish.Converters {
                             return JsonSerializer.Deserialize<AttributeFieldString>( root.GetRawText(), options );
 
                     case "BOOLEAN":
-                        if (multipleValues)
-                            return JsonSerializer.Deserialize<AttributeFieldBooleanList>( root.GetRawText(), options );
-                        else
-                            return JsonSerializer.Deserialize<AttributeFieldBoolean>( root.GetRawText(), options );
+                        //NOTE: We do not allow lists of booleans
+                        return JsonSerializer.Deserialize<AttributeFieldBoolean>( root.GetRawText(), options );
 
                     case "INTEGER":
                         if (multipleValues)

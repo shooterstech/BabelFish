@@ -1,21 +1,13 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Net;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Scopos.BabelFish;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Diagnostics;
-using System.IO;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
@@ -61,8 +53,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var attributeNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
-            var attributeWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
+            var attributeNoCache = JsonSerializer.Serialize( resultNoCache.Definition, SerializerOptions.APIClientSerializer );
+            var attributeWithCache = JsonSerializer.Serialize( resultWithCache.Definition, SerializerOptions.APIClientSerializer );
             Assert.AreEqual( attributeWithCache, attributeNoCache );
         }
 
@@ -139,8 +131,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var cofNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
-            var cofWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
+            var cofNoCache = JsonSerializer.Serialize( resultNoCache.Definition, SerializerOptions.APIClientSerializer );
+            var cofWithCache = JsonSerializer.Serialize( resultWithCache.Definition, SerializerOptions.APIClientSerializer );
             Assert.AreEqual( cofWithCache, cofNoCache );
         }
 
@@ -195,7 +187,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             string json = File.ReadAllText( path );
 
-            var definition = JsonConvert.DeserializeObject<Scopos.BabelFish.DataModel.Definitions.Definition> ( json );
+            var definition = JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json );
 
             Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
 		}
