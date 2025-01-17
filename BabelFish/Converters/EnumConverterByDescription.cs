@@ -16,13 +16,18 @@ namespace Scopos.BabelFish.Converters {
         /// <inheritdoc />
         public override T Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) { 
             string description = reader.GetString(); 
-            foreach (var field in typeToConvert.GetFields()) { 
+            foreach (var field in typeToConvert.GetFields()) {
                 //Try using the description first
+                var da = field.GetCustomAttribute<DescriptionAttribute>();
+                var daDesc = da?.Description;
+                var fieldString = field.ToString();
+                var daString = da?.ToString();
+                var fieldName = field.Name;
                 if (field.GetCustomAttribute<DescriptionAttribute>()?.Description == description) { 
                     return (T)field.GetValue( null ); 
                 }
                 //Second attempt using the name
-                if (field.ToString() == description) {
+                if (field.Name == description) {
                     return (T)field.GetValue( null );
                 }
             } 

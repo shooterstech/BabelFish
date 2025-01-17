@@ -9,6 +9,10 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using System.Runtime.CompilerServices;
+using Scopos.BabelFish.Tests.Definition;
+using System.Text.Json;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
@@ -73,6 +77,21 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( new DateTime(2023, 1, 19), match.StartDate );
+        }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+            var cof = CourseOfFireHelper.Get_60_Standing_Cof();
+
+            var json = JsonSerializer.Serialize( cof, SerializerOptions.APIClientSerializer );
+
+            var cof2 = JsonSerializer.Deserialize<CourseOfFire>( json, SerializerOptions.APIClientSerializer );
+
+            var jsonDocument = JsonDocument.Parse( json );
+
+            var cof3 = JsonSerializer.Deserialize<CourseOfFire>( jsonDocument, SerializerOptions.APIClientSerializer );
+
+            Console.WriteLine( json );
         }
     }
 }

@@ -16,7 +16,11 @@ namespace Scopos.BabelFish.Converters {
         public override DateTime Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
             
             string dateString = reader.GetString();
-            return DateTime.ParseExact( dateString, DateTimeFormat, Helpers.DateTimeFormats.CULTURE );
+            try {
+                return DateTime.ParseExact( dateString, DateTimeFormat, Helpers.DateTimeFormats.CULTURE );
+            } catch (FormatException fe) {
+                return DateTime.Parse( dateString );
+            }
         }
 
         /// <inheritdoc />
