@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.Converters
 
                     //Don't write a property if the value is equal to the default
                     //NOTE: Add the [JsonInclude] decorate on properties to always write to json
-                    //APIClientSerializer.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault;
+                    APIClientSerializer.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault;
 
                     //Write indented
                     APIClientSerializer.WriteIndented = true;
@@ -54,6 +54,7 @@ namespace Scopos.BabelFish.Converters
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<BarcodeLabelSize>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<COFTypeOptions>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<CompetitionType>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<DefinitionType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<DisciplineType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<DisplayEventOptions>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<EventtType>() );

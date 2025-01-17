@@ -2,6 +2,8 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using NLog;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Converters {
 
@@ -11,16 +13,48 @@ namespace Scopos.BabelFish.Converters {
     public abstract class JsonDateTimeConverter : JsonConverter<DateTime> {
 
         protected string DateTimeFormat = Helpers.DateTimeFormats.DATETIME_FORMAT;
+        protected string DateTimeFormatSecondary = null;
+        protected DateTime DefaultValue = DateTime.Now;
+        protected bool UseDefaultAsLastResort = false;
+
+        protected Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <inheritdoc />
         public override DateTime Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
             
             string dateString = reader.GetString();
-            try {
-                return DateTime.ParseExact( dateString, DateTimeFormat, Helpers.DateTimeFormats.CULTURE );
-            } catch (FormatException fe) {
-                return DateTime.Parse( dateString );
+
+            if (!string.IsNullOrEmpty( dateString )) {
+                //Try parsing with the expected format first
+                try {
+                    return DateTime.ParseExact( dateString, DateTimeFormat, Helpers.DateTimeFormats.CULTURE );
+                } catch (FormatException fe) {
+                    Logger.Warn( $"Could not parse DateTime string '{dateString}' using the format '{DateTimeFormat}'." );
+                }
+
+                //Next try parsing with the secondary format, if one was specified
+                try {
+                    if (!string.IsNullOrEmpty( DateTimeFormatSecondary ))
+                        return DateTime.ParseExact( dateString, DateTimeFormatSecondary, Helpers.DateTimeFormats.CULTURE );
+                } catch (FormatException fe) {
+                    Logger.Warn( $"Could not parse DateTime string '{dateString}' using the secondary format '{DateTimeFormatSecondary}'." );
+                }
+
+                //Last effort, try parsing generically
+                try {
+                    return DateTime.Parse( dateString );
+                } catch (FormatException fe) {
+                    Logger.Warn( $"Could not parse DateTime string '{dateString}' using a generic parser." );
+                }
             }
+
+            if (UseDefaultAsLastResort) {
+                Logger.Warn( $"Returning a Default DateTime value because the following could not be parsed '{dateString}'.");
+                return DefaultValue;
+            }
+
+            var msg = "Could not parse the DateTime value {dateString}.";
+            throw new ScoposAPIException( msg, Logger );
         }
 
         /// <inheritdoc />
@@ -39,6 +73,8 @@ namespace Scopos.BabelFish.Converters {
         /// </summary>
         public ScoposDateOnlyConverter() {
             base.DateTimeFormat = Helpers.DateTimeFormats.DATE_FORMAT;
+            base.UseDefaultAsLastResort = true;
+            base.DefaultValue = DateTime.Today;
         }
     }
 
@@ -52,6 +88,9 @@ namespace Scopos.BabelFish.Converters {
         /// </summary>
         public ScoposDateTimeConverter() {
             base.DateTimeFormat = Helpers.DateTimeFormats.DATETIME_FORMAT;
+            base.DateTimeFormatSecondary = Helpers.DateTimeFormats.DATETIME_FORMAT_SECONDARY;
+            base.UseDefaultAsLastResort = true;
+            base.DefaultValue = DateTime.UtcNow;
         }
     }
 }

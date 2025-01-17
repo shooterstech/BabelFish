@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// </summary>
     public class SquaddingListWrapper : BaseClass {
 
-        public SquaddingList SquaddingList = new SquaddingList();
+        public SquaddingList SquaddingList { get; set; } = new SquaddingList();
 
         public override string ToString() {
             return $"Squadding List for {SquaddingList.MatchName}: {SquaddingList.EventName}";

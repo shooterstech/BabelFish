@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// </summary>
     public class LeagueTeamDetailWrapper : BaseClass {
 
-        public LeagueTeamDetail LeagueTeamDetail = new LeagueTeamDetail();
+        public LeagueTeamDetail LeagueTeamDetail { get; set; } = new LeagueTeamDetail();
 
         public override string ToString() {
             return $"LeagusTeamDetail for {LeagueTeamDetail.LeagueTeam.TeamName}";

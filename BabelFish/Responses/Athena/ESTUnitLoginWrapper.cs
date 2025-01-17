@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Responses.Athena
     {
 
 
-        public ESTUnitLogin ESTUnitLogin = new ESTUnitLogin();
+        public ESTUnitLogin ESTUnitLogin { get; set; } = new ESTUnitLogin();
 
         public override string ToString()
         {

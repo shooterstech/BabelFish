@@ -183,7 +183,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         [JsonPropertyOrder ( 12 )]
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = new DateTime();
 
         /// <summary>

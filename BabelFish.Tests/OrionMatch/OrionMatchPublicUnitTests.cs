@@ -80,6 +80,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
+        [Ignore]
         public async Task EriksPlayground() {
             var cof = CourseOfFireHelper.Get_60_Standing_Cof();
 

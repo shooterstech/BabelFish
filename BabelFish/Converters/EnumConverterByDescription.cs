@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection; 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using NLog;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Converters {
 
@@ -13,16 +15,14 @@ namespace Scopos.BabelFish.Converters {
     /// <typeparam name="T"></typeparam>
     public class EnumConverterByDescription<T> : JsonConverter<T> where T : Enum {
 
+
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
+
         /// <inheritdoc />
         public override T Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) { 
             string description = reader.GetString(); 
             foreach (var field in typeToConvert.GetFields()) {
                 //Try using the description first
-                var da = field.GetCustomAttribute<DescriptionAttribute>();
-                var daDesc = da?.Description;
-                var fieldString = field.ToString();
-                var daString = da?.ToString();
-                var fieldName = field.Name;
                 if (field.GetCustomAttribute<DescriptionAttribute>()?.Description == description) { 
                     return (T)field.GetValue( null ); 
                 }
@@ -31,7 +31,10 @@ namespace Scopos.BabelFish.Converters {
                     return (T)field.GetValue( null );
                 }
             } 
-            throw new JsonException( $"Unknown description '{description}'" ); 
+
+            //Open ended question, should I return a default value.
+
+            throw new ScoposAPIException( $"Unknown description '{description}'", Logger ); 
         }
 
 
