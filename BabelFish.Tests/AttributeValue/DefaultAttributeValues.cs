@@ -34,24 +34,21 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
 
             var testAttributeValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte );
-            var today = DateTime.Today;
-            var now = DateTime.UtcNow;
-            var zero = TimeSpan.Zero;
+            var defaultDate = new DateTime( 2022, 1, 1 );
 
-            Assert.AreEqual( "", (string) testAttributeValue.GetFieldValue( "AString" ) );
+            //The default values are defined in the attribute definition. If the Attribute definition changes, so will these values to test against. 
+            Assert.AreEqual( "1000", (string) testAttributeValue.GetFieldValue( "AString" ) );
             Assert.AreEqual( 0, (int)testAttributeValue.GetFieldValue( "AnInteger" ) );
             Assert.AreEqual( 0, (float) testAttributeValue.GetFieldValue( "AFloat" ) );
             Assert.AreEqual( false, (bool)testAttributeValue.GetFieldValue( "ABoolean" ) );
-            Assert.AreEqual( today, (DateTime) testAttributeValue.GetFieldValue( "ADate" ) );
-            Assert.AreEqual( zero, (TimeSpan)testAttributeValue.GetFieldValue( "ATime" ) );
-            Assert.IsTrue( Math.Abs( (((DateTime)testAttributeValue.GetFieldValue( "ADateTime" )).ToUniversalTime() - now).TotalSeconds ) < .1D );
+            Assert.AreEqual( defaultDate, (DateTime) testAttributeValue.GetFieldValue( "ADate" ) );
+            Assert.AreEqual( 60, (float)testAttributeValue.GetFieldValue( "ATime" ) );
 
             Assert.IsTrue( ((List<string>)testAttributeValue.GetFieldValue( "AListOfStrings" )).Count == 0 );
             Assert.IsTrue( ((List<int>)testAttributeValue.GetFieldValue( "AListOfIntegers" )).Count == 0 );
             Assert.IsTrue( ((List<float>)testAttributeValue.GetFieldValue( "AListOfFloats" )).Count == 0 );
             Assert.IsTrue( ((List<DateTime>)testAttributeValue.GetFieldValue( "AListOfDates" )).Count == 0 );
-            Assert.IsTrue( ((List<DateTime>)testAttributeValue.GetFieldValue( "AListOfDateTimes" )).Count == 0 );
-            Assert.IsTrue( ((List<TimeSpan>)testAttributeValue.GetFieldValue( "AListOfTimes" )).Count == 0 );
+            Assert.IsTrue( ((List<float>)testAttributeValue.GetFieldValue( "AListOfTimes" )).Count == 0 );
         }
     }
 }

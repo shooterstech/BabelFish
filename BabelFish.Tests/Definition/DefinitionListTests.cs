@@ -44,6 +44,9 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 			var client = new DefinitionAPIClient();
 
+			//To perform this test, need to clear cache first, as other tests may have populated it.
+			ResponseCache.CACHE.Clear();
+
 			var getDefinitionListResponse1 = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE );
 
 			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse1.StatusCode );

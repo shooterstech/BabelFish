@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters;
 
 namespace  Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
@@ -24,8 +25,9 @@ namespace  Scopos.BabelFish.DataModel.Clubs {
         /// A list of ClubAbbr data objects.
         /// </summary>        
         public List<ClubAbbr> Items { get; set; }
-        
+
         /// <inheritdoc />
+        [JsonConverter(typeof(NextTokenConverter))]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />

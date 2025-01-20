@@ -609,8 +609,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// C# implementations should use TimeSpan objects.
         /// </summary>
-        [Description( "TIME_SPAN" )]
-        [EnumMember( Value = "TIME_SPAN" )]
+        [Description( "TIME SPAN" )]
+        [EnumMember( Value = "TIME SPAN" )]
         TIME_SPAN,
 
         /// <summary>

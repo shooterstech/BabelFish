@@ -86,6 +86,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<MatchParticipant> Items { get; set; }
 
         /// <inheritdoc />
+		[JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />
