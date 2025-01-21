@@ -7,11 +7,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel.Athena;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Tests.OrionMatch {
+namespace Scopos.BabelFish.Tests.OrionMatch
+{
     [TestClass]
     public class OrionMatchAuthenticatedUnitTests {
 

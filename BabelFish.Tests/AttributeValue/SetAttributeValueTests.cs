@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Tests.AttributeValue {
+namespace Scopos.BabelFish.Tests.AttributeValue
+{
 
     [TestClass]
     public class SetAttributeValueTests {

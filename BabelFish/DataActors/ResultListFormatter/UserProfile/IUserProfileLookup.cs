@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile
+{
 
     /// <summary>
     /// Interface class that describes functions that looks up and stores data 

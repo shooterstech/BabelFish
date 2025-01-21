@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Responses
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class Response<T>
-        where T : BaseClass {
+        where T : BaseClass, new() {
 
         /// <summary>
         /// Base constructor.
@@ -107,6 +107,7 @@ namespace Scopos.BabelFish.Responses
 
         /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.
+        /// If the StatusCode is something other than OK (200), the value of Body will be invalid.
         /// </summary>
         public JsonDocument Body {
             get { return body; }
@@ -126,7 +127,10 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.APIClientSerializer );
+            if (StatusCode == HttpStatusCode.OK)
+                Value = JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.APIClientSerializer );
+            else 
+                Value = new T();
 
             /*
             var nameOfClass = typeof( T ).Name;

@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-
+﻿using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 

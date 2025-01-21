@@ -8,10 +8,11 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Tests.ScoreHistory {
+namespace Scopos.BabelFish.Tests.ScoreHistory
+{
 
     [TestClass]
     public class PublicScoreHistoryTests {

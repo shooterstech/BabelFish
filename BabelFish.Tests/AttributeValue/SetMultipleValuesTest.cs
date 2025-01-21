@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Requests.AttributeValueAPI;
-using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Helpers;
-using System.ComponentModel;
+using Scopos.BabelFish.Requests.AttributeValueAPI;
+using Scopos.BabelFish.Responses.AttributeValueAPI;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]

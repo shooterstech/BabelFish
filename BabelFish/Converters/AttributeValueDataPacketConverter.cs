@@ -8,8 +8,10 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters
+{
 
     /// <summary>
     /// Custom converter for AttributeValues. 
@@ -57,7 +59,7 @@ namespace Scopos.BabelFish.Converters {
                         attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
 
                         if (root.TryGetProperty( "StatusCode", out temp ))
-                            ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), temp.GetString() );
+                            ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), temp.GetInt32().ToString() );
 
                         //EKA Note Jan 2025 the Message property is deprecated, and will soon be removed.
                         if (root.TryGetProperty( "Message", out temp ) && temp.ValueKind == JsonValueKind.Array && temp.GetArrayLength() > 0 ) {
@@ -88,7 +90,7 @@ namespace Scopos.BabelFish.Converters {
 
         public override void Write( Utf8JsonWriter writer, AttributeValueDataPacket value, JsonSerializerOptions options ) {
 
-            writer.WriteStartArray();
+            writer.WriteStartObject();
 
             writer.WriteString( "AttributeDef", value.AttributeDef.ToString() );
             writer.WriteString( "Visibility", value.Visibility.ToString() );
@@ -98,12 +100,14 @@ namespace Scopos.BabelFish.Converters {
                 writer.WriteStartArray();
                 foreach (var fieldKey in value.AttributeValue.GetAttributeFieldKeys()) {
 
-                    writer.WriteStartObject();
-                    foreach (var field in value.AttributeValue.GetDefintionFields()) {
-                        writer.WritePropertyName( field.FieldName );
-                        JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName, fieldKey ) );
+                    if (fieldKey != AttributeValue.KEY_FOR_SINGLE_ATTRIBUTES) {
+                        writer.WriteStartObject();
+                        foreach (var field in value.AttributeValue.GetDefintionFields()) {
+                            writer.WritePropertyName( field.FieldName );
+                            JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName, fieldKey ), options );
+                        }
+                        writer.WriteEndObject();
                     }
-                    writer.WriteEndObject();
                 }
                 writer.WriteEndArray();
 
@@ -111,10 +115,12 @@ namespace Scopos.BabelFish.Converters {
                 writer.WriteStartObject();
                 foreach (var field in value.AttributeValue.GetDefintionFields()) {
                     writer.WritePropertyName( field.FieldName );
-                    JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName ) );
+                    JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName ), options );
                 }
                 writer.WriteEndObject();
             }
+
+            writer.WriteEndObject();
         }
 
 
@@ -202,5 +208,58 @@ namespace Scopos.BabelFish.Converters {
             return attributeValueDataPacket;
         }
         */
+
+
+    }
+
+    /// <summary>
+    /// EKA Note Jan 2025.
+    /// For reasons I don't understand, system.text.json will not use the AttributeValueDataPacketConverter when deserializing properties of type
+    /// Dictionary<string, AttributeValueDataPacketAPIResponse> even though AttributeValueDataPacketAPIResponse is a child class of type 
+    /// AttributeValueDataPacket. My work around for this issue is to write a concrete class specific converter for AttributeValueDataPacketAPIResponse.
+    /// Which, ironicaly, just calls AttributeValueDataPacketConverter to do the conversion.
+    /// 
+    /// This converter class is specifically needed for Scopos.BabelFish.Responses.AttributeValueAPI.AttributeValueWrapper.
+    /// </summary>
+    public class AttributeValueDataPacketAPIResponseConverter : JsonConverter<AttributeValueDataPacketAPIResponse> {
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
+        private AttributeValueDataPacketConverter BaseConverter = new AttributeValueDataPacketConverter();
+
+        public override AttributeValueDataPacketAPIResponse? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+            
+            return (AttributeValueDataPacketAPIResponse) BaseConverter.Read( ref reader, typeToConvert, options );
+        }
+
+        public override void Write( Utf8JsonWriter writer, AttributeValueDataPacketAPIResponse value, JsonSerializerOptions options ) {
+
+            BaseConverter.Write( writer, value, options );
+        }
+
+    }
+
+    public class ListOfAttributeValueDataPackets : JsonConverter<List<AttributeValueDataPacket>> {
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
+        private AttributeValueDataPacketConverter BaseConverter = new AttributeValueDataPacketConverter();
+
+
+        public override List<AttributeValueDataPacket>? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+            throw new NotImplementedException();
+        }
+
+        public override void Write( Utf8JsonWriter writer, List<AttributeValueDataPacket> value, JsonSerializerOptions options ) {
+            writer.WriteStartObject();
+            writer.WritePropertyName( "attribute-values" );
+            writer.WriteStartObject();
+            foreach (var av in value) {
+                writer.WritePropertyName( av.AttributeDef );
+                BaseConverter.Write( writer, av, options );
+            }
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
     }
 }

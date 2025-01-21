@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
-	/// <summary>
-	/// Represents the relationship between a user's UserId, AccountURL, and their visibility.
-	/// </summary>
-	public class UserProfile {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile
+{
+    /// <summary>
+    /// Represents the relationship between a user's UserId, AccountURL, and their visibility.
+    /// </summary>
+    public class UserProfile {
 
 		/// <summary>
 		/// The user's GUID formatted UserID, which is assigned by cognito.

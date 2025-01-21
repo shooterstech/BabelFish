@@ -118,7 +118,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             var accessToken = authResponse.AuthenticationResult.AccessToken;
             var refreshToken = authResponse.AuthenticationResult.RefreshToken;
             var idToken = authResponse.AuthenticationResult.IdToken;
-            var deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+            //var deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
 
             //Now we can get AWS Credentials for the user
             CognitoAWSCredentials credentials =
@@ -131,6 +131,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             //TODO: Determine if we will need to remember the device password.
             //TODO: Determine how device authentication will work with users signing onto www server (instead of an App).
 
+            /*
             //Device Verification happens locally. the Salt and password verifier gets sent to Cognito in the next .ConfirmDeviceAsync() call
             var deviceVerifier = user.GenerateDeviceVerifier(
                 authResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey,
@@ -156,6 +157,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 user );
             await device.GetDeviceAsync();
             user.Device = device;
+            */
 
             //Now pretend we need ot fast foward in time and refresh the tokens
 

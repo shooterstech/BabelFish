@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
-using System.Text.Json;
-
-using NLog;
 using System.Text.Json.Serialization;
+using NLog;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 

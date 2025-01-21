@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-
-using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 

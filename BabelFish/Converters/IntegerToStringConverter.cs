@@ -22,15 +22,15 @@ namespace Scopos.BabelFish.Converters {
         protected string DefaultValue = string.Empty;
 
         public override string? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
-            if (reader.TokenType == JsonTokenType.Number) {
+            if (reader.TokenType == JsonTokenType.String) {
+                return reader.GetString();
+            } else if (reader.TokenType == JsonTokenType.Number) {
                 int intValue;
                 float floatValue;
                 if (reader.TryGetInt32( out intValue ))
                     return intValue.ToString();
                 if (reader.TryGetSingle( out floatValue ))
                     return floatValue.ToString(); //Should I format this?
-            } else if (reader.TokenType == JsonTokenType.String) {
-                return reader.GetString();
             }
 
             //If we get here we got an unexpcted type. Should we throw an exception or should we return a default value? 

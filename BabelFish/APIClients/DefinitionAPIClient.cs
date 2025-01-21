@@ -84,7 +84,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
 
-        public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
+        public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition, new() {
 
             await this.CallAPIAsync( request, response ).ConfigureAwait( false );
             return response;

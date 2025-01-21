@@ -7,14 +7,15 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using System.Runtime.CompilerServices;
 using Scopos.BabelFish.Tests.Definition;
 using System.Text.Json;
 using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Tests.OrionMatch {
+namespace Scopos.BabelFish.Tests.OrionMatch
+{
     [TestClass]
     public class OrionMatchPublicUnitTests {
 

@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.APIClients {
         #endregion properties
 
         #region Methods
-        protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass {
+        protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass, new() {
             // Get Uri for call
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 

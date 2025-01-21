@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -30,6 +31,6 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 
         public string Relay { get; set; }
 
-        public AttributeValue.VisibilityOption Privacy { get; set; }
+        public VisibilityOption Privacy { get; set; }
     }
 }

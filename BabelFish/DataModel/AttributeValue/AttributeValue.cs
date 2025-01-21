@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
         private Dictionary<string, Dictionary<string, dynamic>> attributeValues = new Dictionary<string, Dictionary<string, dynamic>>();
         private SetName setName = null;
-        private const string KEY_FOR_SINGLE_ATTRIBUTES = "Single-Value-Attribute-45861567"; //Intended to be random that no one would use it for a key value.
+        internal const string KEY_FOR_SINGLE_ATTRIBUTES = "Single-Value-Attribute-45861567"; //Intended to be random that no one would use it for a key value.
 
         private Scopos.BabelFish.DataModel.Definitions.Attribute definition = null;
 

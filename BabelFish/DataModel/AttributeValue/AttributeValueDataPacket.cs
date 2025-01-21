@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataModel.AttributeValue {
+namespace Scopos.BabelFish.DataModel.AttributeValue
+{
 
     [Serializable]
     public abstract class AttributeValueDataPacket : IDeserializableAbstractClass {

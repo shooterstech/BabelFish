@@ -2,13 +2,13 @@
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.DataModel.Common;
 using NLog;
 using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 
-namespace Scopos.BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch
+{
 
     [Serializable]
     public class League: LeagueBase {

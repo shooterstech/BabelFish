@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
@@ -11,7 +12,8 @@ using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Tests.AttributeValue {
+namespace Scopos.BabelFish.Tests.AttributeValue
+{
     /// <summary>
     /// Tests the user of the Public API call for returning Attribute Value on a user.
     /// Which does not use authapi authenticated calls.

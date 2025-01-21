@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 

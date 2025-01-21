@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
     /// </summary>
     /// <typeparam name="T">Should be a concrete implementation of abstract class .DataModel.Definitions.Definition</typeparam>
     public class GetDefinitionPublicResponse<T> : Response<T>
-        where T : Definition {
+        where T : Definition, new() {
 
         public GetDefinitionPublicResponse( GetDefinitionPublicRequest request) : base() {
             this.Request = request;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
@@ -10,6 +9,7 @@ using Scopos.BabelFish.DataModel.Athena;
 using System.Net;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.SocialNetwork;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.Converters
 {
@@ -38,12 +38,16 @@ namespace Scopos.BabelFish.Converters
 
                     APIClientSerializer.Converters.Add( new AttributeFieldConverter() );
                     APIClientSerializer.Converters.Add( new AttributeValidationConverter() );
+                    APIClientSerializer.Converters.Add( new AttributeValueDataPacketConverter() );
+                    APIClientSerializer.Converters.Add( new AttributeValueDataPacketAPIResponseConverter() );
                     APIClientSerializer.Converters.Add( new DefinitionConverter() );
+                    APIClientSerializer.Converters.Add( new ListOfAttributeValueDataPackets() );
                     APIClientSerializer.Converters.Add( new ParticipantConverter() );
                     APIClientSerializer.Converters.Add( new ScoposDateTimeConverter() );
                     APIClientSerializer.Converters.Add( new ScoposDateOnlyConverter() );
                     APIClientSerializer.Converters.Add( new ScoreAverageBaseConverter() );
                     APIClientSerializer.Converters.Add( new ScoreHistoryBaseConverter() );
+                    APIClientSerializer.Converters.Add( new SetAttributeValueListConverter() );
                     APIClientSerializer.Converters.Add( new ShowWhenBaseConverter() );
                     APIClientSerializer.Converters.Add( new SquaddingAssignmentConverter() );
                     APIClientSerializer.Converters.Add( new TieBreakingRuleConverter() );
@@ -74,6 +78,8 @@ namespace Scopos.BabelFish.Converters
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<TieBreakingRuleMethod>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<TimerCommandOptions>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<DataModel.Definitions.ValueType>() );
+
+                    //Common Enums
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<VisibilityOption>() );
 
                     //Match Enums
@@ -87,7 +93,6 @@ namespace Scopos.BabelFish.Converters
                     //Other Enums
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<APIStage>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<APISubDomain>() );
-                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<HttpStatusCode>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<ClubLicenseCapability>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<SocialRelationshipName>() );
 

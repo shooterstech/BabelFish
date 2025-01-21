@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Attribute = Scopos.BabelFish.DataModel.Definitions.Attribute;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataActors.Specification.Definitions {
-	public class IsAttributeValid : CompositeSpecification<Attribute> {
+namespace Scopos.BabelFish.DataActors.Specification.Definitions
+{
+    public class IsAttributeValid : CompositeSpecification<Attribute> {
 
 		public override async Task<bool> IsSatisfiedByAsync( Attribute candidate ) {
 

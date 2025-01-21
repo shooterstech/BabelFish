@@ -1,7 +1,7 @@
+using Scopos.BabelFish.DataModel.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.DataModel.SocialNetwork;

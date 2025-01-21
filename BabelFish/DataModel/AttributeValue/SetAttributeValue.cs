@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public SetAttributeValue() { }
 
         /// <summary>
-        /// UserID
+        /// The SetName of the AttributeValue that was sent and we have a response about how successful the set-ing went.
         /// </summary>
         public string AttributeValue { get; set; } = string.Empty;
 

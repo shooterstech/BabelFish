@@ -11,6 +11,8 @@ using NLog;
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
     public class PatchScoreHistoryRequest : Request {
 
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
         /// <inheritdoc />
         public PatchScoreHistoryRequest(UserAuthentication credentials ) : base( "PostScoreHistory", credentials ) {
             HttpMethod = HttpMethod.Put;
@@ -31,7 +33,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
                 try {
                     return new StringContent( JsonSerializer.Serialize( ScoreHistoryPatch ), Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
-                    //logger.Error( ex );
+                    Logger.Error( ex );
                     return new StringContent( "" );
                 }
             }

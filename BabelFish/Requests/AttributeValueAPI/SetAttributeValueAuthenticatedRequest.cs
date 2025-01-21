@@ -5,11 +5,13 @@ using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
 using NLog;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.Requests.AttributeValueAPI {
     public class SetAttributeValueAuthenticatedRequest : Request {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public SetAttributeValueAuthenticatedRequest( UserAuthentication credentials ) : base( "SetAttributeValue", credentials ) {
             HttpMethod = HttpMethod.Post;
@@ -28,19 +30,10 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
                 try {
-                    throw new NotImplementedException();
-                    /*
-                    JObject json = new JObject();
-                    JObject attributeValuesJson = new JObject();
-                    json.Add( "attribute-values", attributeValuesJson );
-                    foreach (var attributeValueToUpdate in AttributeValuesToUpdate) {
-                        attributeValuesJson.Add( attributeValueToUpdate.AttributeValue.SetName.ToString(), attributeValueToUpdate.ToJToken() );
-                    }
-
-                    return new StringContent( JsonConvert.SerializeObject( json ), Encoding.UTF8, "application/json" );
-                    */
+                    var json = JsonSerializer.Serialize( AttributeValuesToUpdate, SerializerOptions.APIClientSerializer );
+                    return new StringContent( json, Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
-                    logger.Error( ex );
+                    Logger.Error( ex );
                     return new StringContent( "" );
                 }
             }
