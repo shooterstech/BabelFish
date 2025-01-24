@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldBoolean() {
             MultipleValues = false;
             ValueType = ValueType.BOOLEAN;
-            Validation = new AttributeValidationBoolean();
+            //Validation = new AttributeValidationBoolean();
         }
 
         /// <summary>
@@ -25,6 +25,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private AttributeValidationBoolean validation = new AttributeValidationBoolean();
 
         /// <inheritdoc />
+        /*
         public override AttributeValidation Validation {
             get { return validation; }
             set {
@@ -35,6 +36,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
         }
+        */
 
         /// <inheritdoc />
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {

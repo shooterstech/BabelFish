@@ -16,7 +16,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldString() {
             MultipleValues = false;
             ValueType = ValueType.STRING;
-            Validation = new AttributeValidationString();
+            //Validation = new AttributeValidationString();
         }
 
         /// <summary>
@@ -40,6 +40,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private AttributeValidationString validation = new AttributeValidationString();
 
         /// <inheritdoc />
+        /*
         public override AttributeValidation Validation {
             get { return validation; }
             set {
@@ -50,6 +51,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
         }
+        */
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.String) {

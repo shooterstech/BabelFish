@@ -441,5 +441,18 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             league.AwayTeam.Result = "WIN";
             Assert.AreEqual(false, league.ShowLeaderboard);
         }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+
+            var request = new GetLeagueTeamDetailPublicRequest( "1.1.2024072509092300.3", 2502 );
+
+            var response = await client.GetLeagueTeamDetailPublicAsync( request );
+
+            var team = response.LeagueTeamDetail;
+
+        }
     }
 }

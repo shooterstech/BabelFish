@@ -111,7 +111,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var matchId = new MatchID( "1.1.2024100109282969.1" );
+            var matchId = new MatchID( "1.3987.2025012213525977.0" );
             var resultListName = "Individual - All";
            
             var response = await client.GetResultListPublicAsync( matchId, resultListName );

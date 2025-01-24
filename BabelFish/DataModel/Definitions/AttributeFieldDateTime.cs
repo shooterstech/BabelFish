@@ -7,22 +7,22 @@ using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldDate : AttributeField {
+    public class AttributeFieldDateTime : AttributeField {
 
         /// <summary>
         /// Public default constructor
         /// </summary>
-        public AttributeFieldDate() {
+        public AttributeFieldDateTime() {
             MultipleValues = false;
-            ValueType = ValueType.DATE;
+            ValueType = ValueType.DATE_TIME;
             //Validation = new AttributeValidationDate();
         }
 
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
-        public DateTime DefaultValue { get; set; } = DateTime.Today;
+        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        public DateTime DefaultValue { get; set; } = DateTime.UtcNow;
 
         private AttributeValidationDate validation = new AttributeValidationDate();
 

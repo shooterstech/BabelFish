@@ -607,6 +607,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         DATE,
 
         /// <summary>
+        /// C# implementations should use DateTime objects. The time portion of the DateTime instance is ignored.
+        /// </summary>
+        [Description( "DATE TIME" )]
+        [EnumMember( Value = "DATE TIME" )]
+        DATE_TIME,
+
+        /// <summary>
         /// C# implementations should use TimeSpan objects.
         /// </summary>
         [Description( "TIME SPAN" )]

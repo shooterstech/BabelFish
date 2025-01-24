@@ -79,8 +79,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Validation rule that all must be true in order for the value to pass validation.
+        /// 
+        /// Currently removing Validation (Jan 2025). Since 1) it's not used anywhere and 
+        /// 2) still struggling with how best to define the AttributeValidation data model.
         /// </summary>
-        public abstract AttributeValidation Validation { get; set; }
+        //public abstract AttributeValidation Validation { get; set; }
 
         /// <summary>
         /// Returns a boolean indicating if the passed in value passes all validation tests for thei field.

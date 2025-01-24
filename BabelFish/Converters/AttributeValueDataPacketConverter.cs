@@ -79,7 +79,9 @@ namespace Scopos.BabelFish.Converters
 
                 if (okToDeserialize) {
                     attributeValueDataPacket.AttributeDef = root.GetProperty( "AttributeDef" ).GetString();
-                    attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), root.GetProperty( "AttributeValue" ) );
+                    //Have to creaet a copy of the AttributeValue JsonElement. If we dont', we run the risk that it gets disposed of before we have chance of interpreting it.
+                    var attrValueAsJsonElement = CopyJsonElement( root.GetProperty( "AttributeValue" ) );
+                    attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), attrValueAsJsonElement );
                     if (root.TryGetProperty( "Visibility", out temp ))
                         attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), temp.GetString() );
                 }
@@ -121,6 +123,23 @@ namespace Scopos.BabelFish.Converters
             }
 
             writer.WriteEndObject();
+        }
+        public static JsonElement CopyJsonElement( JsonElement original ) {
+            using (var memoryStream = new System.IO.MemoryStream()) {
+                // Write the original JsonElement to the memory stream.
+                using (var writer = new Utf8JsonWriter( memoryStream )) {
+                    original.WriteTo( writer );
+                }
+
+                // Reset the memory stream position.
+                memoryStream.Position = 0;
+
+                // Parse the memory stream to create a new JsonDocument.
+                using (var document = JsonDocument.Parse( memoryStream )) {
+                    // Return the root element of the new JsonDocument.
+                    return document.RootElement.Clone();
+                }
+            }
         }
 
 
@@ -233,6 +252,23 @@ namespace Scopos.BabelFish.Converters
         }
 
         public override void Write( Utf8JsonWriter writer, AttributeValueDataPacketAPIResponse value, JsonSerializerOptions options ) {
+
+            BaseConverter.Write( writer, value, options );
+        }
+
+    }
+    public class AttributeValueDataPacketMatchConverter : JsonConverter<AttributeValueDataPacketMatch> {
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
+        private AttributeValueDataPacketConverter BaseConverter = new AttributeValueDataPacketConverter();
+
+        public override AttributeValueDataPacketMatch? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+
+            return (AttributeValueDataPacketMatch)BaseConverter.Read( ref reader, typeToConvert, options );
+        }
+
+        public override void Write( Utf8JsonWriter writer, AttributeValueDataPacketMatch value, JsonSerializerOptions options ) {
 
             BaseConverter.Write( writer, value, options );
         }

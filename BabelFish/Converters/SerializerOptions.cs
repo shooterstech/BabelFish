@@ -40,6 +40,8 @@ namespace Scopos.BabelFish.Converters
                     APIClientSerializer.Converters.Add( new AttributeValidationConverter() );
                     APIClientSerializer.Converters.Add( new AttributeValueDataPacketConverter() );
                     APIClientSerializer.Converters.Add( new AttributeValueDataPacketAPIResponseConverter() );
+                    APIClientSerializer.Converters.Add( new AttributeValueDataPacketMatchConverter() );
+                    //APIClientSerializer.Converters.Add( new DefaultValueHandlingConverter<int>() );
                     APIClientSerializer.Converters.Add( new DefinitionConverter() );
                     APIClientSerializer.Converters.Add( new ListOfAttributeValueDataPackets() );
                     APIClientSerializer.Converters.Add( new ParticipantConverter() );

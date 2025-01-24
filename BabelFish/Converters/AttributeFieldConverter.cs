@@ -21,6 +21,12 @@ namespace Scopos.BabelFish.Converters {
                         else
                             return JsonSerializer.Deserialize<AttributeFieldDate>( root.GetRawText(), options );
 
+                    case "DATE TIME":
+                        if (multipleValues)
+                            return JsonSerializer.Deserialize<AttributeFieldDateTimeList>( root.GetRawText(), options );
+                        else
+                            return JsonSerializer.Deserialize<AttributeFieldDateTime>( root.GetRawText(), options );
+
                     case "TIME SPAN":
                         if (multipleValues)
                             return JsonSerializer.Deserialize<AttributeFieldTimeSpanList>( root.GetRawText(), options );

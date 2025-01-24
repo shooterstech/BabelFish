@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using NLog;
 
 namespace Scopos.BabelFish.Converters {
 

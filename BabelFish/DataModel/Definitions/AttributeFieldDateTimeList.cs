@@ -7,22 +7,21 @@ using Scopos.BabelFish.Converters;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldDate : AttributeField {
+    public class AttributeFieldDateTimeList : AttributeField {
 
         /// <summary>
         /// Public default constructor
         /// </summary>
-        public AttributeFieldDate() {
-            MultipleValues = false;
-            ValueType = ValueType.DATE;
+        public AttributeFieldDateTimeList() {
+            MultipleValues = true;
+            ValueType = ValueType.DATE_TIME;
             //Validation = new AttributeValidationDate();
         }
 
         /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
+        /// The default value for this field, which is always an empty list.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
-        public DateTime DefaultValue { get; set; } = DateTime.Today;
+        public List<DateTime> DefaultValue { get; private set; } = new List<DateTime>();
 
         private AttributeValidationDate validation = new AttributeValidationDate();
 
@@ -41,9 +40,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         */
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
-            if (value.ValueKind == JsonValueKind.String) {
+            if (value.ValueKind == JsonValueKind.Array) {
                 //EKA NOTE Jan 2025: May need a JsonSerializerOptions specifying a custom DateTiem format
-                return JsonSerializer.Deserialize<DateTime>( value );
+                return JsonSerializer.Deserialize<List<DateTime>>( value );
             } else {
                 Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
                 return DefaultValue;

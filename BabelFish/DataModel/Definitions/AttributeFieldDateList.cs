@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldDateList() {
             MultipleValues = true;
             ValueType = ValueType.DATE;
-            Validation = new AttributeValidationDate();
+            //Validation = new AttributeValidationDate();
         }
 
         /// <summary>
@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private AttributeValidationDate validation = new AttributeValidationDate();
 
         /// <inheritdoc />
+        /*
         public override AttributeValidation Validation {
             get { return validation; }
             set {
@@ -36,6 +37,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
         }
+        */
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.Array) {
