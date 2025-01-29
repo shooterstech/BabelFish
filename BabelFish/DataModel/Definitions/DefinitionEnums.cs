@@ -238,6 +238,45 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SpecialEventOne, SpecialEventTwo, SpecialEventThree, SpecialEventFour, SafetyBriefing
     }
 
+    /// <summary>
+    /// Indicates how the Score of an Event Composite is calculated.
+    /// </summary>
+    public enum EventCalculation {
+        /// <summary>
+        /// Calculate the score of the Event by summing the score of its children
+        /// </summary>
+        [Description( "Sum" )]
+        [EnumMember( Value = "Sum" )]
+        SUM,
+
+        /// <summary>
+        /// Calculate the score of the Event by taking the average of its children
+        /// </summary>
+        [Description( "Average" )]
+        [EnumMember( Value = "Average" )]
+        AVERAGE,
+
+        /// <summary>
+        /// Reserved for Singularities that don't have children.
+        /// </summary>
+        [Description( "None" )]
+        [EnumMember( Value = "None" )]
+        NONE
+    }
+
+    public enum EventDerivationType {
+        /// <summary>
+        /// The Children of an Event are definted explicitly by name.
+        /// </summary>
+        EXPLICIT,
+
+        /// <summary>
+        /// The Children of an Event are derived based on the Event's Value Series
+        /// </summary>
+        DERIVED,
+
+        EXPAND
+    }
 
     /// <summary>
     /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.

@@ -63,6 +63,8 @@ namespace Scopos.BabelFish.Converters
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<DefinitionType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<DisciplineType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<DisplayEventOptions>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<EventCalculation>() );
+                    APIClientSerializer.Converters.Add( new EnumConverterByDescription<EventDerivationType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<EventtType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<FieldType>() );
                     APIClientSerializer.Converters.Add( new EnumConverterByDescription<LightIllumination>() );

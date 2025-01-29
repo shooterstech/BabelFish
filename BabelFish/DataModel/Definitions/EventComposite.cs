@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// For an event composite, almost always "SUM"
         /// For a singularity, which doesn't have children it will be an empty string ""
         /// </summary>
-        public string Calculation { get; private set; } = "";
+        public EventCalculation Calculation { get; private set; } = EventCalculation.NONE;
 
         public bool HasChildren {
             get {
@@ -233,7 +233,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             foreach( Singular s in singulars ) {
 				parent.EventType = EventtType.SINGULAR;
                 parent.ScoreFormat = s.ScoreFormat;
-                parent.Calculation = "";
+                parent.Calculation = EventCalculation.NONE;
                 return;
 			}
 

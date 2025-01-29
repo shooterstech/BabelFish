@@ -16,22 +16,27 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
-    public class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
+    public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
-        private Logger Logger = LogManager.GetCurrentClassLogger();
+        protected Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
-            //Children = new List<string>();
             ScoreFormat = "Events";
-            Calculation = "SUM";
+            Calculation = EventCalculation.SUM;
             EventType = EventtType.NONE;
         }
 
         /// <summary>
-        /// A unique name given to this Event.
+        /// Indicates if the Event's children are derived or explicit
         /// </summary>
         [JsonPropertyOrder( 1 )]
+        public EventDerivationType Derivation { get; protected set; } = EventDerivationType.EXPLICIT;
+
+        /// <summary>
+        /// A unique name given to this Event.
+        /// </summary>
+        [JsonPropertyOrder( 2 )]
         public string EventName { get; set; }
 
         /// <summary>
@@ -43,35 +48,40 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// * STRING
         /// * SINGULAR
         /// </summary>
-        [JsonPropertyOrder( 2 )]
+        [JsonPropertyOrder( 3 )]
         public EventtType EventType { get; set; } = EventtType.NONE;
+
+        protected List<string> _children = new List<string>();
 
         /// <summary>
         /// The children of this event identified by the EventName. The score for this event is added together from the scores of the children.
         /// </summary>
-        [JsonPropertyOrder( 3 )]
-        public List<string> Children { get; set; }
+        public virtual List<string> Children { 
+            get { return _children; }
+            set { throw new NotImplementedException( "Child classes must decide to implemtn Set Children or not." ); }
+        }
 
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
         /// </summary>
-        [JsonPropertyOrder( 4 )]
-        public string Calculation { get; set; } = "SUM";
+        [JsonPropertyOrder( 10 )]
+        public EventCalculation Calculation { get; set; } = EventCalculation.SUM;
+
+        /// <summary>
+        /// Additional information needed for the Event Calculation score. The type of data is dependent on the 
+        /// Calculation type. 
+        /// </summary>
+        [DefaultValue("")]
+        public string CalculationMeta { get; set; } = string.Empty;
 
         /// <summary>
         /// The score format to use to display scores for this Event.
         /// The possible values are learned from the Score Format Collection.
         /// </summary>
-        [JsonPropertyOrder( 5 )]
+        [JsonPropertyOrder( 11 )]
         public string ScoreFormat { get; set; } = "Events";
 
-        /// <summary>
-        /// Formatted as a ValueSeries
-        /// </summary>
-        [JsonPropertyOrder( 6 )]
-        [DefaultValue("")]
-        public string Values { get; set; }
 
         /// <summary>
         /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
@@ -103,8 +113,20 @@ namespace Scopos.BabelFish.DataModel.Definitions
         [Obsolete( "Use RankingRuleMapping instead." )]
         public string RankingRuleDef { get; set; } = string.Empty;
 
+        /// <summary>
+        /// A mapping of RankingRuleDef to use to sort scores from this Event, based on the ScoreConfigName.
+        /// </summary>
         [JsonPropertyOrder( 16 )]
-        public RankingRuleMapping RankingRuleMapping { get; set;}
+        public RankingRuleMapping RankingRuleMapping { get; set; }
+
+        /// <summary>
+        /// If the fields EventName and Values require interpretation, GetCompiledEvents
+        /// interpres them and returns a new list of TieBreakingRules cooresponding to the interpretation.
+        /// If interpretation is not required, then it returns a list of one tie breaking rule, itself.
+        /// </summary>
+        public virtual List<Event> GetCompiledEvents() {
+            return new List<Event>() { this };
+        }
 
         /// <summary>
         /// Internal documentation comments. All text is ignored by the system.

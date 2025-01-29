@@ -13,6 +13,8 @@ namespace Scopos.BabelFish.APIClients
     public class ResponseCache {
 		private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private int requestCount = 0;
+
 		/// <summary>
 		/// This is where previously called response/request objects
 		/// will be stored in memory. The key is specific to the request. The value is the 
@@ -47,6 +49,10 @@ namespace Scopos.BabelFish.APIClients
         public bool TryGetResponse( Request request, out ResponseIntermediateObject value ) {
             var key = request.GetRequestCacheKey();
             lock (mutex) {
+                //Celan up the cache every 500 requests
+                if (requestCount++ % 500 == 0)
+                    CleanUpAsync();
+
                 if (cachedRequests.TryGetValue( key, out value )) {
                     if (value.ValidUntil > DateTime.UtcNow) {
                         return true;
@@ -116,6 +122,10 @@ namespace Scopos.BabelFish.APIClients
                     cachedRequests.Remove( key );
                 }
             }
+        }
+
+        public async Task CleanUpAsync() {
+            CleanUp();
         }
 
         /// <summary>
