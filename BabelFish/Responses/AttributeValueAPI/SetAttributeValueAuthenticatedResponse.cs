@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
                 var rootElement = Body.RootElement;
                 var setAttrValueListElement = rootElement.GetProperty( OBJECT_LIST_NAME );
 
-                Value = JsonSerializer.Deserialize<SetAttributeValueList>( setAttrValueListElement, SerializerOptions.APIClientSerializer );
+                Value = JsonSerializer.Deserialize<SetAttributeValueList>( setAttrValueListElement, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
             } else {
                 Value = new SetAttributeValueList();
             }

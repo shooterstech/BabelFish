@@ -7,6 +7,7 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueRankingRuleType {
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Specifies the type of season the league is. Preseason, regular season, or postseason
     /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueSeasonType {
 
         /// <summary>
@@ -75,6 +77,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// 
     /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueVirtualType {
 
         /// <summary>
@@ -120,6 +123,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         LOCAL
     }
 
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum MatchAuthorizationRole {
         [Description( "Create Incident Reports" )]
         [EnumMember( Value = "Create Incident Reports" )]
@@ -183,7 +187,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     };
 
 
-    [Serializable]
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum MatchTypeOptions {
         /// <summary>
         /// Unknown
@@ -281,7 +285,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// "FUTURE", "INTERMEDIATE", "UNOFFICIAL", "OFFICIAL
     /// </summary>
-    [Serializable]
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum ResultStatus {
         /// <summary>
         /// The underlying event has not started yet. No scores to report.

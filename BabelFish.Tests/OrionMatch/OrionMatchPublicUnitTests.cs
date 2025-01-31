@@ -85,13 +85,13 @@ namespace Scopos.BabelFish.Tests.OrionMatch
         public async Task EriksPlayground() {
             var cof = CourseOfFireHelper.Get_60_Standing_Cof();
 
-            var json = JsonSerializer.Serialize( cof, SerializerOptions.APIClientSerializer );
+            var json = JsonSerializer.Serialize( cof, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
 
-            var cof2 = JsonSerializer.Deserialize<CourseOfFire>( json, SerializerOptions.APIClientSerializer );
+            var cof2 = JsonSerializer.Deserialize<CourseOfFire>( json, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
 
             var jsonDocument = JsonDocument.Parse( json );
 
-            var cof3 = JsonSerializer.Deserialize<CourseOfFire>( jsonDocument, SerializerOptions.APIClientSerializer );
+            var cof3 = JsonSerializer.Deserialize<CourseOfFire>( jsonDocument, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
 
             Console.WriteLine( json );
         }

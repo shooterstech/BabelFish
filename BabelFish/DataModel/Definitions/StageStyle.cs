@@ -41,29 +41,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The number of shots that make up a Series, for this Stage Style
         /// </summary>
-        [JsonPropertyOrder ( 11 ) ]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public int ShotsInSeries { get; set; } = 10;
 
         /// <summary>
         /// The SetName of the SCORE FORMAT COLLECTION definition to use when displaying scores with this STAGE STYLE
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( "v1.0:orion:Standard Score Formats" )]
-        [JsonInclude]
-        [JsonPropertyOrder( 12 )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The default ScoreConfigName to use, that is defined by the .ScoreFormatCollectionDef, to use when displaying scores with this STAGE STYLE
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( "Integer" )]
-        [JsonInclude]
-        [JsonPropertyOrder( 13 )]
         public string ScoreConfigDefault { get; set; } = "Integer";
 
         /// <summary>
         /// A list (order is inconsequential) of other STAGE STYLEs that are similar to this STAGE STYLE.
         /// </summary>
-        [JsonPropertyOrder ( 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
         public List<string> RelatedStageStyles { get; set; } = new List<string>();
 
         /// <inheritdoc />
@@ -73,8 +75,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
         }
 
+        [G_STJ_SER.JsonPropertyOrder( 90 )]
+        [G_NS.JsonProperty( Order = 90 )]
         [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault")]
-        [JsonPropertyOrder ( 90 )]
         public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
         /// <inheritdoc />

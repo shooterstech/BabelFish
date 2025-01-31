@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -52,46 +48,54 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// A unique human readable name given to this RangeScript.
         /// </summary>
-        [JsonPropertyOrder( 1)]
+		[G_STJ_SER.JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string RangeScriptName { get; set; } = string.Empty;
 
         /// <summary>
         /// True if this RangeScript is intended to be used with Athena compliant ESTs. False if it is not.
         /// </summary>
-        [JsonPropertyOrder( 2)]
+		[G_STJ_SER.JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public bool DesignedForEST { get; set; }
 
         /// <summary>
         /// True if this RangeScript is intended to be used with paper targets for scoring with Orion. False if it is not. 
         /// </summary>
-        [JsonPropertyOrder( 3)]
+		[G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
         public bool DesignedForPaper { get; set; }
 
-        /// <summary>
-        /// List of available options for printing barcode labels on paper targets.
-        /// </summary>
-        [JsonPropertyOrder( 4)]
-        public List<PaperTargetLabel> PaperTargetLabels { get; set; } = new List<PaperTargetLabel>();
+        [G_STJ_SER.JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
+        [DefaultValue(null)]
+        public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
+
+        [G_STJ_SER.JsonPropertyOrder( 5 )]
+        [G_NS.JsonProperty( Order = 5 )]
+        [DefaultValue(null)]
+        public SegmentGroupSegment DefaultSegment { get; set; } = new SegmentGroupSegment();
 
         /// <summary>
         /// List of SegmentGroups used to help run the match.
         /// </summary>
-        [JsonPropertyOrder( 7)]
-        public List<SegmentGroup> SegmentGroups { get; set; } = new List<SegmentGroup> ();
+		[G_STJ_SER.JsonPropertyOrder( 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
+        public List<SegmentGroup> SegmentGroups { get; set; } = new List<SegmentGroup>();
 
-        [DefaultValue(null)]
-        [JsonPropertyOrder( 5)]
-        public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
-
-        [DefaultValue(null)]
-        [JsonPropertyOrder( 6)]
-        public SegmentGroupSegment DefaultSegment { get; set; } = new SegmentGroupSegment();
+        /// <summary>
+        /// List of available options for printing barcode labels on paper targets.
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
+        public List<PaperTargetLabel> PaperTargetLabels { get; set; } = new List<PaperTargetLabel>();
 
         /// <summary>
         /// Authors internal comments for documentation
         /// </summary>
         [DefaultValue( "" )]
-        [JsonPropertyOrder ( 100 )]
+        [G_STJ_SER.JsonPropertyOrder( 100 )]
+        [G_NS.JsonProperty( Order = 100 )]
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc />

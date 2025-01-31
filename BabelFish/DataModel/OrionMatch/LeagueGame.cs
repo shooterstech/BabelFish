@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Text;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -29,16 +27,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public LeagueVirtualType Virtual { get; set; }
 
-		/// <summary>
-		/// The date this league game started.
-		/// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        /// <summary>
+        /// The date this league game started.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
-		/// <summary>
-		/// The date this league game ended.
-		/// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        /// <summary>
+        /// The date this league game ended.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
 		public LeagueTeamResult HomeTeam { get; set; }

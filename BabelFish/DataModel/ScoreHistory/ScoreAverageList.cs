@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {

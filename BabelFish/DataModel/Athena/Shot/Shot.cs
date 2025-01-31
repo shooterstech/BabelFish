@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using System.ComponentModel;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
@@ -74,6 +73,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public Location Location { get; set; }
 
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime TimeScored { get; set; }
 
         /// <summary>
@@ -261,7 +262,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Most likely a VIS.Shot
         /// Non serializable property.
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public object DataObjectTag { get; set; }
 
         /// <summary>
@@ -321,7 +323,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Helper property that indicates if this shot is marked as a deleted shot.
         /// A Deleted shot has "DELETED" as an Attribute
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool IsADeletedShot
         {
             get
@@ -334,7 +337,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Helper property that indicates if this shot is marked as a sighter shot.
         /// A Deleted shot has "SIGHTER" as an Attribute
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool IsASighter
         {
             get

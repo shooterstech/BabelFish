@@ -44,27 +44,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// the default value is v1.0:orion:Standard Score Formats.
         /// </summary>
-        [JsonPropertyOrder( 11 )]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The name of the ScoreConfig to use if none other is specified.
         /// </summary>
         /// <remarks>The ScoreConfigName is usually specified by the Result List.</remarks>
-        [JsonPropertyOrder( 12 )]
+		[G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         public string ScoreConfigDefault { get; set; } = string.Empty;
 
         /// <summary>
         /// A list of ResultListFields that define field values that will be used in the text output of the 
         /// Result List Intermediate Fromat cell values. 
         /// </summary>
-        [JsonPropertyOrder( 13 )]
+		[G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         public List<ResultListField> Fields { get; set; }
 
         /// <summary>
         /// Describes the intermediate format for cells of data within a Result List. 
         /// </summary>
-        [JsonPropertyOrder( 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
         public ResultListFormatDetail Format { get; set; }
 
         /// <inheritdoc />

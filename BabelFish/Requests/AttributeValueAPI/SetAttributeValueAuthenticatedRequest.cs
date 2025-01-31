@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
                 try {
-                    var json = JsonSerializer.Serialize( AttributeValuesToUpdate, SerializerOptions.APIClientSerializer );
+                    var json = JsonSerializer.Serialize( AttributeValuesToUpdate, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
                     return new StringContent( json, Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
                     Logger.Error( ex );

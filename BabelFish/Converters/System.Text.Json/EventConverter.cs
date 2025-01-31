@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
     public class EventConverter : JsonConverter<Event> {
         public override Event? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 

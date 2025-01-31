@@ -53,8 +53,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var attributeNoCache = JsonSerializer.Serialize( resultNoCache.Definition, SerializerOptions.APIClientSerializer );
-            var attributeWithCache = JsonSerializer.Serialize( resultWithCache.Definition, SerializerOptions.APIClientSerializer );
+            var attributeNoCache = JsonSerializer.Serialize( resultNoCache.Definition, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
+            var attributeWithCache = JsonSerializer.Serialize( resultWithCache.Definition, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
             Assert.AreEqual( attributeWithCache, attributeNoCache );
         }
 
@@ -131,8 +131,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var cofNoCache = JsonSerializer.Serialize( resultNoCache.Definition, SerializerOptions.APIClientSerializer );
-            var cofWithCache = JsonSerializer.Serialize( resultWithCache.Definition, SerializerOptions.APIClientSerializer );
+            var cofNoCache = JsonSerializer.Serialize( resultNoCache.Definition, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
+            var cofWithCache = JsonSerializer.Serialize( resultWithCache.Definition, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
             Assert.AreEqual( cofWithCache, cofNoCache );
         }
 

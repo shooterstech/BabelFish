@@ -26,15 +26,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The set name of the Course of Fire definition that this simple COF is emulating.
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         /// <summary>
         /// Components, roughly, describe the stages of this SimpleCOF.
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
 
 
         [Obsolete( "Use CourseOfFireDef instead." )]
+        [G_STJ_SER.JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
         public string Name { get; set; } = string.Empty;
 
         /// <inheritdoc/>
@@ -74,6 +80,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		}
 
         /// <inheritdoc/>
+		[G_STJ_SER.JsonPropertyOrder( 100 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
     }

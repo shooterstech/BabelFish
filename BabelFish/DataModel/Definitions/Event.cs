@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using BabelFish.DataModel.Definitions;
 using NLog;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
@@ -16,6 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
     /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
     /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
     /// </summary>
+    [Serializable]
     public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
         protected Logger Logger = LogManager.GetCurrentClassLogger();
@@ -72,7 +77,6 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// Additional information needed for the Event Calculation score. The type of data is dependent on the 
         /// Calculation type. 
         /// </summary>
-        [DefaultValue("")]
         public string CalculationMeta { get; set; } = string.Empty;
 
         /// <summary>
@@ -100,6 +104,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// </summary>
         [JsonPropertyOrder( 14 )]
         [DefaultValue( "" )]
+        //[JsonConverter( typeof( ExcludeEmptyStringConverter ) )]
         public string ResultListFormatDef { get; set; } = string.Empty;
 
         /// <summary>
@@ -120,20 +125,30 @@ namespace Scopos.BabelFish.DataModel.Definitions
         public RankingRuleMapping RankingRuleMapping { get; set; }
 
         /// <summary>
+        /// Indicates if this Event is outside of the Event Tree.
+        /// </summary>
+        [JsonPropertyOrder( 20 )]
+        [DefaultValue( false )]
+        public bool ExternalToEventTree { get; set; } = false;
+
+        /// <summary>
         /// If the fields EventName and Values require interpretation, GetCompiledEvents
         /// interpres them and returns a new list of TieBreakingRules cooresponding to the interpretation.
         /// If interpretation is not required, then it returns a list of one tie breaking rule, itself.
+        /// <para>Will always return a clone copy of the event, so the original is not modified by the caller.</para>
         /// </summary>
+        /// 
         public virtual List<Event> GetCompiledEvents() {
-            return new List<Event>() { this };
+            return new List<Event>() { this.Clone() };
         }
 
         /// <summary>
         /// Internal documentation comments. All text is ignored by the system.
         /// </summary>
         [JsonPropertyOrder( 99 )]
-        [DefaultValue("")]
-        public string Comment { get; set; }
+        [DefaultValue( "" )]
+        //[JsonConverter( typeof( ExcludeEmptyStringConverter ) )]
+        public string Comment { get; set; } = string.Empty;
 
         public override string ToString() {
             return $"{EventName} of {EventType}";

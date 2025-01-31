@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.Helpers {
     public static class ObjectCloner {
@@ -22,10 +23,7 @@ namespace Scopos.BabelFish.Helpers {
                 return default;
             }
 
-            var options = new JsonSerializerOptions {
-                WriteIndented = false,
-                ReferenceHandler = ReferenceHandler.Preserve
-            };
+            var options = G_BF_STJ_CONV.SerializerOptions.APIClientSerializer;
 
             string jsonString = JsonSerializer.Serialize( source, options );
             return JsonSerializer.Deserialize<T>( jsonString, options );

@@ -9,7 +9,7 @@ using Scopos.BabelFish.DataModel.Common;
 using NLog;
 using Scopos.BabelFish.Helpers;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.Clubs
 {
@@ -114,7 +114,8 @@ namespace Scopos.BabelFish.DataModel.Clubs
         /// To get/set MemberSince date as a DateTime object use GetMemberSince() or SetMemberSince().
         /// </summary>
         /// <example>2001-01-01</example>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime MemberSince { get; set; }
 
         /// <summary>

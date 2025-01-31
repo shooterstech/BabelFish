@@ -37,11 +37,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ScoreConfigs = new List<ScoreConfig>();
         }
 
-        [JsonPropertyOrder ( 11  )]
+        [G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public List<string> ScoreFormats { get; set; } = new List<string>();
 
-		[JsonPropertyOrder ( 12 )]
-		public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
+        public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
 
         public string GetDefaultScoreConfigName() {
             if (ScoreConfigs.Count > 0)
@@ -72,11 +74,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return false;
         }
-
-        /// <inheritdoc/>
-        [JsonPropertyOrder( 99 )]
-        [DefaultValue("")]
-        public string Comment { get; set; } = string.Empty;
 
 		/// <inheritdoc />
 		public override async Task<bool> GetMeetsSpecificationAsync() {

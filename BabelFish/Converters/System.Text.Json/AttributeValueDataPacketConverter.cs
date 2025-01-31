@@ -10,8 +10,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
 using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Converters
-{
+namespace Scopos.BabelFish.Converters.Microsoft {
 
     /// <summary>
     /// Custom converter for AttributeValues. 

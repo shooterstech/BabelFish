@@ -128,7 +128,7 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         protected virtual void ConvertBodyToValue() {
             if (StatusCode == HttpStatusCode.OK)
-                Value = JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.APIClientSerializer );
+                Value = JsonSerializer.Deserialize<T>( Body.RootElement, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
             else 
                 Value = new T();
 

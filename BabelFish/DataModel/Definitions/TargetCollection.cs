@@ -33,6 +33,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The list of TargetCollections for use as options. Each TargetCollections must have a its list of TargetDefs be the same length. 
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public List<TargetCollectionModal> TargetCollections { get; set; } = new List<TargetCollectionModal>();
 
         public string GetDefaultTargetCollectionName() {

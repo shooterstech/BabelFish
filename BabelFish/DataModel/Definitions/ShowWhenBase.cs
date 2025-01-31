@@ -9,6 +9,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
     [Serializable]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ShowWhenBaseConverter ) )]
     public abstract class ShowWhenBase: IReconfigurableRulebookObject {
 
         public ShowWhenOperation Operation { get; protected set; } = ShowWhenOperation.VARIABLE;

@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using NLog;
 using System.Text.Json;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -37,21 +37,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Use GetLastUpdated() to return this value as a DateTime object.
         /// </summary>
         [Obsolete("LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole.")]
-        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; }
 
         /// <summary>
         /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
         /// need defaults?
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
         /// need defaults?
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 using NLog;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
 
     /// <summary>
     /// Abstract JsonConverter to serialize / deserialize DateTime properties using custom date time formats.

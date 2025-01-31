@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using System.Text.Json.Serialization;
@@ -67,7 +67,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The GMT time this ResultCOF was last updated
         /// </summary>
         [JsonPropertyOrder ( 6 )]
-        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = new DateTime();
 
         /// <summary>
@@ -113,7 +114,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// NOTE Local Date is not necessarily the same as the GMT date.
         /// </summary>
         [JsonPropertyOrder ( 14 )]
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
         /// <summary>

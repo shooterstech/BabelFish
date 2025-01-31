@@ -163,7 +163,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             //Dont modify passed in cof
             //And don't clone the whole COF, which can be SLOW
-            var listOfEvents = cofRef.Events.Clone(); 
+            //Besure to exclude Events that are known to be outside the event tree.
+            var listOfEvents = new List<Event>();
+            foreach( var origEvent in cofRef.Events ) {
+                foreach( var cloneEvent in origEvent.GetCompiledEvents() ) {
+                    if ( ! cloneEvent.ExternalToEventTree ) {
+                        listOfEvents.Add( cloneEvent );
+                    }
+                }
+            }
 
             EventComposite top;
             Event topLevelEvent = null;

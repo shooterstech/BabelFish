@@ -82,7 +82,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueSeries vs = new ValueSeries(Values);
 
             for (int i = vs.StartValue; i <= vs.EndValue; i += vs.Step) {
-                Event e = new Event() {
+                Event e = new EventExplicit() {
                     EventName = EventName.Replace("{}", i.ToString()),
                     ScoreFormat = ScoreFormat,
                     Children = new List<string>()

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace  Scopos.BabelFish.DataModel.Clubs {
     /// <summary>

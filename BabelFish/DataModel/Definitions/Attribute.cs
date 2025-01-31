@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -34,6 +33,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// DisplayName is the name displayed to the user for this ATTRIBUTE.
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty( displayName )) {
@@ -54,9 +55,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 		private List<AttributeDesignation> designation = new List<AttributeDesignation>();
 
-		/// <summary>
-		/// The type of participant, teams, or clubs that this Attribute may be applied to.
-		/// </summary>
+        /// <summary>
+        /// The type of participant, teams, or clubs that this Attribute may be applied to.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         public List<AttributeDesignation> Designation {
             get {
                 if (designation == null)
@@ -79,28 +82,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-		/// <summary>
-		/// The maximum visibility the user can set for the ATTRIBUTE VALUE.
-		/// </summary>
+        /// <summary>
+        /// The maximum visibility the user can set for the ATTRIBUTE VALUE.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( VisibilityOption.PUBLIC )]
         public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PUBLIC;
 
-		/// <summary>
-		/// The default visibility for a new ATTRIBUTE VALUE. 
+        /// <summary>
+        /// The default visibility for a new ATTRIBUTE VALUE. 
         /// Must be a Privacy value equal to or greater than the MaxVisibility.
-		/// </summary>
-		[DefaultValue( VisibilityOption.PUBLIC )]
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
+        [DefaultValue( VisibilityOption.PUBLIC )]
 		public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
 
-		/// <summary>
-		/// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
-		/// </summary>
+        /// <summary>
+        /// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue(false)]
         public bool MultipleValues { get; set; } = false;
 
         /// <summary>
         /// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 16 )]
+        [G_NS.JsonProperty( Order = 16 )]
         [DefaultValue(null)]
         public List<AttributeField> Fields { get; set; } = new List<AttributeField>();
 
@@ -108,7 +119,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Returns True if this Attribute is considered a 'Simple Attribute.'
         /// This is when MultipleValues is False, has only one AttributeField, and that field also has MultipleValues set to False
         /// </summary>
-        [JsonIgnore]
+		[G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool SimpleAttribute {
             get {
                 return !MultipleValues

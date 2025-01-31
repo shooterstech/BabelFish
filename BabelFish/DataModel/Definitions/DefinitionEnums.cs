@@ -257,6 +257,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         AVERAGE,
 
         /// <summary>
+        /// Deprecated, and kept only for backwards capatibility
+        /// </summary>
+        [Description( "AVG(10)" )]
+        [EnumMember( Value = "AVG(10)" )]
+        AVG_TEN,
+
+        /// <summary>
         /// Reserved for Singularities that don't have children.
         /// </summary>
         [Description( "None" )]

@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Text.Json;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -15,6 +12,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 	/// PostResponseProcessingAsync()
 	/// </summary>
 	[Serializable]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
     public abstract class Participant : IDeserializableAbstractClass {
 
         /*
@@ -48,6 +46,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<AttributeValueDataPacketMatch> AttributeValues { get; set; } = new List<AttributeValueDataPacketMatch>();
 
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAttributeValues() {
+            return (AttributeValues != null && AttributeValues.Count > 0);
+        }
+
         /*
          * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
          * garand / springfield / vintage military rifle competition is one eacmple. On the first re-entry they may shoot a garand 
@@ -60,7 +67,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A list of this Participant's coaches.
         /// </summary>
         public List<Individual> Coaches { get; set; }
-    
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCoaches() {
+            return (Coaches != null && Coaches.Count > 0);
+        }
+
 
         /// <summary>
         /// When a competitor's name is displayed, this is the default display value.

@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 using NLog;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
 
     /// <summary>
     /// Json converter for Enums. Uses an enum's Description first, if defined, else the enum string value.

@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
     public class SetAttributeValueListConverter : JsonConverter<SetAttributeValueList> {
         public override SetAttributeValueList? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 

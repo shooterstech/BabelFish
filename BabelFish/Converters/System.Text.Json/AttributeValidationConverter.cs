@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
     public class AttributeValidationConverter : JsonConverter<AttributeValidation> {
         public override AttributeValidation? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 

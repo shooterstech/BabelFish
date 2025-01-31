@@ -55,6 +55,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     eventExplicit.EventStyleMapping = this.EventStyleMapping.Clone();
                 if (this.RankingRuleMapping != null )
                     eventExplicit.RankingRuleMapping = this.RankingRuleMapping.Clone();
+                eventExplicit.ExternalToEventTree = this.ExternalToEventTree;
                 eventExplicit.Comment = $"Compiled EventExplicit based on the EventExpand named '{this.EventName}'.";
 
                 for (int i = childIndex; i < childIndex + this.ChildStringSize; i++) {

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
 using NLog;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -33,14 +33,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The start date of the match dates to search.
         /// The default value is the first day of the current month.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
         /// <summary>
         /// The end date of the match dates to search.
         /// The default value is the last day of the current month.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
         /// <summary>

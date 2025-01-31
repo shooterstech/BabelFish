@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
 
     /// <summary>
     /// Custom converter class to deserialize the abstract class SquaddingAssignment into one of its

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using System.Text.Json.Serialization;
 
@@ -64,7 +64,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Local Date that this score was shot. 
         /// NOTE Local Date is not necessarily the same as the GMT date.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
 
@@ -105,7 +106,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
         /// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
 		[DefaultValue( null ) ]
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
 
@@ -115,6 +117,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonPropertyOrder ( 52)]
         public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize TeamMembers when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeTeamMembers() {
+            return (TeamMembers != null && TeamMembers.Count > 0);
+        }
 
         /// <inheritdoc />
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {

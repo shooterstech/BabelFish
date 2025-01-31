@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
@@ -121,7 +121,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The start date that the underlying event, in this Result List, started on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -141,6 +142,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
         [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -183,7 +185,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         [JsonPropertyOrder ( 12 )]
-        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = new DateTime();
 
         /// <summary>

@@ -2,7 +2,6 @@
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text.Json;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Helpers;
@@ -33,7 +32,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Will ignore any json values that are null, and instead use the default value of the property.
         /// </summary>
         /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
-        public static JsonSerializerOptions DeserializerOptions = new JsonSerializerOptions();
+        public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public HttpClient httpClient = new HttpClient();
@@ -45,7 +44,7 @@ namespace Scopos.BabelFish.APIClients {
         protected APIClient() {
 
             Settings.CheckXApiKey();
-            SerializerOptions.InitAPIClientDeserializer();
+            G_BF_STJ_CONV.SerializerOptions.InitAPIClientDeserializer();
 
             this.ApiStage = APIStage.PRODUCTION;
 
@@ -58,7 +57,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         protected APIClient( APIStage apiStage ) {
             Settings.CheckXApiKey();
-            SerializerOptions.InitAPIClientDeserializer();
+            G_BF_STJ_CONV.SerializerOptions.InitAPIClientDeserializer();
 
             this.ApiStage = apiStage;
 
@@ -168,10 +167,10 @@ namespace Scopos.BabelFish.APIClients {
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
                 using (StreamReader sr = new StreamReader( s )) {
-                    response.Body = JsonDocument.Parse( sr.ReadToEnd() );
+                    response.Body = G_STJ.JsonDocument.Parse( sr.ReadToEnd() );
 
-                    JsonElement messageArray;
-                    if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == JsonValueKind.Array ) {
+                    G_STJ.JsonElement messageArray;
+                    if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array ) {
                         foreach (var message in messageArray.EnumerateArray()) {
                             response.MessageResponse.Message.Add( message.GetString() );
                         }

@@ -49,6 +49,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// means all TieBreakingRules will be used. TieBreakingRules may be limited if ResultStatus is something
         /// other than OFFICIAL
         /// </summary>
+        [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
         public ResultStatus ResultStatus { get; set; } = ResultStatus.OFFICIAL;
 
         /// <summary>

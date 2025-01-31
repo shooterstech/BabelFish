@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Xml.XPath;
-using System.Text.Json;
-
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -16,6 +9,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Defines how to compare two IEventScore instances.
     /// </summary>
     [Serializable]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.TieBreakingRuleConverter ) )]
     public abstract class TieBreakingRuleBase : IReconfigurableRulebookObject {
 
         /// <summary>
@@ -29,13 +23,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <remarks>Method is also the Concrete class differentiator.</remarks>
         
         [DefaultValue( TieBreakingRuleMethod.SCORE )]
-        [JsonInclude]
         public TieBreakingRuleMethod Method { get; set; }
 
         /// <summary>
         /// How the comparison should be made.
         /// </summary>
-        [JsonInclude]
         public SortBy SortOrder { get; set; }
 
         /// <summary>
@@ -48,7 +40,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc/>
-        [JsonPropertyOrder( 99 )]
+		[G_STJ_SER.JsonPropertyOrder( 100 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
 

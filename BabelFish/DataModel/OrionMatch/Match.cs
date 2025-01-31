@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using NLog;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -123,10 +123,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 12 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
         [JsonPropertyOrder ( 15 )]

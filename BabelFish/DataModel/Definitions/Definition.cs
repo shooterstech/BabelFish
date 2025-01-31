@@ -3,17 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataActors.Specification;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
 	[Serializable]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DefinitionConverter ) )]
     public abstract class Definition : SparseDefinition, IReconfigurableRulebookObject {
 
         private string commonName = string.Empty;
@@ -35,7 +30,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// <summary>
 		/// HierarchicalName is namespace:properName
 		/// </summary>
-		[JsonPropertyOrder( 3 )]
+		[G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
         public string HierarchicalName { get; set; } = string.Empty;
 
         /// <summary>
@@ -56,7 +52,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A human readable short name for this Definition. If no specific value
         /// is given, then the ProperName portion of the SetName is returned instead.
         /// </summary>
-        [JsonPropertyOrder( 5 )]
+		[G_STJ_SER.JsonPropertyOrder( 5 )]
+        [G_NS.JsonProperty( Order = 5 )]
         public string CommonName {
             get {
                 if (string.IsNullOrEmpty( commonName )) {
@@ -80,7 +77,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// A human readable description of this Definition. May be verbose.
         /// </summary>
-        [JsonPropertyOrder( 6 )]
+		[G_STJ_SER.JsonPropertyOrder( 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
@@ -88,20 +86,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// There is often a one to one relationship between the Owner and namespace of a Definition.
         /// </summary>
         /// <example>OrionAcct001234</example>
-        [JsonPropertyOrder( 7 )]
+		[G_STJ_SER.JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
         public string Owner { get; set; } = string.Empty;
 
         /// <summary>
         /// The high level shooting discipline that uses this Definition.
         /// </summary>
-        [JsonPropertyOrder( 8 )]
+		[G_STJ_SER.JsonPropertyOrder( 8 )]
+        [G_NS.JsonProperty( Order = 8 )]
+        [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
         public DisciplineType Discipline { get; set; }
 
         /// <summary>
         /// The subdiscipline (under the value of Discipline) to categorize this Definition.
         /// The value of a "Subdiscipline" field may be any text string. However, there is a list of common subdisciplines and tags that should be used as appropriate.
         /// </summary>
-        [JsonPropertyOrder( 9 )]
+		[G_STJ_SER.JsonPropertyOrder( 9 )]
+        [G_NS.JsonProperty( Order = 9 )]
         [DefaultValue( "" )]
         public string Subdiscipline { get; set; } = string.Empty;
 
@@ -109,20 +111,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The tag or tags to categorize this Definition with.
         /// The value of a "Tags" field may be any text string. However, there is a list of common subdisciplines and tags that should be used as appropriate.
         /// </summary>
-        [JsonPropertyOrder( 10 )]
+		[G_STJ_SER.JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
         public List<string> Tags { get; set; } = new List<string>();
 
-		/// <summary>
-		/// The Version string of the JSON document.
-		/// </summary>
-		[JsonPropertyOrder (10)]
-        [JsonInclude]
-		[DefaultValue( "2020-03-31" )]
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
+        [DefaultValue( "2020-03-31" )]
 		public string JSONVersion { get; set; } = "2020-03-31";
 
         /// <inheritdoc/>
-        [JsonPropertyOrder( 99 )]
-        [JsonInclude]
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
@@ -143,7 +146,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public abstract Task<bool> GetMeetsSpecificationAsync();
 
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public List<string> SpecificationMessages { get; protected set; }
 
 		/// <summary>
@@ -166,7 +170,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (!typeDirectory.Exists)
                 typeDirectory.Create();
 
-			string json = JsonSerializer.Serialize(this, SerializerOptions.APIClientSerializer );
+            string json = G_NS.JsonConvert.SerializeObject( this, G_NS.Formatting.Indented );
 
             File.WriteAllText( filePath, json );
 

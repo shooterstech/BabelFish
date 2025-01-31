@@ -11,8 +11,7 @@ using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Converters
-{
+namespace Scopos.BabelFish.Converters.Microsoft {
     public static class SerializerOptions {
 
         /// <summary>
@@ -41,7 +40,8 @@ namespace Scopos.BabelFish.Converters
                     APIClientSerializer.Converters.Add( new AttributeValueDataPacketConverter() );
                     APIClientSerializer.Converters.Add( new AttributeValueDataPacketAPIResponseConverter() );
                     APIClientSerializer.Converters.Add( new AttributeValueDataPacketMatchConverter() );
-                    //APIClientSerializer.Converters.Add( new DefaultValueHandlingConverter<int>() );
+                    APIClientSerializer.Converters.Add( new EventConverter() );
+                    //APIClientSerializer.Converters.Add( new ExcludeEmptyStringConverter() );
                     APIClientSerializer.Converters.Add( new DefinitionConverter() );
                     APIClientSerializer.Converters.Add( new ListOfAttributeValueDataPackets() );
                     APIClientSerializer.Converters.Add( new ParticipantConverter() );

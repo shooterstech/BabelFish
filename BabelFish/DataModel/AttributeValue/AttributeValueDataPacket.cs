@@ -7,6 +7,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue
 {
 
     [Serializable]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
     public abstract class AttributeValueDataPacket : IDeserializableAbstractClass {
 
         public const int CONCRETE_CLASS_ID = 1;

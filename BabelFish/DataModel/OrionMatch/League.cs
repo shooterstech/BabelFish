@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Common;
 using NLog;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch
@@ -66,10 +66,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
 		/// </summary>
 		public Contact LeagueAdministrator { get; set; } = new Contact();
 
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
         /// <summary>

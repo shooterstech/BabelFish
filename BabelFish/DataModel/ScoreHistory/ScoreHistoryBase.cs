@@ -1,10 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
@@ -12,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
     /// Base class for a Score History Response object .... needed so the compiler doesn't scream at us.
     /// </summary>
     [Serializable]
-    [JsonConverter( typeof( ScoreHistoryBaseConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ScoreHistoryBaseConverter ) )]
     public abstract class ScoreHistoryBase : IDeserializableAbstractClass {
 
         /*
@@ -29,10 +24,12 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// </summary>
         public string UserId { get; set; } = string.Empty;
 
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
         /// <summary>

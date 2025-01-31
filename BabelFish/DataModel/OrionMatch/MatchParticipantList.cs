@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using NLog;
 using System.Text.Json;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -37,14 +37,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Start date for the ResultList of the Match. Used to guage what the Status of the Result list is.
         /// need defaults?
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// End date for the ResultList of the Match. Used to guage what the Status of the ResultList is.
         /// need defaults?
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>

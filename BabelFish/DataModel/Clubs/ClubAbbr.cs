@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Text;
-using System.Text.Json.Serialization;
 using NLog;
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataModel.OrionMatch;
 using Location = Scopos.BabelFish.DataModel.Common.Location;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
@@ -92,14 +88,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The date the orion account was created. 
         /// </summary>
         /// <example>2001-01-01</example>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime MemberSince { get; set; }
 
         /// <summary>
         /// The date and time of the last shot this club fired that was publicly displayed.
         /// </summary>
         /// <example>2001-01-01</example>
-        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastPublicShot { get; set; }
 
         /// <summary>

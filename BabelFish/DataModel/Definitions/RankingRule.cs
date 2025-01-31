@@ -20,6 +20,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod(context);
         }
 
+        [G_STJ_SER.JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         [DefaultValue(null)]
         public List<RankingDirective> RankingRules { get; set; } = new List<RankingDirective>();
 

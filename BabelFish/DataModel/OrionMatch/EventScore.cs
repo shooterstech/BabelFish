@@ -27,9 +27,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// UNOFFICIAL
         /// OFFICIAL
         /// </summary>
-        
-        [JsonInclude]
-        [DefaultValue( ResultStatus.FUTURE ) ]
+        [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+        [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Populate )]
+        [DefaultValue( ResultStatus.FUTURE )]
         public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
         /// <summary>

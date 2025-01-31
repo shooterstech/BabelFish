@@ -5,8 +5,6 @@ using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Requests;
 using System.Net;
-using System.Text.Json;
-using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.APIClients
 {
@@ -86,7 +84,7 @@ namespace Scopos.BabelFish.APIClients
 						FileInfo file = new FileInfo( filename );
                         file.Directory.Create();
 
-                        var json = JsonSerializer.Serialize( response, SerializerOptions.APIClientSerializer );
+                        var json = G_STJ.JsonSerializer.Serialize( response, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
 
 						using (StreamWriter sw = File.CreateText( file.FullName )) {
 							sw.WriteLine( json );
@@ -147,7 +145,7 @@ namespace Scopos.BabelFish.APIClients
 
         public MessageResponse MessageResponse { get; set; }
 
-        public JsonDocument Body { get; set; }
+        public G_STJ.JsonDocument Body { get; set; }
 
         public DateTime ValidUntil { get; set; }
     }

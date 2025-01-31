@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using NLog;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
     /// <summary>
     /// Intended for use on string properties that may receive some of their data from the REST API as integers and not strings.
     /// This converter converts the integer value into a string.

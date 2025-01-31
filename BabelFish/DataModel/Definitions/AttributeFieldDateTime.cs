@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -21,7 +21,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime DefaultValue { get; set; } = DateTime.UtcNow;
 
         private AttributeValidationDate validation = new AttributeValidationDate();

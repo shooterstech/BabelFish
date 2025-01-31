@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using NLog;
 
-namespace Scopos.BabelFish.Converters {
+namespace Scopos.BabelFish.Converters.Microsoft {
 
     /// <summary>
     /// Custom converter class to deserialize the abstract class Participant into one of its
