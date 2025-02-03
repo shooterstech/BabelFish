@@ -10,6 +10,7 @@ using Scopos.BabelFish.Helpers.Extensions;
 using NLog;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 using Scopos.BabelFish.Helpers;
+using System.Security.Cryptography;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public abstract class ResultListIntermediateFormattedRow {
@@ -40,7 +41,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Creator",
             "Owner",
             "TargetCollectionName",
-            "Status"
+            "Status",
+            "LastShot" //Only avaliable on individual result lists
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -154,6 +156,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "UserID",
             "LocalDate", 
             "Status",
+            "LastShot"
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
@@ -294,6 +297,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 case "Status":
                     return GetStatus().Description();
+
+                case "LastShot": 
+                    var lastShot = resultEvent.GetLastCompetitionShot();
+                    if (lastShot != null && ( DateTime.UtcNow - lastShot.TimeScored).TotalSeconds < 300) {
+
+                        string scoreFormat = resultListFormatted.GetScoreFormat( "Shots" );
+
+                        return StringFormatting.FormatScore( scoreFormat, lastShot.Score );
+                    }
+                    return "";
 
                 default:
                     return "UNKNOWN";

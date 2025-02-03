@@ -252,7 +252,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastShot()
+        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastCompetitionShot()
         {
             Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = Shots;
             Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot = null;
