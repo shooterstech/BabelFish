@@ -108,6 +108,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		[DefaultValue( null ) ]
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
 
+        /// <inheritdoc />
+        public Athena.Shot.Shot LastShot { get; set; } = null;
+
 
         /// <summary>
         /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
@@ -130,7 +133,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastShot()
+        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastCompetitionShot()
         {
             Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = Shots;
             Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot = null;

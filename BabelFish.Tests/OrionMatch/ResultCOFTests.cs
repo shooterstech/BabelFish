@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var shots = resultCof.Shots;
 
-            var lastShot = resultCof.GetLastShot();
+            var lastShot = resultCof.GetLastCompetitionShot();
 
             Assert.AreEqual(shots["60.0"].TimeScored, lastShot.TimeScored);
 
