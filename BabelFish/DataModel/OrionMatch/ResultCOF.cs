@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-
-using Scopos.BabelFish.Converters.Microsoft;
+﻿using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
-using Scopos.BabelFish.DataModel.Athena.Shot;
-using System.Text.Json.Serialization;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -19,14 +11,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
 
-        [JsonPropertyOrder ( 1 )]
-        [Obsolete( "Use OwnerId instead." )]
-        public string AccountNumber { get; set; } = string.Empty;
-
         /// <summary>
         /// GUID assigned to this result
         /// </summary>
-        [JsonPropertyOrder ( 2 )]
+        [G_STJ_SER.JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string ResultCOFID { get; set; } = string.Empty;
 
         /// <summary>
@@ -34,40 +23,40 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
         /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
-        [Obsolete( "Use OwnerId instead." )]
-        public string Owner {
-            get { return this.OwnerId; }
-            set { this.OwnerId = value; }
-        }
+        [G_STJ_SER.JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
+        public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
-        /// The Owner of this data. 
-        /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
-        /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
+        /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
-        public string OwnerId { get; set; } = string.Empty;
+        [G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Populate )]
+        [DefaultValue( ResultStatus.FUTURE )]
+        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
         /// <summary>
         /// The Version string of the JSON document.
         /// Should be "2022-04-09"
         /// </summary>
-        [JsonPropertyOrder ( 4 )]
+        [G_STJ_SER.JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
         public string JSONVersion { get; set; } = string.Empty;
 
         /// <summary>
         /// The IoT Topic to monitor to receive live updates to this Result Course of Fire.
         /// Note if the Result COF is completed, no updated will be provided on this topic. 
         /// </summary>
-        [JsonPropertyOrder ( 5 )]
+        [G_STJ_SER.JsonPropertyOrder( 5 )]
+        [G_NS.JsonProperty( Order = 5 )]
         public string LiveTopic { get; set; } = string.Empty;
 
         /// <summary>
         /// The GMT time this ResultCOF was last updated
         /// </summary>
-        [JsonPropertyOrder ( 6 )]
-        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonPropertyOrder( 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = new DateTime();
 
@@ -77,98 +66,120 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// ResultCOF pulled from the REST API, this value should be false.
         /// ResultCOF pushed from the IoT Topic, this value should be true.
         /// </summary>
-        [JsonPropertyOrder ( 7 )]
+        [G_STJ_SER.JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
         public bool Delta { get; set; }
 
         /// <summary>
         /// Unique ID for the match.
         /// </summary>
-        [JsonPropertyOrder ( 10 )]
+        [G_STJ_SER.JsonPropertyOrder( 8 )]
+        [G_NS.JsonProperty( Order = 8 )]
         public string MatchID { get; set; } = string.Empty;
 
         /// <summary>
         /// Human readable name of the match.
         /// </summary>
-        [JsonPropertyOrder ( 11 )]
+        [G_STJ_SER.JsonPropertyOrder( 9 )]
+        [G_NS.JsonProperty( Order = 9 )]
         public string MatchName { get; set; } = string.Empty;
 
         /// <summary>
         /// City, state, and possible country of the location of the match
         /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
         public string MatchLocation { get; set; } = "";
 
         /// <summary>
         /// Unique ID for the parent of this match, if this is a Virtual Match. If this is not a
         /// Virtual Match, then it will be the same value as MatchID.
         /// </summary>
-        [JsonPropertyOrder ( 12 )]
+        [G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public string ParentID { get; set; } = string.Empty;
 
 
-        [JsonPropertyOrder ( 13 )]
-        
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
+
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
 
         /// <summary>
         /// The Local Date that this score was shot. 
         /// NOTE Local Date is not necessarily the same as the GMT date.
         /// </summary>
-        [JsonPropertyOrder ( 14 )]
+        [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
         /// <summary>
-        /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
+        /// The Firing Point Label of the current match, this is a string because it could not be a number
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
-        
-        public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
+        public string FiringPointNumber { get; set; } = "0";
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        public string Creator { get; set; }
 
         /// <summary>
         /// SetName of the Course Of Fire definition
         /// </summary>
-        [JsonPropertyOrder ( 20 )]
+        [G_STJ_SER.JsonPropertyOrder( 20 )]
+        [G_NS.JsonProperty( Order = 20 )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         /// <summary>
         /// SetName of the ScoreConfig used in this match.
         /// NOTE: The name of the ScoreFormatCollection is specified in the Course of Fire 
         /// </summary>
-        [JsonPropertyOrder ( 21 )]
+        [G_STJ_SER.JsonPropertyOrder( 21 )]
+        [G_NS.JsonProperty( Order = 21 )]
         public string ScoreConfigName { get; set; }
 
         /// <summary>
         /// Name of the TargetCollection used in this match.
         /// </summary>
-        [JsonPropertyOrder ( 22 )]
+        [G_STJ_SER.JsonPropertyOrder( 22 )]
+        [G_NS.JsonProperty( Order = 22 )]
         public string TargetCollectionName { get; set; }
 
         /// <summary>
         /// The name of the Target definition to use as the default when creating a new Course of Fire. 
         /// Must be a value specified in the TargetCollectionDef.
         /// </summary>
-        [JsonPropertyOrder ( 23 )]
+        [G_STJ_SER.JsonPropertyOrder( 23 )]
+        [G_NS.JsonProperty( Order = 23 )]
         public string DefaultTargetDefinition { get; set; }
 
 
         /// <summary>
         /// The GUID of the orion app user who shot this score. Is blank if not known.
         /// </summary>
-        [JsonPropertyOrder ( 30 )]
+        [G_STJ_SER.JsonPropertyOrder( 30 )]
+        [G_NS.JsonProperty( Order = 30 )]
         public string UserID { get; set; } = string.Empty;
 
         /// <summary>
         /// Data on the person or team who shot this score.
         /// </summary>
-        [JsonPropertyOrder ( 31 )]
+        [G_STJ_SER.JsonPropertyOrder( 31 )]
+        [G_NS.JsonProperty( Order = 31 )]
         public Participant Participant { get; set; } = new Individual();
 
         /// <summary>
         /// Scores for each composite Event.
         /// The Key of the Dictionary is the Event Name. the Value is the Event Score
         /// </summary>
-        [JsonPropertyOrder ( 40 )]
+        [G_STJ_SER.JsonPropertyOrder( 40 )]
+        [G_NS.JsonProperty( Order = 40 )]
         public Dictionary<string, EventScore> EventScores { get; set; } = new Dictionary<string, EventScore>();
 
         /// <summary>
@@ -176,8 +187,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
         /// To get a dictionary of Shots by their EventName, use GetShotsByEventName()
         /// </summary>
-        [JsonPropertyOrder ( 50 )]
+        [G_STJ_SER.JsonPropertyOrder( 50 )]
+        [G_NS.JsonProperty( Order = 50 )]
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
+
 
         /// <inheritdoc />
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
@@ -197,7 +210,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
         /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.
         /// </summary>
-        [JsonPropertyOrder ( 60 )]
+        [G_STJ_SER.JsonPropertyOrder( 60 )]
+        [G_NS.JsonProperty( Order = 60 )]
         public ShotGraphicDisplay LiveDisplay { get; set; }
 
         /// <summary>
@@ -205,18 +219,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <remarks> EKA: Currently this field is not used (Apr 2024), as we have no way of populating the values from the range script.
         /// Rezults currently attempts to infer what to display, but can be kludgy depending on the COF.</remarks>
-        [JsonPropertyOrder ( 61 )]
+        [G_STJ_SER.JsonPropertyOrder( 61 )]
+        [G_NS.JsonProperty( Order = 61 )]
         public List<ShotGraphicDisplay> PostDisplay { get; set; }
 
         /// <summary>
-        /// The Firing Point Label of the current match, this is a string because it could not be a number
+        /// The Owner of this data. 
+        /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
+        /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
         /// </summary>
-        public string FiringPointNumber { get; set; } = "0";
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
+        [Obsolete( "Use OwnerId instead." )]
+        public string Owner {
+            get { return this.OwnerId; }
+            set { this.OwnerId = value; }
+        }
 
-        /// <summary>
-        /// String holding the software (Orion Scoring System) and Version number of the software.
-        /// </summary>
-        public string Creator { get; set; }
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
+        [Obsolete( "Use OwnerId instead." )]
+        public string AccountNumber { get; set; } = string.Empty;
 
         /// <inheritdoc />
 		public override string ToString() {

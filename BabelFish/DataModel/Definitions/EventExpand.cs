@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -17,18 +14,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// String formatted as a Value Series.
         /// <para><see href="https://support.scopos.tech/index.html?string-formatting-value-series.html">Value Series documentation.</see></para>
         /// </summary>
-        [JsonPropertyOrder( 12 )]
+		[G_STJ_SER.JsonPropertyOrder( 5 )]
+        [G_NS.JsonProperty( Order = 5 )]
         [DefaultValue( "" )]
         public string Values { get; set; } = string.Empty;
 
-        [JsonPropertyOrder( 12 )]
+        [G_STJ_SER.JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
         [DefaultValue( 10 )]
         public int ChildStringSize { get; set; } = 10;
 
         /// <summary>
         /// Must include the place holder {}. For example "PR {}".
         /// </summary>
-        [JsonPropertyOrder( 13 )]
+		[G_STJ_SER.JsonPropertyOrder( 6 )]
+        [G_NS.JsonProperty( Order = 5 )]
         [DefaultValue( "" )]
         public string ChildEventName { get; set; } = string.Empty;
 

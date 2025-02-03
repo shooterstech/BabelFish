@@ -1,5 +1,4 @@
 ﻿using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
