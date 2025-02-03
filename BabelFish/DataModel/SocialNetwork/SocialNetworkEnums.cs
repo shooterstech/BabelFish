@@ -23,16 +23,16 @@ namespace Scopos.BabelFish.DataModel.SocialNetwork
         /// <summary>
         /// Follows relationship
         /// </summary>
-        [Description("Follow")][EnumMember(Value = "follow")] FOLLOW,
+        [Description("Follow")][EnumMember(Value = "Follow")] FOLLOW,
 
         /// <summary>
         /// Blocks relationship
         /// </summary>
-        [Description("Block")][EnumMember(Value = "block")] BLOCK,
+        [Description("Block")][EnumMember(Value = "Block")] BLOCK,
 
         /// <summary>
         /// Coaches relationship
         /// </summary>
-        [Description("Coach")][EnumMember(Value = "coach")] COACH,
+        [Description("Coach")][EnumMember(Value = "Coach")] COACH,
     }
 }

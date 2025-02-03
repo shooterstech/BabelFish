@@ -1,7 +1,7 @@
-using Scopos.BabelFish.DataModel.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Athena;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.DataModel.SocialNetwork;
@@ -9,20 +9,11 @@ using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Tests.ScoreHistory
-{
+namespace Scopos.BabelFish.Tests.ScoreHistory {
 
     [TestClass]
-    public class AuthenticatedScoreHistoryTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class AuthenticatedScoreHistoryTests : BaseTestClass {
 
         [TestMethod]
         public async Task PostScoreHistory()

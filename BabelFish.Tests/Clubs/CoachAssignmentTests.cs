@@ -13,15 +13,14 @@ using System.Threading.Tasks;
 namespace Scopos.BabelFish.Tests.Clubs
 {
     [TestClass]
-    public class CoachAssignmentTests
+    public class CoachAssignmentTests : BaseTestClass
     {
         private ClubsAPIClient clubsClient;
 
 
         [TestInitialize]
-        public void InitClient()
-        {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        public override void InitializeTest() {
+            base.InitializeTest();
 
             clubsClient = new ClubsAPIClient(APIStage.PRODUCTION);
         }

@@ -163,8 +163,8 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
                     parameterList.Add( "token", new List<string>() { Token } );
 
                 parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
-                parameterList.Add( "start-date", new List<string>() { StartDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
-                parameterList.Add( "end-date", new List<string>() { EndDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "start-date", new List<string>() { StartDate.ToString( DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "end-date", new List<string>() { EndDate.ToString( DateTimeFormats.DATE_FORMAT ) } );
                 parameterList.Add( "include-related", new List<string>() { IncludeRelated.ToString() } );
                 parameterList.Add( "format", new List<string>() { Format.ToString() } );
 

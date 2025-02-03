@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -11,12 +6,17 @@ using Scopos.BabelFish.DataModel.Definitions;
 namespace Scopos.BabelFish.Tests.Miscellaneous {
 
     [TestClass]
-    public class XApiKeyTests {
+    public class XApiKeyTests : BaseTestClass {
 
-        /*
-         * Purposefully NOT setting the x api key in a initialize test method. as writing tests
-         * to check what happens when it's not set
-         */
+        [TestInitialize]
+        public override void InitializeTest() {
+
+            /*
+             * Purposefully NOT setting the x api key in a initialize test method. as writing tests
+             * to check what happens when it's not set
+             */
+
+        }
 
         [TestMethod]
         [ExpectedException(typeof(XApiKeyNotSetException))]

@@ -2,6 +2,8 @@
 global using System.Collections.Generic;
 global using System.Text;
 global using Microsoft.VisualStudio.TestTools.UnitTesting;
+global using Scopos.BabelFish.Helpers;
+global using Scopos.BabelFish.Tests;
 
 global using G_NS = Newtonsoft.Json;
 global using G_STJ = System.Text.Json;

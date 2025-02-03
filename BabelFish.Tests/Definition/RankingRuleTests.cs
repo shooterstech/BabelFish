@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataActors.OrionMatch;
-using System.Diagnostics;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    public class RankingRuleTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class RankingRuleTests : BaseTestClass {
 
         /// <summary>
         /// Basic Unit Tests for when TieBreakingRules.Method is "Score".

@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
@@ -16,12 +11,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
     /// authenticate a user with email (username) and password.
     /// </summary>
     [TestClass]
-    public class AuthenticationTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class AuthenticationTests : BaseTestClass {
 
         /// <summary>
         /// Tests the happy path, correct username and password using a new device. The user should be logged in and the device attached to the user.

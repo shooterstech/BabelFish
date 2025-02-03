@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
-    public class GetSetAttributeValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class GetSetAttributeValueTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.

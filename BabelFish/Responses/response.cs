@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Converters;
+﻿using System.Net;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 
@@ -103,13 +96,13 @@ namespace Scopos.BabelFish.Responses
         /// <summary>
         /// Raw body returned by the Rest API Call.
         /// </summary>
-        private JsonDocument body = null;
+        private G_STJ.JsonDocument body = null;
 
         /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.
         /// If the StatusCode is something other than OK (200), the value of Body will be invalid.
         /// </summary>
-        public JsonDocument Body {
+        public G_STJ.JsonDocument Body {
             get { return body; }
             internal set {
                 body = value;
@@ -128,7 +121,7 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         protected virtual void ConvertBodyToValue() {
             if (StatusCode == HttpStatusCode.OK)
-                Value = JsonSerializer.Deserialize<T>( Body.RootElement, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
+                Value = G_STJ.JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.SystemTextJsonSerializer );
             else 
                 Value = new T();
 

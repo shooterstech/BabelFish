@@ -5,6 +5,12 @@ using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// An abstract term that represents both Events from a COURSE OF FIRE and Singulars from a COURSE OF FIRE. 
+    /// Event Composites can have one parent Event Composite and multiple children Event Composites.
+    /// <para>Use the GrowEventTree() method to determine the Event Tree from a COURSE OF FIRE.</para>
+    /// </summary>
     public class EventComposite : IEquatable<EventComposite> {
 
         public EventComposite() {

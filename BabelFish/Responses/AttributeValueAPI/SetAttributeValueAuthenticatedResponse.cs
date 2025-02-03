@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataModel.AttributeValue;
+﻿using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI
@@ -38,7 +36,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
                 var rootElement = Body.RootElement;
                 var setAttrValueListElement = rootElement.GetProperty( OBJECT_LIST_NAME );
 
-                Value = JsonSerializer.Deserialize<SetAttributeValueList>( setAttrValueListElement, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
+                Value = G_STJ.JsonSerializer.Deserialize<SetAttributeValueList>( setAttrValueListElement, SerializerOptions.SystemTextJsonSerializer );
             } else {
                 Value = new SetAttributeValueList();
             }

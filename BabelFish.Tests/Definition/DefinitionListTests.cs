@@ -12,12 +12,7 @@ using Scopos.BabelFish.APIClients;
 namespace Scopos.BabelFish.Tests.Definition {
 
 	[TestClass]
-	public class DefinitionListTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+	public class DefinitionListTests : BaseTestClass {
 
         [TestMethod]
 		public async Task BasicGetRest() {

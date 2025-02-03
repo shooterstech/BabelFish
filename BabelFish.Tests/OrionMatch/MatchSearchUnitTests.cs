@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -11,12 +7,7 @@ using Scopos.BabelFish.Runtime.Authentication;
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
     [TestClass]
-    public class MatchSearchUnitTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class MatchSearchUnitTests : BaseTestClass {
 
         /// <summary>
         /// Conducts a default search and checks that soemthing comes back.

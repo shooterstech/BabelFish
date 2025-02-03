@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Requests.AttributeValueAPI;
-using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
@@ -16,11 +7,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     /// Series of unit tests that test if new attribute values have expected default values
     /// </summary>
     [TestClass]
-    public class DefaultAttributeValues {
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class DefaultAttributeValues  : BaseTestClass {
 
         /// <summary>
         /// As of Feb 2023 AttributeField is *NOT* reading the default values as specified by the definition. The class is instead using 

@@ -1,21 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net;
-using System.Threading.Tasks;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.OrionMatch;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
-using Amazon.DynamoDBv2.Model;
 using Scopos.BabelFish.DataModel.Definitions;
-using System.Collections.Generic;
-using System;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Tests.Definition;
 
 
-namespace Scopos.BabelFish.Tests.OrionMatch
-{
+namespace Scopos.BabelFish.Tests.OrionMatch {
 
     [TestClass]
-    public class AvgPredictionsTests
+    public class AvgPredictionsTests : BaseTestClass
     {
         public CourseOfFire courseOfFire = new CourseOfFire();
         public ResultEvent resultEvent = new ResultEvent();

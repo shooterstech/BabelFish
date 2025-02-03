@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Converters;
-
+﻿
 namespace Scopos.BabelFish.Helpers {
     public static class ObjectCloner {
 
@@ -23,10 +14,10 @@ namespace Scopos.BabelFish.Helpers {
                 return default;
             }
 
-            var options = G_BF_STJ_CONV.SerializerOptions.APIClientSerializer;
+            var options = SerializerOptions.SystemTextJsonSerializer;
 
-            string jsonString = JsonSerializer.Serialize( source, options );
-            return JsonSerializer.Deserialize<T>( jsonString, options );
+            string jsonString = G_STJ.JsonSerializer.Serialize( source, options );
+            return G_STJ.JsonSerializer.Deserialize<T>( jsonString, options );
         }
 
         /*

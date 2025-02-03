@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Runtime;
-using Scopos.BabelFish.Tests;
-using Scopos.BabelFish.Requests.Athena;
-using Scopos.BabelFish.DataModel.AthenaLogin;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Requests.Athena;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.Athena {
 
     [TestClass]
-    public class LoginTest {
-
-        [TestInitialize]
-        public async Task InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class LoginTest : BaseTestClass {
         
         /// <summary>
          /// Unit test to confirm the Constructors set the api key and API stage as expected.

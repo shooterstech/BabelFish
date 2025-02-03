@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Text;
+﻿using System.Net;
 using System.Threading.Tasks;
-using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
-using System.Net;
-using Scopos.BabelFish.Helpers;
-using System.Diagnostics;
 
 namespace Scopos.BabelFish.Tests.Miscellaneous {
 
     [TestClass]
-    public class StringFormatUnitTest {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class StringFormatUnitTest : BaseTestClass {
 
         /// <summary>
         /// Tests Format Score of String Formatting works as expected.

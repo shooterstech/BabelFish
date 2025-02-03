@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.Requests.ScoreHistoryAPI;
-using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.ScoreHistory;
+using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 
-namespace Scopos.BabelFish.Tests.ScoreHistory
-{
+namespace Scopos.BabelFish.Tests.ScoreHistory {
 
     [TestClass]
-    public class PublicScoreHistoryTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class PublicScoreHistoryTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.

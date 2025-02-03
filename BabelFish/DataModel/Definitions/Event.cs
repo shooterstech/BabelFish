@@ -1,26 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using BabelFish.DataModel.Definitions;
 using NLog;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.Helpers;
 
-namespace Scopos.BabelFish.DataModel.Definitions
-{
+namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
-    /// In the Reconfigurable Rulebook Events are defined using the well known Composite Pattern. 
-    /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
-    /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
+    /// In the Reconfigurable Rulebook Event Composites are defined using the well known Composite Pattern. 
+    /// An Event Composite can either be an Event (that has children), or a Singular that does not have children. 
+    /// 
+    /// <para>An Event defines a real world event in a marksmanship competition. Includes events, stages, series, and strings. 
+    /// Does not includes individual shots (as these are Singulars).</para>
     /// </summary>
-    [Serializable]
     public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
         protected Logger Logger = LogManager.GetCurrentClassLogger();

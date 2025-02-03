@@ -13,15 +13,15 @@ using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
     [TestClass]
-    public class ResultListFormattedTests {
+    public class ResultListFormattedTests : BaseTestClass {
 
         private OrionMatchAPIClient matchClient;
         private DefinitionAPIClient definitionClient;
         private IUserProfileLookup userProfileLookup;
 
         [TestInitialize]
-        public async Task InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1"; // Constants.X_API_KEY;
+        public override void InitializeTest() {
+            base.InitializeTest();
 
             matchClient = new OrionMatchAPIClient( );
             definitionClient = new DefinitionAPIClient( );

@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.Tests.AttributeValue
-{
+namespace Scopos.BabelFish.Tests.AttributeValue {
 
     [TestClass]
-    public class SetAttributeValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class SetAttributeValueTests : BaseTestClass{
 
         [TestMethod]
         public async Task SetAttributeValue_SingleAttribute() {

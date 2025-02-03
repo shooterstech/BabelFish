@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.DataModel.Athena.Shot;
+﻿using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.Tests.AthenaDataModel {
 
     [TestClass]
-    public class LocationTests {
+    public class LocationTests : BaseTestClass {
 
         
 

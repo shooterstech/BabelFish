@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Amazon;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
-using Amazon.Runtime;
-using Amazon.CognitoIdentityProvider.Model;
 
 namespace Scopos.BabelFish.Tests.Authentication {
     [TestClass]
-    public class CognitoTest {
+    public class CognitoTest : BaseTestClass {
 
         private static string accountID = "703601548845";
         private static string awsRegion = "us-east-1";

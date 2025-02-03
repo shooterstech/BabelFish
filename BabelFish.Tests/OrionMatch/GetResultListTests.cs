@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using System.Threading;
-using System.Diagnostics;
-using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
-    public class GetResultListTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class GetResultListTests : BaseTestClass {
 
         [TestMethod]
         public async Task GetResultListBasicPublicTest() {

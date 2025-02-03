@@ -1,12 +1,7 @@
-﻿using System.Text;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using System.Text.Json;
-using Scopos.BabelFish.Runtime.Authentication;
+﻿using NLog;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
-using NLog;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.AttributeValueAPI {
     public class SetAttributeValueAuthenticatedRequest : Request {
@@ -30,7 +25,7 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
                 try {
-                    var json = JsonSerializer.Serialize( AttributeValuesToUpdate, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
+                    var json = G_STJ.JsonSerializer.Serialize( AttributeValuesToUpdate, SerializerOptions.SystemTextJsonSerializer );
                     return new StringContent( json, Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
                     Logger.Error( ex );

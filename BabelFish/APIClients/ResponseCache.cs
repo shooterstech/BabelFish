@@ -1,13 +1,8 @@
-﻿using System.Reflection;
-using System.IO;
-using NLog;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.Responses;
+﻿using System.Net;
 using Scopos.BabelFish.Requests;
-using System.Net;
+using Scopos.BabelFish.Responses;
 
-namespace Scopos.BabelFish.APIClients
-{
+namespace Scopos.BabelFish.APIClients {
     public class ResponseCache {
 		private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -84,7 +79,7 @@ namespace Scopos.BabelFish.APIClients
 						FileInfo file = new FileInfo( filename );
                         file.Directory.Create();
 
-                        var json = G_STJ.JsonSerializer.Serialize( response, G_BF_STJ_CONV.SerializerOptions.APIClientSerializer );
+                        var json = G_STJ.JsonSerializer.Serialize( response, SerializerOptions.SystemTextJsonSerializer );
 
 						using (StreamWriter sw = File.CreateText( file.FullName )) {
 							sw.WriteLine( json );

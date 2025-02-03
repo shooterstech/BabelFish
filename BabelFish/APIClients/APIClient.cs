@@ -44,7 +44,6 @@ namespace Scopos.BabelFish.APIClients {
         protected APIClient() {
 
             Settings.CheckXApiKey();
-            G_BF_STJ_CONV.SerializerOptions.InitAPIClientDeserializer();
 
             this.ApiStage = APIStage.PRODUCTION;
 
@@ -57,7 +56,6 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         protected APIClient( APIStage apiStage ) {
             Settings.CheckXApiKey();
-            G_BF_STJ_CONV.SerializerOptions.InitAPIClientDeserializer();
 
             this.ApiStage = apiStage;
 

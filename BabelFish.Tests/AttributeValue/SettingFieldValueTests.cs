@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
+﻿using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Requests.AttributeValueAPI;
-using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
@@ -18,12 +7,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     /// The methods in this class largely test the AttributeField class, and if data types are stored and returned in their expected format.
     /// </summary>
     [TestClass]
-    public class SettingFieldValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class SettingFieldValueTests : BaseTestClass {
 
         [TestMethod]
         public void HappyPathSingleAttributeFieldDataTypes() {
