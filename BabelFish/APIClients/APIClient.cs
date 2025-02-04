@@ -10,6 +10,7 @@ using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Converters;
+using System.Diagnostics;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -85,8 +86,10 @@ namespace Scopos.BabelFish.APIClients {
                 response.StatusCode = HttpStatusCode.OK;
                 //response.MessageResponse = cachedResponse.MessageResponse.Copy();
                 //response.MessageResponse.Message.Add( "In memory cached response" );
+                //var stopWatch = Stopwatch.StartNew();
                 response.Body = cachedResponse.Body;
                 response.TimeToRun = DateTime.Now - startTime;
+                //stopWatch.Stop();
                 response.InMemoryCachedResponse = true;
 
                 logger.Info( $"Returning a in-memory cached Response for {request}." );
@@ -159,7 +162,6 @@ namespace Scopos.BabelFish.APIClients {
                         responseMessage = await httpClient.SendAsync( requestMessage );
                     }
 
-                    response.TimeToRun = DateTime.Now - startTime;
                     logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );
                 }
 
@@ -167,8 +169,15 @@ namespace Scopos.BabelFish.APIClients {
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
                 using (StreamReader sr = new StreamReader( s )) {
+                    /*
+                     * EKA Note Jan 2025: There are faster ways of parsing the stream into an object. However, by capturing the json (which slows things down)
+                     * it makes troubleshooting much easier. Any by saving the JsonDocument in .Body, makes reusing response in a cache easier.
+                     */
                     jsonAsString = sr.ReadToEnd();
+                    //var stopWatch = Stopwatch.StartNew();
                     response.Body = G_STJ.JsonDocument.Parse( jsonAsString );
+                    response.TimeToRun = DateTime.Now - startTime;
+                    //stopWatch.Stop();
 
                     G_STJ.JsonElement messageArray;
                     if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array ) {

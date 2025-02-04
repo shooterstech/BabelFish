@@ -105,7 +105,7 @@ namespace Scopos.BabelFish.APIClients {
                 CourseOfFireCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             }
@@ -129,7 +129,7 @@ namespace Scopos.BabelFish.APIClients {
                 EventAndStageStyleMappingCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode}" );
             }
@@ -153,7 +153,7 @@ namespace Scopos.BabelFish.APIClients {
                 EventStyleCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode}" );
             }
@@ -178,7 +178,7 @@ namespace Scopos.BabelFish.APIClients {
                 RankingRuleCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode}" );
             }
@@ -203,7 +203,7 @@ namespace Scopos.BabelFish.APIClients {
                 ResultListFormatCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode}" );
             }
@@ -228,7 +228,7 @@ namespace Scopos.BabelFish.APIClients {
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode}" );
             }
@@ -252,7 +252,7 @@ namespace Scopos.BabelFish.APIClients {
                 StageStyleCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode}" );
             }
@@ -277,7 +277,7 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCollectionCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode}" );
             }
@@ -302,7 +302,7 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                throw new DefinitionNotFoundException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
             }

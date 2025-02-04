@@ -25,27 +25,23 @@ namespace Scopos.BabelFish.Converters.Microsoft {
             string dateString = reader.GetString();
 
             if (!string.IsNullOrEmpty( dateString )) {
+
+                DateTime output;
+
                 //Try parsing with the expected format first
-                try {
-                    return DateTime.ParseExact( dateString, DateTimeFormat, Helpers.DateTimeFormats.CULTURE );
-                } catch (FormatException fe) {
-                    Logger.Warn( $"Could not parse DateTime string '{dateString}' using the format '{DateTimeFormat}'." );
-                }
+                if (DateTime.TryParseExact( dateString, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out output ))
+                    return output;
 
                 //Next try parsing with the secondary format, if one was specified
-                try {
-                    if (!string.IsNullOrEmpty( DateTimeFormatSecondary ))
-                        return DateTime.ParseExact( dateString, DateTimeFormatSecondary, Helpers.DateTimeFormats.CULTURE );
-                } catch (FormatException fe) {
-                    Logger.Warn( $"Could not parse DateTime string '{dateString}' using the secondary format '{DateTimeFormatSecondary}'." );
-                }
+                if (!string.IsNullOrEmpty( DateTimeFormatSecondary )
+                && DateTime.TryParseExact( dateString, DateTimeFormatSecondary, CultureInfo.InvariantCulture, DateTimeStyles.None, out output ))
+                    return output;
 
-                //Last effort, try parsing generically
-                try {
-                    return DateTime.Parse( dateString );
-                } catch (FormatException fe) {
-                    Logger.Warn( $"Could not parse DateTime string '{dateString}' using a generic parser." );
-                }
+                if ( DateTime.TryParse( dateString, out output ) ) 
+                    return output;
+                
+                Logger.Warn( $"Could not parse DateTime string '{dateString}' using a generic parser." );
+                
             }
 
             if (UseDefaultAsLastResort) {

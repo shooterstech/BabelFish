@@ -111,8 +111,10 @@ namespace Scopos.BabelFish.Responses
         }
 
         /// <summary>
-        /// Gets or Sets TimeSpan of API call
+        /// Total time of the request. Includes the time it takes to make the API call plus time to parse the returned JSON into object form.
         /// </summary>
+        //  EKA NOTE Jan 2025: There is an argument that the TimeToRun shold only be the API call and not the time to parse the JSON into object form.
+        //  As parsing json into object form can take a while, and maybe shouldn 't be included. I'm not sure which is better? 
         public TimeSpan TimeToRun { get; internal set; } = TimeSpan.Zero;
 
         /// <summary>

@@ -187,6 +187,63 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     };
 
 
+    public enum MatchParticipantRole {
+
+        /// <summary>
+        /// An athlete or competitor
+        /// </summary>
+        [Description( "Athlete" )]
+        [EnumMember( Value = "Athlete" )]
+        ATHLETE,
+
+        /// <summary>
+        /// A coach
+        /// </summary>
+        [Description( "Coach" )]
+        [EnumMember( Value = "Coach" )]
+        COACH,
+
+        /// <summary>
+        /// A statistical officer
+        /// </summary>
+        [Description( "Stat Officer" )]
+        [EnumMember( Value = "Stat Officer" )]
+        STATISTICAL_OFFICER,
+
+        /// <summary>
+        /// A range officer
+        /// </summary>
+        [Description( "Range Officer" )]
+        [EnumMember( Value = "Range Officer" )]
+        RANGE_OFFICER,
+
+        /// <summary>
+        /// A range officer
+        /// </summary>
+        /// <remarks>New as of Jan 2025</remarks>
+        [Description( "Technical Officer" )]
+        [EnumMember( Value = "Technical Officer" )]
+        TECHNICAL_OFFICER,
+
+        /// <summary>
+        /// Match Director
+        /// </summary>
+        /// <remarks>New as of Jan 2025</remarks>
+        [Description( "Match Director" )]
+        [EnumMember( Value = "Match Director" )]
+        MATCH_DIRECTOR,
+
+        /// <summary>
+        /// Registration
+        /// </summary>
+        [Description( "Registration" )]
+        [EnumMember( Value = "Registration" )]
+        REGISTRATION,
+
+        NONE
+    }
+
+
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum MatchTypeOptions {
         /// <summary>
