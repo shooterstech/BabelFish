@@ -111,6 +111,8 @@ namespace Scopos.BabelFish.APIClients {
                 }
             }
 
+            //jsonAsString is practically used only for debugging
+            string jsonAsString = "";
 
             try {
 
@@ -165,7 +167,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
                 using (StreamReader sr = new StreamReader( s )) {
-                    response.Body = G_STJ.JsonDocument.Parse( sr.ReadToEnd() );
+                    jsonAsString = sr.ReadToEnd();
+                    response.Body = G_STJ.JsonDocument.Parse( jsonAsString );
 
                     G_STJ.JsonElement messageArray;
                     if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array ) {
@@ -190,6 +193,7 @@ namespace Scopos.BabelFish.APIClients {
                     }
                 } else {
                     logger.Error( $"API error with: {responseMessage.ReasonPhrase}" );
+                    logger.Debug( jsonAsString );
                 }
 
             } catch (Exception ex) {
@@ -197,6 +201,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.StatusCode = HttpStatusCode.InternalServerError;
                 //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
+                logger.Debug( jsonAsString );
             }
         }
 

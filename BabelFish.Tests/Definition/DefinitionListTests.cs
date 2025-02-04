@@ -40,7 +40,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 			var client = new DefinitionAPIClient();
 
 			//To perform this test, need to clear cache first, as other tests may have populated it.
-			ResponseCache.CACHE.Clear();
+			Initializer.ClearCache(false );
 
 			var getDefinitionListResponse1 = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE );
 

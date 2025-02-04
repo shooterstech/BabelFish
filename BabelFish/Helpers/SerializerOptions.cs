@@ -95,6 +95,11 @@ namespace Scopos.BabelFish.Helpers {
                     //Common Enums
                     SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<VisibilityOption>() );
 
+                    //Club Enums
+                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
+                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseType>() );
+                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubOptions>() );
+
                     //Match Enums
                     SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueRankingRuleType>() );
                     SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueSeasonType>() );

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Text;
 using Scopos.BabelFish.Runtime;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
@@ -66,6 +67,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<Scopos.BabelFish.DataModel.Definitions.Attribute> GetAttributeDefinitionAsync( SetName setName ) {
 
@@ -77,8 +79,10 @@ namespace Scopos.BabelFish.APIClients {
 
                 AttributeCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             }
         }
 
@@ -88,6 +92,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
@@ -99,6 +104,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 CourseOfFireCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             }
@@ -110,6 +117,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
             if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) { return c; }
@@ -120,6 +128,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 EventAndStageStyleMappingCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode}" );
             }
@@ -131,6 +141,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventStyle> GetEventStyleDefinitionAsync( SetName setName ) {
             if (EventStyleCache.TryGetValue( setName, out EventStyle c )) { return c; }
@@ -141,6 +152,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 EventStyleCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode}" );
             }
@@ -152,6 +165,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
             if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) { return c; }
@@ -163,6 +177,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 RankingRuleCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode}" );
             }
@@ -174,6 +190,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
             if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) { return c; }
@@ -185,6 +202,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 ResultListFormatCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode}" );
             }
@@ -196,6 +215,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
             if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) { return c; }
@@ -207,6 +227,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode}" );
             }
@@ -218,6 +240,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<StageStyle> GetStageStyleDefinitionAsync( SetName setName ) {
             if (StageStyleCache.TryGetValue( setName, out StageStyle c )) { return c; }
@@ -228,6 +251,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 StageStyleCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode}" );
             }
@@ -239,6 +264,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
             if (TargetCollectionCache.TryGetValue( setName, out TargetCollection c )) { return c; }
@@ -250,6 +276,8 @@ namespace Scopos.BabelFish.APIClients {
 
                 TargetCollectionCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode}" );
             }
@@ -261,6 +289,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<Target> GetTargetDefinitionAsync( SetName setName ) {
             if (TargetCache.TryGetValue( setName, out Target t )) { return t; }
@@ -272,12 +301,14 @@ namespace Scopos.BabelFish.APIClients {
 
                 TargetCache.TryAdd( setName, definition );
                 return definition;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
+                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
             }
         }
 
-        public static void ClearCaches() {
+        public static void ClearCache() {
             AttributeCache.Clear();
             CourseOfFireCache.Clear();
             EventAndStageStyleMappingCache.Clear();

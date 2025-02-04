@@ -3,7 +3,7 @@ using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 
 namespace Scopos.BabelFish.APIClients {
-    public class ResponseCache {
+    public class ResponseCache : IClearCache{
 		private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private int requestCount = 0;
@@ -121,10 +121,8 @@ namespace Scopos.BabelFish.APIClients {
             CleanUp();
         }
 
-        /// <summary>
-        /// Removes all items from cache
-        /// </summary>
-        public void Clear() {
+        /// <inheritdoc />
+        public void ClearCache() {
             lock(mutex) {
                 cachedRequests.Clear();
             }

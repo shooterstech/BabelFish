@@ -11,12 +11,7 @@ using Scopos.BabelFish.Responses.DefinitionAPI;
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    public class DefinitionCacheTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Initializer.Initialize( Constants.X_API_KEY );
-        }
+    public class DefinitionCacheTests : BaseTestClass {
 
         /// <summary>
         /// Testing that the first request, that is not using cache, is faster than the second test that is. 
@@ -62,6 +57,9 @@ namespace Scopos.BabelFish.Tests.Definition {
         /// </summary>
         [TestMethod]
         public async Task FileSystemCacheTest() {
+
+            //To perform this test, need to clear cache first, as other tests may have populated it.
+            Initializer.ClearCache(false);
 
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
@@ -138,6 +136,9 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task RequestsThatShouldNotGetCached() {
 
+            //To perform this test, need to clear cache first, as other tests may have populated it.
+            Initializer.ClearCache(false);
+
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
@@ -186,7 +187,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             string json = File.ReadAllText( path );
 
-            var definition = G_STJ.JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json );
+            var definition = G_STJ.JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json, Helpers.SerializerOptions.SystemTextJsonSerializer );
 
             Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
 		}

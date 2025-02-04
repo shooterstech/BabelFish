@@ -1,5 +1,4 @@
-﻿using Scopos.BabelFish.Converters.Microsoft;
-using Scopos.BabelFish.DataActors.OrionMatch;
+﻿using Scopos.BabelFish.DataActors.OrionMatch;
 using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -55,8 +54,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The GMT time this ResultCOF was last updated
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 6 )]
-        [G_NS.JsonProperty( Order = 6 )]
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonProperty( Order = 6 )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = new DateTime();
 
@@ -110,8 +109,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// NOTE Local Date is not necessarily the same as the GMT date.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonProperty( Order = 13 )]
-        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
@@ -190,6 +189,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 50 )]
         [G_NS.JsonProperty( Order = 50 )]
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
+
+        /// <inheritdoc />
+        [G_STJ_SER.JsonPropertyOrder( 51 )]
+        [G_NS.JsonProperty( Order = 51 )]
+        public Athena.Shot.Shot LastShot { get; set; } = null;
 
 
         /// <inheritdoc />

@@ -6,7 +6,8 @@ namespace Scopos.BabelFish.Tests {
 
         [TestInitialize]
         public virtual void InitializeTest() {
-            Initializer.Initialize( Constants.X_API_KEY );
+            //Initialize the system, without pre-poulating the Definitino Cache (which avoids unnecessary API calls).
+            Initializer.Initialize( Constants.X_API_KEY, false );
         }
     }
 }

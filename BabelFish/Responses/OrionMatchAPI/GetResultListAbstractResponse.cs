@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
@@ -60,7 +61,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
                     if (attributeValue.AttributeValueTask != null) {
                         await attributeValue.FinishInitializationAsync();
                     }
-                } catch (AttributeNotFoundException nfe) {
+                } catch (DefinitionNotFoundException nfe) {
                     avToRemove.Add( attributeValue );
                 }
             }
