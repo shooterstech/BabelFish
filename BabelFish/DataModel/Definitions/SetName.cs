@@ -142,6 +142,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="copy"></param>
+        public SetName( SetName copy ) {
+            this.majorVersion = copy.majorVersion;
+            this.minorVersion = copy.minorVersion;
+            this.nameSpace = copy.nameSpace;
+            this.properName= copy.properName;
+        }
+
         public int MajorVersion {
             get { return majorVersion; }
         }

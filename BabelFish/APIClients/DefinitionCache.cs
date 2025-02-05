@@ -10,24 +10,34 @@ namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
 
         private static ConcurrentDictionary<SetName, Scopos.BabelFish.DataModel.Definitions.Attribute> AttributeCache = new ConcurrentDictionary<SetName, Scopos.BabelFish.DataModel.Definitions.Attribute>();
+        private static ConcurrentBag<SetName> AttributeNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, CourseOfFire> CourseOfFireCache = new ConcurrentDictionary<SetName, CourseOfFire>();
+        private static ConcurrentBag<SetName> CourseOfFireNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, EventAndStageStyleMapping> EventAndStageStyleMappingCache = new ConcurrentDictionary<SetName, EventAndStageStyleMapping>();
+        private static ConcurrentBag<SetName> EventAndStageStyleMappingNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, EventStyle> EventStyleCache = new ConcurrentDictionary<SetName, EventStyle>();
+        private static ConcurrentBag<SetName> EventStyleNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, RankingRule> RankingRuleCache = new ConcurrentDictionary<SetName, RankingRule>();
+        private static ConcurrentBag<SetName> RankingRuleNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, ResultListFormat> ResultListFormatCache = new ConcurrentDictionary<SetName, ResultListFormat>();
+        private static ConcurrentBag<SetName> ResultListFormatNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, ScoreFormatCollection> ScoreFormatCollectionCache = new ConcurrentDictionary<SetName, ScoreFormatCollection>();
+        private static ConcurrentBag<SetName> ScoreFormatCollectionNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, StageStyle> StageStyleCache = new ConcurrentDictionary<SetName, StageStyle>();
+        private static ConcurrentBag<SetName> StageStyleNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, Target> TargetCache = new ConcurrentDictionary<SetName, Target>();
+        private static ConcurrentBag<SetName> TargetNotFoundCache = new ConcurrentBag<SetName>();
 
         private static ConcurrentDictionary<SetName, TargetCollection> TargetCollectionCache = new ConcurrentDictionary<SetName, TargetCollection>();
+        private static ConcurrentBag<SetName> TargetCollectionNotFoundCache = new ConcurrentBag<SetName>();
 
         /// <summary>
         /// Preloads the Definiiton Cache with commmon definitions. If used, should help with some start up time.
@@ -73,6 +83,10 @@ namespace Scopos.BabelFish.APIClients {
 
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) { return a; }
 
+            var copy = new SetName( setName );
+            if (AttributeNotFoundCache.TryPeek(out copy ))
+                throw new DefinitionNotFoundException( $"Attribute definition '{setName}' not found. " );
+
             var response = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
                 var definition = response.Definition;
@@ -80,7 +94,9 @@ namespace Scopos.BabelFish.APIClients {
                 AttributeCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                AttributeNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"Attribute definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             }
@@ -98,6 +114,10 @@ namespace Scopos.BabelFish.APIClients {
 
             if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) { return c; }
 
+            var copy = new SetName( setName );
+            if (CourseOfFireNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"CourseOfFire definition '{setName}' not found. " );
+
             var response = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
                 var definition = response.Definition;
@@ -105,7 +125,9 @@ namespace Scopos.BabelFish.APIClients {
                 CourseOfFireCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                CourseOfFireNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"CourseOfFire definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             }
@@ -120,7 +142,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+
             if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (EventAndStageStyleMappingNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"EventAndStageStyleMapping definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetEventAndStageStyleMappingDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -129,7 +156,9 @@ namespace Scopos.BabelFish.APIClients {
                 EventAndStageStyleMappingCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                EventAndStageStyleMappingNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"EventAndStageStyleMapping definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.StatusCode}" );
             }
@@ -144,7 +173,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventStyle> GetEventStyleDefinitionAsync( SetName setName ) {
+
             if (EventStyleCache.TryGetValue( setName, out EventStyle c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (EventStyleNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"EventStyle definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetEventStyleDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -153,7 +187,9 @@ namespace Scopos.BabelFish.APIClients {
                 EventStyleCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                EventStyleNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"EventStyle definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. {response.StatusCode}" );
             }
@@ -168,7 +204,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
+
             if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (RankingRuleNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"RankingRule definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -178,7 +219,9 @@ namespace Scopos.BabelFish.APIClients {
                 RankingRuleCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                RankingRuleNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"RankingRule definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.StatusCode}" );
             }
@@ -193,7 +236,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
+
             if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (ResultListFormatNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"ResultListFormat definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -203,7 +251,9 @@ namespace Scopos.BabelFish.APIClients {
                 ResultListFormatCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                ResultListFormatNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"ResultListFormat definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.StatusCode}" );
             }
@@ -218,7 +268,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
+
             if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (ScoreFormatCollectionNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"ScoreFormatCollection definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetScoreFormatCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -228,7 +283,9 @@ namespace Scopos.BabelFish.APIClients {
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                ScoreFormatCollectionNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"ScoreFormatCollection definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.StatusCode}" );
             }
@@ -243,7 +300,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<StageStyle> GetStageStyleDefinitionAsync( SetName setName ) {
+
             if (StageStyleCache.TryGetValue( setName, out StageStyle c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (StageStyleNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"StageStyle definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetStageStyleDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -252,7 +314,9 @@ namespace Scopos.BabelFish.APIClients {
                 StageStyleCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                StageStyleNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"StageStyle definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. {response.StatusCode}" );
             }
@@ -267,7 +331,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
+
             if (TargetCollectionCache.TryGetValue( setName, out TargetCollection c )) { return c; }
+
+            var copy = new SetName( setName );
+            if (TargetCollectionNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"TargetCollection definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -277,7 +346,9 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCollectionCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                TargetCollectionNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"TargetCollection definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. {response.StatusCode}" );
             }
@@ -292,7 +363,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public static async Task<Target> GetTargetDefinitionAsync( SetName setName ) {
+
             if (TargetCache.TryGetValue( setName, out Target t )) { return t; }
+
+            var copy = new SetName( setName );
+            if (TargetNotFoundCache.TryPeek( out copy ))
+                throw new DefinitionNotFoundException( $"Target definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetTargetDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
@@ -302,7 +378,9 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCache.TryAdd( setName, definition );
                 return definition;
             } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) {
-                throw new DefinitionNotFoundException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
+                //Also cache any NotFound requests
+                TargetNotFoundCache.Add( setName );
+                throw new DefinitionNotFoundException( $"Target definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
             }
@@ -319,6 +397,26 @@ namespace Scopos.BabelFish.APIClients {
             StageStyleCache.Clear();
             TargetCache.Clear();
             TargetCollectionCache.Clear();
+
+            while (!AttributeNotFoundCache.IsEmpty) AttributeNotFoundCache.TryTake( out _ );
+
+            while (!EventAndStageStyleMappingNotFoundCache.IsEmpty) EventAndStageStyleMappingNotFoundCache.TryTake( out _ );
+
+            while (!CourseOfFireNotFoundCache.IsEmpty) CourseOfFireNotFoundCache.TryTake( out _ );
+
+            while (!EventStyleNotFoundCache.IsEmpty) EventStyleNotFoundCache.TryTake( out _ );
+
+            while (!RankingRuleNotFoundCache.IsEmpty) RankingRuleNotFoundCache.TryTake( out _ );
+
+            while (!ResultListFormatNotFoundCache.IsEmpty) ResultListFormatNotFoundCache.TryTake( out _ );
+
+            while (!ScoreFormatCollectionNotFoundCache.IsEmpty) ScoreFormatCollectionNotFoundCache.TryTake( out _ );
+
+            while (!StageStyleNotFoundCache.IsEmpty) StageStyleNotFoundCache.TryTake( out _ );
+
+            while (!TargetNotFoundCache.IsEmpty) TargetNotFoundCache.TryTake( out _ );
+
+            while (!TargetCollectionNotFoundCache.IsEmpty) TargetCollectionNotFoundCache.TryTake( out _ );
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
@@ -191,5 +192,31 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
 		}
+
+        [TestMethod]
+        public async Task DefinitionNotFoundTest() {
+
+            SetName notARealAttrDefinition = SetName.Parse( "v1.0:orion:not a real attribute" );
+
+            var swFirstCall = Stopwatch.StartNew();
+            try {
+                await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
+            } catch ( DefinitionNotFoundException ) {
+                //This is expected
+                swFirstCall.Stop();
+            }
+
+            var swSecondCall = Stopwatch.StartNew();
+            try {
+                await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
+            } catch (DefinitionNotFoundException) {
+                //This is expected
+                swSecondCall.Stop();
+            }
+
+            //The second call, if it was cached, should be faster than the first
+            //Due to the time it takes to throw and catch an exception, the benefit is minimal, but still there.
+            Assert.IsTrue( swFirstCall.ElapsedMilliseconds > 2 * swSecondCall.ElapsedMilliseconds );
+        }
     }
 }
