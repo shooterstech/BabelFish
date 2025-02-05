@@ -28,8 +28,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 			Assert.IsTrue( responseNoCache.TimeToRun > responseWithCache.TimeToRun * 100 );
 
 			//And of course the Match object should be equal
-			var matchNoCache = G_NS.JsonConvert.SerializeObject( responseNoCache.Match, SerializerOptions.NewtonsoftJsonDeserializer );
-			var matchWithCache = G_NS.JsonConvert.SerializeObject( responseWithCache.Match, SerializerOptions.NewtonsoftJsonDeserializer );
+			var matchNoCache = G_NS.JsonConvert.SerializeObject( responseNoCache.Match, SerializerOptions.NewtonsoftJsonSerializer );
+			var matchWithCache = G_NS.JsonConvert.SerializeObject( responseWithCache.Match, SerializerOptions.NewtonsoftJsonSerializer );
 			Assert.AreEqual( matchNoCache, matchWithCache );
 
 		}

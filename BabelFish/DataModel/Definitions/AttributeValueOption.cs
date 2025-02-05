@@ -10,8 +10,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// AttributeValueOption are the choices presented to the user with the 
     /// AttributeField FieldType is SUGGEST or CLOSED.
     /// </summary>
-    [Serializable]
-    public class AttributeValueOption: IReconfigurableRulebookObject {
+    public class AttributeValueOption<T> : IReconfigurableRulebookObject {
 
         /// <summary>
         /// Public constructor
@@ -29,7 +28,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The value that get's stored.
         /// </summary>
-        public dynamic Value { get; set; }
+        public T Value { get; set; }
 
         /// <summary>
         /// Human readable description

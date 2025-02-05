@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI {
         protected override void ConvertBodyToValue() {
             G_STJ.JsonElement root = Body.RootElement;
             G_STJ.JsonElement definition = root.GetProperty( SetName.ToString() );
-            Value = G_STJ.JsonSerializer.Deserialize<SparseDefinition>( definition, SerializerOptions.SystemTextJsonSerializer );
+            Value = G_STJ.JsonSerializer.Deserialize<SparseDefinition>( definition, SerializerOptions.SystemTextJsonDeserializer );
         }
     }
 }

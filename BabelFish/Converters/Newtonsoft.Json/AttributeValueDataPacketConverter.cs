@@ -47,11 +47,30 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
             o["Visibility"] = attrValueDataPacket.Visibility.ToString();
             o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
-            o["AttributeValue"] = new JObject();
 
             if (attrValueDataPacket.AttributeValue != null) {
-                foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
-                    o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+                if (attrValueDataPacket.AttributeValue.IsMultipleValue) {
+                    o["AttributeValue"] = new JArray();
+                    foreach (var key in attrValueDataPacket.AttributeValue.GetAttributeFieldKeys()) {
+                        var nextObject = new JObject();
+                        foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
+                            if (!field.MultipleValues) {
+                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key);
+                            } else {
+                                nextObject[field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key ) );
+                            }
+                        }
+                        ((JArray) o["AttributeValue"]).Add( nextObject );
+                    }
+                } else {
+                    o["AttributeValue"] = new JObject();
+                    foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
+                        if (!field.MultipleValues) {
+                            o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+                        } else {
+                            o["AttributeValue"][field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName ) );
+                        }
+                    }
                 }
             }
             

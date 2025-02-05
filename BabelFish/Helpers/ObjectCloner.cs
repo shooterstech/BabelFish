@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Helpers {
                 return default;
             }
 
-            var options = SerializerOptions.SystemTextJsonSerializer;
+            var options = SerializerOptions.SystemTextJsonDeserializer;
 
             string jsonString = G_STJ.JsonSerializer.Serialize( source, options );
             return G_STJ.JsonSerializer.Deserialize<T>( jsonString, options );

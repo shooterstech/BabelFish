@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// List of possible values, when FieldType is CLOSED or SUGGEST
         /// </summary>
-        public List<AttributeValueOption> Values { get; set; } = new List<AttributeValueOption>();
+        public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
 
         private AttributeValidationString validation = new AttributeValidationString();
 
@@ -65,6 +65,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <inheritdoc />
         public override dynamic GetDefaultValue() {
             return DefaultValue;
+        }
+
+        /// <inheritdoc />
+        public override bool ValidateFieldValue( dynamic value ) {
+            return value is string;
         }
     }
 }

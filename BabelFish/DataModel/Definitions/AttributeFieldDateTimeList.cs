@@ -53,5 +53,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public override dynamic GetDefaultValue() {
             return DefaultValue;
         }
+
+        /// <inheritdoc />
+        public override bool ValidateFieldValue( dynamic value ) {
+            return value is List<DateTime>;
+        }
     }
 }

@@ -47,8 +47,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var attributeNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonDeserializer );
-            var attributeWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonDeserializer );
+            var attributeNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonSerializer );
+            var attributeWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonSerializer );
             Assert.AreEqual( attributeWithCache, attributeNoCache );
         }
 
@@ -128,8 +128,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var cofNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonDeserializer ); 
-            var cofWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonDeserializer ); 
+            var cofNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonSerializer ); 
+            var cofWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonSerializer ); 
             Assert.AreEqual( cofWithCache, cofNoCache );
         }
 
@@ -187,7 +187,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             string json = File.ReadAllText( path );
 
-            var definition = G_STJ.JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json, Helpers.SerializerOptions.SystemTextJsonSerializer );
+            var definition = G_STJ.JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json, Helpers.SerializerOptions.SystemTextJsonDeserializer );
 
             Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
 		}

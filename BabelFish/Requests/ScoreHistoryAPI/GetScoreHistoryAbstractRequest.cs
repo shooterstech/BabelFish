@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {

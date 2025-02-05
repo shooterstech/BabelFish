@@ -79,7 +79,7 @@ namespace Scopos.BabelFish.APIClients {
 						FileInfo file = new FileInfo( filename );
                         file.Directory.Create();
 
-                        var json = G_STJ.JsonSerializer.Serialize( response, SerializerOptions.SystemTextJsonSerializer );
+                        var json = G_STJ.JsonSerializer.Serialize( response, SerializerOptions.SystemTextJsonDeserializer );
 
 						using (StreamWriter sw = File.CreateText( file.FullName )) {
 							sw.WriteLine( json );

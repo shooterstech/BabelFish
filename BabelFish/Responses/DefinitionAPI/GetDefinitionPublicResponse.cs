@@ -32,7 +32,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
             if (this.StatusCode == System.Net.HttpStatusCode.OK) {
                 G_STJ.JsonElement root = Body.RootElement;
                 G_STJ.JsonElement definition = root.GetProperty( SetName.ToString() );
-                Value = G_STJ.JsonSerializer.Deserialize<T>( definition, SerializerOptions.SystemTextJsonSerializer );
+                Value = G_STJ.JsonSerializer.Deserialize<T>( definition, SerializerOptions.SystemTextJsonDeserializer );
             }
         }
 

@@ -194,7 +194,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         [G_STJ_SER.JsonPropertyOrder( 51 )]
         [G_NS.JsonProperty( Order = 51 )]
-        public Athena.Shot.Shot LastShot { get; set; } = null;
+        public Athena.Shot.Shot ? LastShot { get; set; } = null;
 
 
         /// <inheritdoc />

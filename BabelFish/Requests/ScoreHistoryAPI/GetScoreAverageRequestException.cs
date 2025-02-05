@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.Requests;
-
+﻿
 namespace Scopos.BabelFish.Requests.ScoreHistory {
     public class GetScoreAverageRequestException : RequestException {
         public GetScoreAverageRequestException()

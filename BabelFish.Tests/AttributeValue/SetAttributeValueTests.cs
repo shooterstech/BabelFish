@@ -52,7 +52,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             string newStringValue = newIntValue.ToString();
             bool newBoolean = intValue % 2 == 0;
             DateTime newDate = DateTime.Today;
-            DateTime newDateTime = DateTime.UtcNow;
+            float newTimeSpan = intValue;
 
             //Set the values to the attribute value
             testAttributeValue1.SetFieldValue( "AnInteger", newIntValue );
@@ -60,7 +60,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttributeValue1.SetFieldValue( "AString", newStringValue );
             testAttributeValue1.SetFieldValue( "ABoolean", newBoolean );
             testAttributeValue1.SetFieldValue( "ADate", newDate );
-            testAttributeValue1.SetFieldValue( "ADateTime", newDateTime );
+            testAttributeValue1.SetFieldValue( "ATime", newTimeSpan );
             testAttriubuteAttributeValueDataPacket1.Visibility = VisibilityOption.PROTECTED;
 
             //Generate a set attribute value request
@@ -94,7 +94,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( newStringValue, (string) testAttributeValue2.GetFieldValue( "AString" ) );
             Assert.AreEqual( newBoolean, (bool)testAttributeValue2.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( newDate, (DateTime)testAttributeValue2.GetFieldValue( "ADate" ) );
-            Assert.IsTrue( Math.Abs((((DateTime)testAttributeValue2.GetFieldValue( "ADateTime" )).ToUniversalTime()- newDateTime).TotalSeconds) < .001D );
+            Assert.AreEqual( newTimeSpan, (float)testAttributeValue2.GetFieldValue( "ATime" ) );
             Assert.AreEqual( VisibilityOption.PROTECTED, testAttriubuteAttributeValueDataPacket2.Visibility );
         }
     }

@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
 
-
-namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
-
+namespace Scopos.BabelFish.DataModel.ScoreHistory {
     /// <summary>
     /// Time span format options when requestion Score History or Score Average.
     /// </summary>
-    
+
     public enum ScoreHistoryFormatOptions {
         /*
          * In order to get an Enum to serialize / deserialize to values with spaces have to do a couple of things.
@@ -24,26 +19,26 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
         /// <summary>
         /// Return values for each day
         /// </summary>
-        [Description( "DAY" )] [EnumMember( Value = "DAY" )] DAY,
+        [Description( "DAY" )][EnumMember( Value = "DAY" )] DAY,
 
         /// <summary>
         /// Return values for each week
         /// </summary>
-        [Description( "WEEK" )] [EnumMember( Value = "WEEK" )] WEEK,
+        [Description( "WEEK" )][EnumMember( Value = "WEEK" )] WEEK,
 
         /// <summary>
         /// Return values for each month
         /// </summary>
-        [Description( "MONTH" )] [EnumMember( Value = "MONTH" )] MONTH,
+        [Description( "MONTH" )][EnumMember( Value = "MONTH" )] MONTH,
 
         /// <summary>
         /// Return values for each quarter (three months)
         /// </summary>
-        [Description( "QUARTER" )] [EnumMember( Value = "QUARTER" )] QUARTER,
+        [Description( "QUARTER" )][EnumMember( Value = "QUARTER" )] QUARTER,
 
         /// <summary>
         /// Return values for each year
         /// </summary>
-        [Description( "YEAR" )] [EnumMember( Value = "YEAR" )] YEAR
+        [Description( "YEAR" )][EnumMember( Value = "YEAR" )] YEAR
     }
 }

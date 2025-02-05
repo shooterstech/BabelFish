@@ -91,7 +91,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="value"></param>
         /// <returns></returns>
         public virtual bool ValidateFieldValue( dynamic value ) {
-            //TODO: Actually validate the field value
             return true;
         }
 

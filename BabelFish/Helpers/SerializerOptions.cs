@@ -16,9 +16,9 @@ namespace Scopos.BabelFish.Helpers {
         /// <summary>
         /// Serializer options for the APIClient.
         /// </summary>
-        public static G_STJ.JsonSerializerOptions SystemTextJsonSerializer = null;
+        public static G_STJ.JsonSerializerOptions SystemTextJsonDeserializer = null;
 
-        public static G_NS.JsonSerializerSettings NewtonsoftJsonDeserializer = null;
+        public static G_NS.JsonSerializerSettings NewtonsoftJsonSerializer = null;
 
         /// <summary>
         /// Initializes the standard serializers used by and with BabelFish.
@@ -32,106 +32,106 @@ namespace Scopos.BabelFish.Helpers {
         /// </summary>
         private static void InitSystemTextJsonSerializer() {
 
-            if (SystemTextJsonSerializer == null) {
-                SystemTextJsonSerializer = new G_STJ.JsonSerializerOptions();
+            if (SystemTextJsonDeserializer == null) {
+                SystemTextJsonDeserializer = new G_STJ.JsonSerializerOptions();
 
-                lock( SystemTextJsonSerializer ) {
+                lock( SystemTextJsonDeserializer ) {
 
                     //Don't write a property if the value is equal to the default
                     //NOTE: Add the [JsonInclude] decorate on properties to always write to json
-                    SystemTextJsonSerializer.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault;
+                    SystemTextJsonDeserializer.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault;
 
                     //Write indented
-                    SystemTextJsonSerializer.WriteIndented = true;
+                    SystemTextJsonDeserializer.WriteIndented = true;
 
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.AttributeFieldConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.AttributeValidationConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketAPIResponseConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketMatchConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeFieldConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValidationConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketAPIResponseConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketMatchConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
                     //APIClientSerializer.Converters.Add( new ExcludeEmptyStringConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ParticipantConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateTimeConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateOnlyConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ScoreAverageBaseConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ScoreHistoryBaseConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.SetAttributeValueListConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.ShowWhenBaseConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.SquaddingAssignmentConverter() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.TieBreakingRuleConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ParticipantConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateTimeConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateOnlyConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreAverageBaseConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreHistoryBaseConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.SetAttributeValueListConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ShowWhenBaseConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.SquaddingAssignmentConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.TieBreakingRuleConverter() );
 
                     //Definition Enums
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AimingMarkColor>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AttributeDesignation>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<BarcodeLabelSize>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<COFTypeOptions>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<CompetitionType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DefinitionType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DisciplineType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DisplayEventOptions>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EventCalculation>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EventDerivationType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EventtType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<FieldType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LightIllumination>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LinkToOption>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultFieldMethod>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ScoreComponent>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ScoringShape>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShotMappingMethodType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenBoolean>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenCondition>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenOperation>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SingularType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SpecialOptions>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SortBy>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TieBreakingRuleMethod>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TimerCommandOptions>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DataModel.Definitions.ValueType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AimingMarkColor>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AttributeDesignation>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<BarcodeLabelSize>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<COFTypeOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<CompetitionType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DefinitionType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DisciplineType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DisplayEventOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EventCalculation>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EventDerivationType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EventtType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<FieldType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LightIllumination>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LinkToOption>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultFieldMethod>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ScoreComponent>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ScoringShape>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShotMappingMethodType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenBoolean>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenCondition>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenOperation>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SingularType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SpecialOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SortBy>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TieBreakingRuleMethod>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TimerCommandOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DataModel.Definitions.ValueType>() );
 
                     //Common Enums
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<VisibilityOption>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<VisibilityOption>() );
 
                     //Club Enums
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubOptions>() );
 
                     //Match Enums
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueRankingRuleType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueSeasonType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueVirtualType>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchAuthorizationRole>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchParticipantRole>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchTypeOptions>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultStatus>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueRankingRuleType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueSeasonType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueVirtualType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchAuthorizationRole>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchParticipantRole>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchTypeOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultStatus>() );
 
                     //Other Enums
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APIStage>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APISubDomain>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SocialRelationshipName>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APIStage>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APISubDomain>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SocialRelationshipName>() );
 
                     //AbstractEST
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ESTUnitCommand>() );
-                    SystemTextJsonSerializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ReplaceVariableOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ESTUnitCommand>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ReplaceVariableOptions>() );
                 }
             }
         }
 
         private static void InitNewtonsoftJsonDeserializer() {
-            NewtonsoftJsonDeserializer = new G_NS.JsonSerializerSettings();
+            NewtonsoftJsonSerializer = new G_NS.JsonSerializerSettings();
 
-            NewtonsoftJsonDeserializer.TypeNameHandling = G_NS.TypeNameHandling.None;
-            NewtonsoftJsonDeserializer.NullValueHandling = G_NS.NullValueHandling.Ignore;
-            NewtonsoftJsonDeserializer.Formatting = G_NS.Formatting.Indented;
-            NewtonsoftJsonDeserializer.DefaultValueHandling = G_NS.DefaultValueHandling.Ignore;
+            NewtonsoftJsonSerializer.TypeNameHandling = G_NS.TypeNameHandling.None;
+            NewtonsoftJsonSerializer.NullValueHandling = G_NS.NullValueHandling.Ignore;
+            NewtonsoftJsonSerializer.Formatting = G_NS.Formatting.Indented;
+            NewtonsoftJsonSerializer.DefaultValueHandling = G_NS.DefaultValueHandling.Ignore;
 
             //Lets enums get deserizlized from their stirng or description representation.
-            NewtonsoftJsonDeserializer.Converters.Add( new G_NS_CONV.StringEnumConverter() );
+            NewtonsoftJsonSerializer.Converters.Add( new G_NS_CONV.StringEnumConverter() );
         }
     }
 }
