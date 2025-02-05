@@ -186,9 +186,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
         /// To get a dictionary of Shots by their EventName, use GetShotsByEventName()
         /// </summary>
+        /// <remarks>Value may be null.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 50 )]
         [G_NS.JsonProperty( Order = 50 )]
-        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
+        public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
 
         /// <inheritdoc />
         [G_STJ_SER.JsonPropertyOrder( 51 )]
@@ -197,7 +198,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
 
         /// <inheritdoc />
-        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
+        public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
             if (shotsByEventName != null)
                 return shotsByEventName;
 
@@ -258,14 +259,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastCompetitionShot()
         {
-            Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = Shots;
-            Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot = null;
-            foreach(var shot in shots)
-            {
-                if (lastShot == null || shot.Value.TimeScored > lastShot.TimeScored)
-                {
-                    lastShot = shot.Value;
-                    continue;
+            Athena.Shot.Shot lastShot = null;
+
+            if (Shots != null) {
+                foreach (var shot in Shots) {
+                    if (lastShot == null || shot.Value.TimeScored > lastShot.TimeScored) {
+                        lastShot = shot.Value;
+                        continue;
+                    }
                 }
             }
             return lastShot;

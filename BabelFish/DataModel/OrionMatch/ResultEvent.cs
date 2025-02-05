@@ -121,7 +121,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
 		[DefaultValue( null ) ]
-        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
+        public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
 
         /// <inheritdoc />
         [G_STJ_SER.JsonPropertyOrder( 12 )]
@@ -146,7 +146,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
+        public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
             if (shotsByEventName != null)
                 return shotsByEventName;
 
@@ -160,15 +160,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastCompetitionShot()
+        public Athena.Shot.Shot? GetLastCompetitionShot()
         {
-            Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = Shots;
-            Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot = null;
-            foreach (var shot in shots)
-            {
-                if (shot.Value.TimeScored > lastShot.TimeScored)
-                {
-                    lastShot = shot.Value;
+            Athena.Shot.Shot lastShot = null;
+
+            if (Shots != null) {
+                foreach (var shot in Shots) {
+                    if (shot.Value.TimeScored > lastShot.TimeScored) {
+                        lastShot = shot.Value;
+                    }
                 }
             }
             return lastShot;
