@@ -109,7 +109,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = null;
 
         /// <inheritdoc />
-        public Athena.Shot.Shot LastShot { get; set; } = null;
+        public Athena.Shot.Shot ? LastShot { get; set; } = null;
 
 
         /// <summary>

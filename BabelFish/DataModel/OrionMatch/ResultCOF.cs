@@ -176,6 +176,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
 
         /// <inheritdoc />
+        public Athena.Shot.Shot ? LastShot { get; set; } = null;
+
+        /// <inheritdoc />
         public Dictionary<string, Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsByEventName() {
             if (shotsByEventName != null)
                 return shotsByEventName;
