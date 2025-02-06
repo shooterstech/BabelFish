@@ -294,7 +294,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions
 
 							if (!isAValueOption) {
 								valid = false;
-								Messages.Add( $"The AttributeField '{field.FieldName}' DefaultValue is not listed as one of the optional Values. Instead have '{field.GetDefaultValue()}.'" );
+								Messages.Add( $"The AttributeField '{field.FieldName}' DefaultValue is not listed as one of the optional Values. Instead have '{field.BaseGetDefaultValue()}.'" );
 							}
 						}
 					}

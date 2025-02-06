@@ -122,10 +122,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public Scopos.BabelFish.DataModel.Definitions.Attribute Attribute {  get { return definition; } }
 
         /// <summary>
-        /// Helper function, returnss a list of AttributeFields that are defined in the Attribute's definition.
+        /// Helper function, returns a list of AttributeFields that are defined in the Attribute's definition.
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefinition</returns>
-        public List<AttributeField> GetDefintionFields() {
+        public List<AttributeFieldBase> GetDefintionFields() {
             return definition.Fields;
         }
 
@@ -135,7 +135,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <param name="fieldName"></param>
         /// <returns></returns>
         /// <exception cref="AttributeValueException">Thrown if the fieldName is not defined by the Attribute.</exception>
-        public AttributeField GetAttributeField( string fieldName ) {
+        public AttributeFieldBase GetAttributeField( string fieldName ) {
             foreach (var field in definition.Fields ) {
                 if (field.FieldName== fieldName) 
                     return field;
@@ -150,7 +150,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <returns></returns>
         public string GetDefinitionKeyFieldName() {
-            AttributeField findKey = definition.Fields.Where( x => x.Key ).FirstOrDefault();
+            AttributeFieldBase findKey = definition.Fields.Where( x => x.Key ).FirstOrDefault();
             if (findKey != null)
                 return findKey.FieldName;
             else
@@ -161,7 +161,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// Get list of AttributeFields that are Required
         /// </summary>
         /// <returns>List<AttributeField> from AttributeDefinition</returns>
-        public List<AttributeField> GetDefinitionRequiredFields() {
+        public List<AttributeFieldBase> GetDefinitionRequiredFields() {
             return definition.Fields.Where( x => x.Required == true ).ToList();
         }
 
@@ -202,17 +202,16 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <returns>object to be type cast</returns>
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is a multi-value attribute.</exception>
         public dynamic GetFieldValue( string fieldName ) {
-            AttributeField attributeField = GetAttributeField( fieldName );
-            dynamic returnValue = attributeField.GetDefaultValue();
+            AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
             if (this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", logger );
             } else {
                 if (attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].ContainsKey( fieldName ))
-                    returnValue = attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName];
+                    return attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName];
             }
 
-            return returnValue;
+            return attributeField.BaseGetDefaultValue();
         }
 
         /// <summary>
@@ -225,17 +224,16 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <returns>object to be Type cast; null object if not found</returns>
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is not a multi-value attribute.</exception>
         public dynamic GetFieldValue( string fieldName, string fieldKey ) {
-            AttributeField attributeField = GetAttributeField( fieldName );
-            dynamic returnValue = attributeField.GetDefaultValue();
+            AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
             if (!this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' with key '{fieldKey}' in {SetName}", logger );
             } else {
                 if (attributeValues.ContainsKey( fieldKey ) && attributeValues[fieldKey].ContainsKey( fieldName )) 
-                    returnValue = attributeValues[fieldKey][fieldName];
+                    return attributeValues[fieldKey][fieldName];
             }
 
-            return returnValue;
+            return attributeField.BaseGetDefaultValue();
         }
 
         /// <summary>
@@ -311,9 +309,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (this.IsMultipleValue)
                 throw new AttributeValueException( $"Field being set is designated MultipleValue needing Key. Use overload SetFieldName(string fieldName, object fieldValue, string fieldKey)", logger );
 
-            AttributeField attributeField = GetAttributeField( fieldName );
+            AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
-            if (!attributeField.ValidateFieldValue( fieldValue )) {
+            if (!attributeField.BaseValidateFieldValue( fieldValue )) {
                 throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             } else {
                 
@@ -337,9 +335,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             if (!this.IsMultipleValue)
                 throw new AttributeValueException( $"Field being set is designated SingleValue not accepting a Key. Use overload SetFieldName(string fieldName, object fieldValue)", logger );
 
-            AttributeField attributeField = GetAttributeField( fieldName );
+            AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
-            if (!attributeField.ValidateFieldValue( fieldValue ))
+            if (!attributeField.BaseValidateFieldValue( fieldValue ))
                 throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             else {
 
@@ -387,14 +385,14 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 if (!attributeValues.ContainsKey( keyField )) {
                     attributeValues[keyField] = new Dictionary<string, dynamic>();
 
-                    foreach (AttributeField field in definition.Fields) {
+                    foreach (AttributeFieldBase field in definition.Fields) {
 
                         if (field.Key)
                             SetFieldValue( field.FieldName, keyField, keyField );
                         else if (definition.MultipleValues)
-                            SetFieldValue( field.FieldName, field.GetDefaultValue(), keyField );
+                            SetFieldValue( field.FieldName, field.BaseGetDefaultValue(), keyField );
                         else
-                            SetFieldValue( field.FieldName, field.GetDefaultValue() );
+                            SetFieldValue( field.FieldName, field.BaseGetDefaultValue() );
                     }
                 }
             } catch (Exception ex) {

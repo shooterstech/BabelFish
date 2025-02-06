@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldInteger : AttributeField {
+    public class AttributeFieldInteger : AttributeField<int> {
 
         /// <summary>
         /// Public default constructor
@@ -14,7 +15,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldInteger() {
             MultipleValues = false;
             ValueType = ValueType.INTEGER;
-            //Validation = new AttributeValidationInteger();
         }
 
         /// <summary>
@@ -22,21 +22,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public int DefaultValue { get; set; } = 0;
 
-        private AttributeValidationInteger validation = new AttributeValidationInteger();
-
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationInteger) {
-                    validation = (AttributeValidationInteger)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationInteger, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
+        public AttributeValidationInteger ? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.Number) {
@@ -48,13 +34,46 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
+        public override int GetDefaultValue() {
             return DefaultValue;
         }
 
         /// <inheritdoc />
-        public override bool ValidateFieldValue( dynamic value ) {
-            return value is int;
+        public override bool ValidateFieldValue( int value ) {
+            if (Validation == null)
+                return true;
+
+            return Validation.ValidateFieldValue( value );
+        }
+    }
+
+    public class AttributeValidationInteger : AttributeValidation<int> {
+
+        public AttributeValidationInteger() {
+        }
+
+        /// <summary>
+        /// The minimum value
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        [DefaultValue( null )]
+        public int ? MinValue { get; set; } = null;
+
+        /// <summary>
+        /// The maximum value
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
+        [DefaultValue( null )]
+        public int ? MaxValue { get; set; } = null;
+
+        public override bool ValidateFieldValue( int value ) {
+            if (MinValue != null && value < MinValue)
+                return false;
+
+            if (MaxValue != null && value > MaxValue)
+                return false;
+
+            return true;
         }
     }
 }

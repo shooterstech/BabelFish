@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldFloat : AttributeField {
+    public class AttributeFieldFloat : AttributeField<float> {
 
         /// <summary>
         /// Public default constructor
@@ -14,7 +12,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldFloat() {
             MultipleValues = false;
             ValueType = ValueType.FLOAT;
-            //Validation = new AttributeValidationFloat();
         }
 
         /// <summary>
@@ -22,41 +19,59 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public float DefaultValue { get; set; } = 0;
 
-        private AttributeValidationFloat validation = new AttributeValidationFloat();
+        public AttributeValidationFloat Validation = null;
 
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationFloat) {
-                    validation = (AttributeValidationFloat)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationFloat, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
-
-        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
-            if (value.ValueKind == JsonValueKind.Number) {
+        internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
+            if (value.ValueKind == G_STJ.JsonValueKind.Number) {
                 return value.GetSingle();
             } else {
                 Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
-                return DefaultValue;
+                return GetDefaultValue();
             }
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
+        public override float GetDefaultValue() {
             return DefaultValue;
         }
 
         /// <inheritdoc />
-        public override bool ValidateFieldValue( dynamic value ) {
-            return value is float
-                || value is int
-                || value is double;
+        public override bool ValidateFieldValue( float value ) {
+            if (Validation == null)
+                return true;
+
+            return Validation.ValidateFieldValue( value );
+        }
+    }
+
+    public class AttributeValidationFloat : AttributeValidation<float> {
+
+        public AttributeValidationFloat() {
+        }
+
+        /// <summary>
+        /// The minimum value
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        [DefaultValue( null  )]
+        public float ? MinValue { get; set; } = null;
+
+        /// <summary>
+        /// The maximum value
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
+        [DefaultValue( null )]
+        public float ? MaxValue { get; set; } = null;
+
+        /// <inheritdoc />
+        public override bool ValidateFieldValue( float value ) {
+            if (MinValue != null && value < MinValue)
+                return false;
+
+            if (MaxValue != null && value > MaxValue) 
+                return false;
+
+            return true;
         }
     }
 }

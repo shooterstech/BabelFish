@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldBoolean : AttributeField {
+    public class AttributeFieldBoolean : AttributeField<bool> {
 
         /// <summary>
         /// Public default constructor
@@ -14,7 +14,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldBoolean() {
             MultipleValues = false;
             ValueType = ValueType.BOOLEAN;
-            //Validation = new AttributeValidationBoolean();
         }
 
         /// <summary>
@@ -22,40 +21,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public bool DefaultValue { get; set; } = false;
 
-        private AttributeValidationBoolean validation = new AttributeValidationBoolean();
-
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationBoolean) {
-                    validation = (AttributeValidationBoolean)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationBoolean, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
-
         /// <inheritdoc />
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.True || value.ValueKind == JsonValueKind.False) {
                 return value.GetBoolean();
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}.");
+                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
                 return DefaultValue;
             }
         }
 
+        /*
+         * Nothing to validate with ValueType Boolean. The value is always valid.
+         */
+
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
+        public override bool GetDefaultValue() {
             return DefaultValue;
         }
 
-        /// <inheritdoc />
-        public override bool ValidateFieldValue( dynamic value ) {
-            return value is bool;
+        public override bool ValidateFieldValue( bool value ) {
+            return true;
         }
     }
 }

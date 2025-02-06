@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters.Microsoft;
-using Scopos.BabelFish.Helpers;
-
+﻿
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldDateTime : AttributeField {
+    public class AttributeFieldDateTime : AttributeField<DateTime> {
 
         /// <summary>
         /// Public default constructor
@@ -15,50 +8,74 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldDateTime() {
             MultipleValues = false;
             ValueType = ValueType.DATE_TIME;
-            //Validation = new AttributeValidationDate();
         }
 
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime DefaultValue { get; set; } = DateTime.UtcNow;
+        public DateTime ? DefaultValue { get; set; } = null;
 
-        private AttributeValidationDate validation = new AttributeValidationDate();
+        public AttributeValidationDateTime Validation = new AttributeValidationDateTime();
 
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationDate) {
-                    validation = (AttributeValidationDate)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationDate, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
-
-        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
-            if (value.ValueKind == JsonValueKind.String) {
+        internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
+            if (value.ValueKind == G_STJ.JsonValueKind.String) {
                 //EKA NOTE Jan 2025: May need a JsonSerializerOptions specifying a custom DateTiem format
-                return JsonSerializer.Deserialize<DateTime>( value );
+                return G_STJ.JsonSerializer.Deserialize<DateTime>( value );
             } else {
                 Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
-                return DefaultValue;
+                return GetDefaultValue();
             }
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
-            return DefaultValue;
+        public override DateTime GetDefaultValue() {
+            if (DefaultValue == null)
+                return DateTime.UtcNow;
+
+            return (DateTime) DefaultValue;
         }
 
         /// <inheritdoc />
-        public override bool ValidateFieldValue( dynamic value ) {
-            return value is DateTime;
+        public override bool ValidateFieldValue( DateTime value ) {
+            if (Validation == null)
+                return true;
+
+            return Validation.ValidateFieldValue( value );
+        }
+    }
+
+    public class AttributeValidationDateTime : AttributeValidation<DateTime> {
+
+        public AttributeValidationDateTime() {
+        }
+
+        /// <summary>
+        /// The minimum value
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        [G_NS.JsonProperty( Order = 3 )]
+        public DateTime? MinValue { get; set; } = null;
+
+        /// <summary>
+        /// The maximum value
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        [G_NS.JsonProperty( Order = 4 )]
+        public DateTime? MaxValue { get; set; } = null;
+
+        /// <inheritdoc />
+        public override bool ValidateFieldValue( DateTime value ) {
+            if (MinValue != null && value < MinValue)
+                return false;
+
+            if (MaxValue != null && value > MaxValue)
+                return false;
+
+            return true;
         }
     }
 }

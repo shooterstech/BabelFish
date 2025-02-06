@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+﻿using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldString : AttributeField {
+    public class AttributeFieldString : AttributeField<string> {
 
         /// <summary>
         /// Public default constructor
@@ -16,13 +11,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldString() {
             MultipleValues = false;
             ValueType = ValueType.STRING;
-            //Validation = new AttributeValidationString();
         }
 
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
-        public string DefaultValue { get; set; } = string.Empty;
+        public string ? DefaultValue { get; set; } = null;
 
 
         /// <summary>
@@ -37,39 +31,65 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
 
-        private AttributeValidationString validation = new AttributeValidationString();
+        public AttributeValidationString ? Validation = null;
 
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationString) {
-                    validation = (AttributeValidationString) value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationString, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
-
-        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
-            if (value.ValueKind == JsonValueKind.String) {
+        internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
+            if (value.ValueKind == G_STJ.JsonValueKind.String) {
                 return value.GetString();
             } else {
                 Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
-                return DefaultValue;
+                return GetDefaultValue();
             }
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
+        public override string GetDefaultValue() {
+            if ( DefaultValue == null )
+                return string.Empty;
+
             return DefaultValue;
         }
 
         /// <inheritdoc />
-        public override bool ValidateFieldValue( dynamic value ) {
-            return value is string;
+        public override bool ValidateFieldValue( string value ) {
+            if (this.FieldType == FieldType.CLOSED) {
+                bool isOneOfTheOptionValues = false;
+                foreach (var option in Values) {
+                    if (option.Value == value) {
+                        isOneOfTheOptionValues = true;
+                        break;
+                    }
+                }
+
+                if (!isOneOfTheOptionValues)
+                    return false;
+
+                return true;
+
+            } else {
+
+                if (Validation == null)
+                    return true;
+
+                return Validation.ValidateFieldValue( value );
+            }
+        }
+    }
+
+    public class AttributeValidationString : AttributeValidation<string> {
+
+        public AttributeValidationString() {
+        }
+
+        /// <summary>
+        /// Regular expression to check the value.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        [DefaultValue( "" )]
+        public string Regex { get; set; } = string.Empty;
+
+        public override bool ValidateFieldValue( string value ) {
+            return System.Text.RegularExpressions.Regex.IsMatch( value, this.Regex );
         }
     }
 }

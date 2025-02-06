@@ -6,8 +6,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
-    public class AttributeFieldConverter : JsonConverter<AttributeField> {
-        public override AttributeField? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+    public class AttributeFieldConverter : JsonConverter<AttributeFieldBase> {
+        public override AttributeFieldBase? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                 JsonElement root = doc.RootElement;
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
             }
         }
 
-        public override void Write( Utf8JsonWriter writer, AttributeField value, JsonSerializerOptions options ) {
+        public override void Write( Utf8JsonWriter writer, AttributeFieldBase value, JsonSerializerOptions options ) {
             JsonSerializer.Serialize( writer, value, value.GetType(), options );
         }
     }

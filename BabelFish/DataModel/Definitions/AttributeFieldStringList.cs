@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
+﻿
 
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldStringList : AttributeField {
+    public class AttributeFieldStringList : AttributeField<List<string>> {
 
         /// <summary>
         /// Public default constructor
@@ -16,13 +11,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldStringList() {
             MultipleValues = true;
             ValueType = ValueType.STRING;
-            //Validation = new AttributeValidationString();
         }
-
-        /// <summary>
-        /// The default value for this field, which is always a empty list.
-        /// </summary>
-        public List<string> DefaultValue { get; private set; } = new List<string>();
 
 
         /// <summary>
@@ -37,28 +26,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
 
-        private AttributeValidationString validation = new AttributeValidationString();
+        public AttributeValidationString ? Validation = null;
 
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationString) {
-                    validation = (AttributeValidationString)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationString, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
-
-        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
+        internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
             List<string> list = new List<string>();
 
-            if (value.ValueKind == JsonValueKind.Array) {
-                foreach( var v in value.EnumerateArray()) {
-                    if (v.ValueKind == JsonValueKind.String) {
+            if (value.ValueKind == G_STJ.JsonValueKind.Array) {
+                foreach (var v in value.EnumerateArray()) {
+                    if (v.ValueKind == G_STJ.JsonValueKind.String) {
                         list.Add( v.GetString() );
                     } else {
                         Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
@@ -68,18 +43,44 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return list;
             } else {
                 Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
-                return DefaultValue;
+                return GetDefaultValue();
             }
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
-            return DefaultValue;
+        public override List<string> GetDefaultValue() {
+            return new List<string>();
         }
 
         /// <inheritdoc />
-        public override bool ValidateFieldValue( dynamic value ) {
-            return value is List<string>;
+        public override bool ValidateFieldValue( List<string> value ) {
+
+            if (this.FieldType == FieldType.CLOSED) {
+                foreach (var item in value) {
+                    bool isOneOfTheOptionValues = false;
+                    foreach (var option in Values) {
+                        if (option.Value == item) {
+                            isOneOfTheOptionValues = true;
+                            break;
+                        }
+                    }
+
+                    if (!isOneOfTheOptionValues)
+                        return false;
+                }
+
+                return true;
+
+            } else {
+                if (Validation == null)
+                    return true;
+
+                foreach (var item in value)
+                    if (!Validation.ValidateFieldValue( item ))
+                        return false;
+
+                return true;
+            }
         }
     }
 }

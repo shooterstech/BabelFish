@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.Converters;
-
+﻿
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldTimeSpanList : AttributeField {
+    public class AttributeFieldTimeSpanList : AttributeField<List<float>> {
 
         /// <summary>
         /// Public default constructor
@@ -14,43 +8,33 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldTimeSpanList() {
             MultipleValues = true;
             ValueType = ValueType.TIME_SPAN;
-            //Validation = new AttributeValidationTimeSpan();
         }
 
-        /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
-        /// </summary>
-        /// <remarks>Time span value represented in seconds.</remarks>
-        public List<float> DefaultValue { get; private set; } = new List<float>();
+        public AttributeValidationTimeSpan ? Validation = null;
 
-        private AttributeValidationTimeSpan validation = new AttributeValidationTimeSpan();
-
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationTimeSpan) {
-                    validation = (AttributeValidationTimeSpan)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationTimeSpan, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
-
-        internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
-            if (value.ValueKind == JsonValueKind.Array) {
-                return JsonSerializer.Deserialize<List<float>>( value );
+        internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
+            if (value.ValueKind == G_STJ.JsonValueKind.Array) {
+                return G_STJ.JsonSerializer.Deserialize<List<float>>( value );
             } else {
                 Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
-                return DefaultValue;
+                return GetDefaultValue();
             }
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
-            return DefaultValue;
+        public override List<float> GetDefaultValue() {
+            return new List<float>();
+        }
+
+        public override bool ValidateFieldValue( List<float> value ) {
+            if (Validation == null)
+                return true;
+
+            foreach (var item in value)
+                if (!Validation.ValidateFieldValue( item ))
+                    return false;
+
+            return true;
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class AttributeFieldTimeSpan : AttributeField {
+    public class AttributeFieldTimeSpan : AttributeField<float> {
 
         /// <summary>
         /// Public default constructor
@@ -14,30 +15,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public AttributeFieldTimeSpan() {
             MultipleValues = false;
             ValueType = ValueType.TIME_SPAN;
-            //Validation = new AttributeValidationTimeSpan();
         }
 
         /// <summary>
         /// The default value for this field. It is the value assigned to the field if the user does not enter one.
         /// </summary>
         /// <remarks>Time span value represented in seconds.</remarks>
-        public float DefaultValue { get; set; } = 0;
+        public float ? DefaultValue { get; set; } = null;
 
-        private AttributeValidationTimeSpan validation = new AttributeValidationTimeSpan();
-
-        /// <inheritdoc />
-        /*
-        public override AttributeValidation Validation {
-            get { return validation; }
-            set {
-                if (value is AttributeValidationTimeSpan) {
-                    validation = (AttributeValidationTimeSpan)value;
-                } else {
-                    throw new ArgumentException( $"Must set Validation to an object of type AttributeValidationTimeSpan, instead received {value.GetType()}" );
-                }
-            }
-        }
-        */
+        public AttributeValidationTimeSpan ? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.Number) {
@@ -49,8 +35,48 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc />
-        public override dynamic GetDefaultValue() {
-            return DefaultValue;
+        public override float GetDefaultValue() {
+            if (DefaultValue == null)
+                return 0;
+
+            return (float) DefaultValue;
+        }
+
+        public override bool ValidateFieldValue( float value ) {
+            if (Validation == null)
+                return true;
+
+            return Validation.ValidateFieldValue( value );
+        }
+    }
+
+    public class AttributeValidationTimeSpan : AttributeValidation<float> {
+
+        public AttributeValidationTimeSpan() {
+        }
+
+        /// <summary>
+        /// The minimum value.
+        /// </summary>
+        /// <remarks>Value represents the number of seconds.</remarks>
+        [DefaultValue( null )]
+        public float ? MinValue { get; set; } = null;
+
+        /// <summary>
+        /// The maximum value.
+        /// </summary>
+        /// <remarks>Value represents the number of seconds.</remarks>
+        [DefaultValue( null )]
+        public float ? MaxValue { get; set; } = null;
+
+        public override bool ValidateFieldValue( float value ) {
+            if (MinValue != null && value < MinValue)
+                return false;
+
+            if (MaxValue != null && value > MaxValue)
+                return false;
+
+            return true;
         }
     }
 }

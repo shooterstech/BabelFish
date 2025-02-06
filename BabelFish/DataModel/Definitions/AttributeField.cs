@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using Scopos.BabelFish.Helpers;
-using NLog;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -15,14 +7,51 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// An AttributeField describes one field of an Attribute
     /// </summary>
     [Serializable]
-    public abstract class AttributeField: IReconfigurableRulebookObject {
-
-        protected Logger Logger= LogManager.GetCurrentClassLogger();
+    public abstract class AttributeField<T>: AttributeFieldBase {
 
         /// <summary>
         /// Public constructor.
         /// </summary>
-        public AttributeField() {
+        public AttributeField() : base() {
+
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if the passed in value passes all validation tests for thei field.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public abstract bool ValidateFieldValue( T value );
+
+        /// <summary>
+        /// This is a helper function to return the value of .DefaultValue as a dynamic.
+        /// </summary>
+        /// <returns></returns>
+        public abstract T GetDefaultValue();
+
+        //internal abstract dynamic DeserializeFromJsonElement( G_STJ.JsonElement value );
+
+        public override dynamic BaseGetDefaultValue() {
+            return this.GetDefaultValue();
+        }
+
+        public override bool BaseValidateFieldValue( dynamic value ) {
+            if (value is not T)
+                return false;
+
+            return this.ValidateFieldValue( (T)value );
+        }
+
+    }
+
+    /// <summary>
+    /// Common abstract class for all AttributeField generic classes. Primarly only exists to allow for Deserialization
+    /// </summary>
+    public abstract class AttributeFieldBase: IReconfigurableRulebookObject {
+
+        protected Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public AttributeFieldBase() {
             Required = false;
             Key = false;
         }
@@ -30,6 +59,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Name given to this field. It is unique within the parent ATTRIBUTE.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public string FieldName { get; set; } = string.Empty;
 
         private string displayName = string.Empty;
@@ -39,6 +69,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// entering ATTRIBUTE VALUES. In a Simple Attribute, it is customarily the same value as 
         /// the parent's (ATTRIBUTE's) DisplayName.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty( displayName )) {
@@ -57,48 +88,28 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// True if the user may enter multiple values in this field (in other words, its a list). 
         /// False if the user may only enter one value.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( false )]
-        [JsonInclude]
         public bool MultipleValues { get; protected set; } = false;
 
         /// <summary>
         /// True if the user is required to enter a value. False if the user desn't have to. If the user doesn't have to, then the DefaultValue is applied.
         /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
         public bool Required { get; set; } = false;
 
         /// <summary>
         /// In an ATTRIBUTE that has MultipleValues set to true, Key determines the unique identifier in the list. 
         /// Exactly one AttributeField within an ATTRIBUTE must have Key set to true.
         /// </summary>
+        [G_NS.JsonProperty( Order = 7 )]
         public bool Key { get; set; } = false;
 
         /// <summary>
         /// Human readable description of what this feild represents. 
         /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
         public string Description { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Validation rule that all must be true in order for the value to pass validation.
-        /// 
-        /// Currently removing Validation (Jan 2025). Since 1) it's not used anywhere and 
-        /// 2) still struggling with how best to define the AttributeValidation data model.
-        /// </summary>
-        //public abstract AttributeValidation Validation { get; set; }
-
-        /// <summary>
-        /// Returns a boolean indicating if the passed in value passes all validation tests for thei field.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public virtual bool ValidateFieldValue( dynamic value ) {
-            return true;
-        }
-
-        /// <summary>
-        /// This is a helper function to return the value of .DefaultValue as a dynamic.
-        /// </summary>
-        /// <returns></returns>
-        public abstract dynamic GetDefaultValue();
 
         /// <summary>
         /// The type of data that this field will hold.
@@ -121,7 +132,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return $"'{FieldName}' of type {ValueType}";
         }
 
-        internal abstract dynamic DeserializeFromJsonElement( JsonElement value ); 
+        internal abstract dynamic DeserializeFromJsonElement( G_STJ.JsonElement value );
 
+        public abstract dynamic BaseGetDefaultValue();
+
+        public abstract bool BaseValidateFieldValue( dynamic value );
     }
 }

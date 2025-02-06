@@ -113,7 +113,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 16 )]
         [G_NS.JsonProperty( Order = 16 )]
         [DefaultValue(null)]
-        public List<AttributeField> Fields { get; set; } = new List<AttributeField>();
+        public List<AttributeFieldBase> Fields { get; set; } = new List<AttributeFieldBase>();
 
         /// <summary>
         /// Returns True if this Attribute is considered a 'Simple Attribute.'
