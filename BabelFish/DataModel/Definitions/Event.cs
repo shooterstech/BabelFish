@@ -38,14 +38,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// * SINGULAR
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 2 )]
-        [G_NS.JsonProperty( Order = 2 )]
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EventtType EventType { get; set; } = EventtType.NONE;
 
         /// <summary>
         /// Indicates if the Event's children are derived or explicit
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 3 )]
-        [G_NS.JsonProperty( Order = 3 )]
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public EventDerivationType Derivation { get; protected set; } = EventDerivationType.EXPLICIT;
 
         protected List<string> _children = new List<string>();
@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// * SUM
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 8 )]
-        [G_NS.JsonProperty( Order = 8 )]
+        [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EventCalculation Calculation { get; set; } = EventCalculation.SUM;
 
         /// <summary>
@@ -74,6 +74,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 9 )]
         [G_NS.JsonProperty( Order = 9 )]
+        [DefaultValue( "" )]
         public string CalculationMeta { get; set; } = string.Empty;
 
         /// <summary>
@@ -142,8 +143,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>Will always return a clone copy of the event, so the original is not modified by the caller.</para>
         /// </summary>
         /// 
-        public virtual List<Event> GetCompiledEvents() {
-            return new List<Event>() { this.Clone() };
+        public virtual List<EventExplicit> GetCompiledEvents() {
+            var events = new List<EventExplicit>();
+            EventExplicit copy = new EventExplicit();
+            copy.EventName = this.EventName;
+            copy.EventType = this.EventType;
+            copy.Children = this.Children;
+            copy.Calculation = this.Calculation;
+            copy.CalculationMeta = this.CalculationMeta;
+            copy.ScoreFormat = this.ScoreFormat;
+            copy.ResultListFormatDef = this.ResultListFormatDef;
+            copy.StageStyleMapping = this.StageStyleMapping;
+            copy.EventStyleMapping = this.EventStyleMapping;  
+            copy.RankingRuleMapping = this.RankingRuleMapping;
+            copy.ExternalToEventTree = this.ExternalToEventTree;
+            if ( this.Derivation == EventDerivationType.EXPLICIT )
+                copy.Comment = this.Comment;
+            else
+                copy.Comment = $"Compiled EventExplicit based on the Event named '{this.EventName}'.";
+            
+            events.Add( copy );
+            return events;
         }
 
         /// <summary>
@@ -152,7 +172,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 100 )]
         [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
-        //[JsonConverter( typeof( ExcludeEmptyStringConverter ) )]
         public string Comment { get; set; } = string.Empty;
 
         public override string ToString() {

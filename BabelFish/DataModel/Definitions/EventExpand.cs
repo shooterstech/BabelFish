@@ -33,12 +33,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string ChildEventName { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        public override List<Event> GetCompiledEvents() {
+        public override List<EventExplicit> GetCompiledEvents() {
             if (string.IsNullOrEmpty( Values )
                 || !this.EventName.Contains( "{}" ))
                 throw new ScoposException( $"Can not compile the list of expanded Events. The value for EventName is incorrectly formatted, '{this.EventName}'. It is empty, null, or does not contain a placeholder." );
 
-            List<Event> events = new List<Event>();
+            List<EventExplicit> events = new List<EventExplicit>();
 
             int childIndex = 1;
             ValueSeries vs = new ValueSeries( this.Values );
@@ -48,6 +48,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 eventExplicit.Calculation = this.Calculation;
                 eventExplicit.CalculationMeta = this.CalculationMeta;
                 eventExplicit.ScoreFormat = this.ScoreFormat;
+                eventExplicit.EventType = this.EventType;
                 eventExplicit.ResultListFormatDef = this.ResultListFormatDef;
                 if ( this.StageStyleMapping != null )
                     eventExplicit.StageStyleMapping = this.StageStyleMapping.Clone();

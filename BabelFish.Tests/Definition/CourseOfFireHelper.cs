@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Amazon.DynamoDBv2;
+using BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition {
@@ -197,5 +199,160 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             return cof;
         }
+
+        public static CourseOfFire Get_Informal_Air_Rifle() {
+
+            CourseOfFire cof = new CourseOfFire();
+
+            /* EVENT */
+            cof.Events.Add( new EventExplicit() {
+                EventName = "Top Level",
+                EventType = EventtType.EVENT,
+                ScoreFormat = "Events",
+                Children = new List<string>() {
+                    "Kneeling",
+                    "Prone",
+                    "Standing"
+                    },
+                EventStyleMapping = new EventStyleMapping() {
+                    EventAppellation = "Qualification3P",
+                    DefaultDef = "v1.0:ntparc:Three-Position Precision Air Rifle"
+                },
+                RankingRuleMapping = new RankingRuleMapping() {
+                    { "DefaultDef", "v2.0:ntparc:Three-Position Air Rifle Qualification Decimal" },
+                    { "Integer", "v2.0:ntparc:Three-Position Air Rifle Qualification" }
+                }
+            } );
+
+            /* STAGES */
+            cof.Events.Add( new EventDerived() {
+                EventName = "Prone",
+                EventType = EventtType.STAGE,
+                ScoreFormat = "Events",
+                ChildEventName = "PR {}",
+                ChildValues = "1..50",
+                StageStyleMapping = new StageStyleMapping() {
+                    StageAppellation = "Prone",
+                    DefaultDef = "v1.0:ntparc:Precision Air Rifle Prone"
+                },
+                RankingRuleMapping = new RankingRuleMapping(){
+                    { "DefaultDef", "v1.0:orion:Generic Decimal Prone" },
+                    { "Integer", "v1.0:ntparc:Prone Position" }
+                }
+            } );
+
+            cof.Events.Add( new EventDerived() {
+                EventName = "Standing",
+                EventType = EventtType.STAGE,
+                ScoreFormat = "Events",
+                ChildEventName = "ST {}",
+                ChildValues = "1..50",
+                StageStyleMapping = new StageStyleMapping() {
+                    StageAppellation = "Standing",
+                    DefaultDef = "v1.0:ntparc:Precision Air Rifle Standing"
+                },
+                RankingRuleMapping = new RankingRuleMapping(){
+                    { "DefaultDef", "v1.0:orion:Generic Decimal Standing" },
+                    { "Integer", "v1.0:ntparc:Standing Position" }
+                }
+            } );
+
+            cof.Events.Add( new EventDerived() {
+                EventName = "Kneeling",
+                EventType = EventtType.STAGE,
+                ScoreFormat = "Events",
+                ChildEventName = "KN {}",
+                ChildValues = "1..50",
+                StageStyleMapping = new StageStyleMapping() {
+                    StageAppellation = "Kneeling",
+                    DefaultDef = "v1.0:ntparc:Precision Air Rifle Kneeling"
+                },
+                RankingRuleMapping = new RankingRuleMapping(){
+                    { "DefaultDef", "v1.0:orion:Generic Decimal Kneeling" },
+                    { "Integer", "v1.0:ntparc:Kneeling Position" }
+                }
+            } );
+
+            /* STRINGS */
+            cof.Events.Add( new EventExpand() {
+                EventName = "PR {}",
+                EventType = EventtType.STRING,
+                ScoreFormat = "Events",
+                Values = "1..50",
+                ChildEventName = "P{}",
+                ChildStringSize = 10
+            } );
+
+            cof.Events.Add( new EventExpand() {
+                EventName = "ST {}",
+                EventType = EventtType.STRING,
+                ScoreFormat = "Events",
+                Values = "1..50",
+                ChildEventName = "S{}",
+                ChildStringSize = 10
+            } );
+
+            cof.Events.Add( new EventExpand() {
+                EventName = "KN {}",
+                EventType = EventtType.STRING,
+                ScoreFormat = "Events",
+                Values = "1..50",
+                ChildEventName = "K{}",
+                ChildStringSize = 10
+            } );
+
+            /* SHOTS */
+            cof.Singulars.Add( new Singular() {
+                EventName = "K{}",
+                StageLabel = "K",
+                ScoreFormat = "Shots",
+                Values = "1..500",
+                ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL
+            } );
+            cof.Singulars.Add( new Singular() {
+                EventName = "P{}",
+                StageLabel = "P",
+                ScoreFormat = "Shots",
+                Values = "1..500",
+                ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL
+            } );
+            cof.Singulars.Add( new Singular() {
+                EventName = "S{}",
+                StageLabel = "S",
+                ScoreFormat = "Shots",
+                Values = "1..500",
+                ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL
+            } );
+
+            /* EXTERNAL */
+            cof.Events.Add( new EventDerived() {
+                EventName = "PR AVG",
+                Calculation = EventCalculation.AVG_TEN,
+                ScoreFormat = "Events",
+                ChildValues = "1..500",
+                ChildEventName = "P{}",
+                ExternalToEventTree = true
+            } );
+            cof.Events.Add( new EventDerived() {
+                EventName = "ST AVG",
+                Calculation = EventCalculation.AVG_TEN,
+                ScoreFormat = "Events",
+                ChildValues = "1..500",
+                ChildEventName = "S{}",
+                ExternalToEventTree = true
+            } );
+            cof.Events.Add( new EventDerived() {
+                EventName = "KN AVG",
+                Calculation = EventCalculation.AVG_TEN,
+                ScoreFormat = "Events",
+                ChildValues = "1..500",
+                ChildEventName = "K{}",
+                ExternalToEventTree = true
+            } );
+
+            return cof;
+        }
+
+        
     }
 }

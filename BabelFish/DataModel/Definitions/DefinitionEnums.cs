@@ -245,29 +245,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Calculate the score of the Event by summing the score of its children
         /// </summary>
-        [Description( "Sum" )]
-        [EnumMember( Value = "Sum" )]
+        [Description( "SUM" )]
+        [EnumMember( Value = "SUM" )]
         SUM,
 
         /// <summary>
         /// Calculate the score of the Event by taking the average of its children
         /// </summary>
-        [Description( "Average" )]
-        [EnumMember( Value = "Average" )]
+        [Description( "AVERAGE" )]
+        [EnumMember( Value = "AVERAGE" )]
         AVERAGE,
 
         /// <summary>
-        /// Deprecated, and kept only for backwards capatibility
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the 10 in the CalculationMeta field
         /// </summary>
         [Description( "AVG(10)" )]
         [EnumMember( Value = "AVG(10)" )]
         AVG_TEN,
 
         /// <summary>
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
+        /// </summary>
+        [Description( "SUM(i, d)" )]
+        [EnumMember( Value = "SUM(i, d)" )]
+        ACCUMULATIVE_FINALS,
+
+        /// <summary>
         /// Reserved for Singularities that don't have children.
         /// </summary>
-        [Description( "None" )]
-        [EnumMember( Value = "None" )]
+        [Description( "NONE" )]
+        [EnumMember( Value = "NONE" )]
         NONE
     }
 

@@ -18,11 +18,11 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Create some random data to store
             var random = new Random();
             var myInt = random.Next();
-            var myFloat = random.NextDouble();
+            var myFloat = (float) random.NextDouble();
             var myBool = random.NextInt64() % 2 == 0;
             var myDate = (new DateTime( random.NextInt64( 0, DateTime.MaxValue.Ticks ) )).Date;
             var myDateTime = new DateTime( random.NextInt64( 0, DateTime.MaxValue.Ticks ) );
-            var myTime = new TimeSpan( random.Next() );
+            var myTime = (float) random.NextDouble();
             var myString = Scopos.BabelFish.Helpers.RandomStringGenerator.RandomAlphaString( 8 );
 
             //Set values to the attribute value.
@@ -37,11 +37,11 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Now test that the GetFieldValue return the same data that we stored
             Assert.AreEqual( myString, (string)testAttrValue.GetFieldValue( "AString" ) );
             Assert.AreEqual( myInt, (int)testAttrValue.GetFieldValue( "AnInteger" ) );
-            Assert.AreEqual( myFloat, (double)testAttrValue.GetFieldValue( "AFloat" ) );
+            Assert.AreEqual( myFloat, (float)testAttrValue.GetFieldValue( "AFloat" ) );
             Assert.AreEqual( myBool, (bool)testAttrValue.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( myDate, (DateTime)testAttrValue.GetFieldValue( "ADate" ) );
+            Assert.AreEqual( myTime, (float)testAttrValue.GetFieldValue( "ATime" ) );
             //Because Times and DateTime are stored with known rounding error, will allow this much tolerance in teh comparison.
-            Assert.IsTrue( Math.Abs( ((TimeSpan)testAttrValue.GetFieldValue( "ATime" ) - myTime).TotalSeconds ) < .001D );
             //Assert.IsTrue( Math.Abs( ((DateTime)testAttrValue.GetFieldValue( "ADateTime" ) - myDateTime).TotalMilliseconds ) < .001D );
         }
 
