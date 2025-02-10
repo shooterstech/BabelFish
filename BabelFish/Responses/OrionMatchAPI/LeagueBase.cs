@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
@@ -23,46 +18,48 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// <summary>
         /// Unique LeagueID for this League. Takes the form of a MatchID
         /// </summary>
-        [JsonPropertyOrder ( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string LeagueID { get; set; } = string.Empty;
 
         /// <summary>
         /// Human readable name of the league.
         /// </summary>
-        [JsonPropertyOrder ( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public string LeagueName { get; set; } = string.Empty;
 
         /// <summary>
         /// Unigue identifier of the LeagueNetworkID. A value of 0 indicates this League is not a member of a League Network.
         /// </summary>
-        [DefaultValue(0)]
-        [JsonPropertyOrder ( 3 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DefaultValueHandlingConverter<int> ) )]
+        [G_NS.JsonProperty( Order = 3 )]
+        [DefaultValue( 0 )]
         public int LeagueNetworkID { get; set; } = 0;
 
         /// <summary>
         /// The name of the League Network. An empty string indicates this league is not functioning within a League Network.
         /// </summary>
-        [JsonPropertyOrder ( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
         public string LeagueNetworkName { get; set; }
 
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DefaultValueHandlingConverter<int> ) )]
+        [G_NS.JsonProperty( Order = 5 )]
         [DefaultValue( 0 )]
-        [JsonPropertyOrder ( 5 )]
         public int SeasonID { get; set; }
 
-        [JsonPropertyOrder ( 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
         public string SeasonName { get; set; }
 
-        [JsonPropertyOrder ( 7 )]
-        
+        [G_NS.JsonProperty( Order = 7 )]
+
         public LeagueSeasonType SeasonType { get; set; }
 
-        [JsonPropertyOrder ( 8 )]
+        [G_NS.JsonProperty( Order = 8 )]
         public LeagueConfiguration Configuration { get; set; }
 
-        [JsonPropertyOrder( 9)]
+        [G_NS.JsonProperty( Order = 9 )]
         public List<string> ConferenceList { get; set; } = new List<string>();
 
-        [JsonPropertyOrder( 10)]
+        [G_NS.JsonProperty( Order = 10 )]
         public List<string> DivisionList { get; set; } = new List<string>();
     }
 }

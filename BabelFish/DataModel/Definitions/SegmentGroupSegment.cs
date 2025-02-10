@@ -131,9 +131,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Group (Need to figure out what this does on the Monitor.)
         /// AdvancedSettings (Need to figure out what this does on the Monitor.)
         /// !AdvancedSettings (Need to figure out what this does on the Monitor.)
+        /// Series(INFORMAL) Deprecated, needs to be removed.
         /// Commands: Not required, missing or null uses DefaultCommand.AthleteHasControl
         /// DefaultCommand: Required with default value of [ ]
         /// </summary>
+        // TODO: Rearchitect. Instead of a list of strings, with some strings contain special characters that represent function actions, replace with list of objects.
         [DefaultValue( null )]
         [JsonPropertyOrder( 5 )]
         public List<string> AthleteHasControl { get; set; } = new List<string>();

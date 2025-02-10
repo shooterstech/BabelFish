@@ -201,13 +201,18 @@ namespace Scopos.BabelFish.APIClients {
                         ResponseCache.CACHE.SaveResponse( cachedResponse );
                     }
                 } else {
-                    logger.Error( $"API error with: {responseMessage.ReasonPhrase}" );
+                    var msg = $"API error with: {responseMessage.ReasonPhrase}";
+                    logger.Error( msg );
                     logger.Debug( jsonAsString );
+                    response.ExceptionMessage = msg; 
+                    response.Json = jsonAsString;
                 }
 
             } catch (Exception ex) {
 
                 response.StatusCode = HttpStatusCode.InternalServerError;
+                response.ExceptionMessage = ex.Message;
+                response.Json = jsonAsString;
                 //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
                 logger.Debug( jsonAsString );

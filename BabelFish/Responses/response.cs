@@ -135,5 +135,12 @@ namespace Scopos.BabelFish.Responses
             }
             */
         }
+
+        /// <summary>
+        /// The serialized text value returned by the Rest API. This value is only set if there was an error.
+        /// </summary>
+        public string Json { get; set; }
+
+        public string ExceptionMessage { get; set; }
     }
 }

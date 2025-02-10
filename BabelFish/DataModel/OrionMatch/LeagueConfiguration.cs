@@ -31,21 +31,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         
         public LeagueRankingRuleType LeagueRankingRules { get; set; } = LeagueRankingRuleType.WIN_LOSS_RECORD;
 
-		/// <summary>
-		/// If the LeagueRankkingRules value is League Points, this LeaguePointsFactor indicates how much
-		/// each win is worth.
-		/// </summary>
-		public int LeaguePointsFactor { get; set; }
+        /// <summary>
+        /// If the LeagueRankkingRules value is League Points, this LeaguePointsFactor indicates how much
+        /// each win is worth.
+        /// </summary>
+        [ G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DefaultValueHandlingConverter<int> ) )]
+        public int LeaguePointsFactor { get; set; }
 
-		/// <summary>
-		/// Number of team members that count towards the team's score total.
-		/// </summary>
-		public int NumberOfTeamMembers { get; set; }
+        /// <summary>
+        /// Number of team members that count towards the team's score total.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DefaultValueHandlingConverter<int> ) )]
+        public int NumberOfTeamMembers { get; set; }
 
-		/// <summary>
-		/// The total number of team members allowed to compete on a team.
-		/// </summary>
-		public int NumberOfTeamMembersMax { get; set; }
+        /// <summary>
+        /// The total number of team members allowed to compete on a team.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DefaultValueHandlingConverter<int> ) )]
+        public int NumberOfTeamMembersMax { get; set; }
 
 		/// <summary>
 		/// SetName of the ScoreConfig used in this match.
