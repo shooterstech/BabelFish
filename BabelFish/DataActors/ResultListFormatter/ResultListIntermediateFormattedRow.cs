@@ -299,8 +299,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return GetStatus().Description();
 
                 case "LastShot": 
-                    var lastShot = resultEvent.GetLastCompetitionShot();
-                    if (lastShot != null && ( DateTime.UtcNow - lastShot.TimeScored).TotalSeconds < 300) {
+                    var lastShot = resultEvent.LastShot;
+                    if (lastShot != null && ( DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalSeconds < 300) {
 
                         string scoreFormat = resultListFormatted.GetScoreFormat( "Shots" );
 
