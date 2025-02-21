@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-using Newtonsoft.Json;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -15,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 	/// PostResponseProcessingAsync()
 	/// </summary>
 	[Serializable]
-    [JsonConverter( typeof( ParticipantConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
     public abstract class Participant : IDeserializableAbstractClass {
 
         /*
@@ -49,6 +46,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<AttributeValueDataPacketMatch> AttributeValues { get; set; } = new List<AttributeValueDataPacketMatch>();
 
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAttributeValues() {
+            return (AttributeValues != null && AttributeValues.Count > 0);
+        }
+
         /*
          * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
          * garand / springfield / vintage military rifle competition is one eacmple. On the first re-entry they may shoot a garand 
@@ -57,11 +63,40 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          * To represent this, need a way to override AttributeValues based on the reentry tag.
          */
 
+
+        /// <summary>
+        /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
+        /// </summary>
+        public List<Remark> RemarkList { get; set; } = new List<Remark>();
+
+        /// <summary>
+        /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        public bool HasRemark( ParticipantRemark remark) {
+            foreach (var re in RemarkList) {
+                if (re.ParticipantRemark == remark)
+                    return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
         public List<Individual> Coaches { get; set; }
-    
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCoaches() {
+            return (Coaches != null && Coaches.Count > 0);
+        }
+
 
         /// <summary>
         /// When a competitor's name is displayed, this is the default display value.

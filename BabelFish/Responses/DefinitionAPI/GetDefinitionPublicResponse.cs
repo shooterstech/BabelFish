@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
     /// </summary>
     /// <typeparam name="T">Should be a concrete implementation of abstract class .DataModel.Definitions.Definition</typeparam>
     public class GetDefinitionPublicResponse<T> : Response<T>
-        where T : Definition {
+        where T : Definition, new() {
 
         public GetDefinitionPublicResponse( GetDefinitionPublicRequest request) : base() {
             this.Request = request;
@@ -27,7 +27,13 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
 
         /// <inheritdoc/>
         protected override void ConvertBodyToValue() {
-            Value = Body[SetName.ToString()].ToObject<T>();
+            //Only deserialize if hte status code was OK. Skip trying, if it was anythnig else, like, not found.
+            //There is an argument to be made that we should throw a Attribute
+            if (this.StatusCode == System.Net.HttpStatusCode.OK) {
+                G_STJ.JsonElement root = Body.RootElement;
+                G_STJ.JsonElement definition = root.GetProperty( SetName.ToString() );
+                Value = G_STJ.JsonSerializer.Deserialize<T>( definition, SerializerOptions.SystemTextJsonDeserializer );
+            }
         }
 
         /// <inheritdoc />

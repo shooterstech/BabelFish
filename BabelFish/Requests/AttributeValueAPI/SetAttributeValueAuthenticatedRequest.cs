@@ -1,16 +1,12 @@
-﻿using System.Text;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Newtonsoft.Json;
-using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.AttributeValueAPI {
     public class SetAttributeValueAuthenticatedRequest : Request {
-
-        private Logger logger = LogManager.GetCurrentClassLogger();
 
         public SetAttributeValueAuthenticatedRequest( UserAuthentication credentials ) : base( "SetAttributeValue", credentials ) {
             HttpMethod = HttpMethod.Post;
@@ -28,19 +24,21 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
         public override StringContent PostParameters {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
+                //var json = G_NS.JsonConvert.SerializeObject( AttributeValuesToUpdate, SerializerOptions.NewtonsoftJsonSerializer );
+                
+                JObject json = new JObject();
                 try {
-                    JObject json = new JObject();
                     JObject attributeValuesJson = new JObject();
                     json.Add( "attribute-values", attributeValuesJson );
                     foreach (var attributeValueToUpdate in AttributeValuesToUpdate) {
-                        attributeValuesJson.Add( attributeValueToUpdate.AttributeValue.SetName.ToString(), attributeValueToUpdate.ToJToken() );
+                        var avJsonAsString = G_NS.JsonConvert.SerializeObject( attributeValueToUpdate, SerializerOptions.NewtonsoftJsonSerializer );
+                        attributeValuesJson.Add( attributeValueToUpdate.AttributeValue.SetName.ToString(), JObject.Parse( avJsonAsString ) );
                     }
-
-                    return new StringContent( JsonConvert.SerializeObject( json ), Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
-                    logger.Error( ex );
-                    return new StringContent( "" );
+                    ;
                 }
+                return new StringContent( JsonConvert.SerializeObject( json ), Encoding.UTF8, "application/json" );
+
             }
         }
     }

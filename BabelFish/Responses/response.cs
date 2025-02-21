@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Converters;
+﻿using System.Net;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 
@@ -20,10 +11,7 @@ namespace Scopos.BabelFish.Responses
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class Response<T>
-        where T : BaseClass {
-
-
-        protected JToken body = new JObject();
+        where T : BaseClass, new() {
 
         /// <summary>
         /// Base constructor.
@@ -82,13 +70,14 @@ namespace Scopos.BabelFish.Responses
         public bool FileSystemCachedResponse { get; protected internal set; } = false;
 
 		/// <summary>
-		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
+		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard 
+        /// fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
 		/// </summary>
 		public MessageResponse MessageResponse
         {
             get;
             internal set;
-        } = new MessageResponse();
+        } = new MessageResponse();        
 
         /// <summary>
         /// Gets or sets the data object returned by the Rest API Call.
@@ -105,9 +94,15 @@ namespace Scopos.BabelFish.Responses
         public HttpStatusCode StatusCode { get; internal set; }
 
         /// <summary>
-        /// Gets or Sets the raw body returned by the Rest API Call.
+        /// Raw body returned by the Rest API Call.
         /// </summary>
-        public JToken Body {
+        private G_STJ.JsonDocument body = null;
+
+        /// <summary>
+        /// Gets or Sets the raw body returned by the Rest API Call.
+        /// If the StatusCode is something other than OK (200), the value of Body will be invalid.
+        /// </summary>
+        public G_STJ.JsonDocument Body {
             get { return body; }
             internal set {
                 body = value;
@@ -116,8 +111,10 @@ namespace Scopos.BabelFish.Responses
         }
 
         /// <summary>
-        /// Gets or Sets TimeSpan of API call
+        /// Total time of the request. Includes the time it takes to make the API call plus time to parse the returned JSON into object form.
         /// </summary>
+        //  EKA NOTE Jan 2025: There is an argument that the TimeToRun shold only be the API call and not the time to parse the JSON into object form.
+        //  As parsing json into object form can take a while, and maybe shouldn 't be included. I'm not sure which is better? 
         public TimeSpan TimeToRun { get; internal set; } = TimeSpan.Zero;
 
         /// <summary>
@@ -125,7 +122,25 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            Value = Body.ToObject<T>( DefinitionAPIClient.DeSerializer );
+            if (StatusCode == HttpStatusCode.OK)
+                Value = G_STJ.JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.SystemTextJsonDeserializer );
+            else 
+                Value = new T();
+
+            /*
+            var nameOfClass = typeof( T ).Name;
+            JsonElement body;
+            if (Body.RootElement.TryGetProperty( nameOfClass, out body )) {
+                Value = JsonSerializer.Deserialize<T>( body, SerializerOptions.APIClientSerializer );
+            }
+            */
         }
+
+        /// <summary>
+        /// The serialized text value returned by the Rest API. This value is only set if there was an error.
+        /// </summary>
+        public string Json { get; set; }
+
+        public string ExceptionMessage { get; set; }
     }
 }

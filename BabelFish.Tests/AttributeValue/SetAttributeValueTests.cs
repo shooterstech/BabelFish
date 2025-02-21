@@ -1,26 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
     [TestClass]
-    public class SetAttributeValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class SetAttributeValueTests : BaseTestClass{
 
         [TestMethod]
         public async Task SetAttributeValue_SingleAttribute() {
@@ -64,7 +52,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             string newStringValue = newIntValue.ToString();
             bool newBoolean = intValue % 2 == 0;
             DateTime newDate = DateTime.Today;
-            DateTime newDateTime = DateTime.UtcNow;
+            float newTimeSpan = intValue;
 
             //Set the values to the attribute value
             testAttributeValue1.SetFieldValue( "AnInteger", newIntValue );
@@ -72,7 +60,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttributeValue1.SetFieldValue( "AString", newStringValue );
             testAttributeValue1.SetFieldValue( "ABoolean", newBoolean );
             testAttributeValue1.SetFieldValue( "ADate", newDate );
-            testAttributeValue1.SetFieldValue( "ADateTime", newDateTime );
+            testAttributeValue1.SetFieldValue( "ATime", newTimeSpan );
             testAttriubuteAttributeValueDataPacket1.Visibility = VisibilityOption.PROTECTED;
 
             //Generate a set attribute value request
@@ -106,7 +94,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( newStringValue, (string) testAttributeValue2.GetFieldValue( "AString" ) );
             Assert.AreEqual( newBoolean, (bool)testAttributeValue2.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( newDate, (DateTime)testAttributeValue2.GetFieldValue( "ADate" ) );
-            Assert.IsTrue( Math.Abs((((DateTime)testAttributeValue2.GetFieldValue( "ADateTime" )).ToUniversalTime()- newDateTime).TotalSeconds) < .001D );
+            Assert.AreEqual( newTimeSpan, (float)testAttributeValue2.GetFieldValue( "ATime" ) );
             Assert.AreEqual( VisibilityOption.PROTECTED, testAttriubuteAttributeValueDataPacket2.Visibility );
         }
     }

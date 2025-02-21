@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using Scopos.BabelFish.Converters.Microsoft;
+using System.Text.Json.Serialization;
+
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /*
@@ -20,8 +22,9 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
         public List<LeagueTeam> Items { get; set; } = new List<LeagueTeam>();
 
-		/// <inheritdoc />
-		public string NextToken { get; set; } = string.Empty;
+        /// <inheritdoc />
+        [JsonConverter( typeof( NextTokenConverter ) )]
+        public string NextToken { get; set; } = string.Empty;
 
 		/// <inheritdoc />
 		public int Limit { get; set; } = 50;

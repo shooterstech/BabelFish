@@ -1,29 +1,12 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Net;
 using System.Threading.Tasks;
-using System.Net;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Scopos.BabelFish;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.DefinitionAPI;
-using Scopos.BabelFish.Responses.DefinitionAPI;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
-	[TestClass]
-	public class MatchObjectCacheTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    [TestClass]
+	public class MatchObjectCacheTests : BaseTestClass {
 
         [TestMethod]
 		public async Task MatchObjectCacheTest() {
@@ -45,8 +28,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 			Assert.IsTrue( responseNoCache.TimeToRun > responseWithCache.TimeToRun * 100 );
 
 			//And of course the Match object should be equal
-			var matchNoCache = JsonConvert.SerializeObject( responseNoCache.Match );
-			var matchWithCache = JsonConvert.SerializeObject( responseWithCache.Match );
+			var matchNoCache = G_NS.JsonConvert.SerializeObject( responseNoCache.Match, SerializerOptions.NewtonsoftJsonSerializer );
+			var matchWithCache = G_NS.JsonConvert.SerializeObject( responseWithCache.Match, SerializerOptions.NewtonsoftJsonSerializer );
 			Assert.AreEqual( matchNoCache, matchWithCache );
 
 		}

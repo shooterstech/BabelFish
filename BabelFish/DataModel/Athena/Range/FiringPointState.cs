@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Scopos.BabelFish.DataModel.Athena.AbstractEST;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.Range
 {
@@ -17,6 +15,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Range
             Monitors = new Dictionary<string, MonitorState>();
         }
 
+        [JsonPropertyOrder(1)]
         [JsonIgnore]
         public string FiringPointNumber { get; set; }
 
@@ -24,26 +23,26 @@ namespace Scopos.BabelFish.DataModel.Athena.Range
         /// Enabled means the firing point is operational and ready for use.
         /// A broken target would be marked with Enabled = false, for example.
         /// </summary>
-        [JsonProperty(Order = 1)]
+        [JsonPropertyOrder( 2 )]
         public bool Enabled { get; set; }
 
         /// <summary>
         /// Competition means the Firing point is current being used in a competition managed by Orion.
         /// When the target is in Practice Mode, Competition would be set to false.
         /// </summary>
-        [JsonProperty(Order = 2)]
+        [JsonPropertyOrder( 3 )]
         public bool Competition { get; set; } = true;
 
         /// <summary>
         /// Key is the Target's State Address (IoT Thing Name), Value is the TargetState
         /// </summary>
-        [JsonProperty(Order = 3)]
+        [JsonPropertyOrder( 4 )]
         public Dictionary<string, TargetState> Targets { get; set; }
 
         /// <summary>
         /// Key is the Monitor State Address (IoT Thing Name), Value is the MonitorState
         /// </summary>
-        [JsonProperty(Order = 4)]
+        [JsonPropertyOrder( 5 )]
         public Dictionary<string, MonitorState> Monitors { get; set; }
     }
 

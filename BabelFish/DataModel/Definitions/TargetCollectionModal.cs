@@ -2,29 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class TargetCollectionModal: ICopy<TargetCollectionModal>, IReconfigurableRulebookObject {
-
-
-        public TargetCollectionModal Copy() {
-            TargetCollectionModal copy = new TargetCollectionModal();
-
-            copy.TargetCollectionName = TargetCollectionName;
-            copy.TargetDefs.AddRange(TargetDefs);
-            copy.RangeDistance = RangeDistance;
-            copy.Comment = Comment;
-
-            return copy;
-        }
+    public class TargetCollectionModal: IReconfigurableRulebookObject {
 
         /// <summary>
         /// A human readable name for this Target Collection. Will be used by the COURSE OF FIRE to reference this Target Collection.
         ///
         /// Required, may not be an empty string.
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder ( 1 )]
         public string TargetCollectionName { get; set; } = string.Empty;
 
         /// <summary>
@@ -32,18 +21,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// Required, may not be an empty list. All values must be known TARGET definition set names.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         public List<string> TargetDefs { get; set; } = new List<string>();
 
         /// <summary>
         /// This Target Collection Modal is intended for use on a range with thie Range Distance.
         /// </summary>
-        [JsonProperty( Order = 3 )]
+        [JsonPropertyOrder ( 3 )]
         public string RangeDistance { get; set; } = "10m";
 
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonPropertyOrder ( 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

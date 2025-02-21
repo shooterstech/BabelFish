@@ -1,74 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using BabelFish.DataModel.Definitions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
-using NLog;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.DataModel.Definitions
-{
+namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
-    /// In the Reconfigurable Rulebook Events are defined using the well known Composite Pattern. 
-    /// An Event is either a composite Event, that is made up of child Events, or it is a singular 
-    /// Event that is a leaf. Within a COURSE OF FIRE Composite events are defined separately from Singular Events.
+    /// In the Reconfigurable Rulebook Event Composites are defined using the well known Composite Pattern. 
+    /// An Event Composite can either be an Event (that has children), or a Singular that does not have children. 
+    /// 
+    /// <para>An Event defines a real world event in a marksmanship competition. Includes events, stages, series, and strings. 
+    /// Does not includes individual shots (as these are Singulars).</para>
     /// </summary>
-    public class Event : IReconfigurableRulebookObject, ICopy<Event>, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
+    public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
 
-        private Logger Logger = LogManager.GetCurrentClassLogger();
+        protected Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
-            //Children = new List<string>();
             ScoreFormat = "Events";
-            Calculation = "SUM";
+            Calculation = EventCalculation.SUM;
             EventType = EventtType.NONE;
-        }
-
-        /// <inheritdoc/>
-        public Event Copy() {
-            Event e = new Event();
-            e.EventName = this.EventName;
-            e.EventType = this.EventType;
-            e.ScoreFormat = this.ScoreFormat;
-            e.Calculation = this.Calculation;
-            e.EventType = this.EventType;
-            e.Values = this.Values;
-            if (this.StageStyleMapping != null) 
-                e.StageStyleMapping = this.StageStyleMapping.Copy();
-            if (this.EventStyleMapping != null) 
-                e.EventStyleMapping = this.EventStyleMapping.Copy();
-            e.ResultListFormatDef = this.ResultListFormatDef;
-            e.RankingRuleDef = this.RankingRuleDef;
-            if (this.RankingRuleMapping != null)
-                e.RankingRuleMapping = this.RankingRuleMapping.Copy();
-            e.Comment = this.Comment;
-
-            var typeOfChildren = this.Children.GetType();
-            if (this.Children is JArray || this.Children is List<string> || this.Children is string[] ) {
-                e.Children = new JArray();
-                foreach( var c in this.Children) {
-                    e.Children.Add(c);
-                }
-            } else {
-                //Is an dictionary
-                e.Children = new JObject();
-                foreach( var c in this.Children) {
-                    e.Children[c.Name] = c.Value;
-                }
-            }
-            return e;
         }
 
         /// <summary>
         /// A unique name given to this Event.
         /// </summary>
-        [JsonProperty(Order = 1)]
+		[G_STJ_SER.JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string EventName { get; set; }
 
         /// <summary>
@@ -80,91 +37,76 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// * STRING
         /// * SINGULAR
         /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        [JsonProperty(Order = 2)]
+		[G_STJ_SER.JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EventtType EventType { get; set; } = EventtType.NONE;
 
         /// <summary>
-        /// The children of this event identified by the EventName. The score for this event is added together from the scores of the children.
-        /// Can either be a list of strings, or 
-        /// {
-        ///   "EventName" : "S{}",
-        ///   "String" : 10,
-        ///   "Values" : "1..500",
-        ///   "StageLabel" : "S"
-        /// }
+        /// Indicates if the Event's children are derived or explicit
         /// </summary>
-        [JsonProperty(Order = 3)]
-        public dynamic Children { get; set; }
+		[G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        public EventDerivationType Derivation { get; protected set; } = EventDerivationType.EXPLICIT;
 
-        public List<string> GetChildrenEventNames() {
-            List<string> listOfEventNames = new List<string>();
+        protected List<string> _children = new List<string>();
 
-            try {
-                if (Children is JArray) {
-                    foreach (var childName in Children) {
-                        listOfEventNames.Add( (string)childName );
-                    }
-                } else {
-                    //It's a dictionary
-                    
-                    //var values = (string)Children["Values"];
-                    //var valueIndexes = values.Split( ".." );
-                    //int start = int.Parse( valueIndexes[0] );
-                    //int stop = int.Parse( valueIndexes[1] );
-
-                    ValueSeries vs = new ValueSeries((string)Children["Values"]);
-                    var valueList = vs.GetAsList();
-
-                    foreach (int i in valueList){
-                        var eventName = (string)Children["EventName"];
-                        listOfEventNames.Add( eventName.Replace( "{}", i.ToString() ) );
-                    }
-                }
-            } catch (Exception ex) {
-                Logger.Error( ex );
-            }
-            return listOfEventNames;
+        /// <summary>
+        /// The children of this event identified by the EventName. The score for this event is added together from the scores of the children.
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
+        public virtual List<string> Children { 
+            get { return _children; }
+            set { throw new NotImplementedException( "Child classes must decide to implemtn Set Children or not." ); }
         }
 
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
         /// * SUM
         /// </summary>
-        [JsonProperty( Order = 4 )]
-        public string Calculation { get; set; } = "SUM";
+		[G_STJ_SER.JsonPropertyOrder( 8 )]
+        [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public EventCalculation Calculation { get; set; } = EventCalculation.SUM;
+
+        /// <summary>
+        /// Additional information needed for the Event Calculation score. The type of data is dependent on the 
+        /// Calculation type. 
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 9 )]
+        [G_NS.JsonProperty( Order = 9 )]
+        [DefaultValue( "" )]
+        public string CalculationMeta { get; set; } = string.Empty;
 
         /// <summary>
         /// The score format to use to display scores for this Event.
         /// The possible values are learned from the Score Format Collection.
         /// </summary>
-        [JsonProperty( Order = 5 )]
+		[G_STJ_SER.JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
         public string ScoreFormat { get; set; } = "Events";
 
-        /// <summary>
-        /// Formatted as a ValueSeries
-        /// </summary>
-        [JsonProperty(Order = 6)]
-        [DefaultValue("")]
-        public string Values { get; set; }
 
         /// <summary>
         /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
         /// </summary>
-        [JsonProperty(Order = 11)]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public StageStyleMapping StageStyleMapping { get; set; }
 
         /// <summary>
         /// EventStyleSelection determines how the resulting Result COF is mapped to a EVENT STYLE.
         /// </summary>
-        [JsonProperty(Order = 13)]
+		[G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         public EventStyleMapping EventStyleMapping { get; set; }
 
         /// <summary>
         /// The recommended Result List Format defintion to use when displaying a result list for this Event.
         /// </summary>
-        [JsonProperty( Order = 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( "" )]
+        //[JsonConverter( typeof( ExcludeEmptyStringConverter ) )]
         public string ResultListFormatDef { get; set; } = string.Empty;
 
         /// <summary>
@@ -173,20 +115,64 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// EKA NOTE: We may have to make this an object, as depending on the Score Formate (e.g. Integer
         /// vs Decimal) we would have different RankingRuleDef. 
         /// </summary>
-        [JsonProperty(Order = 15)]
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
         [DefaultValue("")]
         [Obsolete( "Use RankingRuleMapping instead." )]
         public string RankingRuleDef { get; set; } = string.Empty;
 
-        [JsonProperty(Order = 16)]
-        public RankingRuleMapping RankingRuleMapping { get; set;}
+        /// <summary>
+        /// A mapping of RankingRuleDef to use to sort scores from this Event, based on the ScoreConfigName.
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        public RankingRuleMapping RankingRuleMapping { get; set; }
+
+        /// <summary>
+        /// Indicates if this Event is outside of the Event Tree.
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 16 )]
+        [G_NS.JsonProperty( Order = 16 )]
+        [DefaultValue( false )]
+        public bool ExternalToEventTree { get; set; } = false;
+
+        /// <summary>
+        /// If the fields EventName and Values require interpretation, GetCompiledEvents
+        /// interpres them and returns a new list of TieBreakingRules cooresponding to the interpretation.
+        /// If interpretation is not required, then it returns a list of one tie breaking rule, itself.
+        /// <para>Will always return a clone copy of the event, so the original is not modified by the caller.</para>
+        /// </summary>
+        /// 
+        public virtual List<EventExplicit> GetCompiledEvents() {
+            var events = new List<EventExplicit>();
+            EventExplicit copy = new EventExplicit();
+            copy.EventName = this.EventName;
+            copy.EventType = this.EventType;
+            copy.Children = this.Children;
+            copy.Calculation = this.Calculation;
+            copy.CalculationMeta = this.CalculationMeta;
+            copy.ScoreFormat = this.ScoreFormat;
+            copy.ResultListFormatDef = this.ResultListFormatDef;
+            copy.StageStyleMapping = this.StageStyleMapping;
+            copy.EventStyleMapping = this.EventStyleMapping;  
+            copy.RankingRuleMapping = this.RankingRuleMapping;
+            copy.ExternalToEventTree = this.ExternalToEventTree;
+            if ( this.Derivation == EventDerivationType.EXPLICIT )
+                copy.Comment = this.Comment;
+            else
+                copy.Comment = $"Compiled EventExplicit based on the Event named '{this.EventName}'.";
+            
+            events.Add( copy );
+            return events;
+        }
 
         /// <summary>
         /// Internal documentation comments. All text is ignored by the system.
         /// </summary>
-        [JsonProperty(Order = 99)]
-        [DefaultValue("")]
-        public string Comment { get; set; }
+		[G_STJ_SER.JsonPropertyOrder( 100 )]
+        [G_NS.JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]
+        public string Comment { get; set; } = string.Empty;
 
         public override string ToString() {
             return $"{EventName} of {EventType}";

@@ -1,24 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.DefinitionAPI;
-using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Diagnostics;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition.Validation {
 
     [TestClass]
-    public class DefinitionValidationTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class DefinitionValidationTests : BaseTestClass {
 
         [TestMethod]
         public async Task IsOwnerValidTests() {

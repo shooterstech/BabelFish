@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
     [Serializable]
-    [JsonConverter( typeof( ScoreAverageBaseConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ScoreAverageBaseConverter ) )]
     public abstract class ScoreAverageBase : IDeserializableAbstractClass {
 
         /*
@@ -19,8 +19,12 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// </summary>
         public string UserId { get; set; } = string.Empty;
 
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
         /// <summary>

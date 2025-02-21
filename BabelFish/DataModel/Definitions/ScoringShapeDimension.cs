@@ -1,11 +1,12 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using System.Text.Json;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -24,7 +25,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// THe shape of this ScoringShape.
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        
         [DefaultValue( ScoringShape.CIRCLE )]
         public ScoringShape Shape { get; set; } = ScoringShape.CIRCLE;
 
@@ -37,7 +38,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonPropertyOrder ( 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
     }

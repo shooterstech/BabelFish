@@ -4,8 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -36,7 +34,6 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         /// Mapping between the DisplayEvent (key) which is defined on the course of fire definition for Commands
         /// to the ViewConfig (value) to use.
         /// </summary>
-        [JsonProperty(Order = 1)]
         public Dictionary<string, string> EventAssignments { get; set; }
     }
 }

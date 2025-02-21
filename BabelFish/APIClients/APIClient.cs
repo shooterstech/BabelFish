@@ -2,16 +2,15 @@
 using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Helpers;
-using Newtonsoft.Json.Linq;
 using NLog;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.Converters;
+using System.Diagnostics;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -33,7 +32,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Standard json serializer settings intended for use while deserializing json to object model.
         /// Will ignore any json values that are null, and instead use the default value of the property.
         /// </summary>
-        public static JsonSerializer DeSerializer = new JsonSerializer(  ) { NullValueHandling = NullValueHandling.Ignore };
+        /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
+        public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
         private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public HttpClient httpClient = new HttpClient();
@@ -73,7 +73,7 @@ namespace Scopos.BabelFish.APIClients {
         #endregion properties
 
         #region Methods
-        protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass {
+        protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass, new() {
             // Get Uri for call
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
@@ -84,10 +84,12 @@ namespace Scopos.BabelFish.APIClients {
             if (!IgnoreInMemoryCache && !request.IgnoreInMemoryCache && request.HttpMethod == HttpMethod.Get && ResponseCache.CACHE.TryGetResponse( request, out cachedResponse )) {
 
                 response.StatusCode = HttpStatusCode.OK;
-                response.MessageResponse = cachedResponse.MessageResponse.Copy();
-                response.MessageResponse.Message.Add( "In memory cached response" );
+                //response.MessageResponse = cachedResponse.MessageResponse.Copy();
+                //response.MessageResponse.Message.Add( "In memory cached response" );
+                //var stopWatch = Stopwatch.StartNew();
                 response.Body = cachedResponse.Body;
                 response.TimeToRun = DateTime.Now - startTime;
+                //stopWatch.Stop();
                 response.InMemoryCachedResponse = true;
 
                 logger.Info( $"Returning a in-memory cached Response for {request}." );
@@ -101,7 +103,7 @@ namespace Scopos.BabelFish.APIClients {
 
                 if (fileSystemReadResponse.Item1) {
                     response.StatusCode = HttpStatusCode.OK;
-                    response.MessageResponse.Message.Add( "Read from file system response" );
+                    //response.MessageResponse.Message.Add( "Read from file system response" );
                     response.Body = fileSystemReadResponse.Item2.Body;
                     response.TimeToRun = DateTime.Now - startTime;
                     response.FileSystemCachedResponse = true;
@@ -112,6 +114,8 @@ namespace Scopos.BabelFish.APIClients {
                 }
             }
 
+            //jsonAsString is practically used only for debugging
+            string jsonAsString = "";
 
             try {
 
@@ -158,39 +162,28 @@ namespace Scopos.BabelFish.APIClients {
                         responseMessage = await httpClient.SendAsync( requestMessage );
                     }
 
-                    response.TimeToRun = DateTime.Now - startTime;
                     logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );
                 }
 
                 response.StatusCode = responseMessage.StatusCode;
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
-                using (StreamReader sr = new StreamReader( s ))
-                using (JsonReader reader = new JsonTextReader( sr )) {
-                    var apiReturnJson = JObject.ReadFrom( reader );
-                    try {
+                using (StreamReader sr = new StreamReader( s )) {
+                    /*
+                     * EKA Note Jan 2025: There are faster ways of parsing the stream into an object. However, by capturing the json (which slows things down)
+                     * it makes troubleshooting much easier. Any by saving the JsonDocument in .Body, makes reusing response in a cache easier.
+                     */
+                    jsonAsString = sr.ReadToEnd();
+                    //var stopWatch = Stopwatch.StartNew();
+                    response.Body = G_STJ.JsonDocument.Parse( jsonAsString );
+                    response.TimeToRun = DateTime.Now - startTime;
+                    //stopWatch.Stop();
 
-                        //TODO: Do something with invalid data format from Forbidden....
-                        response.MessageResponse = new MessageResponse();
-                        if (apiReturnJson is JObject) {
-                            JObject jo = (JObject)apiReturnJson;
-                            if (jo.ContainsKey( "Message" ) && jo["Message"] is JArray) {
-                                JArray m = (JArray)jo["Message"];
-                                foreach (var message in m) {
-                                    response.MessageResponse.Message.Add( (string)message );
-                                }
-                            }
+                    G_STJ.JsonElement messageArray;
+                    if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array ) {
+                        foreach (var message in messageArray.EnumerateArray()) {
+                            response.MessageResponse.Message.Add( message.GetString() );
                         }
-
-                        if (responseMessage.IsSuccessStatusCode)
-                            response.Body = apiReturnJson;
-
-                        //Log errors set in calls
-                        if (response.MessageResponse.Message.Count > 0)
-                            logger.Error( "Processing Call Error {processingerror}", string.Join( "; ", response.MessageResponse.Message ) );
-
-                    } catch (Exception ex) {
-                        throw new Exception( $"Error parsing return json: {ex.ToString()}" );
                     }
                 }
 
@@ -199,7 +192,7 @@ namespace Scopos.BabelFish.APIClients {
                     if (request.HttpMethod == HttpMethod.Get) {
                         cachedResponse = new ResponseIntermediateObject() {
                             StatusCode = response.StatusCode,
-                            MessageResponse = response.MessageResponse.Copy(),
+                            //MessageResponse = response.MessageResponse.Copy(),
                             Request = request,
                             Body = response.Body,
                             ValidUntil = response.GetCacheValueExpiryTime()
@@ -208,14 +201,21 @@ namespace Scopos.BabelFish.APIClients {
                         ResponseCache.CACHE.SaveResponse( cachedResponse );
                     }
                 } else {
-                    logger.Error( $"API error with: {responseMessage.ReasonPhrase}" );
+                    var msg = $"API error with: {responseMessage.ReasonPhrase}";
+                    logger.Error( msg );
+                    logger.Debug( jsonAsString );
+                    response.ExceptionMessage = msg; 
+                    response.Json = jsonAsString;
                 }
 
             } catch (Exception ex) {
 
                 response.StatusCode = HttpStatusCode.InternalServerError;
-                response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
+                response.ExceptionMessage = ex.Message;
+                response.Json = jsonAsString;
+                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
                 logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
+                logger.Debug( jsonAsString );
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
-using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI
 {
@@ -32,54 +31,16 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
         }
 
         protected override void ConvertBodyToValue() {
-            SetAttributeValueList returnList = new SetAttributeValueList();
-            List<SetAttributeValue> returnAttributes = new List<SetAttributeValue>();
-            List<string> CaptureErrors = new List<string>();
 
-            try
-            {
-                JObject o = JObject.Parse(Body.ToString());
-                string otype = o.Type.ToString();
-                foreach (JProperty property in o.Properties())
-                {
-                    if (property.Name == OBJECT_LIST_NAME)
-                    {
-                        JObject o2 = JObject.Parse(property.Value.ToString());
-                        foreach (JProperty property2 in o2.Properties())
-                        {
-                            CaptureErrors.Clear();
-                            SetAttributeValue buildAttribute = new SetAttributeValue();
+            if (StatusCode == System.Net.HttpStatusCode.OK) {
+                var rootElement = Body.RootElement;
+                var setAttrValueListElement = rootElement.GetProperty( OBJECT_LIST_NAME );
 
-                            JObject o3 = JObject.Parse(property2.Value.ToString());
-                            buildAttribute.AttributeValue = property2.Name;
-                            foreach (JProperty property3 in o3.Properties())
-                            {
-                                switch (property3.Name)
-                                {
-                                    case "Message":
-                                        buildAttribute.Message.Add(property3.Value.ToString());
-                                        break;
-                                    case "statusCode":
-                                        buildAttribute.StatusCode = property3.Value.ToString();
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            returnAttributes.Add(buildAttribute);
-                        }
-                    }
-                }
-                returnList.SetAttributeValues = returnAttributes;
+                Value = G_STJ.JsonSerializer.Deserialize<SetAttributeValueList>( setAttrValueListElement, SerializerOptions.SystemTextJsonDeserializer );
+            } else {
+                Value = new SetAttributeValueList();
             }
-            catch (Exception ex)
-            {
-                CaptureErrors.Add($": {ex.ToString()}");
-            }
-
-            Value = returnList;
-            if (CaptureErrors.Count > 0)
-                CaptureErrors.ForEach(x => this.MessageResponse.Message.Add(x.ToString()));
+            
         }
     }
 }

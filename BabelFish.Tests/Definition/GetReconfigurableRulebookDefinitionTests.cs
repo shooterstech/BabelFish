@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Net;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.Tests.Definition
-{
+namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
-    public class GetReconfigurableRulebookDefinitionTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class GetReconfigurableRulebookDefinitionTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
@@ -247,13 +234,12 @@ namespace Scopos.BabelFish.Tests.Definition
         }
 
         [TestMethod]
-        public void GetAppellationTest() {
+        public async Task GetAppellationTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
 
-            var taskResponse = client.GetCourseOfFireDefinitionAsync(setName);
-            var result = taskResponse.Result;
+            var result = await client.GetCourseOfFireDefinitionAsync(setName);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
 
             var definition = result.Definition;

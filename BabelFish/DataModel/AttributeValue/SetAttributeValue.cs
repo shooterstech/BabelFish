@@ -1,7 +1,4 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
@@ -25,15 +22,12 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public SetAttributeValue() { }
 
         /// <summary>
-        /// UserID
+        /// The SetName of the AttributeValue that was sent and we have a response about how successful the set-ing went.
         /// </summary>
-        [JsonProperty(Order = 1)]
         public string AttributeValue { get; set; } = string.Empty;
 
-        [JsonProperty(Order = 2)]
         public string StatusCode { get; set; } = string.Empty;
 
-        [JsonProperty(Order = 3)]
         public List<string> Message { get; set; } = new List<string>();
 
         public override string ToString()

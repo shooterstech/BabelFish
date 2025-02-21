@@ -1,31 +1,18 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Net;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Scopos.BabelFish;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel.Definitions;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Diagnostics;
-using System.IO;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    public class DefinitionCacheTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class DefinitionCacheTests : BaseTestClass {
 
         /// <summary>
         /// Testing that the first request, that is not using cache, is faster than the second test that is. 
@@ -61,8 +48,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var attributeNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
-            var attributeWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
+            var attributeNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonSerializer );
+            var attributeWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonSerializer );
             Assert.AreEqual( attributeWithCache, attributeNoCache );
         }
 
@@ -71,6 +58,9 @@ namespace Scopos.BabelFish.Tests.Definition {
         /// </summary>
         [TestMethod]
         public async Task FileSystemCacheTest() {
+
+            //To perform this test, need to clear cache first, as other tests may have populated it.
+            Initializer.ClearCache(false);
 
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
@@ -139,13 +129,16 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var cofNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
-            var cofWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
+            var cofNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonSerializer ); 
+            var cofWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonSerializer ); 
             Assert.AreEqual( cofWithCache, cofNoCache );
         }
 
         [TestMethod]
         public async Task RequestsThatShouldNotGetCached() {
+
+            //To perform this test, need to clear cache first, as other tests may have populated it.
+            Initializer.ClearCache(false);
 
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
@@ -195,9 +188,50 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             string json = File.ReadAllText( path );
 
-            var definition = JsonConvert.DeserializeObject<Scopos.BabelFish.DataModel.Definitions.Definition> ( json );
+            var definition = G_STJ.JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json, Helpers.SerializerOptions.SystemTextJsonDeserializer );
 
             Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
 		}
+
+        [TestMethod]
+        public async Task DefinitionNotFoundTest() {
+
+            SetName notARealAttrDefinition = SetName.Parse( "v1.0:orion:not a real attribute" );
+
+            var swFirstCall = Stopwatch.StartNew();
+            try {
+                await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
+            } catch ( DefinitionNotFoundException ) {
+                //This is expected
+                swFirstCall.Stop();
+            }
+
+            var swSecondCall = Stopwatch.StartNew();
+            try {
+                await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
+            } catch (DefinitionNotFoundException) {
+                //This is expected
+                swSecondCall.Stop();
+            }
+
+            //The second call, if it was cached, should be faster than the first
+            //Due to the time it takes to throw and catch an exception, the benefit is minimal, but still there.
+            Assert.IsTrue( swFirstCall.ElapsedMilliseconds > 2 * swSecondCall.ElapsedMilliseconds );
+        }
+
+        /// <summary>
+        /// Tests that the DefinitionCache's PreLoad, actually loads the expected definitiions into cache.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task DefinitionCachePreLoadTests() {
+            DefinitionCache.ClearCache();
+
+            await DefinitionCache.PreLoad();
+
+            Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+        }
     }
 }

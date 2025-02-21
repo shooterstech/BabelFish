@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
+﻿using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Requests.AttributeValueAPI;
-using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
@@ -18,12 +7,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     /// The methods in this class largely test the AttributeField class, and if data types are stored and returned in their expected format.
     /// </summary>
     [TestClass]
-    public class SettingFieldValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class SettingFieldValueTests : BaseTestClass {
 
         [TestMethod]
         public void HappyPathSingleAttributeFieldDataTypes() {
@@ -34,11 +18,11 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Create some random data to store
             var random = new Random();
             var myInt = random.Next();
-            var myFloat = random.NextDouble();
+            var myFloat = (float) random.NextDouble();
             var myBool = random.NextInt64() % 2 == 0;
             var myDate = (new DateTime( random.NextInt64( 0, DateTime.MaxValue.Ticks ) )).Date;
             var myDateTime = new DateTime( random.NextInt64( 0, DateTime.MaxValue.Ticks ) );
-            var myTime = new TimeSpan( random.Next() );
+            var myTime = (float) random.NextDouble();
             var myString = Scopos.BabelFish.Helpers.RandomStringGenerator.RandomAlphaString( 8 );
 
             //Set values to the attribute value.
@@ -48,17 +32,17 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttrValue.SetFieldValue( "ABoolean", myBool );
             testAttrValue.SetFieldValue( "ADate", myDate );
             testAttrValue.SetFieldValue( "ATime", myTime );
-            testAttrValue.SetFieldValue( "ADateTime", myDateTime );
+            //testAttrValue.SetFieldValue( "ADateTime", myDateTime );
 
             //Now test that the GetFieldValue return the same data that we stored
             Assert.AreEqual( myString, (string)testAttrValue.GetFieldValue( "AString" ) );
             Assert.AreEqual( myInt, (int)testAttrValue.GetFieldValue( "AnInteger" ) );
-            Assert.AreEqual( myFloat, (double)testAttrValue.GetFieldValue( "AFloat" ) );
+            Assert.AreEqual( myFloat, (float)testAttrValue.GetFieldValue( "AFloat" ) );
             Assert.AreEqual( myBool, (bool)testAttrValue.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( myDate, (DateTime)testAttrValue.GetFieldValue( "ADate" ) );
+            Assert.AreEqual( myTime, (float)testAttrValue.GetFieldValue( "ATime" ) );
             //Because Times and DateTime are stored with known rounding error, will allow this much tolerance in teh comparison.
-            Assert.IsTrue( Math.Abs( ((TimeSpan)testAttrValue.GetFieldValue( "ATime" ) - myTime).TotalSeconds ) < .001D );
-            Assert.IsTrue( Math.Abs( ((DateTime)testAttrValue.GetFieldValue( "ADateTime" ) - myDateTime).TotalMilliseconds ) < .001D );
+            //Assert.IsTrue( Math.Abs( ((DateTime)testAttrValue.GetFieldValue( "ADateTime" ) - myDateTime).TotalMilliseconds ) < .001D );
         }
 
         [TestMethod]

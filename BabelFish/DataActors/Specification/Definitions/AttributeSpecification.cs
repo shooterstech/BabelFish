@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Attribute = Scopos.BabelFish.DataModel.Definitions.Attribute;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataActors.Specification.Definitions {
-	public class IsAttributeValid : CompositeSpecification<Attribute> {
+namespace Scopos.BabelFish.DataActors.Specification.Definitions
+{
+    public class IsAttributeValid : CompositeSpecification<Attribute> {
 
 		public override async Task<bool> IsSatisfiedByAsync( Attribute candidate ) {
 
@@ -266,7 +268,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 	}
 
 	/// <summary>
-	/// Tests whether the Default Value on each AttributeField is valid.
+	/// Tests whether the Default Value on each AttributeFieldString is valid.
 	/// </summary>
 	public class IsAttributeFieldDefaultValueValid : CompositeSpecification<Attribute> {
 
@@ -278,19 +280,22 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
 			if (candidate.Fields != null) {
 				foreach (var field in candidate.Fields) {
-					if ( field.FieldType == DataModel.Definitions.FieldType.CLOSED
-						|| field.FieldType == DataModel.Definitions.FieldType.SUGGEST ) {
-						bool isAValueOption = false;
+					if (field is AttributeFieldString) {
+						var stringField = (AttributeFieldString)field;
+						if (stringField.FieldType == DataModel.Definitions.FieldType.CLOSED
+							|| stringField.FieldType == DataModel.Definitions.FieldType.SUGGEST) {
+							bool isAValueOption = false;
 
-						foreach (var option in field.Values) {
-							if (option.Value == field.DefaultValue) {
-								isAValueOption = true;
+							foreach (var option in stringField.Values) {
+								if (option.Value == stringField.DefaultValue) {
+									isAValueOption = true;
+								}
 							}
-						}
 
-						if ( !isAValueOption) {
-							valid = false;
-							Messages.Add( $"The AttributeField '{field.FieldName}' DefaultValue is not listed as one of the optional Values. Instead have '{field.DefaultValue}.'" );
+							if (!isAValueOption) {
+								valid = false;
+								Messages.Add( $"The AttributeField '{field.FieldName}' DefaultValue is not listed as one of the optional Values. Instead have '{field.BaseGetDefaultValue()}.'" );
+							}
 						}
 					}
 				}

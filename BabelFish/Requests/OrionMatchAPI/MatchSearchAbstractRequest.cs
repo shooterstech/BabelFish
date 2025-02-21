@@ -73,8 +73,8 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
                 parameterList.Add( "distance", new List<string>() { Distance.ToString() } );
-                parameterList.Add( "start-date", new List<string>() { StartDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
-                parameterList.Add( "end-date", new List<string>() { EndDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "start-date", new List<string>() { StartDate.ToString( DateTimeFormats.DATE_FORMAT ) } );
+                parameterList.Add( "end-date", new List<string>() { EndDate.ToString( DateTimeFormats.DATE_FORMAT ) } );
                 parameterList.Add( "shooting-style", ShootingStyle );
                 parameterList.Add( "longitude", new List<string>() { Longitude.ToString() } );
                 parameterList.Add( "latitude", new List<string>() { Latitude.ToString() } );

@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 	public class SparseDefinitionList : ITokenItems<SparseDefinitionSearchResult> {
@@ -22,6 +24,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		public List<SparseDefinitionSearchResult> Items { get; set; }
 
 		/// <inheritdoc />
+		[JsonConverter(typeof(NextTokenConverter))]
 		public string NextToken { get; set; } = string.Empty;
 
 		/// <inheritdoc />
@@ -49,7 +52,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A value of -1 means no search term comparision was made.
         /// </summary>
         [DefaultValue( -1 )]
-        [JsonIgnore]
-        public int SearchScore { get; set; } = -1;
+        public float SearchScore { get; set; } = -1;
     }
 }

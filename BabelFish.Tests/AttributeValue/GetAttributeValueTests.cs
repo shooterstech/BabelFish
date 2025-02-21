@@ -1,23 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
     [TestClass]
-    public class GetSetAttributeValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class GetSetAttributeValueTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
@@ -69,8 +58,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             Assert.AreEqual( "Christopher", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
             Assert.AreEqual( "Jones", (string)profileNameAttributeValue.GetFieldValue( "FamilyName" ) );
-
-            Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( profileNameAttributeValueDataPacket, new Scopos.BabelFish.Converters.AttributeValueDataPacketConverter() ) );
         }
 
         /// <summary>
@@ -129,13 +116,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             var addressAttributeValueDataPacket = attributeValueDataPackets[setNameAddress];
             Assert.IsTrue( addressAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
-
-            var addresses = addressAttributeValueDataPacket.AttributeValue;
-            var stateField = addresses.GetAttributeField( "State" );
-            foreach( var value in stateField.Values ) {
-                var stateCode = value.Value; //2 letter state code, which is what should get saved back to the attribute value
-                var stateName = value.Name;  //Fully spelled out state name for display purposes.
-            }
         }
 
         /// <summary>

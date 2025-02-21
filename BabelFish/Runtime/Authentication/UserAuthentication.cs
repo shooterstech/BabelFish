@@ -9,8 +9,6 @@ using Amazon.Extensions.CognitoAuthentication;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.CognitoIdentity.Model;
 using NLog;
-using Scopos.BabelFish.Runtime;
-using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.Runtime.Authentication {
 

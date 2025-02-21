@@ -36,9 +36,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="resultEventList"></param>
         /// <param name="resultListFormat"></param>
         /// <returns></returns>
-        public ResultListIntermediateFormatted( 
-            ResultList resultList, 
-            ResultListFormat resultListFormat, 
+        public ResultListIntermediateFormatted(
+            ResultList resultList,
+            ResultListFormat resultListFormat,
             IUserProfileLookup userProfileLookup ) {
 
             this.ResultList = resultList;
@@ -52,7 +52,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <param name="definitionApiClient"></param>
         /// <returns></returns>
-        public async Task InitializeAsync( ) {
+        public async Task InitializeAsync() {
 
             //NOTE: Don't need to wait for the profile visibility initialization. 
             this.UserProfileLookup.RefreshUserProfileVisibilityAsync();
@@ -132,29 +132,103 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Gets the list of rows to display in the formatted results. This lists excludes Rows hidden by the .ChildrenToShow parameter.
+        /// Gets the list of rows to display in the formatted results. This lists excludes Rows hidden by the row limited properties (listed below).
         /// </summary>
+        /// <remarks>
+        /// Limiting properties are implemented in this order:
+        /// <list type="bullet">
+        /// <item>ShowNumberOfChildRows (implemented for child rows only)</item>
+        /// <item>ShowRanks (implemented for parent rows only)</item>
+        /// <item>ShowStatuses</item>
+        /// <item>ShowZeroScoresWithOFFICIAL</item>
+        /// </list>
+        /// </remarks>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<ResultListIntermediateFormattedRow> ShownRows {
             get {
                 if (!initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-                int childRowsRemaining = this.ChildrenToShow;
+                int childRowsRemaining = this.ShowNumberOfChildRows;
+                bool skipRemainingChildren = false;
+
                 lock (rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>();
-                    foreach( var row in rows) {
+                    foreach (var row in rows) {
                         if (!row.IsChildRow) {
-                            //Thsi is a parent row, we can reset the count of child rows to show
-                            childRowsRemaining = this.ChildrenToShow;
-                            copyOfRows.Add( row );
+                            //This is a parent row
+
+                            //Reset the count of child rows to show, and skip remaining children
+                            childRowsRemaining = this.ShowNumberOfChildRows;
+                            skipRemainingChildren = false;
+
+                            if (ShowRanks >= row.GetRank()) {
+                                //Always show scores with a rank value up to and including ShowRanks
+                                copyOfRows.Add( row );
+                            } else {
+
+                                if ( ShowStatuses.Contains( row.GetStatus() ) ) {
+                                    //This row's status is one of the status we were told to include
+
+                                    if ( this.ResultList.Status == ResultStatus.OFFICIAL 
+                                        && ShowZeroScoresWithOFFICIAL 
+                                        && row.GetScore( this.ResultList.EventName, false ).IsZero ) {
+                                        //The result list status is official, and we were told to exclude rows with scores of zero
+
+                                        if (row.GetParticipant().HasRemark( ParticipantRemark.DNS )
+                                            || row.GetParticipant().HasRemark( ParticipantRemark.DNF )
+                                            || row.GetParticipant().HasRemark( ParticipantRemark.DSQ )) {
+                                            //Do include these rows since the athlete / team did somethign bad and we want to shame them
+                                            copyOfRows.Add( row );
+                                        } else {
+                                            //Don't incldue this row
+                                            skipRemainingChildren = true;
+                                        }
+
+                                    } else {
+                                        copyOfRows.Add( row );
+                                    }
+                                } else {
+                                    //Don't show this row b/c the status is not in the lists of statuses we were told to show
+                                    skipRemainingChildren = true;
+                                }
+                            }
+                            
                         } else {
-                            //This is a child row, check if we can show any more
+                            //This is a child row
+                            if (skipRemainingChildren)
+                                continue;
+
+                            //Check if we can show any more child rows
                             if (childRowsRemaining > 0) {
                                 childRowsRemaining--;
-                                copyOfRows.Add( row );
+
+                                if (ShowStatuses.Contains( row.GetStatus() )) {
+                                    //This row's status is one of the status we were told to include
+
+                                    if (this.ResultList.Status == ResultStatus.OFFICIAL
+                                        && ShowZeroScoresWithOFFICIAL
+                                        && row.GetScore( this.ResultList.EventName, false ).IsZero) {
+                                        //The result list status is official, and we were told to exclude rows with scores of zero
+
+                                        if (row.GetParticipant().HasRemark( ParticipantRemark.DNS )
+                                            || row.GetParticipant().HasRemark( ParticipantRemark.DNF )
+                                            || row.GetParticipant().HasRemark( ParticipantRemark.DSQ )) {
+                                            //Do include these rows since the athlete / team did somethign bad and we want to shame them
+                                            copyOfRows.Add( row );
+                                        } else {
+                                            //Don't incldue this row
+                                            ;
+                                        }
+
+                                    } else {
+                                        copyOfRows.Add( row );
+                                    }
+                                } else {
+                                    //Don't show this row b/c the status is not in the lists of statuses we were told to show
+                                    ;
+                                }
                             }
-                            //else, don't add it
                         }
 
                     }
@@ -164,7 +238,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Gets the list of all rows to display in the formatted results. This lists includes Rows hidden by the .ChildrenToShow parameter.
+        /// Gets the list of all rows to display in the formatted results. This lists includes Rows hidden by row limiting properties.
         /// </summary>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<ResultListIntermediateFormattedRow> Rows {
@@ -172,7 +246,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (!initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-                int childRowsRemaining = this.ChildrenToShow;
+                int childRowsRemaining = this.ShowNumberOfChildRows;
                 lock (rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>( rows );
                     return copyOfRows;
@@ -186,10 +260,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <param name="rankOrder"></param>
         /// <returns></returns>
-        public ResultListIntermediateFormattedRow GetRowAtRankOrder(int rankOrder) {
+        public ResultListIntermediateFormattedRow GetRowAtRankOrder( int rankOrder ) {
             //NOTE: This does a linear search, could be improved by using a dictionary lookup.
             lock (rows) {
-                foreach( var row in rows) {
+                foreach (var row in rows) {
                     if (row.IsChildRow)
                         continue;
 
@@ -227,7 +301,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private string ScoreConfigName {
             get {
-                if (! string.IsNullOrEmpty( ResultList.ScoreConfigName ) ) 
+                if (!string.IsNullOrEmpty( ResultList.ScoreConfigName ))
                     return ResultList.ScoreConfigName;
                 return ResultListFormat.ScoreConfigDefault;
             }
@@ -246,7 +320,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <param name="scoreFormatName"></param>
         /// <returns></returns>
-        public string GetScoreFormat(string scoreFormatName) {
+        public string GetScoreFormat( string scoreFormatName ) {
             string scoreFormat;
             if (ScoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))
                 return scoreFormat;
@@ -339,7 +413,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
             //NOTE .HeaderClassList is deprecated
-            foreach (var c in format.HeaderClassList) { 
+            foreach (var c in format.HeaderClassList) {
                 cellValues.ClassList.Add( c.ToString() );
             }
 
@@ -492,12 +566,83 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public int ResolutionWidth { get; set; } = int.MaxValue;
 
+
+        private int _showNumberOfChildren = int.MaxValue;
+        private HashSet<ResultStatus> _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
+        private bool _showZeroScoresWithOFFICIAL = false;
+        private int _showRanks = 0;
+
+        public void SetShowValuesToDefault() {
+            ShowNumberOfChildRows = 0;
+            ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
+            ShowZeroScoresWithOFFICIAL = false;
+            ShowRanks = 0;
+        }
         /// <summary>
         /// Limits the number of child rows to show under a main body row.
         /// <para>The default value is int.MaxValue, which means to show all children.</para>
-        /// <para>Values of less than 0, are interpreted as being 0.</para>
+        /// <para>Values of less than 0, are interpreted as being int.MaxValue.</para>
         /// </summary>
-        public int ChildrenToShow {  get; set; } = int.MaxValue;
+        public int ShowNumberOfChildRows {
+            get {
+                return _showNumberOfChildren;
+            }
+            set {
+                if (value <= 0)
+                    _showNumberOfChildren = int.MaxValue;
+                else
+                    _showNumberOfChildren = value;
+            }
+        }        
+
+        /// <summary>
+        /// Gets or sets the set of ResultStatus (e.g. INTERMEDIATE, UNOFFICIAL) to show when .ShownRows is called. 
+        /// <para>When setting, if the HashSet is empty, then all ResultStatus will be included.</para>
+        /// </summary>
+        public HashSet<ResultStatus> ShowStatuses {
+            get {
+                HashSet<ResultStatus> copy = new HashSet<ResultStatus>();
+                foreach (ResultStatus status in _showStatuses)
+                    copy.Add( status );
+
+                return copy;
+            }
+            set {
+                if (value.Count == 0) {
+                    _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
+                } else {
+                    _showStatuses = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a boolean indicating if scores with a zero score shold be displayed when the Result LIst's staus is OFFICIAL.
+        /// Scores that have a remark of DNS, DSQ, or DNF are still shown.
+        /// </summary>
+        public bool ShowZeroScoresWithOFFICIAL {
+            get; set;
+        }
+        
+
+        /// <summary>
+        /// Gets or sets the number of highest ranked athletes or teams to always show, regardless of othre row limiting properties, when .ShownRows is called.
+        /// For example, if RanksToShow is 3, then the athletes or teams ranked first, second, and third are always shown.
+        /// <para>A value of 0 indicates to show all athletes and teams.</para>
+        /// <para>This property only effects parent rows, it does not effect child rows.</para>
+        /// </summary>
+        public int ShowRanks {
+            get {
+                return _showRanks;
+            }
+            set {
+                if (value <= 0)
+                    _showRanks = 0;
+                else
+                    _showRanks = value;
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets the engagable variable. Which indicates if the Result List Format will be displayed

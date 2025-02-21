@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
         }
 
-        public MatchParticipantList MatchParticipantList = new MatchParticipantList();
+        public MatchParticipantList MatchParticipantList { get; set; } = new MatchParticipantList();
 
         public override string ToString() {
             return $"Match Participant List for {MatchParticipantList.MatchName}";

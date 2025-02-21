@@ -10,151 +10,138 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Tests.SocialNetwork
-{
+namespace Scopos.BabelFish.Tests.SocialNetwork {
     [TestClass]
-    public class ListSocialRelationshipsTests
-    {
+    public class ListSocialRelationshipsTests : BaseTestClass {
         private SocialNetworkAPIClient socialNetworkClient;
 
 
         [TestInitialize]
-        public void InitClient()
-        {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        public override void InitializeTest() {
+            base.InitializeTest();
 
-            socialNetworkClient = new SocialNetworkAPIClient(APIStage.PRODUCTION);
+            socialNetworkClient = new SocialNetworkAPIClient( APIStage.PRODUCTION );
         }
 
         [TestMethod]
-        public async Task ListAllFollowRelationships()
-        {
+        public async Task ListAllFollowRelationships() {
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
-                Constants.TestDev3Credentials.Password);
+                Constants.TestDev3Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var listRequest = new ListSocialRelationshipsAuthenticatedRequest(userAuthentication);
+            var listRequest = new ListSocialRelationshipsAuthenticatedRequest( userAuthentication );
             listRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             listRequest.AsPassive = true;
             listRequest.AsActive = true;
-            listRequest.IncomingRequests = true; 
+            listRequest.IncomingRequests = true;
             listRequest.OutgoingRequests = true;
 
-            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync(listRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, listResponse.StatusCode);
+            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
         }
 
 
         [TestMethod]
-        public async Task ListApprovedFollowers()
-        {
+        public async Task ListApprovedFollowers() {
             //get list of followers that have been approved by the calling user
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
-                Constants.TestDev3Credentials.Password);
+                Constants.TestDev3Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var listRequest = new ListSocialRelationshipsAuthenticatedRequest(userAuthentication);
+            var listRequest = new ListSocialRelationshipsAuthenticatedRequest( userAuthentication );
             listRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             listRequest.Limit = 10;
             listRequest.AsPassive = true;
-            
 
-            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync(listRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, listResponse.StatusCode);
 
-            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items)
-            {
-                Assert.AreEqual(sr.PassiveId, Constants.TestDev3UserId);
-                Assert.IsTrue(sr.ActiveApproved && sr.PassiveApproved);
+            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+
+            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
+                Assert.AreEqual( sr.PassiveId, Constants.TestDev3UserId );
+                Assert.IsTrue( sr.ActiveApproved && sr.PassiveApproved );
             }
 
         }
 
         [TestMethod]
-        public async Task ListApprovedFollowing()
-        {
+        public async Task ListApprovedFollowing() {
             //get list of users that the calling user is following and is approved 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
-                Constants.TestDev3Credentials.Password);
+                Constants.TestDev3Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var listRequest = new ListSocialRelationshipsAuthenticatedRequest(userAuthentication);
+            var listRequest = new ListSocialRelationshipsAuthenticatedRequest( userAuthentication );
             listRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             listRequest.Limit = 10;
             listRequest.AsActive = true;
 
-            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync(listRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, listResponse.StatusCode);
+            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
 
-            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items)
-            {
-                Assert.AreEqual(sr.ActiveId, Constants.TestDev3UserId);
-                Assert.IsTrue(sr.ActiveApproved && sr.PassiveApproved);
+            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
+                Assert.AreEqual( sr.ActiveId, Constants.TestDev3UserId );
+                Assert.IsTrue( sr.ActiveApproved && sr.PassiveApproved );
             }
         }
 
         [TestMethod]
-        public async Task ListIncomingFollowRequests()
-        {
+        public async Task ListIncomingFollowRequests() {
             //get list of follow requests awaiting approval of the caller
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
-                Constants.TestDev3Credentials.Password);
+                Constants.TestDev3Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var listRequest = new ListSocialRelationshipsAuthenticatedRequest(userAuthentication);
+            var listRequest = new ListSocialRelationshipsAuthenticatedRequest( userAuthentication );
             listRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             listRequest.Limit = 10;
             listRequest.IncomingRequests = true;
 
-            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync(listRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, listResponse.StatusCode);
+            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
 
-            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items)
-            {
-                Assert.AreEqual(sr.PassiveId, Constants.TestDev3UserId);
-                Assert.IsTrue(sr.ActiveApproved && !sr.PassiveApproved);
+            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
+                Assert.AreEqual( sr.PassiveId, Constants.TestDev3UserId );
+                Assert.IsTrue( sr.ActiveApproved && !sr.PassiveApproved );
             }
 
         }
 
         [TestMethod]
-        public async Task ListOutgoingFollowRequests()
-        {
+        public async Task ListOutgoingFollowRequests() {
             //get list of follow requests sent by the caller that have yet to be approved by the passive user
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
-                Constants.TestDev3Credentials.Password);
+                Constants.TestDev3Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var listRequest = new ListSocialRelationshipsAuthenticatedRequest(userAuthentication);
+            var listRequest = new ListSocialRelationshipsAuthenticatedRequest( userAuthentication );
             listRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             listRequest.Limit = 10;
             listRequest.OutgoingRequests = true;
 
-            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync(listRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, listResponse.StatusCode);
-            
-            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items)
-            {
-                Assert.AreEqual(sr.ActiveId, Constants.TestDev3UserId);
-                Assert.IsTrue(sr.ActiveApproved && !sr.PassiveApproved);
+            var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+
+            foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
+                Assert.AreEqual( sr.ActiveId, Constants.TestDev3UserId );
+                Assert.IsTrue( sr.ActiveApproved && !sr.PassiveApproved );
             }
         }
 
         [TestMethod]
-        public async Task ListAllFollowRelationshipsWithTokens()
-        {
+        public async Task ListAllFollowRelationshipsWithTokens() {
             //IF THIS TEST FAILS, TRY RUNNING RestAPI/scripts/DatabaseScripts/PopulateSocialRelationships.py to create dummy relationships
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev3Credentials.Username,
-                Constants.TestDev3Credentials.Password);
+                Constants.TestDev3Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var listRequest = new ListSocialRelationshipsAuthenticatedRequest(userAuthentication);
+            var listRequest = new ListSocialRelationshipsAuthenticatedRequest( userAuthentication );
             listRequest.RelationshipName = SocialRelationshipName.FOLLOW;
             listRequest.AsPassive = true;
             listRequest.AsActive = true;
@@ -167,26 +154,21 @@ namespace Scopos.BabelFish.Tests.SocialNetwork
             bool moreData;
             string lastToken = "";
 
-            do
-            {
-                listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync(listRequest);
-                myRelationships.AddRange(listResponse.SocialRelationshipList.Items);
+            do {
+                listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
+                myRelationships.AddRange( listResponse.SocialRelationshipList.Items );
 
-                Assert.IsTrue(listResponse.SocialRelationshipList.Items.Count() <= listRequest.Limit);
-                Assert.AreNotEqual(lastToken, listResponse.SocialRelationshipList.NextToken);
-                Assert.AreEqual(System.Net.HttpStatusCode.OK, listResponse.StatusCode);
+                Assert.IsTrue( listResponse.SocialRelationshipList.Items.Count() <= listRequest.Limit );
+                Assert.AreNotEqual( lastToken, listResponse.SocialRelationshipList.NextToken );
+                Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
 
                 lastToken = listResponse.SocialRelationshipList.NextToken;
 
-                moreData = !string.IsNullOrEmpty(listResponse.SocialRelationshipList.NextToken);
+                moreData = !string.IsNullOrEmpty( listResponse.SocialRelationshipList.NextToken );
                 listRequest = listResponse.GetNextRequest();
             } while (moreData);
-            
+
 
         }
-
-
-
-
     }
 }

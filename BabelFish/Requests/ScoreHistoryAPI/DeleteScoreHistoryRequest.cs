@@ -1,13 +1,5 @@
 ﻿using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.APIClients;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog;
-using System.Runtime.InteropServices.ComTypes;
 
 
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI

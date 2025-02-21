@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.SocialNetwork {
@@ -20,6 +22,7 @@ namespace Scopos.BabelFish.DataModel.SocialNetwork {
         public List<SocialRelationship> Items { get; set; } = new List<SocialRelationship>();
 
         /// <inheritdoc />
+		[JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />

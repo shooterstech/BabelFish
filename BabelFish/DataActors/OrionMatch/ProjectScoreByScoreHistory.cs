@@ -208,7 +208,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             foreach (var childEvent in eventComposite.Children)
             {//To project the score for any stage, sum the projected scores of it's children
                 Score childScore = RecurProjectScores(childEvent);
-                if (eventComposite.Calculation != "SUM" && childEvent.Equals(eventComposite.Children[0])) 
+                if (eventComposite.Calculation != EventCalculation.SUM && childEvent.Equals(eventComposite.Children[0])) 
                 //I am not entirely sure what this does but I am copying the logic from the AvgShotFiredProjector
                 {//SUM(i,d) ... of which yes, we really ought to be parsing it, but i ain't got tiem for that
                     childScore.S = childScore.I;

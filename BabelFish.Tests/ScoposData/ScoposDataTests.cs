@@ -1,15 +1,12 @@
 ﻿using System.Net;
 using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Requests.ScoposData;
 
 namespace Scopos.BabelFish.Tests.ScoposData {
     [TestClass]
-    public class ScoposDataTests {
+    public class ScoposDataTests  : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.

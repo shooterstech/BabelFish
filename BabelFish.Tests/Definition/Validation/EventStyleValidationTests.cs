@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.DefinitionAPI;
-using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Diagnostics;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
+using Scopos.BabelFish.DataModel.Definitions;
 using static Scopos.BabelFish.DataActors.Specification.Definitions.IsEventStyleValid;
 
 namespace Scopos.BabelFish.Tests.Definition.Validation {
 
-	[TestClass]
-	public class EventStyleValidationTests {
-
-		[TestInitialize]
-		public void InitializeTest() {
-			Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-		}
+    [TestClass]
+	public class EventStyleValidationTests : BaseTestClass {
 
 		[TestMethod]
 		public async Task HappyPathEventStyleIsValid() {
@@ -55,7 +40,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 			Assert.IsTrue( validation.Messages.Count == 0 );
 
 			//Remove both
-			var eventStyle = eventStyleOrig.Copy();
+			var eventStyle = eventStyleOrig.Clone();
 			eventStyle.StageStyles.Clear();
 			eventStyle.EventStyles.Clear();
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
@@ -193,7 +178,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 			var setName = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
 
 			var eventStyleOrig = (await client.GetEventStyleDefinitionAsync( setName )).Value;
-			var eventStyle = eventStyleOrig.Copy();
+			var eventStyle = eventStyleOrig.Clone();
 
 			var validation = new IsEventStyleSimpleCOFsValid();
 
@@ -209,35 +194,35 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 			Assert.IsTrue( validation.Messages.Count > 0 );
 
 			//An empty Commponents list should fail
-			eventStyle = eventStyleOrig.Copy();
+			eventStyle = eventStyleOrig.Clone();
 			eventStyle.SimpleCOFs[0].Components.Clear() ;
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
 			Assert.IsFalse( valid );
 			Assert.IsTrue( validation.Messages.Count > 0 );
 
 			//A Component with 0 shots should fail
-			eventStyle = eventStyleOrig.Copy();
+			eventStyle = eventStyleOrig.Clone();
 			eventStyle.SimpleCOFs[0].Components[0].Shots = 0;
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
 			Assert.IsFalse( valid );
 			Assert.IsTrue( validation.Messages.Count > 0 );
 
 			//A Component with an empthy string for the stage style, should fail
-			eventStyle = eventStyleOrig.Copy();
+			eventStyle = eventStyleOrig.Clone();
 			eventStyle.SimpleCOFs[0].Components[0].StageStyleDef = "";
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
 			Assert.IsFalse( valid );
 			Assert.IsTrue( validation.Messages.Count > 0 );
 
 			//A Component with a real stage style, but one not listed, should fail
-			eventStyle = eventStyleOrig.Copy();
+			eventStyle = eventStyleOrig.Clone();
 			eventStyle.SimpleCOFs[0].Components[0].StageStyleDef = "v1.0:nra:BB Gun Kneeling";
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
 			Assert.IsFalse( valid );
 			Assert.IsTrue( validation.Messages.Count > 0 );
 
 			//A Component with a Score Config Name not listed should fail
-			eventStyle = eventStyleOrig.Copy();
+			eventStyle = eventStyleOrig.Clone();
 			eventStyle.SimpleCOFs[0].Components[0].ScoreConfigName = "NotAScoreConfig";
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
 			Assert.IsFalse( valid );

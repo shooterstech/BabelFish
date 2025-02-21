@@ -13,15 +13,15 @@ using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
     [TestClass]
-    public class ResultListFormattedTests {
+    public class ResultListFormattedTests : BaseTestClass {
 
         private OrionMatchAPIClient matchClient;
         private DefinitionAPIClient definitionClient;
         private IUserProfileLookup userProfileLookup;
 
         [TestInitialize]
-        public async Task InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1"; // Constants.X_API_KEY;
+        public override void InitializeTest() {
+            base.InitializeTest();
 
             matchClient = new OrionMatchAPIClient( );
             definitionClient = new DefinitionAPIClient( );
@@ -359,7 +359,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.2457.2024103114463283.0" );
+            MatchID matchId = new MatchID( "1.2255.2025021709033861.1" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - Sporter";
@@ -370,8 +370,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultEventName = resultList.EventName;
 
             //Get the ResultListFormat to use for formatting
-            //var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
-            var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+            //var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
             var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             var resultListFormat = resultListFormatResponse.Definition;
             Assert.IsNotNull( resultListFormat );
@@ -383,11 +383,16 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             rlf.Engagable = true;
             rlf.ResolutionWidth = 1800;
-            rlf.ChildrenToShow = 4000;
+            rlf.ShowNumberOfChildRows = 4000;
+            rlf.ShowRanks = 3;
+            rlf.ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.INTERMEDIATE } ;
+
+            //rlf.SetShowValuesToDefault();
+
 
             CellValues tryCellValues, cellValues;
             foreach (int i in rlf.GetShownColumnIndexes()) {
-                Console.Write( $"{i}, " );
+                Console.Write( $"{rlf.GetColumnHeaderCell(i).Text}, " );
             }
             Console.WriteLine();
 

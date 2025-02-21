@@ -4,14 +4,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// A PaperTargetLabel details how paper targets should be labeled for the COURSE OF FIRE. Each 
     /// PaperTargetLabel is an option for a different type of target and shots per bull.
     /// </summary>
-    public class PaperTargetLabel : IReconfigurableRulebookObject, ICopy<PaperTargetLabel> {
+    public class PaperTargetLabel : IReconfigurableRulebookObject {
 
         /// <summary>
         /// Public constructor
@@ -20,20 +21,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             PaperTargetLabelName = "";
             Labels = new List<BarcodeLabel>();
             ShotsPerBull = 1;
-        }
-
-        /// <inheritdoc />
-        public PaperTargetLabel Copy() {
-            PaperTargetLabel copy = new PaperTargetLabel();
-            copy.PaperTargetLabelName = PaperTargetLabelName;
-            copy.ShotsPerBull = ShotsPerBull;
-            copy.Comment = Comment;
-            if (Labels != null) {
-                foreach (var l in Labels) {
-                    copy.Labels.Add( l.Copy() );
-                }
-            }
-            return copy;
         }
 
         /// <summary>
@@ -54,10 +41,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonPropertyOrder ( 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
+        /// <inheritdoc/>
         public override string ToString() {
             return PaperTargetLabelName;
         }

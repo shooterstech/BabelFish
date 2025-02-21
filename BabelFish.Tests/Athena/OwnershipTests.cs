@@ -1,20 +1,10 @@
-﻿using Scopos.BabelFish.Requests.Athena;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Scopos.BabelFish.Requests.Athena;
 
-namespace Scopos.BabelFish.Tests.Athena
-{
+namespace Scopos.BabelFish.Tests.Athena {
     [TestClass]
-    public class OwnershipTests {
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class OwnershipTests : BaseTestClass {
 
         [TestMethod]
         public async Task TestRemoveOwnership()

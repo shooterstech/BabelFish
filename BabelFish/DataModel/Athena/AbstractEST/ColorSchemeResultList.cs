@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -19,24 +18,34 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             */
         }
 
-        [JsonProperty("bottomlanes", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Bottom lanes of the result list.")]
+        /// <summary>
+        /// Bottom lanes of the result list.
+        /// </summary>
+        [JsonPropertyName( "bottomlanes" )]
         public String BottomLanes { set; get; } = "#5c5c5c";
 
-        [JsonProperty("toplanes", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Top 3 lanes of the result list.")]
+        /// <summary>
+        /// Top 3 lanes of the result list.
+        /// </summary>
+        [JsonPropertyName( "toplanes" )]
         public String TopLanes { set; get; } = "#39598A";
 
-        [JsonProperty("flash", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Flash color when updating the result list.")]
+        /// <summary>
+        /// Flash color when updating the result list.
+        /// </summary>
+        [JsonPropertyName( "flash" )]
         public String Flash { set; get; } = "#bdbdbd";
 
-        [JsonProperty("toplanestext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Top 3 lanes text color.")]
+        /// <summary>
+        /// Top 3 lanes text color.
+        /// </summary>
+        [JsonPropertyName( "toplanestext" )]
         public String TopLanesText { set; get; } = "#ececec";
 
-        [JsonProperty("bottomlanestext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Bottom lanes text color.")]
+        /// <summary>
+        /// Bottom lanes text color.
+        /// </summary>
+        [JsonPropertyName( "bottomlanestext" )]
         public String BottomLanesText { set; get; } = "#ececec";
     }
 }

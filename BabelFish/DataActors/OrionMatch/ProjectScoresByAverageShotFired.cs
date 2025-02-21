@@ -161,7 +161,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         projectedScore.X += childProjectedScore.X;
                         projectedScore.D += childProjectedScore.D;
 
-                        if (eventComposite.Calculation == "SUM") {
+                        if (eventComposite.Calculation == EventCalculation.SUM) {
                             projectedScore.S += childProjectedScore.D;
                         } else {
                             //SUM(i,d) ... of which yes, we really ought to be parsing it, but i ain't got tiem for that

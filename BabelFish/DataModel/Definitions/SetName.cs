@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
     /// </summary>
-    public class SetName: IEquatable<SetName>, IEquatable<HierarchicalName>, ICopy<SetName> {
+    public class SetName: IEquatable<SetName>, IEquatable<HierarchicalName> {
 
         private int majorVersion = 0;
         private int minorVersion = 0;
@@ -22,17 +22,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Default constructor. Should only be used in conjunction with a TryParse method.
         /// </summary>
         public SetName() { }
-
-        /// <inheritdoc/>
-        public SetName Copy() {
-            SetName copy = new SetName();
-            copy.majorVersion = majorVersion;
-            copy.minorVersion = minorVersion;
-            copy.nameSpace = nameSpace;
-            copy.properName = properName;
-
-            return copy;
-        }
 
         public static bool TryParseVersion(string version, out int majorVersion, out int minorVersion) {
 
@@ -151,6 +140,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 logger.Error( msg, ex );
                 throw new ArgumentException( msg, ex );
             }
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="copy"></param>
+        public SetName( SetName copy ) {
+            this.majorVersion = copy.majorVersion;
+            this.minorVersion = copy.minorVersion;
+            this.nameSpace = copy.nameSpace;
+            this.properName= copy.properName;
         }
 
         public int MajorVersion {

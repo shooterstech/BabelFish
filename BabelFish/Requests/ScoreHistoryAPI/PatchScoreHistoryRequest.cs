@@ -1,16 +1,12 @@
 using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.APIClients;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog;
 
 
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
     public class PatchScoreHistoryRequest : Request {
+
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <inheritdoc />
         public PatchScoreHistoryRequest(UserAuthentication credentials ) : base( "PostScoreHistory", credentials ) {
@@ -30,9 +26,9 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
             get {
                 StringBuilder serializedJSON = new StringBuilder();
                 try {
-                    return new StringContent( JsonConvert.SerializeObject( ScoreHistoryPatch ), Encoding.UTF8, "application/json" );
+                    return new StringContent( G_NS.JsonConvert.SerializeObject( ScoreHistoryPatch, SerializerOptions.NewtonsoftJsonSerializer ), Encoding.UTF8, "application/json" );
                 } catch (Exception ex) {
-                    //logger.Error( ex );
+                    Logger.Error( ex );
                     return new StringContent( "" );
                 }
             }

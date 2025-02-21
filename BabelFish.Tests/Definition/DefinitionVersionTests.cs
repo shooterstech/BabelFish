@@ -10,13 +10,8 @@ using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
-    public class DefinitionVersionTests {
+    public class DefinitionVersionTests : BaseTestClass {
 
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
 
         [TestMethod]
         public async Task GetDefinitionVersionTests() {

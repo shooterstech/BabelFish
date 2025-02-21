@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -23,7 +24,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </list>
     /// </remarks>
     [Serializable]
-    public class StageStyle : Definition, ICopy<StageStyle>, IGetScoreFormatCollectionDefinition
+    public class StageStyle : Definition, IGetScoreFormatCollectionDefinition
     {
         /// <summary>
         /// Public constructor
@@ -37,56 +38,34 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod(context);
         }
 
-        /// <inheritdoc />
-        public StageStyle Copy()
-        {
-            StageStyle stageStyle = new StageStyle();
-            this.Copy(stageStyle);
-            if (this.RelatedStageStyles != null)
-            {
-                foreach (var rss in this.RelatedStageStyles)
-                {
-                    stageStyle.RelatedStageStyles.Add(rss);
-                }
-            }
-
-            stageStyle.ShotsInSeries = this.ShotsInSeries;
-
-            if (this.DisplayScoreFormats != null)
-            {
-                foreach (var dsf in this.DisplayScoreFormats)
-                {
-                    stageStyle.DisplayScoreFormats.Add(dsf.Copy());
-                }
-            }
-
-            return stageStyle;
-        }
-
         /// <summary>
         /// The number of shots that make up a Series, for this Stage Style
         /// </summary>
-        [JsonProperty( Order = 11 ) ]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public int ShotsInSeries { get; set; } = 10;
 
         /// <summary>
         /// The SetName of the SCORE FORMAT COLLECTION definition to use when displaying scores with this STAGE STYLE
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( "v1.0:orion:Standard Score Formats" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include, Order = 12 )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
         /// The default ScoreConfigName to use, that is defined by the .ScoreFormatCollectionDef, to use when displaying scores with this STAGE STYLE
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( "Integer" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include, Order = 13 )]
         public string ScoreConfigDefault { get; set; } = "Integer";
 
         /// <summary>
         /// A list (order is inconsequential) of other STAGE STYLEs that are similar to this STAGE STYLE.
         /// </summary>
-        [JsonProperty( Order = 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
         public List<string> RelatedStageStyles { get; set; } = new List<string>();
 
         /// <inheritdoc />
@@ -96,8 +75,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
         }
 
+        [G_STJ_SER.JsonPropertyOrder( 90 )]
+        [G_NS.JsonProperty( Order = 90 )]
         [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault")]
-        [JsonProperty( Order = 90 )]
         public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
         /// <inheritdoc />

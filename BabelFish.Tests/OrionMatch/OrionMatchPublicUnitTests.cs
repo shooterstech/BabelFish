@@ -1,23 +1,16 @@
-using System;
-using System.Net;
-using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using System.Runtime.CompilerServices;
+using Scopos.BabelFish.Tests.Definition;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
     [TestClass]
-    public class OrionMatchPublicUnitTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class OrionMatchPublicUnitTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
@@ -73,6 +66,22 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( new DateTime(2023, 1, 19), match.StartDate );
+        }
+
+        [TestMethod]
+        [Ignore]
+        public async Task EriksPlayground() {
+            var cof = CourseOfFireHelper.Get_60_Standing_Cof();
+
+            var json = JsonSerializer.Serialize( cof, SerializerOptions.SystemTextJsonDeserializer );
+
+            var cof2 = JsonSerializer.Deserialize<CourseOfFire>( json, SerializerOptions.SystemTextJsonDeserializer );
+
+            var jsonDocument = JsonDocument.Parse( json );
+
+            var cof3 = JsonSerializer.Deserialize<CourseOfFire>( jsonDocument, SerializerOptions.SystemTextJsonDeserializer );
+
+            Console.WriteLine( json );
         }
     }
 }

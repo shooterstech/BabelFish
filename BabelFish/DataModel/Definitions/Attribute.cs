@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-//using System.Text.Json; //COMMENT OUT FOR .NET Standard 2.0
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -18,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Attributes are highly configurable.  Each Attribute will have one or more fields. Each field may be configured to be any value the user types in, a value from a pre-configured list, or a combination.
     /// </summary>
     [Serializable]
-    public class Attribute : Definition, ICopy<Attribute> {
+    public class Attribute : Definition {
 
         /// <summary>
         /// Public constructor
@@ -36,30 +28,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
         }
 
-        /// <inheritdoc />
-        public Attribute Copy() {
-            Attribute copy = new Attribute();
-            base.Copy(copy);
-
-            copy.DisplayName = this.DisplayName;
-            copy.MaxVisibility = this.MaxVisibility;
-            copy.MultipleValues = this.MultipleValues;
-            foreach( var f in this.Fields )
-            copy.Fields.Add( f.Copy() );
-
-            copy.Designation = new List<AttributeDesignation>();
-            copy.Designation.Clear();
-            copy.Designation.AddRange( this.Designation );
-
-            return copy;
-        }
-
         private string displayName = string.Empty;
 
         /// <summary>
         /// DisplayName is the name displayed to the user for this ATTRIBUTE.
         /// </summary>
-        [JsonProperty(Order = 10)]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty( displayName )) {
@@ -80,10 +55,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 		private List<AttributeDesignation> designation = new List<AttributeDesignation>();
 
-		/// <summary>
-		/// The type of participant, teams, or clubs that this Attribute may be applied to.
-		/// </summary>
-		[JsonProperty(Order = 11)]
+        /// <summary>
+        /// The type of participant, teams, or clubs that this Attribute may be applied to.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         public List<AttributeDesignation> Designation {
             get {
                 if (designation == null)
@@ -106,41 +82,45 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-		/// <summary>
-		/// The maximum visibility the user can set for the ATTRIBUTE VALUE.
-		/// </summary>
-		[JsonProperty( Order = 12 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        /// <summary>
+        /// The maximum visibility the user can set for the ATTRIBUTE VALUE.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( VisibilityOption.PUBLIC )]
         public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PUBLIC;
 
-		/// <summary>
-		/// The default visibility for a new ATTRIBUTE VALUE. 
+        /// <summary>
+        /// The default visibility for a new ATTRIBUTE VALUE. 
         /// Must be a Privacy value equal to or greater than the MaxVisibility.
-		/// </summary>
-		[JsonProperty( Order = 13 )]
-		[DefaultValue( VisibilityOption.PUBLIC )]
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
+        [DefaultValue( VisibilityOption.PUBLIC )]
 		public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
 
-		/// <summary>
-		/// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
-		/// </summary>
-		[JsonProperty(Order = 13)]
+        /// <summary>
+        /// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue(false)]
         public bool MultipleValues { get; set; } = false;
 
-		/// <summary>
-		/// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
-		/// </summary>
-		[JsonProperty(Order = 15)]
+        /// <summary>
+        /// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 16 )]
+        [G_NS.JsonProperty( Order = 16 )]
         [DefaultValue(null)]
-        public List<AttributeField> Fields { get; set; } = new List<AttributeField>();
+        public List<AttributeFieldBase> Fields { get; set; } = new List<AttributeFieldBase>();
 
         /// <summary>
         /// Returns True if this Attribute is considered a 'Simple Attribute.'
         /// This is when MultipleValues is False, has only one AttributeField, and that field also has MultipleValues set to False
         /// </summary>
-        [JsonIgnore]
+		[G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool SimpleAttribute {
             get {
                 return !MultipleValues

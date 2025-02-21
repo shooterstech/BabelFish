@@ -1,15 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// In a COURSE OF FIRE definition, Events may be designated as either a EventType EVENT or STAGE. When doing so, these Events may be mapped to an EVENT STYLE or STAGE STYLE respectively. 
     /// Given the further inputs of Target Collection Name and AttributeValueAppellation a StageStyleMapping maps a StageAppellation to a StageStyle.
     /// </summary>
-    public class StageStyleSelection: ICopy<StageStyleSelection>, IReconfigurableRulebookObject
+    public class StageStyleSelection: IReconfigurableRulebookObject
     {
 
         /// <summary>
@@ -22,18 +23,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public string StageStyleDef { get; set; } = "v1.0:orion:Default";
 
-
-        /// <inheritdoc />
-        public StageStyleSelection Copy()
-        {
-            StageStyleSelection es = new StageStyleSelection();
-            es.StageAppellation = this.StageAppellation;
-            es.StageStyleDef = this.StageStyleDef;
-            return es;
-        }
-
         /// <inheritdoc/>
-        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyOrder( 99 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
     }

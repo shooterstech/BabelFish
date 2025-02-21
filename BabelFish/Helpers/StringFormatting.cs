@@ -4,7 +4,6 @@ using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Newtonsoft;
 using NLog;
 using System.Runtime.CompilerServices;
 using Scopos.BabelFish.APIClients;

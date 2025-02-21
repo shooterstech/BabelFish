@@ -1,18 +1,12 @@
-﻿using System.Reflection;
-using System.IO;
-using NLog;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.Responses;
+﻿using System.Net;
 using Scopos.BabelFish.Requests;
-using System.Net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog.LayoutRenderers;
+using Scopos.BabelFish.Responses;
 
-namespace Scopos.BabelFish.APIClients
-{
-    public class ResponseCache {
+namespace Scopos.BabelFish.APIClients {
+    public class ResponseCache : IClearCache{
 		private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private int requestCount = 0;
 
 		/// <summary>
 		/// This is where previously called response/request objects
@@ -24,13 +18,6 @@ namespace Scopos.BabelFish.APIClients
         private object mutex = new object();
 
         public static ResponseCache CACHE= new ResponseCache();
-
-        private static readonly JsonSerializerSettings JSETTINGS_WITHOUT_DEFAULTS = new JsonSerializerSettings() {
-			TypeNameHandling = TypeNameHandling.Auto,
-			NullValueHandling = NullValueHandling.Ignore,
-			Formatting = Formatting.Indented,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
-		};
 
 		private ResponseCache() {
 
@@ -55,6 +42,10 @@ namespace Scopos.BabelFish.APIClients
         public bool TryGetResponse( Request request, out ResponseIntermediateObject value ) {
             var key = request.GetRequestCacheKey();
             lock (mutex) {
+                //Celan up the cache every 500 requests
+                if (requestCount++ % 500 == 0)
+                    CleanUpAsync();
+
                 if (cachedRequests.TryGetValue( key, out value )) {
                     if (value.ValidUntil > DateTime.UtcNow) {
                         return true;
@@ -88,7 +79,7 @@ namespace Scopos.BabelFish.APIClients
 						FileInfo file = new FileInfo( filename );
                         file.Directory.Create();
 
-                        var json = JsonConvert.SerializeObject( response, JSETTINGS_WITHOUT_DEFAULTS );
+                        var json = G_STJ.JsonSerializer.Serialize( response, SerializerOptions.SystemTextJsonDeserializer );
 
 						using (StreamWriter sw = File.CreateText( file.FullName )) {
 							sw.WriteLine( json );
@@ -126,10 +117,12 @@ namespace Scopos.BabelFish.APIClients
             }
         }
 
-        /// <summary>
-        /// Removes all items from cache
-        /// </summary>
-        public void Clear() {
+        public async Task CleanUpAsync() {
+            CleanUp();
+        }
+
+        /// <inheritdoc />
+        public void ClearCache() {
             lock(mutex) {
                 cachedRequests.Clear();
             }
@@ -145,7 +138,7 @@ namespace Scopos.BabelFish.APIClients
 
         public MessageResponse MessageResponse { get; set; }
 
-        public JToken Body { get; set; }
+        public G_STJ.JsonDocument Body { get; set; }
 
         public DateTime ValidUntil { get; set; }
     }

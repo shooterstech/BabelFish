@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// A SegmentGroupCommand is a sub-object of RangeScripts, and SegmentGroup.In SegmentGroup a SegmentGroupCommand object is in the field DefaultCommand, and the list Commands.
     /// In general, if a field is not listed in the Commands list, then it is pulled from SegmentGroup.DefaultCommand.If it is not listed there, then it is pulled from RangeScripts.DefaultCommand.See each field for specifics.
     /// </summary>
-    public class SegmentGroupCommand : IReconfigurableRulebookObject, ICopy<SegmentGroupCommand> {
+    public class SegmentGroupCommand : IReconfigurableRulebookObject {
 
         private const int DEFAULT_INT = -9999;
         private const string DEFAULT_STR = "";
@@ -25,32 +25,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         }
 
-        /// <inheritdoc />
-        public SegmentGroupCommand Copy() {
-            SegmentGroupCommand copy = new SegmentGroupCommand();
-            copy.Command = this.Command;
-            copy.Notes = this.Notes;
-            copy.Fade = this.Fade;
-            copy.Timer = this.Timer;
-            copy.TimerCommand = this.TimerCommand;
-            copy.OccursAt = this.OccursAt;
-            copy.GreenLight = this.GreenLight;
-            copy.RedLight = this.RedLight;
-            copy.TargetLight = this.TargetLight;
-            copy.DisplayEvent = this.DisplayEvent;
-            copy.Continue = this.Continue;
-            copy.NextCommandIndex = this.NextCommandIndex;
-            copy.Comment = this.Comment;
-
-            if (this.ShotAttributes != null) {
-                foreach( var sa in this.ShotAttributes) {
-                    copy.ShotAttributes.Add( sa );
-                }
-            }
-
-            return copy;
-        }
-
         [JsonIgnore]
         protected internal SegmentGroupCommand Parent { get; set; }
 
@@ -59,7 +33,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Ignored
         /// </summary>
         [DefaultValue("")]
-        [JsonProperty(Order = 1)]
         public string Command { get; set; } = DEFAULT_STR;
 
         public string GetCommand() {
@@ -72,7 +45,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Required, defaults to 60
         /// </summary>
         [DefaultValue(-9999)]
-        [JsonProperty(Order = 3)]
         public int Fade { get; set; } = DEFAULT_INT;
 
         public int GetFade() {
@@ -90,7 +62,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Ignored
         /// </summary>
         [DefaultValue( "" )]
-        [JsonProperty( Order = 2 )]
         public string Notes { get; set; } = DEFAULT_STR;
 
         public string GetNotes() {
@@ -102,7 +73,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Ignored
         /// </summary>
         [DefaultValue("")]
-        [JsonProperty(Order = 5)]
+        [Obsolete("Will be replaced with RangeTimer")]
         public string Timer { get; set; } = DEFAULT_STR;
 
         public string GetTimer() {
@@ -110,12 +81,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
+        /// Represents the same value as .Timer, but as a float.
+        /// </summary>
+        /// <remarks>Value is in seconds.</remarks>
+        [JsonInclude]
+        [DefaultValue( -9999 )]
+        public float RangeTimer {
+            get {
+                if (string.IsNullOrEmpty( Timer ))
+                    return DEFAULT_INT;
+
+                TimeSpan timerAsTimeSpan;
+                if (TimeSpan.TryParse( Timer, out timerAsTimeSpan )) {
+                    return (float)timerAsTimeSpan.TotalSeconds;
+                } else {
+                    return DEFAULT_INT;
+                }
+            }
+        }
+
+        /// <summary>
         /// Commands: Not required, missing or value of NONE does not effect the RangeClock
         /// DefaultCommand: Ignored
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
         [DefaultValue( TimerCommandOptions.NONE )]
-        [JsonProperty( Order = 6 )]
         public TimerCommandOptions TimerCommand { get; set; } = TimerCommandOptions.NONE;
 
         public TimerCommandOptions GetTimerCommand() {
@@ -127,7 +116,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Ignored
         /// </summary>
         [DefaultValue("")]
-        [JsonProperty(Order = 4)]
+        [Obsolete("Will be replaced with AtRangeTimerValue")]
         public string OccursAt { get; set; } = DEFAULT_STR;
 
         public string GetOccursAt() {
@@ -135,12 +124,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
+        /// Represents the same value as .OccuresAt, but as a float.
+        /// </summary>
+        /// <remarks>Value is in seconds.</remarks>
+        [JsonInclude]
+        [DefaultValue( -9999 )]
+        public float AtRangeTimerValue {
+            get {
+                if (string.IsNullOrEmpty( OccursAt ))
+                    return DEFAULT_INT;
+
+                TimeSpan timerAsTimeSpan;
+                if (TimeSpan.TryParse( OccursAt, out timerAsTimeSpan )) {
+                    return (float)timerAsTimeSpan.TotalSeconds;
+                } else {
+                    return DEFAULT_INT;
+                }
+            }
+        }
+
+        /// <summary>
         /// Commands: Not required, missing or value of -9999 uses DefaultCommand.GreenLight
         /// DefaultCommand: Required with default value 0
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
         [DefaultValue( LightIllumination.NONE )]
-        [JsonProperty( Order = 8 )]
         public LightIllumination GreenLight { get; set; } = LightIllumination.NONE;
 
         public LightIllumination GetGreenLight() {
@@ -157,9 +164,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, missing or value of -9999 uses DefaultCommand.RedLight
         /// DefaultCommand: Required with default value 0
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
         [DefaultValue( LightIllumination.NONE )]
-        [JsonProperty( Order = 9 )]
         public LightIllumination RedLight { get; set; } = LightIllumination.NONE;
 
         public LightIllumination GetRedLight() {
@@ -176,9 +181,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, missing or value of -9999 uses DefaultCommand.TargetLight
         /// DefaultCommand: Required with default value 0
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
         [DefaultValue( LightIllumination.NONE )]
-        [JsonProperty( Order = 7 )]
         public LightIllumination TargetLight { get; set; } = LightIllumination.NONE;
 
         public LightIllumination GetTargetLight() {
@@ -200,7 +203,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Required, may be empty list []
         /// </summary>
         [DefaultValue( null )]
-        [JsonProperty( Order = 10 )]
         public List<string> ShotAttributes { get; set; } = new List<string>();
 
         public List<string> GetShotAttributes() {
@@ -213,8 +215,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.ShotAttributes;
         }
 
-        [JsonProperty( Order = 11 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        /// <summary>
+        /// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
+        /// </summary>
         [DefaultValue( DisplayEventOptions.NONE )]
         public DisplayEventOptions DisplayEvent { get; set; } = DisplayEventOptions.NONE;
 
@@ -231,8 +234,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return DisplayEventOptions.Default;
         }
 
+        /// <summary>
+        /// Number of seconds to wait before advancing to the next Command (or the Command indicated by NextCommandIndex). This field works independent of the Range Timer.
+        /// <para>Only works if the Target and Monitor pair is in Practice Mode. Generally used to automate advancing Commands in practice that would otherwise be controlled by the Range Officer.</para>
+        /// <list type="bullet">
+        /// <item>Value of 0 means to advance to the next command immediately.</item>
+        /// <item>Value of -1 means to not advance. This is also the default value.</item>
+        /// </list>
+        /// </summary>
         [DefaultValue( -1 )]
-        [JsonProperty( Order = 12 )]
         public int Continue { get; set; } = DEFAULT_INT;
 
         public int GetContinue() {
@@ -248,12 +258,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return -1;
         }
 
+        /// <summary>
+        /// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
+        /// <list type="bullet">
+        /// <item>Value of -1 means to advance to the next command regardless of current index value.</item>
+        /// <item>A value is not required, following the Value Inheritance Rules. Defaults to -1.</item>
+        /// </list>
+        /// </summary>
         [DefaultValue(-1)]
-        [JsonProperty(Order = 13)]
         public int NextCommandIndex { get; set; } = DEFAULT_INT;
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

@@ -5,74 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.Helpers {
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum AttributeValueActionEnums { EMPTY, UPDATE, DELETE };
-
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum AttributeValueKeyEnum {
-        [Description( "attribute-values" )]
-        [EnumMember( Value = "attribute-values" )]
-        ATTRIBUTEVALUEKEY
-    }
-
     /// <summary>
-    /// UserSettings named Auth Enums
+    /// Helper class to define methods to return an enum's Description value, as well as parse an enum by it's Description.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum AuthEnums {
-        [Description( "" )]
-        [EnumMember( Value = "" )]
-        BLANK,
-        [Description( "User Name" )]
-        [EnumMember( Value = "username" )]
-        UserName,
-        [Description( "Password" )]
-        [EnumMember( Value = "password" )]
-        PassWord,
-        [Description( "AWS Access Key" )]
-        [EnumMember( Value = "accesskey" )]
-        AccessKey,
-        [Description( "AWS Secret Key" )]
-        [EnumMember( Value = "secretkey" )]
-        SecretKey,
-        [Description( "AWS Session Token" )]
-        [EnumMember( Value = "sessiontoken" )]
-        SessionToken,
-        [Description( "AWS Refresh Token" )]
-        [EnumMember( Value = "refreshtoken" )]
-        RefreshToken,
-        [Description( "AWS IdToken" )]
-        [EnumMember( Value = "idtoken" )]
-        IdToken,
-        [Description( "AWS Access Token" )]
-        [EnumMember( Value = "accesstoken" )]
-        AccessToken,
-        [Description( "AWS Device Token" )]
-        [EnumMember( Value = "devicetoken" )]
-        DeviceToken,
-        [Description( "XAPIKey" )]
-        [EnumMember( Value = "xapikey" )]
-        XApiKey,
-    }
-
-    /// <summary>
-    /// Common enum for classes that implement the IComparer interface.
-    /// Also used with the TieBreakingRule class.
-    /// </summary>
-    public enum SortBy {
-        [Description( "Ascending")]
-        [EnumMember( Value = "Ascending" )]
-        ASCENDING,
-
-        [Description( "Descending" )]
-        [EnumMember( Value = "Descending" )]
-        DESCENDING 
-    }
 
     public static class EnumHelper {
         /// <summary>

@@ -2,10 +2,11 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataModel.Common;
 using NLog;
-using Scopos.BabelFish.DataModel.AttributeValue;
 
-namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
+namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile
+{
 
     /// <summary>
     /// An in memory only implementation of the IUserProfileLookup interface. 

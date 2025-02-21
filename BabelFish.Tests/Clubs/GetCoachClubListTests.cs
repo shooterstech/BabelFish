@@ -1,27 +1,20 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Tests.Clubs
-{
+namespace Scopos.BabelFish.Tests.Clubs {
     [TestClass]
-    public class GetCoachClubListTests
+    public class GetCoachClubListTests : BaseTestClass
     {
         private ClubsAPIClient clubsClient;
 
 
         [TestInitialize]
-        public void InitClient()            
-        {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
+        public override void InitializeTest() {
+            base.InitializeTest();
 
-            clubsClient = new ClubsAPIClient(APIStage.PRODUCTION);
+            clubsClient = new ClubsAPIClient( APIStage.PRODUCTION );
         }
 
         [TestMethod]

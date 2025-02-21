@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
@@ -60,7 +61,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
                     if (attributeValue.AttributeValueTask != null) {
                         await attributeValue.FinishInitializationAsync();
                     }
-                } catch (AttributeNotFoundException nfe) {
+                } catch (DefinitionNotFoundException nfe) {
                     avToRemove.Add( attributeValue );
                 }
             }
@@ -84,7 +85,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             try {
                 //if today is between start/end then timeout is 30 sec, else, make is 5 min
                 if (DateTime.Today >= ResultList.StartDate && DateTime.Today <= ResultList.EndDate) {
-                    return DateTime.UtcNow.AddSeconds( 30 );
+                    return DateTime.UtcNow.AddSeconds( 16 );
                 } else {
                     return DateTime.UtcNow.AddMinutes( 5 );
                 }

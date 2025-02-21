@@ -1,11 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -18,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </list>
     /// </summary>
     [Serializable]
-    public class EventStyle : Definition, ICopy<EventStyle> {
+    public class EventStyle : Definition {
 
         /// <summary>
         /// Public constructor
@@ -36,66 +30,34 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //Don't initialize EventStyles or StageStyles, since one of these values as to be null.
         }
 
-        /// <inheritdoc />
-        public EventStyle Copy()
-        {
-            EventStyle e = new EventStyle();
-            this.Copy(e);
-            if (this.EventStyles != null)
-            {
-                foreach (var es in this.EventStyles)
-                {
-                    e.EventStyles.Add(es);
-                }
-            }
-            if (this.StageStyles != null)
-            {
-                foreach (var es in this.StageStyles)
-                {
-                    e.StageStyles.Add(es);
-                }
-            }
-            if (this.RelatedEventStyles != null)
-            {
-                foreach (var es in this.RelatedEventStyles)
-                {
-                    e.RelatedEventStyles.Add(es);
-                }
-            }
-            if (this.SimpleCOFs != null)
-            {
-                foreach (var es in this.SimpleCOFs)
-                {
-                    e.SimpleCOFs.Add(es.Copy());
-                }
-            }
-            return e;
-        }
-
         /// <summary>
         /// An ordered list of EVENT STYLEs that comprise this EVENT STYLE. Each Event Style is listed by its SetName.
         /// Either EVENT STYLEs or StageStyles, but not both, is required. If included at least one EVENT STYLE must be listed
         /// </summary>
-        [JsonProperty( Order = 11  )]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public List<string>? EventStyles { get; set; } = new List<string> ();
 
         /// <summary>
         /// An ordered list of STAGE STYLEs that comprise the EVENT STYLE. Each STAGE STYLE is listed by its SetName.
         /// Either EventStyles or StageStyles, but not both, is required. If included at least one STAGE STYLE must be listed.
         /// </summary>
-        [JsonProperty( Order = 12 )]
+		[G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         public List<string>? StageStyles { get; set; } = new List<string>();
 
         /// <summary>
         /// A list (order is inconsequential) of other EVENT STYLEs that are similar to this EVENT STYLE.
         /// </summary>
-        [JsonProperty( Order = 13 )]
+		[G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         public List<string> RelatedEventStyles { get; set; } = new List<string>();
 
         /// <summary>
         /// A list of SimpleCOF. This lists the common ways to displaying scores from this EVENT STYLE.
         /// </summary>
-        [JsonProperty( Order = 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
         public List<SimpleCOF> SimpleCOFs { get; set; } = new List<SimpleCOF>();
 
 		/// <inheritdoc />

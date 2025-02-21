@@ -1,9 +1,12 @@
-﻿using Scopos.BabelFish.DataModel.Common;
+﻿using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -38,6 +41,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The team's orion license number.
         /// </summary>
         [DefaultValue( 0 )]
+        [JsonConverter( typeof( DefaultValueHandlingConverter<int> ) )]
         public int LicenseNumber { get; set; }
 
 

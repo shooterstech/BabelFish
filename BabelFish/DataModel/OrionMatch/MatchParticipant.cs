@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 using System.Globalization;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 

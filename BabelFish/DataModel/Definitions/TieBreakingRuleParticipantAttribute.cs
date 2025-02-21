@@ -16,16 +16,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE;
         }
 
-
-        /// <inheritdoc />
-        public override TieBreakingRuleBase Copy() {
-            TieBreakingRuleParticipantAttribute copy = new TieBreakingRuleParticipantAttribute();
-            copy.SortOrder = this.SortOrder;
-            copy.Source = this.Source;
-
-            return copy;
-        }
-
         /// <summary>
         /// The property name from the Participant object use to compare.
         /// </summary>

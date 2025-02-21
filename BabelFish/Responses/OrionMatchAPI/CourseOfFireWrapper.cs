@@ -10,7 +10,8 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// Helper class that creates the added structure in the data model needed for Deserialzing a Match object from json.
     /// </summary>
     public class CourseOfFireWrapper : BaseClass {
-        public ResultCOF ResultCOF = new ResultCOF();
+
+        public ResultCOF ResultCOF { get; set; } = new ResultCOF();
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

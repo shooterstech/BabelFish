@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -16,12 +16,17 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             */
         }
 
-        [JsonProperty("noviewstext", DefaultValueHandling = DefaultValueHandling.Populate)]
+        /// <summary>
+        /// Text color with no views.
+        /// </summary>
+        [JsonPropertyName("noviewstext")]
         [Description("Text color with no views.")]
         public String NoViewsText { get; set; } = "#ececec";
 
-        [JsonProperty("noviewsbg", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Background color with no views.")]
+        /// <summary>
+        /// Background color with no views.
+        /// </summary>
+        [JsonPropertyName("noviewsbg")]
         public String NoViewsBG { get; set; } = "#5d84bc";
     }
 }

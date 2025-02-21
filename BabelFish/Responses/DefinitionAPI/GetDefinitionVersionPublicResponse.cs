@@ -1,8 +1,5 @@
 ﻿using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Scopos.BabelFish.Responses.DefinitionAPI {
     public class GetDefinitionVersionPublicResponse : Response<SparseDefinition> {
@@ -26,7 +23,9 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI {
 
         /// <inheritdoc/>
         protected override void ConvertBodyToValue() {
-            Value = Body[SetName.ToString()].ToObject<SparseDefinition>();
+            G_STJ.JsonElement root = Body.RootElement;
+            G_STJ.JsonElement definition = root.GetProperty( SetName.ToString() );
+            Value = G_STJ.JsonSerializer.Deserialize<SparseDefinition>( definition, SerializerOptions.SystemTextJsonDeserializer );
         }
     }
 }

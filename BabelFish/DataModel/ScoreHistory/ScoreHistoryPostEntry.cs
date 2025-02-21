@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.OrionMatch;
+using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
     public class PostStageStyleScore {
@@ -31,9 +29,11 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
-        public VisibilityOption Visibility { get; set; } = VisibilityOption.PROTECTED;
+		
+		public VisibilityOption Visibility { get; set; } = VisibilityOption.PROTECTED;
 
-        public string MatchType { get; set; } = "";
+		
+		public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.PRACTICE;
 
         public string MatchName { get; set; } = "";
 

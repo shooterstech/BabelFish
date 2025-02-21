@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
@@ -17,6 +19,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         public List<ScoreHistoryBase> Items { get; set; } = new List<ScoreHistoryBase>();
 
         /// <inheritdoc />
+		[JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />

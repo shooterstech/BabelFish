@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -18,20 +18,28 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             */
         }
 
-        [JsonProperty("topstrip", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Very top strip background of the match info.")]
+        /// <summary>
+        /// Very top strip background of the match info.
+        /// </summary>
+        [JsonPropertyName( "topstrip" )]
         public String TopStrip { set; get; } = "#232529";
 
-        [JsonProperty("bottomstrip", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Bottom strip background of the match info.")]
+        /// <summary>
+        /// Bottom strip background of the match info.
+        /// </summary>
+        [JsonPropertyName( "bottomstrip" )]
         public String BottomStrip { set; get; } = "#232529";
 
-        [JsonProperty("toptext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Top strip text color.")]
+        /// <summary>
+        /// Top strip text color.
+        /// </summary>
+        [JsonPropertyName( "toptext" )]
         public String TopText { set; get; } = "#ececec";
 
-        [JsonProperty("bottomtext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Bottom strip text color.")]
+        /// <summary>
+        /// Bottom strip text color.
+        /// </summary>
+        [JsonPropertyName( "bottomtext" )]
         public String BottomText { set; get; } = "#ececec";
     }
 }
