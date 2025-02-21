@@ -371,7 +371,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return Scopos.BabelFish.Helpers.StringFormatting.FormatScore( scoreFormat, score );
         }
 
-        private Score GetScore( string eventName, bool tryAndUseProjected = false ) {
+        public Score GetScore( string eventName, bool tryAndUseProjected = false ) {
 
             EventScore scoreToReturn;
 
@@ -412,6 +412,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             //For now return an empty Score data object
             return new Score();
+        }
+
+        public Participant GetParticipant() {
+            return this.resultEvent.Participant;
         }
 
         private string GetGap( FieldSource source ) {

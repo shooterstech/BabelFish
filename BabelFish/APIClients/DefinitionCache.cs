@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Text;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
@@ -51,31 +52,114 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <returns></returns>
         public static async Task PreLoad() {
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Profile Name" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Date of Birth" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v2.0:orion:Email Address" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v2.0:orion:Phone Number" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Address" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:High School Graduating Class" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Pronouns" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Gender" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Collegiate Class" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:NCAA ID" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Air Rifle Training Category" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Air Pistol Training Category" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Hometown" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Account URL" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Score History Public" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Score History Personal" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:orion:Score History Coach" ) );
-            await GetAttributeDefinitionAsync( SetName.Parse( "v1.0:usas:Paralympic") );
+            List<string> attributeDefinitionsToLoad = new List<string>() {
+                "v1.0:ntparc:Three-Position Air Rifle Type",
+                "v1.0:orion:Profile Name",
+                "v1.0:orion:Date of Birth",
+                "v2.0:orion:Email Address",
+                "v2.0:orion:Phone Number",
+                "v1.0:orion:Address",
+                "v1.0:orion:High School Graduating Class",
+                "v1.0:orion:Pronouns",
+                "v1.0:orion:Gender",
+                "v1.0:orion:Collegiate Class",
+                "v1.0:orion:NCAA ID",
+                "v1.0:orion:Air Rifle Training Category",
+                "v1.0:orion:Air Pistol Training Category",
+                "v1.0:orion:Hometown",
+                "v1.0:orion:Account URL",
+                "v1.0:orion:Score History Public",
+                "v1.0:orion:Score History Personal",
+                "v1.0:orion:Score History Coach",
+                "v1.0:usas:Paralympic" };
 
-            await GetScoreFormatCollectionDefinitionAsync( SetName.Parse( "v1.0:orion:Standard Score Formats" ) );
-            await GetScoreFormatCollectionDefinitionAsync( SetName.Parse( "v1.0:orion:Standard Averaged Score Formats" ) );
+            List<string> scoreFormatsToLoad = new List<string>() {
+                "v1.0:orion:Standard Score Formats",
+                "v1.0:orion:Standard Averaged Score Formats"
+            };
 
-            await GetTargetDefinitionAsync( SetName.Parse( "v1.0:issf:10m Air Rifle" ) );
-            await GetTargetDefinitionAsync( SetName.Parse( "v1.0:issf:10m Air Pistol" ) );
+            List<string> targetDefinitionsToLoad = new List<string>() {
+                 "v1.0:issf:10m Air Rifle",
+                 "v1.0:issf:10m Air Pistol"
+            };
+
+            List<SetName> attributeSetNamesToTryAgain = new List<SetName>();
+            List<SetName> scoreFormatSetNamesToTryAgain = new List<SetName>();
+            List<SetName> targetSetNamesToTryAgain = new List<SetName>();
+
+            //First attempt 
+            foreach ( var definition in attributeDefinitionsToLoad ) {
+                var setName = SetName.Parse( definition );
+                try {
+                    await GetAttributeDefinitionAsync( setName );
+                } catch (DefinitionNotFoundException) {
+                    //We should never get here, if we do, there was an error in the Rest API
+                    attributeSetNamesToTryAgain.Add( setName );
+                    AttributeNotFoundCache.Clear();
+                } catch (Exception e) {
+                    //We should never get here, if we do, there was an error in the Rest API
+                    attributeSetNamesToTryAgain.Add( setName );
+                }
+            }
+
+            foreach (var definition in scoreFormatsToLoad) {
+                var setName = SetName.Parse( definition );
+                try {
+                    await GetScoreFormatCollectionDefinitionAsync( setName );
+                } catch (DefinitionNotFoundException) {
+                    //We should never get here, if we do, there was an error in the Rest API
+                    scoreFormatSetNamesToTryAgain.Add( setName );
+                    AttributeNotFoundCache.Clear();
+                } catch (Exception e) {
+                    //We should never get here, if we do, there was an error in the Rest API
+                    scoreFormatSetNamesToTryAgain.Add( setName );
+                }
+            }
+
+            foreach (var definition in targetDefinitionsToLoad) {
+                var setName = SetName.Parse( definition );
+                try {
+                    await GetTargetDefinitionAsync( setName );
+                } catch (DefinitionNotFoundException) {
+                    //We should never get here, if we do, there was an error in the Rest API
+                    targetSetNamesToTryAgain.Add( setName );
+                    AttributeNotFoundCache.Clear();
+                } catch (Exception e) {
+                    //We should never get here, if we do, there was an error in the Rest API
+                    targetSetNamesToTryAgain.Add( setName );
+                }
+            }
+
+            //Second attempt
+            if (attributeSetNamesToTryAgain.Count > 0
+                || scoreFormatSetNamesToTryAgain.Count > 0
+                || targetSetNamesToTryAgain.Count > 0) {
+                Thread.Sleep( 10000 );
+
+                foreach( var sn in attributeSetNamesToTryAgain ) {
+                    try {
+                        await GetAttributeDefinitionAsync( sn );
+                    } catch ( Exception ) {
+                        ;
+                    }
+                }
+
+                foreach (var sn in scoreFormatSetNamesToTryAgain) {
+                    try {
+                        await GetScoreFormatCollectionDefinitionAsync( sn );
+                    } catch (Exception) {
+                        ;
+                    }
+                }
+
+                foreach (var sn in targetSetNamesToTryAgain) {
+                    try {
+                        await GetTargetDefinitionAsync( sn );
+                    } catch (Exception) {
+                        ;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -416,5 +500,50 @@ namespace Scopos.BabelFish.APIClients {
             TargetNotFoundCache.Clear();
             TargetCollectionNotFoundCache.Clear();
         }
+
+        /// <summary>
+        /// Effectively for unit testing only. Returns the number of definitions in the cache
+        /// </summary>
+        /// <param name="definitionType"></param>
+        /// <returns></returns>
+        public static int GetCacheSize( DefinitionType definitionType ) {
+
+            switch (definitionType) {
+                case DefinitionType.ATTRIBUTE:
+                    return AttributeCache.Count;
+
+                case DefinitionType.COURSEOFFIRE:
+                    return CourseOfFireCache.Count;
+
+                case DefinitionType.EVENTSTYLE:
+                    return EventStyleCache.Count;
+
+                case DefinitionType.EVENTANDSTAGESTYLEMAPPING:
+                    return EventAndStageStyleMappingCache.Count;
+
+                case DefinitionType.RANKINGRULES:
+                    return RankingRuleCache.Count;
+
+                case DefinitionType.RESULTLISTFORMAT:
+                    return ResultListFormatCache.Count;
+
+                case DefinitionType.SCOREFORMATCOLLECTION:
+                    return ScoreFormatCollectionCache.Count;
+
+                case DefinitionType.STAGESTYLE:
+                    return StageStyleCache.Count;
+
+                case DefinitionType.TARGET:
+                    return TargetCache.Count;
+
+                case DefinitionType.TARGETCOLLECTION:
+                    return TargetCollectionCache.Count;
+
+                default:
+                    //Shouldn't ever get here
+                    return 0;
+            }
+        }
+
     }
 }

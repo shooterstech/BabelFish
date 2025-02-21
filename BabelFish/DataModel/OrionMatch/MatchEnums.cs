@@ -372,4 +372,45 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [EnumMember(Value = "OFFICIAL")]
         OFFICIAL
     }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum ParticipantRemark {
+        /// <summary>
+        /// Did Not Start
+        /// </summary>
+        DNS,
+
+        /// <summary>
+        /// Did Not Finish
+        /// </summary>
+        DNF,
+
+        /// <summary>
+        /// Disqualified
+        /// </summary>
+        DSQ,
+
+        /// <summary>
+        /// Eliminated
+        /// </summary>
+        ELIM,
+
+        /// <summary>
+        /// On the buble of elimination
+        /// </summary>
+        BUB
+    };
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum RemarkVisibility {
+        /// <summary>
+        /// Show the Remark
+        /// </summary>
+        SHOW,
+
+        /// <summary>
+        /// Hide the Remark
+        /// </summary>
+        HIDDEN
+    };
 }

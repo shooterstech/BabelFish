@@ -13,17 +13,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
     [Serializable]
     public class Remark
     {
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum STATUS { SHOW, HIDDEN };
-
-        [JsonConverter(typeof(StringEnumConverter))]
-        public enum REMARKNAME { DNS, DSQ, ELIM, BUB };
         /// <summary>
         /// this would be the name of the remark being given, DNS, DSQ, Eliminated, etc.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty( DefaultValueHandling = DefaultValueHandling.Populate )]
-        public REMARKNAME RemarkName { get; set; }
+        public ParticipantRemark ParticipantRemark { get; set; }
 
         /// <summary>
         /// A reason for a remark is not always given, but should be when the remark is assigned by the RSO
@@ -35,6 +30,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
-        public STATUS Status { get; set; } = STATUS.SHOW;
+        public RemarkVisibility Visibility { get; set; } = RemarkVisibility.SHOW;
     }
 }

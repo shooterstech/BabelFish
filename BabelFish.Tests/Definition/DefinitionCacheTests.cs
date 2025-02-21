@@ -218,5 +218,20 @@ namespace Scopos.BabelFish.Tests.Definition {
             //Due to the time it takes to throw and catch an exception, the benefit is minimal, but still there.
             Assert.IsTrue( swFirstCall.ElapsedMilliseconds > 2 * swSecondCall.ElapsedMilliseconds );
         }
+
+        /// <summary>
+        /// Tests that the DefinitionCache's PreLoad, actually loads the expected definitiions into cache.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task DefinitionCachePreLoadTests() {
+            DefinitionCache.ClearCache();
+
+            await DefinitionCache.PreLoad();
+
+            Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+        }
     }
 }

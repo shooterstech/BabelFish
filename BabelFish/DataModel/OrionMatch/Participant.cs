@@ -69,7 +69,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<Remark> RemarkList { get; set; } = new List<Remark>();
 
-        public bool HasRemark( )
+        /// <summary>
+        /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        public bool HasRemark( ParticipantRemark remark) {
+            foreach (var re in RemarkList) {
+                if (re.ParticipantRemark == remark)
+                    return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// A list of this Participant's coaches.
