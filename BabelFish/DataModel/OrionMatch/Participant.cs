@@ -63,6 +63,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<Remark> RemarkList { get; set; } = new List<Remark>();
 
+        public bool HasRemark( ParticipantRemark remark) {
+
+        }
+
         /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
