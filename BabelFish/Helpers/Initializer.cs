@@ -40,5 +40,13 @@ namespace Scopos.BabelFish.Helpers {
                 //Choosing not to await the PreLoad command. 
                 DefinitionCache.PreLoad();
         }
+
+        private static DateTime StartTime = DateTime.UtcNow;
+
+        public static TimeSpan UpTime {
+            get {
+                return (DateTime.UtcNow - StartTime);
+            }
+        }
     }
 }

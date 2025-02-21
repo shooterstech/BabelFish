@@ -271,6 +271,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         ACCUMULATIVE_FINALS,
 
         /// <summary>
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
+        /// </summary>
+        [Description( "SUM(i,d)" )]
+        [EnumMember( Value = "SUM(i,d)" )]
+        ACCUMULATIVE_FINALS_2,
+
+        /// <summary>
         /// Reserved for Singularities that don't have children.
         /// </summary>
         [Description( "NONE" )]

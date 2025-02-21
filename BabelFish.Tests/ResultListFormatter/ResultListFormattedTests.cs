@@ -383,7 +383,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             rlf.Engagable = true;
             rlf.ResolutionWidth = 1800;
-            rlf.ChildrenToShow = 4000;
+            rlf.ShowNumberOfChildRows = 4000;
 
             CellValues tryCellValues, cellValues;
             foreach (int i in rlf.GetShownColumnIndexes()) {
