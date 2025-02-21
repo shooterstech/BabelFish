@@ -63,6 +63,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          * To represent this, need a way to override AttributeValues based on the reentry tag.
          */
 
+
+        /// <summary>
+        /// A list of Remark objects, each containing a RemarkName and sometimes a reason.
+        /// </summary>
+        public List<Remark> RemarkList { get; set; } = new List<Remark>();
+
         /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
