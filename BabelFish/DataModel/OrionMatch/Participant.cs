@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
 
         /// <summary>
-        /// A list of Remark objects, each containing a RemarkName and sometimes a reason.
+        /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
         public List<Remark> RemarkList { get; set; } = new List<Remark>();
 
