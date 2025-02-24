@@ -59,6 +59,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             ScoreFormatCollection = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionSetName );
 
+            //Set to a default value first.
+            this.ScoreConfig = ScoreFormatCollection.ScoreConfigs[0];
+            //Now set to the value passed in on the Result List.
             foreach (var sConfig in ScoreFormatCollection.ScoreConfigs) {
                 if (sConfig.ScoreConfigName == ScoreConfigName) {
                     this.ScoreConfig = sConfig;
@@ -581,7 +584,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <summary>
         /// Limits the number of child rows to show under a main body row.
         /// <para>The default value is int.MaxValue, which means to show all children.</para>
-        /// <para>Values of less than 0, are interpreted as being int.MaxValue.</para>
+        /// <para>Values of less than 0, are interpreted as being 0.</para>
         /// </summary>
         public int ShowNumberOfChildRows {
             get {
@@ -589,7 +592,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
             set {
                 if (value <= 0)
-                    _showNumberOfChildren = int.MaxValue;
+                    _showNumberOfChildren = 0;
                 else
                     _showNumberOfChildren = value;
             }
