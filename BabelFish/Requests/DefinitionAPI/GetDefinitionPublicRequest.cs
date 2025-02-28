@@ -29,6 +29,7 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
             get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>( DefinitionType ).Value}/{SetName}"; }
         }
 
+        /// <inheritdoc />
         public override string ToString() {
             return $"{OperationId} request for {DefinitionType.Description()} {SetName}";
         }

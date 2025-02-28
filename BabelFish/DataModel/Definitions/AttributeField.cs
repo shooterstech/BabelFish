@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -85,17 +84,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
+        /// The type of data that this field will hold.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        public ValueType ValueType { get; protected set; } = ValueType.STRING;
+
+        /// <summary>
+        /// Human readable description of what this feild represents. 
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
+        public string Description { get; set; } = string.Empty;
+
+        /// <summary>
         /// True if the user may enter multiple values in this field (in other words, its a list). 
         /// False if the user may only enter one value.
         /// </summary>
-        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( Order = 5, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( false )]
         public bool MultipleValues { get; protected set; } = false;
 
         /// <summary>
         /// True if the user is required to enter a value. False if the user desn't have to. If the user doesn't have to, then the DefaultValue is applied.
         /// </summary>
-        [G_NS.JsonProperty( Order = 5 )]
+        [G_NS.JsonProperty( Order = 6 )]
         public bool Required { get; set; } = false;
 
         /// <summary>
@@ -105,20 +116,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 7 )]
         public bool Key { get; set; } = false;
 
-        /// <summary>
-        /// Human readable description of what this feild represents. 
-        /// </summary>
-        [G_NS.JsonProperty( Order = 6 )]
-        public string Description { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The type of data that this field will hold.
-        /// </summary>
-        [JsonInclude]
-        public ValueType ValueType { get; protected set; } = ValueType.STRING;
-
         /// <inheritdoc/>
-        [JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingDefault )]
+        [G_NS.JsonProperty( Order = 99, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

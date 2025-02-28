@@ -25,8 +25,9 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
 
             SetName = setName;
             DefinitionType = definitionType;
+            //Do not use file system cache
             IgnoreFileSystemCache = true;
-            //NOTE: The InMemoryCache timeout is set to a relatively small 5 minutes.
+            //Do allow InMemoryCache. Note that the timeout is set to a relatively small 5 minutes.
             IgnoreInMemoryCache = false;
         }
 

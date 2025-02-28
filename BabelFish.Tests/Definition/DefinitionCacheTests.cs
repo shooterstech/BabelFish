@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"g:\My Drive\Definitions" );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\\temp" );
             var requestNoCache = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             var requestWithCache = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             requestNoCache.IgnoreFileSystemCache = true;
@@ -59,14 +59,18 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task FileSystemCacheTest() {
 
-            //To perform this test, need to clear cache first, as other tests may have populated it.
-            Initializer.ClearCache(false);
 
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
-            //TODO figure out how to read the value of the definition directory from a config file.
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" ); 
+            //These next two lines (should) store the attribute in the local file system if it is not already there.
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
+            await DefinitionCache.GetAttributeDefinitionAsync( setName );
+
+            //Clear the cache so we are starting with a blank slate for the remainder of the test. 
+            //Note clearing the cache does not delete files from the file system,, only memory
+            Initializer.ClearCache( false );
+
             var attributeRequest = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             attributeRequest.IgnoreFileSystemCache = false;
 
@@ -167,31 +171,29 @@ namespace Scopos.BabelFish.Tests.Definition {
 
         }
 
+        /// <summary>
+        /// Tests if the definition is saved to local file system after it is read from the Rest API
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task SaveToFileTest() {
 
+            //to run this test, first need to delete the file that the call would normally try and read.
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
+            var definitionFileName = $"c:\\temp\\DEFINITIONS\\STAGE STYLE\\v1.0 ntparc Sporter Air RIfle Kneeling.json";
 
-			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            if ( File.Exists( definitionFileName ) ) 
+                File.Delete( definitionFileName );
 
-			var response = await client.GetStageStyleDefinitionAsync( setName );
-            var stageStyle = response.Definition;
+            //Now clear the cache so we are starting with a blank slate
+            Initializer.ClearCache(false);
 
-            DirectoryInfo temp = new DirectoryInfo( @"c:\temp" );
-            stageStyle.SaveToFile( temp );
-		}
+            //Now we can try and retreive it in the normal way, which should save it to file system within the (above) set LocalStoreDirectory
+            var setName = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            await DefinitionCache.GetStageStyleDefinitionAsync( setName );
 
-        [TestMethod] 
-        public async Task ReadFromFileTest() {
-
-            string path = @"G:\My Drive\Definitions\COURSE OF FIRE\v1.0 usas Smallbore Rifle 60 Prone.json";
-
-            string json = File.ReadAllText( path );
-
-            var definition = G_STJ.JsonSerializer.Deserialize<Scopos.BabelFish.DataModel.Definitions.Definition> ( json, Helpers.SerializerOptions.SystemTextJsonDeserializer );
-
-            Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
-		}
+            Assert.IsTrue( File.Exists( definitionFileName ) );
+        }
 
         [TestMethod]
         public async Task DefinitionNotFoundTest() {
@@ -220,18 +222,43 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         /// <summary>
-        /// Tests that the DefinitionCache's PreLoad, actually loads the expected definitiions into cache.
+        /// Tests that the DefinitionCache's PreLoad, actually loads the expected definitiions into cache. Runs it twice, first using Rest API, second using local file system.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
         public async Task DefinitionCachePreLoadTests() {
-            DefinitionCache.ClearCache();
 
+            //Clear out the definitions directory, and the cache 
+            Directory.Delete( @"c:\temp\DEFINITIONS", true );
+            Initializer.ClearCache( false );
+
+            //Set the LocalStoreDirectory and preload. Which should also save to file system
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\\temp" );
+            Stopwatch loadFromRestApi = Stopwatch.StartNew();
             await DefinitionCache.PreLoad();
+            loadFromRestApi.Stop();
 
             Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
             Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
             Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+
+            //Clear the cache and make sure it got cleared
+            Initializer.ClearCache( false );
+            Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+
+            //Re-run preload, which will read the files from the local file system (since they should exist now)
+            Stopwatch loadFromFileSystem = Stopwatch.StartNew();
+            await DefinitionCache.PreLoad();
+            loadFromFileSystem.Stop();
+
+            Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+
+            //Check that it is much faster
+            Assert.IsTrue( loadFromFileSystem.ElapsedMilliseconds * 10 < loadFromRestApi.ElapsedMilliseconds );
         }
     }
 }

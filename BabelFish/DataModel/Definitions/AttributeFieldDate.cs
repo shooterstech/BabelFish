@@ -16,8 +16,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        [G_NS.JsonProperty( Order = 10 )]
         public DateTime ? DefaultValue { get; set; } = null;
 
+        [G_NS.JsonProperty( Order = 11 )]
         public AttributeValidationDate Validation { get; set; } = null;
 
         internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {

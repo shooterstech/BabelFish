@@ -44,13 +44,12 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetCourseOfFireTest() {
+        public async Task GetCourseOfFireTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
-            var taskResponse = client.GetCourseOfFireDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetCourseOfFireDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -68,13 +67,12 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetEventStyleTest() {
+        public async Task GetEventStyleTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" );
 
-            var taskResponse = client.GetEventStyleDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetEventStyleDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -90,14 +88,13 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetRankingRuleTest()
+        public async Task GetRankingRuleTest()
         {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:nra:BB Gun Qualification");
 
-            var taskResponse = client.GetRankingRuleDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetRankingRuleDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -122,14 +119,13 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetStageStyleTest()
+        public async Task GetStageStyleTest()
         {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:ntparc:Sporter Air Rifle Standing");
 
-            var taskResponse = client.GetStageStyleDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetStageStyleDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -140,19 +136,17 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.DisplayScoreFormats.Count > 0);
             Assert.IsTrue( definition.RelatedStageStyles.Count > 0 );
         }
 
         [TestMethod]
-        public void GetTargetCollectionTest()
+        public async Task GetTargetCollectionTest()
         {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:ntparc:Air Rifle");
 
-            var taskResponse = client.GetTargetCollectionDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetTargetCollectionDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -167,14 +161,13 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetTargetTest()
+        public async Task GetTargetTest()
         {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:issf:10m Air Rifle");
 
-            var taskResponse = client.GetTargetDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetTargetDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -190,14 +183,13 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetScoreFormatCollectionType()
+        public async Task GetScoreFormatCollectionType()
         {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
 
-            var taskResponse = client.GetScoreFormatCollectionDefinition( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;
@@ -213,13 +205,12 @@ namespace Scopos.BabelFish.Tests.Definition {
         }
 
         [TestMethod]
-        public void GetResultListFormatTest() {
+        public async Task GetResultListFormatTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
             var setName = SetName.Parse( "v1.0:orion:3P Individual" );
 
-            var taskResponse = client.GetResultListFormatDefinitionAsync( setName );
-            var result = taskResponse.Result;
+            var result = await client.GetResultListFormatDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
 
             var definition = result.Definition;

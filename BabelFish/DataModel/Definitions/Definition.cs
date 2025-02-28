@@ -118,8 +118,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Version string of the JSON document.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 10 )]
-        [G_NS.JsonProperty( Order = 10 )]
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
         [DefaultValue( "2020-03-31" )]
 		public string JSONVersion { get; set; } = "2020-03-31";
 
