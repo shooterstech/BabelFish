@@ -260,5 +260,32 @@ namespace Scopos.BabelFish.Tests.Definition {
             //Check that it is much faster
             Assert.IsTrue( loadFromFileSystem.ElapsedMilliseconds * 10 < loadFromRestApi.ElapsedMilliseconds );
         }
+
+        /// <summary>
+        /// Checks that the CheckForNewerVersion() method does indeed return true or false if there's a newer version
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task CheckForNewerVersionTest() {
+
+
+            var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
+            var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
+
+            //Initially, since we just grabbed it, there should not be a newer version
+            var hasNewerVersion = await cofDefinition.CheckForNewerVersionAsync();
+            Assert.IsFalse( hasNewerVersion );
+
+            var currentVersion = cofDefinition.GetDefinitionVersion();
+            var manipulatedVersion = $"{currentVersion.MajorVersion}.{currentVersion.MinorVersion - 1}";
+            cofDefinition.Version = manipulatedVersion;
+
+            //Since we manipulated the cached version, we need to clear the cache before checking again.
+            Initializer.ClearCache( false );
+
+            //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
+            hasNewerVersion = await cofDefinition.CheckForNewerVersionAsync();
+            Assert.IsTrue( hasNewerVersion );
+        }
     }
 }

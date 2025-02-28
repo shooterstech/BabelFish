@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Requests.DefinitionAPI;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -150,6 +152,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonIgnore]
         public List<string> SpecificationMessages { get; protected set; }
 
+        /// <summary>
+        /// Checks to see if there is a newer version of the Definition file avaliable through the Rest API
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> CheckForNewerVersionAsync() {
+
+            //Request a check of the current version stored in the Rest API
+            var versionRequest = new GetDefinitionVersionPublicRequest( this.GetSetName( true ), this.Type );
+            var versionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( versionRequest );
+
+            var thisVersion = this.GetDefinitionVersion();
+            var apiVersion = versionResponse.Value.GetDefinitionVersion();
+            return thisVersion < apiVersion;
+        }
+
 		/// <summary>
 		/// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
 		/// </summary>
@@ -161,6 +178,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return $"d0.0 {HierarchicalName.ToString().Replace( ':', ' ' )}.json";
         }
 
+        /// <summary>
+        /// Helper method to save the Definition file to local storage.
+        /// </summary>
+        /// <param name="definitionDirectory"></param>
+        /// <returns></returns>
         public string SaveToFile( DirectoryInfo definitionDirectory ) {
 
             string filePath = $"{definitionDirectory.FullName}\\{Type.Description()}\\{GetFileName(true)}";
