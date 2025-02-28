@@ -6,6 +6,8 @@ using Scopos.BabelFish.APIClients;
 namespace Scopos.BabelFish.Helpers {
     public static class Initializer {
 
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Sets the x-api-key used thorughout Babelfish, and initializes the JSON serializers and deserializers.
         /// </summary>
@@ -17,15 +19,38 @@ namespace Scopos.BabelFish.Helpers {
 
             if (string.IsNullOrEmpty( xApiKey )) {
                 throw new ArgumentNullException( "The x-api-key may not be empty or null." );
-            }
+			}
 
-            Scopos.BabelFish.Runtime.Settings.XApiKey = xApiKey;
+			if (StartTime == null)
+				StartTime = DateTime.UtcNow;
+
+			Scopos.BabelFish.Runtime.Settings.XApiKey = xApiKey;
 
             SerializerOptions.InitSerializers();
 
             if (runPreLoad )
                 //Choosing not to await the PreLoad command. 
                 DefinitionCache.PreLoad();
+        }
+
+        public static void Initialize( string xApiKey, string localStoreDirectory, bool runPreLoad = true ) {
+            Initialize( xApiKey, runPreLoad );
+
+            try {
+                var dirInfo = new DirectoryInfo( localStoreDirectory );
+
+                AthenaAPIClient.LocalStoreDirectory = dirInfo;
+                AttributeValueAPIClient.LocalStoreDirectory = dirInfo;
+                ClubsAPIClient.LocalStoreDirectory = dirInfo;
+                DefinitionAPIClient.LocalStoreDirectory = dirInfo;
+                OrionMatchAPIClient.LocalStoreDirectory= dirInfo;
+                ScoposDataClient.LocalStoreDirectory = dirInfo;
+                ScoreHistoryAPIClient.LocalStoreDirectory = dirInfo;
+                SocialNetworkAPIClient.LocalStoreDirectory = dirInfo;
+
+            } catch (Exception ex) {
+                logger.Error( ex, $"Can not set LocalStoreDirectory, with error {ex}." );
+            }
         }
 
         /// <summary>
@@ -41,11 +66,14 @@ namespace Scopos.BabelFish.Helpers {
                 DefinitionCache.PreLoad();
         }
 
-        private static DateTime StartTime = DateTime.UtcNow;
+        private static DateTime? StartTime = null;
 
         public static TimeSpan UpTime {
             get {
-                return (DateTime.UtcNow - StartTime);
+                if ( StartTime == null )
+                    StartTime = DateTime.UtcNow;
+
+                return (TimeSpan) (DateTime.UtcNow - StartTime);
             }
         }
     }

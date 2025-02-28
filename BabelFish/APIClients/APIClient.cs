@@ -190,6 +190,10 @@ namespace Scopos.BabelFish.APIClients {
                 if (responseMessage.IsSuccessStatusCode) {
                     //Caching is only valid for GET calls
                     if (request.HttpMethod == HttpMethod.Get) {
+                        
+                        //Purposefully not awaiting this call
+                        TryWriteToFileSystemAsync( response );
+
                         cachedResponse = new ResponseIntermediateObject() {
                             StatusCode = response.StatusCode,
                             //MessageResponse = response.MessageResponse.Copy(),
@@ -231,6 +235,13 @@ namespace Scopos.BabelFish.APIClients {
             //Default behavior is not to try and read from the file system.
 
             return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+        }
+
+        protected virtual async Task TryWriteToFileSystemAsync<T>( Response<T> response ) where T : BaseClass, new() {
+
+            //Default behavior is not to try and write to the file system.
+
+            return;
         }
 
 

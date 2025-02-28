@@ -576,7 +576,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         private int _showRanks = 0;
 
         public void SetShowValuesToDefault() {
-            ShowNumberOfChildRows = 0;
+            ShowNumberOfChildRows = int.MinValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
             ShowZeroScoresWithOFFICIAL = false;
             ShowRanks = 0;

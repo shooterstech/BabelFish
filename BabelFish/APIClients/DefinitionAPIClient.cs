@@ -8,6 +8,10 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
 using Scopos.BabelFish.Helpers;
+using System.Net;
+using System.Text.Json;
+using Scopos.BabelFish.DataModel;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient<DefinitionAPIClient> {
@@ -52,35 +56,105 @@ namespace Scopos.BabelFish.APIClients {
 
             var definitionRequest = (GetDefinitionPublicRequest)request;
             try {
-                if (LocalStoreDirectory != null && LocalStoreDirectory.Exists) {
+                if (LocalDefinitionDirectory != null && LocalDefinitionDirectory.Exists) {
 
                     string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
-                    string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
+                    string filename = $"{LocalDefinitionDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
 
                     logger.Trace( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
 
                     FileInfo fileInfo = new FileInfo( filename );
                     if (fileInfo.Exists) {
 
-                        //TODO:Implement
-                        throw new NotImplementedException();
+                        var definitionJsonAsSring = File.ReadAllText( filename );
+                        var responseAsString = $"{{ \"{definitionRequest.SetName}\" : {definitionJsonAsSring} }}";
+                        var responseBody = G_STJ.JsonDocument.Parse( responseAsString );
 
-                        
+                        var responseIntObj = new ResponseIntermediateObject();
+                        responseIntObj.StatusCode = HttpStatusCode.OK;
+                        responseIntObj.Body = responseBody;
+                        responseIntObj.Request = request;
+                        responseIntObj.ValidUntil = DateTime.UtcNow.AddDays( 1 );
+
+                        logger.Info( $"Returning a in-memory cached Response for {request}." );
+
+
+                        return new Tuple<bool, ResponseIntermediateObject?>( true, responseIntObj );
+
                     } else {
                         logger.Warn( $"Can't read definition '{filename}' because the file does not exist." );
                     }
 
                 } else {
-                    if (LocalStoreDirectory == null)
+                    if (LocalDefinitionDirectory == null)
                         logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory has not been set." );
                     else
-                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory '{LocalStoreDirectory.FullName}' doesn't exist." );
+                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory '{LocalDefinitionDirectory.FullName}' doesn't exist." );
                 }
             } catch (Exception ex) {
                 logger.Error( ex, $"Something unexpected happen while reading the definitions for '{definitionRequest.SetName}'." );
             }
 
             return new Tuple<bool, ResponseIntermediateObject?>( false, null );
+        }
+
+        protected override Task TryWriteToFileSystemAsync<T>( Response<T> response ) {
+
+            var request = response.Request;
+
+            //No need to write to file system, if the response came from the file system or memory cache
+            if (response.FileSystemCachedResponse || response.InMemoryCachedResponse)
+                return Task.CompletedTask;
+
+            var definitionRequest = (GetDefinitionPublicRequest)request;
+
+            try {
+                if (LocalDefinitionDirectory != null ) {
+
+                    //Create the directory structure
+                    string definitionTypeDirectory = $"{LocalDefinitionDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}";
+                    if ( ! Directory.Exists( definitionTypeDirectory ) )
+                        Directory.CreateDirectory( definitionTypeDirectory );
+
+                    string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
+                    string fullFilename = $"{definitionTypeDirectory}\\{definitionFileName}";
+
+                    bool writeThefile = false;
+                    if (!File.Exists( fullFilename )) {
+                        //Write the file if it doesn't exist
+                        writeThefile = true;
+                    } else {
+                        //if The file does exist, only write if its older than 5 mins
+                        DateTime lastWriteTime = File.GetLastWriteTime( fullFilename );
+                        if ((DateTime.Now - lastWriteTime).TotalMilliseconds > 5)
+                            writeThefile = true;
+                    }
+
+                    if (writeThefile) {
+                        string json = JsonConvert.SerializeObject( response.Value, SerializerOptions.NewtonsoftJsonSerializer );
+
+                        File.WriteAllText( fullFilename, json );
+                    }
+
+                } else {
+                    logger.Warn( $"Not writing {definitionRequest.DefinitionType.Description()} definition {definitionRequest.SetName} to the file system because the LocalStoreDirectory has not been set." );
+                }
+            } catch (Exception ex ) {
+                logger.Error( ex, $"Unable to write {definitionRequest.DefinitionType.Description()} definition {definitionRequest.SetName} to the file system due to an exception {ex}." );
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public static DirectoryInfo LocalDefinitionDirectory {
+            get {
+                if (LocalStoreDirectory == null)
+                    return null;
+
+                var definitionDirectory = $"{LocalStoreDirectory.FullName}\\DEFINITIONS";
+
+                return new DirectoryInfo( definitionDirectory );
+            }
         }
 
 

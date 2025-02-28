@@ -22,6 +22,11 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI {
         }
 
         /// <inheritdoc/>
+        protected internal override DateTime GetCacheValueExpiryTime() {
+            return DateTime.UtcNow.AddMinutes( 5 );
+        }
+
+        /// <inheritdoc/>
         protected override void ConvertBodyToValue() {
             G_STJ.JsonElement root = Body.RootElement;
             G_STJ.JsonElement definition = root.GetProperty( SetName.ToString() );

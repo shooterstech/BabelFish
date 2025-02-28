@@ -24,12 +24,6 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// The directory that BabelFish may use to store cached responses. 
-        /// </summary>
-        [Obsolete("Replaced with API Client's File System Cache")]
-        public DirectoryInfo? LocalStoreDirectory { get; set; } = null;
-
-        /// <summary>
         /// Attempts to retreive a Response from memory based on the passed in request value. 
         /// Returns true if there was a cache hit. 
         /// False is returned if either the response value is not cached or the response
@@ -70,22 +64,9 @@ namespace Scopos.BabelFish.APIClients {
                 lock (mutex) {
                     cachedRequests[request.GetRequestCacheKey()] = response;
 
-                    if ( LocalStoreDirectory != null ) {
-                        string relativePath = request.GetRequestCacheKey();
-                        relativePath = relativePath.Replace( ':', ' ' );
-
-						string filename = $"{LocalStoreDirectory.FullName}\\{relativePath}.json";
-
-						FileInfo file = new FileInfo( filename );
-                        file.Directory.Create();
-
-                        var json = G_STJ.JsonSerializer.Serialize( response, SerializerOptions.SystemTextJsonDeserializer );
-
-						using (StreamWriter sw = File.CreateText( file.FullName )) {
-							sw.WriteLine( json );
-						}
-
-					}
+                    //EKA NOTE Feb 2025: Choosing not to write most response value to file system. As this takes time and I just don't
+                    //get a sense saving them to file system is needed. The one exception is definitions, which has their own 
+                    //mechanism to read and write definition files from disk.
                 }
             }
         }

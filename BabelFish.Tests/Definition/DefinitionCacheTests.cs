@@ -66,7 +66,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
             //TODO figure out how to read the value of the definition directory from a config file.
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\Users\erikkanderson\Documents\My Matches\DATABASE\DEFINITIONS\" ); // @"g:\My Drive\Definitions" );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" ); 
             var attributeRequest = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             attributeRequest.IgnoreFileSystemCache = false;
 
