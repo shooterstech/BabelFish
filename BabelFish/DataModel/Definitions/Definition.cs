@@ -167,12 +167,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return thisVersion < apiVersion;
         }
 
-		/// <summary>
-		/// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
-		/// </summary>
-		/// <returns></returns>
-		public string GetFileName(bool useDevelopmentVersioning = false) {
-            if (! useDevelopmentVersioning) 
+        /// <summary>
+        /// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
+        /// </summary>
+        /// <returns></returns>
+        public string GetFileName( bool useDevelopmentVersioning = false ) {
+            if (!useDevelopmentVersioning)
                 return $"{SetName.ToString().Replace( ':', ' ' )}.json";
 
             return $"d0.0 {HierarchicalName.ToString().Replace( ':', ' ' )}.json";
@@ -180,12 +180,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Helper method to save the Definition file to local storage.
+        /// <para>Will save the definition file under [definitionDirectory]/DEFINITIONS/[Definition Type]/[SetName].json</para>
         /// </summary>
         /// <param name="definitionDirectory"></param>
-        /// <returns></returns>
+        /// <returns>The full path of the saved file.</returns>
         public string SaveToFile( DirectoryInfo definitionDirectory ) {
 
-            string filePath = $"{definitionDirectory.FullName}\\{Type.Description()}\\{GetFileName(true)}";
+            if (definitionDirectory == null)
+                throw new ArgumentNullException( nameof( definitionDirectory ) );
+
+            string filePath = $"{definitionDirectory.FullName}\\{GetRelativePath()}";
 
             DirectoryInfo typeDirectory = new DirectoryInfo( $"{definitionDirectory.FullName}\\{Type.Description()}" );
 
@@ -196,7 +200,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             File.WriteAllText( filePath, json );
 
-            return filePath ;
+            return filePath;
+        }
+
+        public string GetRelativePath( ) {
+            string relativePath = $"DEFINITIONS\\{Type.Description()}\\{GetFileName( true )}";
+            return relativePath;
         }
     }
 }

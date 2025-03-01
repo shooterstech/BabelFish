@@ -11,6 +11,7 @@ using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Converters;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -27,6 +28,11 @@ namespace Scopos.BabelFish.APIClients {
         /// Keep track of how many times this API Client is called. Will also update the sitewite statistics class.
         /// </summary>
         public static APIClientStatistics Statistics { get; private set; } = new APIClientStatistics();
+
+        /// <summary>
+        /// Gets called when the LocalStorageDirectory is updated or set for the first time. 
+        /// </summary>
+        public static EventHandler<EventArgs<DirectoryInfo>>? OnLocalStorageDirectoryChange = null;
 
         /// <summary>
         /// Standard json serializer settings intended for use while deserializing json to object model.
@@ -223,12 +229,37 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        private static DirectoryInfo? _localStorageDirectory = null;
+
         /// <summary>
         /// The directory that BabelFish may use to read and store cached responses. 
         /// Because APIClient is a generic class, each concret instance of APIClient get's gtheir own static
         /// property LocalStoreDirectory. https://stackoverflow.com/questions/3542171/c-sharp-abstract-class-static-field-inheritance
         /// </summary>
-        public static DirectoryInfo? LocalStoreDirectory { get; set; }
+        public static DirectoryInfo? LocalStoreDirectory { 
+            get {
+                return _localStorageDirectory;
+            }
+            set {
+                //Grundgingly allowing a null value
+                if (value == null)
+                    _localStorageDirectory = null;
+
+                //If the value is alredy null (which would normally happen at start up)
+                if (_localStorageDirectory == null) {
+                    _localStorageDirectory = value;
+                    OnLocalStorageDirectoryChange?.Invoke( null, new EventArgs<DirectoryInfo>( _localStorageDirectory ) );
+                    return;
+                }
+
+                //check that it actually changes.
+                if (!value.Equals( _localStorageDirectory )) {
+                    _localStorageDirectory = value;
+                    OnLocalStorageDirectoryChange?.Invoke( null, new EventArgs<DirectoryInfo>( _localStorageDirectory ) );
+                    return;
+                }
+            }
+        }
 
         protected virtual async Task<Tuple<bool, ResponseIntermediateObject?>> TryReadFromFileSystemAsync( Request request ) {
 

@@ -175,7 +175,6 @@ namespace Scopos.BabelFish.APIClients {
 
             //Try and pull from cache. If there is a cached value, in a seperate Task (note we are not calling await) check for a newer version
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) {
-                CheckForNewerVersionAsync( a );
                 return a; 
             }
 
@@ -195,25 +194,6 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"Attribute definition '{setName}' not found. " );
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
-            }
-        }
-
-        public static async Task CheckForNewerVersionAsync( Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
-            //Request a check of the current version stored in the Rest API
-            var versionRequest = new GetDefinitionVersionPublicRequest( def.GetSetName(), def.Type );
-            var versionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( versionRequest );
-
-            //If there is a new version avaliable ...
-            if (def.GetDefinitionVersion() < versionResponse.Value.GetDefinitionVersion()) {
-                //Make a request to read the lastest definition. be sure to turn off caching.
-                var definitionRequest = new GetDefinitionPublicRequest( def.GetSetName(), def.Type );
-                definitionRequest.IgnoreInMemoryCache = true;
-                definitionRequest.IgnoreFileSystemCache = true;
-
-                var definitionResponse = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( def.GetSetName() );
-                if ( definitionResponse.StatusCode == System.Net.HttpStatusCode.OK) {
-                    AttributeCache.TryAdd( def.GetSetName(), definitionResponse.Definition );
-                }
             }
         }
 
