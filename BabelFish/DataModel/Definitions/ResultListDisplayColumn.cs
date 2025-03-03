@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
+using BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -76,6 +77,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </list>
         /// </remarks>
         public List<string> ClassList { get; set; } = new List<string>();
+
+        public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
 
         /// <summary>
         /// Logic to determine when this column should be shown.

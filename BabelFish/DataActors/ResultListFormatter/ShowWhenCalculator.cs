@@ -24,14 +24,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public bool Show( ShowWhenBase showWhen ) {
             if (showWhen is ShowWhenVariable)
-                return Show( (ShowWhenVariable)showWhen );
+                return Show( (ShowWhenVariable)showWhen, null );
 
             if (showWhen is ShowWhenSegmentGroup)
-                return Show( (ShowWhenSegmentGroup)showWhen );
+                return Show( (ShowWhenSegmentGroup)showWhen, null );
 
             //else showWhen is a ShowWhenEquation
 
-            return Show( (ShowWhenEquation)showWhen );
+            return Show( (ShowWhenEquation)showWhen, null );
         }
 
         public bool Show( ShowWhenBase showWhen, IParticipant ? participant ) {
@@ -49,7 +49,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
              * 4. Document in H&M as part of ShowWhenCondition
              * 5. Write Unit Tests
              */
-            throw new NotImplementedException();
+            if (showWhen is ShowWhenVariable)
+                return Show((ShowWhenVariable)showWhen, participant);
+
+            if (showWhen is ShowWhenSegmentGroup)
+                return Show((ShowWhenSegmentGroup)showWhen, participant);
+
+            //else showWhen is a ShowWhenEquation
+
+            return Show((ShowWhenEquation)showWhen, participant);
         }
 
         public bool Show( ShowWhenVariable showWhen, IParticipant ? participant ) {
@@ -138,6 +146,56 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 case ShowWhenCondition.RESULT_STATUS_OFFICIAL:
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_DNS:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    participant.Participant.SortRemarks();
+                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.DNS) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_DNF:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    participant.Participant.SortRemarks();
+                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.DNF) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_DSQ:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    participant.Participant.SortRemarks();
+                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.DSQ) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_BUBBLE:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    participant.Participant.SortRemarks();
+                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.BUB) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_ELIMINATED:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    participant.Participant.SortRemarks();
+                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.ELIM) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
                     break;
 
                 default:

@@ -1,9 +1,14 @@
-﻿using System;
+﻿using Scopos.BabelFish.DataModel.Definitions;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace BabelFish.DataModel.Definitions {
-    public class ClassSet {
+
+    [Serializable]
+    [G_NS.JsonConverter(typeof(G_BF_NS_CONV.ShowWhenBaseConverter))]
+    public class ClassSet : IReconfigurableRulebookObject {
 
         /*
          * TODO: Liam
@@ -37,5 +42,13 @@ namespace BabelFish.DataModel.Definitions {
                 "RowClass": [] //Deprecate this list of strings
             },
         */
+
+        public string Name { get; protected set; } = string.Empty;
+
+        public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
+
+        /// <inheritdoc/>
+        [DefaultValue("")]
+        public string Comment { get; set; } = string.Empty;
     }
 }
