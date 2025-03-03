@@ -34,7 +34,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return Show( (ShowWhenEquation)showWhen );
         }
 
-        public bool Show( ShowWhenVariable showWhen ) {
+        public bool Show( ShowWhenBase showWhen, IParticipant ? participant ) {
+            /*
+             * TODO: Liam
+             * 1. Implement this and the other overridden version of Show() that includes the IParticipant. 
+             * 2. Make sure to deal with the case that participant is null.
+             * 3. Implement new ShowWhenConditions
+             *      HAS_REMARK_DNS
+             *      HAS_REMARK_DNF
+             *      HAS_REMARK_DSQ
+             *      HAS_REMARK_BUBBLE
+             *      HAS_REMARK_ELIMINATED
+             *      What others to include?
+             * 4. Document in H&M as part of ShowWhenCondition
+             */
+            throw new NotImplementedException();
+        }
+
+        public bool Show( ShowWhenVariable showWhen, IParticipant ? participant ) {
             bool answer = true;
 
             switch (showWhen.Condition) {
@@ -131,7 +148,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer;
         }
 
-        public bool Show( ShowWhenEquation showWhen ) {
+        public bool Show( ShowWhenEquation showWhen, IParticipant ? participant ) {
 
             bool answer = true;
             bool first = true;
@@ -181,7 +198,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer ^ apployNot;
         }
 
-        public bool Show( ShowWhenSegmentGroup showWhen ) {
+        public bool Show( ShowWhenSegmentGroup showWhen, IParticipant ? participant ) {
 
             ResultListMetadata metadata;
             if ( this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata ) ) {

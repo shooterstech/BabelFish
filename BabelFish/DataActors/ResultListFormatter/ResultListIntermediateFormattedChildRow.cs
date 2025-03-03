@@ -18,6 +18,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         public override List<string> GetClassList() {
+            /*
+             * TODO: Liam
+             * Update to use the new ClassSet property
+             */
+
             //NOTE .RowClass is deprecated
             return resultListFormatted.DisplayPartitions.Children.ClassList.Concat( resultListFormatted.DisplayPartitions.Children.RowClass ).ToList<string>();
         }

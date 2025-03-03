@@ -42,7 +42,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Owner",
             "TargetCollectionName",
             "Status",
-            "LastShot" //Only avaliable on individual result lists
+            "LastShot", //Only avaliable on individual result lists
+            "Remarks"  /* TODO: Liam */
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -156,7 +157,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "UserID",
             "LocalDate", 
             "Status",
-            "LastShot"
+            "LastShot",
+            "Remarks"
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
@@ -553,6 +555,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when the index value is outside the range of columns.</exception>"
         public CellValues GetColumnBodyCell( int index ) {
+            /*
+             * TODO: Liam
+             * Update to use the new ClassSet property
+             */
 
             var column = resultListFormatted.ResultListFormat.Format.Columns[index];
 
