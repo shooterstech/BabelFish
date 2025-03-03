@@ -49,6 +49,18 @@ namespace Scopos.BabelFish.APIClients {
         private const int NOT_FOUND_RECHECK_TIME = 60; //In seconds
 
         /// <summary>
+        /// Set to true, to allow the Definition Cache to automatically check, and if avaliable, downlaod newer minor versions of Definition Files.
+        /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <listheader>In general the value of AutoDownloadNewDefinitionVersions shoudl be </listheader>
+        /// <item>true, if running on a server (e.g. Rezults).</item>
+        /// <item>false, if running on a stand alone application (e.g. Orion).</item>
+        /// </list>
+        /// </remarks>
+        public static bool AutoDownloadNewDefinitionVersions = false;
+
+        /// <summary>
         /// Preloads the Definiiton Cache with commmon definitions. If used, should help with some start up time.
         /// </summary>
         /// <returns></returns>
@@ -175,6 +187,8 @@ namespace Scopos.BabelFish.APIClients {
 
             //Try and pull from cache. If there is a cached value, in a seperate Task (note we are not calling await) check for a newer version
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) {
+                //Purposefully not awaiting this call
+                DownloadNewMinorVersionIfAvaliableAsync( a );
                 return a; 
             }
 
@@ -195,6 +209,13 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. {response.StatusCode}" );
             }
+        }
+
+        public static async Task DownloadNewMinorVersionIfAvaliableAsync( Scopos.BabelFish.DataModel.Definitions.Attribute a ) {
+            if ( AutoDownloadNewDefinitionVersions && await a.IsNewerMinorVersionAvaliableAsync() ) {
+
+            }
+            //else dont' do anything 
         }
 
         /// <summary>

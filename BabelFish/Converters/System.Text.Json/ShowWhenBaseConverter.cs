@@ -14,43 +14,16 @@ namespace Scopos.BabelFish.Converters.Microsoft {
     /// </summary>
     public class ShowWhenBaseConverter : JsonConverter<ShowWhenBase> {
 
-        /*
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ShowWhenBaseSpecifiedConcreteClassConverter() };
-
-        public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( ShowWhenBase ));
-        }
-
-        public override object ReadJson( JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer ) {
-            JObject jo = JObject.Load( reader );
-
-            var id = jo["Operation"]?.Value<string>();
-
-            switch (id) {
-                case "EQUATION" :
-                    return JsonConvert.DeserializeObject<ShowWhenEquation>( jo.ToString(), SpecifiedSubclassConversion );
-                case "VARIABLE" :
-                    return JsonConvert.DeserializeObject<ShowWhenVariable>( jo.ToString(), SpecifiedSubclassConversion );
-                case "SEGMENT_GROUP":
-                    return JsonConvert.DeserializeObject<ShowWhenSegmentGroup>( jo.ToString(), SpecifiedSubclassConversion );
-                default:
-                    //If we get here, it is probable because of ill-formed json
-                    return ShowWhenVariable.ALWAYS_SHOW.Copy();
-            }
-        }
-
-        public override bool CanWrite { get { return false; } }
-
-        public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
-            //When CanWrite is false, which it is, the standard converter is used and not this custom converter
-        }
-        */
-
         public override ShowWhenBase? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                 JsonElement root = doc.RootElement;
-                string operation = root.GetProperty( "Operation" ).GetString();
+                string operation = string.Empty;
+                JsonElement jsonElementValue;
+                if (root.TryGetProperty( "Operation", out jsonElementValue ))
+                    operation = jsonElementValue.GetString();
+                else 
+                    operation = string.Empty;
 
                 switch (operation) {
                     case "EQUATION":

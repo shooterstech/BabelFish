@@ -14,52 +14,16 @@ namespace Scopos.BabelFish.Converters.Microsoft {
     /// </summary>
     public class TieBreakingRuleConverter : JsonConverter<TieBreakingRuleBase> {
 
-        /*
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new TieBreakingRuleBaseSpecifiedConcreteClassConverter() };
-
-        public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( ShowWhenBase ));
-        }
-
-        public override object ReadJson( JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer ) {
-            try {
-                JObject jo = JObject.Load( reader );
-
-                var id = jo["Method"]?.Value<string>();
-
-                switch (id) {
-                    case "Score":
-                    case "":
-                    case null:
-                        return JsonConvert.DeserializeObject<TieBreakingRuleScore>( jo.ToString(), SpecifiedSubclassConversion );
-                    case "CountOf":
-                        return JsonConvert.DeserializeObject<TieBreakingRuleCountOf>( jo.ToString(), SpecifiedSubclassConversion );
-                    case "ParticipantAttribute":
-                        return JsonConvert.DeserializeObject<TieBreakingRuleParticipantAttribute>( jo.ToString(), SpecifiedSubclassConversion );
-                    case "Attribute":
-                        return JsonConvert.DeserializeObject<TieBreakingRuleAttribute>( jo.ToString(), SpecifiedSubclassConversion );
-                    default:
-                        //If we get here, it is probable because of ill-formed json
-                        return new TieBreakingRuleParticipantAttribute() {
-                            Source = "DisplayName",
-                            Comment = "Default TieBreakingRule because the value read in could not be deserialized."
-                        };
-                }
-            } catch (Exception ex) {
-                ;
-                return new TieBreakingRuleParticipantAttribute() {
-                    Source = "DisplayName",
-                    Comment = "Default TieBreakingRule because the value read in could not be deserialized."
-                };
-            }
-        }
-        */
-
         public override TieBreakingRuleBase? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
             try {
                 using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                     JsonElement root = doc.RootElement;
-                    string method = root.GetProperty( "Method" ).GetString();
+                    string method;
+                    JsonElement jsonElementValue;
+                    if (root.TryGetProperty( "Method", out jsonElementValue ))
+                        method = jsonElementValue.ToString();
+                    else
+                        method = "couldNotReadMethod"; //Which will force the default switch case
 
                     switch (method) {
                         case "Score":

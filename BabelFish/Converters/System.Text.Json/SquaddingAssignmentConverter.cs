@@ -13,57 +13,16 @@ namespace Scopos.BabelFish.Converters.Microsoft {
     /// </summary>
     public class SquaddingAssignmentConverter : JsonConverter<SquaddingAssignment> {
 
-        /*
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new SquaddingAssignmentSpecifiedConcreteClassConverter() };
-
-        public override bool CanConvert( Type objectType ) {
-            return (objectType == typeof( SquaddingAssignment ));
-        }
-
-        public override object ReadJson( JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer ) {
-            JObject jo = JObject.Load( reader );
-
-            //first try using the ConcreteClassId, if it is a property of the json, as this will be a faster method.
-            var id = jo["ConcreteClassId"]?.Value<int>();
-
-            switch (id) {
-                case SquaddingAssignmentFiringPoint.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<SquaddingAssignmentFiringPoint>( jo.ToString(), SpecifiedSubclassConversion );
-                case SquaddingAssignmentBank.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<SquaddingAssignmentBank>( jo.ToString(), SpecifiedSubclassConversion );
-                case SquaddingAssignmentSquad.CONCRETE_CLASS_ID:
-                    return JsonConvert.DeserializeObject<SquaddingAssignmentSquad>( jo.ToString(), SpecifiedSubclassConversion );
-                default:
-                    break;
-            }
-
-            //If ConcreteClassId is not in the json, rely instead on the $type value.
-            var type = jo["$type"]?.Value<string>();
-            if (type != null) {
-                if (type.Contains( "FiringPoint" ))
-                    return JsonConvert.DeserializeObject<SquaddingAssignmentFiringPoint>( jo.ToString(), SpecifiedSubclassConversion );
-                else if (type.Contains( "Bank" ))
-                    return JsonConvert.DeserializeObject<SquaddingAssignmentBank>( jo.ToString(), SpecifiedSubclassConversion );
-                else if (type.Contains( "Squad" ))
-                    return JsonConvert.DeserializeObject<SquaddingAssignmentSquad>( jo.ToString(), SpecifiedSubclassConversion );
-            }
-
-            //If we get here, give up. 
-            throw new NotImplementedException( $"Unable to convert type '{type}' to an Abstract class SquaddingAssignment." );
-        }
-
-        public override bool CanWrite { get { return false; } }
-
-        public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
-            //When CanWrite is false, which it is, the standard converter is used and not this custom converter
-        }
-        */
-
         public override SquaddingAssignment? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                 JsonElement root = doc.RootElement;
-                var id = root.GetProperty( "ConcreteClassId" ).GetInt32();
+                int id;
+                JsonElement jsonElementValue;
+                if ( root.TryGetProperty( "ConcreteClassId", out jsonElementValue ) )
+                    id = jsonElementValue.GetInt32();
+                else
+                    id = SquaddingAssignmentFiringPoint.CONCRETE_CLASS_ID;
 
                 switch (id) {
                     case SquaddingAssignmentFiringPoint.CONCRETE_CLASS_ID:
