@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Defines one column within a Result List Format table. Which includes the header, body, and footer values.
     /// Also includes logic to dynamtically determine when the column is shown, or not shown.
     /// </summary>
-    public class ResultListDisplayColumn : IReconfigurableRulebookObject    {
+    public class ResultListDisplayColumn : IReconfigurableRulebookObject {
 
         /// <summary>
         /// Public consructor.
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public ResultListDisplayColumn() { }
 
         [OnDeserialized]
-        internal void OnDeserializedMethod( StreamingContext context ) {
+        internal void OnDeserializedMethod(StreamingContext context) {
 
             if (ShowWhen == null)
                 ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Text, with out interpolation, to display in the header cell.
         /// </summary>
-        [DefaultValue( "" )]
+        [DefaultValue("")]
         public string Header { get; set; } = string.Empty;
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// What, if anything, the text in this cell should link to.
         /// </summary>
-        [DefaultValue( LinkToOption.None )]
+        [DefaultValue(LinkToOption.None)]
         public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
 
         /// <summary>
@@ -51,13 +51,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>If .Child is null or an empty stirng, the value of .Body is displayed in its place. </para>
         /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
         /// </summary>
-        [DefaultValue( "" )]
+        [DefaultValue("")]
         public string Child { get; set; } = string.Empty;
 
         /// <summary>
         /// Text, without interpolation, to display in the footer cell.
         /// </summary>
-        [DefaultValue( "" )]
+        [DefaultValue("")]
         public string Footer { get; set; } = string.Empty;
 
         /// <summary>
@@ -76,9 +76,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-col-gap</item>
         /// </list>
         /// </remarks>
+        [Obsolete("Use .ClassSet instead.")]
         public List<string> ClassList { get; set; } = new List<string>();
 
-        public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
+        private List<ClassSet> classSet = new List<ClassSet>();
+        public List<ClassSet> ClassSet {
+            get {
+                if (classSet is null || classSet.Count == 0) {
+                    //true is classSet list and Convert to class set
+                    foreach (var cl in ClassList)
+                    {
+                        var cs = new ClassSet();
+                        cs.Name = cl;
+                        cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                    }
+
+                } 
+            } 
+            set { classSet = value; } 
+        }
 
         /// <summary>
         /// Logic to determine when this column should be shown.
@@ -87,13 +103,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
 
 
-        [Obsolete( "Use .ClassList instead." )]
+        [Obsolete( "Use .ClassSet instead." )]
         public List<string> HeaderClassList { get; set; } = new List<string>();
 
-        [Obsolete( "Use .ClassList instead." )]
+        [Obsolete( "Use .ClassSet instead." )]
         public List<string> BodyClassList { get; set; } = new List<string>();
 
-        [Obsolete( "Use .ClassList instead." )]
+        [Obsolete( "Use .ClassSet instead." )]
         public List<string> FooterClassList { get; set; } = new List<string>();
 
         /// <inheritdoc/>

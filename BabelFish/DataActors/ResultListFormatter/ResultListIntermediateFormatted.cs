@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormatted {
 
         private readonly List<ResultListIntermediateFormattedRow> rows = new();
-        private ShowWhenCalculator ShowWhenCalculator;
+        public ShowWhenCalculator ShowWhenCalculator;
         private bool initialized = false;
 
         /// <summary>
@@ -402,10 +402,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="IndexOutOfRangeException">Thrown when the index value is outside the range of columns.</exception>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public CellValues GetColumnHeaderCell( int columnIndex ) {
-            /*
-             * TODO: Liam
-             * Update to use the new ClassSet property
-             */
 
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
@@ -416,6 +412,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
+
+            foreach (var c in format.ClassSet)
+            {
+                if(ShowWhenCalculator.Show(c.ShowWhen))
+                    cellValues.ClassList.Add(c.Name);
+            }
+
             foreach (var c in format.ClassList) {
                 cellValues.ClassList.Add( c.ToString() );
             }
@@ -463,14 +466,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<string> GetHeaderRowClassList() {
-            /*
-             * TODO: Liam
-             * Update to use the new ClassSet property
-             */
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
+
+            foreach (var c in DisplayPartitions.Header.ClassSet)
+            {
+                if (ShowWhenCalculator.Show(c.ShowWhen))
+                    l.Add(c.Name);
+            }
+
             foreach (var c in DisplayPartitions.Header.ClassList)
                 l.Add( c.ToString() );
 
@@ -482,14 +488,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<string> GetFooterRowClassList() {
-            /*
-             * TODO: Liam
-             * Update to use the new ClassSet property
-             */
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
+
+            foreach (var c in DisplayPartitions.Footer.ClassSet)
+            {
+                if (ShowWhenCalculator.Show(c.ShowWhen))
+                    l.Add(c.Name);
+            }
+
             foreach (var c in DisplayPartitions.Footer.ClassList)
                 l.Add( c.ToString() );
 
@@ -507,10 +516,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="IndexOutOfRangeException">Thrown when the index value is outside the range of columns.</exception>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public CellValues GetColumnFooterCell( int columnIndex ) {
-            /*
-             * TODO: Liam
-             * Update to use the new ClassSet property
-             */
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
@@ -520,6 +525,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             cellValues.Text = format.Footer.ToString();
             cellValues.ClassList = new List<string>();
+
+            foreach (var c in format.ClassSet)
+            {
+                if (ShowWhenCalculator.Show(c.ShowWhen))
+                    cellValues.ClassList.Add(c.Name);
+            }
+
             foreach (var c in format.ClassList)
                 cellValues.ClassList.Add( c.ToString() );
 

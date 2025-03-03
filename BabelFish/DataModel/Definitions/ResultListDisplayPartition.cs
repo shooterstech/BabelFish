@@ -48,6 +48,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-row-footer</item>
         /// </list>"
         /// </remarks>
+        [Obsolete("Use .ClassSet instead.")]
         public List<string> ClassList { get; set; } = new List<string>();
 
         public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
@@ -55,7 +56,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The list of css classes to assign to the rows within this Partition.
         /// </summary>
-        [Obsolete( "Use .ClassList instead." )]
+        [Obsolete( "Use .ClassSet instead." )]
         public List<string> RowClass { get; set; } = new List<string>();
 
         /// <inheritdoc/>
