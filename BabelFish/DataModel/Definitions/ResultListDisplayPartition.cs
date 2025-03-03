@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using BabelFish.DataModel.Definitions;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -48,6 +49,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </list>"
         /// </remarks>
         public List<string> ClassList { get; set; } = new List<string>();
+
+        public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
 
         /// <summary>
         /// The list of css classes to assign to the rows within this Partition.
