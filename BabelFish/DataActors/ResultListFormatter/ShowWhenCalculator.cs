@@ -47,6 +47,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
              *      HAS_REMARK_ELIMINATED
              *      What others to include?
              * 4. Document in H&M as part of ShowWhenCondition
+             * 5. Write Unit Tests
              */
             throw new NotImplementedException();
         }
