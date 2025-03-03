@@ -84,6 +84,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// Sorts remark table of this participant, most important remarks are the last item on the list. Refer to Remark.Visibility if it should be displayed.
+        /// </summary>
+        public void SortRemarks()
+        {
+            this.RemarkList = (List<Remark>)this.RemarkList.OrderBy(x => x.ParticipantRemark);
+        }
+
+        /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
         public List<Individual> Coaches { get; set; }
