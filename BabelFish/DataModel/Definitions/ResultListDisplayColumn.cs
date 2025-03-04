@@ -80,18 +80,38 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<string> ClassList { get; set; } = new List<string>();
 
         private List<ClassSet> classSet = new List<ClassSet>();
+
+        /// <summary>
+        /// List of ClassSet objects, each holds a name of a CSS class (string) and a ShowWhen object to determine if it should be added the the classes used when displaying the column.
+        /// </summary>
+        /// <remarks> Examples include:
+        /// <list type="bullet">
+        /// <item>rlf-col-rank</item>
+        /// <item>rlf-col-profile</item>
+        /// <item>rlf-col-participant</item>
+        /// <item>rlf-col-matchinfo</item>
+        /// <item>rlf-col-event</item>
+        /// <item>rlf-col-stage</item>
+        /// <item>rlf-col-series</item>
+        /// <item>rlf-col-shot</item>
+        /// <item>rlf-col-gap</item>
+        /// </list>
+        /// </remarks>
         public List<ClassSet> ClassSet {
             get {
                 if (classSet is null || classSet.Count == 0) {
                     //true is classSet list and Convert to class set
+                    classSet = new List<ClassSet>();
                     foreach (var cl in ClassList)
                     {
                         var cs = new ClassSet();
                         cs.Name = cl;
                         cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                        classSet.Add(cs);
                     }
-
-                } 
+                    
+                }
+                return classSet;
             } 
             set { classSet = value; } 
         }

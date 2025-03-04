@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,6 +43,12 @@ namespace BabelFish.DataModel.Definitions {
                 "RowClass": [] //Deprecate this list of strings
             },
         */
+        public ClassSet() { }
+        public ClassSet(string Name, ShowWhenBase showWhen)
+        {
+            this.Name = Name;
+            this.ShowWhen = showWhen;
+        }
 
         public string Name { get; set; } = string.Empty;
 
@@ -50,5 +57,10 @@ namespace BabelFish.DataModel.Definitions {
         /// <inheritdoc/>
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
     }
 }

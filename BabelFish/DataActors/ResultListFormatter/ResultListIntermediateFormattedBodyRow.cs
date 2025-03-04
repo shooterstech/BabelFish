@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
+using System.Diagnostics;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormattedBodyRow : ResultListIntermediateFormattedRow {
@@ -17,13 +18,18 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         public override List<string> GetClassList() {
-            /*
-             * TODO: Liam
-             * Update to use the new ClassSet property
-             */
+            List<string> classSetList = new List<string>();
+            foreach ( var setObj in resultListFormatted.DisplayPartitions.Body.ClassSet ){
+                if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen))
+                {
+                    classSetList.Add(setObj.Name);
+                }
+                Debug.WriteLine($"SPITTING OUT REMARK LIST: {setObj.Name}");
+            }
+            return classSetList;
 
             //NOTE .RowClass is deprecated
-            return resultListFormatted.DisplayPartitions.Body.ClassList.Concat( resultListFormatted.DisplayPartitions.Body.RowClass ).ToList<string>();
+            //return resultListFormatted.DisplayPartitions.Body.ClassList.Concat( resultListFormatted.DisplayPartitions.Body.RowClass ).ToList<string>();
         }
     }
 }

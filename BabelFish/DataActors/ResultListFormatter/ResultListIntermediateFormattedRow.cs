@@ -555,10 +555,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when the index value is outside the range of columns.</exception>"
         public CellValues GetColumnBodyCell( int index ) {
-            /*
-             * TODO: Liam
-             * Update to use the new ClassSet property
-             */
 
             var column = resultListFormatted.ResultListFormat.Format.Columns[index];
 
@@ -573,10 +569,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 {
                     classes.Add((string)c.Name);
                 }
-
+            /*
             foreach (var c in column.ClassList)
                 classes.Add( (string)c );
-
+            */
             //NOTE .BodyClassList is deprecated
             foreach (var c in column.BodyClassList)
                 classes.Add( (string)c );
