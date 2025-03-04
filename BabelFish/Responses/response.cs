@@ -94,6 +94,12 @@ namespace Scopos.BabelFish.Responses
         public HttpStatusCode StatusCode { get; internal set; }
 
         /// <summary>
+        /// Boolean indicating if the response should be written to file system cache on a successful call.
+        /// Default value is false.
+        /// </summary>
+        public bool WriteToFileSystemCacheOnSuccess { get; protected set; } = false;
+
+        /// <summary>
         /// Raw body returned by the Rest API Call.
         /// </summary>
         private G_STJ.JsonDocument body = null;

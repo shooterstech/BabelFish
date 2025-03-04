@@ -8,9 +8,12 @@ using Scopos.BabelFish.DataModel.AttributeValue;
 using System.ComponentModel;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
+using NLog;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
+
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         /*
          * We want to cache both the definition and if a set name is not found (likely b/c it doesn't exist). However, it has been
@@ -189,8 +192,11 @@ namespace Scopos.BabelFish.APIClients {
 
             //Try and pull from cache. If there is a cached value, in a seperate Task (note we are not calling await) check for a newer version
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) {
-                //Purposefully not awaiting this call
-                //DownloadNewMinorVersionIfAvaliableAsync( setName, (Scopos.BabelFish.DataModel.Definitions.Attribute) a);
+                
+                if ( AutoDownloadNewDefinitionVersions )
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( a );
+
                 return a; 
             }
 
@@ -213,26 +219,44 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        /*
-        public static async Task DownloadNewMinorVersionIfAvaliableAsync( SetName setName, Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
-            if ( AutoDownloadNewDefinitionVersions && await def.IsNewerMinorVersionAvaliableAsync() ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
+            if ( def == null ) 
+                throw new ArgumentNullException( nameof( def ) );
 
-                //Make a request, that ignores all of our local caching
-                var request = new GetDefinitionPublicRequest( setName, def.Type ) {
-                    IgnoreInMemoryCache = true,
-                    IgnoreFileSystemCache = true
-                    //Should we also disable-cache on the rest api call?
-                };
-                var response = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( request );
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
 
-                await DefinitionFetcher.FETCHER.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( request, response );
-                if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-                    AttributeCache[setName] = response.Definition;
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        AttributeCache[setName] = response.Definition;
+                        return true;
+                    }
                 }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
             }
-            //else dont' do anything 
+
+            return false;
         }
-        */
+        
 
         /// <summary>
         /// 
@@ -245,7 +269,11 @@ namespace Scopos.BabelFish.APIClients {
         public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) {
-                //DownloadNewMinorVersionIfAvaliableAsync( setName, c );
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
                 return c; 
             }
 
@@ -268,27 +296,43 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        /*
-        public static async Task<CourseOfFire> DownloadNewMinorVersionIfAvaliableAsync( SetName setName, CourseOfFire def ) {
-            if (AutoDownloadNewDefinitionVersions && await def.IsNewerMinorVersionAvaliableAsync()) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( CourseOfFire def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
 
-                //Make a request, that ignores all of our local caching
-                var request = new GetDefinitionPublicRequest( setName, def.Type ) {
-                    IgnoreInMemoryCache = true,
-                    IgnoreFileSystemCache = true
-                    //Should we also disable-cache on the rest api call?
-                };
-                var response = new GetDefinitionPublicResponse<CourseOfFire>( request );
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
 
-                await DefinitionFetcher.FETCHER.GetDefinitionAsync<CourseOfFire>( request, response );
-                if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-                    CourseOfFireCache[setName] = response.Definition;
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<CourseOfFire>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<CourseOfFire>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        CourseOfFireCache[setName] = response.Definition;
+                        return true;
+                    }
                 }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
             }
 
-            return CourseOfFireCache[setName];
+            return false;
         }
-        */
 
         /// <summary>
         /// 
@@ -300,7 +344,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
 
-            if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) { return c; }
+            if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (EventAndStageStyleMappingNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -322,6 +373,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( EventAndStageStyleMapping def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<EventAndStageStyleMapping>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        EventAndStageStyleMappingCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -331,7 +420,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<EventStyle> GetEventStyleDefinitionAsync( SetName setName ) {
 
-            if (EventStyleCache.TryGetValue( setName, out EventStyle c )) { return c; }
+            if (EventStyleCache.TryGetValue( setName, out EventStyle c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (EventStyleNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -353,6 +449,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( EventStyle def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<EventStyle>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<EventStyle>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        EventStyleCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -362,7 +496,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
 
-            if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) { return c; }
+            if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (RankingRuleNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -385,6 +526,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( RankingRule def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<RankingRule>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<RankingRule>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        RankingRuleCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -394,7 +573,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
 
-            if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) { return c; }
+            if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (ResultListFormatNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -417,6 +603,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( ResultListFormat def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<ResultListFormat>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<ResultListFormat>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        ResultListFormatCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -426,7 +650,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
 
-            if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) { return c; }
+            if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (ScoreFormatCollectionNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -449,6 +680,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( ScoreFormatCollection def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<ScoreFormatCollection>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<ScoreFormatCollection>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        ScoreFormatCollectionCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -458,7 +727,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<StageStyle> GetStageStyleDefinitionAsync( SetName setName ) {
 
-            if (StageStyleCache.TryGetValue( setName, out StageStyle c )) { return c; }
+            if (StageStyleCache.TryGetValue( setName, out StageStyle c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (StageStyleNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -480,6 +756,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( StageStyle def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<StageStyle>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<StageStyle>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        StageStyleCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -489,7 +803,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
-            if (TargetCollectionCache.TryGetValue( setName, out TargetCollection c )) { return c; }
+            if (TargetCollectionCache.TryGetValue( setName, out TargetCollection c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
+                
+                return c; 
+            }
 
             DateTime lastChecked;
             if (TargetCollectionNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -512,6 +833,44 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( TargetCollection def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<TargetCollection>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<TargetCollection>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        TargetCollectionCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="setName"></param>
@@ -521,7 +880,14 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<Target> GetTargetDefinitionAsync( SetName setName ) {
 
-            if (TargetCache.TryGetValue( setName, out Target t )) { return t; }
+            if (TargetCache.TryGetValue( setName, out Target t )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( t ); 
+                
+                return t; 
+            }
 
             DateTime lastChecked;
             if (TargetNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -541,6 +907,44 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.StatusCode}" );
             }
+        }
+
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Target def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true
+                        //Should we also disable-cache on the rest api call?
+                    };
+                    var response = new GetDefinitionPublicResponse<Target>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<Target>( request, response );
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                        TargetCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
         }
 
         public static void ClearCache() {

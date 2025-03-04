@@ -271,9 +271,6 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task CheckForNewerVersionTest() {
 
-            //Set to auto download
-            DefinitionCache.AutoDownloadNewDefinitionVersions = true;
-
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
 
@@ -291,6 +288,40 @@ namespace Scopos.BabelFish.Tests.Definition {
             //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
             hasNewerVersion = await cofDefinition.IsNewerMinorVersionAvaliableAsync();
             Assert.IsTrue( hasNewerVersion );
+        }
+
+        /// <summary>
+        /// Checks that the DownloadNewMinorVersionIfAvaliableAsync method does download a new version if one 
+        /// is avaliable.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task DownloadNewMinorVersionIfAvaliableTest() {
+
+            /* TODO: This only tests the DownloadNewMinorVersionIfAvaliableAsync() method for Attributes. Should write other unit tests for the other definition types */             
+
+            //Set to auto download
+            DefinitionCache.AutoDownloadNewDefinitionVersions = true;
+
+            var setName = SetName.Parse( "v1.0:orion:Collegiate Class" );
+            var attrDefinition = await DefinitionCache.GetAttributeDefinitionAsync( setName );
+
+            //Decrement the version so when IsNewerVersionAvaliable is called, it returns true.
+            var currentVersion = attrDefinition.GetDefinitionVersion();
+            var manipulatedVersion = $"{currentVersion.MajorVersion}.{currentVersion.MinorVersion - 1}";
+            attrDefinition.Version = manipulatedVersion;
+
+            //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
+            var hasNewerVersion = await attrDefinition.IsNewerMinorVersionAvaliableAsync();
+            Assert.IsTrue( hasNewerVersion );
+
+            //And we should also get a response back from DownloadNewMinorVersionIfAvaliableAsync() that the latest version was downloaded.
+            var downloadedNewVersion = await DefinitionCache.DownloadNewMinorVersionIfAvaliableAsync( attrDefinition );
+            Assert.IsTrue( downloadedNewVersion );
+
+            //Next, if we call GetAttributeDefinitionAsync() again, we should get the original value of currentVersion
+            var attrDefinitionSecondCall = await DefinitionCache.GetAttributeDefinitionAsync( setName );
+            Assert.IsTrue( currentVersion.ToString() == attrDefinitionSecondCall.Version.ToString() );
         }
     }
 }

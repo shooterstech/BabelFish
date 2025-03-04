@@ -15,6 +15,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
 
             this.SetName = request.SetName;
             this.DefinitionType = request.DefinitionType;
+            this.WriteToFileSystemCacheOnSuccess = true;
         }
 
         public SetName SetName { get; private set; }

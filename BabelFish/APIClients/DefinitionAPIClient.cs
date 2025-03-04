@@ -106,6 +106,10 @@ namespace Scopos.BabelFish.APIClients {
             if (response.FileSystemCachedResponse || response.InMemoryCachedResponse)
                 return Task.CompletedTask;
 
+            //As the DefinitionAPIClient handels more than just get definition requests, we can ignore anything that's not a GetDefinition request.
+            if (! response.WriteToFileSystemCacheOnSuccess)
+                return Task.CompletedTask;
+
             var definitionRequest = (GetDefinitionPublicRequest)request;
 
             try {
