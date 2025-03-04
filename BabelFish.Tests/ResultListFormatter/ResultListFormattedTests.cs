@@ -25,6 +25,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             matchClient = new OrionMatchAPIClient( );
             definitionClient = new DefinitionAPIClient( );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo(@"C:\temp");
 
             userProfileLookup = new BaseUserProfileLookup();
         }

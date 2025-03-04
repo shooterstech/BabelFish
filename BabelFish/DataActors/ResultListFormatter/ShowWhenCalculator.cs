@@ -2,6 +2,7 @@
 using Scopos.BabelFish.DataModel.OrionMatch;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
@@ -154,8 +155,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    participant.Participant.SortRemarks();
-                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.DNS) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNS);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_DNF:
@@ -164,8 +164,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    participant.Participant.SortRemarks();
-                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.DNF) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNF);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_DSQ:
@@ -174,8 +173,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    participant.Participant.SortRemarks();
-                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.DSQ) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DSQ);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_BUBBLE:
@@ -184,8 +182,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    participant.Participant.SortRemarks();
-                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.BUB) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUB);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_ELIMINATED:
@@ -194,9 +191,54 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    participant.Participant.SortRemarks();
-                    answer = (participant.Participant.RemarkList[-1].ParticipantRemark == ParticipantRemark.ELIM) && (participant.Participant.RemarkList[-1].Visibility == RemarkVisibility.SHOW);
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.ELIM);
                     break;
+
+                case ShowWhenCondition.LAST_REMARK_DNS:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNS, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_DNF:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNF, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_DSQ:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DSQ, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_BUBBLE:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUB, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_ELIMINATED:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.ELIM, false);
+                    break;
+
 
                 default:
                     //Shouldnt' get here, as it means a value got added to the ShowWhenCondition enum, but not added here.

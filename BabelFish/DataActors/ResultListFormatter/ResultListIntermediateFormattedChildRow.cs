@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             List<string> classSetList = new List<string>();
             foreach (var setObj in resultListFormatted.DisplayPartitions.Body.ClassSet)
             {
-                if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen))
+                if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, resultEvent))
                 {
                     classSetList.Add(setObj.Name);
                 }
