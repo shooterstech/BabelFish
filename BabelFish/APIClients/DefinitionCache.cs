@@ -190,7 +190,7 @@ namespace Scopos.BabelFish.APIClients {
             //Try and pull from cache. If there is a cached value, in a seperate Task (note we are not calling await) check for a newer version
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) {
                 //Purposefully not awaiting this call
-                DownloadNewMinorVersionIfAvaliableAsync( setName, (Scopos.BabelFish.DataModel.Definitions.Attribute) a);
+                //DownloadNewMinorVersionIfAvaliableAsync( setName, (Scopos.BabelFish.DataModel.Definitions.Attribute) a);
                 return a; 
             }
 
@@ -213,6 +213,7 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /*
         public static async Task DownloadNewMinorVersionIfAvaliableAsync( SetName setName, Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
             if ( AutoDownloadNewDefinitionVersions && await def.IsNewerMinorVersionAvaliableAsync() ) {
 
@@ -231,6 +232,7 @@ namespace Scopos.BabelFish.APIClients {
             }
             //else dont' do anything 
         }
+        */
 
         /// <summary>
         /// 
@@ -243,7 +245,7 @@ namespace Scopos.BabelFish.APIClients {
         public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) {
-                await DownloadNewMinorVersionIfAvaliableAsync( setName, c );
+                //DownloadNewMinorVersionIfAvaliableAsync( setName, c );
                 return c; 
             }
 
@@ -266,7 +268,8 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        public static async Task DownloadNewMinorVersionIfAvaliableAsync( SetName setName, CourseOfFire def ) {
+        /*
+        public static async Task<CourseOfFire> DownloadNewMinorVersionIfAvaliableAsync( SetName setName, CourseOfFire def ) {
             if (AutoDownloadNewDefinitionVersions && await def.IsNewerMinorVersionAvaliableAsync()) {
 
                 //Make a request, that ignores all of our local caching
@@ -282,8 +285,10 @@ namespace Scopos.BabelFish.APIClients {
                     CourseOfFireCache[setName] = response.Definition;
                 }
             }
-            //else dont' do anything 
+
+            return CourseOfFireCache[setName];
         }
+        */
 
         /// <summary>
         /// 
