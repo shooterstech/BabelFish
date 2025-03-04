@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNS);
+                    answer = participant.Participant.HasRemark(ParticipantRemark.DNS);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_DNF:
@@ -164,7 +164,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNF);
+                    answer = participant.Participant.HasRemark(ParticipantRemark.DNF);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_DSQ:
@@ -173,7 +173,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DSQ);
+                    answer = participant.Participant.HasRemark(ParticipantRemark.DSQ);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_BUBBLE:
@@ -182,7 +182,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUB);
+                    answer = participant.Participant.HasRemark(ParticipantRemark.BUB);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_ELIMINATED:
@@ -191,7 +191,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.ELIM);
+                    answer = participant.Participant.HasRemark(ParticipantRemark.ELIM);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_DNS:
