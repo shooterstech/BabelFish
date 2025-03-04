@@ -200,6 +200,9 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             SetName notARealAttrDefinition = SetName.Parse( "v1.0:orion:not a real attribute" );
 
+            //Now clear the cache so we are starting with a blank slate
+            Initializer.ClearCache( false );
+
             var swFirstCall = Stopwatch.StartNew();
             try {
                 await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
@@ -268,12 +271,14 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task CheckForNewerVersionTest() {
 
+            //Set to auto download
+            DefinitionCache.AutoDownloadNewDefinitionVersions = true;
 
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
 
             //Initially, since we just grabbed it, there should not be a newer version
-            var hasNewerVersion = await cofDefinition.CheckForNewerVersionAsync();
+            var hasNewerVersion = await cofDefinition.IsNewerMinorVersionAvaliableAsync();
             Assert.IsFalse( hasNewerVersion );
 
             var currentVersion = cofDefinition.GetDefinitionVersion();
@@ -284,7 +289,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             Initializer.ClearCache( false );
 
             //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
-            hasNewerVersion = await cofDefinition.CheckForNewerVersionAsync();
+            hasNewerVersion = await cofDefinition.IsNewerMinorVersionAvaliableAsync();
             Assert.IsTrue( hasNewerVersion );
         }
     }

@@ -7,6 +7,7 @@ using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using System.ComponentModel;
 using Scopos.BabelFish.Requests.DefinitionAPI;
+using Scopos.BabelFish.Responses.DefinitionAPI;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
@@ -46,7 +47,20 @@ namespace Scopos.BabelFish.APIClients {
         private static ConcurrentDictionary<SetName, TargetCollection> TargetCollectionCache = new ConcurrentDictionary<SetName, TargetCollection>();
         private static ConcurrentDictionary<SetName, DateTime> TargetCollectionNotFoundCache = new ConcurrentDictionary<SetName, DateTime>();
 
+
         private const int NOT_FOUND_RECHECK_TIME = 60; //In seconds
+
+        /// <summary>
+        /// Set to true, to allow the Definition Cache to automatically check, and if avaliable, downlaod newer minor versions of Definition Files.
+        /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <listheader>In general the value of AutoDownloadNewDefinitionVersions shoudl be </listheader>
+        /// <item>true, if running on a server (e.g. Rezults).</item>
+        /// <item>false, if running on a stand alone application (e.g. Orion).</item>
+        /// </list>
+        /// </remarks>
+        public static bool AutoDownloadNewDefinitionVersions = false;
 
         /// <summary>
         /// Preloads the Definiiton Cache with commmon definitions. If used, should help with some start up time.
@@ -175,6 +189,8 @@ namespace Scopos.BabelFish.APIClients {
 
             //Try and pull from cache. If there is a cached value, in a seperate Task (note we are not calling await) check for a newer version
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) {
+                //Purposefully not awaiting this call
+                //DownloadNewMinorVersionIfAvaliableAsync( setName, (Scopos.BabelFish.DataModel.Definitions.Attribute) a);
                 return a; 
             }
 
@@ -197,6 +213,27 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /*
+        public static async Task DownloadNewMinorVersionIfAvaliableAsync( SetName setName, Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
+            if ( AutoDownloadNewDefinitionVersions && await def.IsNewerMinorVersionAvaliableAsync() ) {
+
+                //Make a request, that ignores all of our local caching
+                var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                    IgnoreInMemoryCache = true,
+                    IgnoreFileSystemCache = true
+                    //Should we also disable-cache on the rest api call?
+                };
+                var response = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( request );
+
+                await DefinitionFetcher.FETCHER.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( request, response );
+                if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                    AttributeCache[setName] = response.Definition;
+                }
+            }
+            //else dont' do anything 
+        }
+        */
+
         /// <summary>
         /// 
         /// </summary>
@@ -207,7 +244,10 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="ScoposAPIException" />
         public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
-            if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) { return c; }
+            if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) {
+                //DownloadNewMinorVersionIfAvaliableAsync( setName, c );
+                return c; 
+            }
 
             DateTime lastChecked;
             if (CourseOfFireNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
@@ -227,6 +267,28 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.StatusCode}" );
             }
         }
+
+        /*
+        public static async Task<CourseOfFire> DownloadNewMinorVersionIfAvaliableAsync( SetName setName, CourseOfFire def ) {
+            if (AutoDownloadNewDefinitionVersions && await def.IsNewerMinorVersionAvaliableAsync()) {
+
+                //Make a request, that ignores all of our local caching
+                var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                    IgnoreInMemoryCache = true,
+                    IgnoreFileSystemCache = true
+                    //Should we also disable-cache on the rest api call?
+                };
+                var response = new GetDefinitionPublicResponse<CourseOfFire>( request );
+
+                await DefinitionFetcher.FETCHER.GetDefinitionAsync<CourseOfFire>( request, response );
+                if (response.StatusCode == System.Net.HttpStatusCode.OK) {
+                    CourseOfFireCache[setName] = response.Definition;
+                }
+            }
+
+            return CourseOfFireCache[setName];
+        }
+        */
 
         /// <summary>
         /// 

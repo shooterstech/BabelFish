@@ -153,18 +153,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<string> SpecificationMessages { get; protected set; }
 
         /// <summary>
-        /// Checks to see if there is a newer version of the Definition file avaliable through the Rest API
+        /// Checks to see if there is a newer minor version of the Definition file avaliable through the Rest API
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> CheckForNewerVersionAsync() {
+        public async Task<bool> IsNewerMinorVersionAvaliableAsync() {
+            //The set name would have 0.0 or m.0 as the listed version, if asked for by the user, which is common.
+            //This means the latest major or minor version avaliable for the SetName.
+            //The value of .Version is the specific version number
 
+            var currentSetName = this.GetSetName( true );
+
+            //Check if this definition is for a specific version (e.g. v1.10) and not a most recent version (e.g. v1.0).
+            //If it is for a specific version, then there can never be an update for it. 
+            if (currentSetName.MinorVersion != 0)
+                return false; 
+
+            var specificVersion = this.GetDefinitionVersion();
             //Request a check of the current version stored in the Rest API
-            var versionRequest = new GetDefinitionVersionPublicRequest( this.GetSetName( true ), this.Type );
+            var versionRequest = new GetDefinitionVersionPublicRequest( currentSetName, this.Type );
             var versionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( versionRequest );
 
-            var thisVersion = this.GetDefinitionVersion();
+            
             var apiVersion = versionResponse.Value.GetDefinitionVersion();
-            return thisVersion < apiVersion;
+            return specificVersion < apiVersion;
         }
 
         /// <summary>
