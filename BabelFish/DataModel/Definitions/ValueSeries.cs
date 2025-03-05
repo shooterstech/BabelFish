@@ -8,9 +8,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
     /// Strings formatted as value series will have the form
-    /// n
-    /// n..m
-    /// n..m,s
+    /// *        Applies to all 
+    /// n        Applies to the nth value in the list.
+    /// n..m     Applies to the nth through the mth values in the list.
+    /// n..m,s   Applies to the nth through the mth values in the list, with a step of s.
     /// where n is start value, m is end value, s is step
     /// </summary>
     public class ValueSeries {
