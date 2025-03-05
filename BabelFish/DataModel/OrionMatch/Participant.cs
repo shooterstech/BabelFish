@@ -84,6 +84,44 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// returns a boolean indicating the passed in remark is the last(most important) one. if require visible is true then it will return true when it is the last remark, but the visibility is HIDDEN
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <param name="requiredVisible"></param>
+        /// <returns></returns>
+        public bool IsLastRemark( ParticipantRemark remark, bool requiredVisible = true)
+        {
+            SortRemarks();
+            if (this.RemarkList.Count() > 0)
+            {
+                var lastRemark = this.RemarkList.Last();
+                if (lastRemark.ParticipantRemark == remark)
+                {
+                    if (requiredVisible)
+                    {
+                        if (lastRemark.Visibility == RemarkVisibility.SHOW)
+                        {
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Sorts remark table of this participant, most important remarks are the last item on the list. Refer to Remark.Visibility if it should be displayed.
+        /// </summary>
+        public void SortRemarks()
+        {
+            this.RemarkList = this.RemarkList.OrderByDescending(x => (int)x.ParticipantRemark).ToList();
+        }
+
+        /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
         public List<Individual> Coaches { get; set; }

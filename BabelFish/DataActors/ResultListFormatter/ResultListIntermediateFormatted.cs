@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormatted {
 
         private readonly List<ResultListIntermediateFormattedRow> rows = new();
-        private ShowWhenCalculator ShowWhenCalculator;
+        public ShowWhenCalculator ShowWhenCalculator;
         private bool initialized = false;
 
         /// <summary>
@@ -402,6 +402,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="IndexOutOfRangeException">Thrown when the index value is outside the range of columns.</exception>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public CellValues GetColumnHeaderCell( int columnIndex ) {
+
             if (!initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
@@ -411,10 +412,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
+
+            foreach (var c in format.ClassSet)
+            {
+                if(ShowWhenCalculator.Show(c.ShowWhen))
+                    cellValues.ClassList.Add(c.Name);
+            }
+            /*
             foreach (var c in format.ClassList) {
                 cellValues.ClassList.Add( c.ToString() );
             }
-
+            */
             //NOTE .HeaderClassList is deprecated
             foreach (var c in format.HeaderClassList) {
                 cellValues.ClassList.Add( c.ToString() );
@@ -462,9 +470,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
+
+            foreach (var c in DisplayPartitions.Header.ClassSet)
+            {
+                if (ShowWhenCalculator.Show(c.ShowWhen))
+                    l.Add(c.Name);
+            }
+            /*
             foreach (var c in DisplayPartitions.Header.ClassList)
                 l.Add( c.ToString() );
-
+            */
             //.RowClass is obsolete
             foreach (var c in DisplayPartitions.Header.RowClass)
                 l.Add( c.ToString() );
@@ -477,9 +492,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
+
+            foreach (var c in DisplayPartitions.Footer.ClassSet)
+            {
+                if (ShowWhenCalculator.Show(c.ShowWhen))
+                    l.Add(c.Name);
+            }
+            /*
             foreach (var c in DisplayPartitions.Footer.ClassList)
                 l.Add( c.ToString() );
-
+            */
             //.RowClass is obsolete
             foreach (var c in DisplayPartitions.Footer.RowClass)
                 l.Add( c.ToString() );
@@ -503,9 +525,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             cellValues.Text = format.Footer.ToString();
             cellValues.ClassList = new List<string>();
+
+            foreach (var c in format.ClassSet)
+            {
+                if (ShowWhenCalculator.Show(c.ShowWhen))
+                    cellValues.ClassList.Add(c.Name);
+            }
+            /*
             foreach (var c in format.ClassList)
                 cellValues.ClassList.Add( c.ToString() );
-
+            */
             //NOTE .FooterClassList is deprecated
             foreach (var c in format.FooterClassList)
                 cellValues.ClassList.Add( c.ToString() );

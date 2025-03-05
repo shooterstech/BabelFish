@@ -2,6 +2,7 @@
 using Scopos.BabelFish.DataModel.OrionMatch;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
@@ -24,17 +25,43 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public bool Show( ShowWhenBase showWhen ) {
             if (showWhen is ShowWhenVariable)
-                return Show( (ShowWhenVariable)showWhen );
+                return Show( (ShowWhenVariable)showWhen, null );
 
             if (showWhen is ShowWhenSegmentGroup)
-                return Show( (ShowWhenSegmentGroup)showWhen );
+                return Show( (ShowWhenSegmentGroup)showWhen, null );
 
             //else showWhen is a ShowWhenEquation
 
-            return Show( (ShowWhenEquation)showWhen );
+            return Show( (ShowWhenEquation)showWhen, null );
         }
 
-        public bool Show( ShowWhenVariable showWhen ) {
+        public bool Show( ShowWhenBase showWhen, IParticipant ? participant ) {
+            /*
+             * TODO: Liam
+             * 1. Implement this and the other overridden version of Show() that includes the IParticipant. 
+             * 2. Make sure to deal with the case that participant is null.
+             * 3. Implement new ShowWhenConditions
+             *      HAS_REMARK_DNS
+             *      HAS_REMARK_DNF
+             *      HAS_REMARK_DSQ
+             *      HAS_REMARK_BUBBLE
+             *      HAS_REMARK_ELIMINATED
+             *      What others to include?
+             * 4. Document in H&M as part of ShowWhenCondition
+             * 5. Write Unit Tests
+             */
+            if (showWhen is ShowWhenVariable)
+                return Show((ShowWhenVariable)showWhen, participant);
+
+            if (showWhen is ShowWhenSegmentGroup)
+                return Show((ShowWhenSegmentGroup)showWhen, participant);
+
+            //else showWhen is a ShowWhenEquation
+
+            return Show((ShowWhenEquation)showWhen, participant);
+        }
+
+        public bool Show( ShowWhenVariable showWhen, IParticipant ? participant ) {
             bool answer = true;
 
             switch (showWhen.Condition) {
@@ -122,6 +149,97 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
+                case ShowWhenCondition.HAS_REMARK_DNS:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.DNS);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_DNF:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.DNF);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_DSQ:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.DSQ);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_BUBBLE:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.BUB);
+                    break;
+
+                case ShowWhenCondition.HAS_REMARK_ELIMINATED:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.ELIM);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_DNS:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNS, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_DNF:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNF, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_DSQ:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DSQ, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_BUBBLE:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUB, false);
+                    break;
+
+                case ShowWhenCondition.LAST_REMARK_ELIMINATED:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.ELIM, false);
+                    break;
+
+
                 default:
                     //Shouldnt' get here, as it means a value got added to the ShowWhenCondition enum, but not added here.
                     answer = true;
@@ -131,7 +249,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer;
         }
 
-        public bool Show( ShowWhenEquation showWhen ) {
+        public bool Show( ShowWhenEquation showWhen, IParticipant ? participant ) {
 
             bool answer = true;
             bool first = true;
@@ -181,7 +299,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer ^ apployNot;
         }
 
-        public bool Show( ShowWhenSegmentGroup showWhen ) {
+        public bool Show( ShowWhenSegmentGroup showWhen, IParticipant ? participant ) {
 
             ResultListMetadata metadata;
             if ( this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata ) ) {

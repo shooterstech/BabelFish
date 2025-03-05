@@ -572,7 +572,57 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is not considered user interface engageable. 
         /// </summary>
-        NOT_ENGAGEABLE
+        NOT_ENGAGEABLE,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Shoot
+        /// </summary>
+        HAS_REMARK_DNS,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Finish
+        /// </summary>
+        HAS_REMARK_DNF,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Disqualified
+        /// </summary>
+        HAS_REMARK_DSQ,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Bubble
+        /// </summary>
+        HAS_REMARK_BUBBLE,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Eliminated
+        /// </summary>
+        HAS_REMARK_ELIMINATED,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// </summary>
+        LAST_REMARK_DNS,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// </summary>
+        LAST_REMARK_DNF,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// </summary>
+        LAST_REMARK_DSQ,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// </summary>
+        LAST_REMARK_BUBBLE,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// </summary>
+        LAST_REMARK_ELIMINATED
     }
 
     /// <summary>

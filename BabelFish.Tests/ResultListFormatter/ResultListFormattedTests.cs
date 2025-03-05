@@ -25,6 +25,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             matchClient = new OrionMatchAPIClient( );
             definitionClient = new DefinitionAPIClient( );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo(@"C:\temp");
 
             userProfileLookup = new BaseUserProfileLookup();
         }
@@ -278,7 +279,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task TestIndividualResultListAsHTML() {
 
-            MatchID matchId = new MatchID( "1.3448.2022013116325242.0" );
+            MatchID matchId = new MatchID("1.15.2025022811214006.0");
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - Sporter";

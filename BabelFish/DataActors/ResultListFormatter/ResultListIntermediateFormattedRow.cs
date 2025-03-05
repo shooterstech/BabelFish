@@ -42,7 +42,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Owner",
             "TargetCollectionName",
             "Status",
-            "LastShot" //Only avaliable on individual result lists
+            "LastShot", //Only avaliable on individual result lists
+            "Remarks"  /* TODO: Liam */
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -156,7 +157,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "UserID",
             "LocalDate", 
             "Status",
-            "LastShot"
+            "LastShot",
+            "Remarks"
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
@@ -562,9 +564,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             string value = source.Replace( fields );
 
             var classes = new List<string>();
+            foreach (var c in column.ClassSet)
+                if (resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen ))
+                {
+                    classes.Add((string)c.Name);
+                }
+            /*
             foreach (var c in column.ClassList)
                 classes.Add( (string)c );
-
+            */
             //NOTE .BodyClassList is deprecated
             foreach (var c in column.BodyClassList)
                 classes.Add( (string)c );
