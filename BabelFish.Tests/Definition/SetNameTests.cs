@@ -75,5 +75,19 @@ namespace Scopos.BabelFish.Tests.Definition {
             var setName = SetName.Parse( null );
         }
 
+        [TestMethod]
+        public void ParsingHierarchicalNameTests() {
+
+            var hnString = "ntparc:Three-Position Air Rifle Type";
+
+            HierarchicalName hn;
+            var parseSuccessful = HierarchicalName.TryParse( hnString, out hn );
+
+            Assert.IsTrue( parseSuccessful );
+            Assert.AreEqual( "ntparc", hn.Namespace );
+            Assert.AreEqual( "Three-Position Air Rifle Type", hn.ProperName );
+
+        }
+
     }
 }
