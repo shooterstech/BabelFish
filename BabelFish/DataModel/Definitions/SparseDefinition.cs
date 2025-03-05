@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -11,14 +10,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Definition Type
         /// </summary>
-        [JsonPropertyOrder ( 1 )]
-        
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public DefinitionType Type { get; set; }
 
         /// <summary>
         /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
         /// </summary>
-        [JsonPropertyOrder ( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
         public string SetName { get; set; } = string.Empty;
 
         /// <summary>
@@ -26,13 +24,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// a reference to either the latest Major release. Version always provides both the Major and Minor release numbers and is not a reference.
         /// </summary>
         /// <example>1.5</example>
-        [JsonPropertyOrder ( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public string Version { get; set; } = string.Empty;
 
         /// <summary>
         /// If true, this Definition is no longer in use and should not be referenced.
         /// </summary>
-        [JsonPropertyOrder ( 101 )]
+        [G_NS.JsonProperty( Order = 101 )]
         [DefaultValue( false )]
         public bool Discontinued { get; set; }
 

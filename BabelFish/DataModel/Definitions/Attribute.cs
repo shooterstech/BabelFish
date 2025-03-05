@@ -6,10 +6,11 @@ using Scopos.BabelFish.DataModel.Common;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
-    /// An Attribute is a property that helps describes a participant in a match. For example the type of rifle a participant is using (e.g. Sporter vs Precision air rifle) or an age group the participant is a member of (e.g. Junior, Open, Senior).
-    /// Attributes are highly configurable.  Each Attribute will have one or more fields. Each field may be configured to be any value the user types in, a value from a pre-configured list, or a combination.
+    /// An Attribute is a property that helps describes a participant in a match. For example the type of rifle a participant is using 
+    /// (e.g. Sporter vs Precision air rifle) or an age group the participant is a member of (e.g. Junior, Open, Senior).
+    /// Attributes are highly configurable.  Each Attribute will have one or more fields. Each field may be configured to 
+    /// be any value the user types in, a value from a pre-configured list, or a combination.
     /// </summary>
-    [Serializable]
     public class Attribute : Definition {
 
         /// <summary>

@@ -98,7 +98,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8 )]
         [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
-        public DisciplineType Discipline { get; set; }
+        public DisciplineType Discipline { get; set; } = DisciplineType.NA;
 
         /// <summary>
         /// The subdiscipline (under the value of Discipline) to categorize this Definition.

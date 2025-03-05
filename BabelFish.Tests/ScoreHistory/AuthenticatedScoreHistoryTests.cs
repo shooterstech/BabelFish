@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task PostScoreHistory()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.BETA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.PRODUCTION);
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -50,7 +50,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var entryB = new PostStageStyleScore("stageStyle_b", scoreB);
 
             var scoreC = new Score();
-            var entryC = new PostStageStyleScore("stageStyle_c", scoreB);
+            var entryC = new PostStageStyleScore("stageStyle_c", scoreC);
 
             body.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
 
