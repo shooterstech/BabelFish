@@ -182,7 +182,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.BUBUBLE);
+                    answer = participant.Participant.HasRemark(ParticipantRemark.BUBBLE);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_ELIMINATED:
@@ -227,7 +227,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUBUBLE, false);
+                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUBBLE, false);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_ELIMINATED:

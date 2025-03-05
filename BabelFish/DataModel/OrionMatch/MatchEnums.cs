@@ -398,7 +398,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// On the buble of elimination
         /// </summary>
-        BUBUBLE
+        BUBBLE
     };
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]

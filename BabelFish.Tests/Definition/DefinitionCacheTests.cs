@@ -236,7 +236,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             Initializer.ClearCache( false );
 
             //Set the LocalStoreDirectory and preload. Which should also save to file system
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\\temp" );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\temp" );
             Stopwatch loadFromRestApi = Stopwatch.StartNew();
             await DefinitionCache.PreLoad();
             loadFromRestApi.Stop();
