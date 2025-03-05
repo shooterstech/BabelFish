@@ -182,6 +182,7 @@ namespace Scopos.BabelFish.APIClients {
                     jsonAsString = sr.ReadToEnd();
                     //var stopWatch = Stopwatch.StartNew();
                     response.Body = G_STJ.JsonDocument.Parse( jsonAsString );
+                    response.Json = jsonAsString; //Including the JSON is intended for debug purposes only.
                     response.TimeToRun = DateTime.Now - startTime;
                     //stopWatch.Stop();
 
@@ -215,7 +216,6 @@ namespace Scopos.BabelFish.APIClients {
                     logger.Error( msg );
                     logger.Debug( jsonAsString );
                     response.ExceptionMessage = msg; 
-                    response.Json = jsonAsString;
                 }
 
             } catch (Exception ex) {

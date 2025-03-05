@@ -360,7 +360,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.2255.2025021709033861.1" );
+            MatchID matchId = new MatchID( "1.2038.2025030508464804.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - Sporter";
@@ -385,8 +385,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             rlf.Engagable = true;
             rlf.ResolutionWidth = 1800;
             rlf.ShowNumberOfChildRows = 4000;
-            rlf.ShowRanks = 3;
-            rlf.ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.INTERMEDIATE } ;
+            rlf.ShowRanks = 0;
+            rlf.ShowStatuses = null ;
 
             //rlf.SetShowValuesToDefault();
 

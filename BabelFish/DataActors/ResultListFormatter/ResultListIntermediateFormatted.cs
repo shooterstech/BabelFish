@@ -640,7 +640,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return copy;
             }
             set {
-                if (value.Count == 0) {
+                if (value == null || value.Count == 0) {
                     _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
                 } else {
                     _showStatuses = value;

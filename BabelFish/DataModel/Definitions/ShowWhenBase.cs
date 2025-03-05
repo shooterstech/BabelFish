@@ -12,10 +12,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ShowWhenBaseConverter ) )]
     public abstract class ShowWhenBase: IReconfigurableRulebookObject {
 
+        /// <summary>
+        /// Concret class identifier. 
+        /// </summary>
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public ShowWhenOperation Operation { get; protected set; } = ShowWhenOperation.VARIABLE;
 
         /// <inheritdoc/>
         [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 99 )]
         public string Comment { get; set; } = string.Empty;
     }
 }

@@ -18,10 +18,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The type of boolean operation that should be applied to all of the Arguments.
         /// </summary>
-        [DefaultValue( ShowWhenBoolean.AND )]
-        [JsonInclude]
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [DefaultValue( ShowWhenBoolean.AND )]        
         public ShowWhenBoolean Boolean { get; set; } = ShowWhenBoolean.AND;
 
+        /// <summary>
+        /// A list of ShowWhen arguments for this ShowWhenEquation
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public List<ShowWhenBase> Arguments { get; set; } = new List<ShowWhenBase>();
 
         /// <inheritdoc/>

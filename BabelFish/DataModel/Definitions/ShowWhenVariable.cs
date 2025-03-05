@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Operation = ShowWhenOperation.VARIABLE;
         }
 
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public ShowWhenCondition Condition { get; set; }
 
         public override string ToString() {
