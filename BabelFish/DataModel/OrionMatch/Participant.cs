@@ -70,6 +70,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<Remark> RemarkList { get; set; } = new List<Remark>();
 
         /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
+        }
+
+        /// <summary>
         /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
         /// </summary>
         /// <param name="remark"></param>
