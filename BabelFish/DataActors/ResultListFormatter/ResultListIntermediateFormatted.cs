@@ -418,15 +418,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if(ShowWhenCalculator.Show(c.ShowWhen))
                     cellValues.ClassList.Add(c.Name);
             }
-            /*
-            foreach (var c in format.ClassList) {
-                cellValues.ClassList.Add( c.ToString() );
-            }
-            */
-            //NOTE .HeaderClassList is deprecated
-            foreach (var c in format.HeaderClassList) {
-                cellValues.ClassList.Add( c.ToString() );
-            }
 
             return cellValues;
         }
@@ -476,13 +467,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
                     l.Add(c.Name);
             }
-            /*
-            foreach (var c in DisplayPartitions.Header.ClassList)
-                l.Add( c.ToString() );
-            */
-            //.RowClass is obsolete
-            foreach (var c in DisplayPartitions.Header.RowClass)
-                l.Add( c.ToString() );
+
             return l;
         }
 
@@ -498,13 +483,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
                     l.Add(c.Name);
             }
-            /*
-            foreach (var c in DisplayPartitions.Footer.ClassList)
-                l.Add( c.ToString() );
-            */
-            //.RowClass is obsolete
-            foreach (var c in DisplayPartitions.Footer.RowClass)
-                l.Add( c.ToString() );
+
             return l;
         }
 
@@ -531,13 +510,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
                     cellValues.ClassList.Add(c.Name);
             }
-            /*
-            foreach (var c in format.ClassList)
-                cellValues.ClassList.Add( c.ToString() );
-            */
-            //NOTE .FooterClassList is deprecated
-            foreach (var c in format.FooterClassList)
-                cellValues.ClassList.Add( c.ToString() );
 
             return cellValues;
         }

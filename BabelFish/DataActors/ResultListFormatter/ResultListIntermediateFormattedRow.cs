@@ -564,18 +564,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             string value = source.Replace( fields );
 
             var classes = new List<string>();
-            foreach (var c in column.ClassSet)
-                if (resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen ))
-                {
-                    classes.Add((string)c.Name);
+            foreach (var c in column.ClassSet){
+                if (resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )) {
+                    classes.Add( (string)c.Name );
                 }
-            /*
-            foreach (var c in column.ClassList)
-                classes.Add( (string)c );
-            */
-            //NOTE .BodyClassList is deprecated
-            foreach (var c in column.BodyClassList)
-                classes.Add( (string)c );
+            }
 
             var cellValues = new CellValues( this.resultListFormatted, value, classes );
             cellValues.Body = column.Body;

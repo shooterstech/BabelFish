@@ -32,11 +32,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [OnDeserialized]
         internal void OnDeserializedMethod( StreamingContext context ) {
-            if (RowClass == null)
-                RowClass = new List<string>();
 
             if (ClassList == null)
                 ClassList = new List<string>();
+
+            if (ClassSet == null)
+                ClassSet = new List<ClassSet>();
         }
 
         /// <summary>
@@ -54,27 +55,33 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </remarks>
         [Obsolete("Use .ClassSet instead.")]
         public List<string> ClassList { get; set; } = new List<string>();
-        
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize ClassSEt when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeClassList() {
+            return (ClassList != null && ClassList.Count > 0);
+        }
+
         [OnSerializing]
         internal void OnSerializingMethod(StreamingContext context)
         {
-            if (classSet is null || classSet.Count == 0)
+            if (ClassSet is null || ClassSet.Count == 0)
             {
                 //true is classSet list and Convert to class set
-                classSet = new List<ClassSet>();
+                ClassSet = new List<ClassSet>();
                 foreach (var cl in ClassList)
                 {
                     var cs = new ClassSet();
                     cs.Name = cl;
                     cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
-                    classSet.Add(cs);
+                    ClassSet.Add(cs);
                 }
 
             }
-            ClassSet = classSet;
         }
-
-        private List<ClassSet> classSet = new List<ClassSet>();
 
         /// <summary>
         /// The list of ClassSet objects, each containing a CSS class (string) and ShowWhen object, to determine if the class should be used when displaying the row.
@@ -112,10 +119,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         } = new List<ClassSet>();
 
         /// <summary>
-        /// The list of css classes to assign to the rows within this Partition.
+        /// A Newtonsoft Conditional Property to only serialize ClassSEt when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
         /// </summary>
-        [Obsolete( "Use .ClassSet instead." )]
-        public List<string> RowClass { get; set; } = new List<string>();
+        /// <returns></returns>
+        public bool ShouldSerializeClassSet() {
+            return (ClassSet != null && ClassSet.Count > 0);
+        }
 
         /// <inheritdoc/>
         [JsonPropertyOrder( 99 )]

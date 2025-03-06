@@ -207,16 +207,39 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (!typeDirectory.Exists)
                 typeDirectory.Create();
 
-            string json = G_NS.JsonConvert.SerializeObject( this, G_NS.Formatting.Indented );
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
 
             File.WriteAllText( filePath, json );
 
             return filePath;
         }
 
+        /// <summary>
+        /// Helper method to save the Definition to file
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns>The full path of the saved file.</returns>
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
         public string GetRelativePath( ) {
-            string relativePath = $"DEFINITIONS\\{Type.Description()}\\{GetFileName( true )}";
+            string relativePath = $"DEFINITIONS\\{Type.Description()}\\{GetFileName( false )}";
             return relativePath;
+        }
+
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
         }
     }
 }

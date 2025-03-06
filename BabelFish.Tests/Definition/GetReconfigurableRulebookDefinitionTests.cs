@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -222,6 +223,11 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( DefinitionType.RESULTLISTFORMAT, definition.Type );
             Assert.AreEqual( 4, definition.Fields.Count );
+
+            //Now check that we can save this definition to fijle
+            var localStoreDirectory = new DirectoryInfo( @"c:\temp" );
+            var localFilePath = definition.SaveToFile( localStoreDirectory );
+            Assert.IsTrue( File.Exists( localFilePath ) );
         }
 
         [TestMethod]

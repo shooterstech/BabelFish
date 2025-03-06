@@ -176,7 +176,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task SaveToFileTest() {
+        public async Task SaveToLocalStoreDirectoryAfterDownloadTest() {
 
             //to run this test, first need to delete the file that the call would normally try and read.
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
