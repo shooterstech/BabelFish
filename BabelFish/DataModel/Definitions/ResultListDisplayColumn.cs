@@ -101,6 +101,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return (ClassSet != null && ClassSet.Count > 0);
         }
 
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            if (ClassSet is null || ClassSet.Count == 0)
+            {
+                //true is classSet list and Convert to class set
+                ClassSet = new List<ClassSet>();
+                foreach (var cl in ClassList)
+                {
+                    var cs = new ClassSet();
+                    cs.Name = cl;
+                    cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                    ClassSet.Add(cs);
+                }
+
+            }
+        }
+
         /// <summary>
         /// A list of css classes to decorate each cell within this column.
         /// </summary>

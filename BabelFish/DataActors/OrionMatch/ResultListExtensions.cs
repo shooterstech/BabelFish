@@ -60,8 +60,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="numberOfShotsFired"></param>
         /// <param name="topLevelEvent"></param>
         /// <param name="eventName"></param>
+        /// <param name="participant"></param>
         /// <returns></returns>
-        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName)
+        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName, Participant participant)
         {
 
             //If the match's status is official, then so to are all evetns
@@ -71,7 +72,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 return;
             }
 
-            if (lastShot != null && (DateTime.Now - lastShot.TimeScored).TotalHours > 1.0)
+            if ( (lastShot != null && (DateTime.Now - lastShot.TimeScored).TotalHours > 1.0) ||
+                 (participant.HasRemark(ParticipantRemark.DNS) ||
+                  participant.HasRemark(ParticipantRemark.DNF) ||
+                  participant.HasRemark(ParticipantRemark.DSQ) ||
+                  participant.HasRemark(ParticipantRemark.ELIMINATED) ) )
             {
                 eventScore.Status = ResultStatus.UNOFFICIAL;
                 return;
