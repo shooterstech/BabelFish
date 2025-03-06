@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="InvalidDataException">Thrown if the value of .HierarchicalName can not be parsed.</exception>
         public HierarchicalName GetHierarchicalName() {
             HierarchicalName hierarchicalName;
-            if (!Scopos.BabelFish.DataModel.Definitions.HierarchicalName.TryParse( this.HierarchicalName, out hierarchicalName )) {
+            if (Scopos.BabelFish.DataModel.Definitions.HierarchicalName.TryParse( this.HierarchicalName, out hierarchicalName )) {
                 return hierarchicalName;
             }
 
