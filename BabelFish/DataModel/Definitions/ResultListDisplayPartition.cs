@@ -54,6 +54,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </remarks>
         [Obsolete("Use .ClassSet instead.")]
         public List<string> ClassList { get; set; } = new List<string>();
+        
+        [OnSerializing]
+        internal void OnSerializingMethod(StreamingContext context)
+        {
+            if (classSet is null || classSet.Count == 0)
+            {
+                //true is classSet list and Convert to class set
+                classSet = new List<ClassSet>();
+                foreach (var cl in ClassList)
+                {
+                    var cs = new ClassSet();
+                    cs.Name = cl;
+                    cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                    classSet.Add(cs);
+                }
+
+            }
+            ClassSet = classSet;
+        }
 
         private List<ClassSet> classSet = new List<ClassSet>();
 
@@ -72,7 +91,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </remarks>
         public List<ClassSet> ClassSet
         {
-            get
+            get;/*
             {
                 if (classSet is null || classSet.Count == 0)
                 {
@@ -88,9 +107,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
                 }
                 return classSet;
-            }
-            set { classSet = value; }
-        }
+            }*/
+            set; /*{ classSet = value; }*/
+        } = new List<ClassSet>();
 
         /// <summary>
         /// The list of css classes to assign to the rows within this Partition.
