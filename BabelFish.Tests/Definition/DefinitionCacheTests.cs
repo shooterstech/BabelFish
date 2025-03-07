@@ -275,7 +275,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
 
             //Initially, since we just grabbed it, there should not be a newer version
-            var hasNewerVersion = await cofDefinition.IsNewerMinorVersionAvaliableAsync();
+            var hasNewerVersion = await cofDefinition.IsVersionUpdateAvaliableAsync();
             Assert.IsFalse( hasNewerVersion );
 
             var currentVersion = cofDefinition.GetDefinitionVersion();
@@ -286,7 +286,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             Initializer.ClearCache( false );
 
             //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
-            hasNewerVersion = await cofDefinition.IsNewerMinorVersionAvaliableAsync();
+            hasNewerVersion = await cofDefinition.IsVersionUpdateAvaliableAsync();
             Assert.IsTrue( hasNewerVersion );
         }
 
@@ -312,7 +312,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             attrDefinition.Version = manipulatedVersion;
 
             //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
-            var hasNewerVersion = await attrDefinition.IsNewerMinorVersionAvaliableAsync();
+            var hasNewerVersion = await attrDefinition.IsVersionUpdateAvaliableAsync();
             Assert.IsTrue( hasNewerVersion );
 
             //And we should also get a response back from DownloadNewMinorVersionIfAvaliableAsync() that the latest version was downloaded.

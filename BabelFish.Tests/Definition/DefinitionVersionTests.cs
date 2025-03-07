@@ -89,5 +89,41 @@ namespace Scopos.BabelFish.Tests.Definition {
         public void BadVersionString5() {
             var v = new DefinitionVersion( "not a real version string" );
         }
+
+        [TestMethod]
+        public async Task MostRecentVersionTests() {
+
+            var setName_0_0 = SetName.Parse( "v0.0:orion:Phone Number" );
+            var setName_1_0 = SetName.Parse( "v1.0:orion:Phone Number" );
+            var setName_2_0 = SetName.Parse( "v2.0:orion:Phone Number" );
+            var setName_1_1 = SetName.Parse( "v1.1:orion:Phone Number" );
+            var setName_2_1 = SetName.Parse( "v2.1:orion:Phone Number" );
+
+            var phoneNumber_0_0 = await DefinitionCache.GetAttributeDefinitionAsync( setName_0_0 ); //Most Recent Version
+            var phoneNumber_1_0 = await DefinitionCache.GetAttributeDefinitionAsync( setName_1_0 ); //Most recent major version 1.x
+            var phoneNumber_2_0 = await DefinitionCache.GetAttributeDefinitionAsync( setName_2_0 ); //Most recent major version 2.x
+            var phoneNumber_1_1 = await DefinitionCache.GetAttributeDefinitionAsync( setName_1_1 );
+            var phoneNumber_2_1 = await DefinitionCache.GetAttributeDefinitionAsync( setName_2_1 );
+
+            Assert.IsTrue( await phoneNumber_0_0.IsMostRecentVersionAsync() );
+            Assert.IsTrue( await phoneNumber_0_0.IsMostRecentMajorVersionAsync() );
+            Assert.IsFalse( await phoneNumber_0_0.IsVersionUpdateAvaliableAsync() );
+
+            Assert.IsFalse( await phoneNumber_1_0.IsMostRecentVersionAsync() );
+            Assert.IsTrue( await phoneNumber_1_0.IsMostRecentMajorVersionAsync() );
+            Assert.IsFalse( await phoneNumber_1_0.IsVersionUpdateAvaliableAsync() );
+
+            Assert.IsTrue( await phoneNumber_2_0.IsMostRecentVersionAsync() ); //This will be true as long as we don't create a v3.0 of phone number
+            Assert.IsTrue( await phoneNumber_2_0.IsMostRecentMajorVersionAsync() );
+            Assert.IsFalse( await phoneNumber_2_0.IsVersionUpdateAvaliableAsync() );
+
+            Assert.IsFalse( await phoneNumber_1_1.IsMostRecentVersionAsync() );
+            Assert.IsFalse( await phoneNumber_1_1.IsMostRecentMajorVersionAsync() );
+            Assert.IsFalse( await phoneNumber_1_1.IsVersionUpdateAvaliableAsync() );
+
+            Assert.IsTrue( await phoneNumber_2_1.IsMostRecentVersionAsync() ); //As of March 2025 this is true, b/c we don't have a 2.2 version of phone number
+            Assert.IsTrue( await phoneNumber_2_1.IsMostRecentMajorVersionAsync() );
+            Assert.IsFalse( await phoneNumber_2_1.IsVersionUpdateAvaliableAsync() );
+        }
     }
 }

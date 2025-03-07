@@ -156,7 +156,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Checks to see if there is a newer minor version of the Definition file avaliable through the Rest API
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> IsNewerMinorVersionAvaliableAsync() {
+        public async Task<bool> IsVersionUpdateAvaliableAsync() {
             //The set name would have 0.0 or m.0 as the listed version, if asked for by the user, which is common.
             //This means the latest major or minor version avaliable for the SetName.
             //The value of .Version is the specific version number
@@ -176,6 +176,40 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             
             var apiVersion = versionResponse.Value.GetDefinitionVersion();
             return specificVersion < apiVersion;
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if this Definition's Version is equal to or greater than the current (v0.0) most recent version stored in the Rest API.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> IsMostRecentVersionAsync() {
+
+            var hn = this.GetHierarchicalName();
+            var mostRecentVersionValue = this.GetDefinitionVersion().GetAsMostRecentVersion();
+            var mostRecentVersionSetName = Definitions.SetName.Parse( $"v{mostRecentVersionValue}:{hn}" );
+
+            var mostRecentVersionRequest = new GetDefinitionVersionPublicRequest( mostRecentVersionSetName, this.Type );
+            var mostRecentVersionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( mostRecentVersionRequest );
+
+            var apiVersion = mostRecentVersionResponse.Value.GetDefinitionVersion();
+            return this.GetDefinitionVersion() >= apiVersion;
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if this Definition's Version is equal to or greater than the current (vn.0, where n is the major version) most recent major version stored in the Rest API.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> IsMostRecentMajorVersionAsync() {
+
+            var hn = this.GetHierarchicalName();
+            var mostRecentVersionValue = this.GetDefinitionVersion().GetAsMostRecentMajorVersion();
+            var mostRecentVersionSetName = Definitions.SetName.Parse( $"v{mostRecentVersionValue}:{hn}" );
+
+            var mostRecentVersionRequest = new GetDefinitionVersionPublicRequest( mostRecentVersionSetName, this.Type );
+            var mostRecentVersionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( mostRecentVersionRequest );
+
+            var apiVersion = mostRecentVersionResponse.Value.GetDefinitionVersion();
+            return this.GetDefinitionVersion() >= apiVersion;
         }
 
         /// <summary>
@@ -231,11 +265,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return fileInfo.FullName;
         }
 
+        /// <summary>
+        /// Definitions, by commonality, are saved to file system in a standard relative directory structure. This method
+        /// returns that standard relative path. 
+        /// </summary>
+        /// <returns></returns>
         public string GetRelativePath( ) {
             string relativePath = $"DEFINITIONS\\{Type.Description()}\\{GetFileName( false )}";
             return relativePath;
         }
 
+        /// <summary>
+        /// Returns this Definition as a json serialized string.
+        /// </summary>
+        /// <returns></returns>
         public string SerializeToJson() {
             string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
 
