@@ -231,7 +231,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -308,7 +308,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -384,7 +384,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -460,7 +460,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -537,7 +537,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -614,7 +614,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -691,7 +691,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -767,7 +767,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -844,7 +844,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 
@@ -921,7 +921,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
-                if (await def.IsNewerMinorVersionAvaliableAsync()) {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
 
                     SetName setName = def.GetSetName( true );
 

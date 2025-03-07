@@ -179,6 +179,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return ToString().GetHashCode();
         }
 
+        /// <summary>
+        /// Helper method. 
+        /// Returns a constant string version 0.0, which is the code for the most recent version overall of a Definition.
+        /// </summary>
+        /// <returns></returns>
+        public string GetAsMostRecentVersion() {
+            return "0.0";
+        }
+
+        /// <summary>
+        /// Helper method. 
+        /// Returns a string version value n.0, where n is the MajorVersion value. Which is code for the most recent major version. 
+        /// </summary>
+        /// <returns></returns>
+        public string GetAsMostRecentMajorVersion() {
+            return $"{this.MajorVersion}.0";
+        }
 
     }
 }
