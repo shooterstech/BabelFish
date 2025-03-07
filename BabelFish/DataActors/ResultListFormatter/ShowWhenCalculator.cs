@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.FIRST);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.FIRST);
                     break;
 
 
@@ -165,7 +165,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.SECOND);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.SECOND);
                     break;
 
 
@@ -175,7 +175,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.THIRD);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.THIRD);
                     break;
 
 
@@ -185,7 +185,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.DNS);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.DNS);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_DNF:
@@ -194,7 +194,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.DNF);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.DNF);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_DSQ:
@@ -203,7 +203,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.DSQ);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.DSQ);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_BUBBLE:
@@ -212,7 +212,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.BUBBLE);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.BUBBLE);
                     break;
 
                 case ShowWhenCondition.HAS_REMARK_ELIMINATED:
@@ -221,7 +221,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.HasRemark(ParticipantRemark.ELIMINATED);
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.ELIMINATED);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_DNS:
@@ -230,7 +230,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNS, false);
+                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.DNS, false);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_DNF:
@@ -239,7 +239,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DNF, false);
+                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.DNF, false);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_DSQ:
@@ -248,7 +248,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.DSQ, false);
+                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.DSQ, false);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_BUBBLE:
@@ -257,7 +257,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.BUBBLE, false);
+                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.BUBBLE, false);
                     break;
 
                 case ShowWhenCondition.LAST_REMARK_ELIMINATED:
@@ -266,7 +266,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.IsLastRemark(ParticipantRemark.ELIMINATED, false);
+                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.ELIMINATED, false);
                     break;
 
 

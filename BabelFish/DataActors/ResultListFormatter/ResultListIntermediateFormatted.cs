@@ -178,9 +178,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                         && row.GetScore( this.ResultList.EventName, false ).IsZero ) {
                                         //The result list status is official, and we were told to exclude rows with scores of zero
 
-                                        if (row.GetParticipant().HasRemark( ParticipantRemark.DNS )
-                                            || row.GetParticipant().HasRemark( ParticipantRemark.DNF )
-                                            || row.GetParticipant().HasRemark( ParticipantRemark.DSQ )) {
+                                        if (row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNS )
+                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNF )
+                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DSQ )) {
                                             //Do include these rows since the athlete / team did somethign bad and we want to shame them
                                             copyOfRows.Add( row );
                                         } else {
@@ -214,9 +214,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                         && row.GetScore( this.ResultList.EventName, false ).IsZero) {
                                         //The result list status is official, and we were told to exclude rows with scores of zero
 
-                                        if (row.GetParticipant().HasRemark( ParticipantRemark.DNS )
-                                            || row.GetParticipant().HasRemark( ParticipantRemark.DNF )
-                                            || row.GetParticipant().HasRemark( ParticipantRemark.DSQ )) {
+                                        if (row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNS )
+                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNF )
+                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DSQ )) {
                                             //Do include these rows since the athlete / team did somethign bad and we want to shame them
                                             copyOfRows.Add( row );
                                         } else {
@@ -413,6 +413,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
 
+            format.CombineClassListSet();
             foreach (var c in format.ClassSet)
             {
                 if(ShowWhenCalculator.Show(c.ShowWhen))
@@ -462,6 +463,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             List<string> l = new();
 
+            DisplayPartitions.Header.CombineClassListSet();
             foreach (var c in DisplayPartitions.Header.ClassSet)
             {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
@@ -478,6 +480,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             List<string> l = new();
 
+            DisplayPartitions.Footer.CombineClassListSet();
             foreach (var c in DisplayPartitions.Footer.ClassSet)
             {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
@@ -505,6 +508,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             cellValues.Text = format.Footer.ToString();
             cellValues.ClassList = new List<string>();
 
+            format.CombineClassListSet();
             foreach (var c in format.ClassSet)
             {
                 if (ShowWhenCalculator.Show(c.ShowWhen))

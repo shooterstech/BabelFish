@@ -209,7 +209,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         public async Task GetResultListFormatTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse( "v1.0:orion:Prone Individual" );
+            var setName = SetName.Parse( "v1.0:orion:3P Individual" );
 
             var result = await client.GetResultListFormatDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
