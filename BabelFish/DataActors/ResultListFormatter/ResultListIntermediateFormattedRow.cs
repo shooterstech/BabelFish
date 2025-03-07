@@ -563,7 +563,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 source = column.Child;
             string value = source.Replace( fields );
 
+            column.CombineClassListSet();
             var classes = new List<string>();
+            
             foreach (var c in column.ClassSet){
                 if (resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )) {
                     classes.Add( (string)c.Name );
@@ -642,5 +644,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </remarks>
         /// <returns></returns>
         public abstract List<string> GetClassList();
+
     }
 }

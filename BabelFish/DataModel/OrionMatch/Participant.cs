@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
-        public List<Remark> RemarkList { get; set; } = new List<Remark>();
+        public RemarkList RemarkList { get; set; } = new RemarkList();
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
@@ -75,59 +75,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeRemarkList() {
-            return (RemarkList != null && RemarkList.Count > 0);
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
-        /// </summary>
-        /// <param name="remark"></param>
-        /// <returns></returns>
-        public bool HasRemark( ParticipantRemark remark) {
-            foreach (var re in RemarkList) {
-                if (re.ParticipantRemark == remark)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// returns a boolean indicating the passed in remark is the last(most important) one. if require visible is true then it will return true when it is the last remark, but the visibility is HIDDEN
-        /// </summary>
-        /// <param name="remark"></param>
-        /// <param name="requiredVisible"></param>
-        /// <returns></returns>
-        public bool IsLastRemark( ParticipantRemark remark, bool requiredVisible = true)
-        {
-            SortRemarks();
-            if (this.RemarkList.Count() > 0)
-            {
-                var lastRemark = this.RemarkList.Last();
-                if (lastRemark.ParticipantRemark == remark)
-                {
-                    if (requiredVisible)
-                    {
-                        if (lastRemark.Visibility == RemarkVisibility.SHOW)
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Sorts remark table of this participant, most important remarks are the last item on the list. Refer to Remark.Visibility if it should be displayed.
-        /// </summary>
-        public void SortRemarks()
-        {
-            this.RemarkList = this.RemarkList.OrderByDescending(x => (int)x.ParticipantRemark).ToList();
+            return (RemarkList != null && RemarkList.Count() > 0);
         }
 
         /// <summary>
