@@ -96,27 +96,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-row-footer</item>
         /// </list>"
         /// </remarks>
-        public List<ClassSet> ClassSet
-        {
-            get;/*
-            {
-                if (classSet is null || classSet.Count == 0)
-                {
-                    //true is classSet list and Convert to class set
-                    classSet = new List<ClassSet>();
-                    foreach (var cl in ClassList)
-                    {
-                        var cs = new ClassSet();
-                        cs.Name = cl;
-                        cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
-                        classSet.Add(cs);
-                    }
-
-                }
-                return classSet;
-            }*/
-            set; /*{ classSet = value; }*/
-        } = new List<ClassSet>();
+        public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize ClassSEt when the list has something in it.
