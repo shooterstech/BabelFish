@@ -65,24 +65,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return (ClassList != null && ClassList.Count > 0);
         }
 
-        [OnSerializing]
-        internal void OnSerializingMethod(StreamingContext context)
-        {
-            if (ClassSet is null || ClassSet.Count == 0)
-            {
-                //true is classSet list and Convert to class set
-                ClassSet = new List<ClassSet>();
-                foreach (var cl in ClassList)
-                {
-                    var cs = new ClassSet();
-                    cs.Name = cl;
-                    cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
-                    ClassSet.Add(cs);
-                }
-
-            }
-        }
-
         /// <summary>
         /// The list of ClassSet objects, each containing a CSS class (string) and ShowWhen object, to determine if the class should be used when displaying the row.
         /// </summary>
