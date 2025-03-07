@@ -220,7 +220,9 @@ namespace Scopos.BabelFish.APIClients {
 
             } catch (Exception ex) {
 
-                response.StatusCode = HttpStatusCode.InternalServerError;
+                //Keep NotFound exceptions, otherwise replace with internal server error
+                if (response.StatusCode != HttpStatusCode.NotFound)
+                    response.StatusCode = HttpStatusCode.InternalServerError;
                 response.ExceptionMessage = ex.Message;
                 response.Json = jsonAsString;
                 //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );

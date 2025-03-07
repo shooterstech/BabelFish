@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using NLog;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -6,6 +8,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// latest version of a Definition.
     /// </summary>
     public class SparseDefinition : BaseClass {
+
+        protected Logger Logger { get; set; } = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The Definition Type
@@ -26,6 +30,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <example>1.5</example>
         [G_NS.JsonProperty( Order = 2 )]
         public string Version { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The date and time this definition version was uploaded to the Rest API.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        [G_STJ_SER.JsonPropertyOrder( 100 )]
+        [G_NS.JsonProperty( Order = 100 )]
+        public DateTime ModifiedAt { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// If true, this Definition is no longer in use and should not be referenced.

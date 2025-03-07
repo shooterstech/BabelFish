@@ -105,25 +105,22 @@ namespace Scopos.BabelFish.Tests.Definition {
             var phoneNumber_1_1 = await DefinitionCache.GetAttributeDefinitionAsync( setName_1_1 );
             var phoneNumber_2_1 = await DefinitionCache.GetAttributeDefinitionAsync( setName_2_1 );
 
-            Assert.IsTrue( await phoneNumber_0_0.IsMostRecentVersionAsync() );
-            Assert.IsTrue( await phoneNumber_0_0.IsMostRecentMajorVersionAsync() );
             Assert.IsFalse( await phoneNumber_0_0.IsVersionUpdateAvaliableAsync() );
 
-            Assert.IsFalse( await phoneNumber_1_0.IsMostRecentVersionAsync() );
-            Assert.IsTrue( await phoneNumber_1_0.IsMostRecentMajorVersionAsync() );
             Assert.IsFalse( await phoneNumber_1_0.IsVersionUpdateAvaliableAsync() );
 
-            Assert.IsTrue( await phoneNumber_2_0.IsMostRecentVersionAsync() ); //This will be true as long as we don't create a v3.0 of phone number
-            Assert.IsTrue( await phoneNumber_2_0.IsMostRecentMajorVersionAsync() );
             Assert.IsFalse( await phoneNumber_2_0.IsVersionUpdateAvaliableAsync() );
 
-            Assert.IsFalse( await phoneNumber_1_1.IsMostRecentVersionAsync() );
-            Assert.IsFalse( await phoneNumber_1_1.IsMostRecentMajorVersionAsync() );
             Assert.IsFalse( await phoneNumber_1_1.IsVersionUpdateAvaliableAsync() );
 
-            Assert.IsTrue( await phoneNumber_2_1.IsMostRecentVersionAsync() ); //As of March 2025 this is true, b/c we don't have a 2.2 version of phone number
-            Assert.IsTrue( await phoneNumber_2_1.IsMostRecentMajorVersionAsync() );
             Assert.IsFalse( await phoneNumber_2_1.IsVersionUpdateAvaliableAsync() );
+
+            var notYetInRestAPIDefinition = new StageStyle();
+            notYetInRestAPIDefinition.Version = "1.1";
+            notYetInRestAPIDefinition.HierarchicalName = "orion:Not Yet in API";
+            notYetInRestAPIDefinition.SetName = $"v{notYetInRestAPIDefinition.Version}:{notYetInRestAPIDefinition.HierarchicalName}";
+
+            Assert.IsFalse( await notYetInRestAPIDefinition.IsVersionUpdateAvaliableAsync() );
         }
     }
 }

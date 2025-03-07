@@ -173,43 +173,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             var versionRequest = new GetDefinitionVersionPublicRequest( currentSetName, this.Type );
             var versionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( versionRequest );
 
-            
-            var apiVersion = versionResponse.Value.GetDefinitionVersion();
-            return specificVersion < apiVersion;
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating if this Definition's Version is equal to or greater than the current (v0.0) most recent version stored in the Rest API.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> IsMostRecentVersionAsync() {
-
-            var hn = this.GetHierarchicalName();
-            var mostRecentVersionValue = this.GetDefinitionVersion().GetAsMostRecentVersion();
-            var mostRecentVersionSetName = Definitions.SetName.Parse( $"v{mostRecentVersionValue}:{hn}" );
-
-            var mostRecentVersionRequest = new GetDefinitionVersionPublicRequest( mostRecentVersionSetName, this.Type );
-            var mostRecentVersionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( mostRecentVersionRequest );
-
-            var apiVersion = mostRecentVersionResponse.Value.GetDefinitionVersion();
-            return this.GetDefinitionVersion() >= apiVersion;
-        }
-
-        /// <summary>
-        /// Returns a boolean indicating if this Definition's Version is equal to or greater than the current (vn.0, where n is the major version) most recent major version stored in the Rest API.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> IsMostRecentMajorVersionAsync() {
-
-            var hn = this.GetHierarchicalName();
-            var mostRecentVersionValue = this.GetDefinitionVersion().GetAsMostRecentMajorVersion();
-            var mostRecentVersionSetName = Definitions.SetName.Parse( $"v{mostRecentVersionValue}:{hn}" );
-
-            var mostRecentVersionRequest = new GetDefinitionVersionPublicRequest( mostRecentVersionSetName, this.Type );
-            var mostRecentVersionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( mostRecentVersionRequest );
-
-            var apiVersion = mostRecentVersionResponse.Value.GetDefinitionVersion();
-            return this.GetDefinitionVersion() >= apiVersion;
+            if (versionResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+                //The happy path
+                var apiVersion = versionResponse.Value.GetDefinitionVersion();
+                return specificVersion < apiVersion;
+            } else if ( versionResponse.StatusCode == System.Net.HttpStatusCode.NotFound ) {
+                //Likely means that this is a new Definition, that's not been uploaded before
+                return false;
+            } else {
+                //Throw an error as something unexpected happen.
+                throw new ScoposAPIException( $"Unable to complete GetDefinitionVersionPublicAsync request with status code {versionResponse.StatusCode}." );
+            }
         }
 
         /// <summary>
