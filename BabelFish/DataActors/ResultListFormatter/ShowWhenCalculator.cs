@@ -149,6 +149,36 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
+                case ShowWhenCondition.HAS_REMARK_FIRST:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.FIRST);
+                    break;
+
+
+                case ShowWhenCondition.HAS_REMARK_SECOND:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.SECOND);
+                    break;
+
+
+                case ShowWhenCondition.HAS_REMARK_THIRD:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.HasRemark(ParticipantRemark.THIRD);
+                    break;
+
+
                 case ShowWhenCondition.HAS_REMARK_DNS:
                     if (participant.Participant == null)
                     {
