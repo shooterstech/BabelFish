@@ -946,6 +946,44 @@ namespace Scopos.BabelFish.APIClients {
 
             return false;
         }
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Definition def ) {
+
+            switch (def.Type) {
+                case DefinitionType.ATTRIBUTE:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (Scopos.BabelFish.DataModel.Definitions.Attribute)def );
+
+                case DefinitionType.COURSEOFFIRE:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (CourseOfFire)def );
+
+                case DefinitionType.EVENTSTYLE:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (EventStyle)def );
+
+                case DefinitionType.EVENTANDSTAGESTYLEMAPPING:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (EventAndStageStyleMapping)def );
+
+                case DefinitionType.RANKINGRULES:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (RankingRule)def );
+
+                case DefinitionType.RESULTLISTFORMAT:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (ResultListFormat)def );
+
+                case DefinitionType.SCOREFORMATCOLLECTION:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (ScoreFormatCollection)def );
+
+                case DefinitionType.STAGESTYLE:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (StageStyle)def );
+
+                case DefinitionType.TARGET:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (Target)def );
+
+                case DefinitionType.TARGETCOLLECTION:
+                    return await DownloadNewMinorVersionIfAvaliableAsync( (TargetCollection)def );
+
+                default:
+                    //Shouldn't ever get here
+                    return 0;
+            }
+        }
 
         public static void ClearCache() {
             AttributeCache.Clear();
