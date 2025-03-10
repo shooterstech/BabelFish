@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.Definitions;
-using NLog;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -21,7 +14,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         {
             resultListFormatted.DisplayPartitions.Body.CombineClassListSet();
             List<string> classSetList = new List<string>();
-            foreach (var setObj in resultListFormatted.DisplayPartitions.Body.ClassSet)
+            foreach (var setObj in resultListFormatted.DisplayPartitions.Children.ClassSet)
             {
                 if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, resultEvent))
                 {

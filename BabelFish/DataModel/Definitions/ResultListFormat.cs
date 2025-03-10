@@ -1,13 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 

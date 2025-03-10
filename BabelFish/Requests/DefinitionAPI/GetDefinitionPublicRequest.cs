@@ -24,9 +24,23 @@ namespace Scopos.BabelFish.Requests.DefinitionAPI {
 
         public DefinitionType DefinitionType { get; set; } = DefinitionType.ATTRIBUTE;
 
+        public bool IgnoreRestAPICache = false;
+
         /// <inheritdoc />
         public override string RelativePath {
             get { return $"/definition/{EnumHelper.GetAttributeOfType<EnumMemberAttribute>( DefinitionType ).Value}/{SetName}"; }
+        }
+
+        /// <inheritdoc />
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
+                var queryParameters = base.QueryParameters;
+
+                if ( IgnoreRestAPICache )
+                    queryParameters.Add( "disable-cache", new List<string> { "true" } );
+
+                return queryParameters;
+            }
         }
 
         /// <inheritdoc />

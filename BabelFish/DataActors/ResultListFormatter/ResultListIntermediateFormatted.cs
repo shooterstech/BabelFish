@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.OrionMatch;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
-using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
