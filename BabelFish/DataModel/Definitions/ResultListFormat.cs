@@ -72,5 +72,297 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return meetsSpecification;
         }
+
+        /// <inheritdoc />
+        public override bool ConvertValues() {
+            bool updateHappened = base.SetDefaultValues();
+
+            //Convert from using ClassList to ClassSet
+            //On Columns
+            foreach( var col in Format.Columns ) {
+
+                if (col.ClassSet is null || col.ClassSet.Count == 0) {
+                    //First try and convert from the deprecated .ClassList property
+                    if (col.ClassList != null) {
+                        foreach (var cl in col.ClassList) {
+                            var cs = new ClassSet();
+                            cs.Name = cl;
+                            cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                            col.ClassSet.Add( cs );
+                            updateHappened |= true;
+                        }
+                    } else {
+                        //Next try and infer the column and give the .ClassSet default values.
+                        switch (col.Header) {
+                            case "Rank":
+                            case "Rk":
+                                col.ClassSet.Add( new ClassSet() {
+                                    Name = "rol-col-rank",
+                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                } );
+                                updateHappened |= true;
+                                break;
+                            case "Prone":
+                            case "Standing":
+                            case "Sitting":
+                            case "Kneeling":
+                                col.ClassSet.Add( new ClassSet() {
+                                    Name = "rol-col-stage",
+                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                } );
+                                updateHappened |= true;
+                                break;
+                            case "Athlete":
+                            case "Team":
+                            case "Participant":
+                                col.ClassSet.Add( new ClassSet() {
+                                    Name = "rol-col-participant",
+                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                } );
+                                updateHappened |= true;
+                                break;
+                            case "Gap":
+                            case "DFL":
+                                col.ClassSet.Add( new ClassSet() {
+                                    Name = "rol-col-gap",
+                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                } );
+                                updateHappened |= true;
+                                break;
+                            default:
+                                col.ClassSet.Add( new ClassSet() {
+                                    Name = "rol-col-event",
+                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                } );
+                                updateHappened |= true;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            //On Rows
+            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Header);
+            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Body );
+            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Children );
+            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Footer );
+            updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Header );
+            updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Body );
+            updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Children );
+            updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Footer );
+
+            /* EKA NOTE March 2025: These 'SetDefault' methods should be removed at some point. 
+             * Adding them now as a helper convienance to convert really old Result List formats. */
+
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Children, "rlf-row-child" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Footer, "rlf-row-footer" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Header, "rlf-row-header" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Body, "rlf-row-team" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Children, "rlf-row-child" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Footer, "rlf-row-footer" );
+
+            return updateHappened;
+        }
+
+        public override bool SetDefaultValues() {
+            bool updateHappened = true;
+
+            if (this.Fields == null)
+                this.Fields = new List<ResultListField>();
+            if (this.Format == null)
+                this.Format = new ResultListFormatDetail();
+            if (this.Format.Columns == null)
+                this.Format.Columns = new List<ResultListDisplayColumn>();
+            if (this.Format.Display == null)
+                this.Format.Display = new ResultListDisplayPartitions();
+            if (this.Format.DisplayForTeam == null)
+                this.Format.DisplayForTeam = new ResultListDisplayPartitions();
+
+
+            this.Fields.Add( new ResultListField() {
+                FieldName = "Aggregate",
+                Source = new FieldSource() {
+                    ScoreFormat = "Events",
+                    Name = "Qualification",
+                    Comment = "Auto generated FieldSource. Source's Name may need to be updated."
+                },
+                Method = ResultFieldMethod.SCORE
+            } );
+
+            this.Fields.Add( new ResultListField() {
+                FieldName = "Gap",
+                Source = new FieldSource() {
+                    ScoreFormat = "Gap",
+                    Value = 1,
+                    Name = "Qualification",
+                    Comment = "Auto generated FieldSource. Source's Name may need to be updated."
+                },
+                Method = ResultFieldMethod.GAP
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "Rk",
+                Body = "{Rank}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-rank",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "",
+                Body = "",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-profile",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenVariable() {
+                    Condition = ShowWhenCondition.ENGAGEABLE
+                }
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "Participant",
+                Body = "{DisplayName}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-participant",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenVariable() {
+                    Condition = ShowWhenCondition.DIMENSION_LARGE
+                }
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "Participant",
+                Body = "{DisplayNameAbbreviated}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-participant",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenVariable() {
+                    Condition = ShowWhenCondition.DIMENSION_LT_LARGE
+                }
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "Location",
+                Body = "{MatchLocation}",
+                Child = "{Empty}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-matchinfo",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenEquation() {
+                    Boolean = ShowWhenBoolean.AND,
+                    Arguments = new List<ShowWhenBase>() {
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.MATCH_TYPE_VIRTUAL
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.DIMENSION_LARGE
+                        }
+                    }
+                }
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "LS",
+                Body = "{LastShot}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-shot",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenVariable() {
+                    Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                }
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "Aggregate",
+                Body = "{Aggregate}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-event",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+            } );
+
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "DFL",
+                Body = "{Gap}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-gap",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenEquation() {
+                    Boolean = ShowWhenBoolean.OR,
+                    Arguments = new List<ShowWhenBase>() {
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.RESULT_STATUS_UNOFFICIAL
+                        }
+                    }
+                }
+            } );
+
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Children, "rlf-row-child" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Footer, "rlf-row-footer" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Header, "rlf-row-header" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Body, "rlf-row-team" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Children, "rlf-row-child" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Footer, "rlf-row-footer" );
+
+            return updateHappened;
+        }
+
+        private bool ConvertResultListDisplayPartition( ResultListDisplayPartition partition ) {
+
+            bool updateHappened = false;
+
+            if (partition.ClassSet == null)
+                partition.ClassSet = new List<ClassSet>();
+
+            if (partition.ClassSet.Count == 0) {
+                if (partition.ClassList != null) {
+                    foreach (var cl in partition.ClassList) {
+                        partition.ClassSet.Add( new ClassSet() {
+                            Name = cl,
+                            ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                        } );
+                        updateHappened |= true;
+                    }
+                }
+            }
+
+            return updateHappened;
+        }
+
+        private bool SetDefaultResultListDisplayPartition( ResultListDisplayPartition partition, string defaultCssName ) {
+            bool updateHappened = false;
+
+            if (partition.ClassSet == null)
+                partition.ClassSet = new List<ClassSet>();
+
+            if (partition.ClassSet.Count == 0) { 
+
+                if (partition.ClassSet.Count == 0) {
+                    partition.ClassSet.Add( new ClassSet() {
+                        Name = defaultCssName,
+                        ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    } );
+                    updateHappened |= true;
+                }
+            }
+
+            return updateHappened;
+        }
     }
 }

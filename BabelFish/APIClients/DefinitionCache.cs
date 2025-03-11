@@ -505,7 +505,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 RankingRuleCache.TryAdd( setName, definition );
@@ -582,7 +581,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 ResultListFormatCache.TryAdd( setName, definition );
@@ -659,7 +657,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetScoreFormatCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
@@ -812,7 +809,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 TargetCollectionCache.TryAdd( setName, definition );
@@ -889,7 +885,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetTargetDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 TargetCache.TryAdd( setName, definition );

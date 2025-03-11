@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
-using Scopos.BabelFish.DataModel.Definitions;
 
-namespace BabelFish.DataModel.Definitions {
+namespace Scopos.BabelFish.DataModel.Definitions {
 
     [Serializable]
     [G_NS.JsonConverter(typeof(G_BF_NS_CONV.ShowWhenBaseConverter))]

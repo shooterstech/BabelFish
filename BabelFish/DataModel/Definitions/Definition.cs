@@ -258,5 +258,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return json;
         }
+
+        /// <summary>
+        /// Method to set default values on a new Definition. Implementation specific for each definition type.
+        /// </summary>
+        /// <remarks>This method should be called seperatly by the user. It is NOT called from the new Definition() method.</remarks>
+        /// <returns>Returns a boolean indicating if one or more property values, within the definition, got updated.</returns>
+        public virtual bool SetDefaultValues() {
+            //Default implementation is to do nothing.
+            return false;
+        }
+
+        /// <summary>
+        /// Method to set default values on a new Definition. Implementation specific for each definition type.
+        /// </summary>
+        /// <remarks>Gets called in GetDefinitionPublciResponse.ConvertBodyToValue(). In other words, when ever a definition 
+        /// is read from the REST API</remarks>
+        /// <returns>Returns a boolean indicating if one or more property values, within the definition, got updated.</returns>
+        public virtual bool ConvertValues() {
+            //Default implementation is to do nothing.
+            return false;
+        }
     }
 }

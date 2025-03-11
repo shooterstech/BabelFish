@@ -12,7 +12,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public override List<string> GetClassList()
         {
-            resultListFormatted.DisplayPartitions.Body.CombineClassListSet();
             List<string> classSetList = new List<string>();
             foreach (var setObj in resultListFormatted.DisplayPartitions.Children.ClassSet)
             {

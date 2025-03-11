@@ -563,7 +563,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 source = column.Child;
             string value = source.Replace( fields );
 
-            column.CombineClassListSet();
             var classes = new List<string>();
             
             foreach (var c in column.ClassSet){

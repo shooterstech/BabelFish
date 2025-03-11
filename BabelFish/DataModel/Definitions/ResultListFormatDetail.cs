@@ -16,18 +16,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class ResultListFormatDetail : IReconfigurableRulebookObject {
 
         public ResultListFormatDetail() {
-            Display = new ResultListDisplayPartitions();
 
             Columns = new List<ResultListDisplayColumn>();
+            Display = new ResultListDisplayPartitions();
+            DisplayForTeam = new ResultListDisplayPartitions();
         }
 
         [OnDeserialized]
         internal void OnDeserializedMethod( StreamingContext context ) {
-            if (Display == null)
-                Display = new ResultListDisplayPartitions();
 
             if (Columns == null)
                 Columns = new List<ResultListDisplayColumn>();
+
+            if (Display == null)
+                Display = new ResultListDisplayPartitions();
+
+            if (DisplayForTeam == null)
+                DisplayForTeam = new ResultListDisplayPartitions();
         }
 
         /// <summary>
