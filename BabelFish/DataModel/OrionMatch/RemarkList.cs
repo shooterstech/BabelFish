@@ -82,5 +82,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
             this.OrderByDescending(x => (int)x.ParticipantRemark).ToList();
         }
 
+        /// <summary>
+        /// Find the location of the exact remark given, with no regard to the Reason string
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        internal int? Find(Remark remark)
+        {
+            SortRemarks();
+            int spot = 0;
+            foreach (var mark in this)
+            {
+                if(mark.ParticipantRemark == remark.ParticipantRemark &&
+                    mark.Visibility == remark.Visibility)
+                {
+                    return spot;
+                }
+                spot++;
+            }
+            return null;
+        }
     }
 }
