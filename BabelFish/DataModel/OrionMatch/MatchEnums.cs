@@ -428,4 +428,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         HIDDEN
     };
+
+
+    [G_NS.JsonConverter(typeof(G_NS_CONV.StringEnumConverter))]
+    public enum CommandAutomationSubject {
+        /// <summary>
+        /// No command automation should happen
+        /// </summary>
+        NONE,
+
+        /// <summary>
+        /// Command automation should happen to remarks, whether that is showing (adding) or Hiding
+        /// </summary>
+        REMARK
+    };
 }
