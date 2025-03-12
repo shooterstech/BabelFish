@@ -12,21 +12,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
     {
         //public List<Remark> remarks = new List<Remark>();
 
-        /*
+        
         public void Add(ParticipantRemark remark, string reason)
         {
             var newRemark = new Remark();
             newRemark.ParticipantRemark = remark;
             newRemark.Reason = reason;
             newRemark.Visibility = RemarkVisibility.SHOW;
-            remarks.Add(newRemark);
+            this.Add(newRemark);
             this.SortRemarks();
+        }
+        public void Hide(ParticipantRemark remark)
+        {
+            Remark match = new Remark() { ParticipantRemark = remark, Visibility = RemarkVisibility.SHOW };
+            SortRemarks();
+            if (this.Count() > 0)
+            {
+                var thing = Find(match);
+                if (thing != null)
+                {
+                    this[(int)thing].Visibility = RemarkVisibility.HIDDEN;
+                }
+            }
         }
         public void Remove(int spot)
         {
-            remarks.RemoveAt(spot);
+            this.RemoveAt(spot);
             this.SortRemarks();
-        }*/
+        }
 
         /// <summary>
         /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
@@ -79,7 +92,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         public void SortRemarks()
         {
-            this.OrderByDescending(x => (int)x.ParticipantRemark).ToList();
+            this.OrderByDescending(y => (int)y.Visibility).OrderByDescending(x => (int)x.ParticipantRemark).ToList();
         }
 
         /// <summary>

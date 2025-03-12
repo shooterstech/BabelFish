@@ -27,42 +27,31 @@ namespace Scopos.BabelFish.DataModel.Definitions
             this.Condition = ParticipantRemark.BUBBLE;
         }
 
+        /// <summary>
+        /// functionally the same as adding remarks or a participant
+        /// </summary>
+        /// <param name="resultList"></param>
         public void ShowRemarkOnParticipants(ResultList resultList)
         {
-            Remark remark = new Remark() {
-                ParticipantRemark = Condition,
-                Reason = "Automatically given by Range Script",
-                Visibility = Action
-            };
             var ranks = GetParticipantRanksAsList();
             foreach (var item in resultList.Items)
             {
                 if ( ranks.Contains(item.Rank) )
                 {
-                    item.Participant.RemarkList.Add(remark);
+                    item.Participant.RemarkList.Add(Condition, "Automatically given by Range Script");
                 }
             }
         }
 
         public void HideRemarkOnParticipants(ResultList resultList)
         {
-            Remark remark = new Remark()
-            {
-                ParticipantRemark = Condition,
-                Reason = "Automatically given by Range Script",
-                Visibility = RemarkVisibility.SHOW
-            };
             var ranks = GetParticipantRanksAsList();
             foreach (var item in resultList.Items)
             {
                 //I am not sure this will work. does contains look for the same exact object? or one that has the same form?
                 if (ranks.Contains(item.Rank))
                 {
-                    int? spot = item.Participant.RemarkList.Find(remark);
-                    if(spot != null)
-                    { 
-                        item.Participant.RemarkList[(int)spot].Visibility = RemarkVisibility.HIDDEN;
-                    }
+                    item.Participant.RemarkList.Hide(Condition);
                 }
             }
         }
