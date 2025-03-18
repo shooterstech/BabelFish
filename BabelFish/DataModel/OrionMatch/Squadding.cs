@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The EventName of the SquaddingList returned. Will match exactly (assuming no errors) of the EventName in the GetSquaddingListRequest
         /// </summary>
         public string EventName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        [DefaultValue("")]
+        public string Creator { get; set; } = string.Empty;
 
         /// <summary>
         /// The SquaddingList.

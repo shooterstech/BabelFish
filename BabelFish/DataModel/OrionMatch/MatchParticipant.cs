@@ -29,16 +29,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 MatchParticipantResults= new List<MatchParticipantResult>();
         }
 
-        /*
-         * Currently choosing not to have theise properties within a MatchParticipant. This is because these properties 
-         * are part of the MatchPartipantList.
-         * 
+
         public string MatchID { get; set; }
+
+        public string MatchName { get; set; }
 
         public string ParentID { get; set; }
 
-        public string MatchName { get; set; }
-        */
+        /// <summary>
+        /// Unique ID within this match, for this Match Participant.
+        /// </summary>
+        public string ParticipantID { get; set; }
+
+        /// <summary>
+        /// UUID formatted Orion Account user id. 
+        /// </summary>
+        public string UserID { get; set; }
+
         public string LocalDate { get; set; }
 
         public Participant Participant { get; set; }

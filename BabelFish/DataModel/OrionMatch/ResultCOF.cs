@@ -228,6 +228,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 61 )]
         public List<ShotGraphicDisplay> PostDisplay { get; set; }
 
+        /*
+         * TODO: Make this an enum
+         */
+        /// <summary>
+        /// The event that caused the publication of this Result COF.
+        /// Current known values are an empty string, ShotDetected, and NotSureButWasntAShot
+        /// </summary>
+        public string GenerativeEvent { get; set; } = "ShotDetected";
+
         /// <summary>
         /// The Owner of this data. 
         /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
