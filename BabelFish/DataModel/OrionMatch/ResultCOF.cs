@@ -217,7 +217,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 60 )]
         [G_NS.JsonProperty( Order = 60 )]
-        public ShotGraphicDisplay LiveDisplay { get; set; }
+        public ShotGraphicDisplay LiveDisplay { get; set; } = new ShotGraphicDisplay();
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, after an event is completed.
@@ -226,7 +226,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Rezults currently attempts to infer what to display, but can be kludgy depending on the COF.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 61 )]
         [G_NS.JsonProperty( Order = 61 )]
-        public List<ShotGraphicDisplay> PostDisplay { get; set; }
+        public List<ShotGraphicDisplay> PostDisplay { get; set; } = new List<ShotGraphicDisplay>();
 
         /*
          * TODO: Make this an enum

@@ -50,6 +50,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public Participant Participant { get; set; }
 
+        /// <summary>
+        /// Intended to be a list of squadding events that the Participant competed it. However, the 
+        /// format is not well organize and needs to be updated.
+        /// </summary>
         public List<MatchParticipantResult> MatchParticipantResults { get; set; }
 
         /// <summary>
