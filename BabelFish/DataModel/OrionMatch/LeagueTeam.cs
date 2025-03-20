@@ -75,5 +75,43 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Indicates the number of wins, loses, DNSs, DSQs the team has for the current League.
         /// </summary>
         public LeagueRecord Record { get; set; }
+
+        /// <summary>
+        /// Human readable Name of the League Network
+        /// </summary>
+        public string LeagueNetworkName { get; set; }
+
+        public int LeagueNetworkID { get; set; }
+
+        /// <summary>
+        /// Human readable name of the League's Season
+        /// </summary>
+        public string SeasonName { get; set; }
+
+        public int SeasonID { get; set; }
+
+        /// <summary>
+        /// Human readabel name of the League
+        /// </summary>
+        public string LeagueName { get; set; }
+
+        /// <summary>
+        /// The scheibentoni ID of the league
+        /// </summary>
+        public string LeagueID { get; set; }
+
+        /// <summary>
+        /// GUID formatted ClubID
+        /// </summary>
+        public string ClubID { get; set; }
+
+        public POC POC { get; set; }
+
+        /// <summary>
+        /// Typically city and state, e.g. "Bristow, VA"
+        /// </summary>
+        public string Location { get; set; }
+
+        public string Mascot { get; set; }
     }
 }

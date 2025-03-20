@@ -22,10 +22,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public string GameName { get; set; }
 
-		/// <summary>
-		/// The Virtual type of league game. Usually Not Set, Local, Virtual, Bye Week, or Cancelled.
-		/// </summary>
-		public LeagueVirtualType Virtual { get; set; }
+        /// <summary>
+        /// Human readable Name of the League Network
+        /// </summary>
+        public string LeagueNetworkName { get; set; }
+
+        public int LeagueNetworkID { get; set; }
+
+        /// <summary>
+        /// Human readable name of the League's Season
+        /// </summary>
+        public string SeasonName { get; set; }
+
+        public int SeasonID { get; set; }
+
+        /// <summary>
+        /// Human readabel name of the League
+        /// </summary>
+        public string LeagueName { get; set; }
+
+        /// <summary>
+        /// The Virtual type of league game. Usually Not Set, Local, Virtual, Bye Week, or Cancelled.
+        /// </summary>
+        public LeagueVirtualType Virtual { get; set; }
+
+        /// <summary>
+        /// The scheibentoni ID of the league
+        /// </summary>
+        public string LeagueID { get; set; }
 
         /// <summary>
         /// The date this league game started.
@@ -44,6 +68,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public LeagueTeamResult HomeTeam { get; set; }
 
 		public LeagueTeamResult AwayTeam { get; set; }
+
+        public string ReportText { get; set; }
+
+        public string ReportHTML { get; set; }
 
         public override string ToString() {
 			return GameName;
