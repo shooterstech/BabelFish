@@ -4,14 +4,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// In a COURSE OF FIRE definition, Events may be designated as either a EventType EVENT or STAGE. When doing so, these Events may be mapped to an EVENT STYLE or STAGE STYLE respectively. 
     /// Given the further inputs of Target Collection Name and AttributeValueAppellation a StageStyleMapping maps a StageAppellation to a StageStyle.
     /// </summary>
-    public class StageStyleSelection: IReconfigurableRulebookObject
-    {
+    public class StageStyleSelection: IReconfigurableRulebookObject, IGetStageStyleDefinition {
 
         /// <summary>
         /// The Stage's appellation (name) to use when looking up the mapping. Stage appellations are usually common across (printed) rulebooks that have different courses of fire.
@@ -27,5 +27,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonPropertyOrder( 99 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        public async Task<StageStyle> GetStageStyleDefinitionAsync() {
+            
+            var sb = SetName.Parse( StageStyleDef );
+            return await DefinitionCache.GetStageStyleDefinitionAsync( sb );
+        }
     }
 }

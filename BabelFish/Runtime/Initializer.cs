@@ -59,6 +59,18 @@ namespace Scopos.BabelFish.Runtime {
         }
 
         /// <summary>
+        /// Gets and Sets the Definition Cache's property to automatically download new definition versions when avaliable from the REST API.
+        /// </summary>
+        public static bool AutoDownloadNewDefinitionVersions {
+            get {
+                return DefinitionCache.AutoDownloadNewDefinitionVersions;
+            }
+            set {
+                DefinitionCache.AutoDownloadNewDefinitionVersions = value;
+            }
+        }
+
+        /// <summary>
         /// Clears all cache from the BabelFish library. With option to run the Definition.PreLoad() method to load common Definition files.
         /// </summary>
         /// <param name="runPreLoad">If true, pre-loads the definition cache with standard set of Definitions. Intended to be set to false during unit testing to avoid excessive API calls.</param>

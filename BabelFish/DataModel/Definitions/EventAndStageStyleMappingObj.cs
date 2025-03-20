@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -11,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Given the Target Collection Name, AttributeValueAppellation, and EventAppellation / StageAppellation, the Event and Stage Style Mapping
     /// defines how to map these inputs to an EventStyle or StageStyle. This is then used in the generation of a ResultCOF data structure.
     /// </summary>
-    public class EventAndStageStyleMappingObj : IReconfigurableRulebookObject {
+    public class EventAndStageStyleMappingObj : IReconfigurableRulebookObject, IGetEventStyleDefinition, IGetStageStyleDefinition {
 
         public EventAndStageStyleMappingObj() {
             EventStyleMappings = new List<EventStyleSelection>();
@@ -66,6 +67,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc/>
         [DefaultValue( "" )]
+        [JsonPropertyOrder( 99 )]
         public string Comment { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        /// <remarks>Returns the EVENT STYLE definition referenced by the property DefaultEventStyleDef </remarks>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        public async Task<EventStyle> GetEventStyleDefinitionAsync() {
+
+            var sb = SetName.Parse( DefaultEventStyleDef );
+            return await DefinitionCache.GetEventStyleDefinitionAsync( sb );
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>Returns the STAGE STYLE definition referenced by the property DefaultStageStyleDef </remarks>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        public async Task<StageStyle> GetStageStyleDefinitionAsync() {
+
+            var sb = SetName.Parse( DefaultStageStyleDef );
+            return await DefinitionCache.GetStageStyleDefinitionAsync( sb );
+        }
     }
 }

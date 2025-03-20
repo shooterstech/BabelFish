@@ -49,7 +49,9 @@ namespace Scopos.BabelFish.APIClients {
 
         /// <summary>
         /// Set to true, to allow the Definition Cache to automatically check, and if avaliable, downlaod newer minor versions of Definition Files.
+        /// <para>The runtime.Initializer has the same property .AutoDownloadNewDefinitionVersions, as an easier facade to set / unset.</para>
         /// </summary>
+        /// 
         /// <remarks>
         /// <list type="bullet">
         /// <listheader>In general the value of AutoDownloadNewDefinitionVersions shoudl be </listheader>
