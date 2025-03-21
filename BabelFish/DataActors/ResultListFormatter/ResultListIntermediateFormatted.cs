@@ -119,6 +119,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
+        /// Updates the reference result list. Mostly used to refreshing the Result List's Meta Data.
+        /// Does NOT effect the rows, ,use Clear() and AppendTokenizedResultList() to do this. 
+        /// </summary>
+        /// <param name="updatedResultList"></param>
+        public void RefreshResultList( ResultList updatedResultList ) {
+            this.ResultList = updatedResultList;
+        }
+
+        /// <summary>
         /// UserProfielDB instance to look up if a user id has a public profile.
         /// </summary>
         protected internal IUserProfileLookup UserProfileLookup { get; private set; }
@@ -649,5 +658,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>The default value is true.</para>
         /// </summary>
         public bool Engagable { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the show supplemental information variable. What is or what is not supplemental information
+        /// is up to the composers of the RESULT LIST FORMAT to decide. Generally though its extra information
+        /// that is interesting, but not necessaryly required.
+        /// <para>The default value is true.</para>
+        /// </summary>
+        public bool ShowSupplementalInformation {  get; set; } = true;
     }
 }

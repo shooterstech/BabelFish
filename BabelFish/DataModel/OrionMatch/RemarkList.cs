@@ -42,6 +42,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         }
 
         /// <summary>
+        /// Returns true if the user has one of the following remarks: DNS, DSQ, DNF, or ELIMINATED. 
+        /// Returns flase if they do not (and would then mean that they are still competing).
+        /// </summary>
+        /// <returns></returns>
+        public bool HasNonCompletionRemark() {
+
+            foreach (var re in this) {
+                switch (re.ParticipantRemark) {
+                    case ParticipantRemark.DNS:
+                    case ParticipantRemark.DNF:
+                    case ParticipantRemark.DSQ:
+                    case ParticipantRemark.ELIMINATED:
+                        return true;
+                    default:
+                        break;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// returns a boolean indicating the passed in remark is the last(most important) one. if require visible is true then it will return true when it is the last remark, but the visibility is HIDDEN
         /// </summary>
         /// <param name="remark"></param>

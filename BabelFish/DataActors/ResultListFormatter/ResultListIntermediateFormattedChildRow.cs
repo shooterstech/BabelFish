@@ -6,16 +6,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public ResultListIntermediateFormattedChildRow( ResultListIntermediateFormatted rlf, ResultEvent re ) : base( rlf, re ) {
 
-            logger = LogManager.GetCurrentClassLogger();
+            _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = true;
         }
 
         public override List<string> GetClassList()
         {
             List<string> classSetList = new List<string>();
-            foreach (var setObj in resultListFormatted.DisplayPartitions.Children.ClassSet)
+            foreach (var setObj in _resultListFormatted.DisplayPartitions.Children.ClassSet)
             {
-                if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, resultEvent))
+                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _resultEvent))
                 {
                     classSetList.Add(setObj.Name);
                 }

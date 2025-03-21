@@ -575,6 +575,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         NOT_ENGAGEABLE,
 
         /// <summary>
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does want to see "supplemental" information. 
+        /// </summary>
+        SUPPLIEMENTAL,
+
+        /// <summary>
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does not want to see "supplemental" information. 
+        /// </summary>
+        NOT_SUPPLIEMENTAL,
+
+        /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Shoot
         /// </summary>
         HAS_REMARK_DNS,
