@@ -31,5 +31,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
         public RemarkVisibility Visibility { get; set; } = RemarkVisibility.SHOW;
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return ParticipantRemark.Description();
+        }
     }
 }
