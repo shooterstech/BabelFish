@@ -81,11 +81,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = ! RLF.Engagable;
                     break;
 
-                case ShowWhenCondition.SUPPLIEMENTAL:
+                case ShowWhenCondition.SUPPLEMENTAL:
                     answer = RLF.ShowSupplementalInformation;
                     break;
 
-                case ShowWhenCondition.NOT_SUPPLIEMENTAL:
+                case ShowWhenCondition.NOT_SUPPLEMENTAL:
                     answer = ! RLF.ShowSupplementalInformation;
                     break;
 

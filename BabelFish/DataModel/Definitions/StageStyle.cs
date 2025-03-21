@@ -80,6 +80,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault")]
         public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize DisplayScoreFormats when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeDisplayScoreFormats() {
+            return (DisplayScoreFormats != null && DisplayScoreFormats.Count > 0);
+        }
+
         /// <inheritdoc />
 		public override async Task<bool> GetMeetsSpecificationAsync() {
                 var validation = new IsStageStyleValid();

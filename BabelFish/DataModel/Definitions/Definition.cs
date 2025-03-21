@@ -163,6 +163,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             var currentSetName = this.GetSetName( true );
 
+            //currentSetName may be null, if this is a new definition file and has not yet been set
+            if (currentSetName == null)
+                return false;
+
             //Check if this definition is for a specific version (e.g. v1.10) and not a most recent version (e.g. v1.0).
             //If it is for a specific version, then there can never be an update for it. 
             if (currentSetName.MinorVersion != 0)
@@ -210,10 +214,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             string filePath = $"{definitionDirectory.FullName}\\{GetRelativePath()}";
 
-            DirectoryInfo typeDirectory = new DirectoryInfo( $"{definitionDirectory.FullName}\\{Type.Description()}" );
+            var directoryPath = Path.GetDirectoryName( filePath );
 
-            if (!typeDirectory.Exists)
-                typeDirectory.Create();
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
 
             string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
 
