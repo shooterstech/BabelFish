@@ -55,5 +55,22 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 }
             }
         }
+
+        public List<CommandAutomationIntermediate> IntermediateCommandAutomationRemarkList(ResultList resultList)
+        {
+            List<CommandAutomationIntermediate> caIntermediate = new List<CommandAutomationIntermediate>();
+            var ranks = GetParticipantRanksAsList();
+            foreach (var item in resultList.Items)
+            {
+                if (ranks.Contains(item.Rank))
+                {
+                    CommandAutomationIntermediateRemark interRemark = new CommandAutomationIntermediateRemark();
+                    interRemark.visibility = Action;
+                    interRemark.participant = item.Participant;
+                    caIntermediate.Add(interRemark);
+                }
+            }
+            return caIntermediate;
+        }
     }
 }
