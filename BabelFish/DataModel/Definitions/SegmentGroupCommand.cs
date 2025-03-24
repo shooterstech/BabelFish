@@ -266,6 +266,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 200 )]
         public CommandAutomationList CommandAutomation { get; set; } = new CommandAutomationList();
 
+        public bool ShouldSerializeCommandAutomation() {
+            return CommandAutomation != null && CommandAutomation.Count > 0;
+        }
+
         /// <summary>
         /// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
         /// <list type="bullet">
