@@ -270,8 +270,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <remarks>This method should be called seperatly by the user. It is NOT called from the new Definition() method.</remarks>
         /// <returns>Returns a boolean indicating if one or more property values, within the definition, got updated.</returns>
         public virtual bool SetDefaultValues() {
-            //Default implementation is to do nothing.
-            return false;
+
+            //These are common values appropirate for defaults.
+            Discipline = DisciplineType.RIFLE;
+            Subdiscipline = "Subdisciipline Name";
+            return true;
         }
 
         /// <summary>

@@ -107,7 +107,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 17 )]
-        [G_NS.JsonProperty( Order = 17 )]
+        [G_NS.JsonProperty( Order = 17, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Standard Score Formats" )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
@@ -115,8 +115,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 18 )]
-        [G_NS.JsonProperty( Order = 18 )]
-        public string ScoreConfigDefault { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 18, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "Decimal" )]
+        public string ScoreConfigDefault { get; set; } = "Decimal";
 
         /// <inheritdoc />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {

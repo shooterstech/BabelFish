@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
+using Scopos.BabelFish.DataModel.Athena.AbstractEST;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -140,5 +141,38 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			return meetsSpecification;
 		}
 
-	}
+        /// <inheritdoc />
+        public override bool SetDefaultValues() {
+            base.SetDefaultValues();
+
+            Designation.Add( AttributeDesignation.ATHLETE );
+            Designation.Add( AttributeDesignation.USER );
+            Designation.Add( AttributeDesignation.TEAM );
+
+            var field = new AttributeFieldString() {
+                Comment = "This is an example field",
+                DefaultValue = "AAAA",
+                Required = false,
+                FieldName = "Example Field",
+                FieldType = FieldType.CLOSED
+            };
+
+            field.Values.Add( new AttributeValueOption<string>() {
+                AttributeValueAppellation = "AAAA",
+                Value = "AAAA",
+                Name = "A Value"
+            } );
+
+            field.Values.Add( new AttributeValueOption<string>() {
+                AttributeValueAppellation = "BBBB",
+                Value = "BBBB",
+                Name = "B Value"
+            } );
+
+            this.Fields.Add( field );
+
+            return true;
+        }
+
+    }
 }

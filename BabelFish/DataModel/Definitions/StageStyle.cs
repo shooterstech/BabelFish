@@ -42,14 +42,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The number of shots that make up a Series, for this Stage Style
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 11 )]
-        [G_NS.JsonProperty( Order = 11 )]
+        [G_NS.JsonProperty( Order = 11, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( 10 )]
         public int ShotsInSeries { get; set; } = 10;
 
         /// <summary>
         /// The SetName of the SCORE FORMAT COLLECTION definition to use when displaying scores with this STAGE STYLE
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 12 )]
-        [G_NS.JsonProperty( Order = 12 )]
+        [G_NS.JsonProperty( Order = 12, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Standard Score Formats" )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
@@ -57,7 +58,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The default ScoreConfigName to use, that is defined by the .ScoreFormatCollectionDef, to use when displaying scores with this STAGE STYLE
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 13 )]
-        [G_NS.JsonProperty( Order = 13 )]
+        [G_NS.JsonProperty( Order = 13, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "Integer" )]
         public string ScoreConfigDefault { get; set; } = "Integer";
 
