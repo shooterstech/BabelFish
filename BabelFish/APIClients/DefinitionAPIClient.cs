@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.APIClients {
                         responseIntObj.Request = request;
                         responseIntObj.ValidUntil = DateTime.UtcNow.AddDays( 1 );
 
-                        logger.Info( $"Returning a in-memory cached Response for {request}." );
+                        logger.Info( $"Returning a file system cached Response for {request}." );
 
 
                         return new Tuple<bool, ResponseIntermediateObject?>( true, responseIntObj );

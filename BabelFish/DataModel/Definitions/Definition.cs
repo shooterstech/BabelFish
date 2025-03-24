@@ -163,6 +163,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             var currentSetName = this.GetSetName( true );
 
+            //currentSetName may be null, if this is a new definition file and has not yet been set
+            if (currentSetName == null)
+                return false;
+
             //Check if this definition is for a specific version (e.g. v1.10) and not a most recent version (e.g. v1.0).
             //If it is for a specific version, then there can never be an update for it. 
             if (currentSetName.MinorVersion != 0)
@@ -210,10 +214,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             string filePath = $"{definitionDirectory.FullName}\\{GetRelativePath()}";
 
-            DirectoryInfo typeDirectory = new DirectoryInfo( $"{definitionDirectory.FullName}\\{Type.Description()}" );
+            var directoryPath = Path.GetDirectoryName( filePath );
 
-            if (!typeDirectory.Exists)
-                typeDirectory.Create();
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
 
             string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
 
@@ -257,6 +262,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
 
             return json;
+        }
+
+        /// <summary>
+        /// Method to set default values on a new Definition. Implementation specific for each definition type.
+        /// </summary>
+        /// <remarks>This method should be called seperatly by the user. It is NOT called from the new Definition() method.</remarks>
+        /// <returns>Returns a boolean indicating if one or more property values, within the definition, got updated.</returns>
+        public virtual bool SetDefaultValues() {
+            //Default implementation is to do nothing.
+            return false;
+        }
+
+        /// <summary>
+        /// Method to set default values on a new Definition. Implementation specific for each definition type.
+        /// </summary>
+        /// <remarks>Gets called in GetDefinitionPublciResponse.ConvertBodyToValue(). In other words, when ever a definition 
+        /// is read from the REST API</remarks>
+        /// <returns>Returns a boolean indicating if one or more property values, within the definition, got updated.</returns>
+        public virtual bool ConvertValues() {
+            //Default implementation is to do nothing.
+            return false;
         }
     }
 }

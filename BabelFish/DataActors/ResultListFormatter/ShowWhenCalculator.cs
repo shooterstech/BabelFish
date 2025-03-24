@@ -81,6 +81,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = ! RLF.Engagable;
                     break;
 
+                case ShowWhenCondition.SUPPLEMENTAL:
+                    answer = RLF.ShowSupplementalInformation;
+                    break;
+
+                case ShowWhenCondition.NOT_SUPPLEMENTAL:
+                    answer = ! RLF.ShowSupplementalInformation;
+                    break;
+
                 case ShowWhenCondition.DIMENSION_SMALL:
                     answer = RLF.ResolutionWidth >= 576;
                     break;

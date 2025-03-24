@@ -13,15 +13,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public ResultListIntermediateFormattedBodyRow( ResultListIntermediateFormatted rlf, ResultEvent re ) : base (rlf, re) {
 
-            logger = LogManager.GetCurrentClassLogger();
+            _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = false;
         }
 
         public override List<string> GetClassList() {
-            resultListFormatted.DisplayPartitions.Body.CombineClassListSet();
             List<string> classSetList = new List<string>();
-            foreach ( var setObj in resultListFormatted.DisplayPartitions.Body.ClassSet ){
-                if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, resultEvent))
+            foreach ( var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet ){
+                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _resultEvent))
                 {
                     classSetList.Add(setObj.Name);
                 }

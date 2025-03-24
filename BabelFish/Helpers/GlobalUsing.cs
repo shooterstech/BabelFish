@@ -2,6 +2,7 @@
 global using System.Collections.Generic;
 global using System.Text;
 global using Scopos.BabelFish.Helpers;
+global using Scopos.BabelFish.Runtime;
 global using NLog;
 
 /*

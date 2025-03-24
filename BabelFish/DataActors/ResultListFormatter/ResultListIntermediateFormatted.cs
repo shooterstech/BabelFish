@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.OrionMatch;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
-using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -122,6 +116,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             lock (rows) {
                 rows.Clear();
             }
+        }
+
+        /// <summary>
+        /// Updates the reference result list. Mostly used to refreshing the Result List's Meta Data.
+        /// Does NOT effect the rows, ,use Clear() and AppendTokenizedResultList() to do this. 
+        /// </summary>
+        /// <param name="updatedResultList"></param>
+        public void RefreshResultList( ResultList updatedResultList ) {
+            this.ResultList = updatedResultList;
         }
 
         /// <summary>
@@ -413,7 +416,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             cellValues.Text = format.Header;
             cellValues.ClassList = new List<string>();
 
-            format.CombineClassListSet();
             foreach (var c in format.ClassSet)
             {
                 if(ShowWhenCalculator.Show(c.ShowWhen))
@@ -463,7 +465,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             List<string> l = new();
 
-            DisplayPartitions.Header.CombineClassListSet();
             foreach (var c in DisplayPartitions.Header.ClassSet)
             {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
@@ -480,7 +481,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             List<string> l = new();
 
-            DisplayPartitions.Footer.CombineClassListSet();
             foreach (var c in DisplayPartitions.Footer.ClassSet)
             {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
@@ -508,7 +508,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             cellValues.Text = format.Footer.ToString();
             cellValues.ClassList = new List<string>();
 
-            format.CombineClassListSet();
             foreach (var c in format.ClassSet)
             {
                 if (ShowWhenCalculator.Show(c.ShowWhen))
@@ -659,5 +658,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>The default value is true.</para>
         /// </summary>
         public bool Engagable { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the show supplemental information variable. What is or what is not supplemental information
+        /// is up to the composers of the RESULT LIST FORMAT to decide. Generally though its extra information
+        /// that is interesting, but not necessaryly required.
+        /// <para>The default value is true.</para>
+        /// </summary>
+        public bool ShowSupplementalInformation {  get; set; } = true;
     }
 }

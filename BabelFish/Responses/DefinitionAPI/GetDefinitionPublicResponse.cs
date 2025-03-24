@@ -34,6 +34,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
                 G_STJ.JsonElement root = Body.RootElement;
                 G_STJ.JsonElement definition = root.GetProperty( SetName.ToString() );
                 Value = G_STJ.JsonSerializer.Deserialize<T>( definition, SerializerOptions.SystemTextJsonDeserializer );
+                Value.ConvertValues();
             }
         }
 

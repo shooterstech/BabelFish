@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <para>An Event defines a real world event in a marksmanship competition. Includes events, stages, series, and strings. 
     /// Does not includes individual shots (as these are Singulars).</para>
     /// </summary>
-    public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition {
+    public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition, IGetRankingRuleDefinitionList {
 
         protected Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -126,7 +126,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
-        public RankingRuleMapping RankingRuleMapping { get; set; }
+        public RankingRuleMapping RankingRuleMapping { get; set; } = new RankingRuleMapping();
 
         /// <summary>
         /// Indicates if this Event is outside of the Event Tree.
@@ -179,22 +179,58 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <remarks>
+        /// It is a best practice to check for null or empty string for the value of .RankingRuleDef. This is because .RankingRuleDef is not 
+        /// a required property and is allowed to be empty. If it is empty, calling this function GetRankingRuleDefinitionAsync() will throw
+        /// an exception.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown if the value for RankingRuleDef is empty</exception>
+        /// <exception cref="DefinitionNotFoundException"></exception>
+        /// <exception cref="ScoposAPIException"></exception>
+        [Obsolete( "Use GetRankingRuleDefinitionListAsync() instead.")]
         public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
 
             if (string.IsNullOrEmpty( RankingRuleDef ))
-                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+                throw new ArgumentNullException( $"The value for RankingRuleDef is empty or null." );
 
             SetName rrSetName = SetName.Parse( RankingRuleDef );
             return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <remarks>
+        /// Returns a list of RANKING RULE definitions referenced by the property .RankingRuleMapping.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty.</exception>
+        /// <exception cref="DefinitionNotFoundException"></exception>
+        /// <exception cref="ScoposAPIException"></exception>
+        public async Task<Dictionary<string, RankingRule>> GetRankingRuleDefinitionListAsync() {
+            var list = new Dictionary<string, RankingRule>();
+            if (this.RankingRuleMapping != null) {
+                foreach (var rrmSetName in this.RankingRuleMapping.Values) {
+                    if ( ! list.ContainsKey( rrmSetName ) ) {
+                        var sn = SetName.Parse( rrmSetName );
+                        list[rrmSetName] = await DefinitionCache.GetRankingRuleDefinitionAsync( sn );
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// It is a best practice to check for null or empty string for the value of .ResultListFormatDef. This is because .ResultListFormatDef is not 
+        /// a required property and is allowed to be empty. If it is empty, calling this function GetResultListFormatDefinitionAsync() will throw
+        /// an exception.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty.</exception>
+        /// <exception cref="DefinitionNotFoundException"></exception>
+        /// <exception cref="ScoposAPIException"></exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
             if (string.IsNullOrEmpty( ResultListFormatDef ))
-                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
+                throw new ArgumentNullException( $"The value for ResultListFormatDef is empty or null." );
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );

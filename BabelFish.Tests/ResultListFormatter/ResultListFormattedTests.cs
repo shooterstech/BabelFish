@@ -360,10 +360,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.2038.2025030508464804.0" );
+            MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - Sporter";
+            var resultListName = "Team - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -403,6 +403,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
                     Console.Write( $"{cell.Text}, " );
                 }
+                Console.Write( string.Join( ", ", row.GetClassList() ) );
                 Console.WriteLine();
             }
         }

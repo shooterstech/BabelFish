@@ -1,14 +1,8 @@
-﻿using Scopos.BabelFish.DataModel.Athena;
+﻿using System.Collections.Concurrent;
 using Scopos.BabelFish.DataModel.Definitions;
-using System;
-using System.Collections.Concurrent;
-using System.Text;
-using Scopos.BabelFish.Runtime;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using System.ComponentModel;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using NLog;
+using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
@@ -55,7 +49,9 @@ namespace Scopos.BabelFish.APIClients {
 
         /// <summary>
         /// Set to true, to allow the Definition Cache to automatically check, and if avaliable, downlaod newer minor versions of Definition Files.
+        /// <para>The runtime.Initializer has the same property .AutoDownloadNewDefinitionVersions, as an easier facade to set / unset.</para>
         /// </summary>
+        /// 
         /// <remarks>
         /// <list type="bullet">
         /// <listheader>In general the value of AutoDownloadNewDefinitionVersions shoudl be </listheader>
@@ -238,8 +234,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( request );
 
@@ -315,8 +311,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<CourseOfFire>( request );
 
@@ -391,8 +387,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
 
@@ -467,8 +463,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<EventStyle>( request );
 
@@ -511,7 +507,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 RankingRuleCache.TryAdd( setName, definition );
@@ -544,8 +539,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<RankingRule>( request );
 
@@ -588,7 +583,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 ResultListFormatCache.TryAdd( setName, definition );
@@ -621,8 +615,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<ResultListFormat>( request );
 
@@ -665,7 +659,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetScoreFormatCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
@@ -698,8 +691,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<ScoreFormatCollection>( request );
 
@@ -774,8 +767,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<StageStyle>( request );
 
@@ -818,7 +811,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 TargetCollectionCache.TryAdd( setName, definition );
@@ -851,8 +843,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<TargetCollection>( request );
 
@@ -895,7 +887,6 @@ namespace Scopos.BabelFish.APIClients {
 
             var response = await DefinitionFetcher.FETCHER.GetTargetDefinitionAsync( setName );
             if (response.StatusCode == System.Net.HttpStatusCode.OK) {
-
                 var definition = response.Definition;
 
                 TargetCache.TryAdd( setName, definition );
@@ -928,8 +919,8 @@ namespace Scopos.BabelFish.APIClients {
                     //Make a request, that ignores all of our local caching
                     var request = new GetDefinitionPublicRequest( setName, def.Type ) {
                         IgnoreInMemoryCache = true,
-                        IgnoreFileSystemCache = true
-                        //Should we also disable-cache on the rest api call?
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
                     };
                     var response = new GetDefinitionPublicResponse<Target>( request );
 
@@ -946,6 +937,7 @@ namespace Scopos.BabelFish.APIClients {
 
             return false;
         }
+
         public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Definition def ) {
 
             switch (def.Type) {
@@ -982,6 +974,45 @@ namespace Scopos.BabelFish.APIClients {
                 default:
                     //Shouldn't ever get here
                     return false;
+            }
+        }
+
+        public static async Task<Definition?> GetDefinitionAsync(DefinitionType type, SetName setName) {
+
+            switch (type) {
+                case DefinitionType.ATTRIBUTE:
+                    return await GetAttributeDefinitionAsync( setName );
+
+                case DefinitionType.COURSEOFFIRE:
+                    return await GetCourseOfFireDefinitionAsync( setName );
+
+                case DefinitionType.EVENTSTYLE:
+                    return await GetEventStyleDefinitionAsync( setName );
+
+                case DefinitionType.EVENTANDSTAGESTYLEMAPPING:
+                    return await GetEventAndStageStyleMappingDefinitionAsync( setName );
+
+                case DefinitionType.RANKINGRULES:
+                    return await GetRankingRuleDefinitionAsync( setName );
+
+                case DefinitionType.RESULTLISTFORMAT:
+                    return await GetResultListFormatDefinitionAsync( setName );
+
+                case DefinitionType.SCOREFORMATCOLLECTION:
+                    return await GetScoreFormatCollectionDefinitionAsync( setName );
+
+                case DefinitionType.STAGESTYLE:
+                    return await GetStageStyleDefinitionAsync( setName );
+
+                case DefinitionType.TARGET:
+                    return await GetTargetCollectionDefinitionAsync( setName );
+
+                case DefinitionType.TARGETCOLLECTION:
+                    return await GetTargetCollectionDefinitionAsync ( setName );
+
+                default:
+                    //Shouldn't ever get here
+                    return null;
             }
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.APIClients;
 
-namespace Scopos.BabelFish.Helpers {
+namespace Scopos.BabelFish.Runtime {
     public static class Initializer {
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -36,6 +36,11 @@ namespace Scopos.BabelFish.Helpers {
         public static void Initialize( string xApiKey, string localStoreDirectory, bool runPreLoad = true ) {
             Initialize( xApiKey, runPreLoad );
 
+            UpdateLocalStoreDirectory( localStoreDirectory );
+        }
+
+        public static void UpdateLocalStoreDirectory( string localStoreDirectory ) {
+
             try {
                 var dirInfo = new DirectoryInfo( localStoreDirectory );
 
@@ -43,13 +48,25 @@ namespace Scopos.BabelFish.Helpers {
                 AttributeValueAPIClient.LocalStoreDirectory = dirInfo;
                 ClubsAPIClient.LocalStoreDirectory = dirInfo;
                 DefinitionAPIClient.LocalStoreDirectory = dirInfo;
-                OrionMatchAPIClient.LocalStoreDirectory= dirInfo;
+                OrionMatchAPIClient.LocalStoreDirectory = dirInfo;
                 ScoposDataClient.LocalStoreDirectory = dirInfo;
                 ScoreHistoryAPIClient.LocalStoreDirectory = dirInfo;
                 SocialNetworkAPIClient.LocalStoreDirectory = dirInfo;
 
             } catch (Exception ex) {
                 logger.Error( ex, $"Can not set LocalStoreDirectory, with error {ex}." );
+            }
+        }
+
+        /// <summary>
+        /// Gets and Sets the Definition Cache's property to automatically download new definition versions when avaliable from the REST API.
+        /// </summary>
+        public static bool AutoDownloadNewDefinitionVersions {
+            get {
+                return DefinitionCache.AutoDownloadNewDefinitionVersions;
+            }
+            set {
+                DefinitionCache.AutoDownloadNewDefinitionVersions = value;
             }
         }
 

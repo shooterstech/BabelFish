@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.Definitions;
-using NLog;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -13,17 +6,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public ResultListIntermediateFormattedChildRow( ResultListIntermediateFormatted rlf, ResultEvent re ) : base( rlf, re ) {
 
-            logger = LogManager.GetCurrentClassLogger();
+            _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = true;
         }
 
         public override List<string> GetClassList()
         {
-            resultListFormatted.DisplayPartitions.Body.CombineClassListSet();
             List<string> classSetList = new List<string>();
-            foreach (var setObj in resultListFormatted.DisplayPartitions.Body.ClassSet)
+            foreach (var setObj in _resultListFormatted.DisplayPartitions.Children.ClassSet)
             {
-                if (resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, resultEvent))
+                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _resultEvent))
                 {
                     classSetList.Add(setObj.Name);
                 }
