@@ -10,7 +10,11 @@ namespace Scopos.BabelFish.DataModel.Definitions
         public CommandAutomationNone()
         {
             this.Subject = CommandAutomationSubject.NONE;
-            this.ParticipantRanks = string.Empty;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return $"{Subject}";
         }
     }
 }

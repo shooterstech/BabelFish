@@ -1,30 +1,56 @@
 ﻿using Scopos.BabelFish.DataModel.OrionMatch;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
-    public class CommandAutomationRemark : CommandAutomation
-    {
-        /// <summary>
-        /// Condition to add to the participants on the ranks given.
-        /// </summary>
-        public ParticipantRemark Condition { get; set; } = ParticipantRemark.BUBBLE;
+    public class CommandAutomationRemark : CommandAutomation { 
 
 
-        /// <summary>
-        /// Action describes what should be done to the remark specified, on the participants specified.
-        /// </summary>
-        public RemarkVisibility Action { get; set; } = RemarkVisibility.HIDDEN;
-
-        public CommandAutomationRemark()
+    public CommandAutomationRemark()
         {
             this.Subject = CommandAutomationSubject.REMARK;
             this.Action = RemarkVisibility.HIDDEN;
             this.ParticipantRanks = string.Empty;
             this.Condition = ParticipantRemark.BUBBLE;
+        }
+
+        /// <summary>
+        /// Action describes what should be done to the remark specified, on the participants specified.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public RemarkVisibility Action { get; set; } = RemarkVisibility.HIDDEN;
+
+        /// <summary>
+        /// Condition to add to the participants on the ranks given.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public ParticipantRemark Condition { get; set; } = ParticipantRemark.BUBBLE;
+
+        /// <summary>
+        /// ValueString object that is the items to apply an action of remark to.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
+        [DefaultValue( "" )]
+        public string ParticipantRanks { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Generates a list of Firing Lanes based on FiringLanes specified in property.
+        /// </summary>
+        /// <returns></returns>
+        public List<int> GetParticipantRanksAsList() {
+            List<int> list = new List<int>();
+
+            ValueSeries vs = new ValueSeries( ParticipantRanks );
+
+            for (int i = vs.StartValue; i <= vs.EndValue; i += vs.Step) {
+                list.Add( i );
+            }
+
+            return list;
         }
 
         /// <summary>
@@ -71,6 +97,11 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 }
             }
             return caIntermediate;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return $"{Subject} {Condition} {Action} on {ParticipantRanks}";
         }
     }
 }

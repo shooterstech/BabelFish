@@ -263,6 +263,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
         /// DefaultCommand: Required, may be empty list []
         /// </summary>
+        [G_NS.JsonProperty( Order = 200 )]
         public CommandAutomationList CommandAutomation { get; set; } = new CommandAutomationList();
 
         /// <summary>
@@ -277,6 +278,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc/>
         [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 100 )]
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc/>
