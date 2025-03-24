@@ -981,7 +981,7 @@ namespace Scopos.BabelFish.APIClients {
 
                 default:
                     //Shouldn't ever get here
-                    return 0;
+                    return false;
             }
         }
 
