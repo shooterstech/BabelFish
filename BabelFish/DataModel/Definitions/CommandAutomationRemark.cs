@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 if (ranks.Contains(item.Rank))
                 {
                     CommandAutomationIntermediateRemark interRemark = new CommandAutomationIntermediateRemark();
-                    interRemark.visibility = Action;
+                    interRemark.visibility = Action; // doesn't matter what I am doing, it's gonna get passed off down the line.
                     interRemark.participant = item.Participant;
                     caIntermediate.Add(interRemark);
                 }

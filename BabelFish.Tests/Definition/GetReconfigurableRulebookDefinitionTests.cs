@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
@@ -377,6 +378,34 @@ namespace Scopos.BabelFish.Tests.Definition {
             for (int i = 0; i < 20; i++)
                 Assert.AreEqual( $"S{i + 1}", singulars[i+40].EventName );
 
+        }
+
+
+
+
+        [TestMethod]
+        public async Task CommandAutomationIntermediateTest()
+        {
+
+            var client = new DefinitionAPIClient() { IgnoreInMemoryCache = false };
+            var setName = SetName.Parse("v1.0:ntparc:40 Shot Standing");
+
+            var result = await client.GetCourseOfFireDefinitionAsync(setName);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+
+            var definition = result.Definition;
+            var msgResponse = result.MessageResponse;
+
+            Assert.IsNotNull(definition);
+            Assert.IsNotNull(msgResponse);
+
+            Assert.AreEqual(setName.ToString(), definition.SetName);
+            Assert.AreEqual(result.DefinitionType, definition.Type);
+            Assert.IsTrue(definition.RangeScripts.Count > 0);
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].SegmentGroupName == "Standing Sighters");
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation.Count > 0);
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation[0].Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation[0].ParticipantRanks == "1..8");
         }
 
     }
