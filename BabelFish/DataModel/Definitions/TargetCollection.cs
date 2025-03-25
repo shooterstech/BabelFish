@@ -62,5 +62,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 			return meetsSpecification;
 		}
-	}
+
+        /// <inheritdoc />
+        public override bool SetDefaultValues() {
+            this.TargetCollections = new List<TargetCollectionModal>();
+
+            var defaultTcm = new TargetCollectionModal();
+            defaultTcm.RangeDistance = "10m";
+            defaultTcm.TargetCollectionName = "Default Collection";
+            defaultTcm.TargetDefs.Add( "v1.0:issf:10m Air Rifle" );
+
+            return true;
+        }
+    }
 }
