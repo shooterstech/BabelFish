@@ -36,39 +36,69 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// The AttributeValueAppellation to use within this mapping.
+        /// The AttributeValueAppellations to use within this mapping.
         /// </summary>
-        [JsonPropertyOrder ( 1 )]
+        /// <remarks>
+        /// This property is ignored in the EVENT AND STAGE STYLE MAPPING's DefaultMapping section.
+        /// </remarks>
+        [JsonPropertyOrder( 1 )]
         public List<string> AttributeValueAppellation { get; set; } = new List<string>();
 
         /// <summary>
         /// The TargetCollectionName to use within this mapping.
         /// </summary>
-        [JsonPropertyOrder ( 2 )]
+        /// <remarks>
+        /// This property is ignored in the EVENT AND STAGE STYLE MAPPING's DefaultMapping section.
+        /// </remarks>
+        [JsonPropertyOrder( 2 )]
         public List<string> TargetCollectionName { get; set; } = new List<string>();
 
         /// <summary>
         /// The EventStyle definition to use if a mappings could not be found.
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
-        [DefaultValue( "" )] //Purposefully setting the JSON serializer default value to an empty string, which does not equal the object initialzer default value.
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "v1.0:orion:Default" )]
         public string DefaultEventStyleDef { get; set; } = "v1.0:orion:Default";
+
+        /// <summary>
+        /// The EventAppellation specific mappings to use for EVENT STYLES.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
+        public List<EventStyleSelection> EventStyleMappings { get; set; } = new List<EventStyleSelection> { };
 
         /// <summary>
         /// The StageStyle definition to use if a mapping could not be found.
         /// </summary>
-        [JsonPropertyOrder ( 4 )]
-        [DefaultValue( "" )] //Purposefully setting the JSON serializer default value to an empty string, which does not equal the object initialzer default value.
+        [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "v1.0:orion:Default" )]
         public string DefaultStageStyleDef { get; set; } = "v1.0:orion:Default";
 
-        public List<EventStyleSelection> EventStyleMappings { get; set; } = new List<EventStyleSelection> { };
-
+        /// <summary>
+        /// The EventAppellation specific mappings to use for STAGE STYLES.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
         public List<StageStyleSelection> StageStyleMappings { get; set; } = new List<StageStyleSelection> { };
 
         /// <inheritdoc/>
-        [DefaultValue( "" )]
-        [JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]        
         public string Comment { get; set; } = string.Empty;
+
+        public bool ShouldSerializeEventStyleMappings() {
+            return EventStyleMappings != null && EventStyleMappings.Count > 0;
+        }
+
+        public bool ShouldSerializeStageStyleMappings() {
+            return StageStyleMappings != null && StageStyleMappings.Count > 0;
+        }
+
+        public bool ShouldSerializeAttributeValueAppellation() {
+            return AttributeValueAppellation != null && AttributeValueAppellation.Count > 0;
+        }
+
+        public bool ShouldSerializeTargetCollectionName() {
+            return TargetCollectionName != null && TargetCollectionName.Count > 0;
+        }
 
         /// <inheritdoc/>
         /// <remarks>Returns the EVENT STYLE definition referenced by the property DefaultEventStyleDef </remarks>

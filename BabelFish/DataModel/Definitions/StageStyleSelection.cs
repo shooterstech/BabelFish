@@ -1,9 +1,4 @@
-﻿using System.Text.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -16,15 +11,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Stage's appellation (name) to use when looking up the mapping. Stage appellations are usually common across (printed) rulebooks that have different courses of fire.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public string StageAppellation { get; set; } = string.Empty;
 
         /// <summary>
         /// String formatted as a SetName. The STAGE STYLE definition to use in this mapping.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public string StageStyleDef { get; set; } = "v1.0:orion:Default";
 
         /// <inheritdoc/>
-        [JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
 
@@ -36,6 +33,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             
             var sb = SetName.Parse( StageStyleDef );
             return await DefinitionCache.GetStageStyleDefinitionAsync( sb );
+        }
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return $"EventStyleSelectin for {StageAppellation}";
         }
     }
 }

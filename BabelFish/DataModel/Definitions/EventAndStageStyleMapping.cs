@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Scopos.BabelFish.DataActors.Specification.Definitions;
+﻿using Scopos.BabelFish.DataActors.Specification.Definitions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,12 +28,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The default Event Style and Stage Styles to use, when no matches can be found with in the .Mappings array. 
         /// </summary>
+        [G_NS.JsonProperty( Order = 20  )]
         public EventAndStageStyleMappingObj DefaultMapping { get; set; } = new EventAndStageStyleMappingObj();
 
         /// <summary>
         /// Lists the Event Styles and Stage Styles to use, for a specific set of Target Collection Names, Attribute Value Appelations,
         /// Event Appelations and Stage Appelations.
         /// </summary>
+        [G_NS.JsonProperty( Order = 20 )]
         public List<EventAndStageStyleMappingObj> Mappings { get; set; } = new List<EventAndStageStyleMappingObj> { };
 
         /// <inheritdoc />
@@ -120,6 +121,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return list;
+        }
+
+        /// <inheritdoc />
+        public override bool SetDefaultValues() {
+            base.SetDefaultValues();
+
+            this.DefaultMapping = new EventAndStageStyleMappingObj();
+            this.DefaultMapping.DefaultStageStyleDef = "v1.0:orion:Default";
+            this.DefaultMapping.DefaultEventStyleDef = "v1.0:orion:Default";
+            this.Mappings = new List<EventAndStageStyleMappingObj>();
+
+            return true;
         }
     }
 }
