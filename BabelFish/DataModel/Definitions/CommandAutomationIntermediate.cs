@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
-    public class CommandAutomationIntermediate
+    public abstract class CommandAutomationIntermediate
     {
         public Participant participant { get; set; }
 

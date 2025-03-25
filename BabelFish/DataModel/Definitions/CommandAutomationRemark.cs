@@ -10,10 +10,10 @@ namespace Scopos.BabelFish.DataModel.Definitions
     public class CommandAutomationRemark : CommandAutomation { 
 
 
-    public CommandAutomationRemark()
+        public CommandAutomationRemark()
         {
             this.Subject = CommandAutomationSubject.REMARK;
-            this.Action = RemarkVisibility.HIDDEN;
+            this.Action = RemarkVisibility.HIDE;
             this.ParticipantRanks = string.Empty;
             this.Condition = ParticipantRemark.BUBBLE;
         }
@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// Action describes what should be done to the remark specified, on the participants specified.
         /// </summary>
         [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        public RemarkVisibility Action { get; set; } = RemarkVisibility.HIDDEN;
+        public RemarkVisibility Action { get; set; } = RemarkVisibility.HIDE;
 
         /// <summary>
         /// Condition to add to the participants on the ranks given.
@@ -92,6 +92,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
                 {
                     CommandAutomationIntermediateRemark interRemark = new CommandAutomationIntermediateRemark();
                     interRemark.visibility = Action; // doesn't matter what I am doing, it's gonna get passed off down the line.
+                    interRemark.condition = Condition;
                     interRemark.participant = item.Participant;
                     caIntermediate.Add(interRemark);
                 }

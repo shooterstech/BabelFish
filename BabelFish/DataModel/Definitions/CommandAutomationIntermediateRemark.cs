@@ -9,6 +9,8 @@ namespace Scopos.BabelFish.DataModel.Definitions
     {
         public RemarkVisibility visibility { get; set; }
 
-        public CommandAutomationSubject subject = CommandAutomationSubject.REMARK;
+        public CommandAutomationSubject subject { get; set; } = CommandAutomationSubject.REMARK;
+
+        public ParticipantRemark condition { get; set; }
     }
 }

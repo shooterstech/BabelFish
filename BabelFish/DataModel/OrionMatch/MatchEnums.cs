@@ -426,7 +426,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Hide the Remark
         /// </summary>
-        HIDDEN
+        HIDE
     };
 
 

@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 var thing = Find(match);
                 if (thing != null)
                 {
-                    this[(int)thing].Visibility = RemarkVisibility.HIDDEN;
+                    this[(int)thing].Visibility = RemarkVisibility.HIDE;
                 }
             }
         }
