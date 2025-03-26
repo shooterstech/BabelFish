@@ -68,37 +68,37 @@ namespace Scopos.BabelFish.Tests.Definition {
             var integerDescending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.DESCENDING,
                 EventName = "Qualification",
-                Source = "I"
+                Source = TieBreakingRuleScoreSource.I
             };
 
             var integerAscending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.ASCENDING,
                 EventName = "Qualification",
-                Source = "I"
+                Source = TieBreakingRuleScoreSource.I
             };
 
             var decimalDescending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.DESCENDING,
                 EventName = "Qualification",
-                Source = "D"
+                Source = TieBreakingRuleScoreSource.D
             };
 
             var decimalAscending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.ASCENDING,
                 EventName = "Qualification",
-                Source = "D"
+                Source = TieBreakingRuleScoreSource.D
             };
 
             var xDescending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.DESCENDING,
                 EventName = "Qualification",
-                Source = "X"
+                Source = TieBreakingRuleScoreSource.X
             };
 
             var xAscending = new TieBreakingRuleScore() {
                 SortOrder = SortBy.ASCENDING,
                 EventName = "Qualification",
-                Source = "X"
+                Source = TieBreakingRuleScoreSource.X
             };
 
             var directive = new RankingDirective();
@@ -191,27 +191,27 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             var familyName = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Source = "FamilyName"
+                Source = TieBreakingRuleParticipantAttributeSource.FamilyName
             };
 
             var givenName = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Source = "GivenName"
+                Source = TieBreakingRuleParticipantAttributeSource.GivenName
             };
 
             var familyNameDesc = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.DESCENDING,
-                Source = "FamilyName"
+                Source = TieBreakingRuleParticipantAttributeSource.FamilyName
             };
 
             var compeNumber = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Source = "CompetitorNumber"
+                Source = TieBreakingRuleParticipantAttributeSource.CompetitorNumber
             };
 
             var country = new TieBreakingRuleParticipantAttribute() {
                 SortOrder = SortBy.ASCENDING,
-                Source = "Country"
+                Source = TieBreakingRuleParticipantAttributeSource.Country
             };
 
             var directive = new RankingDirective();

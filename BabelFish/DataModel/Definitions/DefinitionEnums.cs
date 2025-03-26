@@ -713,6 +713,60 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         ATTRIBUTE
     }
 
+    public enum TieBreakingRuleParticipantAttributeSource {
+        FamilyName,
+        GivenName,
+        MiddleName,
+        CompetitorNumber,
+        DisplayName,
+        DisplayNameShort,
+        HomeTown,
+        Country,
+        Club
+    }
+
+    public enum TieBreakingRuleScoreSource {
+        /// <summary>
+        /// Use the integer score
+        /// </summary>
+        I,
+
+        /// <summary>
+        /// Use the decimal score
+        /// </summary>
+        D,
+
+        /// <summary>
+        /// Use the special sum rulebook score
+        /// </summary>
+        S,
+
+        /// <summary>
+        /// Use the inner ten score
+        /// </summary>
+        X,
+
+        /// <summary>
+        /// Use the integer socre, and if still tied then use the inner ten score
+        /// </summary>
+        IX,
+
+        /// <summary>
+        /// Use the special use case J score
+        /// </summary>
+        J,
+
+        /// <summary>
+        /// Use the special use case K score
+        /// </summary>
+        K,
+
+        /// <summary>
+        /// Use the special use case L score
+        /// </summary>
+        L
+    }
+
 
     public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
 

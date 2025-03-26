@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Scopos.BabelFish.Helpers;
 
@@ -22,6 +23,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// May contain a place holder "{}". If used, ValueSeries must be included to compile the list of EventNames to check.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public string EventName { get; set; } = string.Empty;
 
         /// <summary>
@@ -29,6 +31,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// Required when EventName has a placeholder, ignored otherwise.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        [DefaultValue( "" )]
         public string Values { get; set; } = string.Empty;
 
         /// <summary>
@@ -47,7 +51,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>L => Use the special use case L score.</item>
         /// </list>
         /// </remarks>
-        public string Source { get; set; } = "IX";
+        [G_NS.JsonProperty( Order = 4, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( TieBreakingRuleScoreSource.IX )]
+        public TieBreakingRuleScoreSource Source { get; set; } = TieBreakingRuleScoreSource.IX;
 
         /// <inheritdoc/>
         public override string ToString() {

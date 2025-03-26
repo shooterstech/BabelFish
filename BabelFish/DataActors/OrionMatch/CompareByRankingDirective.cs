@@ -176,47 +176,36 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (TryGetScore( x, rule.EventName, out xScore ) && TryGetScore( y, rule.EventName, out yScore )) {
                 //When the rule's .Method is "Score" the .Source shold always be a string. However, checking for it to prevent exceptions being thrown.
 
-                string source = rule.Source;
-                switch (source) {
-                    case "I":
-                    case "i":
+                switch (rule.Source) {
+                    case TieBreakingRuleScoreSource.I:
                         compare = xScore.I - yScore.I;
                         break;
-                    case "X":
-                    case "x":
+                    case TieBreakingRuleScoreSource.X:
                         compare = xScore.X - yScore.X;
                         break;
-                    case "IX":
-                    case "Ix":
-                    case "iX":
-                    case "ix":
+                    case TieBreakingRuleScoreSource.IX:
                         compare = xScore.I - yScore.I;
                         if (compare != 0)
                             break;
                         compare = xScore.X - yScore.X;
                         break;
-                    case "D":
-                    case "d":
+                    case TieBreakingRuleScoreSource.D:
                         //To avoid floating point errors, need to evalute jus the first decimal place
                         compare = (int)((xScore.D - yScore.D) * 100);
                         break;
-                    case "S":
-                    case "s":
+                    case TieBreakingRuleScoreSource.S:
                         //To avoid floating point errors, need to evalute jus the first decimal place
                         compare = (int)((xScore.S - yScore.S) * 100);
                         break;
-                    case "J":
-                    case "j":
+                    case TieBreakingRuleScoreSource.J:
                         //To avoid floating point errors, need to evalute jus the first three decimal place
                         compare = (int)((xScore.J - yScore.J) * 10000);
                         break;
-                    case "K":
-                    case "k":
+                    case TieBreakingRuleScoreSource.K:
                         //To avoid floating point errors, need to evalute jus the first three decimal place
                         compare = (int)((xScore.K - yScore.K) * 10000);
                         break;
-                    case "L":
-                    case "l":
+                    case TieBreakingRuleScoreSource.L:
                         //To avoid floating point errors, need to evalute jus the first three decimal place
                         compare = (int)((xScore.L - yScore.L) * 10000);
                         break;
@@ -271,50 +260,49 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         private int CompareParticipantAttribute( TieBreakingRuleParticipantAttribute rule, IEventScores x, IEventScores y ) {
 
             int compare = 0;
-            string source = rule.Source.ToUpper();
-            switch (source) {
-                case "FAMILYNAME":
+            switch (rule.Source) {
+                case TieBreakingRuleParticipantAttributeSource.FamilyName:
                     if (x.Participant is Individual && y.Participant is Individual)
                         compare = ((Individual)x.Participant).FamilyName.CompareTo( ((Individual)y.Participant).FamilyName );
                     break;
 
-                case "GIVENNAME":
+                case TieBreakingRuleParticipantAttributeSource.GivenName:
                     if (x.Participant is Individual && y.Participant is Individual)
                         compare = ((Individual)x.Participant).GivenName.CompareTo( ((Individual)y.Participant).GivenName );
                     break;
 
-                case "MIDDLENAME":
+                case TieBreakingRuleParticipantAttributeSource.MiddleName:
                     if (x.Participant is Individual && y.Participant is Individual)
                         compare = ((Individual)x.Participant).MiddleName.CompareTo( ((Individual)y.Participant).MiddleName );
                     break;
 
-                case "COMPETITORNUMBER":
+                case TieBreakingRuleParticipantAttributeSource.CompetitorNumber:
                     if (x.Participant is Individual && y.Participant is Individual)
                         compare = ((Individual)x.Participant).CompetitorNumber.CompareToAsIntegers( ((Individual)y.Participant).CompetitorNumber );
                     break;
 
-                case "DISPLAYNAME":
+                case TieBreakingRuleParticipantAttributeSource.DisplayName:
                     compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
                     break;
 
-                case "DISPLAYNAMESHORT":
+                case TieBreakingRuleParticipantAttributeSource.DisplayNameShort:
                     compare = x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
                     break;
 
-                case "HOMETOWN":
+                case TieBreakingRuleParticipantAttributeSource.HomeTown:
                     compare = x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
                     break;
 
-                case "COUNTRY":
+                case TieBreakingRuleParticipantAttributeSource.Country:
                     compare = x.Participant.Country.CompareTo( y.Participant.Country );
                     break;
 
-                case "CLUB":
+                case TieBreakingRuleParticipantAttributeSource.Club:
                     compare = x.Participant.Club.CompareTo( y.Participant.Club );
                     break;
 
                 default:
-                    logger.Error( $"Unexpected Method value in TieBreakingRule '{(string)rule.Source}'." );
+                    logger.Error( $"Unexpected Method value in TieBreakingRule '{rule.Source}'." );
                     compare = 0;
                     break;
 

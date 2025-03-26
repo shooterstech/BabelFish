@@ -20,6 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The SetName of the Attribute to use to compare. Must be a "Simple Attribute"
         /// </summary>
         /// <remarks>
+        [G_NS.JsonProperty( Order = 2 )]
         public string Source { get; set; }
 
         /// <inheritdoc/>

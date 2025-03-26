@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Scopos.BabelFish.Helpers;
 
@@ -24,6 +25,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// May contain a place holder "{}". If used, ValueSeries must be included to compile the list of EventNames to check.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public string EventName { get; set; } = string.Empty;
 
         /// <summary>
@@ -31,12 +33,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// Required when EventName has a placeholder, ignored otherwise.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        [DefaultValue( "" )]
         public string Values { get; set; } = string.Empty ;
 
         /// <summary>
         /// The integer score value to use to count.
         /// </summary>
         /// <remarks>Example 10, 9, 8, etc</remarks>
+        [G_NS.JsonProperty( Order = 4, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( 0 )]
         public int Source { get; set; } = 10;
 
         /// <inheritdoc/>
