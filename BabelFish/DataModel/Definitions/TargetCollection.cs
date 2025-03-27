@@ -37,6 +37,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 11 )]
         public List<TargetCollectionModal> TargetCollections { get; set; } = new List<TargetCollectionModal>();
 
+        /// <summary>
+        /// Helper method to return a list of TargetCollectionNames.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetTargetCollectionNames() {
+            List<string> list = new List<string>();
+            foreach (var item in TargetCollections) {
+                list.Add( item.TargetCollectionName );
+            }
+            return list;
+        }
+
         public string GetDefaultTargetCollectionName() {
             if (TargetCollections.Count > 0)
                 return TargetCollections[0].TargetCollectionName;

@@ -70,6 +70,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<string> RelatedStageStyles { get; set; } = new List<string>();
 
         /// <inheritdoc />
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
 
             SetName scoreFormatCollectionSetName = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( ScoreFormatCollectionDef );

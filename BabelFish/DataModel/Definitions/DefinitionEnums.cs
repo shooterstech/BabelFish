@@ -565,6 +565,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         MATCH_TYPE_TOURNAMENT,
 
         /// <summary>
+        /// Evaluates to true when the Result List report scores were shot on ESTs.
+        /// </summary>
+        /// <remarks>In a Virtual Match, this evalutes to true if one or more of the VM locations was shot on ESTs.</remarks>
+        SHOT_ON_EST,
+
+        /// <summary>
+        /// Evalutes to true when the Result List reports scores were shot on paper targets.
+        /// </summary>
+        /// <remarks>In a Virtual Match, this evalutes to true if one or more of the VM locations was shot on Paper.</remarks>
+        SHOT_ON_PAPER,
+
+        /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
         /// </summary>
         ENGAGEABLE,

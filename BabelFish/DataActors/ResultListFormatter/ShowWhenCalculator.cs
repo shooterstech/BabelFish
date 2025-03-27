@@ -141,6 +141,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = this.MatchID.VirtualMatch;
                     break;
 
+                case ShowWhenCondition.SHOT_ON_EST:
+                    //If one or more of the VM locations have ESTs, then this will evaluate to true.
+                    foreach( var md in RLF.ResultList.Metadata.Values ) {
+                        if ( md.ScoringSystem == ScoringSystem.EST ) {
+                            return true;
+                        }
+                    }
+                    return false;
+
+                case ShowWhenCondition.SHOT_ON_PAPER:
+                    //If one or more of the VM locations have PAPER, then this will evaluate to true.
+                    foreach (var md in RLF.ResultList.Metadata.Values) {
+                        if (md.ScoringSystem == ScoringSystem.PAPER) {
+                            return true;
+                        }
+                    }
+                    return false;
+
                 case ShowWhenCondition.RESULT_STATUS_FUTURE:
                     answer = RLF.ResultList.Status == ResultStatus.FUTURE;
                     break;

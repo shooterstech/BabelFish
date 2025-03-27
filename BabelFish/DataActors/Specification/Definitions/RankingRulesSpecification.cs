@@ -143,17 +143,49 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 								Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Source must be a SimpleAttribute." );
 							}
 						}
-					} else if ( rule is TieBreakingRuleCountOf ) {
+
+					} else if (rule is TieBreakingRuleCountOf) {
 						var tbRule = rule as TieBreakingRuleCountOf;
 
 						//Soucre must be an integer >= 0;
-						if ( tbRule.Source < 0) {
+						if (tbRule.Source < 0) {
 							valid = false;
-                            Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Source must be an integer equal to or greater than 0." );
-                        }
-					} 
+							Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Source must be an integer equal to or greater than 0." );
+						}
 
-					//Nothing to check for in TieBreakingRuleParticipantAttribute or TieBreakingRuleScore since the source are enums.
+                        //EventName may not be empty
+                        if (string.IsNullOrEmpty( tbRule.EventName )) {
+							valid = false;
+							Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].EventName must not be an empty string." );
+                        }
+
+                        //If EventName has {} then Values needs to be a Values Series
+                        //TODO Check that .Values is a ValueSeries
+                        if (tbRule.EventName.Contains( "{}" ) && string.IsNullOrEmpty( tbRule.Values )) {
+                            valid = false;
+                            Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Values must not be an empty string when EventName contains the wildcard replacement characters '{{}}'." );
+
+                        }
+
+                    } else if (rule is TieBreakingRuleScore) {
+                        var tbRule = rule as TieBreakingRuleScore;
+
+						//EventName may not be empty
+                        if (string.IsNullOrEmpty( tbRule.EventName )) {
+                            valid = false;
+                            Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].EventName must not be an empty string." );
+                        }
+
+						//If EventName has {} then Values needs to be a Values Series
+						//TODO Check that .Values is a ValueSeries
+						if ( tbRule.EventName.Contains( "{}" ) && string.IsNullOrEmpty( tbRule.Values) ) {
+                            valid = false;
+                            Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Values must not be an empty string when EventName contains the wildcard replacement characters '{{}}'." );
+
+                        }
+                    }
+
+					//Nothing to check for in TieBreakingRuleParticipantAttribute
 
 					ruleIndex++;
 				}

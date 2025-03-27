@@ -1,4 +1,7 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -10,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// 
     /// The ResultListFormat will describes in a 2D fashion the data from the ResultList to display.
     /// </summary>
-    public class ResultListFormat : Definition {
+    public class ResultListFormat : Definition, IGetScoreFormatCollectionDefinition {
 
         public ResultListFormat() : base() {
             Type = DefinitionType.RESULTLISTFORMAT;
@@ -37,7 +40,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// the default value is v1.0:orion:Standard Score Formats.
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 11 )]
-        [G_NS.JsonProperty( Order = 11 )]
+        [G_NS.JsonProperty( Order = 11, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
@@ -45,8 +49,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         /// <remarks>The ScoreConfigName is usually specified by the Result List.</remarks>
 		[G_STJ_SER.JsonPropertyOrder( 12 )]
-        [G_NS.JsonProperty( Order = 12 )]
-        public string ScoreConfigDefault { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 12, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "Integer" )]
+        public string ScoreConfigDefault { get; set; } = "Integer";
 
         /// <summary>
         /// A list of ResultListFields that define field values that will be used in the text output of the 
@@ -73,9 +78,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return meetsSpecification;
         }
 
+        /// <summary>
+        /// Helper method, that returns a list of FieldNames that are 
+        /// acceptable for string interpolation in Display.Columns.
+        /// This list includes both the standard FieldNames (e.g. DisplayName)
+        /// as well of the FieldNames defined by the user in .Fields
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetFieldNames() {
+            List<string> fields = new List<string>();
+            fields.AddRange( ResultListIntermediateFormattedRow.StandardParticipantAttributeFields );
+
+            foreach( var field in Fields )
+                fields.Add( field.FieldName );
+
+            return fields;
+        }
+
         /// <inheritdoc />
         public override bool ConvertValues() {
-            bool updateHappened = base.SetDefaultValues();
+            bool updateHappened = base.ConvertValues();
 
             //Convert from using ClassList to ClassSet
             //On Columns
@@ -216,6 +238,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "",
                 Body = "",
+                BodyLinkTo = LinkToOption.PublicProfile,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-profile",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -228,6 +251,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
                 Body = "{DisplayName}",
+                BodyLinkTo = LinkToOption.ResultCOF,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -240,6 +264,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
                 Body = "{DisplayNameAbbreviated}",
+                BodyLinkTo = LinkToOption.ResultCOF,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -277,8 +302,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     Name = "rlf-col-shot",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
                 }},
-                ShowWhen = new ShowWhenVariable() {
-                    Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                ShowWhen = new ShowWhenEquation() {
+                    Boolean = ShowWhenBoolean.AND,
+                    Arguments = new List<ShowWhenBase>() {
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.SUPPLEMENTAL
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.SHOT_ON_EST
+                        }
+                    }
                 }
             } );
 
@@ -364,6 +400,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return updateHappened;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
+
+            SetName scoreFormatCollectionSetName = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( ScoreFormatCollectionDef );
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+
         }
     }
 }

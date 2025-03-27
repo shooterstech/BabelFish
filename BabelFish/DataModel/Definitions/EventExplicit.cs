@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// The Children of the Event are listed explicitly. 
+    /// </summary>
     public class EventExplicit : Event {
 
         public EventExplicit() {

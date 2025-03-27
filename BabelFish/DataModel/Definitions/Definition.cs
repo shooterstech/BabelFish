@@ -273,7 +273,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             //These are common values appropirate for defaults.
             Discipline = DisciplineType.RIFLE;
-            Subdiscipline = "Subdisciipline Name";
+            Subdiscipline = "Subdiscipline Name";
             return true;
         }
 

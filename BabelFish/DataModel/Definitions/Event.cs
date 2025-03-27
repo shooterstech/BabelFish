@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -127,6 +126,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
         public RankingRuleMapping RankingRuleMapping { get; set; } = new RankingRuleMapping();
+
+        public bool GetShouldSerializeRankingRuleMapping() {
+
+            if (RankingRuleMapping.Count == 0)
+                return false;
+
+            if (RankingRuleMapping.Count == 1 &&
+                RankingRuleMapping.TryGetValue( RankingRuleMapping.DEFAULTDEF, out string rankingRuleDef ) &&
+                rankingRuleDef == RankingRuleMapping.DEFAULT_RANKING_RULE_DEF)
+                return false;
+
+            return true;
+        }
 
         /// <summary>
         /// Indicates if this Event is outside of the Event Tree.

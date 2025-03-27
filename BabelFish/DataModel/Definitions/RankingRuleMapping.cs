@@ -1,12 +1,6 @@
 ﻿using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.DataModel.Definitions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
-namespace BabelFish.DataModel.Definitions {
+namespace Scopos.BabelFish.DataModel.Definitions {
 
 
 
@@ -15,11 +9,25 @@ namespace BabelFish.DataModel.Definitions {
     /// </summary>
     public class RankingRuleMapping : Dictionary<string, string>, IGetRankingRuleDefinitionList {
 
+        public RankingRuleMapping() {
+            this[DEFAULTDEF] = DEFAULT_RANKING_RULE_DEF;
+        }
+
+        public RankingRuleMapping( string rankingRuleDef ) {
+            this[DEFAULTDEF] = rankingRuleDef;
+        }
+
         /// <summary>
         /// This is the default ScoreConfig name. When no other ScoreConfig names match, this value may point to the default RankingRuleDefinition to use instead.
         /// </summary>
         public const string DEFAULTDEF = "DefaultDef";
 
+        public const string DEFAULT_RANKING_RULE_DEF = "v1.0:orion:Alphabetical Participant Sort";
+
+        /// <inheritdoc />
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
         public async Task<Dictionary<string, RankingRule>> GetRankingRuleDefinitionListAsync() {
 
             Dictionary<string, RankingRule> rankingRules = new Dictionary<string, RankingRule>();
