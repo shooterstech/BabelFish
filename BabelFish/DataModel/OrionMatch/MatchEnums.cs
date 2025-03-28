@@ -442,4 +442,41 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         REMARK
     };
+
+    /// <summary>
+    /// The type of scoring system in use.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum ScoringSystem {
+        /// <summary>
+        /// Target system is unknown.
+        /// </summary>
+        /// <remarks>Result List generated prior to Orion 2.22 will have this listed.</remarks>
+        UNKNOWN,
+
+        /// <summary>
+        /// ESTs where used to score all shots.
+        /// </summary>
+        EST,
+
+        /// <summary>
+        /// All shots were shot on paper but scored by electronic means. Orion's VIS is an example.
+        /// </summary>
+        TARGET_READING_MACHINE,
+
+        /// <summary>
+        /// All shots were shot on paper and scored using manual methods.
+        /// </summary>
+        PAPER,
+
+        /// <summary>
+        /// Scores were entered by hand. Scoring system is unknown.
+        /// </summary>
+        MANUAL,
+
+        /// <summary>
+        /// A Mix of scoring systems were used.
+        /// </summary>
+        MIXED
+    }
 }

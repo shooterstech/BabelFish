@@ -113,5 +113,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 11 )]
         [DefaultValue( "" )]
         public string SegmentGroupName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The type of target system that was used to score shots.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
+        [DefaultValue( ScoringSystem.UNKNOWN )]
+        public ScoringSystem ScoringSystem { get; set; } = ScoringSystem.UNKNOWN;
+
+        /// <summary>
+        /// The name of the scoring system in use. An empty string means unknown or a mix of differnt Scoring Systems.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
+        [DefaultValue( "" )]
+        public string ScoringSystemName { get; set; } = string.Empty;
     }
 }

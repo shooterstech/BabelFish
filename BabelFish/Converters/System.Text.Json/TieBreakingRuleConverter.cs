@@ -37,14 +37,14 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             return JsonSerializer.Deserialize<TieBreakingRuleAttribute>( root.GetRawText(), options );
                         default:
                             return new TieBreakingRuleParticipantAttribute() {
-                                Source = "DisplayName",
+                                Source = TieBreakingRuleParticipantAttributeSource.DisplayName,
                                 Comment = "Default TieBreakingRule because the value read in could not be deserialized."
                             };
                     }
                 }
             } catch (Exception ex) {
                 return new TieBreakingRuleParticipantAttribute() {
-                    Source = "DisplayName",
+                    Source = TieBreakingRuleParticipantAttributeSource.DisplayName,
                     Comment = "Default TieBreakingRule because the value read in could not be deserialized."
                 };
             }

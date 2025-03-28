@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -14,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         ///
         /// Required, may not be an empty string.
         /// </summary>
-        [JsonPropertyOrder ( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string TargetCollectionName { get; set; } = string.Empty;
 
         /// <summary>
@@ -22,17 +19,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// Required, may not be an empty list. All values must be known TARGET definition set names.
         /// </summary>
-        [JsonPropertyOrder ( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public List<string> TargetDefs { get; set; } = new List<string>();
 
         /// <summary>
         /// This Target Collection Modal is intended for use on a range with thie Range Distance.
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
         public string RangeDistance { get; set; } = "10m";
 
         /// <inheritdoc/>
-        [JsonPropertyOrder ( 99 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

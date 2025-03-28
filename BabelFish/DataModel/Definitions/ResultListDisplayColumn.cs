@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using BabelFish.DataModel.Definitions;
 using Newtonsoft.Json;
-using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -72,6 +67,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonProperty( Order = 6 )]
         public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
+
+        public bool ShouldSerializeShowWhen() {
+
+            //Dont serialize ShowWhen if it says to always show
+            if (ShowWhen is ShowWhenVariable showWhen && showWhen.Condition == ShowWhenCondition.TRUE) {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// List of ClassSet objects, each holds a name of a CSS class (string) and a ShowWhen object to determine if it should be added the the classes used when displaying the column.

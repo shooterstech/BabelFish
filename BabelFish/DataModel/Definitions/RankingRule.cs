@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [G_STJ_SER.JsonPropertyOrder( 1 )]
-        [G_NS.JsonProperty( Order = 1 )]
+        [G_NS.JsonProperty( Order = 20 )]
         [DefaultValue(null)]
         public List<RankingDirective> RankingRules { get; set; } = new List<RankingDirective>();
 
@@ -48,5 +48,46 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 			return meetsSpecification;
 		}
-	}
+
+        /// <inheritdoc />
+        public override bool SetDefaultValues() {
+            base.SetDefaultValues();
+
+            RankingDirective rd = new RankingDirective();
+            rd.AppliesTo = "*";
+
+            var aggregateRule = new TieBreakingRuleScore() {
+                EventName = "Aggregate",
+                SortOrder = SortBy.DESCENDING,
+                Source = TieBreakingRuleScoreSource.I,
+                Comment = "Auto generated default Tie Breaking Rule"
+            };
+            rd.Rules.Add( aggregateRule );
+
+            var familyName = new TieBreakingRuleParticipantAttribute() {
+                SortOrder = SortBy.ASCENDING,
+                Source = TieBreakingRuleParticipantAttributeSource.FamilyName
+            };
+            var givenName = new TieBreakingRuleParticipantAttribute() {
+                SortOrder = SortBy.ASCENDING,
+                Source = TieBreakingRuleParticipantAttributeSource.GivenName
+            };
+            var middleName = new TieBreakingRuleParticipantAttribute() {
+                SortOrder = SortBy.ASCENDING,
+                Source = TieBreakingRuleParticipantAttributeSource.MiddleName
+            };
+            var compNumber = new TieBreakingRuleParticipantAttribute() {
+                SortOrder = SortBy.ASCENDING,
+                Source = TieBreakingRuleParticipantAttributeSource.CompetitorNumber
+            };
+            rd.ListOnly.Add( familyName );
+            rd.ListOnly.Add( givenName );
+            rd.ListOnly.Add( middleName );
+            rd.ListOnly.Add( compNumber );
+
+            this.RankingRules.Add( rd );
+
+            return true;
+        }
+    }
 }

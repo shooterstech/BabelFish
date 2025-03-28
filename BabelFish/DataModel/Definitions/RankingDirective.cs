@@ -33,6 +33,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// For example, “1..8” means to apply this RankingRule to participants currently in first through eighth place.
         /// Not required, assumed to be '*' if missing.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "*" )]
         public string AppliesTo { get; set; } = "*";
 
@@ -100,6 +101,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// This attribute is required and must have one or more elements in the list.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public List<TieBreakingRuleBase> Rules { get; set; } = new List<TieBreakingRuleBase>();
 
         /// <summary>
@@ -110,6 +112,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// This attribute is not required.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public List<TieBreakingRuleBase> ListOnly { get; set; } = new List<TieBreakingRuleBase>();
 
         /// <summary>
@@ -134,7 +137,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        Source = "D"
+                        Source = TieBreakingRuleScoreSource.D
                     } );
                     break;
 
@@ -148,21 +151,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        Source = "I"
+                        Source = TieBreakingRuleScoreSource.I
                     } );
 
                     directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        Source = "X"
+                        Source = TieBreakingRuleScoreSource.X
                     } );
                     break;
             }
 
             directive.ListOnly.Add( new TieBreakingRuleParticipantAttribute() {
                 Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
-                Source = "DisplayName",
+                Source =  TieBreakingRuleParticipantAttributeSource.DisplayName,
                 SortOrder = Helpers.SortBy.ASCENDING
             } );
 

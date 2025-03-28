@@ -37,6 +37,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 11 )]
         public List<TargetCollectionModal> TargetCollections { get; set; } = new List<TargetCollectionModal>();
 
+        /// <summary>
+        /// Helper method to return a list of TargetCollectionNames.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> GetTargetCollectionNames() {
+            List<string> list = new List<string>();
+            foreach (var item in TargetCollections) {
+                list.Add( item.TargetCollectionName );
+            }
+            return list;
+        }
+
         public string GetDefaultTargetCollectionName() {
             if (TargetCollections.Count > 0)
                 return TargetCollections[0].TargetCollectionName;
@@ -62,5 +74,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 			return meetsSpecification;
 		}
-	}
+
+        /// <inheritdoc />
+        public override bool SetDefaultValues() {
+            this.TargetCollections = new List<TargetCollectionModal>();
+
+            var defaultTcm = new TargetCollectionModal();
+            defaultTcm.RangeDistance = "10m";
+            defaultTcm.TargetCollectionName = "Default Collection";
+            defaultTcm.TargetDefs.Add( "v1.0:issf:10m Air Rifle" );
+
+            return true;
+        }
+    }
 }

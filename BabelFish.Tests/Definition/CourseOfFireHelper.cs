@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amazon.DynamoDBv2;
-using BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition {
     public static class CourseOfFireHelper {

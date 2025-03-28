@@ -33,7 +33,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>Club</item>
         /// </list>
         /// </remarks>
-        public string Source { get; set; }
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public TieBreakingRuleParticipantAttributeSource Source { get; set; }
 
         /// <inheritdoc/>
         public override string ToString() {

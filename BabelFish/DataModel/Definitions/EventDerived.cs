@@ -4,6 +4,10 @@ using System.ComponentModel;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// Event where the children are derived based on a ChildEventName and a value series ChildValues
+    /// </summary>
     public class EventDerived : Event {
 
         public EventDerived() {

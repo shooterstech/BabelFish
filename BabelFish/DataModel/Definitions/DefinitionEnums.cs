@@ -565,6 +565,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         MATCH_TYPE_TOURNAMENT,
 
         /// <summary>
+        /// Evaluates to true when the Result List report scores were shot on ESTs.
+        /// </summary>
+        /// <remarks>In a Virtual Match, this evalutes to true if one or more of the VM locations was shot on ESTs.</remarks>
+        SHOT_ON_EST,
+
+        /// <summary>
+        /// Evalutes to true when the Result List reports scores were shot on paper targets.
+        /// </summary>
+        /// <remarks>In a Virtual Match, this evalutes to true if one or more of the VM locations was shot on Paper.</remarks>
+        SHOT_ON_PAPER,
+
+        /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
         /// </summary>
         ENGAGEABLE,
@@ -711,6 +723,60 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "Attribute" )]
         [EnumMember( Value = "Attribute" )]
         ATTRIBUTE
+    }
+
+    public enum TieBreakingRuleParticipantAttributeSource {
+        FamilyName,
+        GivenName,
+        MiddleName,
+        CompetitorNumber,
+        DisplayName,
+        DisplayNameShort,
+        HomeTown,
+        Country,
+        Club
+    }
+
+    public enum TieBreakingRuleScoreSource {
+        /// <summary>
+        /// Use the integer score
+        /// </summary>
+        I,
+
+        /// <summary>
+        /// Use the decimal score
+        /// </summary>
+        D,
+
+        /// <summary>
+        /// Use the special sum rulebook score
+        /// </summary>
+        S,
+
+        /// <summary>
+        /// Use the inner ten score
+        /// </summary>
+        X,
+
+        /// <summary>
+        /// Use the integer socre, and if still tied then use the inner ten score
+        /// </summary>
+        IX,
+
+        /// <summary>
+        /// Use the special use case J score
+        /// </summary>
+        J,
+
+        /// <summary>
+        /// Use the special use case K score
+        /// </summary>
+        K,
+
+        /// <summary>
+        /// Use the special use case L score
+        /// </summary>
+        L
     }
 
 

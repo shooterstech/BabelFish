@@ -21,13 +21,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Specifies the method to use to compare two competitors.
         /// </summary>
         /// <remarks>Method is also the Concrete class differentiator.</remarks>
-        
+
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( TieBreakingRuleMethod.SCORE )]
         public TieBreakingRuleMethod Method { get; set; }
 
         /// <summary>
         /// How the comparison should be made.
         /// </summary>
+        [G_NS.JsonProperty( Order = 10, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public SortBy SortOrder { get; set; }
 
         /// <summary>

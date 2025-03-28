@@ -14,6 +14,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
 
             var valid = true;
+            Messages.Clear();
 
             //Common fields
             var hierarchicalName = new IsDefinitionHierarchicalNameValid();

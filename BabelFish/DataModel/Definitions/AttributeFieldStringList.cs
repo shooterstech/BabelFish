@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// may be any value, of the there is a suggested list of values.
         /// </summary>
         [DefaultValue( FieldType.OPEN )]
-        public FieldType FieldType { get; protected set; } = FieldType.OPEN;
+        public FieldType FieldType { get; set; } = FieldType.OPEN;
 
         /// <summary>
         /// List of possible values, when FieldType is CLOSED or SUGGEST

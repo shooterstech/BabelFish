@@ -68,7 +68,47 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			SpecificationMessages = validation.Messages;
 
 			return meetsSpecification;
-		}
+        }
 
-	}
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize EventStyles when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeEventStyles() {
+            return (EventStyles != null && EventStyles.Count > 0);
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize StageStyles when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeStageStyles() {
+            return (StageStyles != null && StageStyles.Count > 0);
+        }
+
+        public override bool SetDefaultValues() {
+            base.SetDefaultValues();
+
+            StageStyles = new List<string>();
+            StageStyles.Add( "v1.0:orion:Default" );
+            SimpleCOFs = new List<SimpleCOF>();
+
+            var sCof = new SimpleCOF() {
+                Name = "Default",
+                CourseOfFireDef = "v1.0:orion:Default"
+            };
+            sCof.Components = new List<SimpleCOFComponent>();
+            sCof.Components.Add( new SimpleCOFComponent() {
+                StageStyleDef = "v1.0:orion:Default",
+                ScoreConfigName = "Integer",
+                ScoreComponent = ScoreComponent.I
+            } );
+            SimpleCOFs.Add( sCof );
+
+            return true;
+        }
+
+    }
 }
