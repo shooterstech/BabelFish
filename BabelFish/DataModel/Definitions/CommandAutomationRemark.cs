@@ -1,9 +1,5 @@
 ﻿using Scopos.BabelFish.DataModel.OrionMatch;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {

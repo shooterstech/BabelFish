@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Scopos.BabelFish.DataModel.Definitions
+namespace Scopos.BabelFish.DataModel.OrionMatch
 {
     public abstract class CommandAutomationIntermediate
     {

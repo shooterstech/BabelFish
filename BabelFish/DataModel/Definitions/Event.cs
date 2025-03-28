@@ -105,7 +105,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 13 )]
         [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( "" )]
-        //[JsonConverter( typeof( ExcludeEmptyStringConverter ) )]
         public string ResultListFormatDef { get; set; } = string.Empty;
 
         /// <summary>
@@ -127,7 +126,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 15 )]
         public RankingRuleMapping RankingRuleMapping { get; set; } = new RankingRuleMapping();
 
-        public bool GetShouldSerializeRankingRuleMapping() {
+        public bool ShouldSerializeRankingRuleMapping() {
 
             if (RankingRuleMapping.Count == 0)
                 return false;

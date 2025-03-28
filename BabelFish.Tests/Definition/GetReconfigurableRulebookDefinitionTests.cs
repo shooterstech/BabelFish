@@ -7,7 +7,8 @@ using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.Tests.Definition {
+namespace Scopos.BabelFish.Tests.Definition
+{
     [TestClass]
     public class GetReconfigurableRulebookDefinitionTests : BaseTestClass {
 

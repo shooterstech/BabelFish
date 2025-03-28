@@ -213,14 +213,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             var topLvelEvent = new EventExplicit() {
                 EventName = "Individual",
                 EventType = EventtType.EVENT,
-                EventStyleMapping = new EventStyleMapping()
+                EventStyleMapping = new EventStyleMapping(),
+                ResultListFormatDef = "v1.0:orion:Default Individual"
             };
             topLvelEvent.Children.Add( "ChildStage" );
 
             var stageEvent = new EventExplicit() {
                 EventName = "Stage Event",
                 EventType = EventtType.STAGE,
-                StageStyleMapping = new StageStyleMapping()
+                StageStyleMapping = new StageStyleMapping(),
+                ResultListFormatDef = "v1.0:orion:Default Individual"
             };
             stageEvent.Children.Add( "String Event" );
 

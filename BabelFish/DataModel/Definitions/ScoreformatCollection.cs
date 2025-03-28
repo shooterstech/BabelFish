@@ -37,10 +37,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ScoreConfigs = new List<ScoreConfig>();
         }
 
+        /// <summary>
+        /// Defines the list of ScoreFormat names (key values), that must be defined in each ScoreConfig.
+        /// </summary>
+        /// <example>
+        /// <list type="bullet">
+        /// <item>Events</item>
+        /// <item>Shots</item>
+        /// <item>Gap</item>
+        /// </list>
+        /// </example>
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         public List<string> ScoreFormats { get; set; } = new List<string>();
 
+        /// <summary>
+        /// List of ScoreConfigs. Each ScoreConfig pertains to a human recongnizable type of scoring, which is defined in the ScoreConfigName. 
+        /// </summary>
+        /// <example>
+        /// <list type="bullet">
+        /// <item>Integer</item>
+        /// <item>Decimal</item>
+        /// <item>Conventional</item>
+        /// </list>
+        /// </example>
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();

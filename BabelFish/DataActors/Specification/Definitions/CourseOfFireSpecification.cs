@@ -5,92 +5,139 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.DataActors.Specification.Definitions {
-	public class IsCourseOfFireValid : CompositeSpecification<CourseOfFire> {
+    public class IsCourseOfFireValid : CompositeSpecification<CourseOfFire> {
 
-		public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
 
-			var valid = true;
-			Messages.Clear();
+            var valid = true;
+            Messages.Clear();
 
-			//Common fields
-			var hierarchicalName = new IsDefinitionHierarchicalNameValid();
-			var commonName = new IsDefiniitonCommonNameValid();
-			var description = new IsDefiniitonDescriptionValid();
-			var subdiscipline = new IsDefiniitonSubdisciplineValid();
-			var tags = new IsDefiniitonTagsValid();
-			var comment = new IsCommentValid();
-			var owner = new IsDefiniitonOwnerValid();
-			var version = new IsDefiniitonVersionValid();
+            //Common fields
+            var hierarchicalName = new IsDefinitionHierarchicalNameValid();
+            var commonName = new IsDefiniitonCommonNameValid();
+            var description = new IsDefiniitonDescriptionValid();
+            var subdiscipline = new IsDefiniitonSubdisciplineValid();
+            var tags = new IsDefiniitonTagsValid();
+            var comment = new IsCommentValid();
+            var owner = new IsDefiniitonOwnerValid();
+            var version = new IsDefiniitonVersionValid();
 
-			if (!await hierarchicalName.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( hierarchicalName.Messages );
-			} else {
-				if (!await owner.IsSatisfiedByAsync( candidate )) {
-					valid = false;
-					Messages.AddRange( owner.Messages );
-				}
-			}
+            if (!await hierarchicalName.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( hierarchicalName.Messages );
+            } else {
+                if (!await owner.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( owner.Messages );
+                }
+            }
 
-			if (!await version.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( version.Messages );
-			}
+            if (!await version.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( version.Messages );
+            }
 
-			if (!await commonName.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( commonName.Messages );
-			}
+            if (!await commonName.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( commonName.Messages );
+            }
 
-			if (!await description.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( description.Messages );
-			}
+            if (!await description.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( description.Messages );
+            }
 
-			if (!await subdiscipline.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( subdiscipline.Messages );
-			}
+            if (!await subdiscipline.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( subdiscipline.Messages );
+            }
 
-			if (!await tags.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( tags.Messages );
-			}
+            if (!await tags.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( tags.Messages );
+            }
 
-			if (!await comment.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( comment.Messages );
-			}
+            if (!await comment.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( comment.Messages );
+            }
 
-			//Attribute specific fields
-			var tc = new IsCourseOfFireTargetCollectionDefValid();
-			var sc = new IsCourseOfFireScoreFormatCollectionDefValid();
+            //Attribute specific fields
+            var tc = new IsCourseOfFireTargetCollectionDefValid();
+            var scoreFormatCollection = new IsCourseOfFireScoreFormatCollectionDefValid();
             var essm = new IsCourseOfFireDefaultEventAndStageStyleMappingDefValid();
             var a = new IsCourseOfFireDefaultAttributeDefValid();
+            var scoreFormats = new IsCourseOfFireScoreFormatsValid();
+            var singularStageLabesl = new IsCourseOfFireSingularStageLabelsValid();
+            var rankingRuleMapping = new IsCourseOfFireResultEventRankingRuleMappingValid();
+            var resultListFormatDefs = new IsCourseOfFireEventResultListFormatDefValid();
+            var eventStyleMapping = new IsCourseOfFireEventEventStyleMappingValid();
+            var stageStyleMapping = new IsCourseOfFireEventStageStyleMappingValid();
+            var eventTree = new IsCourseOfFireEventTreeValid();
+            var abbrFormats = new IsCourseOfFireAbbreviatedFormatsValid();
 
-            if (! await tc.IsSatisfiedByAsync( candidate )) {
-				valid = false;
-				Messages.AddRange( tc.Messages );
-            }
-
-            if (! await sc.IsSatisfiedByAsync( candidate )) {
+            if (!await tc.IsSatisfiedByAsync( candidate )) {
                 valid = false;
-                Messages.AddRange( sc.Messages );
+                Messages.AddRange( tc.Messages );
             }
 
-            if (! await essm.IsSatisfiedByAsync( candidate )) {
+            if (!await scoreFormatCollection.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( scoreFormatCollection.Messages );
+            } else {
+                if (!await scoreFormats.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( scoreFormats.Messages );
+                }
+            }
+
+            if (!await essm.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( essm.Messages );
             }
 
-            if (! await a.IsSatisfiedByAsync( candidate )) {
+            if (!await a.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( a.Messages );
             }
 
+            if (!await singularStageLabesl.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( singularStageLabesl.Messages );
+            }
+
+            if (!await rankingRuleMapping.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( rankingRuleMapping.Messages );
+            }
+
+            if (!await resultListFormatDefs.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( resultListFormatDefs.Messages );
+            }
+
+            if (!await eventStyleMapping.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( eventStyleMapping.Messages );
+            }
+
+            if (!await stageStyleMapping.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( stageStyleMapping.Messages );
+            }
+
+            if (!await eventTree.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( eventTree.Messages );
+            }
+
+            if (!await abbrFormats.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( abbrFormats.Messages );
+            }
 
             return valid;
-		}
+        }
     }
 
     /// <summary>
@@ -99,9 +146,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     public class IsCourseOfFireTargetCollectionDefValid : CompositeSpecification<CourseOfFire> {
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
             Messages.Clear();
-			bool valid = true;
+            bool valid = true;
 
-			//Test if .TargetCollectionDef is a valid set name for a real lifee TARGET COLLECTION
+            //Test if .TargetCollectionDef is a valid set name for a real lifee TARGET COLLECTION
             var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync( "TargetCollectionDef",
                 candidate.TargetCollectionDef,
                 DefinitionType.TARGETCOLLECTION );
@@ -113,20 +160,20 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             //Test that the DefaultTargetCollectionName value is a name listed in the TARGET COLLECTION 
             var setName = SetName.Parse( candidate.TargetCollectionDef );
-			var targetCollection = await DefinitionCache.GetTargetCollectionDefinitionAsync( setName );
+            var targetCollection = await DefinitionCache.GetTargetCollectionDefinitionAsync( setName );
 
-			bool foundTargetCollectionName = false;
-			foreach( var tc in targetCollection.TargetCollections ) {
-				if ( tc.TargetCollectionName == candidate.DefaultTargetCollectionName ) {
-					foundTargetCollectionName = true;
-					break;
-				}
-			}
+            bool foundTargetCollectionName = false;
+            foreach (var tc in targetCollection.TargetCollections) {
+                if (tc.TargetCollectionName == candidate.DefaultTargetCollectionName) {
+                    foundTargetCollectionName = true;
+                    break;
+                }
+            }
 
-			if (!foundTargetCollectionName) {
-				valid = false;
-				Messages.Add( $"The value of DefaultTargetCollectionName must be listed in the TARGET COLLECTION. The valid values are {string.Join( ", ", targetCollection.GetTargetCollectionNames() )}" );
-			}
+            if (!foundTargetCollectionName) {
+                valid = false;
+                Messages.Add( $"The value of DefaultTargetCollectionName must be listed in the TARGET COLLECTION. The valid values are {string.Join( ", ", targetCollection.GetTargetCollectionNames() )}" );
+            }
 
             return valid;
         }
@@ -171,23 +218,26 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         }
     }
 
-	public class IsCourseOfFireDefaultEventAndStageStyleMappingDefValid : CompositeSpecification<CourseOfFire> {
+    /// <summary>
+    /// Tests that the COURSE OF FIRE's value for DefaultEventAndStageStyleMappingDef is valid.
+    /// </summary>
+    public class IsCourseOfFireDefaultEventAndStageStyleMappingDefValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
             Messages.Clear();
             bool valid = true;
 
-			var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
-				"DefaultEventAndStageStyleMappingDef",
-				candidate.DefaultEventAndStageStyleMappingDef,
-				DefinitionType.EVENTANDSTAGESTYLEMAPPING );
+            var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
+                "DefaultEventAndStageStyleMappingDef",
+                candidate.DefaultEventAndStageStyleMappingDef,
+                DefinitionType.EVENTANDSTAGESTYLEMAPPING );
 
             if (!vm.Valid) {
                 Messages.Add( vm.Message );
-				valid = false;
+                valid = false;
             }
 
-			return valid;
+            return valid;
         }
     }
 
@@ -209,6 +259,377 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     Messages.Add( vm.Message );
                     valid = false;
                 }
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Inspects both the Events and Singulars for valid values for .ScoreFormat.
+    /// </summary>
+    /// <remarks>Assumes that the value for ScoreFormatCollectionDef has already been validated.</remarks>
+    public class IsCourseOfFireScoreFormatsValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+            Messages.Clear();
+            bool valid = true;
+
+            var scoreConfig = await candidate.GetScoreFormatCollectionDefinitionAsync();
+            var scoreFormats = scoreConfig.ScoreFormats;
+
+            int index = 0;
+            foreach (var singular in candidate.Singulars) {
+                if (!scoreFormats.Contains( singular.ScoreFormat )) {
+                    valid = false;
+                    Messages.Add( $"Singular[{index}].ScoreForamt '{singular.ScoreFormat}' is not known. The valid values are {string.Join( ", ", scoreFormats )}." );
+                }
+
+                index++;
+            }
+
+            index = 0;
+            foreach (var @event in candidate.Events) {
+                if (!scoreFormats.Contains( @event.ScoreFormat )) {
+                    valid = false;
+                    Messages.Add( $"Singular[{index}].ScoreForamt '{@event.ScoreFormat}' is not known. The valid values are {string.Join( ", ", scoreFormats )}." );
+                }
+
+                index++;
+            }
+
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Tests that each Singular has a non empty string for the StageLabel. And that each StageLabel is unique.
+    /// </summary>
+    public class IsCourseOfFireSingularStageLabelsValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            HashSet<string> seen = new HashSet<string>();
+
+            int index = 0;
+            foreach (var singular in candidate.Singulars) {
+                if (string.IsNullOrEmpty( singular.StageLabel )) {
+                    valid = false;
+                    Messages.Add( $"Singular[{index}] has an empty string as its value for StageLabel." );
+                } else {
+                    if (seen.Contains( singular.StageLabel )) {
+                        valid = false;
+                        Messages.Add( $"Singular[{index}] has a StageLabel '{singular.StageLabel}' that is used more than once." );
+                    } else {
+                        seen.Add( singular.StageLabel );
+                    }
+                }
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Tests that each Event's RankingRuleMapping has valid key names (either DefaultDef or a ScoreConfig name),
+    /// and the SetName points to a valid RANKING RULE
+    /// </summary>
+    public class IsCourseOfFireResultEventRankingRuleMappingValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+
+            var scoreConfigDefinition = await candidate.GetScoreFormatCollectionDefinitionAsync();
+            var scoreConfigNames = scoreConfigDefinition.GetScoreConfigNames();
+            scoreConfigNames.Add( "DefaultDef" ); //DefaultDef is valid as the default ScoreConfig name
+
+            var index = 0;
+            foreach (var @event in candidate.Events) {
+
+                foreach (var rrm in @event.RankingRuleMapping) {
+
+                    //Check that the Key value is known ScoreFormat
+                    if (!scoreConfigNames.Contains( rrm.Key )) {
+                        valid = false;
+                        Messages.Add( $"Event[{index}].RankingRuleMapping has a key value '{rrm.Key}' that is unknown. The acceptable ScoreConfigName values are {string.Join( ", ", scoreConfigNames )}." );
+                    } else {
+
+                        var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
+                            $"Event[{index}].RankingRuleMapping",
+                            rrm.Value,
+                            DefinitionType.RANKINGRULES );
+
+                        if (!vm.Valid) {
+                            valid = false;
+                            Messages.Add( vm.Message );
+                        }
+
+                    }
+                }
+                index++;
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Tests if the value for ResultListFormatDef, on each Event, is valid.
+    /// </summary>
+    public class IsCourseOfFireEventResultListFormatDefValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            var index = 0;
+            foreach (var @event in candidate.Events) {
+
+                //ResultListFormatDef is allowed to be an empty string
+                if (!string.IsNullOrEmpty( @event.ResultListFormatDef )) {
+                    var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
+                        $"Event[{index}].ResultListFormatDef",
+                        @event.ResultListFormatDef,
+                        DefinitionType.RESULTLISTFORMAT );
+
+                    if (!vm.Valid) {
+                        valid = false;
+                        Messages.Add( vm.Message );
+                    }
+                }
+
+                index++;
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Tests that there is only one EventType EVENT.
+    /// Tests that the one EventType EVENT has a EventStyleMapping object.
+    /// Tests that the EventStyleMapping object has a valid reference to an EVENT STYLE.
+    /// Tests that the remaining (non EventType EVENT) events do not have a EventStyleMapping object.
+    /// </summary>
+    public class IsCourseOfFireEventEventStyleMappingValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            var index = 0;
+            bool foundEventTypeEvent = false;
+            foreach (var @event in candidate.Events) {
+
+                if (@event.EventType == EventtType.EVENT) {
+                    //Test that there is only one EventType EVENT.
+                    if (foundEventTypeEvent) {
+                        valid = false;
+                        Messages.Add( $"Event[{index}] is listed as an EventType EVENT, but one was already found. A COURSE OF FIRE must have exactly one EventType EVENT, and it must be the top level event." );
+                        continue;
+                    } else {
+                        foundEventTypeEvent = true;
+                    }
+
+                    //Should have an EventStyleMapping object
+                    //With a valid EVENT STYLE definition reference
+                    if (@event.EventStyleMapping == null) {
+                        valid = false;
+                        Messages.Add( $"Event[{index}] is listed as an EventType EVENT, but does not have an EventStyleMapping" );
+                    } else {
+                        var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
+                            $"Event[{index}].EventStyleMapping.DefaultDef",
+                            @event.EventStyleMapping.DefaultDef,
+                            DefinitionType.EVENTSTYLE );
+
+                        if (!vm.Valid) {
+                            valid = false;
+                            Messages.Add( vm.Message );
+                        }
+                    }
+                } else {
+                    //Test that other (non EventType EVENT) events do not have an EventStyleMapping object
+                    if (@event.EventStyleMapping != null) {
+                        valid = false;
+                        Messages.Add( $"Event[{index}] is listed as an EventType {@event.EventType}, but includes an EventStyleMapping" );
+                    }
+
+                }
+
+                index++;
+            }
+
+            if (!foundEventTypeEvent) {
+                valid = false;
+                Messages.Add( $"An Event with EventType EVENT was not found. A COURSE OF FIRE must have exactly one EventType EVENT, and it must be the top level event." );
+            }
+
+            return valid;
+        }
+    }
+
+
+    /// <summary>
+    /// Tests that there is at least one EventType STAGE.
+    /// Tests that each EventType STAGE has a StageStyleMapping object.
+    /// Tests that the StageStyleMapping object has a valid reference to an STAGE STYLE.
+    /// Tests that the remaining (non EventType STAGE) events do not have a StageStyleMapping object.
+    /// </summary>
+    public class IsCourseOfFireEventStageStyleMappingValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            var index = 0;
+            bool foundEventTypeStage = false;
+            foreach (var @event in candidate.Events) {
+
+                if (@event.EventType == EventtType.STAGE) {
+                    //Test that there is at least one EventType STAGE.
+                    foundEventTypeStage = true;
+
+                    //Should have an StageStyleMapping object
+                    //With a valid STAGE STYLE definition reference
+                    if (@event.StageStyleMapping == null) {
+                        valid = false;
+                        Messages.Add( $"Event[{index}] is listed as an EventType STAGE, but does not have an StageStyleMapping" );
+                    } else {
+                        var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
+                            $"Event[{index}].StageStyleMapping.DefaultDef",
+                            @event.StageStyleMapping.DefaultDef,
+                            DefinitionType.STAGESTYLE );
+
+                        if (!vm.Valid) {
+                            valid = false;
+                            Messages.Add( vm.Message );
+                        }
+                    }
+                } else {
+                    //Test that other (non EventType STAGE) events do not have an StageStyleMapping object
+                    if (@event.StageStyleMapping != null) {
+                        valid = false;
+                        Messages.Add( $"Event[{index}] is listed as an EventType {@event.EventType}, but includes an StageStyleMapping" );
+                    }
+
+                }
+
+                index++;
+            }
+
+            if (!foundEventTypeStage) {
+                valid = false;
+                Messages.Add( $"An Event with EventType STAGE was not found. A COURSE OF FIRE must have at least one EventType STAGE." );
+            }
+
+            return valid;
+        }
+    }
+
+    public class IsCourseOfFireEventTreeValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            try {
+                var eventTree = EventComposite.GrowEventTree( candidate );
+
+                //Count how many singulars are defined.
+                var singularCount = 0;
+                foreach (var singular in candidate.Singulars) {
+                    singularCount += singular.GetSingularEventList().Count;
+                }
+
+                //Which should match the number of Singulars in the EventTree
+                if (singularCount != eventTree.GetAllSingulars().Count) {
+                    valid = false;
+                    Messages.Add( $"Not all Singulars are accounted for in the Event Tree. Make sure they each have a parent Event." );
+                }
+
+                //Compile a list of Events, excluding those marked ExternalToEventTree
+                var listOfEvents = new List<Event>();
+                foreach (var origEvent in candidate.Events) {
+                    foreach (var cloneEvent in origEvent.GetCompiledEvents()) {
+                        if (!cloneEvent.ExternalToEventTree) {
+                            listOfEvents.Add( cloneEvent );
+                        }
+                    }
+                }
+
+                //Check that each of them are in the EventTree
+                foreach (var @event in listOfEvents) {
+                    var foo = eventTree.FindEventComposite( @event.EventName );
+                    if (foo == null) {
+                        valid = false;
+                        Messages.Add( $"The Event {@event.EventName} is defined, but is not found in the Event Tree." );
+                    }
+                }
+
+            } catch (Exception ex) {
+                valid = false;
+                Messages.Add( $"Could not grow the Event Tree, which means something is wrong. Recevied error {ex}." );
+            }
+
+            return valid;
+        }
+    }
+    public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            try {
+                if (candidate.AbbreviatedFormats.Count == 0) {
+                    valid = false;
+                    Messages.Add( $"At least one AbbreviatedFormat is required." );
+                } else {
+                    var eventTree = EventComposite.GrowEventTree( candidate );
+
+                    int index = 0;
+                    int childIndex = 0;
+                    foreach (var af in candidate.AbbreviatedFormats) {
+
+                        if (string.IsNullOrEmpty( af.FormatName )) {
+                            valid = false;
+                            Messages.Add( $"AbbreviatedFormats[{index}] does not have a FormatName." );
+                        }
+
+                        var foo = eventTree.FindEventComposite( af.EventName );
+                        if (foo == null) {
+                            valid = false;
+                            Messages.Add( $"AbbreviatedFormats[{index}] names an Event '{af.EventName}' that does not exist." );
+                        }
+
+                        childIndex = 0;
+                        foreach (var child in af.Children) {
+                            foo = eventTree.FindEventComposite( child.EventName );
+                            if (foo == null) {
+                                valid = false;
+                                Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] names an Event '{af.EventName}' that does not exist." );
+                            }
+
+                            childIndex++;
+                        }
+
+                        index++;
+                    }
+                }
+            } catch (Exception ex) {
+                valid = false;
+                Messages.Add( ex.ToString() );
             }
 
             return valid;

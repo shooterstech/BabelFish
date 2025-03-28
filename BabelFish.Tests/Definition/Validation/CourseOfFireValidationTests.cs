@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -19,7 +20,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
 			var valid = await validation.IsSatisfiedByAsync( candidate );
 
-			Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
+            Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
 		}
 	}
 }
