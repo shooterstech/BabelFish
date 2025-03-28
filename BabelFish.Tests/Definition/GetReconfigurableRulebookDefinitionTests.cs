@@ -415,9 +415,9 @@ namespace Scopos.BabelFish.Tests.Definition
             Assert.AreEqual(DefinitionType.COURSEOFFIRE, definition.Type);
             Assert.IsTrue(definition.RangeScripts.Count > 0);
             Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].SegmentGroupName == "Standing Sighters");
-            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation.Count > 0);
-            var firstCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation[0];
-            var secondCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation[1];
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].Automation.Count > 0);
+            var firstCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].Automation[0];
+            var secondCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].Automation[1];
             Assert.IsTrue( firstCommandAutomation.Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);
             Assert.IsTrue( firstCommandAutomation.ParticipantRanks == "1..8");
             Assert.IsTrue(secondCommandAutomation.Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);

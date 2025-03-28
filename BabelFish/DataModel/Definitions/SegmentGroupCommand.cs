@@ -264,10 +264,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Required, may be empty list []
         /// </summary>
         [G_NS.JsonProperty( Order = 200 )]
-        public CommandAutomationList CommandAutomation { get; set; } = new CommandAutomationList();
+        public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
 
         public bool ShouldSerializeCommandAutomation() {
-            return CommandAutomation != null && CommandAutomation.Count > 0;
+            return Automation != null && Automation.Count > 0;
         }
 
         /// <summary>
