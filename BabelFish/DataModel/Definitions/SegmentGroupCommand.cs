@@ -259,6 +259,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
+        /// A list of Command Automations, these are currently Remark additions or None.
+        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
+        /// DefaultCommand: Required, may be empty list []
+        /// </summary>
+        [G_NS.JsonProperty( Order = 200 )]
+        public CommandAutomationList CommandAutomation { get; set; } = new CommandAutomationList();
+
+        public bool ShouldSerializeCommandAutomation() {
+            return CommandAutomation != null && CommandAutomation.Count > 0;
+        }
+
+        /// <summary>
         /// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
         /// <list type="bullet">
         /// <item>Value of -1 means to advance to the next command regardless of current index value.</item>
@@ -270,6 +282,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc/>
         [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 100 )]
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc/>

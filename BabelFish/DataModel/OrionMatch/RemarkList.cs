@@ -7,21 +7,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class RemarkList : List<Remark> {
         //public List<Remark> remarks = new List<Remark>();
 
-        /*
+        
         public void Add(ParticipantRemark remark, string reason)
         {
             var newRemark = new Remark();
             newRemark.ParticipantRemark = remark;
             newRemark.Reason = reason;
             newRemark.Visibility = RemarkVisibility.SHOW;
-            remarks.Add(newRemark);
+            this.Add(newRemark);
             this.SortRemarks();
+        }
+        public void Hide(ParticipantRemark remark)
+        {
+            Remark match = new Remark() { ParticipantRemark = remark, Visibility = RemarkVisibility.SHOW };
+            SortRemarks();
+            if (this.Count() > 0)
+            {
+                var thing = Find(match);
+                if (thing != null)
+                {
+                    this[(int)thing].Visibility = RemarkVisibility.HIDE;
+                }
+            }
         }
         public void Remove(int spot)
         {
-            remarks.RemoveAt(spot);
+            this.RemoveAt(spot);
             this.SortRemarks();
-        }*/
+        }
 
         /// <summary>
         /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
@@ -86,7 +99,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Sorts remark table of this participant, most important remarks are the last item on the list. Refer to Remark.Visibility if it should be displayed.
         /// </summary>
         public void SortRemarks() {
-            this.OrderByDescending( x => (int)x.ParticipantRemark ).ToList();
+            this.OrderByDescending(y => (int)y.Visibility).OrderByDescending(x => (int)x.ParticipantRemark).ToList();
         }
 
         /// <inheritdoc />
@@ -102,5 +115,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return string.Join( ", ", list );
         }
 
+        /// <summary>
+        /// Find the location of the exact remark given, with no regard to the Reason string
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <returns></returns>
+        internal int? Find(Remark remark)
+        {
+            SortRemarks();
+            int spot = 0;
+            foreach (var mark in this)
+            {
+                if(mark.ParticipantRemark == remark.ParticipantRemark &&
+                    mark.Visibility == remark.Visibility)
+                {
+                    return spot;
+                }
+                spot++;
+            }
+            return null;
+        }
     }
 }

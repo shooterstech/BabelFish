@@ -346,6 +346,5 @@ namespace Scopos.BabelFish.Tests.Definition {
             return cof;
         }
 
-        
     }
 }

@@ -2,7 +2,10 @@
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
@@ -377,6 +380,89 @@ namespace Scopos.BabelFish.Tests.Definition {
             for (int i = 0; i < 20; i++)
                 Assert.AreEqual( $"S{i + 1}", singulars[i+40].EventName );
 
+        }
+
+
+
+        private OrionMatchAPIClient matchClient;
+        private DefinitionAPIClient definitionClient;
+        private IUserProfileLookup userProfileLookup;
+
+        [TestInitialize]
+        public override void InitializeTest()
+        {
+            base.InitializeTest();
+
+            matchClient = new OrionMatchAPIClient();
+            definitionClient = new DefinitionAPIClient();
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo(@"C:\temp");
+
+            userProfileLookup = new BaseUserProfileLookup();
+        }
+
+        [TestMethod]
+        public async Task CommandAutomationIntermediateTest()
+        {
+            Runtime.Initializer.UpdateLocalStoreDirectory( @"c:\temp" );
+            var setName = SetName.Parse("v1.0:ntparc:40 Shot Standing");
+
+            var definition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
+
+            Assert.IsNotNull(definition);
+
+            Assert.AreEqual(setName.ToString(), definition.SetName);
+            Assert.AreEqual(DefinitionType.COURSEOFFIRE, definition.Type);
+            Assert.IsTrue(definition.RangeScripts.Count > 0);
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].SegmentGroupName == "Standing Sighters");
+            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation.Count > 0);
+            var firstCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation[0];
+            var secondCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].CommandAutomation[1];
+            Assert.IsTrue( firstCommandAutomation.Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);
+            Assert.IsTrue( firstCommandAutomation.ParticipantRanks == "1..8");
+            Assert.IsTrue(secondCommandAutomation.Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);
+            Assert.IsTrue(secondCommandAutomation.ParticipantRanks == "8");
+
+            MatchID matchId = new MatchID("1.15.2025032511494954.0");
+            var matchDetailResponse = await matchClient.GetMatchPublicAsync(matchId);
+            var match = matchDetailResponse.Match;
+            var resultListName = "Individual - All";
+
+            //Get the Result List from the API Server
+            var resultListResponse = await matchClient.GetResultListPublicAsync(matchId, resultListName);
+            var resultList = resultListResponse.ResultList;
+            var resultEventName = resultList.EventName;
+
+            //Get the definition file that will tell us how to display the results.
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync(resultList);
+            definitionClient.IgnoreInMemoryCache = true;
+            var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync(resultListFormatSetName);
+            var resultListFormat = resultListFormatResponse.Definition;
+
+            //Convert the result list into the result event intermediate list that we can use
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted(resultList, resultListFormat, userProfileLookup);
+            await rlf.InitializeAsync();
+
+            var thing = firstCommandAutomation.IntermediateCommandAutomationRemarkList(resultList);
+            var thing1 = secondCommandAutomation.IntermediateCommandAutomationRemarkList(resultList);
+
+            foreach (var item in thing)
+            {
+                if (item is CommandAutomationIntermediateRemark)
+                {
+                    var rightItem = (CommandAutomationIntermediateRemark)item;
+                    Console.WriteLine(rightItem.participant.DisplayName + " " + rightItem.subject.ToString() + " " + rightItem.visibility.ToString() + " " + rightItem.condition.ToString());
+                }
+            }
+            Console.WriteLine("CA1 DONE, moving to CA2");
+            foreach (var item in thing1)
+            {
+                if (item is CommandAutomationIntermediateRemark)
+                {
+                    var rightItem = (CommandAutomationIntermediateRemark)item;
+                    Console.WriteLine(rightItem.participant.DisplayName + " " + rightItem.subject.ToString() + " " + rightItem.visibility.ToString() + " " + rightItem.condition.ToString());
+                }
+            }
+            Console.Write("DONE - THANKS");
         }
 
     }
