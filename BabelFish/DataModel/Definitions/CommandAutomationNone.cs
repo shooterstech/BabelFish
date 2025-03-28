@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
+    /// <summary>
+    /// No Command Automation, used as default when handling Command automation.
+    /// </summary>
     class CommandAutomationNone : CommandAutomation
     {
         public CommandAutomationNone()

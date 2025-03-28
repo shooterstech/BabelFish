@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions
 {
+    /// <summary>
+    /// Automation to happen during this command segment, typically like show/hide remarks on a participant.
+    /// </summary>
     public abstract class CommandAutomation
     {
         // maybe need to add action for applying penalties?

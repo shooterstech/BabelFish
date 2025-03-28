@@ -65,6 +65,10 @@ namespace Scopos.BabelFish.DataModel.Definitions
             }
         }
 
+        /// <summary>
+        /// Hide a remark that is currently on a participant. if remark is not on participant, do nothing.
+        /// </summary>
+        /// <param name="resultList"></param>
         public void HideRemarkOnParticipants(ResultList resultList)
         {
             var ranks = GetParticipantRanksAsList();
@@ -78,6 +82,11 @@ namespace Scopos.BabelFish.DataModel.Definitions
             }
         }
 
+        /// <summary>
+        /// returns a list of [participant, remark, action] objects allows the medea RL to be updated by itself.
+        /// </summary>
+        /// <param name="resultList"></param>
+        /// <returns></returns>
         public List<CommandAutomationIntermediate> IntermediateCommandAutomationRemarkList(ResultList resultList)
         {
             List<CommandAutomationIntermediate> caIntermediate = new List<CommandAutomationIntermediate>();

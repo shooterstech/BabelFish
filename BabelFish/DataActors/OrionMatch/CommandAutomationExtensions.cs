@@ -17,6 +17,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// hide remark on participants that it exists on.
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <param name="resultList"></param>
         public static void HideRemarkOnParticipants(this CommandAutomationRemark remark, ResultList resultList ) {
             var ranks = remark.GetParticipantRanksAsList();
             foreach (var item in resultList.Items) {
@@ -27,6 +32,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// return a list of command automation intermediate objects [participant, remark, visibility] typically. mostly for medea to update itself.
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <param name="resultList"></param>
+        /// <returns></returns>
         public static List<CommandAutomationIntermediate> IntermediateCommandAutomationRemarkList(this CommandAutomationRemark remark, ResultList resultList ) {
             List<CommandAutomationIntermediate> caIntermediate = new List<CommandAutomationIntermediate>();
             var ranks = remark.GetParticipantRanksAsList();
