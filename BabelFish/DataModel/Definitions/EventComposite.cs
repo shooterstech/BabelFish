@@ -149,12 +149,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return hash;
         }
 
-        private static ConcurrentDictionary<string, EventComposite> eventCompositeCache = new ConcurrentDictionary<string, EventComposite> ();
+        private static ConcurrentDictionary<string, EventComposite> _eventCompositeCache = new ConcurrentDictionary<string, EventComposite> ();
 
         /// <summary>
         /// Generates the Event tree as defined by the passed in Course of Fire definition. 
         /// the EventComposite that is passed back, is the top level Event in the tree.
         /// </summary>
+        /// <remarks>
+        /// WARNING: GrowEventTree uses a cache, which is usually fine. However, if you are running the CourseOfFirespecification, it is a 
+        /// best practice to clear the cache before re-running GrowEventTree().
+        /// </remarks>
+        /// 
         /// <param name="cofRef"></param>
         /// <returns></returns>
         /// <exception cref="ScoposException"></exception>
@@ -163,7 +168,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //Because growing the event tree can take time, and its an operation that's often repeated, we will try
             //and store cache copies of it and return the cached value first, before growing a new one.
             EventComposite ec;
-            if ( eventCompositeCache.TryGetValue( cofRef.SetName, out ec ) ) { 
+            if ( _eventCompositeCache.TryGetValue( cofRef.SetName, out ec ) ) { 
                 return ec; 
             }
 
@@ -203,7 +208,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             GrowChildren( listOfEvents, cofRef.Singulars, top, 0 );
 
             //Store in cache, so we can use later
-            eventCompositeCache.TryAdd( cofRef.SetName, top );
+            _eventCompositeCache.TryAdd( cofRef.SetName, top );
 
             return top;
         }
@@ -267,6 +272,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return false;
 
             return Equals( obj as EventComposite );
+        }
+
+        public static void ClearCache() {
+            _eventCompositeCache.Clear();
         }
     }
 }

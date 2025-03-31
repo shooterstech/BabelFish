@@ -11,6 +11,8 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             var valid = true;
             Messages.Clear();
+            //Clear the EventComposit cache, which may be holding on to out-dated COF structure.
+            EventComposite.ClearCache();
 
             //Common fields
             var hierarchicalName = new IsDefinitionHierarchicalNameValid();

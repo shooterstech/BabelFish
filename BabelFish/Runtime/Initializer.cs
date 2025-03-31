@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Runtime {
     public static class Initializer {
@@ -77,6 +78,7 @@ namespace Scopos.BabelFish.Runtime {
         public static void ClearCache(bool runPreLoad = true ) {
             DefinitionCache.ClearCache();
             ResponseCache.CACHE.ClearCache();
+            EventComposite.ClearCache();
 
             if ( runPreLoad)
                 //Choosing not to await the PreLoad command. 

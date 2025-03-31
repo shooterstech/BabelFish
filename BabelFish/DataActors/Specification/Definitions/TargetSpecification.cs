@@ -10,9 +10,10 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 		public override async Task<bool> IsSatisfiedByAsync( Target candidate ) {
 
 			var valid = true;
+            Messages.Clear();
 
-			//Common fields
-			var hierarchicalName = new IsDefinitionHierarchicalNameValid();
+            //Common fields
+            var hierarchicalName = new IsDefinitionHierarchicalNameValid();
 			var commonName = new IsDefiniitonCommonNameValid();
 			var description = new IsDefiniitonDescriptionValid();
 			var subdiscipline = new IsDefiniitonSubdisciplineValid();

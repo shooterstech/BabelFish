@@ -11,10 +11,11 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 		[TestMethod]
 		public async Task HappyPathCourseOfFireValid() {
 
-			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v1.0:cmp:Smallbore Rifle 3x20" );
+			Initializer.UpdateLocalStoreDirectory( @"c:\temp" );
+			//var setName = SetName.Parse( "v1.0:cmp:Smallbore Rifle 3x20" );
+			var setName = SetName.Parse( "v1.0:cmp:High Power Rifle National Match Course" );
 
-			var candidate = (await client.GetCourseOfFireDefinitionAsync( setName )).Value;
+			var candidate = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
 
 			var validation = new IsCourseOfFireValid();
 
