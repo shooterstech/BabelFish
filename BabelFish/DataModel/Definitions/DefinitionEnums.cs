@@ -645,6 +645,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
         /// </summary>
         LAST_REMARK_ELIMINATED,
+        HAS_REMARK_LEADER,
         HAS_REMARK_FIRST,
         HAS_REMARK_SECOND,
         HAS_REMARK_THIRD

@@ -396,22 +396,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ELIMINATED,
 
         /// <summary>
-        /// On the buble of elimination
+        /// On the bubble of elimination
         /// </summary>
         BUBBLE,
 
         /// <summary>
-        /// On the buble of elimination
+        /// First place
         /// </summary>
         FIRST,
 
         /// <summary>
-        /// On the buble of elimination
+        /// Second place
         /// </summary>
         SECOND,
 
         /// <summary>
-        /// On the buble of elimination
+        /// Third place
         /// </summary>
         THIRD
     };
