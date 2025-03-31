@@ -401,6 +401,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         BUBBLE,
 
         /// <summary>
+        /// Participant was a leader at some point.
+        /// </summary>
+        LEADER,
+
+        /// <summary>
         /// First place
         /// </summary>
         FIRST,

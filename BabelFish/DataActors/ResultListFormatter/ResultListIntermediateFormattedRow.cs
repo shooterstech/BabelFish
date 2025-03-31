@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "TargetCollectionName",
             "Status",
             "LastShot", //Only avaliable on individual result lists
-            "Remarks"  
+            "Remark"  
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -158,7 +158,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "LocalDate", 
             "Status",
             "LastShot",
-            "Remarks"
+            "Remark"
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
@@ -310,7 +310,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     }
                     return "";
 
-                case "Remarks":
+                case "Remark":
                     return GetRemarks();
 
                 default:
@@ -653,39 +653,51 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public string GetRemarks() {
-            List<string> remarkList = new List<string>();
+            string remarkString = "";
             int survivedTheBubble = 0;
+            int wasTheLeader = 0;
             foreach (var remark in this._resultEvent.Participant.RemarkList) {
                 switch (remark.ParticipantRemark) {
                     case ParticipantRemark.DNS:
-                        remarkList.Add( "DNS" );
+                        remarkString = "DNS";
                         break;
                     case ParticipantRemark.DNF:
-                        remarkList.Add( "DNF" );
+                        remarkString = "DNF";
                         break;
                     case ParticipantRemark.DSQ:
-                        remarkList.Add( "Disqualified" );
+                        remarkString = "Disqualified";
                         break;
                     case ParticipantRemark.ELIMINATED:
                         if (remark.Visibility == RemarkVisibility.SHOW) {
-                            remarkList.Add( "Eliminated" );
+                            remarkString = "Eliminated";
                         }
                         break;
                     case ParticipantRemark.FIRST:
-                        remarkList.Add( "Gold" );
+                        remarkString = "Gold";
                         break;
                     case ParticipantRemark.SECOND:
-                        remarkList.Add( "Silver" );
+                        remarkString = "Silver";
                         break;
                     case ParticipantRemark.THIRD:
-                        remarkList.Add( "Bronze" );
+                        remarkString = "Bronze";
                         break;
                     case ParticipantRemark.BUBBLE:
                         if (remark.Visibility == RemarkVisibility.SHOW) {
-                            remarkList.Add( "Bubble" );
+                            remarkString = "Bubble";
                         } else {
                             //HIDDEN .... meaning they survived the bubble
                             survivedTheBubble++;
+                        }
+                        break;
+                    case ParticipantRemark.LEADER:
+                        if (remark.Visibility == RemarkVisibility.SHOW)
+                        {
+                            remarkString = "Leader";
+                        }
+                        else
+                        {
+                            //HIDDEN .... meaning they were the leader before.
+                            wasTheLeader++;
                         }
                         break;
                     default:
@@ -693,11 +705,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         break;
                 }
             }
+
             if (survivedTheBubble > 0
                 && ! this._resultEvent.Participant.RemarkList.HasNonCompletionRemark())
-                remarkList.Add( $"Survived {survivedTheBubble}x" );
+                remarkString += $"Survived {survivedTheBubble}x";
 
-            return string.Join( ", ", remarkList );
+            if (wasTheLeader > 0
+                && !this._resultEvent.Participant.RemarkList.HasNonCompletionRemark())
+                remarkString += $"Was the leader {wasTheLeader}x";
+
+            return remarkString;
         }
 
     }

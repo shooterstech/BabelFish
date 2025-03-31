@@ -175,6 +175,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
+                case ShowWhenCondition.HAS_REMARK_LEADER:
+                    if (participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.LEADER);
+                    break;
+
+
                 case ShowWhenCondition.HAS_REMARK_FIRST:
                     if (participant.Participant == null)
                     {

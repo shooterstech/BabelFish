@@ -295,6 +295,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             } );
 
+            this.Format.Columns.Add(new ResultListDisplayColumn()
+            {
+                Header = "Remark",
+                Body = "{Remark}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-participant",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenVariable()
+                {
+                    Condition = ShowWhenCondition.DIMENSION_LARGE
+                }
+            });
+
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "LS",
                 Body = "{LastShot}",
@@ -305,9 +319,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ShowWhen = new ShowWhenEquation() {
                     Boolean = ShowWhenBoolean.AND,
                     Arguments = new List<ShowWhenBase>() {
-                        new ShowWhenVariable() {
-                            Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
-                        },
                         new ShowWhenVariable() {
                             Condition = ShowWhenCondition.SUPPLEMENTAL
                         },

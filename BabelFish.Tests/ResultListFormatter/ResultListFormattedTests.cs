@@ -214,7 +214,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task TestBBGunIndividualResultListCells() {
 
-            MatchID matchId = new MatchID( "1.1.2023062817085368.0" ); // "1.1.2023052011495618.0";
+            MatchID matchId = new MatchID( "1.15.2025030713204931.0" ); // "1.1.2023052011495618.0";
 
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
@@ -360,10 +360,11 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
+            //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
+            MatchID matchId = new MatchID("1.15.2025032815551421.0");
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Team - All";
+            var resultListName = "Individual - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -387,6 +388,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             rlf.ShowNumberOfChildRows = 4000;
             rlf.ShowRanks = 0;
             rlf.ShowStatuses = null ;
+            rlf.ShowSupplementalInformation = true;
 
             //rlf.SetShowValuesToDefault();
 
