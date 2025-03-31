@@ -132,14 +132,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Comment { get; set; } = string.Empty;
 
         /// <summary>
-        /// Indicates that this Definition file is no longer in use.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 200 )]
-        [G_NS.JsonProperty( Order = 200 )]
-        [DefaultValue( false )]
-        public bool Discontinued { get; set; } = false;
-
-        /// <summary>
         /// Returns a SetName object based on the Definitions Version and HierrchcialName
         /// If originalSetName is true, returns the setname as was loaded, usually with v1.0, or v0.0
         /// If false, returns the Version based on the version in the file

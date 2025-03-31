@@ -36,16 +36,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        [G_STJ_SER.JsonPropertyOrder( 100 )]
-        [G_NS.JsonProperty( Order = 100 )]
+        [G_NS.JsonProperty( Order = 119 )]
         public DateTime ModifiedAt { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// If true, this Definition is no longer in use and should not be referenced.
         /// </summary>
-        [G_NS.JsonProperty( Order = 101 )]
+        [G_NS.JsonProperty( Order = 120 )]
         [DefaultValue( false )]
-        public bool Discontinued { get; set; }
+        public bool Discontinued { get; set; } = false;
 
         /// <summary>
         /// Returns the Version of the Definition as an object DefinitionVersion.
