@@ -387,7 +387,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             rlf.ResolutionWidth = 1800;
             rlf.ShowNumberOfChildRows = 4000;
             rlf.ShowRanks = 0;
-            rlf.ShowStatuses = null ;
+            rlf.ShowStatuses = null;
             rlf.ShowSupplementalInformation = true;
 
             //rlf.SetShowValuesToDefault();
