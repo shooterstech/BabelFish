@@ -33,6 +33,13 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
 		}
 
 		/// <inheritdoc />
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.DefinitionList.NextToken );
+			}
+		}
+
+		/// <inheritdoc />
 		protected internal override DateTime GetCacheValueExpiryTime() {
             //Definition files don't change often, so we can set the expiration time well into the future.
 			return DateTime.UtcNow.AddDays(1);

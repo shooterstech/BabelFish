@@ -26,6 +26,13 @@ namespace Scopos.BabelFish.Responses.ClubsAPI {
             var nextRequest = (GetClubListAuthenticatedRequest)Request.Copy();
             nextRequest.Token = Value.ClubList.NextToken;
             return nextRequest;
-        }
-    }
+		}
+
+        /// <inheritdoc />
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.ClubList.NextToken );
+			}
+		}
+	}
 }

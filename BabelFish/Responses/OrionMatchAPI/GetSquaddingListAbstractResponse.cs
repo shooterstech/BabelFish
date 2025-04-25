@@ -31,10 +31,17 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             } else {
                 throw new ArgumentException( $"Parameter Request is of unexpected type ${Request.GetType()}." );
             }
-        }
+		}
 
-        /// <inheritdoc />
-        protected internal override DateTime GetCacheValueExpiryTime()
+		/// <inheritdoc />
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.SquaddingList.NextToken );
+			}
+		}
+
+		/// <inheritdoc />
+		protected internal override DateTime GetCacheValueExpiryTime()
         {
 
             try
