@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -49,7 +48,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 
         [G_STJ_SER.JsonPropertyOrder( 14 )]
-        [G_NS.JsonProperty( Order = 14 )]
+        [G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public AimingMarkColor BackgroundColor { get; set; } = AimingMarkColor.WHITE;
 
         /// <summary>

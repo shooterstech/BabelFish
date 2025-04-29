@@ -19,11 +19,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string ? DefaultValue { get; set; } = null;
 
 
-        /// <summary>
-        /// Indicates if the value of the attribute must be chosen from a list, 
-        /// may be any value, of the there is a suggested list of values.
-        /// </summary>
-        [DefaultValue( FieldType.OPEN )]
+		/// <summary>
+		/// Indicates if the value of the attribute must be chosen from a list, 
+		/// may be any value, of the there is a suggested list of values.
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		[DefaultValue( FieldType.OPEN )]
         public FieldType FieldType { get; set; } = FieldType.OPEN;
 
         /// <summary>

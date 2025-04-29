@@ -60,12 +60,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public string StageLabel { get; set; }
 
-        /// <summary>
-        /// The method to use to map shots to events. Must be one of the following values:
-        /// * Sequential
-        /// </summary>
-        
-        public ShotMappingMethodType ShotMappingMethod { get; set; } = ShotMappingMethodType.SEQUENTIAL;
+		/// <summary>
+		/// The method to use to map shots to events. Must be one of the following values:
+		/// * Sequential
+		/// </summary>
+        [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public ShotMappingMethodType ShotMappingMethod { get; set; } = ShotMappingMethodType.SEQUENTIAL;
 
         /// <inheritdoc/>
         [JsonPropertyOrder ( 99 )]

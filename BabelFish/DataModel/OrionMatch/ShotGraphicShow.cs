@@ -19,10 +19,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         public string ShowName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Show Competition shots or sighter shots.
-        /// </summary>
-        public CompetitionType Competition { get; set; } = CompetitionType.COMPETITION;
+		/// <summary>
+		/// Show Competition shots or sighter shots.
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public CompetitionType Competition { get; set; } = CompetitionType.COMPETITION;
 
         /// <summary>
         /// If Competition == SIGHTER, then show all sighters that have a StageLabel equal to, well, this property.

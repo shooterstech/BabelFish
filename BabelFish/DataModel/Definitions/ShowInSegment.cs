@@ -30,10 +30,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public List<string> StageLabel { get; set; } = new List<string>();
 
-        /// <summary>
-        /// Display shots that are either competition shots (non sighters), sighters, or both.
-        /// </summary>
-        public CompetitionType Competition { get; set; } = CompetitionType.BOTH;
+		/// <summary>
+		/// Display shots that are either competition shots (non sighters), sighters, or both.
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public CompetitionType Competition { get; set; } = CompetitionType.BOTH;
 
         /// <summary>
         /// Must be one of the following values

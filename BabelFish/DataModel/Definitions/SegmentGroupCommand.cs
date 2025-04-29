@@ -215,10 +215,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.ShotAttributes;
         }
 
-        /// <summary>
-        /// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
-        /// </summary>
-        [DefaultValue( DisplayEventOptions.NONE )]
+		/// <summary>
+		/// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		[DefaultValue( DisplayEventOptions.NONE )]
         public DisplayEventOptions DisplayEvent { get; set; } = DisplayEventOptions.NONE;
 
         public DisplayEventOptions GetDisplayEvent() {

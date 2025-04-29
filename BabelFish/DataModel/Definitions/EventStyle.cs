@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -12,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </list>
     /// </summary>
     [Serializable]
-    public class EventStyle : Definition {
+    public class EventStyle : Definition, IGetScoreFormatCollectionDefinition {
 
         /// <summary>
         /// Public constructor
@@ -53,11 +55,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 13 )]
         public List<string> RelatedEventStyles { get; set; } = new List<string>();
 
+		/// <summary>
+		/// The SCORE FORMAT COLLECTION to use when displaying scores for this EVENT STYLE.
+		/// Each SimpleCOFComponent specifies the Score Config Name.
+		/// <para>The default value is "v1.0:orion:Standard Score Formats"
+		/// </para>
+		/// </summary>
+		/// <remarks>
+		/// There is an argument to be made that we should also include a SCORE FORMAT COLLECTION to use
+		/// when displaying average scores over time.</remarks>
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+		[G_NS.JsonProperty( Order = 14 )]
+		[DefaultValue( "v1.0:orion:Standard Score Formats" )]
+        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
+
         /// <summary>
         /// A list of SimpleCOF. This lists the common ways to displaying scores from this EVENT STYLE.
         /// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 14 )]
-        [G_NS.JsonProperty( Order = 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 16 )]
+        [G_NS.JsonProperty( Order = 16 )]
         public List<SimpleCOF> SimpleCOFs { get; set; } = new List<SimpleCOF>();
 
 		/// <inheritdoc />
@@ -88,6 +104,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return (StageStyles != null && StageStyles.Count > 0);
         }
 
+        /// <inheritdoc />
         public override bool SetDefaultValues() {
             base.SetDefaultValues();
 
@@ -97,18 +114,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             var sCof = new SimpleCOF() {
                 Name = "Default",
-                CourseOfFireDef = "v1.0:orion:Default"
+                CourseOfFireDef = "v1.0:orion:Default",
+                ScoreFormat = "Events"
             };
             sCof.Components = new List<SimpleCOFComponent>();
             sCof.Components.Add( new SimpleCOFComponent() {
                 StageStyleDef = "v1.0:orion:Default",
-                ScoreConfigName = "Integer",
                 ScoreComponent = ScoreComponent.I
             } );
             SimpleCOFs.Add( sCof );
 
             return true;
-        }
+		}
 
-    }
+		/// <inheritdoc />
+		/// <exception cref="XApiKeyNotSetException" />
+		/// <exception cref="DefinitionNotFoundException" />
+		/// <exception cref="ScoposAPIException" />
+		public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
+
+			SetName scoreFormatCollectionSetName = Definitions.SetName.Parse( ScoreFormatCollectionDef );
+			return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+		}
+	}
 }

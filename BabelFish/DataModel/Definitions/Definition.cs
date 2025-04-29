@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The high level shooting discipline that uses this Definition.
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 8 )]
-        [G_NS.JsonProperty( Order = 8 )]
+        [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
         public DisciplineType Discipline { get; set; } = DisciplineType.NA;
 

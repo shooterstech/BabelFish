@@ -653,68 +653,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public string GetRemarks() {
-            string remarkString = "";
-            int survivedTheBubble = 0;
-            int wasTheLeader = 0;
-            foreach (var remark in this._resultEvent.Participant.RemarkList) {
-                switch (remark.ParticipantRemark) {
-                    case ParticipantRemark.DNS:
-                        remarkString = "DNS";
-                        break;
-                    case ParticipantRemark.DNF:
-                        remarkString = "DNF";
-                        break;
-                    case ParticipantRemark.DSQ:
-                        remarkString = "Disqualified";
-                        break;
-                    case ParticipantRemark.ELIMINATED:
-                        if (remark.Visibility == RemarkVisibility.SHOW) {
-                            remarkString = "Eliminated";
-                        }
-                        break;
-                    case ParticipantRemark.FIRST:
-                        remarkString = "Gold";
-                        break;
-                    case ParticipantRemark.SECOND:
-                        remarkString = "Silver";
-                        break;
-                    case ParticipantRemark.THIRD:
-                        remarkString = "Bronze";
-                        break;
-                    case ParticipantRemark.BUBBLE:
-                        if (remark.Visibility == RemarkVisibility.SHOW) {
-                            remarkString = "Bubble";
-                        } else {
-                            //HIDDEN .... meaning they survived the bubble
-                            survivedTheBubble++;
-                        }
-                        break;
-                    case ParticipantRemark.LEADER:
-                        if (remark.Visibility == RemarkVisibility.SHOW)
-                        {
-                            remarkString = "Leader";
-                        }
-                        else
-                        {
-                            //HIDDEN .... meaning they were the leader before.
-                            wasTheLeader++;
-                        }
-                        break;
-                    default:
-                        //Shouldn't ever get here
-                        break;
-                }
-            }
+            return this._resultEvent.Participant.RemarkList.Summarize;
 
-            if (survivedTheBubble > 0
-                && ! this._resultEvent.Participant.RemarkList.HasNonCompletionRemark())
-                remarkString += $"Survived {survivedTheBubble}x";
-
-            if (wasTheLeader > 0
-                && !this._resultEvent.Participant.RemarkList.HasNonCompletionRemark())
-                remarkString += $"Was the leader {wasTheLeader}x";
-
-            return remarkString;
         }
 
     }
