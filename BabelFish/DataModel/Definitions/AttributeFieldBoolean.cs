@@ -16,10 +16,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueType = ValueType.BOOLEAN;
         }
 
-        /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
-        /// </summary>
-        public bool DefaultValue { get; set; } = false;
+		/// <summary>
+		/// The default value for this field. It is the value assigned to the field if the user does not enter one.
+		/// </summary>
+		[G_NS.JsonProperty( Order = 12 )]
+		public bool DefaultValue { get; set; } = false;
 
         /// <inheritdoc />
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {

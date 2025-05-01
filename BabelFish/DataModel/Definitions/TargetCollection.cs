@@ -78,11 +78,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <inheritdoc />
         public override bool SetDefaultValues() {
             this.TargetCollections = new List<TargetCollectionModal>();
+            this.Discipline = DisciplineType.RIFLE;
+            this.Subdiscipline = "Subdiscipline";
 
             var defaultTcm = new TargetCollectionModal();
             defaultTcm.RangeDistance = "10m";
             defaultTcm.TargetCollectionName = "Default Collection";
             defaultTcm.TargetDefs.Add( "v1.0:issf:10m Air Rifle" );
+            this.TargetCollections.Add( defaultTcm );
 
             return true;
         }

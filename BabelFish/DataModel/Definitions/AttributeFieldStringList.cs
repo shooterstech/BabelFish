@@ -19,14 +19,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// may be any value, of the there is a suggested list of values.
         /// </summary>
         [DefaultValue( FieldType.OPEN )]
-        public FieldType FieldType { get; set; } = FieldType.OPEN;
+		[G_NS.JsonProperty( Order = 11 )]
+		public FieldType FieldType { get; set; } = FieldType.OPEN;
 
-        /// <summary>
-        /// List of possible values, when FieldType is CLOSED or SUGGEST
-        /// </summary>
-        public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
+		/// <summary>
+		/// List of possible values, when FieldType is CLOSED or SUGGEST
+		/// </summary>
+		[G_NS.JsonProperty( Order = 12 )]
+		public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
 
-        public AttributeValidationString ? Validation = null;
+		[G_NS.JsonProperty( Order = 13 )]
+		public AttributeValidationString ? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
             List<string> list = new List<string>();

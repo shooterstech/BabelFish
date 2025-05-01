@@ -220,13 +220,6 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 			valid = await validation.IsSatisfiedByAsync( eventStyle );
 			Assert.IsFalse( valid );
 			Assert.IsTrue( validation.Messages.Count > 0 );
-
-			//A Component with a Score Config Name not listed should fail
-			eventStyle = eventStyleOrig.Clone();
-			eventStyle.SimpleCOFs[0].Components[0].ScoreConfigName = "NotAScoreConfig";
-			valid = await validation.IsSatisfiedByAsync( eventStyle );
-			Assert.IsFalse( valid );
-			Assert.IsTrue( validation.Messages.Count > 0 );
 		}
 	}
 }

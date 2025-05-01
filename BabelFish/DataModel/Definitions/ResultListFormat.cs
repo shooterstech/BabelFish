@@ -205,7 +205,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
             this.Fields.Add( new ResultListField() {
-                FieldName = "Aggregate",
+                FieldName = "Individual",
                 Source = new FieldSource() {
                     ScoreFormat = "Events",
                     Name = "Qualification",
@@ -274,7 +274,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             } );
 
-            this.Format.Columns.Add( new ResultListDisplayColumn() {
+			this.Format.Columns.Add( new ResultListDisplayColumn() {
+				Header = "LS",
+				Body = "{LastShot}",
+				ClassSet = new List<ClassSet>() { new ClassSet() {
+					Name = "rlf-col-shot",
+					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+				}},
+				ShowWhen = new ShowWhenEquation() {
+					Boolean = ShowWhenBoolean.AND,
+					Arguments = new List<ShowWhenBase>() {
+						new ShowWhenVariable() {
+							Condition = ShowWhenCondition.SUPPLEMENTAL
+						},
+						new ShowWhenVariable() {
+							Condition = ShowWhenCondition.SHOT_ON_EST
+						}
+					}
+				}
+			} );
+
+			this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Location",
                 Body = "{MatchLocation}",
                 Child = "{Empty}",
@@ -295,43 +315,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             } );
 
-            this.Format.Columns.Add(new ResultListDisplayColumn()
-            {
-                Header = "Remark",
-                Body = "{Remark}",
-                ClassSet = new List<ClassSet>() { new ClassSet() {
-                    Name = "rlf-col-participant",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-                }},
-                ShowWhen = new ShowWhenVariable()
-                {
-                    Condition = ShowWhenCondition.DIMENSION_LARGE
-                }
-            });
-
-            this.Format.Columns.Add( new ResultListDisplayColumn() {
-                Header = "LS",
-                Body = "{LastShot}",
-                ClassSet = new List<ClassSet>() { new ClassSet() {
-                    Name = "rlf-col-shot",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-                }},
-                ShowWhen = new ShowWhenEquation() {
-                    Boolean = ShowWhenBoolean.AND,
-                    Arguments = new List<ShowWhenBase>() {
-                        new ShowWhenVariable() {
-                            Condition = ShowWhenCondition.SUPPLEMENTAL
-                        },
-                        new ShowWhenVariable() {
-                            Condition = ShowWhenCondition.SHOT_ON_EST
-                        }
-                    }
-                }
-            } );
-
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Aggregate",
-                Body = "{Aggregate}",
+                Body = "{Individual}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-event",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -359,7 +345,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             } );
 
-            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
+			this.Format.Columns.Add( new ResultListDisplayColumn() {
+				Header = "Remark",
+				Body = "{Remark}",
+				ClassSet = new List<ClassSet>() { new ClassSet() {
+					Name = "rlf-col-matchinfo",
+					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+				}},
+				ShowWhen = new ShowWhenEquation() {
+					Boolean = ShowWhenBoolean.AND,
+					Arguments = new List<ShowWhenBase>() {
+						new ShowWhenVariable() {
+							Condition = ShowWhenCondition.HAS_ANY_REMARK
+						},
+						new ShowWhenVariable() {
+							Condition = ShowWhenCondition.DIMENSION_LARGE
+						}
+					}
+				}
+			} );
+
+			updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Children, "rlf-row-child" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Footer, "rlf-row-footer" );

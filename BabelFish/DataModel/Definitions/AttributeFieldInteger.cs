@@ -17,12 +17,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueType = ValueType.INTEGER;
         }
 
-        /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
-        /// </summary>
-        public int DefaultValue { get; set; } = 0;
+		/// <summary>
+		/// The default value for this field. It is the value assigned to the field if the user does not enter one.
+		/// </summary>
+		[G_NS.JsonProperty( Order = 11 )]
+		public int DefaultValue { get; set; } = 0;
 
-        public AttributeValidationInteger ? Validation = null;
+
+		[G_NS.JsonProperty( Order = 12 )]
+		public AttributeValidationInteger ? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.Number) {

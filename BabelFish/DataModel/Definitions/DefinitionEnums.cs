@@ -597,6 +597,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         NOT_SUPPLEMENTAL,
 
         /// <summary>
+        /// Evaluates to true on a column when any participant in the Result List has a Remark. In a row, evaluates to true with the participant has any Remark.
+        /// </summary>
+        HAS_ANY_REMARK,
+        
+        /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Shoot
         /// </summary>
         HAS_REMARK_DNS,

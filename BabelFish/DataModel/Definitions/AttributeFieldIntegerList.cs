@@ -10,7 +10,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueType = ValueType.INTEGER;
         }
 
-        public AttributeValidationInteger ? Validation = null;
+		[G_NS.JsonProperty( Order = 12 )]
+		public AttributeValidationInteger ? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
             if (value.ValueKind == G_STJ.JsonValueKind.Array) {

@@ -61,6 +61,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// Returns true if this Remark List has any remark in it.
+        /// </summary>
+        public bool HasAnyRemark {
+            get {
+                return this.Count() > 0;
+            }
+        }
+
+        /// <summary>
         /// Returns true if the user has one of the following remarks: DNS, DSQ, DNF, or ELIMINATED. 
         /// Returns flase if they do not (and would then mean that they are still competing).
         /// </summary>

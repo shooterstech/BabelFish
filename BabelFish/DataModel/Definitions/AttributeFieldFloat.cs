@@ -14,12 +14,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueType = ValueType.FLOAT;
         }
 
-        /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
-        /// </summary>
-        public float DefaultValue { get; set; } = 0;
+		/// <summary>
+		/// The default value for this field. It is the value assigned to the field if the user does not enter one.
+		/// </summary>
+		[G_NS.JsonProperty( Order = 11 )]
+		public float DefaultValue { get; set; } = 0;
 
-        public AttributeValidationFloat Validation = null;
+		[G_NS.JsonProperty( Order = 12 )]
+		public AttributeValidationFloat Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
             if (value.ValueKind == G_STJ.JsonValueKind.Number) {

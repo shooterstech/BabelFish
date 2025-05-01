@@ -17,13 +17,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueType = ValueType.TIME_SPAN;
         }
 
-        /// <summary>
-        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
-        /// </summary>
-        /// <remarks>Time span value represented in seconds.</remarks>
-        public float ? DefaultValue { get; set; } = null;
+		/// <summary>
+		/// The default value for this field. It is the value assigned to the field if the user does not enter one.
+		/// </summary>
+		/// <remarks>Time span value represented in seconds.</remarks>
+		[G_NS.JsonProperty( Order = 11 )]
+		public float ? DefaultValue { get; set; } = null;
 
-        public AttributeValidationTimeSpan ? Validation = null;
+		[G_NS.JsonProperty( Order = 12 )]
+		public AttributeValidationTimeSpan ? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( JsonElement value ) {
             if (value.ValueKind == JsonValueKind.Number) {

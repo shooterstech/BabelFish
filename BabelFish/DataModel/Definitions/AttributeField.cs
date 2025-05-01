@@ -104,20 +104,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool MultipleValues { get; protected set; } = false;
 
         /// <summary>
-        /// True if the user is required to enter a value. False if the user desn't have to. If the user doesn't have to, then the DefaultValue is applied.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 6 )]
-        public bool Required { get; set; } = false;
-
-        /// <summary>
         /// In an ATTRIBUTE that has MultipleValues set to true, Key determines the unique identifier in the list. 
         /// Exactly one AttributeField within an ATTRIBUTE must have Key set to true.
         /// </summary>
-        [G_NS.JsonProperty( Order = 7 )]
+        [G_NS.JsonProperty( Order = 21 )]
         public bool Key { get; set; } = false;
 
-        /// <inheritdoc/>
-        [G_NS.JsonProperty( Order = 99, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
+		/// <summary>
+		/// True if the user is required to enter a value. False if the user desn't have to. If the user doesn't have to, then the DefaultValue is applied.
+		/// </summary>
+		[G_NS.JsonProperty( Order = 22 )]
+		public bool Required { get; set; } = false;
+
+		/// <inheritdoc/>
+		[G_NS.JsonProperty( Order = 99, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
