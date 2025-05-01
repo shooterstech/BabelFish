@@ -44,12 +44,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public string TargetName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product. Value must be one of the following:
-        /// OL385(for Small barcode labels)
-        /// OL161(for Large barcode labels).
-        /// </summary>
-        public BarcodeLabelSize LabelSize { get; set; } = BarcodeLabelSize.OL385;
+		/// <summary>
+		/// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product. Value must be one of the following:
+		/// OL385(for Small barcode labels)
+		/// OL161(for Large barcode labels).
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public BarcodeLabelSize LabelSize { get; set; } = BarcodeLabelSize.OL385;
 
         /// <inheritdoc/>
         [JsonPropertyOrder(99)]

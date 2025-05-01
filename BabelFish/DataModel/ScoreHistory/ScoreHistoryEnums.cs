@@ -33,8 +33,9 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         /// <summary>
         /// Return values for each quarter (three months)
+        /// Currently not supported. REST API has to be updated if we wanted it.
         /// </summary>
-        [Description( "QUARTER" )][EnumMember( Value = "QUARTER" )] QUARTER,
+        ///[Description( "QUARTER" )][EnumMember( Value = "QUARTER" )] QUARTER,
 
         /// <summary>
         /// Return values for each year

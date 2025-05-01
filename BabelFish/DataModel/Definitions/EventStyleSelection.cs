@@ -16,13 +16,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The Event's appellation (name) to use when looking up the mapping. Event appellations are usually common across (printed) rulebooks that have different courses of fire.
         /// </summary>
-        [G_NS.JsonProperty( Order = 1 )]
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public string EventAppellation { get; set; } = string.Empty;
 
         /// <summary>
         /// String formatted as a SetName. The EVENT STYLE definition to use in this mapping.
         /// </summary>
-        [G_NS.JsonProperty( Order = 2 )]
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public string EventStyleDef { get; set; } = "v1.0:orion:Default";
 
         /// <inheritdoc/>

@@ -20,9 +20,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public AimingMark() { }
 
-        /// <summary>
-        /// the color of the aiming mark
-        /// </summary>
-        public AimingMarkColor Color { get; set; } = AimingMarkColor.BLACK;
+		/// <summary>
+		/// the color of the aiming mark
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public AimingMarkColor Color { get; set; } = AimingMarkColor.BLACK;
     }
 }

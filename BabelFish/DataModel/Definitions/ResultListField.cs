@@ -59,6 +59,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Defines the type of data to be displayed.
         /// </summary>
+        [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public ResultFieldMethod Method { get; set; }
 
         /// <summary>

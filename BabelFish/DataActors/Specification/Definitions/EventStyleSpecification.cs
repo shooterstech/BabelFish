@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -67,8 +68,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var relatedEventStyles = new IsEventStyleRelatedEventStylesValid();
             var stageStyles = new IsEventStyleStageStylesValid();
             var simpleCof = new IsEventStyleSimpleCOFsValid();
+            var scoreFormatCollection = new IsEventStyleScoreFormatCollectionDefValid();
 
-            if (!await stageStylesAndEventStyles.IsSatisfiedByAsync( candidate )) {
+			if (!await stageStylesAndEventStyles.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( stageStylesAndEventStyles.Messages );
 			}
@@ -92,6 +94,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 				valid = false;
 				Messages.AddRange( simpleCof.Messages );
 			}
+
+            if (!await scoreFormatCollection.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( scoreFormatCollection.Messages );
+            }
 
 			return valid;
         }
@@ -262,7 +269,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         } else {
 
                             var cof = await simpleCof.GetCourseOfFireDefinitionAsync();
-                            var sfc = await cof.GetScoreFormatCollectionDefinitionAsync();
 
                             //Foreach SimpleCOFComponent
                             foreach (var component in simpleCof.Components) {
@@ -277,11 +283,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                                     valid = false;
                                     Messages.Add( $"The SimpleCOF identified with CourseOfFireDef '{simpleCof.CourseOfFireDef}' has a SimpleCOFCompoenent identified with StageStyleDef '{component.StageStyleDef}' that is not listed in the EventStyle's list of StageStyles." );
                                 }
-
-                                if ( !sfc.GetScoreConfigNames().Contains( component.ScoreConfigName ) ) {
-                                    valid = false;
-                                    Messages.Add( $"The SimpleCOF identified with CourseOfFireDef '{simpleCof.CourseOfFireDef}' has a SimpleCOFCompoenent identified with StageStyleDef '{component.StageStyleDef}' that has a ScoreConfigName '{component.ScoreConfigName}' that is not found in the ScoreFormatCollection '{cof.ScoreFormatCollectionDef}'." );
-                                }
                             }
 
                         }
@@ -292,5 +293,43 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             }
 
         }
-    }
+
+
+
+		/// <summary>
+		/// Tests whether the ScoreFormationCollectionDef property is valid in the passed in EventStyle instance.
+		/// </summary>
+		public class IsEventStyleScoreFormatCollectionDefValid : CompositeSpecification<EventStyle> {
+			public override async Task<bool> IsSatisfiedByAsync( EventStyle candidate ) {
+				Messages.Clear();
+				bool valid = true;
+
+				//Test if .TargetCollectionDef is a valid set name for a real lifee SCORE FORMAT COLLECTION
+				var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync( "ScoreFormatCollectionDef",
+					candidate.ScoreFormatCollectionDef,
+					DefinitionType.SCOREFORMATCOLLECTION );
+
+				if (!vm.Valid) {
+                    valid = false;
+					Messages.Add( vm.Message );
+					return false;
+				}
+
+				//Test that the ScoreConfigName value is a name listed in each SimpleCOFComponent is valid
+				var setName = SetName.Parse( candidate.ScoreFormatCollectionDef );
+				var scoreConfigDefinition = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( setName );
+
+                int i = 0;
+                foreach (var simpleCof in candidate.SimpleCOFs) {
+                    if (! scoreConfigDefinition.ScoreFormats.Contains( simpleCof.ScoreFormat  ) ) {
+                        valid = false;
+                        Messages.Add( $"The ScoreFormat value in SimpleCOFs[{i}]'{simpleCof.ScoreFormat}' is not a known value. The valid values are {string.Join( ", ", scoreConfigDefinition.ScoreFormats )}" );
+                    }
+                    i++;
+                }
+
+				return valid;
+			}
+		}
+	}
 }

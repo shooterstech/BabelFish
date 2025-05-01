@@ -9,11 +9,15 @@ using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
 
-    /// <summary>
-    /// Json converter for Enums. Uses an enum's Description first, if defined, else the enum string value.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class EnumConverterByDescription<T> : JsonConverter<T> where T : Enum {
+	/// <summary>
+	/// Json converter for Enums. Uses an enum's Description first, if defined, else the enum string value.
+	/// </summary>
+	/// <remarks>
+	/// As a general rule, enums properties should be decorated with the following JsonProperty to always wrtie their value when JSON is serialized.
+	/// [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+	/// </remarks>
+	/// <typeparam name="T"></typeparam>
+	public class EnumConverterByDescription<T> : JsonConverter<T> where T : Enum {
 
 
         protected static Logger Logger = LogManager.GetCurrentClassLogger();

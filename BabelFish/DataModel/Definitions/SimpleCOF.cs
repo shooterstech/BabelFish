@@ -36,8 +36,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 2 )]
         public List<SimpleCOFComponent> Components { get; set; } = new List<SimpleCOFComponent>();
 
+		/// <summary>
+		/// The ScoreFormat to use (e.g. Events or Shots), that is defined by the parent's Event Style .ScoreFormatCollectionDef, to use when displaying scores with this SimpleCOFComponent.
+		/// </summary>
+        /// <remarks>When displaying scores, the user chooses the ScoreFormatName (e.g. Decimal or Integer) to use to format scores.</remarks>
+		[G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		[DefaultValue( "Events" )]
+		public string ScoreFormat { get; set; } = "Events";
 
-        [Obsolete( "Use CourseOfFireDef instead." )]
+
+		[Obsolete( "Use CourseOfFireDef instead." )]
         [G_STJ_SER.JsonPropertyOrder( 10 )]
         [G_NS.JsonProperty( Order = 10 )]
         public string Name { get; set; } = string.Empty;
@@ -123,13 +131,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public int Shots { get; set; } = 10;
-
-        /// <summary>
-        /// The ScoreConfigName to use, that is defined by the parent's COF's .ScoreFormatCollectionDef, to use when displaying scores with this SimpleCOFComponent.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 4, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "Integer" )]
-        public string ScoreConfigName { get; set; } = "Integer";
 
         /// <summary>
         /// The ScoreComponent to use, from the score of this StageStyle, to calculate the 

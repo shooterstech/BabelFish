@@ -31,6 +31,13 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             } else {
                 throw new ArgumentException( $"Parameter Request is of unexpected type ${Request.GetType()}." );
             }
-        }
-    }
+		}
+
+		/// <inheritdoc />
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.MatchSearchList.NextToken );
+			}
+		}
+	}
 }

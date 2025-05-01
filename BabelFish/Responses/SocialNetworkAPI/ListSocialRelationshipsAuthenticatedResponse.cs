@@ -23,6 +23,13 @@ namespace Scopos.BabelFish.Responses.SocialNetworkAPI
             var nextRequest = (ListSocialRelationshipsAuthenticatedRequest)Request.Copy();
             nextRequest.Token = Value.SocialRelationshipList.NextToken;
             return nextRequest;
-        }
-    }
+		}
+
+		/// <inheritdoc />
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.SocialRelationshipList.NextToken );
+			}
+		}
+	}
 }

@@ -5,10 +5,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     public class RemarkList : List<Remark> {
-        //public List<Remark> remarks = new List<Remark>();
+		//public List<Remark> remarks = new List<Remark>();
 
-        
-        public void Add(ParticipantRemark remark, string reason)
+		public readonly List<ParticipantRemark> PriorityOfRemarks = new List<ParticipantRemark>() {
+					ParticipantRemark.DSQ,
+					ParticipantRemark.DNS,
+					ParticipantRemark.DNF,
+					ParticipantRemark.FIRST,
+					ParticipantRemark.SECOND,
+					ParticipantRemark.THIRD,
+					ParticipantRemark.ELIMINATED,
+					ParticipantRemark.BUBBLE,
+					ParticipantRemark.LEADER};
+
+		public void Add(ParticipantRemark remark, string reason)
         {
             var newRemark = new Remark();
             newRemark.ParticipantRemark = remark;
@@ -113,6 +123,40 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             return string.Join( ", ", list );
+        }
+
+        /// <summary>
+        /// Returns the most important Remark. If the participant has the Remark more than once, it indicates it on the return string.
+        /// </summary>
+        /// <remarks>Same(ish) as python's RemarkHelperFunctions.GetMostImportantRemark()</remarks>
+        public string Summarize {
+            get {
+
+                //Key is the ParticipantRemark, value is the number of times it is included in this Remark List. Counts both Hidden and Shown remarks.
+                Dictionary<ParticipantRemark, int> countOfRemarks = new Dictionary<ParticipantRemark, int>();
+
+                //Count up each of the remarks.
+                foreach (var pr in this) {
+                    if (countOfRemarks.ContainsKey( pr.ParticipantRemark )) {
+                        countOfRemarks[pr.ParticipantRemark] += 1;
+                    } else {
+                        countOfRemarks[pr.ParticipantRemark] = 1;
+                    }
+                }
+
+                //Return something
+                foreach( var pr in PriorityOfRemarks ) {
+                    if ( countOfRemarks.ContainsKey( pr )) {
+                        var count = countOfRemarks[pr];
+                        if (count == 1)
+                            return $"{pr}";
+                        if (count > 1)
+                            return $"{pr} x {count}";
+                    }
+                }
+
+                return "";
+            }
         }
 
         /// <summary>

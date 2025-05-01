@@ -12,5 +12,10 @@ namespace Scopos.BabelFish.Responses {
         /// </summary>
         /// <returns></returns>
         T GetNextRequest();
+
+        /// <summary>
+        /// Returns a boolean indicating if the server has more items to respond with. If so, the user may call GetNextRequest to retreive those items.
+        /// </summary>
+        bool HasMoreItems { get; }
     }
 }

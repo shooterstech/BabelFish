@@ -1,11 +1,6 @@
-﻿using System.Text.Json;
-using Scopos.BabelFish.DataModel.Athena;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.DataModel.ScoreHistory {
+namespace Scopos.BabelFish.DataModel.Athena {
 
     /// <summary>
     /// Represents an athletes averaged score over a given time span.
@@ -17,10 +12,10 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// </summary>
         public AveragedScore() { }
 
-        public AveragedScore(Score score) { 
-            X = (float)score.X;
+        public AveragedScore( Score score ) {
+            X = score.X;
             D = score.D;
-            I = (float)score.I;
+            I = score.I;
         }
 
         /// <summary>
@@ -38,33 +33,41 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// </summary>
         public float I { get; set; } = 0.0f;
 
-        [JsonIgnore]
-        public bool IsZero
-        {
-            get
-            {
-                return (X == 0 && D == 0 && I == 0);
+        [G_STJ_SER.JsonIgnore]
+        public bool IsZero {
+            get {
+                return X == 0 && D == 0 && I == 0;
             }
         }
 
-        public static AveragedScore operator +(AveragedScore left, AveragedScore right)
-        {
-            return new AveragedScore()
-            {
+        public static AveragedScore operator +( AveragedScore left, AveragedScore right ) {
+            return new AveragedScore() {
                 X = left.X + right.X,
                 D = left.D + right.D,
                 I = left.I + right.I
             };
         }
 
-        public static AveragedScore operator /(AveragedScore left, float right)
-        {
-            return new AveragedScore()
-            {
+        public static AveragedScore operator /( AveragedScore left, float right ) {
+            return new AveragedScore() {
                 X = left.X / right,
                 D = left.D / right,
                 I = left.I / right
             };
-        }
-    }
+		}
+
+		public float GetScoreComponentScore( ScoreComponent scoreComponent ) {
+
+			switch (scoreComponent) {
+				case ScoreComponent.D:
+				default:
+					return this.D;
+				case ScoreComponent.I:
+					return this.I;
+				case ScoreComponent.X:
+					return this.X;
+			}
+
+		}
+	}
 }

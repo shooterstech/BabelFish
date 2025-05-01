@@ -1,4 +1,6 @@
-﻿using Scopos.BabelFish.APIClients;
+﻿using BabelFish.DataModel.Athena;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoreHistory;
