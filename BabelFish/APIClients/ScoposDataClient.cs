@@ -52,13 +52,47 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="service">VersionService enum</param>
         /// <param name="level">VersionLevel enum</param>
         /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetVersionPublicResponse> GetVersionPublicAsync( VersionService service, VersionLevel level ) {
+        public async Task<GetVersionPublicResponse> GetVersionPublicAsync(ApplicationName service, ReleasePhase level ) {
             GetVersionPublicRequest requestParameters = new GetVersionPublicRequest() {
-                Services = new List<VersionService>() { service },
+                Services = new List<ApplicationName>() { service },
                 Level = level
             };
 
             return await GetVersionPublicAsync( requestParameters ).ConfigureAwait( false );
+        }
+
+
+        /// <summary>
+        /// GetVersion API for multiple services
+        /// </summary>
+        /// <param name="requestParameters">GetVersionRequest object</param>
+        /// <returns>List<VersionInfo> object</returns>
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(GetReleasePublicRequest requestParameters)
+        {
+
+            GetReleasePublicResponse response = new GetReleasePublicResponse(requestParameters);
+
+            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
+
+            return response;
+        }
+
+        /// <summary>
+        /// GetRelease API for one service
+        /// </summary>
+        /// <param name="service">VersionService enum</param>
+        /// <param name="level">VersionLevel enum</param>
+        /// <returns>List<VersionInfo> object</returns>
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName = "", string thingVersion = "" )
+        {
+            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
+            {
+                ReleasePhase = releasePhase,
+                ThingName = thingName,
+                ThingVersion = thingVersion
+            };
+
+            return await GetReleasePublicAsync( requestParameters ).ConfigureAwait( false );
         }
 
         /// <summary>

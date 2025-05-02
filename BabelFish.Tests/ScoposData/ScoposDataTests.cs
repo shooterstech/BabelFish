@@ -23,11 +23,25 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         }
 
         [TestMethod]
+        public void GetReleaseList()
+        {
+            var client = new ScoposDataClient(APIStage.BETA);
+
+            ReleasePhase level = ReleasePhase.PRODUCTION;
+            var response = client.GetReleasePublicAsync(level);
+
+            var result = response.Result;
+            Assert.IsNotNull(result);
+            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+            Assert.AreEqual(2, result.ApplicationRelease.Items.Count);
+        }
+
+        [TestMethod]
         public void GetOrionServiceProductionLevel() {
             var client = new ScoposDataClient( APIStage.BETA );
 
-            VersionService service = VersionService.ORION;
-            VersionLevel level = VersionLevel.PRODUCTION;
+            ApplicationName service = ApplicationName.ORION;
+            ReleasePhase level = ReleasePhase.PRODUCTION;
             var response = client.GetVersionPublicAsync( service, level );
 
             var result = response.Result;
@@ -41,8 +55,8 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         public void GetAthenaServiceAlphaLevel() {
             var client = new ScoposDataClient( APIStage.BETA );
 
-            VersionService service = VersionService.ATHENA;
-            VersionLevel level = VersionLevel.ALPHA;
+            ApplicationName service = ApplicationName.ATHENA;
+            ReleasePhase level = ReleasePhase.ALPHA;
             var response = client.GetVersionPublicAsync( service, level );
 
             var result = response.Result;
@@ -57,8 +71,8 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             var client = new ScoposDataClient( APIStage.BETA );
 
             GetVersionPublicRequest request = new GetVersionPublicRequest() {
-                Services = new List<VersionService>() { VersionService.ORION, VersionService.ATHENA },
-                Level = VersionLevel.PRODUCTION
+                Services = new List<ApplicationName>() { ApplicationName.ORION, ApplicationName.ATHENA },
+                Level = ReleasePhase.PRODUCTION
             };
 
             var response = client.GetVersionPublicAsync( request );
@@ -67,7 +81,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             Assert.IsNotNull( result );
             Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
             Assert.AreEqual( result.VersionList.Count, 2 );
-            Assert.IsTrue( result.VersionList.Any( x => x.Service == VersionService.ATHENA ) );
+            Assert.IsTrue( result.VersionList.Any( x => x.Service == ApplicationName.ATHENA ) );
         }
 
         [TestMethod]
