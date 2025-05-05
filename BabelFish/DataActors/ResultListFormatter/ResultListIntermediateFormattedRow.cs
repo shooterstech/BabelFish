@@ -13,6 +13,16 @@ using Scopos.BabelFish.Helpers;
 using System.Security.Cryptography;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
+
+    /// <summary>
+    /// Delegate to allow the overload of GetParticipantAttribute for the common fields.
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="resultEvent"></param>
+    /// <param name="rlf"></param>
+    /// <returns></returns>
+    public delegate string ParticipantAttributeOverload( ResultEvent resultEvent, ResultListIntermediateFormatted rlf );
+
     public abstract class ResultListIntermediateFormattedRow {
 
         /// <summary>
@@ -34,6 +44,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Club",
             "CompetitorNumber", 
             "MatchLocation", 
+            "MatchLocationAbbreviated",
             "MatchID", //If this is a Virtual Match, will differ from the ParentID
 			"LocalDate", 
             "ResultCOFID", 
@@ -104,6 +115,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
+        /// Recalculates the standard participant attribute fields (e.g. rank, display name, club, etc). Is useful
+        /// to call if the user overrode one of the GetParticipantAttribute Pointers
+        /// </summary>
+        public void RefreshStandardParticipantAttributeFields() {
+			//Pull in the standard ParticipantAttribute Fields that are always included
+			foreach (var field in StandardParticipantAttributeFields) {
+				_fields[field] = GetParticipantAttribute( field );
+			}
+		}
+
+        /// <summary>
         /// Method is responsible for implementing the .TrucateAt rule in the FieldSource.
         /// </summary>
         /// <param name="source"></param>
@@ -162,6 +184,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             //Fields that are unique to the child Match ID that generated them
             "MatchLocation", 
+            "MatchLocationAbbreviated",
             "MatchID", 
             "Creator", //"Orion Scoring System version 2.20.5.2"
             "Owner", //"OrionAcct000001"
@@ -172,7 +195,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 			switch (source) {
 				case "Rank":
-                    int rank = GetRank();
+					if (_resultListFormatted.GetParticipantAttributeRankPtr != null)
+						return _resultListFormatted.GetParticipantAttributeRankPtr( this._resultEvent, this._resultListFormatted );
+
+					int rank = GetRank();
 
                     if (rank > 0)
                         return rank.ToString();
@@ -180,6 +206,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					return "";
 
                 case "RankOrder":
+					if (_resultListFormatted.GetParticipantAttributeRankOrderPtr != null)
+						return _resultListFormatted.GetParticipantAttributeRankOrderPtr( this._resultEvent, this._resultListFormatted );
+					
                     int rankOrder = GetRankOrder();
 
                     if (rankOrder > 0)
@@ -188,18 +217,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return "";
 
                 case "Empty":
-                    return "";
+					if (_resultListFormatted.GetParticipantAttributeEmptyPtr != null)
+						return _resultListFormatted.GetParticipantAttributeEmptyPtr( this._resultEvent, this._resultListFormatted );
+					return "";
 
                 case "DisplayName":
-                    var dn = _resultEvent.Participant.DisplayName;
+					if (_resultListFormatted.GetParticipantAttributeDisplayNamePtr != null)
+						return _resultListFormatted.GetParticipantAttributeDisplayNamePtr( this._resultEvent, this._resultListFormatted );
+
+					var dn = _resultEvent.Participant.DisplayName;
                     if (!string.IsNullOrEmpty( dn ))
                         return dn;
 
                     return "Unknown";
 
                 case "DisplayNameAbbreviated":
-                    //First try the regular display name
-                    var dna = _resultEvent.Participant.DisplayName;
+					if (_resultListFormatted.GetParticipantAttributeDisplayNameAbbreviatedPtr != null)
+						return _resultListFormatted.GetParticipantAttributeDisplayNameAbbreviatedPtr( this._resultEvent, this._resultListFormatted );
+
+					//First try the regular display name
+					var dna = _resultEvent.Participant.DisplayName;
                     if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
                         return dna;
 
@@ -216,68 +253,118 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return "Unknown";
 
                 case "DisplayNameShort":
-                    var dns = _resultEvent.Participant.DisplayNameShort;
+					if (_resultListFormatted.GetParticipantAttributeDisplayNameShortPtr != null)
+						return _resultListFormatted.GetParticipantAttributeDisplayNameShortPtr( this._resultEvent, this._resultListFormatted );
+
+					var dns = _resultEvent.Participant.DisplayNameShort;
                     if (!string.IsNullOrEmpty( dns ))
                         return dns;
 
                     return "Unknown";
 
                 case "FamilyName":
-                    if (_resultEvent.Participant is Individual)
+					if (_resultListFormatted.GetParticipantAttributeFamilyNamePtr != null)
+						return _resultListFormatted.GetParticipantAttributeFamilyNamePtr( this._resultEvent, this._resultListFormatted );
+
+					if (_resultEvent.Participant is Individual)
                         return ((Individual)_resultEvent.Participant).FamilyName;
                     else
                         return "";
 
 				case "GivenName":
+					if (_resultListFormatted.GetParticipantAttributeGivenNamePtr != null)
+						return _resultListFormatted.GetParticipantAttributeGivenNamePtr( this._resultEvent, this._resultListFormatted );
+
 					if (_resultEvent.Participant is Individual)
 						return ((Individual)_resultEvent.Participant).GivenName;
 					else
 						return "";
 
 				case "MiddleName":
+					if (_resultListFormatted.GetParticipantAttributeMiddleNamePtr != null)
+						return _resultListFormatted.GetParticipantAttributeMiddleNamePtr( this._resultEvent, this._resultListFormatted );
+
 					if (_resultEvent.Participant is Individual)
 						return ((Individual)_resultEvent.Participant).MiddleName;
 					else
 						return "";
 
                 case "HomeTown":
+					if (_resultListFormatted.GetParticipantAttributeHomeTownPtr != null)
+						return _resultListFormatted.GetParticipantAttributeHomeTownPtr( this._resultEvent, this._resultListFormatted );
+					
                     return _resultEvent.Participant.HomeTown;
 
                 case "Country":
-                    return _resultEvent.Participant.Country;
+					if (_resultListFormatted.GetParticipantAttributeCountryPtr != null)
+						return _resultListFormatted.GetParticipantAttributeCountryPtr( this._resultEvent, this._resultListFormatted );
+
+					return _resultEvent.Participant.Country;
 
                 case "Club":
-                    return _resultEvent.Participant.Club;
+					if (_resultListFormatted.GetParticipantAttributeClubPtr != null)
+						return _resultListFormatted.GetParticipantAttributeClubPtr( this._resultEvent, this._resultListFormatted );
+					return _resultEvent.Participant.Club;
 
 				case "CompetitorNumber":
+					if (_resultListFormatted.GetParticipantAttributeCompetitorNumberPtr != null)
+						return _resultListFormatted.GetParticipantAttributeCompetitorNumberPtr( this._resultEvent, this._resultListFormatted );
+
 					if (_resultEvent.Participant is Individual)
 						return ((Individual)_resultEvent.Participant).CompetitorNumber;
 					else
 						return "";
 
 				case "ResultCOFID":
-                    return _resultEvent.ResultCOFID;
+					if (_resultListFormatted.GetParticipantAttributeResultCOFIDPtr != null)
+						return _resultListFormatted.GetParticipantAttributeResultCOFIDPtr( this._resultEvent, this._resultListFormatted );
+
+					return _resultEvent.ResultCOFID;
 
                 case "UserID":
+					if (_resultListFormatted.GetParticipantAttributeUserIDPtr != null)
+						return _resultListFormatted.GetParticipantAttributeUserIDPtr( this._resultEvent, this._resultListFormatted );
+
 					if (_resultEvent.Participant is Individual)
 						return ((Individual)_resultEvent.Participant).UserID;
 					else
 						return "";
 
                 case "LocalDate":
+					if (_resultListFormatted.GetParticipantAttributeLocalDatePtr != null)
+						return _resultListFormatted.GetParticipantAttributeLocalDatePtr( this._resultEvent, this._resultListFormatted );
+					
                     return _resultEvent.LocalDate.ToString();
 
 				case "MatchID":
+					if (_resultListFormatted.GetParticipantAttributeMatchIDPtr != null)
+						return _resultListFormatted.GetParticipantAttributeMatchIDPtr( this._resultEvent, this._resultListFormatted );
+
 					//This is the local match id, which likely different from the Parent ID in a virtual match
 					return _resultEvent.MatchID;
 
 				case "MatchLocation":
+					if (_resultListFormatted.GetParticipantAttributeMatchLocationPtr != null)
+						return _resultListFormatted.GetParticipantAttributeMatchLocationPtr( this._resultEvent, this._resultListFormatted );
+					
                     if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ) )
                         return metadata.MatchLocation;
                     else 
                         return "";
 
+                case "MatchLocationAbbreviated":
+					if (_resultListFormatted.GetParticipantAttributeMatchLocationAbbreviatedPtr != null)
+						return _resultListFormatted.GetParticipantAttributeMatchLocationAbbreviatedPtr( this._resultEvent, this._resultListFormatted );
+
+					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
+						return GetTruncatedValue( metadata.MatchLocation );
+					else
+						return "";
+
 				case "Creator":
+					if (_resultListFormatted.GetParticipantAttributeCreatorPtr != null)
+						return _resultListFormatted.GetParticipantAttributeCreatorPtr( this._resultEvent, this._resultListFormatted );
+
 					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
 						return metadata.Creator;
 					else
@@ -286,22 +373,34 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 				case "Owner":
                 case "OwnerId":
                 case "OwnerID":
+					if (_resultListFormatted.GetParticipantAttributeOwnerPtr != null)
+						return _resultListFormatted.GetParticipantAttributeOwnerPtr( this._resultEvent, this._resultListFormatted );
+
 					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
 						return metadata.OwnerId;
 					else
 						return "";
 
 				case "TargetCollectionName":
+					if (_resultListFormatted.GetParticipantAttributeTargetCollectionNamePtr != null)
+						return _resultListFormatted.GetParticipantAttributeTargetCollectionNamePtr( this._resultEvent, this._resultListFormatted );
+
 					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
 						return metadata.TargetCollectionName;
 					else
 						return "";
 
                 case "Status":
+					if (_resultListFormatted.GetParticipantAttributeStatusPtr != null)
+						return _resultListFormatted.GetParticipantAttributeStatusPtr( this._resultEvent, this._resultListFormatted );
+					
                     return GetStatus().Description();
 
-                case "LastShot": 
-                    var lastShot = _resultEvent.LastShot;
+                case "LastShot":
+                    if (_resultListFormatted.GetParticipantAttributeLastShotPtr != null)
+                        return _resultListFormatted.GetParticipantAttributeLastShotPtr( this._resultEvent, this._resultListFormatted );
+
+					var lastShot = _resultEvent.LastShot;
                     if (lastShot != null && ( DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalSeconds < 300) {
 
                         string scoreFormat = _resultListFormatted.GetScoreFormat( "Shots" );
@@ -311,6 +410,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return "";
 
                 case "Remark":
+					if (_resultListFormatted.GetParticipantAttributeRemarkPtr != null)
+						return _resultListFormatted.GetParticipantAttributeRemarkPtr( this._resultEvent, this._resultListFormatted );
+					
                     return GetRemarks();
 
                 default:

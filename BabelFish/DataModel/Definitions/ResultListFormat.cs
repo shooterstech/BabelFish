@@ -296,7 +296,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 			this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Location",
-                Body = "{MatchLocation}",
+                Body = "{MatchLocationAbbreviated}",
                 Child = "{Empty}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-matchinfo",

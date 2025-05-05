@@ -9,6 +9,7 @@ using Scopos.BabelFish.Helpers;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
+using Amazon.CognitoIdentityProvider.Model;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
@@ -358,6 +359,53 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         }
 
         [TestMethod]
+        public async Task GetParticipantAttributeDelegateTest() {
+
+			MatchID matchId = new MatchID( "1.2413.2025050117240235.0" );
+			var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+			var match = matchDetailResponse.Match;
+			var resultListName = "Individual - All";
+
+			//Get the Result List from the API Server
+			var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
+			var resultList = resultListResponse.ResultList;
+			var resultEventName = resultList.EventName;
+
+			//Get the definition file that will tell us how to display the results.
+			var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+			var resultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+
+			//Convert the result list into the result event intermediate list that we can use
+			ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
+			await rlf.InitializeAsync();
+
+            //First loop through, looking at rank which should be 1 .. 8
+            for ( int i = 0; i < 8; i++ ) {
+                Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
+                Assert.AreEqual( (i + 1).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
+            }
+
+            //Point to a delegate that overrides getting rank. Then recalculate the value of the fields.
+            rlf.GetParticipantAttributeRankPtr = GetParticipantAttributeRank;
+            rlf.RefreshAllRowsParticipantAttributeFields();
+
+			//First loop through, looking at rank which should be 1 .. 8
+			for (int i = 0; i < 8; i++) {
+				Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
+				Assert.AreEqual( (i + 1001).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
+			}
+
+		}
+
+        public string GetParticipantAttributeRank( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {
+
+            var realRank = resultEvent.Rank;
+            var modifiedRank = 1000 + realRank;
+
+            return modifiedRank.ToString();
+        }
+
+		[TestMethod]
         public async Task EriksPlayground() {
 
             //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
