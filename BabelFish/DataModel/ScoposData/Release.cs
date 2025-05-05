@@ -39,6 +39,9 @@ namespace Scopos.BabelFish.DataModel.ScoposData
         [JsonPropertyOrder(7)]
         public ReleaseNote ReleaseNotes { get; set; } = new ReleaseNote();
 
+        [JsonPropertyOrder(8)]
+        public List<ReleaseRequirements> Requires { get; set; } = new List<ReleaseRequirements>();
+
         public override string ToString()
         {
             StringBuilder foo = new StringBuilder();
@@ -55,5 +58,11 @@ namespace Scopos.BabelFish.DataModel.ScoposData
 
         [JsonPropertyOrder(2)]
         public List<string> BugFixes { get; set; } = new List<string>();
+    }
+
+    public class ReleaseRequirements
+    {
+        public ApplicationName Application { get; set; }
+        public string Version { get; set; } = string.Empty;
     }
 }
