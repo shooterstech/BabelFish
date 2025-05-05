@@ -34,6 +34,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             Assert.IsNotNull(result);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
             Assert.AreEqual(2, result.ApplicationRelease.Items.Count);
+            Console.Write(result.ApplicationRelease.Items.ToString());
         }
 
         [TestMethod]
