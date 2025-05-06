@@ -418,7 +418,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Third place
         /// </summary>
-        THIRD
+        THIRD,
+
+        /// <summary>
+        /// Qualified for Final
+        /// </summary>
+        QUALIFIED
     };
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]

@@ -338,6 +338,94 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         None
     }
 
+    public enum Months {
+
+        /// <summary>
+        /// The month of January
+        /// </summary>
+        [Description( "January" )]
+        [EnumMember( Value = "January" )]
+        January,
+
+        /// <summary>
+        /// The month of February
+        /// </summary>
+        [Description( "February" )]
+        [EnumMember( Value = "February" )]
+        February,
+
+        /// <summary>
+        /// The month of March
+        /// </summary>
+        [Description( "March" )]
+        [EnumMember( Value = "March" )]
+        March,
+
+        /// <summary>
+        /// The month of April
+        /// </summary>
+        [Description( "April" )]
+        [EnumMember( Value = "April" )]
+        April,
+
+        /// <summary>
+        /// The month of May
+        /// </summary>
+        [Description( "May" )]
+        [EnumMember( Value = "May" )]
+        May,
+
+        /// <summary>
+        /// The month of June
+        /// </summary>
+        [Description( "June" )]
+        [EnumMember( Value = "JanJuneuary" )]
+        June,
+
+        /// <summary>
+        /// The month of July
+        /// </summary>
+        [Description( "July" )]
+        [EnumMember( Value = "July" )]
+        July,
+
+        /// <summary>
+        /// The month of August
+        /// </summary>
+        [Description( "August" )]
+        [EnumMember( Value = "August" )]
+        August,
+
+        /// <summary>
+        /// The month of September
+        /// </summary>
+        [Description( "September" )]
+        [EnumMember( Value = "September" )]
+        September,
+
+        /// <summary>
+        /// The month of October
+        /// </summary>
+        [Description( "October" )]
+        [EnumMember( Value = "October" )]
+        October,
+
+        /// <summary>
+        /// The month of November
+        /// </summary>
+        [Description( "November" )]
+        [EnumMember( Value = "November" )]
+        November,
+
+        /// <summary>
+        /// The month of December
+        /// </summary>
+        [Description( "December" )]
+        [EnumMember( Value = "December" )]
+        December
+
+    }
+
     /// <summary>
     /// Specifies where the data is coming from for a Result List Field.
     /// </summary>

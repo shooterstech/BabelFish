@@ -70,6 +70,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
+        /// The first day of this month, is considered with the annual season for this Event Style starts.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( Months.January )]
+        public Months SeasonStarts { get; set; } = Months.January;
+
+        /// <summary>
         /// A list of SimpleCOF. This lists the common ways to displaying scores from this EVENT STYLE.
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 16 )]

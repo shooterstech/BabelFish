@@ -235,6 +235,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
             } );
 
+            /*
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "",
                 Body = "",
@@ -247,11 +248,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     Condition = ShowWhenCondition.ENGAGEABLE
                 }
             } );
+            */
 
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
                 Body = "{DisplayName}",
-                BodyLinkTo = LinkToOption.ResultCOF,
+                BodyLinkTo = LinkToOption.PublicProfile,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -264,7 +266,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
                 Body = "{DisplayNameAbbreviated}",
-                BodyLinkTo = LinkToOption.ResultCOF,
+                BodyLinkTo = LinkToOption.PublicProfile,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -321,6 +323,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Aggregate",
                 Body = "{Individual}",
+                BodyLinkTo = LinkToOption.ResultCOF,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-event",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
