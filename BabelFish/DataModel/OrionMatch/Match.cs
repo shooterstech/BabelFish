@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.ComponentModel;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json.Serialization;
 using NLog;
@@ -196,9 +197,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<Contact> MatchContacts { get; set; } = new List<Contact>();
 
         /// <summary>
-        /// A list of scoring systems used in this match.
+        /// A list of scoring system names used in this match.
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
+
+        public bool ShouldSerializeScoringSystems() {
+            return ScoringSystems != null && ScoringSystems.Count > 0;
+        }
+
+        /// <summary>
+        /// The type of scoring system used in this match.
+        /// </summary>
+        [DefaultValue( ScoringSystem.UNKNOWN )]
+        public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.

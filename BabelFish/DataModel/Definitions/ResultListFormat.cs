@@ -289,7 +289,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 						},
 						new ShowWhenVariable() {
 							Condition = ShowWhenCondition.SHOT_ON_EST
-						}
+						},
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                        }
 					}
 				}
 			} );

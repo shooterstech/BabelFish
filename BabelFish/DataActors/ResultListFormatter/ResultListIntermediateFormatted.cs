@@ -770,15 +770,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeMiddleNamePtr { get; set; } = null;
 
-		/// <summary>
-		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the HomeTown field
-		/// in each row. 
-		/// </summary>
-		/// <remarks>
-		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
-		/// method in the field value.
-		/// </remarks>
-		public ParticipantAttributeOverload GetParticipantAttributeHomeTownPtr { get; set; } = null;
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the HomeTown field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload GetParticipantAttributeHomeTownPtr { get; set; } = null;
 
 		/// <summary>
 		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Country field
