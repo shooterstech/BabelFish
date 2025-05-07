@@ -303,7 +303,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
     /// NOTE EventtType is purposefully misspelled.
     /// </summary>
-    public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
+    public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, ROUND, SINGULAR }
 
     public enum FieldType {
         OPEN,

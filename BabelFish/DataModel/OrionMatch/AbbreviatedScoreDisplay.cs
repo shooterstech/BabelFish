@@ -80,6 +80,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( null )]
         public List<AbbreviatedScoreDisplay> Children { get; set; }
 
+        public bool ShouldSerializeChildren() {
+            return ( Children != null && Children.Count > 0 );
+        }
+
         /// <summary>
         /// Human Readable score format string. defaults to decimal single value.
         /// </summary>
@@ -92,6 +96,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonPropertyOrder ( 6 )]
         public List<string> AttributeList { get; set; } = new List<string>();
+
+        public bool ShouldSerializeAttributeList() {
+            return (AttributeList != null && AttributeList.Count > 0);
+        }
 
         public override string ToString() {
             if (FormatName != "")

@@ -214,7 +214,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventName = "Individual",
                 EventType = EventtType.EVENT,
                 EventStyleMapping = new EventStyleMapping(),
-                ResultListFormatDef = "v1.0:orion:Default Individual"
+                ResultListFormatDef = "v1.0:orion:Default Individual",
+                RankingRuleMapping = new RankingRuleMapping( "v1.0:orion:Generic Qualification" )
             };
             topLvelEvent.Children.Add( "ChildStage" );
 
@@ -222,7 +223,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventName = "Stage Event",
                 EventType = EventtType.STAGE,
                 StageStyleMapping = new StageStyleMapping(),
-                ResultListFormatDef = "v1.0:orion:Default Individual"
+                ResultListFormatDef = "v1.0:orion:Default Individual",
+                RankingRuleMapping = new RankingRuleMapping( "v1.0:orion:Generic Qualification" )
             };
             stageEvent.Children.Add( "String Event" );
 

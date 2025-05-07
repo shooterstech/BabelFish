@@ -25,6 +25,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         public ShotGraphicShow Show { get; set; } = new ShotGraphicShow();
 
+        public bool ShouldSerializeShow() {
+            if (Show == null
+                || string.IsNullOrEmpty( Show.ShowName ) 
+                || string.IsNullOrEmpty( Show.EventName ) )
+                return false;
+
+            return true;
+        }
+
         /// <summary>
         /// In a Live event, lists the current EventNames for each EventType. In a event that is
         /// already concluded, this data structure will not have any meaning.
