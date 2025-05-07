@@ -32,7 +32,12 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// The URL to download the build from.
         /// </summary>
         [G_NS.JsonProperty( Order = 4 )]
-        public string DownloadFile { get; set; } = "";
+        public string DownloadFileUrl { get; set; } = "";
+
+        /// <summary>
+        /// The URL of the EULA's PDF.
+        /// </summary>
+        public string EULAUrl { get; set; } = "";
 
         /// <summary>
         /// Enhancement and bug fix notes for this release.

@@ -34,6 +34,10 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         [EnumMember(Value = "beta")]
         BETA,
 
+        [Description( "integrated" )]
+        [EnumMember( Value = "integrated" )]
+        INTEGRATED,
+
         [Description("production")]
         [EnumMember(Value = "production")]
         PRODUCTION

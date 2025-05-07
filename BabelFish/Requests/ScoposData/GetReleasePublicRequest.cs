@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Requests.ScoposData
         public GetReleasePublicRequest() : base("GetRelease") { }
 
         /// <summary>
-        /// VersionLevel enum value
+        /// VersionLevel to request
         /// </summary>
         public ReleasePhase ReleasePhase { get; set; } = ReleasePhase.PRODUCTION;
 
@@ -26,7 +26,8 @@ namespace Scopos.BabelFish.Requests.ScoposData
         /// <summary>
         /// The ThingVersion of whoever is making the call, not required.
         /// </summary>
-        public string ThingVersion { get; set; } = "";
+        /// <remarks>ThingVersion may be null.</remarks>
+        public Version ? ThingVersion { get; set; } = null;
 
         /// <inheritdoc />
         public override string RelativePath
@@ -41,8 +42,13 @@ namespace Scopos.BabelFish.Requests.ScoposData
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
                 parameterList.Add("release-phase", new List<string>() { ReleasePhase.Description() });
-                parameterList.Add("thing-name", new List<string>() { ThingName });
-                parameterList.Add("thing-version", new List<string>() { ThingVersion });
+
+                if ( !string.IsNullOrEmpty( this.ThingName ) )
+                    parameterList.Add("thing-name", new List<string>() { ThingName });
+
+                if (this.ThingVersion != null) {
+                    parameterList.Add( "thing-version", new List<string>() { ThingVersion.ToString() } );
+                }
 
                 return parameterList;
             }
