@@ -13,12 +13,12 @@ namespace Scopos.BabelFish.Requests.ScoposData {
         /// <summary>
         /// List of VersionService enum value(s)
         /// </summary>
-        public List<VersionService> Services { get; set; } = new List<VersionService>();
+        public List<ApplicationName> Services { get; set; } = new List<ApplicationName>();
 
         /// <summary>
         /// VersionLevel enum value
         /// </summary>
-        public VersionLevel Level { get; set; } = VersionLevel.PRODUCTION;
+        public ReleasePhase Level { get; set; } = ReleasePhase.PRODUCTION;
 
         /// <inheritdoc />
         public override string RelativePath {

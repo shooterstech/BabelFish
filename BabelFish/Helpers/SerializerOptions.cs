@@ -9,6 +9,7 @@ using System.Net;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.ScoposData;
 
 namespace Scopos.BabelFish.Helpers {
     public static class SerializerOptions {
@@ -121,6 +122,8 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APISubDomain>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SocialRelationshipName>() );
+                    SystemTextJsonDeserializer.Converters.Add(new G_BF_STJ_CONV.EnumConverterByDescription<ApplicationName>());
+                    SystemTextJsonDeserializer.Converters.Add(new G_BF_STJ_CONV.EnumConverterByDescription<ReleasePhase>());
 
                     //AbstractEST
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ESTUnitCommand>() );
