@@ -323,5 +323,13 @@ namespace Scopos.BabelFish.Tests.Definition {
             var attrDefinitionSecondCall = await DefinitionCache.GetAttributeDefinitionAsync( setName );
             Assert.IsTrue( currentVersion.ToString() == attrDefinitionSecondCall.Version.ToString() );
         }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+            var setName = SetName.Parse( "v1.0:ntparc:40 Shot Standing" );
+            var definition = await DefinitionCache.GetDefinitionAsync( DefinitionType.COURSEOFFIRE, setName );
+
+            Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
+        }
     }
 }

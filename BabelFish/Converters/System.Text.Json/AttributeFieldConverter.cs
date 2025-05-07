@@ -11,8 +11,20 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                 JsonElement root = doc.RootElement;
-                bool multipleValues = root.GetProperty( "MultipleValues" ).GetBoolean();
-                string valueType = root.GetProperty( "ValueType" ).GetString();
+                bool multipleValues;
+                string valueType;
+
+                if (root.TryGetProperty( "MultipleValues", out JsonElement mv ) 
+                    && (mv.ValueKind == JsonValueKind.True || mv.ValueKind == JsonValueKind.False) )
+                    multipleValues = mv.GetBoolean();
+                else
+                    multipleValues = false;
+
+                if (root.TryGetProperty( "ValueType", out JsonElement vt )
+                    && vt.ValueKind == JsonValueKind.String )
+                    valueType = vt.GetString();
+                else
+                    valueType = "STIRNG";
 
                 switch (valueType) {
                     case "DATE":

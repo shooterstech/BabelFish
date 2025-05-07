@@ -144,7 +144,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case ShowWhenCondition.SHOT_ON_EST:
                     //If one or more of the VM locations have ESTs, then this will evaluate to true.
                     foreach( var md in RLF.ResultList.Metadata.Values ) {
-                        if ( md.ScoringSystem == ScoringSystem.EST ) {
+                        if ( md.ScoringSystemType == ScoringSystem.EST ) {
                             return true;
                         }
                     }
@@ -153,7 +153,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case ShowWhenCondition.SHOT_ON_PAPER:
                     //If one or more of the VM locations have PAPER, then this will evaluate to true.
                     foreach (var md in RLF.ResultList.Metadata.Values) {
-                        if (md.ScoringSystem == ScoringSystem.PAPER) {
+                        if (md.ScoringSystemType == ScoringSystem.PAPER) {
                             return true;
                         }
                     }

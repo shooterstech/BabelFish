@@ -120,14 +120,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( ScoringSystem.UNKNOWN )]
-        public ScoringSystem ScoringSystem { get; set; } = ScoringSystem.UNKNOWN;
+        public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
 
         /// <summary>
         /// The name of the scoring system in use. An empty string means unknown or a mix of differnt Scoring Systems.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 13 )]
         [G_NS.JsonProperty( Order = 13 )]
-        [DefaultValue( "" )]
-        public string ScoringSystemName { get; set; } = string.Empty;
+        public List<string> ScoringSystems { get; set; } = new List<string>();
+
+        public bool ShouldSerializeScoringSystems() {
+            return ScoringSystems != null && ScoringSystems.Count > 0;
+        }
     }
 }

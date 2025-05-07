@@ -5,9 +5,9 @@
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-    <AssemblyVersion>1.8.2.19</AssemblyVersion>
+    <AssemblyVersion>1.8.3.4</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
-	<Version>1.8.2.19</Version>
+	<Version>1.8.3.4</Version>
 	<Authors>Scopos</Authors>
 	<Company>Scopos</Company>
 	<PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>

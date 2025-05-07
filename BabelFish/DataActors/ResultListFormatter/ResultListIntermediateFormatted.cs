@@ -666,5 +666,270 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>The default value is true.</para>
         /// </summary>
         public bool ShowSupplementalInformation {  get; set; } = true;
-    }
+
+		#region Participant Attribute Delegates
+		/// <summary>
+		/// Recalculates the standard participant attribute fields (e.g. rank, display name, club, etc). Is useful
+		/// to call if the user overrode one of the GetParticipantAttribute Pointers
+		/// </summary>
+		public void RefreshAllRowsParticipantAttributeFields() {
+            lock (rows) {
+                foreach (var r in rows) {
+                    r.RefreshStandardParticipantAttributeFields();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Rank field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload GetParticipantAttributeRankPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the RankOrder field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeRankOrderPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Empty field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeEmptyPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the DisplayName field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeDisplayNamePtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the DisplayNameShort field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeDisplayNameShortPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the DisplayNameAbbreviated field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeDisplayNameAbbreviatedPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the FamilyName field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeFamilyNamePtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the GivenName field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeGivenNamePtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MiddleName field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeMiddleNamePtr { get; set; } = null;
+
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the HomeTown field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload GetParticipantAttributeHomeTownPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Country field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeCountryPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Club field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeClubPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the CompetitorNumber field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeCompetitorNumberPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchLocation field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeMatchLocationPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchLocationAbbreviated field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeMatchLocationAbbreviatedPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchID field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeMatchIDPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the LocalDate field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeLocalDatePtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the ResultCOFID field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeResultCOFIDPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the UserID field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeUserIDPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Creator field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeCreatorPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Owner field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeOwnerPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the TargetCollectionName field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeTargetCollectionNamePtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Status field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeStatusPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the LastShot field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeLastShotPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Remark field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeRemarkPtr { get; set; } = null;
+
+		#endregion
+	}
 }
