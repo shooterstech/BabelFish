@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.Json.Serialization;
+using Version = Scopos.BabelFish.DataModel.Common.Version;
 
-namespace Scopos.BabelFish.DataModel.ScoposData
-{
-    public class ReleaseInfo
-    {
+namespace Scopos.BabelFish.DataModel.ScoposData {
+    public class ReleaseInfo {
 
         /// <summary>
         /// Version number. in the form of a.b.c.d
@@ -15,54 +13,73 @@ namespace Scopos.BabelFish.DataModel.ScoposData
         /// c = bug fix version
         /// d = internal build
         /// </summary>
-        [JsonPropertyOrder(1)]
-        public string Version { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 1 )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.VersionConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VersionConverter ) )]
+        public Version Version { get; set; } = new Version( "1.0.0.0" );
 
 
-        [JsonPropertyOrder(2)]
+        [G_NS.JsonProperty( Order = 2 )]
 
         public ApplicationName Application { get; set; }
 
-        [JsonPropertyOrder(3)]
+        [G_NS.JsonProperty( Order = 3 )]
 
         public ReleasePhase ReleasePhase { get; set; }
 
-        [JsonPropertyOrder(4)]
+
+        /// <summary>
+        /// The URL to download the build from.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
         public string DownloadFile { get; set; } = "";
 
-        [JsonPropertyOrder(5)]
-        public List<string> Enhancements { get; set; } = new List<string>();
-
-        [JsonPropertyOrder(6)]
-        public List<string> BugFixes { get; set; } = new List<string>();
-
-        [JsonPropertyOrder(7)]
+        /// <summary>
+        /// Enhancement and bug fix notes for this release.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
         public ReleaseNote ReleaseNotes { get; set; } = new ReleaseNote();
 
-        [JsonPropertyOrder(8)]
+        /// <summary>
+        /// Other applicaiton version requirements to run this release.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
         public List<ReleaseRequirements> Requires { get; set; } = new List<ReleaseRequirements>();
 
-        public override string ToString()
-        {
+        /// <inheritdoc />
+        public override string ToString() {
             StringBuilder foo = new StringBuilder();
-            foo.Append("Version ");
-            foo.Append(Version);
+            foo.Append( "Version " );
+            foo.Append( Version );
             return foo.ToString();
         }
     }
 
-    public class ReleaseNote
-    {
-        [JsonPropertyOrder(1)]
+    public class ReleaseNote {
+        /// <summary>
+        /// Enhancement notes
+        /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public List<string> Enhancements { get; set; } = new List<string>();
 
-        [JsonPropertyOrder(2)]
+        /// <summary>
+        /// Bug fixe notes
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public List<string> BugFixes { get; set; } = new List<string>();
     }
 
-    public class ReleaseRequirements
-    {
+    public class ReleaseRequirements {
+
+        [G_NS.JsonProperty( Order = 1 )]
         public ApplicationName Application { get; set; }
-        public string Version { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The minimum version of the Applicaiton that is required.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.VersionConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VersionConverter ) )]
+        public Version Version { get; set; } = new Version( "1.0.0.0" );
     }
 }

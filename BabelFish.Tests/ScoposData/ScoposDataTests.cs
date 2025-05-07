@@ -3,6 +3,8 @@ using System.Linq;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Requests.ScoposData;
+using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.Tests.ScoposData {
     [TestClass]
@@ -23,18 +25,34 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         }
 
         [TestMethod]
-        public void GetReleaseList()
+        public async Task GetReleaseTests()
         {
-            var client = new ScoposDataClient(APIStage.BETA);
+            var client = new ScoposDataClient();
 
             ReleasePhase level = ReleasePhase.PRODUCTION;
-            var response = client.GetReleasePublicAsync(level);
+            var response = await client.GetReleasePublicAsync(level);
 
-            var result = response.Result;
-            Assert.IsNotNull(result);
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
-            Assert.AreEqual(2, result.ApplicationRelease.Items.Count);
-            Console.Write(result.ApplicationRelease.Items.ToString());
+
+            Assert.IsNotNull(response.ApplicationRelease);
+
+            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode, $"Expecting and OK status code, instead received {response.StatusCode}." );
+
+            var releaseNotes = response.ApplicationRelease;
+            Assert.AreEqual(2, releaseNotes.Items.Count);
+
+            //We should have one ReleaseNote for Orion, and one for Athena
+            var orionExists = releaseNotes.Items.Any( releaseInfo => releaseInfo.Application == ApplicationName.ORION );
+            var athenaExists = releaseNotes.Items.Any( releaseInfo => releaseInfo.Application == ApplicationName.ATHENA );
+            Assert.IsTrue( orionExists );
+            Assert.IsTrue( athenaExists );
+
+            //Both should haver versions that are greater than 1.4
+            var orionVersion = releaseNotes.Items.First( releaseInfo => releaseInfo.Application == ApplicationName.ORION ).Version;
+            var athenaVersion = releaseNotes.Items.First( releaseInfo => releaseInfo.Application == ApplicationName.ATHENA ).Version;
+            var referenceVersion = new Scopos.BabelFish.DataModel.Common.Version( "1.4.0.0" );
+            Assert.IsTrue( orionVersion > referenceVersion );
+            Assert.IsTrue( athenaVersion > referenceVersion );
+
         }
 
         [TestMethod]
