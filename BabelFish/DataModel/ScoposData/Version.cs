@@ -22,11 +22,11 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
 
         [JsonPropertyOrder ( 2 )]
         
-        public VersionService Service { get; set; }
+        public ApplicationName Service { get; set; }
 
         [JsonPropertyOrder ( 3 )]
         
-        public VersionLevel Level { get; set; }
+        public ReleasePhase Level { get; set; }
 
         [JsonPropertyOrder ( 4 )]
         public List<string> ReleaseNotes { get; set; } = new List<string>();
