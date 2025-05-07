@@ -83,7 +83,21 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="service">VersionService enum</param>
         /// <param name="level">VersionLevel enum</param>
         /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName = "", string thingVersion = "" )
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase ) {
+            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest() {
+                ReleasePhase = releasePhase
+            };
+
+            return await GetReleasePublicAsync( requestParameters ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// GetRelease API for one service
+        /// </summary>
+        /// <param name="service">VersionService enum</param>
+        /// <param name="level">VersionLevel enum</param>
+        /// <returns>List<VersionInfo> object</returns>
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName, Version thingVersion )
         {
             GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
             {

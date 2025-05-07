@@ -10,6 +10,7 @@ using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.ScoposData;
+using Scopos.BabelFish.DataModel.Athena.AbstractEST;
 
 namespace Scopos.BabelFish.Helpers {
     public static class SerializerOptions {
@@ -52,6 +53,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
                     //APIClientSerializer.Converters.Add( new ExcludeEmptyStringConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DisplayEntityConfigurationConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ParticipantConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateTimeConverter() );
@@ -126,6 +128,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add(new G_BF_STJ_CONV.EnumConverterByDescription<ReleasePhase>());
 
                     //AbstractEST
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DisplayEntityType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ESTUnitCommand>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ReplaceVariableOptions>() );
                 }

@@ -16,7 +16,7 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         {
 
             ViewName = "Default";
-            EntityName = "AthleteDisplay";
+            EntityName = DisplayEntityType.AthleteDisplay;
             //Config = new Dictionary<string, string>();
             ReplaceAttributes = new List<ReplaceVariableOptions>();
         }
@@ -38,12 +38,12 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 
         public string Description { get; set; }
 
-        public string EntityName { get; set; }
+        public DisplayEntityType EntityName { get; set; }
 
         /// <summary>
         /// EntityName specific configurations.
         /// </summary>
-        public dynamic Config { get; set; }
+        public DisplayEntityConfiguration Config { get; set; }
 
         /// <summary>
         /// If the Config attribute is a dictionary with Key type of string (which it should be)

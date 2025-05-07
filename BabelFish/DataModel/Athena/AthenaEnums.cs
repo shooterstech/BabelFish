@@ -4,8 +4,15 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Scopos.BabelFish.DataModel.Athena
-{
+namespace Scopos.BabelFish.DataModel.Athena {
+
+    public enum DisplayEntityType {
+        AthleteDisplay,
+        ImageDisplay,
+        ResultList,
+        SquaddingList
+    }
+
     public enum ESTUnitCommand {
         /*
          * In order to get an Enum to serialize / deserialize to values with spaces have to do a couple of things.
@@ -63,6 +70,7 @@ namespace Scopos.BabelFish.DataModel.Athena
         /// </summary>
         [Description( "SaveStateFile" )][EnumMember( Value = "SaveStateFile" )] SAVESTATEFILE
     }
+
     public enum ReplaceVariableOptions { ResultList, ResultLists };
 
 }

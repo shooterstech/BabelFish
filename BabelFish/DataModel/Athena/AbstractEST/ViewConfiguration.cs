@@ -32,9 +32,9 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
 
         public string Description { get; set; }
 
-        public List<ViewDefinitionConfiguration> ViewDefinitions { get; set; }
+        public List<ViewDefinitionConfiguration> ViewDefinitions { get; set; } = new List<ViewDefinitionConfiguration>();
 
-        public List<MarqueeMessage> MarqueeMessages { get; set; }
+        public List<MarqueeMessage> MarqueeMessages { get; set; } = new List<MarqueeMessage>();
 
         public override string ToString() {
             return $"{ConfigName} ({ViewDefinitions.Count} View Definitions)";

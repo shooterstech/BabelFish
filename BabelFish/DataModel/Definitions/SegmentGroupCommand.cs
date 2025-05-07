@@ -267,7 +267,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 200 )]
         public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
 
-        public bool ShouldSerializeCommandAutomation() {
+        public bool ShouldSerializeAutomation() {
             return Automation != null && Automation.Count > 0;
         }
 
