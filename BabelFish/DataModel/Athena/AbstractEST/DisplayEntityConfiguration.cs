@@ -58,6 +58,9 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         public List<string> ResultLists { get; set; } = new List<string>();
 
         public bool ByRelay { get; set; } = true;
+
+        [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public int AnimatedRows { get; set; } = 3;
     }
 
     public class SquaddingListConfiguration : DisplayEntityConfiguration {
