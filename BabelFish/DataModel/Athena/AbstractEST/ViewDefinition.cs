@@ -34,15 +34,17 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             this.ShowBottomStrip = vd.ShowBottomStrip;
         }
 
+        [G_NS.JsonProperty( Order = 1 )]
         public string ViewName { get; set; }
 
-        public string Description { get; set; }
 
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public DisplayEntityType EntityName { get; set; }
 
         /// <summary>
         /// EntityName specific configurations.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public DisplayEntityConfiguration Config { get; set; }
 
         /// <summary>
@@ -52,11 +54,20 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         /// ResultLists: Which is a list of strings
         /// ResultList: Which is a string
         /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
         public List<ReplaceVariableOptions> ReplaceAttributes { get; set; }
 
+
+        [G_NS.JsonProperty( Order = 5 )]
         public bool ShowTopStrip { get; set; }
 
+
+        [G_NS.JsonProperty( Order = 6 )]
         public bool ShowBottomStrip { get; set; }
+
+
+        [G_NS.JsonProperty( Order = 10 )]
+        public string Description { get; set; }
 
         public override string ToString()
         {

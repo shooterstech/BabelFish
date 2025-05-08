@@ -8,6 +8,7 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         /// <summary>
         /// Acts as the concrete class identifier.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public DisplayEntityType DisplayEntity { get; protected set; }
     }
 
@@ -20,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
             this.DisplayEntity = DisplayEntityType.AthleteDisplay;
         }
 
-        public string FiringPoints { get; set; } = "*";
+        public List<string> FiringPoints { get; set; } = new List<string>();
 
         public string ResultList { get; set; } = string.Empty;
 
@@ -68,7 +69,7 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
             this.DisplayEntity = DisplayEntityType.SquaddingList;
         }
 
-        public string FiringPoints { get; set; } = "*";
+        public List<string> FiringPoints { get; set; } = new List<string>();
 
         public string Relay { get; set; } = "CURRENT";
 

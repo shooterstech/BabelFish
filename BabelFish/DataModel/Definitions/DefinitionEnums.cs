@@ -227,6 +227,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[Description( "BENCHREST" )][EnumMember( Value = "BENCHREST" )] BENCHREST
 	}
 
+
+    /*
+     * IMPORTANT NOTE
+     * If one of the enum values in DisplayEventOptions gets updated, then the cooresponding
+     * property in EventAssignments also needs to be updated. Located in 
+     * Scopos.BabelFish.DataModel.Athena.AbstractEST
+     */
+
     public enum DisplayEventOptions {
         NONE, Default, QualificationPreEvent, QualificationPostEvent, QualificationCallToLine, QualificationRemoveEquipment,
         QualificationStart, QualificationStop, QualificationPreparationPeriodStart, QualificationPreparationPeriodStop, QualificationSightersStart, QualificationSightersStop,
