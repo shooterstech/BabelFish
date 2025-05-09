@@ -401,6 +401,7 @@ namespace Scopos.BabelFish.Tests.Definition
             userProfileLookup = new BaseUserProfileLookup();
         }
 
+        /*
         [TestMethod]
         public async Task CommandAutomationIntermediateTest()
         {
@@ -465,6 +466,7 @@ namespace Scopos.BabelFish.Tests.Definition
             }
             Console.Write("DONE - THANKS");
         }
+        */
 
     }
 }

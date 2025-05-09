@@ -527,7 +527,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private string GetGap( FieldSource source ) {
             if (IsChildRow
-                || this._resultEvent.Participant.RemarkList.HasNonCompletionRemark() ) {
+                || this._resultEvent.Participant.RemarkList.HasNonCompletionRemark ) {
                 return "";
             }
 

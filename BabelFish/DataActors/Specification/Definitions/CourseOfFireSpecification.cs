@@ -77,6 +77,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var stageStyleMapping = new IsCourseOfFireEventStageStyleMappingValid();
             var eventTree = new IsCourseOfFireEventTreeValid();
             var abbrFormats = new IsCourseOfFireAbbreviatedFormatsValid();
+            var commandAutomationIds = new IsCourseOfFireRangeScriptAutomationIdsValid();
 
             if (!await tc.IsSatisfiedByAsync( candidate )) {
                 valid = false;
@@ -136,6 +137,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await abbrFormats.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( abbrFormats.Messages );
+            }
+
+            if (!await commandAutomationIds.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( commandAutomationIds.Messages );
             }
 
             return valid;
@@ -378,6 +384,57 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             }
 
             return valid;
+        }
+    }
+
+    /// <summary>
+    /// Checks that each Command Automation has a unique ID.
+    /// </summary>
+    public class IsCourseOfFireRangeScriptAutomationIdsValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            List<int> seenIds =     new List<int>();
+
+            int indexRangeScript = 0;
+            int indexSegmentGroup = 0;
+            int indexCommand = 0;
+            int indexAutomation = 0;
+            foreach( var rs in candidate.RangeScripts ) {
+
+                indexSegmentGroup = 0;
+                foreach( var sg in rs.SegmentGroups ) {
+
+                    indexCommand = 0;
+                    foreach ( var command in sg.Commands ) {
+
+                        indexAutomation = 0;
+                        foreach( var automation in command.Automation ) {
+
+                            if (automation.Id <= 0) {
+                                valid = false;
+                                Messages.Add( $"Command Automation RangeScripts[{indexRangeScript}].SegmentGroup[{indexSegmentGroup}].Command[{indexCommand}].Automation[{indexAutomation}] must have an unique id that is greater than 0." );
+                            } else if ( seenIds.Contains( automation.Id )) {
+                                valid = false;
+                                Messages.Add( $"Command Automation RangeScripts[{indexRangeScript}].SegmentGroup[{indexSegmentGroup}].Command[{indexCommand}].Automation[{indexAutomation}] has an Id '{automation.Id}' that has been used already." );
+                            } else {
+                                seenIds.Add( automation.Id );
+                            }
+                            indexAutomation++;
+
+                        }
+                        indexCommand++;
+
+                    }
+                    indexSegmentGroup++;
+                }
+            }
+
+            return valid;
+
         }
     }
 

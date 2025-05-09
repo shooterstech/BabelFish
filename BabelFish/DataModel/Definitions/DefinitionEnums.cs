@@ -693,63 +693,59 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         NOT_SUPPLEMENTAL,
 
         /// <summary>
-        /// Evaluates to true on a column when any participant in the Result List has a Remark. In a row, evaluates to true with the participant has any Remark.
+        /// Evaluates to true on a column when any participant in the Result List has a shown Remark. In a row, evaluates to true with the participant has any Remark.
         /// </summary>
-        HAS_ANY_REMARK,
+        HAS_ANY_SHOWN_REMARK,
         
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Shoot
         /// </summary>
-        HAS_REMARK_DNS,
+        HAS_SHOWN_REMARK_DNS,
 
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Finish
         /// </summary>
-        HAS_REMARK_DNF,
+        HAS_SHOWN_REMARK_DNF,
 
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Disqualified
         /// </summary>
-        HAS_REMARK_DSQ,
+        HAS_SHOWN_REMARK_DSQ,
 
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Bubble
         /// </summary>
-        HAS_REMARK_BUBBLE,
+        HAS_SHOWN_REMARK_BUBBLE,
 
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Eliminated
         /// </summary>
-        HAS_REMARK_ELIMINATED,
+        HAS_SHOWN_REMARK_ELIMINATED,
 
         /// <summary>
-        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
         /// </summary>
-        LAST_REMARK_DNS,
+        HAS_SHOWN_REMARK_QUALIFIED,
 
         /// <summary>
-        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
         /// </summary>
-        LAST_REMARK_DNF,
+        HAS_SHOWN_REMARK_FIRST,
 
         /// <summary>
-        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
         /// </summary>
-        LAST_REMARK_DSQ,
+        HAS_SHOWN_REMARK_SECOND,
 
         /// <summary>
-        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
         /// </summary>
-        LAST_REMARK_BUBBLE,
+        HAS_SHOWN_REMARK_THIRD,
 
         /// <summary>
-        /// Evaluates to true when the Participant within the Result List has the Last(Most important) Remark of Did Not Shoot and the Remark should be shown based on Remark.Visibility
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
         /// </summary>
-        LAST_REMARK_ELIMINATED,
-        HAS_REMARK_LEADER,
-        HAS_REMARK_FIRST,
-        HAS_REMARK_SECOND,
-        HAS_REMARK_THIRD
+        HAS_SHOWN_REMARK_LEADER
     }
 
     /// <summary>

@@ -20,5 +20,10 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// </summary>
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
         public CommandAutomationSubject Subject { get; set; } = CommandAutomationSubject.NONE;
+
+        /// <summary>
+        /// Unique identifier of this CommandAutomationRemark. Must be unique within all CommandAutomationRemarks in a COURSE OF FIRE.
+        /// </summary>
+        public int Id { get; set; } = 0;
     }
 }

@@ -71,12 +71,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 return;
             }
 
-            if ( (lastShot != null && (DateTime.Now - lastShot.TimeScored).TotalHours > 1.0) ||
-                 ( remarkList.HasRemark(ParticipantRemark.DNS) ||
-                   remarkList.HasRemark(ParticipantRemark.DNF) ||
-                   remarkList.HasRemark(ParticipantRemark.DSQ) ||
-                   remarkList.HasRemark(ParticipantRemark.ELIMINATED) ) )
-            {
+            if ((lastShot != null && (DateTime.Now - lastShot.TimeScored).TotalHours > 1.0) ||
+                 (remarkList.HasNonCompletionRemark)) {
                 eventScore.Status = ResultStatus.UNOFFICIAL;
                 return;
             }

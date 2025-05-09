@@ -181,9 +181,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                         && row.GetScore( this.ResultList.EventName, false ).IsZero ) {
                                         //The result list status is official, and we were told to exclude rows with scores of zero
 
-                                        if (row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNS )
-                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNF )
-                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DSQ )) {
+                                        if (row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
+                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
+                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
                                             //Do include these rows since the athlete / team did somethign bad and we want to shame them
                                             copyOfRows.Add( row );
                                         } else {
@@ -217,9 +217,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                         && row.GetScore( this.ResultList.EventName, false ).IsZero) {
                                         //The result list status is official, and we were told to exclude rows with scores of zero
 
-                                        if (row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNS )
-                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DNF )
-                                            || row.GetParticipant().RemarkList.HasRemark( ParticipantRemark.DSQ )) {
+                                        if (row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
+                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
+                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
                                             //Do include these rows since the athlete / team did somethign bad and we want to shame them
                                             copyOfRows.Add( row );
                                         } else {

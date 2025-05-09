@@ -33,6 +33,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [DefaultValue( "" )]
         [JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1)]
         public string SegmentName { get; set; }
 
         public string GetSegmentName() {
@@ -46,6 +47,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultSegments: Ignored
         /// </summary>
         [JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
         [DefaultValue( -9999 )]
         public int NumberOfShots { get; set; } = DEFAULT_INT;
 
@@ -67,6 +69,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [DefaultValue( "" )]
         [JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public string StageLabel { get; set; } = DEFAULT_STR;
 
         public string GetStageLabel() {
@@ -85,6 +88,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [DefaultValue( DEFAULT_INT )]
         [JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
         public int TargetCollectionIndex { get; set; } = DEFAULT_INT;
 
         public int GetTargetCollectionIndex() {
@@ -106,6 +110,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [DefaultValue( -9999 )]
         [JsonPropertyOrder( 5 )]
+        [G_NS.JsonProperty( Order = 5 )]
         public int TargetHeight { get; set; } = DEFAULT_INT;
 
         public int GetTargetHeight() {
@@ -137,7 +142,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         // TODO: Rearchitect. Instead of a list of strings, with some strings contain special characters that represent function actions, replace with list of objects.
         [DefaultValue( null )]
-        [JsonPropertyOrder( 5 )]
+        [JsonPropertyOrder( 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
         public List<string> AthleteHasControl { get; set; } = new List<string>();
 
         public List<string> GetAthleteHasControl() {
@@ -156,7 +162,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Required with default value of [ ]
         /// </summary>
         [DefaultValue( null )]
-        [JsonPropertyOrder( 6 )]
+        [JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
         public List<string> NextSegments { get; set; } = new List<string>();
 
         public List<string> GetNextSegments() {
@@ -178,7 +185,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Required with default value of [ ] 
         /// </summary>
         [DefaultValue( null )]
-        [JsonPropertyOrder( 7 )]
+        [JsonPropertyOrder( 8 )]
+        [G_NS.JsonProperty( Order = 8 )]
         public List<string> ShotAttributes { get; set; } = new List<string>();
 
         public List<string> GetShotAttributes() {
@@ -194,8 +202,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The name of the AbbreviatedFormat to use to display scores to the athlete on the monitor.
         /// </summary>
-        [JsonPropertyOrder( 8 )]
+        [JsonPropertyOrder( 9 )]
         [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 9 )]
         public string AbbreviatedFormat { get; set; } = DEFAULT_STR;
 
         public string GetAbbreviatedFormat() {
@@ -211,7 +220,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Indicates what type of shots to display within the Athlete EST Monitor or Spectator EST Display.
         /// </summary>
-        [JsonPropertyOrder( 9 )]
+        [JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
         public ShowInSegment Show { get; set; } = new ShowInSegment();
 
         public ShowInSegment GetShow() {
@@ -239,7 +249,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// DefaultCommand: Required with default value of [ ] 
         /// </summary>
         [DefaultValue( null )]
-        [JsonPropertyOrder( 10 )]
+        [JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public List<SpecialOptions> Special { get; set; } = new List<SpecialOptions>();
 
         public List<SpecialOptions> GetSpecial() {
@@ -255,7 +266,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The number of shots in a string, used for displaying shots purposes only.
         /// </summary>
-        [JsonPropertyOrder( 10 )]
+        [JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( -9999 )]
         public int StringSize { get; set; } = DEFAULT_INT;
 
@@ -272,13 +284,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// When set, advances the tape feed on the target this number of millimeters at the start of the Segment.
         /// </summary>
-        [JsonPropertyOrder( 11 )]
+        [JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( 0 )]
         public int TapeAdvance { get; set; } = DEFAULT_INT;
 
 
         /// <inheritdoc/>
         [JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

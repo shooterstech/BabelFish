@@ -362,7 +362,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 					Boolean = ShowWhenBoolean.AND,
 					Arguments = new List<ShowWhenBase>() {
 						new ShowWhenVariable() {
-							Condition = ShowWhenCondition.HAS_ANY_REMARK
+							Condition = ShowWhenCondition.HAS_ANY_SHOWN_REMARK
 						},
 						new ShowWhenVariable() {
 							Condition = ShowWhenCondition.DIMENSION_LARGE

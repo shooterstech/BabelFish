@@ -47,13 +47,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A unique short human readable name given to this SegmentGroup.
         /// </summary>
         [JsonPropertyOrder( 1)]
+        [G_NS.JsonProperty( Order = 1 )]
         public string SegmentGroupName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Default values to use when fields are not included in objects in the Commands list.
+        /// </summary>
+        [JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
+        public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
+
+        /// <summary>
+        /// Default values to use when fields are not included in objects in the Segments list.
+        /// </summary>
+        [JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
+        public SegmentGroupSegment DefaultSegment { get; set; } = new SegmentGroupSegment();
 
         /// <summary>
         /// The list of Commands. A Command object specifies the state of the EST Targets and Monitors for the 
         /// current command. It also lists the text of the range officer's commands and notes for the ROs.
         /// </summary>
         [JsonPropertyOrder( 4)]
+        [G_NS.JsonProperty( Order = 4 )]
         public List<SegmentGroupCommand> Commands { get; set; } = new List<SegmentGroupCommand>();
 
         /// <summary>
@@ -61,19 +77,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// what capabilities the athlete has over the EST Target.
         /// </summary>
         [JsonPropertyOrder( 5)]
+        [G_NS.JsonProperty( Order = 5 )]
         public List<SegmentGroupSegment> Segments { get; set; } = new List<SegmentGroupSegment>();
-
-        /// <summary>
-        /// Default values to use when fields are not included in objects in the Commands list.
-        /// </summary>
-        [JsonPropertyOrder ( 2 )]
-        public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
-
-        /// <summary>
-        /// Default values to use when fields are not included in objects in the Segments list.
-        /// </summary>
-        [JsonPropertyOrder ( 3 )]
-        public SegmentGroupSegment DefaultSegment { get; set; } = new SegmentGroupSegment();
 
         /// <inheritdoc />
         [DefaultValue("")]

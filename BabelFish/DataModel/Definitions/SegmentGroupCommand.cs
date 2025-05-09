@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, defaults to empty string.
         /// DefaultCommand: Ignored
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         [DefaultValue("")]
         public string Command { get; set; } = DEFAULT_STR;
 
@@ -40,27 +41,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// How long to display the text of the Command in the athlete monitor or spectator display units. Measured in seconds. A value of 0 means don't display the Command . Value of -1 means do not ever remove the Command.
-        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.Fade
-        /// DefaultCommand: Required, defaults to 60
-        /// </summary>
-        [DefaultValue(-9999)]
-        public int Fade { get; set; } = DEFAULT_INT;
-
-        public int GetFade() {
-            if (Fade != DEFAULT_INT)
-                return Fade;
-
-            if (Parent.Fade != DEFAULT_INT)
-                return Parent.Fade;
-
-            return Parent.Parent.Fade;
-        }
-
-        /// <summary>
         /// Commands: Not required, defaults to ""
         /// DefaultCommand: Ignored
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         [DefaultValue( "" )]
         public string Notes { get; set; } = DEFAULT_STR;
 
@@ -69,15 +53,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// Commands: Not required, missing or value of "" does not change the RangeClock
-        /// DefaultCommand: Ignored
+        /// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
         /// </summary>
-        [DefaultValue("")]
-        [Obsolete("Will be replaced with RangeTimer")]
-        public string Timer { get; set; } = DEFAULT_STR;
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [DefaultValue( DisplayEventOptions.NONE )]
+        public DisplayEventOptions DisplayEvent { get; set; } = DisplayEventOptions.NONE;
 
-        public string GetTimer() {
-            return Timer;
+        public DisplayEventOptions GetDisplayEvent() {
+            if (DisplayEvent != DisplayEventOptions.NONE)
+                return DisplayEvent;
+
+            if (Parent.DisplayEvent != DisplayEventOptions.NONE)
+                return Parent.DisplayEvent;
+
+            if (Parent.Parent.DisplayEvent != DisplayEventOptions.NONE)
+                return Parent.Parent.DisplayEvent;
+
+            return DisplayEventOptions.Default;
         }
 
         /// <summary>
@@ -85,6 +77,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         /// <remarks>Value is in seconds.</remarks>
         [JsonInclude]
+        [G_NS.JsonProperty( Order = 4  )]
         [DefaultValue( -9999 )]
         public float RangeTimer {
             get {
@@ -101,9 +94,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
+        /// Commands: Not required, missing or value of "" does not change the RangeClock
+        /// DefaultCommand: Ignored
+        /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
+        [DefaultValue( "" )]
+        [Obsolete( "Will be replaced with RangeTimer" )]
+        public string Timer { get; set; } = DEFAULT_STR;
+
+        public string GetTimer() {
+            return Timer;
+        }
+
+        /// <summary>
         /// Commands: Not required, missing or value of NONE does not effect the RangeClock
         /// DefaultCommand: Ignored
         /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
         [DefaultValue( TimerCommandOptions.NONE )]
         public TimerCommandOptions TimerCommand { get; set; } = TimerCommandOptions.NONE;
 
@@ -112,41 +119,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// Commands: Not required, missing or value of "" does not implement automation
-        /// DefaultCommand: Ignored
-        /// </summary>
-        [DefaultValue("")]
-        [Obsolete("Will be replaced with AtRangeTimerValue")]
-        public string OccursAt { get; set; } = DEFAULT_STR;
-
-        public string GetOccursAt() {
-            return OccursAt;
-        }
-
-        /// <summary>
-        /// Represents the same value as .OccuresAt, but as a float.
-        /// </summary>
-        /// <remarks>Value is in seconds.</remarks>
-        [JsonInclude]
-        [DefaultValue( -9999 )]
-        public float AtRangeTimerValue {
-            get {
-                if (string.IsNullOrEmpty( OccursAt ))
-                    return DEFAULT_INT;
-
-                TimeSpan timerAsTimeSpan;
-                if (TimeSpan.TryParse( OccursAt, out timerAsTimeSpan )) {
-                    return (float)timerAsTimeSpan.TotalSeconds;
-                } else {
-                    return DEFAULT_INT;
-                }
-            }
-        }
-
-        /// <summary>
         /// Commands: Not required, missing or value of -9999 uses DefaultCommand.GreenLight
         /// DefaultCommand: Required with default value 0
         /// </summary>
+        [G_NS.JsonProperty( Order = 10 )]
         [DefaultValue( LightIllumination.NONE )]
         public LightIllumination GreenLight { get; set; } = LightIllumination.NONE;
 
@@ -164,6 +140,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, missing or value of -9999 uses DefaultCommand.RedLight
         /// DefaultCommand: Required with default value 0
         /// </summary>
+        [G_NS.JsonProperty( Order = 11 )]
         [DefaultValue( LightIllumination.NONE )]
         public LightIllumination RedLight { get; set; } = LightIllumination.NONE;
 
@@ -181,6 +158,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, missing or value of -9999 uses DefaultCommand.TargetLight
         /// DefaultCommand: Required with default value 0
         /// </summary>
+        [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( LightIllumination.NONE )]
         public LightIllumination TargetLight { get; set; } = LightIllumination.NONE;
 
@@ -202,6 +180,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
         /// DefaultCommand: Required, may be empty list []
         /// </summary>
+        [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( null )]
         public List<string> ShotAttributes { get; set; } = new List<string>();
 
@@ -215,24 +194,57 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.ShotAttributes;
         }
 
-		/// <summary>
-		/// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
-		/// </summary>
-		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-		[DefaultValue( DisplayEventOptions.NONE )]
-        public DisplayEventOptions DisplayEvent { get; set; } = DisplayEventOptions.NONE;
+        /// <summary>
+        /// How long to display the text of the Command in the athlete monitor or spectator display units. Measured in seconds. A value of 0 means don't display the Command . Value of -1 means do not ever remove the Command.
+        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.Fade
+        /// DefaultCommand: Required, defaults to 60
+        /// </summary>
+        [G_NS.JsonProperty( Order = 20 )]
+        [DefaultValue(-9999)]
+        public int Fade { get; set; } = DEFAULT_INT;
 
-        public DisplayEventOptions GetDisplayEvent() {
-            if (DisplayEvent != DisplayEventOptions.NONE)
-                return DisplayEvent;
+        public int GetFade() {
+            if (Fade != DEFAULT_INT)
+                return Fade;
 
-            if (Parent.DisplayEvent != DisplayEventOptions.NONE)
-                return Parent.DisplayEvent;
+            if (Parent.Fade != DEFAULT_INT)
+                return Parent.Fade;
 
-            if (Parent.Parent.DisplayEvent != DisplayEventOptions.NONE)
-                return Parent.Parent.DisplayEvent;
+            return Parent.Parent.Fade;
+        }
 
-            return DisplayEventOptions.Default;
+        /// <summary>
+        /// Commands: Not required, missing or value of "" does not implement automation
+        /// DefaultCommand: Ignored
+        /// </summary>
+        [G_NS.JsonProperty( Order = 21 )]
+        [DefaultValue("")]
+        [Obsolete("Will be replaced with AtRangeTimerValue")]
+        public string OccursAt { get; set; } = DEFAULT_STR;
+
+        public string GetOccursAt() {
+            return OccursAt;
+        }
+
+        /// <summary>
+        /// Represents the same value as .OccuresAt, but as a float.
+        /// </summary>
+        /// <remarks>Value is in seconds.</remarks>
+        [JsonInclude]
+        [G_NS.JsonProperty( Order = 22 )]
+        [DefaultValue( -9999 )]
+        public float AtRangeTimerValue {
+            get {
+                if (string.IsNullOrEmpty( OccursAt ))
+                    return DEFAULT_INT;
+
+                TimeSpan timerAsTimeSpan;
+                if (TimeSpan.TryParse( OccursAt, out timerAsTimeSpan )) {
+                    return (float)timerAsTimeSpan.TotalSeconds;
+                } else {
+                    return DEFAULT_INT;
+                }
+            }
         }
 
         /// <summary>
@@ -243,6 +255,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>Value of -1 means to not advance. This is also the default value.</item>
         /// </list>
         /// </summary>
+        [G_NS.JsonProperty( Order = 23 )]
         [DefaultValue( -1 )]
         public int Continue { get; set; } = DEFAULT_INT;
 
@@ -260,26 +273,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// A list of Command Automations, these are currently Remark additions or None.
-        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required, may be empty list []
-        /// </summary>
-        [G_NS.JsonProperty( Order = 200 )]
-        public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
-
-        public bool ShouldSerializeAutomation() {
-            return Automation != null && Automation.Count > 0;
-        }
-
-        /// <summary>
         /// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
         /// <list type="bullet">
         /// <item>Value of -1 means to advance to the next command regardless of current index value.</item>
         /// <item>A value is not required, following the Value Inheritance Rules. Defaults to -1.</item>
         /// </list>
         /// </summary>
+        [G_NS.JsonProperty( Order = 24 )]
         [DefaultValue(-1)]
         public int NextCommandIndex { get; set; } = DEFAULT_INT;
+
+        /// <summary>
+        /// A list of Command Automations, these are currently Remark additions or None.
+        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
+        /// DefaultCommand: Required, may be empty list []
+        /// </summary>
+        [G_NS.JsonProperty( Order = 90 )]
+        public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
+
+        public bool ShouldSerializeAutomation() {
+            return Automation != null && Automation.Count > 0;
+        }
 
         /// <inheritdoc/>
         [DefaultValue( "" )]

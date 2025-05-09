@@ -1,137 +1,175 @@
 ﻿
+using Amazon.Auth.AccessControlPolicy;
+using Scopos.BabelFish.DataModel.Definitions;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
-    /// A list of Remarks, each holding a RemarkName, reason, and a status (show/don't show)
+    /// A list of RemarkActions, each holding a ParticiapntRemark, reason, and visibility (show/don't show).
+    /// <para>To avoid corrupting the data, use Apply(), AddShowRemark(), HideRemark(), or RemoveRemark()</para>
     /// </summary>
     [Serializable]
-    public class RemarkList : List<Remark> {
-		//public List<Remark> remarks = new List<Remark>();
+    public class RemarkList : List<RemarkAction> {
+        //public List<Remark> remarks = new List<Remark>();
 
-		public readonly List<ParticipantRemark> PriorityOfRemarks = new List<ParticipantRemark>() {
-					ParticipantRemark.DSQ,
-					ParticipantRemark.DNS,
-					ParticipantRemark.DNF,
-					ParticipantRemark.FIRST,
-					ParticipantRemark.SECOND,
-					ParticipantRemark.THIRD,
-					ParticipantRemark.ELIMINATED,
-					ParticipantRemark.BUBBLE,
-					ParticipantRemark.LEADER};
+        public readonly List<ParticipantRemark> PriorityOfRemarks = new List<ParticipantRemark>() {
+                    ParticipantRemark.DSQ,
+                    ParticipantRemark.DNS,
+                    ParticipantRemark.DNF,
+                    ParticipantRemark.FIRST,
+                    ParticipantRemark.SECOND,
+                    ParticipantRemark.THIRD,
+                    ParticipantRemark.ELIMINATED,
+                    ParticipantRemark.BUBBLE,
+                    ParticipantRemark.LEADER};
 
-		public void Add(ParticipantRemark remark, string reason)
-        {
-            var newRemark = new Remark();
-            newRemark.ParticipantRemark = remark;
-            newRemark.Reason = reason;
-            newRemark.Visibility = RemarkVisibility.SHOW;
-            this.Add(newRemark);
-            this.SortRemarks();
-        }
-        public void Hide(ParticipantRemark remark)
-        {
-            Remark match = new Remark() { ParticipantRemark = remark, Visibility = RemarkVisibility.SHOW };
-            SortRemarks();
-            if (this.Count() > 0)
-            {
-                var thing = Find(match);
-                if (thing != null)
-                {
-                    this[(int)thing].Visibility = RemarkVisibility.HIDE;
-                }
+        public void Apply( CommandAutomationRemark commandAutomation ) {
+            if ( commandAutomation.Action == RemarkVisibility.SHOW ) {
+                this.AddShowParticipantRemark( commandAutomation.Condition, string.Empty, commandAutomation.Id );
+            } else if ( commandAutomation.Action == RemarkVisibility.HIDE ) {
+                this.HideParticipantRemark( commandAutomation.Condition, string.Empty, commandAutomation.Id );
             }
-        }
-        public void Remove(int spot)
-        {
-            this.RemoveAt(spot);
-            this.SortRemarks();
         }
 
         /// <summary>
-        /// Returns a boolean indicating of this Participant has the passed in ParticiapntRemark in it's RemarkList
+        /// Adds a new RemarkAction, with visility SHOW, to this RemarkList.
+        /// If this RemarkList is already shwoing a ParticipantRemark of type remark,
+        /// then two Remarks are added, one SHOW and one HIDE (which keeps the balance of showing 1 or 0).
+        /// </summary>
+        /// <param name="remark"></param>
+        /// <param name="reason"></param>
+		public void AddShowParticipantRemark( ParticipantRemark remark, string reason = "", int actionId = 0 ) {
+            bool hasRemarkAlready = this.IsShowingParticipantRemark( remark );
+
+            var remarkActionShow = new RemarkAction() {
+                ParticipantRemark = remark,
+                Visibility = RemarkVisibility.SHOW,
+                Reason = reason,
+                ActionId = actionId
+            };
+            this.Add( remarkActionShow );
+
+            if (hasRemarkAlready) {
+                var remarkActionHide = new RemarkAction() {
+                    ParticipantRemark = remark,
+                    Visibility = RemarkVisibility.HIDE,
+                    Reason = reason,
+                    ActionId = actionId
+                };
+                this.Add( remarkActionShow );
+            }
+
+        }
+
+        /// <summary>
+        /// If this RemarkList is showing a ParticipantRemark of type remark, then a new RemarkAction
+        /// is added to hide it. If the RemarkList is not showing a ParticpantRemark of type remark,
+        /// then no RemarkAction is added.
+        /// </summary>
+        /// <param name="remark"></param>
+        public void HideParticipantRemark( ParticipantRemark remark, string reason = "", int actionId = 0 ) {
+            if (this.IsShowingParticipantRemark( remark )) {
+                var remarkAction = new RemarkAction() {
+                    ParticipantRemark = remark,
+                    Visibility = RemarkVisibility.HIDE,
+                    Reason = reason,
+                    ActionId = actionId
+                };
+                this.Add( remarkAction );
+            }
+        }
+
+        /// <summary>
+        /// Removes all RemarkAction items in this RemarkList that have a
+        /// command automation id equal to the passed in automationId.
+        /// </summary>
+        /// <param name="automationId"></param>
+        public void RemoveAutomationRemark(int automationId) {
+            List<RemarkAction> remarksToRemove = new List<RemarkAction>();
+            foreach( var ra in this ) {
+                if (ra.ActionId == automationId) {
+                    remarksToRemove.Add( ra );
+                }
+            }
+
+            foreach (var ra in remarksToRemove)
+                this.Remove( ra );
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if this RemarkList is currently showing a ParticipantRemark
+        /// of type remark. 
+        /// If this RemarkList has one or more RemarkActions of type remark but they are all hidden, then this 
+        /// method will return false.
         /// </summary>
         /// <param name="remark"></param>
         /// <returns></returns>
-        public bool HasRemark( ParticipantRemark remark ) {
+        public bool IsShowingParticipantRemark( ParticipantRemark remark ) {
+            int count = 0;
             foreach (var re in this) {
-                if (re.ParticipantRemark == remark)
-                    return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Returns true if this Remark List has any remark in it.
-        /// </summary>
-        public bool HasAnyRemark {
-            get {
-                return this.Count() > 0;
-            }
-        }
-
-        /// <summary>
-        /// Returns true if the user has one of the following remarks: DNS, DSQ, DNF, or ELIMINATED. 
-        /// Returns flase if they do not (and would then mean that they are still competing).
-        /// </summary>
-        /// <returns></returns>
-        public bool HasNonCompletionRemark() {
-
-            foreach (var re in this) {
-                switch (re.ParticipantRemark) {
-                    case ParticipantRemark.DNS:
-                    case ParticipantRemark.DNF:
-                    case ParticipantRemark.DSQ:
-                    case ParticipantRemark.ELIMINATED:
-                        return true;
-                    default:
-                        break;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// returns a boolean indicating the passed in remark is the last(most important) one. if require visible is true then it will return true when it is the last remark, but the visibility is HIDDEN
-        /// </summary>
-        /// <param name="remark"></param>
-        /// <param name="requiredVisible"></param>
-        /// <returns></returns>
-        public bool IsLastRemark( ParticipantRemark remark, bool requiredVisible = true ) {
-            SortRemarks();
-            if (this.Count() > 0) {
-                var lastRemark = this.Last();
-                if (lastRemark.ParticipantRemark == remark) {
-                    if (requiredVisible) {
-                        if (lastRemark.Visibility == RemarkVisibility.SHOW) {
-                            return true;
-                        }
+                if (re.ParticipantRemark == remark) {
+                    if (re.Visibility == RemarkVisibility.SHOW) {
+                        count++;
                     } else {
-                        return true;
+                        count--;
                     }
                 }
             }
-            return false;
+
+            //if everything else is working correclty, count should only ever be 0 or 1
+            return count > 0;
         }
 
         /// <summary>
-        /// Sorts remark table of this participant, most important remarks are the last item on the list. Refer to Remark.Visibility if it should be displayed.
+        /// Returns true if this Remark List has any shown ParticipantRemark in it.
         /// </summary>
-        public void SortRemarks() {
-            this.OrderByDescending(y => (int)y.Visibility).OrderByDescending(x => (int)x.ParticipantRemark).ToList();
+        public bool HasAnyShownParticipantRemark {
+            get {
+                int count = 0;
+                foreach (var re in this) {
+                    if (re.Visibility == RemarkVisibility.SHOW) {
+                        count++;
+                    } else {
+                        count--;
+                    }
+                }
+
+                return count > 0;
+            }
+        }
+
+        /// <summary>
+        /// Returns an integer representing the number of times this RemarkList has a 
+        /// Show visility RemarkAction with type remark.
+        /// </summary>
+        /// <param name="remark"></param>
+        public int GetParticipantRemarkCount(ParticipantRemark remark) {
+            int count = 0;
+            foreach (var re in this)
+                if (re.ParticipantRemark == remark && re.Visibility == RemarkVisibility.SHOW)
+                    count++;
+
+            return count;
+        }
+
+        /// <summary>
+        /// Returns true if this RemarkList is shwoing one of the following remarks: DNS, DSQ, DNF, or ELIMINATED. 
+        /// Returns flase if they do not (and would then mean that they are still competing).
+        /// </summary>
+        /// <returns></returns>
+        public bool HasNonCompletionRemark {
+
+            get {
+
+                return (this.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED )
+                    || this.IsShowingParticipantRemark( ParticipantRemark.DNS )
+                    || this.IsShowingParticipantRemark( ParticipantRemark.DNF )
+                    || this.IsShowingParticipantRemark( ParticipantRemark.DSQ ));
+            }
         }
 
         /// <inheritdoc />
         public override string ToString() {
-            List<string> list = new List<string>();
-
-            foreach (var pr in this) {
-                if (pr.Visibility == RemarkVisibility.SHOW) {
-                    list.Add( pr.ParticipantRemark.Description() );
-                }
-            }
-
-            return string.Join( ", ", list );
+            return $"{this.Count} Actions: {Summarize}";
         }
 
         /// <summary>
@@ -140,53 +178,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>Same(ish) as python's RemarkHelperFunctions.GetMostImportantRemark()</remarks>
         public string Summarize {
             get {
+                if (this.IsShowingParticipantRemark( ParticipantRemark.DSQ ))
+                    return "DSQ";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.DNF ))
+                    return "DNF";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.DNS ))
+                    return "DNS";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.FIRST ))
+                    return "FIRST";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.SECOND ))
+                    return "SECOND";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.THIRD ))
+                    return "THIRD";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED ))
+                    return "QUALIFIED";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED ))
+                    return "ELIMINATED";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.BUBBLE ))
+                    return "BUBBLE";
+                if (this.IsShowingParticipantRemark( ParticipantRemark.LEADER ))
+                    return "LEADER";
 
-                //Key is the ParticipantRemark, value is the number of times it is included in this Remark List. Counts both Hidden and Shown remarks.
-                Dictionary<ParticipantRemark, int> countOfRemarks = new Dictionary<ParticipantRemark, int>();
-
-                //Count up each of the remarks.
-                foreach (var pr in this) {
-                    if (countOfRemarks.ContainsKey( pr.ParticipantRemark )) {
-                        countOfRemarks[pr.ParticipantRemark] += 1;
-                    } else {
-                        countOfRemarks[pr.ParticipantRemark] = 1;
-                    }
-                }
-
-                //Return something
-                foreach( var pr in PriorityOfRemarks ) {
-                    if ( countOfRemarks.ContainsKey( pr )) {
-                        var count = countOfRemarks[pr];
-                        if (count == 1)
-                            return $"{pr}";
-                        if (count > 1)
-                            return $"{pr} x {count}";
-                    }
-                }
+                int count = this.GetParticipantRemarkCount( ParticipantRemark.LEADER );
+                if (count > 0)
+                    return $"LEADER x {count}"; 
+                
+                count = this.GetParticipantRemarkCount( ParticipantRemark.BUBBLE );
+                if (count > 0)
+                    return $"BUBBLE x {count}";
 
                 return "";
             }
-        }
-
-        /// <summary>
-        /// Find the location of the exact remark given, with no regard to the Reason string
-        /// </summary>
-        /// <param name="remark"></param>
-        /// <returns></returns>
-        internal int? Find(Remark remark)
-        {
-            SortRemarks();
-            int spot = 0;
-            foreach (var mark in this)
-            {
-                if(mark.ParticipantRemark == remark.ParticipantRemark &&
-                    mark.Visibility == remark.Visibility)
-                {
-                    return spot;
-                }
-                spot++;
-            }
-            return null;
         }
     }
 }

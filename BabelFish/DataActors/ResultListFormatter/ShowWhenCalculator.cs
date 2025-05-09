@@ -175,147 +175,110 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
-                case ShowWhenCondition.HAS_ANY_REMARK:
+                case ShowWhenCondition.HAS_ANY_SHOWN_REMARK:
                     if ( participant == null || participant.Participant == null ) {
                         foreach ( var p in this.RLF.ResultList.Items ) {
-                            if ( p.Participant.RemarkList.HasAnyRemark) {
+                            if ( p.Participant.RemarkList.HasAnyShownParticipantRemark) {
                                 return true;
                             }
                         }
                         return false;
                     } else {
-                        return participant.Participant.RemarkList.HasAnyRemark;
+                        return participant.Participant.RemarkList.HasAnyShownParticipantRemark;
                     }
 
 
-				case ShowWhenCondition.HAS_REMARK_LEADER:
-                    if (participant.Participant == null)
+				case ShowWhenCondition.HAS_SHOWN_REMARK_LEADER:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.LEADER);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.LEADER);
                     break;
 
 
-                case ShowWhenCondition.HAS_REMARK_FIRST:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_FIRST:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.FIRST);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.FIRST);
                     break;
 
 
-                case ShowWhenCondition.HAS_REMARK_SECOND:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_SECOND:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.SECOND);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.SECOND);
                     break;
 
 
-                case ShowWhenCondition.HAS_REMARK_THIRD:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_THIRD:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.THIRD);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.THIRD);
                     break;
 
 
-                case ShowWhenCondition.HAS_REMARK_DNS:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_DNS:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.DNS);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DNS);
                     break;
 
-                case ShowWhenCondition.HAS_REMARK_DNF:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_DNF:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.DNF);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DNF);
                     break;
 
-                case ShowWhenCondition.HAS_REMARK_DSQ:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_DSQ:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.DSQ);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DSQ);
                     break;
 
-                case ShowWhenCondition.HAS_REMARK_BUBBLE:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_BUBBLE:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.BUBBLE);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.BUBBLE);
                     break;
 
-                case ShowWhenCondition.HAS_REMARK_ELIMINATED:
-                    if (participant.Participant == null)
+                case ShowWhenCondition.HAS_SHOWN_REMARK_ELIMINATED:
+                    if (participant == null || participant.Participant == null)
                     {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.HasRemark(ParticipantRemark.ELIMINATED);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.ELIMINATED);
                     break;
 
-                case ShowWhenCondition.LAST_REMARK_DNS:
-                    if (participant.Participant == null)
-                    {
+                case ShowWhenCondition.HAS_SHOWN_REMARK_QUALIFIED:
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.DNS, false);
-                    break;
-
-                case ShowWhenCondition.LAST_REMARK_DNF:
-                    if (participant.Participant == null)
-                    {
-                        answer = false;
-                        break;
-                    }
-                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.DNF, false);
-                    break;
-
-                case ShowWhenCondition.LAST_REMARK_DSQ:
-                    if (participant.Participant == null)
-                    {
-                        answer = false;
-                        break;
-                    }
-                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.DSQ, false);
-                    break;
-
-                case ShowWhenCondition.LAST_REMARK_BUBBLE:
-                    if (participant.Participant == null)
-                    {
-                        answer = false;
-                        break;
-                    }
-                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.BUBBLE, false);
-                    break;
-
-                case ShowWhenCondition.LAST_REMARK_ELIMINATED:
-                    if (participant.Participant == null)
-                    {
-                        answer = false;
-                        break;
-                    }
-                    answer = participant.Participant.RemarkList.IsLastRemark(ParticipantRemark.ELIMINATED, false);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED );
                     break;
 
 

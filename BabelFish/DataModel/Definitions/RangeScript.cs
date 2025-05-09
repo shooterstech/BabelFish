@@ -93,9 +93,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Authors internal comments for documentation
         /// </summary>
-        [DefaultValue( "" )]
         [G_STJ_SER.JsonPropertyOrder( 100 )]
         [G_NS.JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc />

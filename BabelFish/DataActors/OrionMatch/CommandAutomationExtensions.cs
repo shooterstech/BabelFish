@@ -3,7 +3,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
     public static class CommandAutomationExtensions {
-
+        /*
         /// <summary>
         /// functionally the same as adding remarks or a participant
         /// </summary>
@@ -52,5 +52,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
             return caIntermediate;
         }
+        */
     }
 }
