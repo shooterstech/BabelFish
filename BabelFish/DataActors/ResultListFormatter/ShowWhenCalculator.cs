@@ -300,35 +300,35 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             foreach (var argument in showWhen.Arguments) {
                 if (first) {
-                    answer = Show( argument );
+                    answer = Show( argument, participant );
                     first = false;
                 } else {
                     switch (showWhen.Boolean) {
                         case ShowWhenBoolean.AND:
-                            answer &= Show( argument );
+                            answer &= Show( argument, participant );
                             //If the answer is already false, we can stop evaluating
                             if (!answer)
                                 breakForeach = true;
                             break;
                         case ShowWhenBoolean.OR:
-                            answer |= Show( argument );
+                            answer |= Show( argument, participant );
                             //If the answer is already true, we can stop evaluating
                             if (answer)
                                 breakForeach = true;
                             break;
                         case ShowWhenBoolean.XOR:
-                            answer ^= Show( argument );
+                            answer ^= Show( argument, participant );
                             break;
                         case ShowWhenBoolean.NAND:
-                            answer &= Show( argument );
+                            answer &= Show( argument, participant );
                             apployNot = true;
                             break;
                         case ShowWhenBoolean.NOR:
-                            answer |= Show( argument );
+                            answer |= Show( argument, participant );
                             apployNot = true;
                             break;
                         case ShowWhenBoolean.NXOR:
-                            answer ^= Show( argument );
+                            answer ^= Show( argument, participant );
                             apployNot = true;
                             break;
                     }

@@ -21,10 +21,13 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
             this.DisplayEntity = DisplayEntityType.AthleteDisplay;
         }
 
+        [G_NS.JsonProperty( Order = 2 )]
         public List<string> FiringPoints { get; set; } = new List<string>();
 
+        [G_NS.JsonProperty( Order = 3 )]
         public string ResultList { get; set; } = string.Empty;
 
+        [G_NS.JsonProperty( Order = 4 )]
         public string ShotPresentation { get; set; } = "ALL";
     }
 
@@ -37,11 +40,14 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
             this.DisplayEntity = DisplayEntityType.ImageDisplay;
         }
 
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public string ImageKey { get; set; } = string.Empty;
 
+        [G_NS.JsonProperty( Order = 3 )]
         //Should be an enum
         public string Presentation { get; set; } = "Alternate";
-        
+
+        [G_NS.JsonProperty( Order = 4 )]
         //Should be an enum
         public string ScreenFormat { get; set; } = "FIT";
     }
@@ -55,11 +61,13 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
             this.DisplayEntity = DisplayEntityType.ResultList;
         }
 
+        [G_NS.JsonProperty( Order = 2 )]
         public List<string> ResultLists { get; set; } = new List<string>();
 
+        [G_NS.JsonProperty( Order = 3 )]
         public bool ByRelay { get; set; } = true;
 
-        [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( Order = 4, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public int AnimatedRows { get; set; } = 3;
     }
 
@@ -72,10 +80,13 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
             this.DisplayEntity = DisplayEntityType.SquaddingList;
         }
 
+        [G_NS.JsonProperty( Order = 2 )]
         public List<string> FiringPoints { get; set; } = new List<string>();
 
+        [G_NS.JsonProperty( Order = 3 )]
         public string Relay { get; set; } = "CURRENT";
 
+        [G_NS.JsonProperty( Order = 4 )]
         public bool Scrolling { get; set; } = false;
     }
 }

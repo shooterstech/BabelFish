@@ -179,7 +179,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                 await ps.InitializeAsync( this.ResultList.Items.ToList<IEventScoreProjection>() );
                 foreach (var item in this.ResultList.Items) {
-                    item.ProjectScores( ps );
+                    //Do not project scores for anyone who has a DNS, DNF, DSQ, or ELIMINATED
+                    if (!item.Participant.RemarkList.HasNonCompletionRemark)
+                        item.ProjectScores( ps );
                 }
 
                 //When we are sorting by projected scores, we only will ever use the first Ranking Directive (which gets applied to all Result Events)

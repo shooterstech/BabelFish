@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     Reason = reason,
                     ActionId = actionId
                 };
-                this.Add( remarkActionShow );
+                this.Add( remarkActionHide );
             }
 
         }
@@ -169,46 +169,80 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public override string ToString() {
-            return $"{this.Count} Actions: {Summarize}";
+            return $"{this.Count} Actions: {GetSummary(false)}";
         }
 
         /// <summary>
         /// Returns the most important Remark. If the participant has the Remark more than once, it indicates it on the return string.
         /// </summary>
         /// <remarks>Same(ish) as python's RemarkHelperFunctions.GetMostImportantRemark()</remarks>
-        public string Summarize {
-            get {
-                if (this.IsShowingParticipantRemark( ParticipantRemark.DSQ ))
-                    return "DSQ";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.DNF ))
-                    return "DNF";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.DNS ))
-                    return "DNS";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.FIRST ))
+        public string GetSummary( bool useAbbreviations ) {
+            if (this.IsShowingParticipantRemark( ParticipantRemark.DSQ ))
+                return "DSQ";
+            if (this.IsShowingParticipantRemark( ParticipantRemark.DNF ))
+                return "DNF";
+            if (this.IsShowingParticipantRemark( ParticipantRemark.DNS ))
+                return "DNS";
+            if (this.IsShowingParticipantRemark( ParticipantRemark.FIRST ))
+                if (!useAbbreviations) {
                     return "FIRST";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.SECOND ))
+                } else {
+                    return "1ST";
+                }
+            if (this.IsShowingParticipantRemark( ParticipantRemark.SECOND ))
+                if (!useAbbreviations) {
                     return "SECOND";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.THIRD ))
+                } else {
+                    return "2ND";
+                }
+            if (this.IsShowingParticipantRemark( ParticipantRemark.THIRD ))
+                if (!useAbbreviations) {
                     return "THIRD";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED ))
+                } else {
+                    return "3RD";
+                }
+            if (this.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED ))
+                if (!useAbbreviations) {
                     return "QUALIFIED";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED ))
+                } else {
+                    return "QUAL";
+                }
+            if (this.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED ))
+                if (!useAbbreviations) {
                     return "ELIMINATED";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.BUBBLE ))
+                } else {
+                    return "ELIM";
+                }
+            if (this.IsShowingParticipantRemark( ParticipantRemark.BUBBLE ))
+                if (!useAbbreviations) {
                     return "BUBBLE";
-                if (this.IsShowingParticipantRemark( ParticipantRemark.LEADER ))
+                } else {
+                    return "BBL";
+                }
+            if (this.IsShowingParticipantRemark( ParticipantRemark.LEADER ))
+                if (!useAbbreviations) {
                     return "LEADER";
+                } else {
+                    return "LDR";
+                }
 
-                int count = this.GetParticipantRemarkCount( ParticipantRemark.LEADER );
-                if (count > 0)
-                    return $"LEADER x {count}"; 
-                
-                count = this.GetParticipantRemarkCount( ParticipantRemark.BUBBLE );
-                if (count > 0)
-                    return $"BUBBLE x {count}";
+            int count = this.GetParticipantRemarkCount( ParticipantRemark.LEADER );
+            if (count > 0)
+                if (!useAbbreviations) {
+                    return $"HELD LEAD x{count}";
+                } else {
+                    return $"LDRx{count}";
+                }
 
-                return "";
-            }
+            count = this.GetParticipantRemarkCount( ParticipantRemark.BUBBLE );
+            if (count > 0)
+                if (useAbbreviations) {
+                    return $"SURVIVED x{count}";
+                } else {
+                    return $"SVDx{count}";
+                }
+
+            return "";
         }
     }
 }

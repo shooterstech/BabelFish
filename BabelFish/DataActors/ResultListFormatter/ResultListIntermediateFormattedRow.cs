@@ -126,6 +126,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		}
 
         /// <summary>
+        /// Helper method that basically indicates if the standard fields should be truncated because the screen resolution is shorten. 
+        /// </summary>
+        private bool LessThanLarge {
+            get {
+                return this._resultListFormatted.ResolutionWidth < 992;
+            }
+        }
+
+        /// <summary>
         /// Method is responsible for implementing the .TrucateAt rule in the FieldSource.
         /// </summary>
         /// <param name="source"></param>
@@ -222,33 +231,33 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					return "";
 
                 case "DisplayName":
-					if (_resultListFormatted.GetParticipantAttributeDisplayNamePtr != null)
+                case "DisplayNameAbbreviated": //Deprecated
+
+                    if (_resultListFormatted.GetParticipantAttributeDisplayNamePtr != null)
 						return _resultListFormatted.GetParticipantAttributeDisplayNamePtr( this._resultEvent, this._resultListFormatted );
 
-					var dn = _resultEvent.Participant.DisplayName;
-                    if (!string.IsNullOrEmpty( dn ))
-                        return dn;
+                    if (this.LessThanLarge) {
 
-                    return "Unknown";
+                        //First try the regular display name
+                        var dna = _resultEvent.Participant.DisplayName;
+                        if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
+                            return dna;
 
-                case "DisplayNameAbbreviated":
-					if (_resultListFormatted.GetParticipantAttributeDisplayNameAbbreviatedPtr != null)
-						return _resultListFormatted.GetParticipantAttributeDisplayNameAbbreviatedPtr( this._resultEvent, this._resultListFormatted );
+                        //if that's too long, try the display name short, if it exists
+                        dna = _resultEvent.Participant.DisplayNameShort;
+                        if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
+                            return dna;
 
-					//First try the regular display name
-					var dna = _resultEvent.Participant.DisplayName;
-                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
-                        return dna;
+                        //If that's too long, go back to the regular display name and truncate it
+                        dna = _resultEvent.Participant.DisplayName;
+                        if (!string.IsNullOrEmpty( dna ))
+                            return GetTruncatedValue( dna );
 
-                    //if that's too long, try the display name short, if it exists
-                    dna = _resultEvent.Participant.DisplayNameShort;
-                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
-                        return dna;
-                    
-                    //If that's too long, go back to the regular display name and truncate it
-                    dna = _resultEvent.Participant.DisplayName;
-                    if (!string.IsNullOrEmpty( dna ))
-                        return GetTruncatedValue( dna );
+                    } else {
+                        var dn = _resultEvent.Participant.DisplayName;
+                        if (!string.IsNullOrEmpty( dn ))
+                            return dn;
+                    }
 
                     return "Unknown";
 
@@ -344,22 +353,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					return _resultEvent.MatchID;
 
 				case "MatchLocation":
-					if (_resultListFormatted.GetParticipantAttributeMatchLocationPtr != null)
+                case "MatchLocationAbbreviation": //Deprecated
+                    if (_resultListFormatted.GetParticipantAttributeMatchLocationPtr != null)
 						return _resultListFormatted.GetParticipantAttributeMatchLocationPtr( this._resultEvent, this._resultListFormatted );
-					
-                    if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ) )
-                        return metadata.MatchLocation;
-                    else 
-                        return "";
 
-                case "MatchLocationAbbreviated":
-					if (_resultListFormatted.GetParticipantAttributeMatchLocationAbbreviatedPtr != null)
-						return _resultListFormatted.GetParticipantAttributeMatchLocationAbbreviatedPtr( this._resultEvent, this._resultListFormatted );
-
-					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
-						return GetTruncatedValue( metadata.MatchLocation );
-					else
-						return "";
+                    if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata )) {
+                        if (this.LessThanLarge) {
+                            return GetTruncatedValue( metadata.MatchLocation );
+                        } else {
+                            return metadata.MatchLocation;
+                        }
+                    }
+                    
+                    return "";
 
 				case "Creator":
 					if (_resultListFormatted.GetParticipantAttributeCreatorPtr != null)
@@ -411,9 +417,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 case "Remark":
 					if (_resultListFormatted.GetParticipantAttributeRemarkPtr != null)
-						return _resultListFormatted.GetParticipantAttributeRemarkPtr( this._resultEvent, this._resultListFormatted );
-					
-                    return GetRemarks();
+						return _resultListFormatted.GetParticipantAttributeRemarkPtr( this._resultEvent, this._resultListFormatted );					
+                    
+                    return GetRemarks(this.LessThanLarge);
 
                 default:
                     return "UNKNOWN";
@@ -754,9 +760,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Returns a string, that tries and encapsulates all of the Remarks that a participant has. 
         /// </summary>
         /// <returns></returns>
-        public string GetRemarks() {
-            return this._resultEvent.Participant.RemarkList.Summarize;
-
+        public string GetRemarks( bool useAbbreviation ) {
+            return this._resultEvent.Participant.RemarkList.GetSummary( useAbbreviation );
         }
 
     }

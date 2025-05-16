@@ -731,16 +731,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		public ParticipantAttributeOverload GetParticipantAttributeDisplayNameShortPtr { get; set; } = null;
 
 		/// <summary>
-		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the DisplayNameAbbreviated field
-		/// in each row. 
-		/// </summary>
-		/// <remarks>
-		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
-		/// method in the field value.
-		/// </remarks>
-		public ParticipantAttributeOverload GetParticipantAttributeDisplayNameAbbreviatedPtr { get; set; } = null;
-
-		/// <summary>
 		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the FamilyName field
 		/// in each row. 
 		/// </summary>
@@ -819,16 +809,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// method in the field value.
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeMatchLocationPtr { get; set; } = null;
-
-		/// <summary>
-		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchLocationAbbreviated field
-		/// in each row. 
-		/// </summary>
-		/// <remarks>
-		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
-		/// method in the field value.
-		/// </remarks>
-		public ParticipantAttributeOverload GetParticipantAttributeMatchLocationAbbreviatedPtr { get; set; } = null;
 
 		/// <summary>
 		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchID field
