@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// There is an argument to be made that we should also include a SCORE FORMAT COLLECTION to use
 		/// when displaying average scores over time.</remarks>
 		[G_STJ_SER.JsonPropertyOrder( 14 )]
-		[G_NS.JsonProperty( Order = 14 )]
+		[G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
 		[DefaultValue( "v1.0:orion:Standard Score Formats" )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 

@@ -74,6 +74,9 @@ namespace Scopos.BabelFish.DataModel.Athena {
             }
         }
 
+        /// <summary>
+        /// This field is used internally to BabelFish only. Its value is neither written to or read from JSON.
+        /// </summary>
         [G_STJ_SER.JsonIgnore]
         public int NumShotsFired { get; set; } = 0;
 

@@ -46,7 +46,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The background color of the target.
         /// </summary>
-
         [G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public AimingMarkColor BackgroundColor { get; set; } = AimingMarkColor.WHITE;
@@ -54,10 +53,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The expected distance that this target is shot at. Measured in mm.
         /// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 15 )]
-        [G_NS.JsonProperty( Order = 15 )]
+		[G_STJ_SER.JsonPropertyOrder( 20 )]
+        [G_NS.JsonProperty( Order = 20 )]
         [DefaultValue( 10000 )]
         public int Distance { get; set; } = 10000;
+
+        /// <summary>
+        /// The maximum zoom that this target should be displayed in a square user interface window.
+        /// The width that is shown (on the physical target) would be the width of the widest scoirng ring
+        /// divided by the MaxZoom. So on an Air Rifle target, the width of the 1 ring is 45.5mm. If MaxZoom
+        /// is 4.5, then 45.5 / 4.5 = 10.1mm of the target would be shown (which is about the width of the 
+        /// 8 ring.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( 4.5f )]
+        public float MaxZoom { get; set; } = 4.5f;
 
 		/// <inheritdoc />
 		public override async Task<bool> GetMeetsSpecificationAsync() {

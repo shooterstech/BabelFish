@@ -163,7 +163,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return (this.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED )
                     || this.IsShowingParticipantRemark( ParticipantRemark.DNS )
                     || this.IsShowingParticipantRemark( ParticipantRemark.DNF )
-                    || this.IsShowingParticipantRemark( ParticipantRemark.DSQ ));
+                    || this.IsShowingParticipantRemark( ParticipantRemark.DSQ )
+                    || this.IsShowingParticipantRemark( ParticipantRemark.THIRD )
+                    || this.IsShowingParticipantRemark( ParticipantRemark.SECOND )
+                    || this.IsShowingParticipantRemark( ParticipantRemark.FIRST ));
             }
         }
 
