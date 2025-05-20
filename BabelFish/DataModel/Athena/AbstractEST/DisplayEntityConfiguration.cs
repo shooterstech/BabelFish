@@ -29,7 +29,10 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
 
         [G_NS.JsonProperty( Order = 4 )]
         public string ShotPresentation { get; set; } = "ALL";
-    }
+
+		[G_NS.JsonProperty( Order = 5 )]
+		public string PaintGraphic { get; set; } = string.Empty;
+	}
 
     public class ImageDisplayConfiguration : DisplayEntityConfiguration {
         /*
