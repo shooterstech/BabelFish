@@ -12,6 +12,33 @@ using System.Runtime.Serialization;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
 
+    public enum AbbreviatedFormatDerivedOptions {
+
+        [Description( "LAST(1)" )]
+        [EnumMember( Value = "LAST(1)" )]
+        LAST_1,
+
+		[Description( "LAST(2)" )]
+		[EnumMember( Value = "LAST(2)" )]
+		LAST_2,
+
+		[Description( "LAST(3)" )]
+		[EnumMember( Value = "LAST(3)" )]
+		LAST_3,
+
+		[Description( "LAST(4)" )]
+		[EnumMember( Value = "LAST(4)" )]
+		LAST_4,
+
+		[Description( "LAST(5)" )]
+		[EnumMember( Value = "LAST(5)" )]
+		LAST_5,
+
+		[Description( "LAST(6)" )]
+		[EnumMember( Value = "LAST(6)" )]
+		LAST_6
+	}
+
     /// <summary>
     /// The color of the aiming mark.
     /// </summary>

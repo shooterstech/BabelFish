@@ -35,7 +35,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Empty",
             "DisplayName", 
             "DisplayNameShort", 
-            "DisplayNameAbbreviated",
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -44,7 +43,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Club",
             "CompetitorNumber", 
             "MatchLocation", 
-            "MatchLocationAbbreviated",
             "MatchID", //If this is a Virtual Match, will differ from the ParentID
 			"LocalDate", 
             "ResultCOFID", 
