@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 var eventExplicit = new EventExplicit();
                 eventExplicit.EventName = eventName;
                 eventExplicit.Calculation = this.Calculation;
-                eventExplicit.CalculationMeta = this.CalculationMeta;
+                eventExplicit.CalculationVariables = this.CalculationVariables;
                 eventExplicit.ScoreFormat = this.ScoreFormat;
                 eventExplicit.EventType = this.EventType;
                 eventExplicit.ResultListFormatDef = this.ResultListFormatDef;

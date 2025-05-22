@@ -248,9 +248,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             AbbreviatedFormats.Add( new AbbreviatedFormat() {
                 FormatName = "Aggregate",
                 EventName = "Individual",
-                Children = new List<AbbreviatedFormat>() {
-                    new AbbreviatedFormat() {EventName = "Stage Event" },
-                    new AbbreviatedFormat() {EventName = "String Event" },
+                Children = new List<AbbreviatedFormatChild>() {
+                    new AbbreviatedFormatChildExplicit() {EventName = "Stage Event" },
+                    new AbbreviatedFormatChildExplicit() {EventName = "String Event" }
                 }
             } );
 

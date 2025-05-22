@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     public abstract class AbbreviatedFormatBase : IReconfigurableRulebookObject {
@@ -25,6 +26,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[DefaultValue( "" )]
 		public string Comment { get; set; } = string.Empty;
 
+		public abstract List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re );
+
 	}
 
     /// <summary>
@@ -45,9 +48,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		public string FormatName { get; set; } = string.Empty;
 
 		/// <summary>
-		/// A list of child events who scores should be included in the resulting AbbreviatedResultCOF.
-		/// Must be List<AbbreviatedFormat> or ...
+		/// A list of (uncompiled) child events who scores should be included in the resulting AbbreviatedResultCOF.
 		/// </summary>
+        /// <remarks>
+        /// To get the compiled list, use the method GetCompiledabbreviatedFormatChildren()</remarks>
 		[G_NS.JsonProperty( Order = 20 )]
         [DefaultValue( null )]
         public List<AbbreviatedFormatChild> Children { get; set; } = new List<AbbreviatedFormatChild>();
@@ -55,7 +59,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool ShouldSerializeChildren() {
 
             return Children != null && Children.Count > 0;
-        }
+		}
+
+		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re ) {
+			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
+            foreach (var child in Children) {
+                list.AddRange( child.GetCompiledAbbreviatedFormatChildren( re ) );
+            }
+
+            return list;
+		}
 
 		/// <inheritdoc/>
 		public override string ToString() {

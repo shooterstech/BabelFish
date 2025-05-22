@@ -109,6 +109,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         OL161 
     }
 
+    public enum CalculationVariableType {
+        INTEGER,
+        FLOAT,
+        STRING,
+        SCORE //Score Component, e.g. I, D, X
+    }
+
     public enum COFTypeOptions { 
         COMPETITION, 
         FORMALPRACTICE, 

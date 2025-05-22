@@ -46,23 +46,25 @@ namespace Scopos.BabelFish.Helpers {
                     //Write indented
                     SystemTextJsonDeserializer.WriteIndented = true;
 
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeFieldConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketAPIResponseConverter() );
+
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AbbreviatedFormatChildConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeFieldConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketAPIResponseConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketMatchConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
-                    //APIClientSerializer.Converters.Add( new ExcludeEmptyStringConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CalculationVariableConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CommandAutomationConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DisplayEntityConfigurationConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ParticipantConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateTimeConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateOnlyConverter() );
+					//SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateOnlyConverter() );
+					//SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateTimeConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreAverageBaseConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreHistoryBaseConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.SetAttributeValueListConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ShowWhenBaseConverter() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CommandAutomationConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.SquaddingAssignmentConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.TieBreakingRuleConverter() );
 
@@ -71,7 +73,8 @@ namespace Scopos.BabelFish.Helpers {
 					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AimingMarkColor>() );
 					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AttributeDesignation>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<BarcodeLabelSize>() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<COFTypeOptions>() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<CalculationVariableType>() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<COFTypeOptions>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<CommandAutomationSubject>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<CompetitionType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DefinitionType>() );

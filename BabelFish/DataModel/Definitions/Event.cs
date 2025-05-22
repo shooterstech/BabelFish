@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -11,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public abstract class Event : IReconfigurableRulebookObject, IGetResultListFormatDefinition, IGetRankingRuleDefinition, IGetRankingRuleDefinitionList {
 
-        protected Logger Logger = LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Event()
         {
@@ -61,7 +62,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// The method to use to calculate the score of this event from the children. Must be one of the following:
-        /// * SUM
+        /// * SUM  (may have CalculationVariables of type CalculationVariablesString)
+        /// * AVERAGE (may have CalculationVariables of type CalculationVariableInteger)
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
@@ -73,8 +75,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 9 )]
         [G_NS.JsonProperty( Order = 9 )]
-        [DefaultValue( "" )]
-        public string CalculationMeta { get; set; } = string.Empty;
+        public List<CalculationVariable> CalculationVariables { get; set; } = new List<CalculationVariable>();
+
+        public bool ShouldSerializeCalculationVariables() {
+            return CalculationVariables != null && CalculationVariables.Count > 0;  
+        }
 
         /// <summary>
         /// The score format to use to display scores for this Event.
@@ -161,7 +166,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             copy.EventType = this.EventType;
             copy.Children = this.Children;
             copy.Calculation = this.Calculation;
-            copy.CalculationMeta = this.CalculationMeta;
+            copy.CalculationVariables = this.CalculationVariables;
             copy.ScoreFormat = this.ScoreFormat;
             copy.ResultListFormatDef = this.ResultListFormatDef;
             copy.StageStyleMapping = this.StageStyleMapping;

@@ -78,8 +78,10 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var eventTree = new IsCourseOfFireEventTreeValid();
             var abbrFormats = new IsCourseOfFireAbbreviatedFormatsValid();
             var commandAutomationIds = new IsCourseOfFireRangeScriptAutomationIdsValid();
+            var calculationVariables = new IsCourseOfFireEventCalculationVariablesValid();
 
-            if (!await tc.IsSatisfiedByAsync( candidate )) {
+
+			if (!await tc.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( tc.Messages );
             }
@@ -142,6 +144,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await commandAutomationIds.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( commandAutomationIds.Messages );
+            }
+
+            if (!await calculationVariables.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( calculationVariables.Messages );
             }
 
             return valid;
@@ -469,15 +476,75 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             return valid;
         }
-    }
+	}
 
-    /// <summary>
-    /// Tests that there is only one EventType EVENT.
-    /// Tests that the one EventType EVENT has a EventStyleMapping object.
-    /// Tests that the EventStyleMapping object has a valid reference to an EVENT STYLE.
-    /// Tests that the remaining (non EventType EVENT) events do not have a EventStyleMapping object.
-    /// </summary>
-    public class IsCourseOfFireEventEventStyleMappingValid : CompositeSpecification<CourseOfFire> {
+	/// <summary>
+	/// Tests if the CalculatoinVariables are valid, given an Event's Calculation method
+	/// </summary>
+	public class IsCourseOfFireEventCalculationVariablesValid : CompositeSpecification<CourseOfFire> {
+
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            var index = 0;
+            var variableIndex = 0;
+            foreach (var @event in candidate.Events) {
+
+                switch (@event.Calculation) {
+                    case EventCalculation.SUM:
+                        //CalculationVariables must be of type Score Component.
+                        variableIndex = 0;
+                        foreach (var variable in @event.CalculationVariables) {
+                            if (variable.VariableType != CalculationVariableType.SCORE) {
+                                valid = false;
+                                Messages.Add( $"Event[{index}] has Calculation method SUM. However, CalculationVariable[{variableIndex}] is of tpe {variable.VariableType} and instead must be of type SCORE." );
+                            }
+                            variableIndex++;
+                        }
+
+                        //May have zero to many. So not doing a check on the number of variables.
+                        break;
+
+					case EventCalculation.AVERAGE:
+						//CalculationVariables must be type Integer
+						variableIndex = 0;
+						foreach (var variable in @event.CalculationVariables) {
+							if (variable.VariableType != CalculationVariableType.INTEGER) {
+								valid = false;
+								Messages.Add( $"Event[{index}] has Calculation method AVERAGE. However, CalculationVariable[{variableIndex}] is of tpe {variable.VariableType} and instead must be of type INTEGER." );
+							}
+							variableIndex++;
+						}
+
+                        //Must have exactly one variable.
+                        if ( @event.CalculationVariables.Count != 1 ) {
+							valid = false;
+							Messages.Add( $"Event[{index}] has Calculation method AVERAGE, and must have exactly 1 CalculationVariable of type INTEGER. Instead have {@event.CalculationVariables.Count}." );
+						}
+						break;
+
+                    default:
+                        //The other EventCalculation values are deprecated and one day should cause an Specification error. EKA May 2025.
+                        break;
+				}
+
+
+                index++;
+            }
+
+			return valid;
+		}
+	}
+
+	/// <summary>
+	/// Tests that there is only one EventType EVENT.
+	/// Tests that the one EventType EVENT has a EventStyleMapping object.
+	/// Tests that the EventStyleMapping object has a valid reference to an EVENT STYLE.
+	/// Tests that the remaining (non EventType EVENT) events do not have a EventStyleMapping object.
+	/// </summary>
+	public class IsCourseOfFireEventEventStyleMappingValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
 
@@ -656,6 +723,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     Messages.Add( $"At least one AbbreviatedFormat is required." );
                 } else {
                     var eventTree = EventComposite.GrowEventTree( candidate );
+                    var externalEvents = EventComposite.FindExternalEvents( candidate );
 
                     int index = 0;
                     int childIndex = 0;
@@ -674,11 +742,46 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
                         childIndex = 0;
                         foreach (var child in af.Children) {
-                            foo = eventTree.FindEventComposite( child.EventName );
-                            if (foo == null) {
-                                valid = false;
-                                Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] names an Event '{af.EventName}' that does not exist." );
-                            }
+                            switch (child.Derivation) {
+                                case EventDerivationType.EXPLICIT:
+                                    //Check if the Event name is in the Event Tree
+                                    //If not, check if it is an external event.
+                                    foo = eventTree.FindEventComposite( child.EventName );
+                                    if (foo == null && ! externalEvents.ContainsKey( child.EventName ) ) {
+                                        valid = false;
+                                        Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] names an Event '{child.EventName}' that does not exist." );
+                                    }
+                                    break;
+
+                                case EventDerivationType.EXPAND:
+                                    var vs1 = new ValueSeries( ((AbbreviatedFormatChildExpand)child).Values );
+                                    foreach (var eventName in vs1.GetAsList( child.EventName )) {
+
+										//Check if the Event name is in the Event Tree
+										//If not, check if it is an external event.
+										foo = eventTree.FindEventComposite( eventName );
+										if (foo == null && !externalEvents.ContainsKey( child.EventName ) ) {
+											valid = false;
+											Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] compiles to an Event '{child.EventName}' that does not exist." );
+										}
+									}
+                                    break;
+
+                                case EventDerivationType.DERIVED:
+									//Currently don't have a good way of checking these, as the expansion depends on the Result Event. So only going to check against a ValueSeries of "1".
+									var vs2 = new ValueSeries( "1" );
+									foreach (var eventName in vs2.GetAsList( child.EventName )) {
+
+										//Check if the Event name is in the Event Tree
+										//If not, check if it is an external event.
+										foo = eventTree.FindEventComposite( eventName );
+										if (foo == null && !externalEvents.ContainsKey( child.EventName ) ) {
+											valid = false;
+											Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] compiles to an Event '{child.EventName}' that does not exist." );
+										}
+									}
+									break;
+							}
 
                             childIndex++;
                         }

@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 JsonElement root = doc.RootElement;
                 string operation = string.Empty;
                 JsonElement jsonElementValue;
-                if (root.TryGetProperty( "DisplayEntity", out jsonElementValue ))
+                if (root.TryGetProperty( "Derivation", out jsonElementValue ))
                     operation = jsonElementValue.GetString();
                 else 
                     operation = string.Empty;

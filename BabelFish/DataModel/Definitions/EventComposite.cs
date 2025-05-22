@@ -213,6 +213,38 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return top;
         }
 
+        /// <summary>
+        /// Generates a Dictionary of all External Events to the Event Tree.
+        /// Key is the EventName, Value is the EventComposite.
+        /// </summary>
+        /// <param name="cof"></param>
+        /// <returns></returns>
+        public static Dictionary<string, EventComposite> FindExternalEvents( CourseOfFire cof ) {
+			Dictionary<string, EventComposite> dictionary = new Dictionary<string, EventComposite>();
+
+			var listOfEvents = new List<Event>();
+			foreach (var origEvent in cof.Events) {
+				foreach (var cloneEvent in origEvent.GetCompiledEvents()) {
+					if (cloneEvent.ExternalToEventTree) {
+						listOfEvents.Add( cloneEvent );
+					}
+				}
+			}
+
+            foreach( var e in listOfEvents) {
+                var eventComposite = new EventComposite() {
+                    EventName = e.EventName,
+                    EventStyleMapping = e.EventStyleMapping,
+                    ScoreFormat = e.ScoreFormat,
+                    Calculation = e.Calculation
+                };
+
+                dictionary.Add( e.EventName, eventComposite );
+            }
+
+            return dictionary;
+		}
+
         private static void GrowChildren( List<Event> listOfEvents, List<Singular> singulars, EventComposite parent, int level ) {
 
             if (level > 10)
