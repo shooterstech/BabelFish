@@ -31,10 +31,10 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         [G_NS.JsonProperty( Order = 4 )]
         public string ShotPresentation { get; set; } = "ALL";
 
-        [G_NS.JsonProperty( Order = 5 )]
-        public string PaintGraphic { get; set; } = string.Empty;
+        [G_NS.JsonProperty(Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
+        public PaintGraphic PaintGraphic { get; set; } = PaintGraphic.TargetAndResultCOF; //default is first enum, TargetAndResultCOF
 
-		[G_NS.JsonProperty( Order = 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
 		public bool ShowNeedsToLead { get; set; } = false;
 
 		[G_NS.JsonProperty( Order = 6, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]

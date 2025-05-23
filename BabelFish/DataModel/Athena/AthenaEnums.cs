@@ -79,4 +79,12 @@ namespace Scopos.BabelFish.DataModel.Athena {
         SCORE
     }
 
+    public enum PaintGraphic
+    {
+        TargetAndResultCOF,
+        TargetOnly
+    }
+
+
+
 }
