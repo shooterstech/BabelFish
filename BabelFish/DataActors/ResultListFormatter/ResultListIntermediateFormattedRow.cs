@@ -148,20 +148,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Static version of GetRuncatedValue. Truncates a string at 24 characters.
-        /// </summary>
-        /// <param name="untruncatedValue"></param>
-        /// <returns></returns>
-        private string GetTruncatedValue( string untruncatedValue ) {
-            if (untruncatedValue.Length > 23) {
-                return $"{untruncatedValue.Substring( 0, 20 )}...";
-            } else {
-                return untruncatedValue;
-            }
-
-        }
-
-        /// <summary>
         /// Returns the specified ParticipantAttribute
         /// </summary>
         /// <param name="source">The name of the ParticipantAttribute to return.</param>
@@ -249,7 +235,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         //If that's too long, go back to the regular display name and truncate it
                         dna = _resultEvent.Participant.DisplayName;
                         if (!string.IsNullOrEmpty( dna ))
-                            return GetTruncatedValue( dna );
+                            return StringFormatting.GetTruncatedString( dna );
 
                     } else {
                         var dn = _resultEvent.Participant.DisplayName;
@@ -357,7 +343,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata )) {
                         if (this.LessThanLarge) {
-                            return GetTruncatedValue( metadata.MatchLocation );
+                            return StringFormatting.GetTruncatedString( metadata.MatchLocation );
                         } else {
                             return metadata.MatchLocation;
                         }

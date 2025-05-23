@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
@@ -30,8 +31,19 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         [G_NS.JsonProperty( Order = 4 )]
         public string ShotPresentation { get; set; } = "ALL";
 
-		[G_NS.JsonProperty( Order = 5 )]
-		public string PaintGraphic { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 5 )]
+        public string PaintGraphic { get; set; } = string.Empty;
+
+		[G_NS.JsonProperty( Order = 6 )]
+		public bool ShowNeedsToLead { get; set; } = false;
+
+		[G_NS.JsonProperty( Order = 6, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( ViewDefinitionShotDisplay.NONE )]
+		public ViewDefinitionShotDisplay ShotDisplayModifier { get; set; } = ViewDefinitionShotDisplay.NONE;
+
+		[G_NS.JsonProperty( Order = 7, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		[DefaultValue( ViewDefinitionShotDisplay.SIGHTER_NUMBER )]
+		public ViewDefinitionShotDisplay SighterDisplayModifier { get; set; } = ViewDefinitionShotDisplay.SIGHTER_NUMBER;
 	}
 
     public class ImageDisplayConfiguration : DisplayEntityConfiguration {

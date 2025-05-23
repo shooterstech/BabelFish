@@ -364,6 +364,19 @@ namespace Scopos.BabelFish.Helpers {
                     break;
             }
             return $"{number}{suffix}";
-        }
-    }
+		}
+
+		/// <summary>
+		/// Truncates a string at the given number of characters (default to 24).
+		/// </summary>
+		/// <param name="untruncatedValue"></param>
+		/// <returns></returns>
+		public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
+			if (untruncatedValue.Length >= numberOfCharacters) {
+				return $"{untruncatedValue.Substring( 0, numberOfCharacters-4 )}...";
+			} else {
+				return untruncatedValue;
+			}
+		}
+	}
 }

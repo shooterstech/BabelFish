@@ -134,8 +134,10 @@ namespace Scopos.BabelFish.Helpers {
                     //AbstractEST
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DisplayEntityType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ESTUnitCommand>() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ReplaceVariableOptions>() );
-                }
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ReplaceVariableOptions>() ); 
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ViewDefinitionShotDisplay>() );
+
+				}
             }
         }
 

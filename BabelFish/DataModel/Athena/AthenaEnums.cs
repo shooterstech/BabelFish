@@ -73,4 +73,10 @@ namespace Scopos.BabelFish.DataModel.Athena {
 
     public enum ReplaceVariableOptions { ResultList, ResultLists };
 
+    public enum ViewDefinitionShotDisplay {
+        NONE,
+        SIGHTER_NUMBER,
+        SCORE
+    }
+
 }

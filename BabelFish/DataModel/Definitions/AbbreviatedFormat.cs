@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -26,7 +27,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[DefaultValue( "" )]
 		public string Comment { get; set; } = string.Empty;
 
-		public abstract List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re );
+		public abstract List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( IEventScoreProjection re );
 
 	}
 
@@ -61,7 +62,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Children != null && Children.Count > 0;
 		}
 
-		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re ) {
+		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( IEventScoreProjection re ) {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
             foreach (var child in Children) {
                 list.AddRange( child.GetCompiledAbbreviatedFormatChildren( re ) );

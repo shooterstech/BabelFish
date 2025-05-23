@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -36,7 +37,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		}
 
 		/// <inheritdoc />
-		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re ) {
+		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( IEventScoreProjection re ) {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
 			list.Add( this.Clone() );
 			return list;
@@ -56,7 +57,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		public AbbreviatedFormatDerivedOptions Values { get; set; } = AbbreviatedFormatDerivedOptions.LAST_1;
 
 		/// <inheritdoc />
-		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re ) {
+		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( IEventScoreProjection re ) {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
 			ValueSeries vs = new ValueSeries( "100..1,-1" );
 			var eventNameList = vs.GetAsList( this.EventName );
@@ -117,7 +118,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		public string Values { get; set; } = string.Empty;
 
 		/// <inheritdoc />
-		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( ResultEvent re ) {
+		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( IEventScoreProjection re ) {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
 			ValueSeries vs = new ValueSeries( this.Values );
 			var eventNameList = vs.GetAsList( this.EventName );
