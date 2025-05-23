@@ -62,14 +62,38 @@ namespace Scopos.BabelFish.DataModel.Definitions
         /// <returns></returns>
         public List<ResultEvent> GetParticipantListToApply( ResultList resultList ) {
             List<ResultEvent> resultEvents = new List<ResultEvent>();
+            CalculateBottomRank( resultList );
 
             var ranks = GetParticipantRanksAsList();
             foreach (var item in resultList.Items) {
-                if (ranks.Contains( item.Rank )) {
+                if (ranks.Contains( item.Rank ) || ranks.Contains( item.BottomRank ) ) {
                     resultEvents.Add( item );
                 }
             }
             return resultEvents;
+        }
+
+        private void CalculateBottomRank( ResultList resultList ) {
+
+            bool foundATime = false;
+            int currentBottomRank = 0;
+            for (int i = resultList.Items.Count - 1; i >= 0; i--) {
+                var item = resultList.Items[i];
+
+                if (foundATime) {
+                    //If we are currently on a tie, when .Rank equal .RankOrder this is our stop condition
+                    if ( item.Rank == item.RankOrder) {
+                        foundATime = false;
+					}
+
+				} else {
+                    //Detect if we found a new tie
+                    foundATime = (item.Rank != item.RankOrder);
+                    currentBottomRank = item.RankOrder;
+				}
+
+				item.BottomRank = currentBottomRank;
+			}
         }
 
         /// <inheritdoc />

@@ -51,6 +51,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int RankOrder {  get; set; }
 
         /// <summary>
+        /// For internal use only, to learn which ResultEvents to applyh Command Automation to
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public int BottomRank { get; set; }
+
+        /// <summary>
         /// The projected rank of this competitor, using projected scores.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
