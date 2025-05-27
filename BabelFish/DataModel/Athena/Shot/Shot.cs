@@ -187,7 +187,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public string MatchID { get; set; }
 
-        public dynamic Meta { get; set; }
+        public Dictionary<string, object> Meta { get; set; }
 
         /// <summary>
         /// EventName is only set when the shot is part of a Result COF .Shots dictionary

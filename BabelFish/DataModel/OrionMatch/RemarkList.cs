@@ -218,9 +218,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             if (this.IsShowingParticipantRemark( ParticipantRemark.BUBBLE ))
                 if (!useAbbreviations) {
-                    return "BUBBLE";
+                    return "AT RISK";
                 } else {
-                    return "BBL";
+                    return "RISK";
                 }
             if (this.IsShowingParticipantRemark( ParticipantRemark.LEADER ))
                 if (!useAbbreviations) {
@@ -239,7 +239,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             count = this.GetParticipantRemarkCount( ParticipantRemark.BUBBLE );
             if (count > 0)
-                if (useAbbreviations) {
+                if (!useAbbreviations) {
                     return $"SURVIVED x{count}";
                 } else {
                     return $"SVDx{count}";

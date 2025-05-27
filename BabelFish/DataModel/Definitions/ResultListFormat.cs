@@ -257,23 +257,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-                }},
-                ShowWhen = new ShowWhenVariable() {
-                    Condition = ShowWhenCondition.DIMENSION_LARGE
-                }
-            } );
-
-            this.Format.Columns.Add( new ResultListDisplayColumn() {
-                Header = "Participant",
-                Body = "{DisplayNameAbbreviated}",
-                BodyLinkTo = LinkToOption.PublicProfile,
-                ClassSet = new List<ClassSet>() { new ClassSet() {
-                    Name = "rlf-col-participant",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-                }},
-                ShowWhen = new ShowWhenVariable() {
-                    Condition = ShowWhenCondition.DIMENSION_LT_LARGE
-                }
+                }}
             } );
 
 			this.Format.Columns.Add( new ResultListDisplayColumn() {
@@ -301,7 +285,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 			this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Location",
-                Body = "{MatchLocationAbbreviated}",
+                Body = "{MatchLocation}",
                 Child = "{Empty}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-matchinfo",
@@ -338,16 +322,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     Name = "rlf-col-gap",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
                 }},
-                ShowWhen = new ShowWhenEquation() {
-                    Boolean = ShowWhenBoolean.OR,
-                    Arguments = new List<ShowWhenBase>() {
-                        new ShowWhenVariable() {
-                            Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
-                        },
-                        new ShowWhenVariable() {
-                            Condition = ShowWhenCondition.RESULT_STATUS_UNOFFICIAL
-                        }
-                    }
+                ShowWhen = new ShowWhenVariable() {
+                    Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
                 }
             } );
 
@@ -358,16 +334,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 					Name = "rlf-col-matchinfo",
 					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
 				}},
-				ShowWhen = new ShowWhenEquation() {
-					Boolean = ShowWhenBoolean.AND,
-					Arguments = new List<ShowWhenBase>() {
-						new ShowWhenVariable() {
-							Condition = ShowWhenCondition.HAS_ANY_SHOWN_REMARK
-						},
-						new ShowWhenVariable() {
-							Condition = ShowWhenCondition.DIMENSION_LARGE
-						}
-					}
+				ShowWhen = new ShowWhenVariable() {
+					Condition = ShowWhenCondition.HAS_ANY_SHOWN_REMARK
 				}
 			} );
 

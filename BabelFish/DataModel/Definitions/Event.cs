@@ -57,7 +57,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 4 )]
         public virtual List<string> Children { 
             get { return _children; }
-            set { throw new NotImplementedException( "Child classes must decide to implemtn Set Children or not." ); }
+            
+		    set {
+                // Child classes must decide to implemtn Set Children or not.
+                // Making the set operation a no-op to avoid unexpected exceptions.
+                Logger.Warn( $"Set Children unexpectedly called for '{EventName},' an Event of Derivation {Derivation}." );
+			}
         }
 
         /// <summary>

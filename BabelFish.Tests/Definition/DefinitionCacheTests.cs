@@ -326,7 +326,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
         [TestMethod]
         public async Task EriksPlayground() {
-            var setName = SetName.Parse( "v1.0:ntparc:40 Shot Standing" );
+            var setName = SetName.Parse( "v1.0:orion:Test Informal Practice Air Rifle" );
             var definition = await DefinitionCache.GetDefinitionAsync( DefinitionType.COURSEOFFIRE, setName );
 
             Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );

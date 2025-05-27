@@ -4,7 +4,28 @@ using System.ComponentModel;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class EventExpand : Event {
+
+	/// <summary>
+	/// An EventExpand is a concrete child of abstract class Event.
+	/// It represents a series of EventExplicits (but defined more compactly). The values of EventName and Children (and the expanded list of 
+	/// Event Explicits), are encodeed within this EventExpand. The Event Name of the expanded list, is based on the value 
+	/// of EventName and Values. The Children are based on the values of ChildEventName and ChildStringSize.
+	/// </summary>
+	/// <remarks>
+	/// <![CDATA[
+	/// {
+	/// "EventName": "PR {}",
+	/// "EventType": "STRING",
+	/// "Derivation": "EXPAND",
+	/// "Values": "1..50",
+	/// "ChildEventName": "P{}",
+    /// "ChildStringSize" : 10,
+	/// "Calculation": "SUM",
+	/// "ScoreFormat": "Events"
+	/// }
+	/// ]]>
+	/// </remarks>
+	public class EventExpand : Event {
 
         public EventExpand() {
             Derivation = EventDerivationType.EXPAND;
@@ -20,7 +41,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Values { get; set; } = string.Empty;
 
         [G_STJ_SER.JsonPropertyOrder( 7 )]
-        [G_NS.JsonProperty( Order = 7 )]
+        [G_NS.JsonProperty( Order = 7, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( 10 )]
         public int ChildStringSize { get; set; } = 10;
 
@@ -69,6 +90,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return events;
+        }
+
+
+		/// <inheritdoc />
+		/// <remarks>
+		/// Overriding the property here, specifically to apply the JsonIgnore attribute. As the json definition
+        /// has no use for Children, there is no need to serialize or deserize it. 
+		/// </remarks>
+		[G_STJ_SER.JsonIgnore]
+		[G_NS.JsonIgnore]
+		public override List<string> Children {
+            get { return _children; } 
+            set { ; } 
         }
     }
 }

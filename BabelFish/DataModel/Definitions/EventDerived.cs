@@ -5,10 +5,25 @@ using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-    /// <summary>
-    /// Event where the children are derived based on a ChildEventName and a value series ChildValues
-    /// </summary>
-    public class EventDerived : Event {
+	/// <summary>
+	/// An EventDerived is a concrete child of abstract class Event.
+	/// It represents a single EventExplicit, but one where the Children are encoded. 
+    /// The Children are based on the values of ChildEventName and ChildValues.
+	/// </summary>
+	/// <remarks>
+	/// <![CDATA[
+	/// {
+	/// "EventName": "Prone",
+	/// "EventType": "STAGE",
+	/// "Derivation": "DERIVED",
+	/// "ChildValues": "1..50",
+	/// "ChildEventName": "PR {}",
+	/// "Calculation": "SUM",
+	/// "ScoreFormat": "Events"
+	/// }
+	/// ]]>
+	/// </remarks>
+	public class EventDerived : Event {
 
         public EventDerived() {
             Derivation = EventDerivationType.DERIVED;
