@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using System.ComponentModel;
+using System.Dynamic;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
@@ -187,7 +188,11 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public string MatchID { get; set; }
 
-        public Dictionary<string, object> Meta { get; set; }
+        /// <summary>
+        /// Additional information about the shot. Format is dependent of the type of EST system used to score the shot.
+        /// </summary>
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DynamicConverter ) ) ]
+		public ExpandoObject Meta { get; set; }
 
         /// <summary>
         /// EventName is only set when the shot is part of a Result COF .Shots dictionary
@@ -209,15 +214,18 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         {
             try
             {
-                float x = (float)Meta["VerImgBullXCoor"];
-                float y = (float)Meta["VerImgBullYCoor"];
+                var meta = (IDictionary<string, object>)Meta;
+
+				float x = Convert.ToSingle( meta["VerImgBullXCoor"] );
+                float y = Convert.ToSingle( meta["VerImgBullYCoor"] );
                 Tuple<float, float> coordinates = new Tuple<float, float>(x, y);
 
                 return coordinates;
             }
             catch (Exception e)
             {
-                throw new KeyNotFoundException("Unable to read the X and Y coorediantes of the aiming bull from the Shot's Meta data.");
+                var knf = new KeyNotFoundException("Unable to read the X and Y coorediantes of the aiming bull from the Shot's Meta data.", e);
+                throw knf;
             }
         }
 
@@ -229,13 +237,14 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <exception cref="KeyNotFoundException"></exception>
         public float GetVerificationImageDPMM()
         {
-            try
-            {
-                return (float)Meta["VerImgDPMM"];
+            try {
+				var meta = (IDictionary<string, object>)Meta;
+				return Convert.ToSingle( meta["VerImgDPMM"] );
             }
             catch (Exception e)
             {
-                throw new KeyNotFoundException("Unable to read the DPMM value from the Shot's Meta data.");
+				var knf = new KeyNotFoundException("Unable to read the DPMM value from the Shot's Meta data.", e);
+                throw knf;
             }
         }
 
@@ -246,9 +255,9 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <returns></returns>
         public float GetVerificationImageRotation()
         {
-            try
-            {
-                return (float)Meta["VerImgRotation"];
+            try {
+				var meta = (IDictionary<string, object>)Meta;
+				return Convert.ToSingle( meta["VerImgRotation"] );
             }
             catch (Exception e)
             {
