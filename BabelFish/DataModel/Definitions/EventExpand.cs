@@ -49,7 +49,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Must include the place holder {}. For example "PR {}".
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 6 )]
-        [G_NS.JsonProperty( Order = 5 )]
+        [G_NS.JsonProperty( Order = 6 )]
         [DefaultValue( "" )]
         public string ChildEventName { get; set; } = string.Empty;
 

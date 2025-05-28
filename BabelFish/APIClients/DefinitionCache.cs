@@ -1005,7 +1005,7 @@ namespace Scopos.BabelFish.APIClients {
                     return await GetStageStyleDefinitionAsync( setName );
 
                 case DefinitionType.TARGET:
-                    return await GetTargetCollectionDefinitionAsync( setName );
+                    return await GetTargetDefinitionAsync( setName );
 
                 case DefinitionType.TARGETCOLLECTION:
                     return await GetTargetCollectionDefinitionAsync ( setName );
