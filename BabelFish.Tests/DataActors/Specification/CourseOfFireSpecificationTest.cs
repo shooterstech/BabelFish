@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.Tests.DataActors
         public async Task EventTreeValidTest()
         {
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v2.0:ntparc:Three-Position Air Rifle 3x10");
+            var setName = SetName.Parse("v1.0:orion:Test Informal Practice Air Rifle");
 
             var result = await client.GetCourseOfFireDefinitionAsync(setName);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
