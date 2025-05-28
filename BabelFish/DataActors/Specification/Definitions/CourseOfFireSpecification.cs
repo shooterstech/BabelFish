@@ -2,6 +2,7 @@
 using Scopos.BabelFish.DataModel.Definitions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Scopos.BabelFish.DataActors.Specification.Definitions {
@@ -691,6 +692,18 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                             listOfEvents.Add( cloneEvent );
                         }
                     }
+                }
+
+                //Check that there are no duplicates
+                var duplicates = listOfEvents
+                        .GroupBy(x => x.EventName)
+                        .Where(g => g.Count() > 1)
+                        .Select(g => g.Key)
+                        .ToList();
+                if (duplicates.Any())
+                {
+                    valid = false;
+                    Messages.Add($"The following events occur multiple times in the Event Tree: " + string.Join(", ", duplicates));
                 }
 
                 //Check that each of them are in the EventTree
