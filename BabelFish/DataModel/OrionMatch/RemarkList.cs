@@ -216,6 +216,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 } else {
                     return "ELIM";
                 }
+            if (this.IsShowingParticipantRemark(ParticipantRemark.ELLIPSES))
+                return "...";
             if (this.IsShowingParticipantRemark( ParticipantRemark.BUBBLE ))
                 if (!useAbbreviations) {
                     return "AT RISK";
