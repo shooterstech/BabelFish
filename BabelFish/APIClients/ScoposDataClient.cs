@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="service">VersionService enum</param>
         /// <param name="level">VersionLevel enum</param>
         /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName, Version thingVersion )
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName, DataModel.Common.Version thingVersion )
         {
             GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
             {
@@ -117,7 +117,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="thingName"></param>
         /// <param name="thingVersion"></param>
         /// <returns></returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase, List<string> ApplicationItems, string thingName, Version thingVersion)
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase, List<string> ApplicationItems, string thingName, DataModel.Common.Version thingVersion)
         {
             GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
             {
@@ -140,7 +140,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="AthenaEulaAccepted"></param>
         /// <param name="OwnerID"></param>
         /// <returns></returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase,  string thingName, Version thingVersion, bool OrionEulaAccepted, bool AthenaEulaAccepted, string OwnerID)
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase,  string thingName, DataModel.Common.Version thingVersion, bool OrionEulaAccepted, bool AthenaEulaAccepted, string OwnerID)
         {
             GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
             {
