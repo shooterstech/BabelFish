@@ -137,6 +137,9 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ReplaceVariableOptions>() ); 
 					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ViewDefinitionShotDisplay>() );
                     SystemTextJsonDeserializer.Converters.Add(new G_BF_STJ_CONV.EnumConverterByDescription<PaintGraphic>());
+                    SystemTextJsonDeserializer.Converters.Add(new G_BF_STJ_CONV.EnumConverterByDescription<NeedsDisplayOptions>());
+
+
 
                 }
             }

@@ -31,6 +31,9 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         [G_NS.JsonProperty( Order = 4 )]
         public string ShotPresentation { get; set; } = "ALL";
 
+        [G_NS.JsonProperty(Order = 4)]
+        public bool ShowRank { get; set; } = true;
+
         [G_NS.JsonProperty(Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
         public PaintGraphic PaintGraphic { get; set; } = PaintGraphic.TargetAndResultCOF; //default is first enum, TargetAndResultCOF
 
@@ -44,7 +47,16 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
 		[G_NS.JsonProperty( Order = 7, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
 		[DefaultValue( ViewDefinitionShotDisplay.SIGHTER_NUMBER )]
 		public ViewDefinitionShotDisplay SighterDisplayModifier { get; set; } = ViewDefinitionShotDisplay.SIGHTER_NUMBER;
-	}
+
+        [G_NS.JsonProperty(Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
+        [DefaultValue(NeedsDisplayOptions.NONE)]
+        public NeedsDisplayOptions NeedsToLeadDisplay { get; set; } = NeedsDisplayOptions.NONE;
+
+        [G_NS.JsonProperty(Order = 9, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
+        [DefaultValue(NeedsDisplayOptions.NONE)]
+        public NeedsDisplayOptions NeedsToSurviveDisplay { get; set; } = NeedsDisplayOptions.NONE;
+
+    }
 
     public class ImageDisplayConfiguration : DisplayEntityConfiguration {
         /*

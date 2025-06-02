@@ -775,5 +775,23 @@ namespace Scopos.BabelFish.Helpers {
                 return stateList;
             }
         }
-    }
+
+        /// <summary>
+        /// Takes in a direcgtory and file path as a string. Then replaces any
+        /// illegal characters with a '-' mark, returning the new string.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+		public static string SanitizePath( string path ) {
+			if (string.IsNullOrEmpty( path ))
+				throw new ArgumentException( "Path cannot be null or empty.", nameof( path ) );
+
+			char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+			char[] invalidPathChars = Path.GetInvalidPathChars();
+
+			return new string( path.Select( c => invalidFileNameChars.Contains( c ) || invalidPathChars.Contains( c ) ? '-' : c ).ToArray() );
+		}
+
+	}
 }
