@@ -31,7 +31,8 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         [G_NS.JsonProperty( Order = 4 )]
         public string ShotPresentation { get; set; } = "ALL";
 
-        [G_NS.JsonProperty(Order = 4)]
+        [G_NS.JsonProperty(Order = 4, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
+        [DefaultValue(true)]
         public bool ShowRank { get; set; } = true;
 
         [G_NS.JsonProperty(Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
