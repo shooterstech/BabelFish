@@ -777,20 +777,52 @@ namespace Scopos.BabelFish.Helpers {
         }
 
         /// <summary>
-        /// Takes in a direcgtory and file path as a string. Then replaces any
+        /// Takes in a full path to a file (including directory) as a string. Then replaces any
         /// illegal characters with a '-' mark, returning the new string.
+        /// <para>If the file name, portion of the full path, has an "\" in it (a directory seperator)
+        /// then the sanitization will not work, as the file name gets mis-interpreted. It is better
+        /// instead to use the method SanitizePath()</para>
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-		public static string SanitizePath( string path ) {
-			if (string.IsNullOrEmpty( path ))
-				throw new ArgumentException( "Path cannot be null or empty.", nameof( path ) );
+		public static string SanitizeFullFilenamePath( string fullFilePath ) {
+			if (string.IsNullOrEmpty( fullFilePath ))
+				throw new ArgumentException( "Path cannot be null or empty.", nameof( fullFilePath ) );
 
-			char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+            var fileInfo = new FileInfo( fullFilePath );
+            var fileName = fileInfo.Name;
+            var directory = fileInfo.Directory.ToString();
+
+            return $"{SanitizeDirectoryPath( directory )}\\{SanitizeFileName( fileName )}";
+		}
+
+		public static string SanitizeDirectoryPath( string directoryPath ) {
+			if (string.IsNullOrEmpty( directoryPath ))
+				throw new ArgumentException( "Path cannot be null or empty.", nameof( directoryPath ) );
+
 			char[] invalidPathChars = Path.GetInvalidPathChars();
 
-			return new string( path.Select( c => invalidFileNameChars.Contains( c ) || invalidPathChars.Contains( c ) ? '-' : c ).ToArray() );
+			return new string( directoryPath.Select( c => invalidPathChars.Contains( c ) ? '-' : c ).ToArray() );
+		}
+
+		public static string SanitizeFileName( string fileName ) {
+			if (string.IsNullOrEmpty( fileName ))
+				throw new ArgumentException( "Path cannot be null or empty.", nameof( fileName ) );
+
+			char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+
+			return new string( fileName.Select( c => invalidFileNameChars.Contains( c ) ? '-' : c ).ToArray() );
+		}
+
+        public static string SanitizePath( string directoryPath, string fileName ) {
+			if (string.IsNullOrEmpty( directoryPath ))
+				throw new ArgumentException( "Path cannot be null or empty.", nameof( directoryPath ) );
+			if (string.IsNullOrEmpty( fileName ))
+				throw new ArgumentException( "Path cannot be null or empty.", nameof( fileName ) );
+
+			return $"{SanitizeDirectoryPath( directoryPath )}\\{SanitizeFileName( fileName )}";
+
 		}
 
 	}
