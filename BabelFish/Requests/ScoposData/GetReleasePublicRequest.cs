@@ -71,12 +71,15 @@ namespace Scopos.BabelFish.Requests.ScoposData
             {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
+
                 parameterList.Add("release-phase", new List<string>() { ReleasePhase.Description() });
+
+                parameterList.Add("application-items", ApplicationItems );
 
                 if ( !string.IsNullOrEmpty( this.ThingName ) )
                     parameterList.Add("thing-name", new List<string>() { ThingName });
 
-                if (this.ThingVersion != null) {
+                if ( !(ThingVersion is null) ) {
                     parameterList.Add( "thing-version", new List<string>() { ThingVersion.ToString() } );
                 }
 

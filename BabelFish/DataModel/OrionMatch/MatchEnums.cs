@@ -441,7 +441,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Hide the Remark
         /// </summary>
-        HIDE
+        HIDE,
+
+        /// <summary>
+        /// Delete the Remark, seldome used for ellipses mostly.
+        /// </summary>
+        DELETE
     };
 
 

@@ -19,6 +19,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     ParticipantRemark.SECOND,
                     ParticipantRemark.THIRD,
                     ParticipantRemark.ELIMINATED,
+                    ParticipantRemark.ELLIPSES,
                     ParticipantRemark.BUBBLE,
                     ParticipantRemark.LEADER};
 
@@ -27,6 +28,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 this.AddShowParticipantRemark( commandAutomation.Condition, string.Empty, commandAutomation.Id );
             } else if ( commandAutomation.Action == RemarkVisibility.HIDE ) {
                 this.HideParticipantRemark( commandAutomation.Condition, string.Empty, commandAutomation.Id );
+            } else if ( commandAutomation.Action == RemarkVisibility.DELETE ) {
+                this.RemoveAutomationRemark(commandAutomation.Condition);
             }
         }
 
@@ -93,6 +96,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             foreach (var ra in remarksToRemove)
                 this.Remove( ra );
+        }
+
+        /// <summary>
+        /// Removes all RemarkAction items in this RemarkList that have a
+        /// ParticipantRemark of the passed in parameter
+        /// </summary>
+        /// <param name="remark"></param>
+        public void RemoveAutomationRemark(ParticipantRemark remark)
+        {
+            List<RemarkAction> remarksToRemove = new List<RemarkAction>();
+            foreach (var ra in this)
+            {
+                if (ra.ParticipantRemark == remark)
+                {
+                    remarksToRemove.Add(ra);
+                }
+            }
+
+            foreach (var ra in remarksToRemove)
+                this.Remove(ra);
         }
 
         /// <summary>
