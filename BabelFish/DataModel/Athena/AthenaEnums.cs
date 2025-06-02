@@ -85,6 +85,12 @@ namespace Scopos.BabelFish.DataModel.Athena {
         TargetOnly
     }
 
+    public enum NeedsDisplayOptions
+    {
+        NONE, 
+        SINGLE_SHOT,
+        AVG_SHOT
+    }
 
 
 }
