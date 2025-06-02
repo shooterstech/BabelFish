@@ -37,9 +37,6 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         [G_NS.JsonProperty(Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include)]
         public PaintGraphic PaintGraphic { get; set; } = PaintGraphic.TargetAndResultCOF; //default is first enum, TargetAndResultCOF
 
-        [G_NS.JsonProperty( Order = 6 )]
-		public bool ShowNeedsToLead { get; set; } = false;
-
 		[G_NS.JsonProperty( Order = 6, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( ViewDefinitionShotDisplay.NONE )]
 		public ViewDefinitionShotDisplay ShotDisplayModifier { get; set; } = ViewDefinitionShotDisplay.NONE;
