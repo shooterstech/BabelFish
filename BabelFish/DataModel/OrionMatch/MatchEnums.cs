@@ -423,7 +423,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Qualified for Final
         /// </summary>
-        QUALIFIED
+        QUALIFIED,
+
+        /// <summary>
+        /// Three dots (...) show when we don't want to show un-updated information.
+        /// </summary>
+        ELLIPSES
     };
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
@@ -436,7 +441,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Hide the Remark
         /// </summary>
-        HIDE
+        HIDE,
+
+        /// <summary>
+        /// Delete the Remark, seldome used for ellipses mostly.
+        /// </summary>
+        DELETE
     };
 
 

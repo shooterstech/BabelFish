@@ -37,18 +37,19 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// <summary>
         /// The URL of the EULA's PDF.
         /// </summary>
+        [G_NS.JsonProperty(Order = 5)]
         public string EULAUrl { get; set; } = "";
 
         /// <summary>
         /// Enhancement and bug fix notes for this release.
         /// </summary>
-        [G_NS.JsonProperty( Order = 5 )]
+        [G_NS.JsonProperty( Order = 6 )]
         public ReleaseNote ReleaseNotes { get; set; } = new ReleaseNote();
 
         /// <summary>
         /// Other applicaiton version requirements to run this release.
         /// </summary>
-        [G_NS.JsonProperty( Order = 6 )]
+        [G_NS.JsonProperty( Order = 7 )]
         public List<ReleaseRequirements> Requires { get; set; } = new List<ReleaseRequirements>();
 
         /// <inheritdoc />

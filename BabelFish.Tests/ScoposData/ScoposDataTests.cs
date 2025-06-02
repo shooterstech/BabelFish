@@ -30,7 +30,9 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             var client = new ScoposDataClient();
 
             ReleasePhase level = ReleasePhase.PRODUCTION;
-            var response = await client.GetReleasePublicAsync(level);
+            var appList = new List<string>() { "orion", "athena" };
+            var appVersion = new Scopos.BabelFish.DataModel.Common.Version("2.21.1");
+            var response = await client.GetReleasePublicAsync(level, "000015-orion-001", appVersion);
 
 
             Assert.IsNotNull(response.ApplicationRelease);
@@ -38,6 +40,10 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             Assert.AreEqual( HttpStatusCode.OK, response.StatusCode, $"Expecting and OK status code, instead received {response.StatusCode}." );
 
             var releaseNotes = response.ApplicationRelease;
+            foreach (var item in releaseNotes.Items) {
+                Console.Write(item.Application);
+            }
+            
             Assert.AreEqual(2, releaseNotes.Items.Count);
 
             //We should have one ReleaseNote for Orion, and one for Athena
