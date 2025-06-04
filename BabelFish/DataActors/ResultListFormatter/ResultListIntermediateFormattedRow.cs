@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
             "Rank", 
             "RankOrder",
+            "RankDelta",
             "Empty",
             "DisplayName", 
             "DisplayNameShort", 
@@ -157,6 +158,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			//Fields that are unique to the Participant 
             "Rank", 
             "RankOrder",
+            "RankDelta",
             "Empty",
             "DisplayName", 
             "DisplayNameShort", 
@@ -209,7 +211,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     return "";
 
-                case "Empty":
+
+                case "RankDelta":
+					if (_resultListFormatted.GetParticipantAttributeRankDeltaPtr != null)
+						return _resultListFormatted.GetParticipantAttributeRankDeltaPtr( this._resultEvent, this._resultListFormatted );
+
+					int rankDelta = GetRankDelta();
+
+                    if (rankDelta != 0)
+                        return rankDelta.ToString();
+
+                    return "";
+
+
+				case "Empty":
 					if (_resultListFormatted.GetParticipantAttributeEmptyPtr != null)
 						return _resultListFormatted.GetParticipantAttributeEmptyPtr( this._resultEvent, this._resultListFormatted );
 					return "";
@@ -595,6 +610,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             return 0;
         }
+
+        public int GetRankDelta() {
+
+			if (this._resultListFormatted.ResultList.Projected
+				&& this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
+				&& _resultEvent.ProjectedRankDelta != 0)
+				return _resultEvent.ProjectedRankDelta;
+
+            if ( _resultEvent.ProjectedRankDelta != 0)
+                return _resultEvent.ProjectedRankDelta;
+
+            return 0;
+		}
 
         public ResultStatus GetStatus() {
 

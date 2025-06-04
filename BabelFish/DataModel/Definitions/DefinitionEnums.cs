@@ -518,10 +518,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
     }
 
-    /// <summary>
-    /// The Score Components from a Score object.
-    /// </summary>
-    public enum ScoreComponent {
+    public enum ResultListCompareType {
+        NONE,
+        NOW,
+        WINDOW_1_MINUTE,
+		WINDOW_3_MINUTE,
+		WINDOW_5_MINUTE
+	}
+
+	/// <summary>
+	/// The Score Components from a Score object.
+	/// </summary>
+	public enum ScoreComponent {
         X,
         I,
         D,

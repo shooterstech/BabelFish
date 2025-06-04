@@ -93,6 +93,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         public RankingRule RankingRule { get; private set; }
 
+        public ResultList CompareResultList { get; set; } = null;
+
         /// <summary>
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
         /// RankingRule definition.
@@ -252,6 +254,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     resultEvent.ProjectedRank = 0;
                     resultEvent.ProjectedRankOrder = 0;
                 }
+            }
+
+            //Calculate the RankDelta and ProjectedRankDelta
+            ResultEvent compare;
+            if (this.CompareResultList != null 
+                && this.CompareResultList.ResultName == this.ResultList.ResultName
+                && this.ResultList.Status == ResultStatus.INTERMEDIATE ) {
+                foreach (var re in this.ResultList.Items) {
+                    if (this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )) {
+                        if (this.ResultList.Projected) {
+                            re.ProjectedRankDelta = compare.ProjectedRank - re.ProjectedRank;
+                        }
+                        re.RankDelta = compare.Rank - re.Rank;
+                    }
+                }
+                this.ResultList.Metadata.First().Value.CompareResultListLastUpdated = this.CompareResultList.LastUpdated;
             }
         }
 
