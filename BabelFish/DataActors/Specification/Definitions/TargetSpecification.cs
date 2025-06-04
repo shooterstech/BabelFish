@@ -63,8 +63,44 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 			}
 
 			//Attribute specific fields
+			var scoringRingsDescending = new IsTargetScoringRingsDescending();
+			if (!await scoringRingsDescending.IsSatisfiedByAsync(candidate))
+			{
+				valid = false;
+				Messages.AddRange(scoringRingsDescending.Messages);
+			}
 
-			return valid;
+
+            return valid;
 		}
+
+	
 	}
+
+    public class IsTargetScoringRingsDescending : CompositeSpecification<Target>
+    {
+
+        public override async Task<bool> IsSatisfiedByAsync(Target candidate)
+        {
+			var valid = true;
+            Messages.Clear();
+
+			List<ScoringRing> rings = candidate.ScoringRings;
+            for( int i = 0; i < rings.Count-1; ++i)
+			{
+				if (rings[i].Value < rings[i + 1].Value)
+				{
+					Messages.Add($"Scoring rings must be descending. {rings[i + 1].Value} is greater than {rings[i].Value}.");
+					valid = false;
+					break; 
+				}
+			}
+
+            return valid;
+        }
+
+
+    }
+
+
 }
