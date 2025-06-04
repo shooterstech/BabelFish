@@ -29,7 +29,8 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST {
         public string ResultList { get; set; } = string.Empty;
 
         [G_NS.JsonProperty( Order = 4 )]
-        public string ShotPresentation { get; set; } = "ALL";
+		//Should be an enum
+		public string ShotPresentation { get; set; } = "ALL"; 
 
         [G_NS.JsonProperty(Order = 4)]
         public bool ShowRank { get; set; } = true;

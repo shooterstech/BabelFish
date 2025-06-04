@@ -322,5 +322,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override string ToString() {
             return $"ResultList for {ResultName}" ;
         }
+
+        public bool TryGetByResultCOFID( string resultCofId, out ResultEvent resultEvent ) {
+
+            foreach (var re in this.Items) {
+                if (re.ResultCOFID == resultCofId) {
+                    resultEvent = re;
+                    return true;
+                }
+            }
+
+            resultEvent = null;
+            return false;
+        }
     }
 }

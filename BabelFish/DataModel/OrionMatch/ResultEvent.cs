@@ -50,8 +50,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 4 )]
         public int RankOrder {  get; set; }
 
+		[G_STJ_SER.JsonPropertyOrder( 5 )]
+		[G_NS.JsonProperty( Order = 5 )]
+		[DefaultValue( 0 )]
+		public int RankDelta { get; set; } = 0;
+
         /// <summary>
-        /// For internal use only, to learn which ResultEvents to applyh Command Automation to
+        /// For internal use only, to learn which ResultEvents to apply Command Automation to
         /// </summary>
         [G_NS.JsonIgnore]
         public int BottomRank { get; set; }
@@ -59,8 +64,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The projected rank of this competitor, using projected scores.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 5 )]
-        [G_NS.JsonProperty( Order = 5 )]
+        [G_STJ_SER.JsonPropertyOrder( 6 )]
+        [G_NS.JsonProperty( Order = 6 )]
         [DefaultValue(0)]
 		public int ProjectedRank { get; set; } = 0;
 
@@ -69,10 +74,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// ProjectedRankOrder is very nearly the same as ProjectedRank. The difference is if there is an unbreakable tie. In an
 		/// unbreakable tie the two partjicipants are given the same ProjectedRank but different ProjectedRankOrder.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 6 )]
-        [G_NS.JsonProperty( Order = 6 )]
+        [G_STJ_SER.JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
         [DefaultValue( 0 )]
         public int ProjectedRankOrder { get; set; } = 0;
+
+		[G_STJ_SER.JsonPropertyOrder( 8 )]
+		[G_NS.JsonProperty( Order = 8 )]
+		[DefaultValue( 0 )]
+		public int ProjectedRankDelta {  get; set; } = 0;
 
 
         /// <summary>
@@ -81,8 +91,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
-        [G_STJ_SER.JsonPropertyOrder( 7 )]
-        [G_NS.JsonProperty( Order = 7 )]
+        [G_STJ_SER.JsonPropertyOrder( 9 )]
+        [G_NS.JsonProperty( Order = 9 )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
 

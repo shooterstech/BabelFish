@@ -132,5 +132,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public bool ShouldSerializeScoringSystems() {
             return ScoringSystems != null && ScoringSystems.Count > 0;
         }
+
+		/// <summary>
+		/// Intended for future use. THe name of the Squadding List (that hopefully can be ready through the 
+		/// REST API) that holds the squadding for competitors in this Result List.
+		/// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+		[G_NS.JsonProperty( Order = 14 )]
+        [DefaultValue( null )]
+		public string SquaddingListName { get; set; } = null;
+
+		/// <summary>
+		/// The time the reference result list was generated to calculate the RankDelta and ProjectedRankDelta
+		/// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 15 )]
+		[G_NS.JsonProperty( Order = 15 )]
+		[DefaultValue( null )]
+		public DateTime? CompareResultListLastUpdated { get; set; } = null;
     }
 }

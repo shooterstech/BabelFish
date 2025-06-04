@@ -283,6 +283,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue(-1)]
         public int NextCommandIndex { get; set; } = DEFAULT_INT;
 
+        public ResultListCompareType ResultListCompare { get; set; } 
+
+        public ResultListCompareType GetResultListCompare() {
+            if ( this.ResultListCompare != ResultListCompareType.NONE )
+                return this.ResultListCompare;
+
+            if (Parent.ResultListCompare != ResultListCompareType.NONE )
+                return Parent.ResultListCompare;
+
+            return Parent.Parent.ResultListCompare; //Which the default is NONE
+        }
+
         /// <summary>
         /// A list of Command Automations, these are currently Remark additions or None.
         /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes

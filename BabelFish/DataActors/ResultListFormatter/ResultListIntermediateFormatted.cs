@@ -701,6 +701,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		public ParticipantAttributeOverload GetParticipantAttributeRankOrderPtr { get; set; } = null;
 
 		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the RankDelta field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeRankDeltaPtr { get; set; } = null;
+
+		/// <summary>
 		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Empty field
 		/// in each row. 
 		/// </summary>
