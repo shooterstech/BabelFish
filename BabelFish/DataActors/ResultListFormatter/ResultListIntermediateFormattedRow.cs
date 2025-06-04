@@ -218,7 +218,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 					int rankDelta = GetRankDelta();
 
-                    if (rankDelta != 0)
+                    if (rankDelta > 0)
+                        return $"+{rankDelta}";
+                    if (rankDelta < 0)
                         return rankDelta.ToString();
 
                     return "";

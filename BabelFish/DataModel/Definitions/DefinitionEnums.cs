@@ -466,12 +466,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "December" )]
         December
 
-    }
+	}
 
     /// <summary>
-    /// Specifies where the data is coming from for a Result List Field.
+    /// Directive command given to the Result Engine telling it how it should calculate the Rank Delta
     /// </summary>
-    public enum ResultFieldMethod {
+	public enum ResultEngineCompareType {
+		NONE,
+		NOW,
+		WINDOW_1_MINUTE,
+		WINDOW_3_MINUTE,
+		WINDOW_5_MINUTE
+	}
+
+    /// <summary>
+    /// Directive command given to the Result Engine, telling it to keep the current score projection algorithm or to turn it off completly. 
+    /// </summary>
+	public enum ResultEngineScoreProjection {
+		NO_CHANGE,
+        TURN_OFF
+	}
+
+	/// <summary>
+	/// Specifies where the data is coming from for a Result List Field.
+	/// </summary>
+	public enum ResultFieldMethod {
         /// <summary>
         /// This is the absolute score the Participant has shot.
         /// </summary>
@@ -517,14 +536,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         RECORD
 
     }
-
-    public enum ResultListCompareType {
-        NONE,
-        NOW,
-        WINDOW_1_MINUTE,
-		WINDOW_3_MINUTE,
-		WINDOW_5_MINUTE
-	}
 
 	/// <summary>
 	/// The Score Components from a Score object.

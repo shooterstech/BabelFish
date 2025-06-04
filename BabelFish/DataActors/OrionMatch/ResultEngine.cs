@@ -96,6 +96,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public ResultList CompareResultList { get; set; } = null;
 
         /// <summary>
+        /// Enables or disables projecting scores and ranking participants by their projection. 
+        /// This value is practically set by the COURSE OF FIRE Range Scrip's Command.ResultEngine.
+        /// A value of true (to disable) only has an effect if score projection would otherwise
+        /// be used (e.g. result list status is INTERMEDIATE). 
+        /// </summary>
+        public bool DisableScoreProjection { get; set; } = false;
+
+        /// <summary>
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
         /// RankingRule definition.
         /// 
@@ -169,8 +177,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             //Project scores and perform a ranking by Projected Score
-            //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL)
-            if (this.ResultList.Status == ResultStatus.INTERMEDIATE) {
+            //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL), and the user has not turned it off.
+            if (this.ResultList.Status == ResultStatus.INTERMEDIATE && ! DisableScoreProjection) {
 
 
                 //Project (predict) the scores of athlets at the end of the match.

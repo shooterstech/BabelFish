@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 		private static ConcurrentDictionary<string, ResultList> _resultLists = new ConcurrentDictionary<string, ResultList>();
 
 
-		public static ResultListCompareType Mode { get; set; } = ResultListCompareType.NOW;
+		public static ResultEngineCompareType Mode { get; set; } = ResultEngineCompareType.NOW;
 
 		public static void PushResultList( ResultList resultList)  {
 			_resultLists.AddOrUpdate( resultList.ResultName, resultList, ( key, oldValue ) => resultList );

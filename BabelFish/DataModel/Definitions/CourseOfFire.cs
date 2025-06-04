@@ -206,8 +206,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			return meetsSpecification;
 		}
 
-        /// <inheritdoc />
-        public override bool SetDefaultValues() {
+		public override bool ConvertValues() {
+			base.ConvertValues();
+
+            foreach (var rs in this.RangeScripts) {
+                foreach (var sg in rs.SegmentGroups) {
+
+                    sg.DefaultCommand.Parent = rs.DefaultCommand;
+                    sg.DefaultSegment.Parent = rs.DefaultSegment;
+
+                    foreach( var c  in sg.Commands ) {
+                        c.Parent = rs.DefaultCommand;
+                    }
+
+                    foreach (var s in sg.Segments) {
+                        s.Parent = rs.DefaultSegment;
+                    }
+                }
+            }
+
+            return true;
+		}
+
+		/// <inheritdoc />
+		public override bool SetDefaultValues() {
             base.SetDefaultValues();
 
             var topLvelEvent = new EventExplicit() {

@@ -283,24 +283,46 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue(-1)]
         public int NextCommandIndex { get; set; } = DEFAULT_INT;
 
-        public ResultListCompareType ResultListCompare { get; set; } 
+        /// <summary>
+        /// Directive given to the Result Engine, to tell it which, if any Result List to use to compare 
+        /// against in calculating the Rank Delta.
+        /// </summary>
+		[G_NS.JsonProperty( Order = 25, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
+		public ResultEngineCompareType ResultEngineCompare { get; set; } 
 
-        public ResultListCompareType GetResultListCompare() {
-            if ( this.ResultListCompare != ResultListCompareType.NONE )
-                return this.ResultListCompare;
+        public ResultEngineCompareType GetResultEngineCompare() {
+            if ( this.ResultEngineCompare != ResultEngineCompareType.NONE )
+                return this.ResultEngineCompare;
 
-            if (Parent.ResultListCompare != ResultListCompareType.NONE )
-                return Parent.ResultListCompare;
+            if (Parent.ResultEngineCompare != ResultEngineCompareType.NONE )
+                return Parent.ResultEngineCompare;
 
-            return Parent.Parent.ResultListCompare; //Which the default is NONE
+            return Parent.Parent.ResultEngineCompare; //Which the default is NONE
         }
 
-        /// <summary>
-        /// A list of Command Automations, these are currently Remark additions or None.
-        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required, may be empty list []
-        /// </summary>
-        [G_NS.JsonProperty( Order = 90 )]
+		/// <summary>
+		/// Directive command given to the Result Engine, telling it to keep the current score projection algorithm or to turn it off completely. 
+		/// </summary>
+		[G_NS.JsonProperty( Order = 26, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
+		[DefaultValue( ResultEngineScoreProjection.NO_CHANGE  )]
+        public ResultEngineScoreProjection ResultEngineScoreProjection { get; set; } = ResultEngineScoreProjection.NO_CHANGE;
+
+        public ResultEngineScoreProjection GetResultEngineScoreProjection() {
+            if ( this.ResultEngineScoreProjection != ResultEngineScoreProjection.NO_CHANGE ) 
+                return this.ResultEngineScoreProjection;
+
+            if (Parent.ResultEngineScoreProjection != ResultEngineScoreProjection.NO_CHANGE )
+                return Parent.ResultEngineScoreProjection;
+
+            return Parent.Parent.ResultEngineScoreProjection;
+        }
+
+		/// <summary>
+		/// A list of Command Automations, these are currently Remark additions or None.
+		/// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
+		/// DefaultCommand: Required, may be empty list []
+		/// </summary>
+		[G_NS.JsonProperty( Order = 90 )]
         public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
 
         public bool ShouldSerializeAutomation() {
