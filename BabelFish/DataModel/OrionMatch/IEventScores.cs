@@ -27,5 +27,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Returns the last shot fired, to include both competition and sighting shots.
         /// </summary>
         Shot? LastShot { get; set; }
+
+        /// <summary>
+        /// Returns the Status of the top level Event (Event Type Event).
+        /// </summary>
+        /// <returns></returns>
+        ResultStatus GetStatus();
     }
 }

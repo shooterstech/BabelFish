@@ -194,5 +194,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override string ToString() {
             return $"ResultEvent for {this.Participant.DisplayName}";
         }
+
+		/// <inheritdoc />
+		public ResultStatus GetStatus() {
+            foreach( var es in this.EventScores.Values ) {
+                if ( es.EventType == "EVENT" ) {
+                    return es.Status;
+                }
+            }
+
+            return ResultStatus.OFFICIAL;
+        }
     }
 }

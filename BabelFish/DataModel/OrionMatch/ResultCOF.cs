@@ -281,6 +281,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return lastShot;
         }
 
+		/// <inheritdoc />
+		public ResultStatus GetStatus() {
+            return this.Status;
+        }
+
         /// <inheritdoc />
         public void ProjectScores( ProjectorOfScores ps ) {
             ps.ProjectEventScores( this );

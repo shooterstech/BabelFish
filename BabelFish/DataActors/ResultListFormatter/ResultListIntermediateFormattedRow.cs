@@ -216,12 +216,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					if (_resultListFormatted.GetParticipantAttributeRankDeltaPtr != null)
 						return _resultListFormatted.GetParticipantAttributeRankDeltaPtr( this._resultEvent, this._resultListFormatted );
 
-					int rankDelta = GetRankDelta();
+                    if (GetStatus() == ResultStatus.INTERMEDIATE) {
+                        int rankDelta = GetRankDelta();
 
-                    if (rankDelta > 0)
-                        return $"+{rankDelta}";
-                    if (rankDelta < 0)
-                        return rankDelta.ToString();
+                        if (rankDelta > 0)
+                            return $"+{rankDelta}";
+                        if (rankDelta < 0)
+                            return rankDelta.ToString();
+                    }
 
                     return "";
 
@@ -615,15 +617,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public int GetRankDelta() {
 
-			if (this._resultListFormatted.ResultList.Projected
-				&& this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
-				&& _resultEvent.ProjectedRankDelta != 0)
+			if (this._resultListFormatted.ResultList.Projected)
 				return _resultEvent.ProjectedRankDelta;
 
-            if ( _resultEvent.RankDelta != 0)
-                return _resultEvent.RankDelta;
-
-            return 0;
+            return _resultEvent.RankDelta;
 		}
 
         public ResultStatus GetStatus() {
