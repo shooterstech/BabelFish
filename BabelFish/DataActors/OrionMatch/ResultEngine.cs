@@ -271,7 +271,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 && this.ResultList.Status == ResultStatus.INTERMEDIATE ) {
                 foreach (var re in this.ResultList.Items) {
                     if (this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )) {
-                        if (this.ResultList.Projected) {
+                        if (this.ResultList.Projected && this.CompareResultList.Projected) {
                             re.ProjectedRankDelta = compare.ProjectedRank - re.ProjectedRank;
                         }
                         re.RankDelta = compare.Rank - re.Rank;

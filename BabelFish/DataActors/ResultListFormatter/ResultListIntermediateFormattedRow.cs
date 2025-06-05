@@ -620,8 +620,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 				&& _resultEvent.ProjectedRankDelta != 0)
 				return _resultEvent.ProjectedRankDelta;
 
-            if ( _resultEvent.ProjectedRankDelta != 0)
-                return _resultEvent.ProjectedRankDelta;
+            if ( _resultEvent.RankDelta != 0)
+                return _resultEvent.RankDelta;
 
             return 0;
 		}

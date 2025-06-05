@@ -184,10 +184,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 11 )]
         public string ResultName { get; set; } = string.Empty;
 
-        [JsonPropertyOrder ( 12 )]
+        /// <summary>
+        /// UTC time that this Result List was updated.
+        /// </summary>
+        [JsonPropertyOrder( 12 )]
         [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime LastUpdated { get; set; } = new DateTime();
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The orion account or at home account who owns this match.

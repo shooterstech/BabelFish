@@ -212,8 +212,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             foreach (var rs in this.RangeScripts) {
                 foreach (var sg in rs.SegmentGroups) {
 
-                    sg.DefaultCommand.Parent = rs.DefaultCommand;
-                    sg.DefaultSegment.Parent = rs.DefaultSegment;
+                    rs.DefaultCommand.Parent = sg.DefaultCommand;
+                    rs.DefaultSegment.Parent = sg.DefaultSegment;
 
                     foreach( var c  in sg.Commands ) {
                         c.Parent = rs.DefaultCommand;
