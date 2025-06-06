@@ -281,8 +281,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return lastShot;
         }
 
-		/// <inheritdoc />
-		public ResultStatus GetStatus() {
+        /// <inheritdoc />
+        public ResultStatus GetStatus() {
             return this.Status;
         }
 
@@ -302,5 +302,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             //Result COF does not have TeamMembers (not yet at least) so doing nothing
             ;
         }
-    }
+
+		/// <inheritdoc />
+		public bool CurrentlyCompetingOrRecentlyDone() {
+            if (GetStatus() == ResultStatus.INTERMEDIATE)
+                return true;
+
+            if (LastShot != null && ((DateTime.UtcNow - LastShot.TimeScored.ToUniversalTime()).TotalMinutes < 5.0))
+                return true;
+
+            return false;
+        }
+
+	}
 }

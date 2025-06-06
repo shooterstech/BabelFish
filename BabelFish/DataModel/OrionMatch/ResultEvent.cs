@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultEvent() {
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
-		}
+        }
 
         /// <summary>
         /// Data on the person or team who shot this score.
@@ -48,12 +48,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        public int RankOrder {  get; set; }
+        public int RankOrder { get; set; }
 
-		[G_STJ_SER.JsonPropertyOrder( 5 )]
-		[G_NS.JsonProperty( Order = 5 )]
-		[DefaultValue( 0 )]
-		public int RankDelta { get; set; } = 0;
+        [G_STJ_SER.JsonPropertyOrder( 5 )]
+        [G_NS.JsonProperty( Order = 5 )]
+        [DefaultValue( 0 )]
+        public int RankDelta { get; set; } = 0;
 
         /// <summary>
         /// For internal use only, to learn which ResultEvents to apply Command Automation to
@@ -66,8 +66,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 6 )]
         [G_NS.JsonProperty( Order = 6 )]
-        [DefaultValue(0)]
-		public int ProjectedRank { get; set; } = 0;
+        [DefaultValue( 0 )]
+        public int ProjectedRank { get; set; } = 0;
 
 
         /// <summary>
@@ -79,10 +79,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( 0 )]
         public int ProjectedRankOrder { get; set; } = 0;
 
-		[G_STJ_SER.JsonPropertyOrder( 8 )]
-		[G_NS.JsonProperty( Order = 8 )]
-		[DefaultValue( 0 )]
-		public int ProjectedRankDelta {  get; set; } = 0;
+        [G_STJ_SER.JsonPropertyOrder( 8 )]
+        [G_NS.JsonProperty( Order = 8 )]
+        [DefaultValue( 0 )]
+        public int ProjectedRankDelta { get; set; } = 0;
 
 
         /// <summary>
@@ -98,22 +98,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
 		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
-			if (TeamMembers == null) {
-				return new List<IEventScoreProjection>();
-			}
+            if (TeamMembers == null) {
+                return new List<IEventScoreProjection>();
+            }
 
-			return TeamMembers.ToList<IEventScoreProjection>();
+            return TeamMembers.ToList<IEventScoreProjection>();
         }
 
         /// <inheritdoc />
         public void SetTeamMembersFromIEventScoreProjection( List<IEventScoreProjection> teamMembers ) {
-            
-            if (TeamMembers == null) 
+
+            if (TeamMembers == null)
                 TeamMembers = new List<ResultEvent>();
 
             TeamMembers.Clear();
 
-            foreach( var tm in teamMembers) {
+            foreach (var tm in teamMembers) {
                 TeamMembers.Add( (ResultEvent)tm );
             }
         }
@@ -136,19 +136,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
-		[DefaultValue( null ) ]
+        [DefaultValue( null )]
         public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
 
         /// <inheritdoc />
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
-        public Athena.Shot.Shot ? LastShot { get; set; } = null;
+        public Athena.Shot.Shot? LastShot { get; set; } = null;
 
+        /// <inheritdoc />
+		public ResultStatus GetStatus() {
+            foreach (var es in this.EventScores.Values) {
+                if (es.EventType == "EVENT") {
+                    return es.Status;
+                }
+            }
 
-        /// <summary>
-        /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 21 )]
+            return ResultStatus.OFFICIAL;
+        }    
+
+		/// <summary>
+		/// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
+		/// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 21 )]
         [G_NS.JsonProperty( Order = 21 )]
         public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
 
@@ -188,22 +198,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             }
             return lastShot;
-        }
-
-        /// <inheritdoc />
-        public override string ToString() {
-            return $"ResultEvent for {this.Participant.DisplayName}";
-        }
+		}
 
 		/// <inheritdoc />
-		public ResultStatus GetStatus() {
-            foreach( var es in this.EventScores.Values ) {
-                if ( es.EventType == "EVENT" ) {
-                    return es.Status;
-                }
-            }
+		public bool CurrentlyCompetingOrRecentlyDone() {
+			if (GetStatus() == ResultStatus.INTERMEDIATE)
+				return true;
 
-            return ResultStatus.OFFICIAL;
+			if (LastShot != null && ((DateTime.UtcNow - LastShot.TimeScored.ToUniversalTime()).TotalMinutes < 5.0))
+				return true;
+
+			return false;
+		}
+
+		/// <inheritdoc />
+		public override string ToString() {
+            return $"ResultEvent for {this.Participant.DisplayName}";
         }
     }
 }

@@ -226,31 +226,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             } );
 
             this.Format.Columns.Add( new ResultListDisplayColumn() {
-                Header = "Rk",
-                Body = "{Rank}",
+                Header = "Rank",
+                Body = "{Rank} {RankDelta}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-rank",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
                 }},
-                ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-            } );
-
-            /*
-            this.Format.Columns.Add( new ResultListDisplayColumn() {
-                Header = "",
-                Body = "",
-                BodyLinkTo = LinkToOption.PublicProfile,
-                ClassSet = new List<ClassSet>() { new ClassSet() {
-                    Name = "rlf-col-profile",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-                }},
                 ShowWhen = new ShowWhenVariable() {
-                    Condition = ShowWhenCondition.ENGAGEABLE
+                    Condition = ShowWhenCondition.DIMENSION_MEDIUM
                 }
             } );
-            */
 
-            this.Format.Columns.Add( new ResultListDisplayColumn() {
+			this.Format.Columns.Add( new ResultListDisplayColumn() {
+				Header = "Rk",
+				Body = "{Rank}",
+				ClassSet = new List<ClassSet>() { new ClassSet() {
+					Name = "rlf-col-rank",
+					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+				}},
+				ShowWhen = new ShowWhenVariable() {
+					Condition = ShowWhenCondition.DIMENSION_LT_MEDIUM
+				}
+			} );
+
+			this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
                 Body = "{DisplayName}",
                 BodyLinkTo = LinkToOption.PublicProfile,

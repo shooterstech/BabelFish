@@ -25,6 +25,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Returns the last shot fired, to include both competition and sighting shots.
+        /// <para>Value should only be set when shooting on ESTs. On paper, its not practically possible to know what the last shot was.</para>
         /// </summary>
         Shot? LastShot { get; set; }
 
@@ -33,5 +34,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns></returns>
         ResultStatus GetStatus();
+
+        /// <summary>
+        /// Returns a boolean indicating if the participant is currently competing
+        /// (same as Status == INTERMEDIATE) or they are recently done. Recently done
+        /// is determined by the age of the last shot.
+        /// </summary>
+        /// <returns></returns>
+        bool CurrentlyCompetingOrRecentlyDone();
     }
 }

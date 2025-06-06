@@ -93,15 +93,21 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         public RankingRule RankingRule { get; private set; }
 
-        public ResultList CompareResultList { get; set; } = null;
+		/// <summary>
+		/// Sets the Result List to use to calculate the Rank Delta for each participant.
+		/// The static class ResultListSlidingWindow is written to know which Result List
+		/// should be set to CompareResultList. 
+		/// <para>A value of null means dont' calculate a comparision.</para>
+		/// </summary>
+		public ResultList CompareResultList { get; set; } = null;
 
-        /// <summary>
-        /// Enables or disables projecting scores and ranking participants by their projection. 
-        /// This value is practically set by the COURSE OF FIRE Range Scrip's Command.ResultEngine.
-        /// A value of true (to disable) only has an effect if score projection would otherwise
-        /// be used (e.g. result list status is INTERMEDIATE). 
-        /// </summary>
-        public bool DisableScoreProjection { get; set; } = false;
+		/// <summary>
+		/// Enables or disables projecting scores and ranking participants by their projection. 
+		/// This value is traditionally specified by the COURSE OF FIRE Range Scrip's Command.ResultEngineScoreProjection property.
+		/// A value of true (to disable) only has an effect if score projection would otherwise
+		/// be used (e.g. result list status is INTERMEDIATE). A value of false, has no effect.
+		/// </summary>
+		public bool DisableScoreProjection { get; set; } = false;
 
         /// <summary>
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
@@ -270,8 +276,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 && this.CompareResultList.ResultName == this.ResultList.ResultName
                 && this.ResultList.Status == ResultStatus.INTERMEDIATE ) {
                 foreach (var re in this.ResultList.Items) {
-                    var resultEventStatus = re.GetStatus();
-                    if ((resultEventStatus == ResultStatus.INTERMEDIATE)
+                    if ((re.CurrentlyCompetingOrRecentlyDone())
 						&& this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )) {
 
                         if (this.ResultList.Projected && this.CompareResultList.Projected) {

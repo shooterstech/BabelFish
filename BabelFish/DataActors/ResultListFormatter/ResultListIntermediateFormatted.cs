@@ -173,7 +173,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                 copyOfRows.Add( row );
                             } else {
 
-                                if ( ShowStatuses.Contains( row.GetStatus() ) ) {
+                                if (row.StatusIsInShownStatus()) {
                                     //This row's status is one of the status we were told to include
 
                                     if ( this.ResultList.Status == ResultStatus.OFFICIAL 
@@ -209,7 +209,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             if (childRowsRemaining > 0) {
                                 childRowsRemaining--;
 
-                                if (ShowStatuses.Contains( row.GetStatus() )) {
+                                if (row.StatusIsInShownStatus()) {
                                     //This row's status is one of the status we were told to include
 
                                     if (this.ResultList.Status == ResultStatus.OFFICIAL

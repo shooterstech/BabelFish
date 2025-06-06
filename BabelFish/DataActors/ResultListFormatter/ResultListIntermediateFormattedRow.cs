@@ -216,7 +216,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					if (_resultListFormatted.GetParticipantAttributeRankDeltaPtr != null)
 						return _resultListFormatted.GetParticipantAttributeRankDeltaPtr( this._resultEvent, this._resultListFormatted );
 
-                    if (GetStatus() == ResultStatus.INTERMEDIATE) {
+                    if (GetStatus() == ResultStatus.INTERMEDIATE
+                        && this._resultListFormatted.ShowSupplementalInformation) {
                         int rankDelta = GetRankDelta();
 
                         if (rankDelta > 0)
@@ -625,22 +626,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public ResultStatus GetStatus() {
 
-            EventScore topLevelScore;
-            string topLevelEventName = this._resultListFormatted.ResultList.EventName;
-
-            if (_resultEvent.EventScores != null) {
-                if (_resultEvent.EventScores.TryGetValue( topLevelEventName, out topLevelScore )) {
-
-                    return topLevelScore.Status;
-                }
-            }
-
-            ResultListMetadata metadata;
-            if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
-                return metadata.Status;
-
-            //Shouldn't ever get here
-            return ResultStatus.OFFICIAL;
+            return _resultEvent.GetStatus();
         }
 
         /// <summary>
@@ -775,5 +761,27 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return this._resultEvent.Participant.RemarkList.GetSummary( useAbbreviation );
         }
 
-    }
+        /// <summary>
+        /// Returns true if this row has a status that is part of the RLF's ShowStatuses property.
+        /// OR if INTERMEDIATE is in ShowStatuses, will also return true if this rwo recently just finished
+        /// shooting.
+        /// </summary>
+        /// <returns></returns>
+        public bool StatusIsInShownStatus( ) {
+            if (_resultListFormatted.ShowStatuses == null)
+                return false;
+
+			if ( _resultListFormatted.ShowStatuses.Contains( this.GetStatus() ))
+				return true;
+
+            //This is a special carve out for marksmen who just finished shooting. So techncially they would be UNOFFICIAL
+            //but as far as displaying them in shown rows we want to pretend they are INTERMEDIATE for a bit longer.
+            if (_resultListFormatted.ShowStatuses.Contains( ResultStatus.INTERMEDIATE )
+                && _resultEvent.CurrentlyCompetingOrRecentlyDone())
+                return true;
+
+            return false;
+		}
+
+	}
 }
