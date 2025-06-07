@@ -113,6 +113,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( "" )]
 		public string DefaultAttributeDef { get; set; } = string.Empty;
 
+
+		/// <summary>
+		/// The default Result Engine Compare Type to use when calculating Rank Deltas. 
+		/// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 30 )]
+		[G_NS.JsonProperty( Order = 30, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		[DefaultValue( ResultEngineCompareType.WINDOW_1_MINUTE )]
+		public ResultEngineCompareType DefaultCompareType { get; set; } = ResultEngineCompareType.WINDOW_1_MINUTE;
+
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
         /// </summary>

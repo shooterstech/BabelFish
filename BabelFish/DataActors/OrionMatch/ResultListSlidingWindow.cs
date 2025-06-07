@@ -96,6 +96,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 		/// <returns></returns>
 		public static ResultList GetResultList( string resultListName ) {
 
+			//Call DequeueToSize to make sure we have the correct result list to compare against.
+			switch( Mode) {
+
+				case ResultEngineCompareType.WINDOW_1_MINUTE:
+				case ResultEngineCompareType.WINDOW_3_MINUTE:
+				case ResultEngineCompareType.WINDOW_5_MINUTE:
+					DequeueToSize( resultListName );
+
+					break;
+
+				default:
+					//Doesn't need to be called for MODE == NOW
+					break;
+			}
+
+			//Return the Result List to the user.
 			ResultList resultList;
 			if (_resultLists.TryGetValue( resultListName, out resultList )) {
 				return resultList;
@@ -106,6 +122,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
 		/// <summary>
 		/// Private function to remove any Result Lists that are too old, according to the time span set in MODE.
+		/// And to populate _resultLists with the current Result List to use in comparison.
 		/// </summary>
 		/// <param name="resultListName"></param>
 		private static void DequeueToSize( string resultListName ) {
@@ -115,6 +132,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 			double maxAgeInMinutes = 5;
 
 			switch (Mode) {
+				case ResultEngineCompareType.NOW:
+				case ResultEngineCompareType.NONE:
+					return;
+
 				case ResultEngineCompareType.WINDOW_1_MINUTE:
 					maxAgeInMinutes = 1;
 					break;

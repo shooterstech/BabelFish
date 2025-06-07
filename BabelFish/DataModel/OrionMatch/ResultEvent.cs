@@ -50,6 +50,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 4 )]
         public int RankOrder { get; set; }
 
+        /// <summary>
+        /// The change in this participant's result list ranking. A positive value means the participant
+        /// has moved up in the ranking. A negative value means the participant has moved down.
+        /// <para>A change in the ranking can only happen when the participant is shooting (INTERMEDIATE Result Status), so 
+        /// there is no difference between an absolute and projected ranking change. They are all projected. </para>
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
         [DefaultValue( 0 )]
@@ -78,11 +84,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 7 )]
         [DefaultValue( 0 )]
         public int ProjectedRankOrder { get; set; } = 0;
-
-        [G_STJ_SER.JsonPropertyOrder( 8 )]
-        [G_NS.JsonProperty( Order = 8 )]
-        [DefaultValue( 0 )]
-        public int ProjectedRankDelta { get; set; } = 0;
 
 
         /// <summary>

@@ -36,6 +36,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Empty",
             "DisplayName", 
             "DisplayNameShort", 
+            "DisplayNameAbbreviated", //Deprecated
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -162,7 +163,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Empty",
             "DisplayName", 
             "DisplayNameShort", 
-            "DisplayNameAbbreviated",
+            "DisplayNameAbbreviated", //Deprecated
             "FamilyName",
             "GivenName",
             "MiddleName",
@@ -216,7 +217,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					if (_resultListFormatted.GetParticipantAttributeRankDeltaPtr != null)
 						return _resultListFormatted.GetParticipantAttributeRankDeltaPtr( this._resultEvent, this._resultListFormatted );
 
-                    if (GetStatus() == ResultStatus.INTERMEDIATE
+                    if (this._resultEvent.CurrentlyCompetingOrRecentlyDone()
                         && this._resultListFormatted.ShowSupplementalInformation) {
                         int rankDelta = GetRankDelta();
 
@@ -617,9 +618,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         public int GetRankDelta() {
-
-			if (this._resultListFormatted.ResultList.Projected)
-				return _resultEvent.ProjectedRankDelta;
 
             return _resultEvent.RankDelta;
 		}

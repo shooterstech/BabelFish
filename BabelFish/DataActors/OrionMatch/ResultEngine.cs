@@ -270,7 +270,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 }
             }
 
-            //Calculate the RankDelta and ProjectedRankDelta
+            //Calculate the RankDelta 
             ResultEvent compare;
             if (this.CompareResultList != null 
                 && this.CompareResultList.ResultName == this.ResultList.ResultName
@@ -280,10 +280,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 						&& this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )) {
 
                         if (this.ResultList.Projected && this.CompareResultList.Projected) {
-                            re.ProjectedRankDelta = compare.ProjectedRank - re.ProjectedRank;
+                            re.RankDelta = compare.ProjectedRank - re.ProjectedRank;
+                        } else if (this.ResultList.Projected) { //And by deduction, the CompareResultList is not projected
+                            //This is a special case that is known to happen in Finals.
+                            //The Compare result list is generated during commentary, and uses only absolute ranking.
+                            //However the updated Result Lisst, generated when everyone is shooting, uses projected ranking.
+                            re.RankDelta = compare.Rank - re.ProjectedRank;
+                        } else {
+                            logger.Error( $"RE {re.Participant.DisplayName} {re.ResultCOFID} {re.Rank} {this.ResultList.LastUpdated}" );
+							logger.Error( $"Compare {compare.Participant.DisplayName} {compare.ResultCOFID} {compare.Rank} {CompareResultList.LastUpdated}" );
+                            logger.Error( $"{re.RankDelta}" );
+							re.RankDelta = compare.Rank - re.Rank;
                         }
-
-                        re.RankDelta = compare.Rank - re.Rank;
+                    } else {
+                        re.RankDelta = 0;
                     }
                 }
                 this.ResultList.Metadata.First().Value.CompareResultListLastUpdated = this.CompareResultList.LastUpdated;

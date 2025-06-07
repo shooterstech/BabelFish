@@ -469,7 +469,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 	}
 
     /// <summary>
-    /// Directive command given to the Result Engine telling it how it should calculate the Rank Delta
+    /// Mode given to the Result Engine telling it how it should calculate the Rank Delta.
     /// </summary>
 	public enum ResultEngineCompareType {
 		NONE,
@@ -477,14 +477,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		WINDOW_1_MINUTE,
 		WINDOW_3_MINUTE,
 		WINDOW_5_MINUTE
-	}
-
-    /// <summary>
-    /// Directive command given to the Result Engine, telling it to keep the current score projection algorithm or to turn it off completly. 
-    /// </summary>
-	public enum ResultEngineScoreProjection {
-		NO_CHANGE,
-        TURN_OFF
 	}
 
 	/// <summary>

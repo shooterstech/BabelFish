@@ -284,37 +284,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public int NextCommandIndex { get; set; } = DEFAULT_INT;
 
         /// <summary>
-        /// Directive given to the Result Engine, to tell it which, if any Result List to use to compare 
-        /// against in calculating the Rank Delta.
+        /// Directive given to the Result Engine, to tell it to record the current Result List as the
+        /// one to compare against. Only valid when the ResultEngineCompareType is NOW.
         /// </summary>
 		[G_NS.JsonProperty( Order = 25, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
-		public ResultEngineCompareType ResultEngineCompare { get; set; } 
+		public ResultEngineDirectives ResultEngineDirectives { get; set; } = new ResultEngineDirectives();
 
-        public ResultEngineCompareType GetResultEngineCompare() {
-            if ( this.ResultEngineCompare != ResultEngineCompareType.NONE )
-                return this.ResultEngineCompare;
+        public ResultEngineDirectives GetResultEngineDirectives() {
+            var red = new ResultEngineDirectives();
 
-            if (Parent.ResultEngineCompare != ResultEngineCompareType.NONE )
-                return Parent.ResultEngineCompare;
+            red.DisableScoreProjection = this.ResultEngineDirectives?.DisableScoreProjection ?? false;
+			red.DisableScoreProjection |= this.Parent.ResultEngineDirectives?.DisableScoreProjection ?? false;
+			red.DisableScoreProjection |= this.Parent.Parent.ResultEngineDirectives?.DisableScoreProjection ?? false;
 
-            return Parent.Parent.ResultEngineCompare; //Which the default is NONE
+			red.RecordCompareResultListNow = this.ResultEngineDirectives?.RecordCompareResultListNow ?? false;
+			red.RecordCompareResultListNow |= this.Parent.ResultEngineDirectives?.RecordCompareResultListNow ?? false;
+			red.RecordCompareResultListNow |= this.Parent.Parent.ResultEngineDirectives?.RecordCompareResultListNow ?? false;
+
+			return red;
         }
 
-		/// <summary>
-		/// Directive command given to the Result Engine, telling it to keep the current score projection algorithm or to turn it off completely. 
-		/// </summary>
-		[G_NS.JsonProperty( Order = 26, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
-		[DefaultValue( ResultEngineScoreProjection.NO_CHANGE  )]
-        public ResultEngineScoreProjection ResultEngineScoreProjection { get; set; } = ResultEngineScoreProjection.NO_CHANGE;
+        public bool ShouldSerializeResultEngineDirectives() {
+            
+            if (this.ResultEngineDirectives == null)
+                return false;
 
-        public ResultEngineScoreProjection GetResultEngineScoreProjection() {
-            if ( this.ResultEngineScoreProjection != ResultEngineScoreProjection.NO_CHANGE ) 
-                return this.ResultEngineScoreProjection;
+            //If both properties are false, then don't serialize it.
+            //If one or more are true, then do serialize it.
 
-            if (Parent.ResultEngineScoreProjection != ResultEngineScoreProjection.NO_CHANGE )
-                return Parent.ResultEngineScoreProjection;
-
-            return Parent.Parent.ResultEngineScoreProjection;
+            return this.ResultEngineDirectives.DisableScoreProjection
+                || this.ResultEngineDirectives.RecordCompareResultListNow;
         }
 
 		/// <summary>
