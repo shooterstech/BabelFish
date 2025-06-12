@@ -97,5 +97,34 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.AreEqual( newTimeSpan, (float)testAttributeValue2.GetFieldValue( "ATime" ) );
             Assert.AreEqual( VisibilityOption.PROTECTED, testAttriubuteAttributeValueDataPacket2.Visibility );
         }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+
+
+			var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
+
+			var userAuthentication = new UserAuthentication(
+				Constants.TestDev7Credentials.Username,
+				Constants.TestDev7Credentials.Password );
+			await userAuthentication.InitializeAsync();
+
+			//The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
+			var setNameTestAttriubte = "v1.0:orion:Address";
+
+			List<SetName> myAttributes = new List<SetName>()
+			{
+			   SetName.Parse( setNameTestAttriubte )
+			};
+
+			var getRequest1 = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
+				AttributeNames = myAttributes
+			};
+
+            var response = await client.GetAttributeValueAuthenticatedAsync( getRequest1 );
+            var av = response.AttributeValues[setNameTestAttriubte];
+
+            var list = av.AttributeValue.GetAttributeFieldKeys();
+		}
     }
 }

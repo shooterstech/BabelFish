@@ -8,7 +8,7 @@ using NLog;
 namespace Scopos.BabelFish.Responses.AttributeValueAPI {
     public class GetAttributeValueAuthenticatedResponse : Response<AttributeValuesWrapper> {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public GetAttributeValueAuthenticatedResponse( GetAttributeValueAuthenticatedRequest request ) : base() {
             this.Request = request;

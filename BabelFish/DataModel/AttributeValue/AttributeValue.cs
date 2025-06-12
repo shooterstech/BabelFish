@@ -337,7 +337,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
-            if (!attributeField.BaseValidateFieldValue( fieldValue ))
+
+            if (fieldKey == KEY_FOR_SINGLE_ATTRIBUTES) {
+                logger.Warn( $"Trying to set Attribute Value for '{definition.CommonName}'  for field '{fieldName}' with value '{fieldValue}' and key '{fieldKey}.' However, this is the special use field key for non-MultipleValue attribute value. Will be skipping setting it." );
+            } else if (!attributeField.BaseValidateFieldValue( fieldValue ))
                 throw new AttributeValueValidationException( $"Invalid Set Field Value {fieldValue} for {fieldName}", logger );
             else {
 
@@ -382,6 +385,11 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="AttributeValueException"></exception>
         private void SetDefaultFieldValues( string keyField = KEY_FOR_SINGLE_ATTRIBUTES ) {
             try {
+                //Check for the special case that this is for an Attribute with MultipleValues and the 
+                //key field is a sepcial key for SingleValue. Meaning, default values shouldn't be set.
+                if (definition.MultipleValues && keyField == KEY_FOR_SINGLE_ATTRIBUTES)
+                    return;
+
                 if (!attributeValues.ContainsKey( keyField )) {
                     attributeValues[keyField] = new Dictionary<string, dynamic>();
 

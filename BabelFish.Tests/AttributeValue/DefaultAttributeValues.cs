@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.AttributeValue;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
@@ -37,5 +38,25 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             Assert.IsTrue( ((List<DateTime>)testAttributeValue.GetFieldValue( "AListOfDates" )).Count == 0 );
             Assert.IsTrue( ((List<float>)testAttributeValue.GetFieldValue( "AListOfTimes" )).Count == 0 );
         }
+
+        [TestMethod]
+        public async Task DefaultValueForMultiValuesClosedKey() {
+            /*
+             * Social Media Accounts is a unique test case. It allows for multiple values and the key field is CLOSED.
+             */
+			var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Social Media Accounts" );
+
+			var socialMediaAv = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte );
+
+            Assert.IsTrue( socialMediaAv.GetAttributeFieldKeys ().Count == 0 );
+
+            socialMediaAv.SetFieldValue( "ProfileName", "erik", "TWITTER" );
+            socialMediaAv.SetFieldValue( "ProfileName", "ben", "INSTAGRAM" );
+
+			Assert.IsTrue( socialMediaAv.GetAttributeFieldKeys().Count == 2 );
+
+            Assert.AreEqual( "erik", socialMediaAv.GetFieldValue( "ProfileName", "TWITTER" ) );
+			Assert.AreEqual( "ben", socialMediaAv.GetFieldValue( "ProfileName", "INSTAGRAM" ) );
+		}
     }
 }

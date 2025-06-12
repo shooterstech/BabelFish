@@ -145,12 +145,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 12 )]
         public Athena.Shot.Shot? LastShot { get; set; } = null;
 
+        //Cached copy of the name of the top level event.
+        private string _topLevelEventName = "";
+
         /// <inheritdoc />
 		public ResultStatus GetStatus() {
-            foreach (var es in this.EventScores.Values) {
-                if (es.EventType == "EVENT") {
-                    return es.Status;
+            if (string.IsNullOrEmpty( _topLevelEventName )) {
+                foreach (var es in this.EventScores.Values) {
+                    if (es.EventType == "EVENT") {
+                        _topLevelEventName = es.EventName;
+                        return es.Status;
+                    }
                 }
+            } else if ( this.EventScores.TryGetValue( _topLevelEventName, out EventScore es)) {
+                return es.Status;
             }
 
             return ResultStatus.OFFICIAL;
