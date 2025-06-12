@@ -260,5 +260,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool Equals( HierarchicalName other ) {
             return this.ToHierarchicalNameString() == other.ToString();
         }
+
+        public static void ClearCache() {
+            _cache.Clear();
+        }
     }
 }

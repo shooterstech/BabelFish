@@ -79,6 +79,7 @@ namespace Scopos.BabelFish.Runtime {
             DefinitionCache.ClearCache();
             ResponseCache.CACHE.ClearCache();
             EventComposite.ClearCache();
+            SetName.ClearCache();
 
             if ( runPreLoad)
                 //Choosing not to await the PreLoad command. 
