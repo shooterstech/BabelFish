@@ -69,7 +69,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         if (eventSMapping.EventAppellation == eventStyleMapping.EventAppellation) {
                             // if event appellation matches, set definition to that. this is most specific
                             eventStyleMappingToReturn = eventSMapping.EventStyleDef;
-                        }
+
+							//And now we may return it. Its the first one found maching AttributeValueAppellation, TargetCollectionName, and EventAppellation
+							return eventStyleMappingToReturn;
+						}
                     }
                 }
             }
@@ -116,6 +119,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         if (stageSMapping.StageAppellation == stageStyleMapping.StageAppellation) {
                             // if stage appellation matches, set definition to that. this is most specific
                             stageStyleMappingToReturn = stageSMapping.StageStyleDef;
+
+							//And now we may return it. Its the first one found maching AttributeValueAppellation, TargetCollectionName, and StageAppellation
+							return stageStyleMappingToReturn;
                         }
                     }
                 }

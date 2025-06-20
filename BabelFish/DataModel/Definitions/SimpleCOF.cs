@@ -44,11 +44,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[DefaultValue( "Events" )]
 		public string ScoreFormat { get; set; } = "Events";
 
-
-		[Obsolete( "Use CourseOfFireDef instead." )]
+        /// <summary>
+        /// Helper function that retreives the common name of the referrenced COURSE OF FIRE. 
+        /// <para>The method relies on the COURSE OF FIRE being loaded into the DefinitionCache (which
+        /// is usually the case). If it is not, the string "Default" is instead returned.</para>
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 10 )]
+        [G_NS.JsonIgnore]
         [G_NS.JsonProperty( Order = 10 )]
-        public string Name { get; set; } = string.Empty;
+        public string Name { 
+            get {
+                if ( SetName.TryParse( CourseOfFireDef, out SetName sn ) && 
+                    DefinitionCache.TryGetCourseOfFireDefinition( sn, out CourseOfFire cof ) ) {
+                    return cof.CommonName;
+                }
+
+                return "Default";
+            }
+        }
 
         /// <inheritdoc/>
         public override string ToString() {
@@ -139,11 +152,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( ScoreComponent.S )]
         public ScoreComponent ScoreComponent { get; set; } = ScoreComponent.S;
-
-        [G_NS.JsonProperty( Order = 10 )]
-        [Obsolete( "Removed in favor of ScoreConfigName." )]
-        [DefaultValue( "" )]
-        public string ScoreFormat { get; set; } = string.Empty;
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 100 )]

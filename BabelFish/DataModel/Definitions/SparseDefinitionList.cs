@@ -45,6 +45,38 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 	public class SparseDefinitionSearchResult : SparseDefinition {
 
+		private string _commonName = null;
+		public string CommonName {
+			get {
+				if (string.IsNullOrEmpty( _commonName )) {
+					SetName sn;
+					if (Scopos.BabelFish.DataModel.Definitions.SetName.TryParse( this.SetName, out sn )) {
+						return sn.ProperName;
+					}
+					//Shouldn't ever really get here, b/c every Definition should/better have a SetName.
+					return "Unknown";
+				} else {
+					return _commonName;
+				}
+			}
+			set {
+				if (!string.IsNullOrEmpty( value )) {
+					_commonName = value;
+				}
+			}
+		}
+
+		public string Description {  get; set; } = string.Empty;
+
+		public string OwnerId { get; set; } = string.Empty;
+
+		public string OwnerName { get; set; } = string.Empty;
+
+		public string Discipline {  get; set; } = string.Empty;
+
+		public List<string> Tags { get; set; } = new List<string>();
+
+		public string Comment { get; set; } = string.Empty;
 
         /// <summary>
         /// If the user specified a search term in the REST API call, SearchScore returns the relavenacy

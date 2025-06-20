@@ -121,7 +121,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             SimpleCOFs = new List<SimpleCOF>();
 
             var sCof = new SimpleCOF() {
-                Name = "Default",
                 CourseOfFireDef = "v1.0:orion:Default",
                 ScoreFormat = "Events"
             };
