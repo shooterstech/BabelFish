@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using Amazon.Util;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -51,6 +52,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
         public string RangeScriptName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Range Scripts can be composed to be one of five types.
+        /// <list type="ul">
+        /// <item>FORMAL_MATCH: Range Officer controlled</item>
+        /// <item>FORMAL_PRACTICE: Mimics a FORMAL_MATCH but participant controls the commands.</item>
+        /// <item>INFORMAL_PRACTICE</item>
+        /// <item>DRILL</item>
+        /// <item>GAME</item>
+        /// </list>
+        /// </summary>
+        public RangeScriptType RangeScriptType { get; set; } = RangeScriptType.FORMAL_MATCH;
 
         /// <summary>
         /// True if this RangeScript is intended to be used with Athena compliant ESTs. False if it is not.

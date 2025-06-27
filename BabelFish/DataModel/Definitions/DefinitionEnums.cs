@@ -116,6 +116,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SCORE //Score Component, e.g. I, D, X
     }
 
+    [Obsolete("Use RangeScriptType instead.")]
     public enum COFTypeOptions { 
         COMPETITION, 
         FORMALPRACTICE, 
@@ -303,6 +304,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "AVG(10)" )]
         [EnumMember( Value = "AVG(10)" )]
+        [Obsolete("Use AVERAGE with CalculationVariables instead.")]
         AVG_TEN,
 
         /// <summary>
@@ -310,14 +312,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "SUM(i, d)" )]
         [EnumMember( Value = "SUM(i, d)" )]
-        ACCUMULATIVE_FINALS,
+		[Obsolete( "Use SUM with CalculationVariables instead." )]
+		ACCUMULATIVE_FINALS,
 
         /// <summary>
         /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
         /// </summary>
         [Description( "SUM(i,d)" )]
         [EnumMember( Value = "SUM(i,d)" )]
-        ACCUMULATIVE_FINALS_2,
+		[Obsolete( "Use SUM with CalculationVariables instead." )]
+		ACCUMULATIVE_FINALS_2,
 
         /// <summary>
         /// Reserved for Singularities that don't have children.
@@ -467,6 +471,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         December
 
 	}
+
+    public enum RangeScriptType {
+        /// <summary>
+        /// Range Script is designed to be ran by a Range Officer. Usually with multiple 
+        /// firiring point receiivng the RS Commands synchornously.
+        /// </summary>
+        FORMAL_MATCH,
+
+        /// <summary>
+        /// Mimics a FORMAL_MATCH but the RS Commands are all automated, and each competitor
+        /// can shoot asynchronously. 
+        /// </summary>
+        FORMAL_PRACTICE,
+
+        /// <summary>
+        /// Range Script is designed to allow the marksman to shoot slow fire on a target type
+        /// for as long as they want.
+        /// </summary>
+        INFORMAL_PRACTICE,
+
+        DRILL,
+
+        GAME
+    }
 
     /// <summary>
     /// Mode given to the Result Engine telling it how it should calculate the Rank Delta.

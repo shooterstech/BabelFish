@@ -28,11 +28,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonIgnore]
         protected internal SegmentGroupCommand Parent { get; set; }
 
-        /// <summary>
-        /// Commands: Not required, defaults to empty string.
-        /// DefaultCommand: Ignored
-        /// </summary>
-        [G_NS.JsonProperty( Order = 1 )]
+		/// <summary>
+		/// Commands: Not required, defaults to empty string.
+		/// DefaultCommand: Ignored
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 1 )]
         [DefaultValue("")]
         public string Command { get; set; } = DEFAULT_STR;
 
@@ -40,11 +41,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Command;
         }
 
-        /// <summary>
-        /// Commands: Not required, defaults to ""
-        /// DefaultCommand: Ignored
-        /// </summary>
-        [G_NS.JsonProperty( Order = 2 )]
+		/// <summary>
+		/// Commands: Not required, defaults to ""
+		/// DefaultCommand: Ignored
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 2 )]
         [DefaultValue( "" )]
         public string Notes { get; set; } = DEFAULT_STR;
 
@@ -52,10 +54,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Notes;
         }
 
-        /// <summary>
-        /// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+		/// <summary>
+		/// A Display Event is a transitional moment in a competition. When used, it keys an automated change to the Spectator Display.
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 3 )]
         [DefaultValue( DisplayEventOptions.NONE )]
         public DisplayEventOptions DisplayEvent { get; set; } = DisplayEventOptions.NONE;
 
@@ -72,11 +75,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return DisplayEventOptions.Default;
         }
 
-        /// <summary>
-        /// Represents the same value as .Timer, but as a float.
-        /// </summary>
-        /// <remarks>Value is in seconds.</remarks>
-        [JsonInclude]
+		/// <summary>
+		/// Represents the same value as .Timer, but as a float.
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		/// <remarks>Value is in seconds.</remarks>
+		[JsonInclude]
         [G_NS.JsonProperty( Order = 4  )]
         [DefaultValue( -9999 )]
         public float RangeTimer {
@@ -106,11 +110,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Timer;
         }
 
-        /// <summary>
-        /// Commands: Not required, missing or value of NONE does not effect the RangeClock
-        /// DefaultCommand: Ignored
-        /// </summary>
-        [G_NS.JsonProperty( Order = 6 )]
+		/// <summary>
+		/// Commands: Not required, missing or value of NONE does not effect the RangeClock
+		/// DefaultCommand: Ignored
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 6 )]
         [DefaultValue( TimerCommandOptions.NONE )]
         public TimerCommandOptions TimerCommand { get; set; } = TimerCommandOptions.NONE;
 
@@ -118,11 +123,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return TimerCommand;
         }
 
-        /// <summary>
-        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.GreenLight
-        /// DefaultCommand: Required with default value 0
-        /// </summary>
-        [G_NS.JsonProperty( Order = 10 )]
+		/// <summary>
+		/// Commands: Not required, missing or value of NONE uses DefaultCommand.GreenLight
+		/// DefaultCommand: Required with default value 0
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 10 )]
         [DefaultValue( LightIllumination.NONE )]
         public LightIllumination GreenLight { get; set; } = LightIllumination.NONE;
 
@@ -136,11 +142,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.GreenLight;
         }
 
-        /// <summary>
-        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.RedLight
-        /// DefaultCommand: Required with default value 0
-        /// </summary>
-        [G_NS.JsonProperty( Order = 11 )]
+		/// <summary>
+		/// Commands: Not required, missing or value of NONE uses DefaultCommand.RedLight
+		/// DefaultCommand: Required with default value 0
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 11 )]
         [DefaultValue( LightIllumination.NONE )]
         public LightIllumination RedLight { get; set; } = LightIllumination.NONE;
 
@@ -154,11 +161,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.RedLight;
         }
 
-        /// <summary>
-        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.TargetLight
-        /// DefaultCommand: Required with default value 0
-        /// </summary>
-        [G_NS.JsonProperty( Order = 12 )]
+		/// <summary>
+		/// Commands: Not required, missing or value of NONE uses DefaultCommand.TargetLight
+		/// DefaultCommand: Required with default value 0
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( LightIllumination.NONE )]
         public LightIllumination TargetLight { get; set; } = LightIllumination.NONE;
 
@@ -172,15 +180,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.TargetLight;
         }
 
-        /// <summary>
-        /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
-        /// Must be one of the following
-        /// FIRED BEFORE COMMAND START
-        /// FIRED AFTER COMMAND STOP
-        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required, may be empty list []
-        /// </summary>
-        [G_NS.JsonProperty( Order = 15 )]
+		/// <summary>
+		/// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
+		/// Must be one of the following
+		/// FIRED BEFORE COMMAND START
+		/// FIRED AFTER COMMAND STOP
+		/// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
+		/// DefaultCommand: Required, may be empty list []
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( null )]
         public List<string> ShotAttributes { get; set; } = new List<string>();
 
@@ -194,12 +203,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.ShotAttributes;
         }
 
-        /// <summary>
-        /// How long to display the text of the Command in the athlete monitor or spectator display units. Measured in seconds. A value of 0 means don't display the Command . Value of -1 means do not ever remove the Command.
-        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.Fade
-        /// DefaultCommand: Required, defaults to 60
-        /// </summary>
-        [G_NS.JsonProperty( Order = 20 )]
+        public bool ShouldSerializeShotAttributes() {
+            return ShotAttributes != null && ShotAttributes.Count > 0;
+        }
+
+		/// <summary>
+		/// How long to display the text of the Command in the athlete monitor or spectator display units. Measured in seconds. 
+		/// A value of 0 means don't display the Command . Value of -1 means do not ever remove the Command.
+		/// Commands: Not required, missing or value of -9999 uses DefaultCommand.Fade
+		/// DefaultCommand: Required, defaults to 60
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 20 )]
         [DefaultValue(-9999)]
         public int Fade { get; set; } = DEFAULT_INT;
 
@@ -226,11 +241,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return OccursAt;
         }
 
-        /// <summary>
-        /// Represents the same value as .OccuresAt, but as a float.
-        /// </summary>
-        /// <remarks>Value is in seconds.</remarks>
-        [JsonInclude]
+		/// <summary>
+		/// Represents the same value as .OccuresAt, but as a float.
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		/// <remarks>Value is in seconds.</remarks>
+		[JsonInclude]
         [G_NS.JsonProperty( Order = 22 )]
         [DefaultValue( -9999 )]
         public float AtRangeTimerValue {
@@ -247,15 +263,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-        /// <summary>
-        /// Number of seconds to wait before advancing to the next Command (or the Command indicated by NextCommandIndex). This field works independent of the Range Timer.
-        /// <para>Only works if the Target and Monitor pair is in Practice Mode. Generally used to automate advancing Commands in practice that would otherwise be controlled by the Range Officer.</para>
-        /// <list type="bullet">
-        /// <item>Value of 0 means to advance to the next command immediately.</item>
-        /// <item>Value of -1 means to not advance. This is also the default value.</item>
-        /// </list>
-        /// </summary>
-        [G_NS.JsonProperty( Order = 23 )]
+		/// <summary>
+		/// Number of seconds to wait before advancing to the next Command (or the Command indicated by NextCommandIndex). This field works independent of the Range Timer.
+		/// <para>Only works if the Target and Monitor pair is in Practice Mode. Generally used to automate advancing Commands in practice that would otherwise be controlled by the Range Officer.</para>
+		/// <list type="bullet">
+		/// <item>Value of 0 means to advance to the next command immediately.</item>
+		/// <item>Value of -1 means to not advance. This is also the default value.</item>
+		/// </list>
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 23 )]
         [DefaultValue( -1 )]
         public int Continue { get; set; } = DEFAULT_INT;
 
@@ -272,21 +289,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return -1;
         }
 
-        /// <summary>
-        /// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
-        /// <list type="bullet">
-        /// <item>Value of -1 means to advance to the next command regardless of current index value.</item>
-        /// <item>A value is not required, following the Value Inheritance Rules. Defaults to -1.</item>
-        /// </list>
-        /// </summary>
-        [G_NS.JsonProperty( Order = 24 )]
+		/// <summary>
+		/// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
+		/// <para>Value of -1 means to advance to the next command regardless of current index value.</para>
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 24 )]
         [DefaultValue(-1)]
         public int NextCommandIndex { get; set; } = DEFAULT_INT;
 
-        /// <summary>
-        /// Directive given to the Result Engine, to tell it to record the current Result List as the
-        /// one to compare against. Only valid when the ResultEngineCompareType is NOW.
-        /// </summary>
+		/// <summary>
+		/// Directive given to the Result Engine, to tell it to record the current Result List as the
+		/// one to compare against. Only valid when the ResultEngineCompareType is NOW.
+		/// <para>Does (kinda) follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
 		[G_NS.JsonProperty( Order = 25, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
 		public ResultEngineDirectives ResultEngineDirectives { get; set; } = new ResultEngineDirectives();
 

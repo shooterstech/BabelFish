@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI {
 
         /// <inheritdoc/>
         protected internal override DateTime GetCacheValueExpiryTime() {
-            return DateTime.UtcNow.AddMinutes( 5 );
+            return DateTime.UtcNow.AddMinutes( 10 );
         }
 
         /// <inheritdoc/>

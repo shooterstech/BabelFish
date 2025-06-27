@@ -65,11 +65,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			}
         }
 
-        /// <summary>
-        /// The method to use to calculate the score of this event from the children. Must be one of the following:
-        /// * SUM  (may have CalculationVariables of type CalculationVariablesString)
-        /// * AVERAGE (may have CalculationVariables of type CalculationVariableInteger)
-        /// </summary>
+		/// <summary>
+		/// The method to use to calculate the score of this event from the children. Must be one of the following:
+		/// * SUM  (may have CalculationVariables of type CalculationVariablesString)
+		/// * AVERAGE (may have CalculationVariables of type CalculationVariableInteger)
+		/// </summary>
+		/// <remarks>
+		/// <list type="bullet">
+		/// <item>SUM: CalculationVariables are used to determine how the “S” the special sum score component is derived. 
+		/// If there are 0 CalculationVariables S is calculated by the sum of each child event’s S. If there are more then 1, 
+		/// then there should be one CalculationVariable for each child, and must be of VariableType SCORE. For example, 
+		/// if the values are “I”, and then “D”, it means S is calculated by taking the I (integer) component of the first 
+		/// child’s score, plus the D (decimal) component of the second child’s score.
+		/// </item>
+		/// <item>
+		/// AVERAGE: Must be one CalculationVariable, of VariableType INTEGER. Used to specify the number of shots in a 
+        /// series to calculate the average to. For example, if the value is 10, then the Event Score is [average shot score] * 10. 
+		/// </item>
+		/// </list>
+		/// </remarks>
 		[G_STJ_SER.JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EventCalculation Calculation { get; set; } = EventCalculation.SUM;

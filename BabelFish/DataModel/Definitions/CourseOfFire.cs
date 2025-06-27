@@ -140,6 +140,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [G_STJ_SER.JsonPropertyOrder( 42 )]
         [G_NS.JsonProperty( Order = 42, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [Obsolete("Use RangeScriptType, which is part of a RangeScript, instead.")]
         public COFTypeOptions COFType { get; set; }
 
         /// <inheritdoc />

@@ -26,12 +26,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonIgnore]
         protected internal SegmentGroupSegment Parent { get; set; }
 
-        /// <summary>
-        /// A unique name given to this segment.
-        /// Segments: Required and must be unique
-        /// DefaultSegment: Ignored
-        /// </summary>
-        [DefaultValue( "" )]
+		/// <summary>
+		/// A unique name given to this segment.
+		/// Segments: Required and must be unique
+		/// DefaultSegment: Ignored
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( "" )]
         [JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1)]
         public string SegmentName { get; set; }
@@ -40,13 +41,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return SegmentName;
         }
 
-        /// <summary>
-        /// The expected number of shots to be fired during this segment. The value -1 indicates shots are 
-        /// expected and an unlimited number of shots could be fired (i.e. sighters). The value 0 indicates not shots are expected. 
-        /// Segments: Required
-        /// DefaultSegments: Ignored
-        /// </summary>
-        [JsonPropertyOrder( 3 )]
+		/// <summary>
+		/// The expected number of shots to be fired during this segment. The value -1 indicates shots are 
+		/// expected and an unlimited number of shots could be fired (i.e. sighters). The value 0 indicates not shots are expected. 
+		/// Segments: Required
+		/// DefaultSegments: Ignored
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[JsonPropertyOrder( 3 )]
         [G_NS.JsonProperty( Order = 3 )]
         [DefaultValue( -9999 )]
         public int NumberOfShots { get; set; } = DEFAULT_INT;
@@ -61,13 +63,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.NumberOfShots;
         }
 
-        /// <summary>
-        /// The stage label that is applied to each shot that is fired during this segment. Stage labels are usually 
-        /// represented by a single character ('P', 'S', 'K'). They are used to map shots to Singulars. 
-        /// Segments: Not required. If missing or "" uses DefaultSegment.StageLabel
-        /// DefaultSegment: Required
-        /// </summary>
-        [DefaultValue( "" )]
+		/// <summary>
+		/// The stage label that is applied to each shot that is fired during this segment. Stage labels are usually 
+		/// represented by a single character ('P', 'S', 'K'). They are used to map shots to Singulars. 
+		/// Segments: Not required. If missing or "" uses DefaultSegment.StageLabel
+		/// DefaultSegment: Required
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( "" )]
         [JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
         public string StageLabel { get; set; } = DEFAULT_STR;
@@ -82,11 +85,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.StageLabel;
         }
 
-        /// <summary>
-        /// Specifies the TargetDef to use during this Segment. Specifically, this is the index into the 
-        /// CourseOfFire.TargetCollectionDef.TargetCollections.TargetDefs array.
-        /// </summary>
-        [DefaultValue( DEFAULT_INT )]
+		/// <summary>
+		/// Specifies the TargetDef to use during this Segment. Specifically, this is the index into the 
+		/// CourseOfFire.TargetCollectionDef.TargetCollections.TargetDefs array.
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( DEFAULT_INT )]
         [JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
         public int TargetCollectionIndex { get; set; } = DEFAULT_INT;
@@ -104,11 +108,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return 0;
         }
 
-        /// <summary>
-        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.TargetHeight
-        /// DefaultCommand: Required with default value 0
-        /// </summary>
-        [DefaultValue( -9999 )]
+		/// <summary>
+		/// Commands: Not required, missing or value of -9999 uses DefaultCommand.TargetHeight
+		/// DefaultCommand: Required with default value 0
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( -9999 )]
         [JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
         public int TargetHeight { get; set; } = DEFAULT_INT;
@@ -123,25 +128,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.TargetHeight;
         }
 
-        /// <summary>
-        /// Values must be one of
-        /// TargetLight
-        /// TargetLift
-        /// TargetLiftDefault
-        /// TargetLift(min, max)
-        /// TargetLift('PosOne(height)', 'PosTwo(height)', 'PosThree(height)')
-        /// ShotPresentation
-        /// Pause (Need to figure out what this does on the Monitor.)
-        /// Series (Need to figure out what this does on the Monitor, might be a function, e.g. Series() .)
-        /// Group (Need to figure out what this does on the Monitor.)
-        /// AdvancedSettings (Need to figure out what this does on the Monitor.)
-        /// !AdvancedSettings (Need to figure out what this does on the Monitor.)
-        /// Series(INFORMAL) Deprecated, needs to be removed.
-        /// Commands: Not required, missing or null uses DefaultCommand.AthleteHasControl
-        /// DefaultCommand: Required with default value of [ ]
-        /// </summary>
-        // TODO: Rearchitect. Instead of a list of strings, with some strings contain special characters that represent function actions, replace with list of objects.
-        [DefaultValue( null )]
+		/// <summary>
+		/// Values must be one of
+		/// TargetLight
+		/// TargetLift
+		/// TargetLiftDefault
+		/// TargetLift(min, max)
+		/// TargetLift('PosOne(height)', 'PosTwo(height)', 'PosThree(height)')
+		/// ShotPresentation
+		/// Pause (Need to figure out what this does on the Monitor.)
+		/// Series (Need to figure out what this does on the Monitor, might be a function, e.g. Series() .)
+		/// Group (Need to figure out what this does on the Monitor.)
+		/// AdvancedSettings (Need to figure out what this does on the Monitor.)
+		/// !AdvancedSettings (Need to figure out what this does on the Monitor.)
+		/// Series(INFORMAL) Deprecated, needs to be removed.
+		/// Commands: Not required, missing or null uses DefaultCommand.AthleteHasControl
+		/// DefaultCommand: Required with default value of [ ]
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		// TODO: Rearchitect. Instead of a list of strings, with some strings contain special characters that represent function actions, replace with list of objects.
+		[DefaultValue( null )]
         [JsonPropertyOrder( 6 )]
         [G_NS.JsonProperty( Order = 6 )]
         public List<string> AthleteHasControl { get; set; } = new List<string>();
@@ -156,12 +162,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.AthleteHasControl;
         }
 
-        /// <summary>
-        /// List of other SegmentGroupSegments identified by the SegmentName that the athlete has the option to advance to next. 
-        /// Commands: Not required, missing or null uses DefaultCommand.NextSegments
-        /// DefaultCommand: Required with default value of [ ]
-        /// </summary>
-        [DefaultValue( null )]
+		/// <summary>
+		/// List of other SegmentGroupSegments identified by the SegmentName that the athlete has the option to advance to next. 
+		/// Commands: Not required, missing or null uses DefaultCommand.NextSegments
+		/// DefaultCommand: Required with default value of [ ]
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( null )]
         [JsonPropertyOrder( 7 )]
         [G_NS.JsonProperty( Order = 7 )]
         public List<string> NextSegments { get; set; } = new List<string>();
@@ -176,15 +183,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return NextSegments;
         }
 
-        /// <summary>
-        /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
-        /// Must be one of the following
-        /// SIGHTER
-        /// STOP
-        /// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required with default value of [ ] 
-        /// </summary>
-        [DefaultValue( null )]
+		/// <summary>
+		/// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
+		/// Must be one of the following
+		/// SIGHTER
+		/// STOP
+		/// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
+		/// DefaultCommand: Required with default value of [ ] 
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( null )]
         [JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8 )]
         public List<string> ShotAttributes { get; set; } = new List<string>();
@@ -199,10 +207,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.ShotAttributes;
         }
 
-        /// <summary>
-        /// The name of the AbbreviatedFormat to use to display scores to the athlete on the monitor.
-        /// </summary>
-        [JsonPropertyOrder( 9 )]
+		/// <summary>
+		/// The name of the AbbreviatedFormat to use to display scores to the athlete on the monitor.
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[JsonPropertyOrder( 9 )]
         [DefaultValue( "" )]
         [G_NS.JsonProperty( Order = 9 )]
         public string AbbreviatedFormat { get; set; } = DEFAULT_STR;
@@ -217,10 +226,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.AbbreviatedFormat;
         }
 
-        /// <summary>
-        /// Indicates what type of shots to display within the Athlete EST Monitor or Spectator EST Display.
-        /// </summary>
-        [JsonPropertyOrder( 10 )]
+		/// <summary>
+		/// Indicates what type of shots to display within the Athlete EST Monitor or Spectator EST Display.
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[JsonPropertyOrder( 10 )]
         [G_NS.JsonProperty( Order = 10 )]
         public ShowInSegment Show { get; set; } = new ShowInSegment();
 
@@ -240,15 +250,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             };
         }
 
-        /// <summary>
-        /// Unique display mode specifics for this segement.
-        /// Must be one of the following
-        /// GroupMode
-        /// ShotCalling
-        /// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required with default value of [ ] 
-        /// </summary>
-        [DefaultValue( null )]
+		/// <summary>
+		/// Unique display mode specifics for this segement.
+		/// Must be one of the following
+		/// GroupMode
+		/// ShotCalling
+		/// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
+		/// DefaultCommand: Required with default value of [ ] 
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[DefaultValue( null )]
         [JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         public List<SpecialOptions> Special { get; set; } = new List<SpecialOptions>();
@@ -263,10 +274,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.Special;
         }
 
-        /// <summary>
-        /// The number of shots in a string, used for displaying shots purposes only.
-        /// </summary>
-        [JsonPropertyOrder( 12 )]
+		/// <summary>
+		/// The number of shots in a string, used for displaying shots purposes only.
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( -9999 )]
         public int StringSize { get; set; } = DEFAULT_INT;
@@ -281,10 +293,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.StringSize;
         }
 
-        /// <summary>
-        /// When set, advances the tape feed on the target this number of millimeters at the start of the Segment.
-        /// </summary>
-        [JsonPropertyOrder( 15 )]
+		/// <summary>
+		/// When set, advances the tape feed on the target this number of millimeters at the start of the Segment.
+		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// </summary>
+		[JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( 0 )]
         public int TapeAdvance { get; set; } = DEFAULT_INT;

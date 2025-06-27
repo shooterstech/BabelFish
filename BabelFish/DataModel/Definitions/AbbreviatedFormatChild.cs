@@ -17,6 +17,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		public EventDerivationType Derivation { get; protected set; } = EventDerivationType.EXPLICIT;
 	}
 
+
+	/// <summary>
+	/// The .EventName is the explicit Event Name to return, as is the Display Event Name.
+	/// </summary>
+	/// <remarks>
+	/// JSON Example
+	/// <code>
+	/// {
+	///    "EventName": "ST 1",
+	///    “DERIVATION” : “EXPLICIT”
+	/// }
+	/// </code>
+	/// </remarks>
 	public class AbbreviatedFormatChildExplicit : AbbreviatedFormatChild {
 
 		public AbbreviatedFormatChildExplicit() : base() {
@@ -44,6 +57,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		}
 	}
 
+	/// <summary>
+	/// The .EventName should have a wild card character {}. Optionally, but probable a good idea
+	/// so should the EventDisplayName property. 
+	/// Values are derived using the method specified in .Values.	/// 
+	/// </summary>
+	/// <remarks>
+	/// JSON Example
+	/// <code>
+	/// {
+	///	   "Values": "LAST(3)",
+	///    "EventName": "ST {}",
+	///    “DERIVATION” : “DERIVED”
+	/// }
+	/// </code>
+	/// </remarks>
 	public class AbbreviatedFormatChildDerived : AbbreviatedFormatChild {
 
 		public AbbreviatedFormatChildDerived() : base() {
@@ -51,7 +79,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		}
 
 		/// <summary>
-		/// 
+		/// The method to use to return appropriate Event Names.
 		/// </summary>
 		[G_NS.JsonProperty( Order = 16 )]
 		public AbbreviatedFormatDerivedOptions Values { get; set; } = AbbreviatedFormatDerivedOptions.LAST_1;
@@ -65,7 +93,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			var count = eventNameList.Count;
 
 			var numberToInclude = 0;
-			switch( this.Values ) {
+			switch (this.Values) {
 				default:
 				case AbbreviatedFormatDerivedOptions.LAST_1:
 					numberToInclude = 1;
@@ -103,8 +131,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 	/// <summary>
 	/// The .EventName should have a wild card character {}. Optionally, but probable a good idea
-	/// so should the EventDisplayName property.
+	/// so should the EventDisplayName property. 
+	/// Values are derived using the Value Series specified in .Values.
 	/// </summary>
+	/// <remarks>
+	/// JSON Example
+	/// <code>
+	/// {
+	///	   "Values": "1..4",
+	///    "EventName": "ST {}",
+	///    “DERIVATION” : “EXPAND”
+	/// }
+	/// </code>
+	/// </remarks>
 	public class AbbreviatedFormatChildExpand : AbbreviatedFormatChild {
 
 		public AbbreviatedFormatChildExpand() : base() {

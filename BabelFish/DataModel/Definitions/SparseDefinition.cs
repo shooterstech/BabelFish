@@ -36,13 +36,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        [G_NS.JsonProperty( Order = 119 )]
+        [G_NS.JsonProperty( Order = 118 )]
         public DateTime ModifiedAt { get; set; } = DateTime.MinValue;
 
-        /// <summary>
-        /// If true, this Definition is no longer in use and should not be referenced.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 120 )]
+		/// <summary>
+		/// If true, the major version of this Definition will be marked Discontinued in the future. 
+        /// <para>The author should put in .Comments additional information on when it will be deprecated. </para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 119 )]
+		[DefaultValue( false )]
+		public bool Deprecated { get; set; } = false;
+
+		/// <summary>
+		/// If true, the major version of this Definition is no longer in use and should not be referenced. Other major versions 
+        /// of this same Definition may still  be in use (e.g. v1.0 vs v2.0).
+		/// </summary>
+		[G_NS.JsonProperty( Order = 120 )]
         [DefaultValue( false )]
         public bool Discontinued { get; set; } = false;
 
