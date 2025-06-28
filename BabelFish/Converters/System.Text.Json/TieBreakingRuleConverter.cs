@@ -28,6 +28,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     switch (method) {
                         case "Score":
                         case "":
+                        default:
                             return JsonSerializer.Deserialize<TieBreakingRuleScore>( root.GetRawText(), options );
                         case "CountOf":
                             return JsonSerializer.Deserialize<TieBreakingRuleCountOf>( root.GetRawText(), options );
@@ -35,11 +36,6 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             return JsonSerializer.Deserialize<TieBreakingRuleParticipantAttribute>( root.GetRawText(), options );
                         case "Attribute":
                             return JsonSerializer.Deserialize<TieBreakingRuleAttribute>( root.GetRawText(), options );
-                        default:
-                            return new TieBreakingRuleParticipantAttribute() {
-                                Source = TieBreakingRuleParticipantAttributeSource.DisplayName,
-                                Comment = "Default TieBreakingRule because the value read in could not be deserialized."
-                            };
                     }
                 }
             } catch (Exception ex) {
