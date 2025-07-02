@@ -36,8 +36,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 		[Description( "LAST(6)" )]
 		[EnumMember( Value = "LAST(6)" )]
-		LAST_6
-	}
+		LAST_6,
+
+        [Description( "LAST(7)" )]
+        [EnumMember( Value = "LAST(7)" )]
+        LAST_7,
+
+        [Description( "LAST(8)" )]
+        [EnumMember( Value = "LAST(8)" )]
+        LAST_8,
+
+        [Description( "LAST(9)" )]
+        [EnumMember( Value = "LAST(9)" )]
+        LAST_9
+    }
 
     /// <summary>
     /// The color of the aiming mark.

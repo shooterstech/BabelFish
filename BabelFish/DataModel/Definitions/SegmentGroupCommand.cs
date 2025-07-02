@@ -180,18 +180,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.TargetLight;
         }
 
-		/// <summary>
-		/// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
-		/// Must be one of the following
-		/// FIRED BEFORE COMMAND START
-		/// FIRED AFTER COMMAND STOP
-		/// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
-		/// DefaultCommand: Required, may be empty list []
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[G_NS.JsonProperty( Order = 15 )]
+        /// <summary>
+        /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
+        /// Must be one of the following
+        /// FIRED BEFORE COMMAND START
+        /// FIRED AFTER COMMAND STOP
+        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
+        /// DefaultCommand: Required, may be empty list []
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( null )]
-        public List<string> ShotAttributes { get; set; } = new List<string>();
+        public List<string> ? ShotAttributes { get; set; } = null;
 
         public List<string> GetShotAttributes() {
             if (ShotAttributes != null)
@@ -204,17 +204,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public bool ShouldSerializeShotAttributes() {
-            return ShotAttributes != null && ShotAttributes.Count > 0;
+            //Do not serialize if it is null. As a null means inheret from the .Parent or .Parent.Parent
+            //Do serialize if it is an empty list. As an empty list means do not mark the current shot with any attributes.
+            return (ShotAttributes != null);
         }
 
-		/// <summary>
-		/// How long to display the text of the Command in the athlete monitor or spectator display units. Measured in seconds. 
-		/// A value of 0 means don't display the Command . Value of -1 means do not ever remove the Command.
-		/// Commands: Not required, missing or value of -9999 uses DefaultCommand.Fade
-		/// DefaultCommand: Required, defaults to 60
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[G_NS.JsonProperty( Order = 20 )]
+        /// <summary>
+        /// How long to display the text of the Command in the athlete monitor or spectator display units. Measured in seconds. 
+        /// A value of 0 means don't display the Command . Value of -1 means do not ever remove the Command.
+        /// Commands: Not required, missing or value of -9999 uses DefaultCommand.Fade
+        /// DefaultCommand: Required, defaults to 60
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 20 )]
         [DefaultValue(-9999)]
         public int Fade { get; set; } = DEFAULT_INT;
 

@@ -30,6 +30,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public async Task<SetName> GetResultListFormatSetNameAsync( ResultList resultList) {
 
+            if ( resultList == null )
+                return GetDefaultByEventName( "Qualification" );
+
             SetName resultListFormatSetName;
 
             //First priority, check if the ResultList includes a Result List Format definition to use. If it does, return it.
@@ -172,7 +175,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
 
-            return GetDefaultByEventName( eventName ); ;
+            return GetDefaultByEventName( eventName );
 
 
         }

@@ -183,19 +183,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return NextSegments;
         }
 
-		/// <summary>
-		/// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
-		/// Must be one of the following
-		/// SIGHTER
-		/// STOP
-		/// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
-		/// DefaultCommand: Required with default value of [ ] 
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[DefaultValue( null )]
+        /// <summary>
+        /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
+        /// Must be one of the following
+        /// SIGHTER
+        /// STOP
+        /// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
+        /// DefaultCommand: Required with default value of [ ] 
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        [DefaultValue( null )]
         [JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8 )]
-        public List<string> ShotAttributes { get; set; } = new List<string>();
+        public List<string> ? ShotAttributes { get; set; } = null;
 
         public List<string> GetShotAttributes() {
             if (ShotAttributes != null)
@@ -205,6 +205,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return Parent.ShotAttributes;
 
             return Parent.Parent.ShotAttributes;
+        }
+
+        public bool ShouldSerializeShotAttributes() {
+            //Do not serialize if it is null. As a null means inheret from the .Parent or .Parent.Parent
+            //Do serialize if it is an empty list. As an empty list means do not mark the current shot with any attributes.
+            return (ShotAttributes != null);
         }
 
 		/// <summary>
