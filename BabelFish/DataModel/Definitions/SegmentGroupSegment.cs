@@ -14,9 +14,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class SegmentGroupSegment : IReconfigurableRulebookObject {
 
-        private const int DEFAULT_INT = -9999;
-        private const string DEFAULT_STR = "";
-
         /// <summary>
         /// Public Constructor
         /// </summary>
@@ -51,13 +48,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[JsonPropertyOrder( 3 )]
         [G_NS.JsonProperty( Order = 3 )]
         [DefaultValue( -9999 )]
-        public int NumberOfShots { get; set; } = DEFAULT_INT;
+        public int NumberOfShots { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetNumberOfShots() {
-            if (NumberOfShots != DEFAULT_INT)
+            if (NumberOfShots != SegmentGroup.DEFAULT_INT)
                 return NumberOfShots;
 
-            if (Parent.NumberOfShots != DEFAULT_INT)
+            if (Parent.NumberOfShots != SegmentGroup.DEFAULT_INT)
                 return Parent.NumberOfShots;
 
             return Parent.Parent.NumberOfShots;
@@ -73,13 +70,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[DefaultValue( "" )]
         [JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        public string StageLabel { get; set; } = DEFAULT_STR;
+        public string StageLabel { get; set; } = SegmentGroup.DEFAULT_STR;
 
         public string GetStageLabel() {
-            if (StageLabel != DEFAULT_STR)
+            if (StageLabel != SegmentGroup.DEFAULT_STR)
                 return StageLabel;
 
-            if (Parent.StageLabel != DEFAULT_STR)
+            if (Parent.StageLabel != SegmentGroup.DEFAULT_STR)
                 return Parent.StageLabel;
 
             return Parent.Parent.StageLabel;
@@ -90,19 +87,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// CourseOfFire.TargetCollectionDef.TargetCollections.TargetDefs array.
 		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
 		/// </summary>
-		[DefaultValue( DEFAULT_INT )]
+		[DefaultValue( SegmentGroup.DEFAULT_INT )]
         [JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        public int TargetCollectionIndex { get; set; } = DEFAULT_INT;
+        public int TargetCollectionIndex { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetTargetCollectionIndex() {
-            if (TargetCollectionIndex != DEFAULT_INT)
+            if (TargetCollectionIndex != SegmentGroup.DEFAULT_INT)
                 return TargetCollectionIndex;
 
-            if (Parent.TargetCollectionIndex != DEFAULT_INT)
+            if (Parent.TargetCollectionIndex != SegmentGroup.DEFAULT_INT)
                 return Parent.TargetCollectionIndex;
 
-            if (Parent.Parent.TargetCollectionIndex != DEFAULT_INT)
+            if (Parent.Parent.TargetCollectionIndex != SegmentGroup.DEFAULT_INT)
                 return Parent.Parent.TargetCollectionIndex;
 
             return 0;
@@ -116,13 +113,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[DefaultValue( -9999 )]
         [JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
-        public int TargetHeight { get; set; } = DEFAULT_INT;
+        public int TargetHeight { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetTargetHeight() {
-            if (TargetHeight != DEFAULT_INT)
+            if (TargetHeight != SegmentGroup.DEFAULT_INT)
                 return TargetHeight;
 
-            if (Parent.TargetHeight != DEFAULT_INT)
+            if (Parent.TargetHeight != SegmentGroup.DEFAULT_INT)
                 return TargetHeight;
 
             return Parent.Parent.TargetHeight;
@@ -162,55 +159,197 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.AthleteHasControl;
         }
 
-		/// <summary>
-		/// List of other SegmentGroupSegments identified by the SegmentName that the athlete has the option to advance to next. 
-		/// Commands: Not required, missing or null uses DefaultCommand.NextSegments
-		/// DefaultCommand: Required with default value of [ ]
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[DefaultValue( null )]
+        /// <summary>
+        /// List of other SegmentGroupSegments identified by the SegmentName that the athlete has the option to advance to next. 
+        /// Commands: Not required, missing or null uses DefaultCommand.NextSegments
+        /// DefaultCommand: Required with default value of [ ]
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a></para>
+        /// </summary>
+        [DefaultValue( null )]
         [JsonPropertyOrder( 7 )]
         [G_NS.JsonProperty( Order = 7 )]
         public List<string> NextSegments { get; set; } = new List<string>();
 
+        /// <summary>
+        /// Returns the calculated list of NextSegments, based on this Segment, the DefaultSegment, and the RangeSCript's DefaultSegment,
+        /// and of course the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a>
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetNextSegments() {
-            if (NextSegments != null)
-                return NextSegments;
 
-            if (Parent.NextSegments != null)
-                return Parent.NextSegments;
+            var list = new List<string>();
 
-            return NextSegments;
+            //Start with the RangeScript's DefaultCommand .NextSegments.
+            if (Parent.Parent.NextSegments != null) {
+                foreach (var item in Parent.Parent.NextSegments) {
+                    if (item != CONSTANT || !item.StartsWith( "!" )) {
+                        list.Add( item );
+                    }
+                }
+            }
+
+            //Add values from the SegmentGroup's DefaultCommand
+            if (Parent.NextSegments != null) {
+                //Check for CONSTANT which is the override
+                if (Parent.NextSegments.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in Parent.NextSegments) {
+                        if (item != CONSTANT || !item.StartsWith( "!" )) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in Parent.NextSegments) {
+                        if (item.StartsWith( "!" ) && list.Contains( item.Substring(1) ) ) {
+                            list.Remove( item.Substring( 1 ) );
+                        } 
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in Parent.NextSegments) {
+                        if (item != CONSTANT || !item.StartsWith( "!" )) {
+                            list.Add( item );
+                        } 
+                    }
+                }
+            }
+
+            //Add values from the this
+            if (NextSegments != null) {
+                //Check for CONSTANT which is the override
+                if (NextSegments.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in NextSegments) {
+                        if (item != CONSTANT || !item.StartsWith( "!" )) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in NextSegments) {
+                        if (item.StartsWith( "!" ) && list.Contains( item.Substring( 1 ) )) {
+                            list.Remove( item.Substring( 1 ) );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in NextSegments) {
+                        if (item != CONSTANT || !item.StartsWith( "!" )) {
+                            list.Add( item );
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
 
+        private string SIGHTER = "SIGHTER";
+        private string STOP = "STOP";
+        private string NOT_SIGHTER = "!SIGHTER";
+        private string NOT_STOP = "!STOP";
+        private string CONSTANT = "CONSTANT";
+
         /// <summary>
-        /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
-        /// Must be one of the following
-        /// SIGHTER
-        /// STOP
-        /// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required with default value of [ ] 
-        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupSegment.
+        /// <list type="bullet">
+        /// Must be one of the following.
+        /// <item>SIGHTER</item>
+        /// <item>STOP</item>
+        /// <item>CONSTANT (see below for meaning)</item>
+        /// </list>
+        /// <para>If an item is prepended with "!" (example "!SIGHTER") then it is removed from the inherited list.</para>
+        /// <para>If CONSTANT is included, then all inherited values are ignored.</para>
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a></para>
         /// </summary>
-        [DefaultValue( null )]
         [JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8 )]
-        public List<string> ? ShotAttributes { get; set; } = null;
+        public List<string> ShotAttributes { get; set; } = new List<string>();
 
+        /// <summary>
+        /// Returns the calculated list of ShotAttributes, based on this Segment, the DefaultSegment, and the RangeSCript's DefaultSegment,
+        /// and of course the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a>
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetShotAttributes() {
-            if (ShotAttributes != null)
-                return ShotAttributes;
 
-            if (Parent.ShotAttributes != null)
-                return Parent.ShotAttributes;
+            var list = new List<string>();
 
-            return Parent.Parent.ShotAttributes;
+            //Start with the RangeScript's DefaultCommand .ShotAttributes.
+            //Note is only makes sense to add "FIRED BEFORE COMMAND START" or "FIRED AFTER COMMAND STOP"
+            if (Parent.Parent.ShotAttributes != null) {
+                foreach (var item in Parent.Parent.ShotAttributes) {
+                    if (item == SIGHTER || item == STOP) {
+                        list.Add( item );
+                    }
+                }
+            }
+
+            //Add values from the SegmentGroup's DefaultCommand
+            if (Parent.ShotAttributes != null) {
+                //Check for CONSTANT which is the override
+                if (Parent.ShotAttributes.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in Parent.ShotAttributes) {
+                        if (item == SIGHTER || item == STOP) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in Parent.ShotAttributes) {
+                        if (item == NOT_SIGHTER && list.Contains( SIGHTER )) {
+                            list.Remove( SIGHTER );
+                        } else if (item == NOT_STOP && list.Contains( STOP )) {
+                            list.Remove( STOP );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in Parent.ShotAttributes) {
+                        if (item == SIGHTER && !list.Contains( SIGHTER )) {
+                            list.Add( SIGHTER );
+                        } else if (item == STOP && !list.Contains( STOP )) {
+                            list.Add( STOP );
+                        }
+                    }
+                }
+            }
+
+            //Finally add values from the SegmentGroupCommand
+            if (ShotAttributes != null) {
+                //Check for CONSTANT which is the override
+                if (ShotAttributes.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in ShotAttributes) {
+                        if (item == SIGHTER || item == STOP) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in ShotAttributes) {
+                        if (item == NOT_SIGHTER && list.Contains( SIGHTER )) {
+                            list.Remove( SIGHTER );
+                        } else if (item == NOT_STOP && list.Contains( STOP )) {
+                            list.Remove( STOP );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in ShotAttributes) {
+                        if (item == SIGHTER && !list.Contains( SIGHTER )) {
+                            list.Add( SIGHTER );
+                        } else if (item == STOP && !list.Contains( STOP )) {
+                            list.Add( STOP );
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
 
         public bool ShouldSerializeShotAttributes() {
-            //Do not serialize if it is null. As a null means inheret from the .Parent or .Parent.Parent
-            //Do serialize if it is an empty list. As an empty list means do not mark the current shot with any attributes.
-            return (ShotAttributes != null);
+            //Do not serialize if it is null or an empty list.
+            return (ShotAttributes != null && ShotAttributes.Count > 0);
         }
 
 		/// <summary>
@@ -220,7 +359,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[JsonPropertyOrder( 9 )]
         [DefaultValue( "" )]
         [G_NS.JsonProperty( Order = 9 )]
-        public string AbbreviatedFormat { get; set; } = DEFAULT_STR;
+        public string AbbreviatedFormat { get; set; } = SegmentGroup.DEFAULT_STR;
 
         public string GetAbbreviatedFormat() {
             if (AbbreviatedFormat != "")
@@ -287,13 +426,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( -9999 )]
-        public int StringSize { get; set; } = DEFAULT_INT;
+        public int StringSize { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetStringSize() {
-            if (StringSize != DEFAULT_INT)
+            if (StringSize != SegmentGroup.DEFAULT_INT)
                 return StringSize;
 
-            if (Parent.StringSize != DEFAULT_INT)
+            if (Parent.StringSize != SegmentGroup.DEFAULT_INT)
                 return Parent.StringSize;
 
             return Parent.Parent.StringSize;
@@ -306,7 +445,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( 0 )]
-        public int TapeAdvance { get; set; } = DEFAULT_INT;
+        public int TapeAdvance { get; set; } = SegmentGroup.DEFAULT_INT;
 
 
         /// <inheritdoc/>

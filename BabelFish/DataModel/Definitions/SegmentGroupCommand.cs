@@ -15,9 +15,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class SegmentGroupCommand : IReconfigurableRulebookObject {
 
-        private const int DEFAULT_INT = -9999;
-        private const string DEFAULT_STR = "";
-
         /// <summary>
         /// Public interface
         /// </summary>
@@ -35,7 +32,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// </summary>
 		[G_NS.JsonProperty( Order = 1 )]
         [DefaultValue("")]
-        public string Command { get; set; } = DEFAULT_STR;
+        public string Command { get; set; } = SegmentGroup.DEFAULT_STR;
 
         public string GetCommand() {
             return Command;
@@ -48,7 +45,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// </summary>
 		[G_NS.JsonProperty( Order = 2 )]
         [DefaultValue( "" )]
-        public string Notes { get; set; } = DEFAULT_STR;
+        public string Notes { get; set; } = SegmentGroup.DEFAULT_STR;
 
         public string GetNotes() {
             return Notes;
@@ -86,13 +83,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public float RangeTimer {
             get {
                 if (string.IsNullOrEmpty( Timer ))
-                    return DEFAULT_INT;
+                    return SegmentGroup.DEFAULT_INT;
 
                 TimeSpan timerAsTimeSpan;
                 if (TimeSpan.TryParse( Timer, out timerAsTimeSpan )) {
                     return (float)timerAsTimeSpan.TotalSeconds;
                 } else {
-                    return DEFAULT_INT;
+                    return SegmentGroup.DEFAULT_INT;
                 }
             }
         }
@@ -104,8 +101,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 5 )]
         [DefaultValue( "" )]
         [Obsolete( "Will be replaced with RangeTimer" )]
-        public string Timer { get; set; } = DEFAULT_STR;
+        public string Timer { get; set; } = SegmentGroup.DEFAULT_STR;
 
+        [Obsolete( "Will be replaced with RangeTimer" )]
         public string GetTimer() {
             return Timer;
         }
@@ -180,33 +178,112 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.TargetLight;
         }
 
+        private string BEFORE_START = "FIRED BEFORE COMMAND START";
+        private string AFTER_STOP = "FIRED AFTER COMMAND STOP";
+        private string NOT_BEFORE_START = "!FIRED BEFORE COMMAND START";
+        private string NOT_AFTER_STOP = "!FIRED AFTER COMMAND STOP";
+        private string CONSTANT = "CONSTANT";
+
         /// <summary>
         /// A list of ShotAttributes that should decorate a Shot if fired during this SegmentGroupCommand.
-        /// Must be one of the following
-        /// FIRED BEFORE COMMAND START
-        /// FIRED AFTER COMMAND STOP
-        /// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
-        /// DefaultCommand: Required, may be empty list []
-        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// <list type="bullet">
+        /// Must be one of the following.
+        /// <item>FIRED BEFORE COMMAND START</item>
+        /// <item>FIRED AFTER COMMAND STOP</item>
+        /// <item>CONSTANT (see below for meaning)</item>
+        /// </list>
+        /// <para>If an item is prepended with "!" (example "!FIRED BEFORE COMMAND START") then it is removed from the inherited list.</para>
+        /// <para>If CONSTANT is included, then all inherited values are ignored.</para>
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a></para>
         /// </summary>
         [G_NS.JsonProperty( Order = 15 )]
-        [DefaultValue( null )]
-        public List<string> ? ShotAttributes { get; set; } = null;
+        public List<string> ShotAttributes { get; set; } = new List<string>();
 
+        /// <summary>
+        /// Returns the calculated list of ShotAttributes, based on this Segment, the DefaultSegment, and the RangeSCript's DefaultSegment,
+        /// and of course the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a>
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetShotAttributes() {
-            if (ShotAttributes != null)
-                return ShotAttributes;
 
-            if (Parent.ShotAttributes != null)
-                return Parent.ShotAttributes;
+            var list = new List<string>();
 
-            return Parent.Parent.ShotAttributes;
+            //Start with the RangeScript's DefaultCommand .ShotAttributes.
+            //Note is only makes sense to add "FIRED BEFORE COMMAND START" or "FIRED AFTER COMMAND STOP"
+            if (Parent.Parent.ShotAttributes != null) {
+                foreach( var item in Parent.Parent.ShotAttributes ) {
+                    if ( item == BEFORE_START || item == AFTER_STOP ) {
+                        list.Add(item);
+                    }
+                }
+            }
+
+            //Add values from the SegmentGroup's DefaultCommand
+            if ( Parent.ShotAttributes != null) {
+                //Check for CONSTANT which is the override
+                if (Parent.ShotAttributes.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in Parent.ShotAttributes) {
+                        if (item == BEFORE_START || item == AFTER_STOP) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in Parent.ShotAttributes) {
+                        if (item == NOT_BEFORE_START && list.Contains( BEFORE_START )) {
+                            list.Remove( BEFORE_START );
+                        } else if (item == NOT_AFTER_STOP && list.Contains( AFTER_STOP )) {
+                            list.Remove( AFTER_STOP );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in Parent.ShotAttributes) {
+                        if (item == BEFORE_START && !list.Contains( BEFORE_START )) {
+                            list.Add( BEFORE_START );
+                        } else if (item == AFTER_STOP && !list.Contains( AFTER_STOP )) {
+                            list.Add( AFTER_STOP );
+                        }
+                    }
+                }
+            }
+
+            //Finally add values from the SegmentGroupCommand
+            if (ShotAttributes != null) {
+                //Check for CONSTANT which is the override
+                if (ShotAttributes.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in ShotAttributes) {
+                        if (item == BEFORE_START || item == AFTER_STOP) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in ShotAttributes) {
+                        if (item == NOT_BEFORE_START && list.Contains( BEFORE_START )) {
+                            list.Remove( BEFORE_START );
+                        } else if (item == NOT_AFTER_STOP && list.Contains( AFTER_STOP )) {
+                            list.Remove( AFTER_STOP );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in ShotAttributes) {
+                        if (item == BEFORE_START && !list.Contains( BEFORE_START )) {
+                            list.Add( BEFORE_START );
+                        } else if (item == AFTER_STOP && !list.Contains( AFTER_STOP )) {
+                            list.Add( AFTER_STOP );
+                        }
+                    }
+                }
+            }
+
+            return list;
         }
 
         public bool ShouldSerializeShotAttributes() {
-            //Do not serialize if it is null. As a null means inheret from the .Parent or .Parent.Parent
-            //Do serialize if it is an empty list. As an empty list means do not mark the current shot with any attributes.
-            return (ShotAttributes != null);
+            //Do not serialize if it is null or an empty list.
+            return (ShotAttributes != null && ShotAttributes.Count > 0);
         }
 
         /// <summary>
@@ -218,13 +295,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_NS.JsonProperty( Order = 20 )]
         [DefaultValue(-9999)]
-        public int Fade { get; set; } = DEFAULT_INT;
+        public int Fade { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetFade() {
-            if (Fade != DEFAULT_INT)
+            if (Fade != SegmentGroup.DEFAULT_INT)
                 return Fade;
 
-            if (Parent.Fade != DEFAULT_INT)
+            if (Parent.Fade != SegmentGroup.DEFAULT_INT)
                 return Parent.Fade;
 
             return Parent.Parent.Fade;
@@ -237,30 +314,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 21 )]
         [DefaultValue("")]
         [Obsolete("Will be replaced with AtRangeTimerValue")]
-        public string OccursAt { get; set; } = DEFAULT_STR;
+        public string OccursAt { get; set; } = SegmentGroup.DEFAULT_STR;
 
+        [Obsolete( "Will be replaced with AtRangeTimerValue" )]
         public string GetOccursAt() {
             return OccursAt;
         }
 
-		/// <summary>
-		/// Represents the same value as .OccuresAt, but as a float.
-		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		/// <remarks>Value is in seconds.</remarks>
-		[JsonInclude]
+        /// <summary>
+        /// This command is automatically issued when the range timer reaches this value. Value is represented in seconds.
+        /// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        /// <remarks>Value is in seconds.</remarks>
+        [JsonInclude]
         [G_NS.JsonProperty( Order = 22 )]
         [DefaultValue( -9999 )]
         public float AtRangeTimerValue {
             get {
                 if (string.IsNullOrEmpty( OccursAt ))
-                    return DEFAULT_INT;
+                    return SegmentGroup.DEFAULT_INT;
 
                 TimeSpan timerAsTimeSpan;
                 if (TimeSpan.TryParse( OccursAt, out timerAsTimeSpan )) {
                     return (float)timerAsTimeSpan.TotalSeconds;
                 } else {
-                    return DEFAULT_INT;
+                    return SegmentGroup.DEFAULT_INT;
                 }
             }
         }
@@ -275,17 +353,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
 		/// </summary>
 		[G_NS.JsonProperty( Order = 23 )]
-        [DefaultValue( -1 )]
-        public int Continue { get; set; } = DEFAULT_INT;
+        [DefaultValue( -9999 )]
+        public int Continue { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetContinue() {
-            if (Continue >= 0)
+            if (Continue >= -1)
                 return Continue;
 
-            if (Parent.Continue >= 0)
+            if (Parent.Continue >= -1)
                 return Parent.Continue;
 
-            if (Parent.Parent.Continue >= 0)
+            if (Parent.Parent.Continue >= -1)
                 return Parent.Parent.Continue;
 
             return -1;
@@ -294,18 +372,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// <summary>
 		/// The index of the command, within the current SegmentGroup to advance to next using the Continue attribute. Useful if you want to go back a few commands to repeat a loop.
 		/// <para>Value of -1 means to advance to the next command regardless of current index value.</para>
-		/// <para>Does not follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
 		/// </summary>
 		[G_NS.JsonProperty( Order = 24 )]
-        [DefaultValue(-1)]
-        public int NextCommandIndex { get; set; } = DEFAULT_INT;
+        [DefaultValue(-9999)]
+        public int NextCommandIndex { get; set; } = SegmentGroup.DEFAULT_INT;
 
-		/// <summary>
-		/// Directive given to the Result Engine, to tell it to record the current Result List as the
-		/// one to compare against. Only valid when the ResultEngineCompareType is NOW.
-		/// <para>Does (kinda) follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[G_NS.JsonProperty( Order = 25, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
+        public int GetNextCommandIndex() {
+            if (NextCommandIndex >= -1)
+                return NextCommandIndex;
+
+            if (Parent.NextCommandIndex >= -1)
+                return Parent.NextCommandIndex;
+
+            if (Parent.Parent.NextCommandIndex >= -1)
+                return Parent.Parent.NextCommandIndex;
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Directive given to the Result Engine, to tell it to record the current Result List as the
+        /// one to compare against. Only valid when the ResultEngineCompareType is NOW.
+        /// <para>Does (kinda) follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 25, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
 		public ResultEngineDirectives ResultEngineDirectives { get; set; } = new ResultEngineDirectives();
 
         public ResultEngineDirectives GetResultEngineDirectives() {

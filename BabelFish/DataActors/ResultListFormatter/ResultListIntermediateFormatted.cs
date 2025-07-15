@@ -307,9 +307,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private string ScoreConfigName {
             get {
-                if (!string.IsNullOrEmpty( ResultList.ScoreConfigName ))
+                if (ResultList != null && !string.IsNullOrEmpty( ResultList.ScoreConfigName ))
                     return ResultList.ScoreConfigName;
-                return ResultListFormat.ScoreConfigDefault;
+                if (ResultListFormat != null)
+                    return ResultListFormat.ScoreConfigDefault;
+                return "Integer";
             }
         }
 

@@ -15,6 +15,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class SegmentGroup: IReconfigurableRulebookObject {
 
+        public const int DEFAULT_INT = -9999;
+        public const string DEFAULT_STR = "";
+
         /// <summary>
         /// Public constructor
         /// </summary>
