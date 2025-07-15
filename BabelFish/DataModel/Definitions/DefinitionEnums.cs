@@ -963,7 +963,42 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
 
-    public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
+    public enum TimerCommandOptions { 
+        /// <summary>
+        /// Does not effect the Range Timer
+        /// </summary>
+        NONE, 
+
+        /// <summary>
+        /// Starts the Range Timer
+        /// </summary>
+        START, 
+
+        /// <summary>
+        /// Pauses the Range Timer
+        /// </summary>
+        PAUSE, 
+
+        /// <summary>
+        /// Resumes the Range Timer after a pause.
+        /// </summary>
+        RESUME, 
+
+        /// <summary>
+        /// Stops the Range Timer
+        /// </summary>
+        STOP, 
+
+        /// <summary>
+        /// Sets the Range Timer to act as a Clock
+        /// </summary>
+        CLOCK, 
+
+        /// <summary>
+        /// To be filled in by Ben. 
+        /// </summary>
+        SEGMENT 
+    };
 
 
     /// <summary>
