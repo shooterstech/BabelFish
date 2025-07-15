@@ -243,6 +243,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return list;
         }
 
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property NextSegments should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeNextSegments() {
+            //Do not serialize if it is null or an empty list.
+            return (NextSegments != null && NextSegments.Count > 0);
+        }
+
         private string SIGHTER = "SIGHTER";
         private string STOP = "STOP";
         private string NOT_SIGHTER = "!SIGHTER";
@@ -347,6 +356,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return list;
         }
 
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property ShotAttributes should be serialized.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeShotAttributes() {
             //Do not serialize if it is null or an empty list.
             return (ShotAttributes != null && ShotAttributes.Count > 0);
@@ -371,13 +384,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return Parent.Parent.AbbreviatedFormat;
         }
 
-		/// <summary>
-		/// Indicates what type of shots to display within the Athlete EST Monitor or Spectator EST Display.
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[JsonPropertyOrder( 10 )]
+        /// <summary>
+        /// Indicates what type of shots to display within the Athlete EST Monitor or Spectator EST Display.
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        [JsonPropertyOrder( 10 )]
         [G_NS.JsonProperty( Order = 10 )]
-        public ShowInSegment Show { get; set; } = new ShowInSegment();
+        [DefaultValue( null )]
+        public ShowInSegment? Show { get; set; } = null;
 
         public ShowInSegment GetShow() {
             if (Show != null)
@@ -389,41 +403,142 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (Parent.Parent.Show != null)
                 return Parent.Parent.Show;
 
+            //Return a defaut value
             return new ShowInSegment() {
                 StageLabel = new List<string>(),
                 Competition = CompetitionType.BOTH
             };
         }
 
-		/// <summary>
-		/// Unique display mode specifics for this segement.
-		/// Must be one of the following
-		/// GroupMode
-		/// ShotCalling
-		/// Commands: Not requried, missing or null uses DefaultCommand.ShotAttributes
-		/// DefaultCommand: Required with default value of [ ] 
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[DefaultValue( null )]
-        [JsonPropertyOrder( 11 )]
-        [G_NS.JsonProperty( Order = 11 )]
-        public List<SpecialOptions> Special { get; set; } = new List<SpecialOptions>();
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property Show should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeShow() {
+            if (Show == null)
+                return false;
 
-        public List<SpecialOptions> GetSpecial() {
-            if (Special != null)
-                return Special;
+            //Check for default value
+            if ((Show.StageLabel == null || Show.StageLabel.Count > 0) &&
+                Show.Competition == CompetitionType.BOTH) {
+                return false;
+            }
 
-            if (Parent.Special != null)
-                return Parent.Special;
-
-            return Parent.Parent.Special;
+            return true;
         }
 
-		/// <summary>
-		/// The number of shots in a string, used for displaying shots purposes only.
-		/// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
-		/// </summary>
-		[JsonPropertyOrder( 12 )]
+        private string GROUP_MODE = "GroupMode";
+        private string SHOT_CALLING = "ShotCalling";
+        private string NOT_GROUP_MODE = "!GroupMode";
+        private string NOT_SHOT_CALLING = "!ShotCalling";
+
+        /// <summary>
+        /// Unique display mode specifics for this segement.
+        /// <list type="bullet">
+        /// Must be one of the following.
+        /// <item>GroupMode</item>
+        /// <item>ShotCalling</item>
+        /// <item>CONSTANT (see below for meaning)</item>
+        /// </list>
+        /// <para>If an item is prepended with "!" (example "!ShotCalling") then it is removed from the inherited list.</para>
+        /// <para>If CONSTANT is included, then all inherited values are ignored.</para>
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-list-rules.html">list inheritance rules.</a></para>
+        /// </summary>
+        [DefaultValue( null )]
+        [JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
+        public List<string> Special { get; set; } = new List<string>();
+
+        public List<string> GetSpecial() {
+
+            var list = new List<string>();
+
+            //Start with the RangeScript's DefaultCommand .ShotAttributes.
+            //Note is only makes sense to add "FIRED BEFORE COMMAND START" or "FIRED AFTER COMMAND STOP"
+            if (Parent.Parent.Special != null) {
+                foreach (var item in Parent.Parent.Special) {
+                    if (item == GROUP_MODE || item == SHOT_CALLING) {
+                        list.Add( item );
+                    }
+                }
+            }
+
+            //Add values from the SegmentGroup's DefaultCommand
+            if (Parent.Special != null) {
+                //Check for CONSTANT which is the override
+                if (Parent.Special.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in Parent.Special) {
+                        if (item == GROUP_MODE || item == SHOT_CALLING) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in Parent.Special) {
+                        if (item == NOT_GROUP_MODE && list.Contains( GROUP_MODE )) {
+                            list.Remove( GROUP_MODE );
+                        } else if (item == NOT_SHOT_CALLING && list.Contains( SHOT_CALLING )) {
+                            list.Remove( SHOT_CALLING );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in Parent.Special) {
+                        if (item == GROUP_MODE && !list.Contains( GROUP_MODE )) {
+                            list.Add( GROUP_MODE );
+                        } else if (item == SHOT_CALLING && !list.Contains( SHOT_CALLING )) {
+                            list.Add( SHOT_CALLING );
+                        }
+                    }
+                }
+            }
+
+            //Finally add values from the SegmentGroupCommand
+            if (Special != null) {
+                //Check for CONSTANT which is the override
+                if (Special.Contains( CONSTANT )) {
+                    list.Clear();
+                    foreach (var item in Special) {
+                        if (item == GROUP_MODE || item == SHOT_CALLING) {
+                            list.Add( item );
+                        }
+                    }
+                } else {
+                    //Remove anything from the list that the user asked to be removed
+                    foreach (var item in Special) {
+                        if (item == NOT_GROUP_MODE && list.Contains( GROUP_MODE )) {
+                            list.Remove( GROUP_MODE );
+                        } else if (item == NOT_SHOT_CALLING && list.Contains( SHOT_CALLING )) {
+                            list.Remove( SHOT_CALLING );
+                        }
+                    }
+                    //Add to the list anything that is not already there
+                    foreach (var item in Special) {
+                        if (item == GROUP_MODE && !list.Contains( GROUP_MODE )) {
+                            list.Add( GROUP_MODE );
+                        } else if (item == SHOT_CALLING && !list.Contains( SHOT_CALLING )) {
+                            list.Add( SHOT_CALLING );
+                        }
+                    }
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property Special should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeSpecial() {
+            return (Special != null && Special.Count > 0);
+        }
+
+        /// <summary>
+        /// The number of shots in a string, used for displaying shots purposes only.
+        /// <para>Does follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
+        /// </summary>
+        [JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( -9999 )]
         public int StringSize { get; set; } = SegmentGroup.DEFAULT_INT;

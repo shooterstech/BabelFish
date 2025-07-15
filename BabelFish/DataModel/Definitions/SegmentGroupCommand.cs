@@ -281,6 +281,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return list;
         }
 
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property ShotAttributes should be serialized.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeShotAttributes() {
             //Do not serialize if it is null or an empty list.
             return (ShotAttributes != null && ShotAttributes.Count > 0);
@@ -413,6 +417,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			return red;
         }
 
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property ResultEngineDirectives should be serialized.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeResultEngineDirectives() {
             
             if (this.ResultEngineDirectives == null)
@@ -433,6 +441,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_NS.JsonProperty( Order = 90 )]
         public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
 
+        /// <summary>
+        /// Newtonsoft helper method to determine if the property Automation should be serialized.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeAutomation() {
             return Automation != null && Automation.Count > 0;
         }

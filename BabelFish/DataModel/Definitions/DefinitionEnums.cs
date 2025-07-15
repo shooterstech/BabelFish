@@ -864,16 +864,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         TEST
     }
 
-	public enum SpecialOptions {
-		[Description( "GroupMode" )]
-		[EnumMember( Value = "GroupMode" )]
-		GROUP_MODE,
-
-		[Description( "ShotCalling" )]
-		[EnumMember( Value = "ShotCalling" )]
-		SHOT_CALLING
-    }
-
     /// <summary>
     /// Specifies the method to use to compare two competitors.
     /// </summary>
