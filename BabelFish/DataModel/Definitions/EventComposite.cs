@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Text;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -83,7 +80,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="string">EventType == STRING</param>
         /// <param name="singular">EventType == SINGULAR</param>
         /// <returns></returns>
-        public List<EventComposite> GetEvents(bool none = true, bool @event = true, bool stage = true, bool series = true, bool @string = true, bool singular = true) {
+        public List<EventComposite> GetEvents(bool none = true, bool @event = true, bool stage = true, bool series = true, bool @string = true, bool singular = true, bool round = true) {
             //NONE, EVENT, STAGE, SERIES, STRING, SINGULAR
             List<EventComposite> descendants = new List<EventComposite>();
 
@@ -105,11 +102,34 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (this.EventType == EventtType.SINGULAR && singular) {
                 descendants.Add(this);
             }
+            if (this.EventType == EventtType.ROUND && singular) {
+                descendants.Add( this );
+            }
             foreach (var child in Children) {
-                descendants.AddRange( child.GetEvents(none, @event, stage, series, @string, singular ) );
+                descendants.AddRange( child.GetEvents(none, @event, stage, series, @string, singular, round ) );
             }
 
             return descendants;
+        }
+
+        public List<EventComposite> GetEvents( EventtType et ) {
+            switch ( et ) {
+                default:
+                case EventtType.NONE:
+                    return GetEvents( true, false, false, false, false, false, false );
+                case EventtType.EVENT:
+                    return GetEvents( false, true, false, false, false, false, false );
+                case EventtType.STAGE:
+                    return GetEvents( false, false, true, false, false, false, false );
+                case EventtType.SERIES:
+                    return GetEvents( false, false, false, true, false, false, false );
+                case EventtType.STRING:
+                    return GetEvents( false, false, false, false, true, false, false );
+                case EventtType.SINGULAR:
+                    return GetEvents( false, false, false, false, false, true, false );
+                case EventtType.ROUND:
+                    return GetEvents( false, false, false, false, false, false, true );
+            }
         }
 
         /// <summary>

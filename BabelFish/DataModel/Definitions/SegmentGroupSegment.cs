@@ -540,7 +540,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
-        [DefaultValue( -9999 )]
+        [DefaultValue( SegmentGroup.DEFAULT_INT )]
         public int StringSize { get; set; } = SegmentGroup.DEFAULT_INT;
 
         public int GetStringSize() {
@@ -550,7 +550,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (Parent.StringSize != SegmentGroup.DEFAULT_INT)
                 return Parent.StringSize;
 
-            return Parent.Parent.StringSize;
+            if (Parent.Parent.StringSize > 0)
+                 return Parent.Parent.StringSize;
+
+            return 10;
         }
 
 		/// <summary>
@@ -559,8 +562,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// </summary>
 		[JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
-        [DefaultValue( 0 )]
+        [DefaultValue( SegmentGroup.DEFAULT_INT )]
         public int TapeAdvance { get; set; } = SegmentGroup.DEFAULT_INT;
+
+        public int GetTapeAdvance() {
+            if (TapeAdvance != SegmentGroup.DEFAULT_INT)
+                return TapeAdvance;
+
+            if (Parent.TapeAdvance != SegmentGroup.DEFAULT_INT)
+                return Parent.TapeAdvance;
+
+            if (Parent.Parent.TapeAdvance > 0 )
+                return Parent.Parent.TapeAdvance;
+
+            return 0;
+        }
 
 
         /// <inheritdoc/>
