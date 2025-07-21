@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using QuestPDF.Infrastructure;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -26,6 +27,8 @@ namespace Scopos.BabelFish.Runtime {
 				StartTime = DateTime.UtcNow;
 
 			Scopos.BabelFish.Runtime.Settings.XApiKey = xApiKey;
+
+            QuestPDF.Settings.License = LicenseType.Professional;
 
             SerializerOptions.InitSerializers();
 

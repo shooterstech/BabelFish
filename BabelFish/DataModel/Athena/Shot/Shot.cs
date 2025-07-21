@@ -30,6 +30,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public const string SHOT_ATTRIBUTE_EMPTY = "EMPTY";
         /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
         public const string SHOT_ATTRIBUTE_UNKNOWN_COORDINATES = "UNKNOWN COORDINATES";
+        /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
+        public const string MANUALLY_MODIFIED = "MANUALLY MODIFIED";
 
         /// <summary>
         /// Public constructor
