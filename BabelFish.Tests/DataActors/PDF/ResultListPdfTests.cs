@@ -14,7 +14,7 @@ namespace BabelFish.Tests.DataActors.PDF {
     public class ResultListPdfTests  : BaseTestClass {
 
         [TestMethod]
-        public async Task BasicGenerationTest() {
+        public async Task GenerateResultListTest() {
 
             var client = new OrionMatchAPIClient( );
 
@@ -36,7 +36,24 @@ namespace BabelFish.Tests.DataActors.PDF {
             var pdf = new ResultListPdf(  match, resultList );
             await pdf.InitializeAsync();
 
-            pdf.GeneratePdf(PageSizes.Letter.Landscape() );
+            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf" );
+
+        }
+
+        [TestMethod]
+        public async Task GenerateResultCOFTest() {
+
+            var client = new OrionMatchAPIClient();
+
+            var resultCofId = "0f814586-3513-411a-8229-914d4608db05";
+
+            var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
+            var resultCof = getResultCofResponse.ResultCOF;
+
+            var pdf = new ResultCOFPdf( resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.STAGE );
+            await pdf.InitializeAsync();
+
+            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
         }
     }

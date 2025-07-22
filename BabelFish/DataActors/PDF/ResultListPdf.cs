@@ -13,7 +13,7 @@ using ZXing.QrCode;
 using ZXing.Rendering;
 
 namespace Scopos.BabelFish.DataActors.PDF {
-    public class ResultListPdf : IGeneratePdf {
+    public class ResultListPdf : PdfGenerator {
 
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static IUserProfileLookup _userProfileLookup = new BaseUserProfileLookup();
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             RLF.GetParticipantAttributeRankDeltaPtr = this.RankDeltaFormatting;
         }
 
-        public void GeneratePdf( PageSize pageSize ) {
+        public override void GeneratePdf( PageSize pageSize, string filePath ) {
             if (ResultListFormat == null)
                 throw new InitializeAsyncNotCompletedException();
 
@@ -56,7 +56,6 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 
-                    var width = PageSizes.Letter.Width;
                     RLF.ResolutionWidth = (int) ((pageSize.Width - 114) * 1200 / 500);
 
                     page.Content().Column( column => {
@@ -70,10 +69,10 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     page.Footer().Element( Footer );
                 } );
             } )
-            .GeneratePdf( "c:\\temp\\hello.pdf" );
+            .GeneratePdf( filePath );
         }
 
-        private void ReportTitle( IContainer container ) {
+        protected override void ReportTitle( IContainer container ) {
             var rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
 
             container.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
@@ -89,15 +88,17 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     column.Item().Text( $"{StringFormatting.Location( Match.Location.City, Match.Location.State, Match.Location.Country )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                 } );
 
-                row.ConstantItem( 3, Unit.Centimetre )
-                    .AspectRatio( 1 )
-                    .Background( Colors.White )
-                    .Svg( size => {
-                        var writer = new QRCodeWriter();
-                        var qrCode = writer.encode( rezultsUrl, BarcodeFormat.QR_CODE, (int)size.Width, (int)size.Height );                        
-                        var renderer = new SvgRenderer { FontName = "Lato" };                        
-                        return renderer.Render( qrCode, BarcodeFormat.QR_CODE, null ).Content;
-                    } );
+                if (Match.Visibility == DataModel.Common.VisibilityOption.PUBLIC) {
+                    row.ConstantItem( 3, Unit.Centimetre )
+                        .AspectRatio( 1 )
+                        .Background( Colors.White )
+                        .Svg( size => {
+                            var writer = new QRCodeWriter();
+                            var qrCode = writer.encode( rezultsUrl, BarcodeFormat.QR_CODE, (int)size.Width, (int)size.Height );
+                            var renderer = new SvgRenderer { FontName = "Lato" };
+                            return renderer.Render( qrCode, BarcodeFormat.QR_CODE, null ).Content;
+                        } );
+                }
             } );
         }
 
@@ -135,35 +136,6 @@ namespace Scopos.BabelFish.DataActors.PDF {
                      }
                  }
              } );
-        }
-
-        private void Footer( IContainer container ) {
-            foreach (var resourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()) {
-                Console.WriteLine( resourceName );
-            }
-
-            container.Row( row => {
-                row.RelativeItem( 1 )
-                .AlignLeft()
-                .Text( x => {
-                    x.Span( "Page " );
-                    x.CurrentPageNumber();
-                    x.Span( " / " );
-                    x.TotalPages();
-                } );
-
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Resources.Images.scopos_logo.png" )) {
-                    row.RelativeItem( 1 )
-                    .AlignCenter()
-                    .Padding( 1 )
-                    .Height( .75f, Unit.Centimetre )
-                    .Image( stream );
-                }
-
-                row.RelativeItem( 1 )
-                .AlignRight()
-                .Text( ResultList.Status.ToString() );
-            } );
         }
 
         public string RankDeltaFormatting( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {
