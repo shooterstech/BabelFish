@@ -6,6 +6,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Athena.ESTUnitCommands;
+using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using ZXing;
@@ -99,7 +100,32 @@ namespace Scopos.BabelFish.DataActors.PDF {
                             } );
 
                             if (eventType == this.EventtType) {
-                                column.Item().Text( Placeholders.LoremIpsum() );
+                                column.Item().Table( table => {
+                                    table.ColumnsDefinition( columns => {
+                                        columns.RelativeColumn( 1 ); //Event Name
+                                        columns.RelativeColumn( 1 ); //Score
+                                        columns.RelativeColumn( 2 ); //Time Scored
+                                        columns.RelativeColumn( 3 ); //Attributes
+                                    } );
+
+                                    table.Header( header => {
+                                        header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 1 ).Text( "Name" ).FontSize( 8 ).Bold();
+                                        header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 1 ).Text( "Score" ).FontSize( 8 ).Bold();
+                                        header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 1 ).Text( "Time Scored" ).FontSize( 8 ).Bold();
+                                        header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 1 ).Text( "Attributes" ).FontSize( 8 ).Bold();
+                                    } );
+
+                                    var singulars = eventToHighlight.GetAllSingulars();
+                                    foreach( var singular in singulars ) {
+                                        if (ResultCOF.GetShotsByEventName().TryGetValue( singular.EventName, out Shot shot ) ) {
+                                            table.Cell().Padding( 1 ).Text( shot.EventName ).FontSize( 8 );
+                                            table.Cell().Padding( 1 ).Text( StringFormatting.FormatScore( "{m}{d}{X}", shot.Score ) ).FontSize( 8 );
+                                            table.Cell().Padding( 1 ).Text( shot.TimeScored.ToString( "yyyy-MM-dd HH:mm:ss.F" ) ).FontSize( 8 );
+                                            table.Cell().Padding( 1 ).Text( string.Join( ", ", shot.Attributes ?? Enumerable.Empty<string>() ) ).FontSize( 8 );
+                                        }
+                                    }
+
+                                } );
                             }
                         }
                     }
