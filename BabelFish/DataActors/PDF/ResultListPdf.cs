@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using NLog;
+﻿using System.Reflection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.DataModel.Athena.ESTUnitCommands;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using ZXing;
+using ZXing.QrCode;
+using ZXing.Rendering;
 
 namespace Scopos.BabelFish.DataActors.PDF {
     public class ResultListPdf : IGeneratePdf {
@@ -18,20 +18,25 @@ namespace Scopos.BabelFish.DataActors.PDF {
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static IUserProfileLookup _userProfileLookup = new BaseUserProfileLookup();
 
+        public Match Match { get; private set; }
         public ResultList ResultList { get; private set; }
 
         public ResultListFormat? ResultListFormat { get; private set; } = null;
 
         public ResultListIntermediateFormatted? RLF { get; private set; } = null;
 
-        public ResultListPdf( ResultList resultList ) {
-            ResultList = resultList;
+        public CourseOfFire CourseOfFire { get; private set; } = null;
+
+        public ResultListPdf( Match match, ResultList resultList ) {
+            this.ResultList = resultList;
+            this.Match = match;
         }
 
         public async Task InitializeAsync() {
 
             var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( ResultList ).ConfigureAwait( false );
             ResultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( Match.CourseOfFireDef ) );
             RLF = new ResultListIntermediateFormatted( ResultList, ResultListFormat, _userProfileLookup );
             await RLF.InitializeAsync();
 
@@ -40,74 +45,125 @@ namespace Scopos.BabelFish.DataActors.PDF {
             RLF.GetParticipantAttributeRankDeltaPtr = this.RankDeltaFormatting;
         }
 
-        public void GeneratePdf() {
+        public void GeneratePdf( PageSize pageSize ) {
             if (ResultListFormat == null)
                 throw new InitializeAsyncNotCompletedException();
 
             QuestPDF.Fluent.Document.Create( container => {
                 container.Page( page => {
-                    page.Size( PageSizes.Letter );
+                    page.Size( pageSize );
                     page.Margin( 2, Unit.Centimetre );
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 
                     var width = PageSizes.Letter.Width;
+                    RLF.ResolutionWidth = (int) ((pageSize.Width - 114) * 1200 / 500);
 
-                    page.Header()
-                        .Text( ResultList.ResultName )
-                        .SemiBold().FontSize( 24 ).FontColor( Colors.Blue.Medium );
+                    page.Content().Column( column => {
 
-                    var columnIndexes = RLF.GetShownColumnIndexes();
+                        column.Spacing( 10 );
+                        column.Item().Element( ReportTitle );
 
-                    page.Content().Table( table => {
-                        table.ColumnsDefinition( columns => {
-                            foreach (var colIndex in columnIndexes) {
-                                var headerCell = RLF.GetColumnHeaderCell( colIndex );
-
-                                if (headerCell.ClassList.Contains( "rlf-col-rank" )
-                                    || headerCell.ClassList.Contains( "rlf-col-gap" ))
-                                    columns.RelativeColumn( 1 );
-                                else if (headerCell.ClassList.Contains( "rlf-col-participant" ))
-                                    columns.RelativeColumn( 4 );
-                                else 
-                                    columns.RelativeColumn( 2 );
-
-                            }
-                        } );
-
-                        table.Header( header => {
-                            foreach (var colIndex in columnIndexes) {
-                                var headerCell = RLF.GetColumnHeaderCell( colIndex );
-                                header.Cell().BorderBottom( 2 ).Padding( 4 ).Text( headerCell.Text );
-                            }
-                        } );
-
-                        foreach (var row in RLF.Rows) {
-                            foreach (var colIndex in columnIndexes) {
-                                var rowCell = row.GetColumnBodyCell( colIndex );
-                                table.Cell().Padding( 4 ).Text( rowCell.Text );
-                            }
-                        }
-                        /*
-                        foreach (var i in Enumerable.Range( 0, 6 )) {
-                            var price = 4.50;
-
-                            table.Cell().Padding( 8 ).Text( $"{i + 1}" );
-                            table.Cell().Padding( 8 ).Text( Placeholders.Label() );
-                            table.Cell().Padding( 8 ).AlignRight().Text( $"${price}" );
-                        }
-                        */
+                        column.Item().Element( ResultListTable );
                     } );
 
-                    page.Footer()
-                        .AlignCenter()
-                        .Text( x => {
-                            x.Span( "Page " );
-                            x.CurrentPageNumber();
-                        } );
+                    page.Footer().Element( Footer );
                 } );
             } )
             .GeneratePdf( "c:\\temp\\hello.pdf" );
+        }
+
+        private void ReportTitle( IContainer container ) {
+            var rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
+
+            container.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
+            .Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
+            .CornerRadius( 5 )
+            .Padding( 10 )
+            .Row( row => {
+                row.RelativeItem().Column( column => {
+                    column.Item().Text( ResultList.ResultName ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"{Match.Name} | {StringFormatting.SpanOfDates( ResultList.StartDate, ResultList.EndDate )}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"Status: {ResultList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"{StringFormatting.Location( Match.Location.City, Match.Location.State, Match.Location.Country )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                } );
+
+                row.ConstantItem( 3, Unit.Centimetre )
+                    .AspectRatio( 1 )
+                    .Background( Colors.White )
+                    .Svg( size => {
+                        var writer = new QRCodeWriter();
+                        var qrCode = writer.encode( rezultsUrl, BarcodeFormat.QR_CODE, (int)size.Width, (int)size.Height );                        
+                        var renderer = new SvgRenderer { FontName = "Lato" };                        
+                        return renderer.Render( qrCode, BarcodeFormat.QR_CODE, null ).Content;
+                    } );
+            } );
+        }
+
+        private void ResultListTable( IContainer container ) {
+
+            var columnIndexes = RLF.GetShownColumnIndexes();
+
+            container.Table( table => {
+                 table.ColumnsDefinition( columns => {
+                     foreach (var colIndex in columnIndexes) {
+                         var headerCell = RLF.GetColumnHeaderCell( colIndex );
+
+                         if (headerCell.ClassList.Contains( "rlf-col-rank" )
+                             || headerCell.ClassList.Contains( "rlf-col-gap" ))
+                             columns.RelativeColumn( 1 );
+                         else if (headerCell.ClassList.Contains( "rlf-col-participant" ))
+                             columns.RelativeColumn( 4 );
+                         else
+                             columns.RelativeColumn( 2 );
+
+                     }
+                 } );
+
+                 table.Header( header => {
+                     foreach (var colIndex in columnIndexes) {
+                         var headerCell = RLF.GetColumnHeaderCell( colIndex );
+                         header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 2 ).Text( headerCell.Text ).Bold();
+                     }
+                 } );
+
+                 foreach (var row in RLF.Rows) {
+                     foreach (var colIndex in columnIndexes) {
+                         var rowCell = row.GetColumnBodyCell( colIndex );
+                         table.Cell().Padding( 2 ).Text( rowCell.Text );
+                     }
+                 }
+             } );
+        }
+
+        private void Footer( IContainer container ) {
+            foreach (var resourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()) {
+                Console.WriteLine( resourceName );
+            }
+
+            container.Row( row => {
+                row.RelativeItem( 1 )
+                .AlignLeft()
+                .Text( x => {
+                    x.Span( "Page " );
+                    x.CurrentPageNumber();
+                    x.Span( " / " );
+                    x.TotalPages();
+                } );
+
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Resources.Images.scopos_logo.png" )) {
+                    row.RelativeItem( 1 )
+                    .AlignCenter()
+                    .Padding( 1 )
+                    .Height( .75f, Unit.Centimetre )
+                    .Image( stream );
+                }
+
+                row.RelativeItem( 1 )
+                .AlignRight()
+                .Text( ResultList.Status.ToString() );
+            } );
         }
 
         public string RankDeltaFormatting( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {

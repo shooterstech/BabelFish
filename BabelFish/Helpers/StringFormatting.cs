@@ -70,6 +70,10 @@ namespace Scopos.BabelFish.Helpers {
             return date.ToString( "ddd, dd MMM yyyy" );
         }
 
+        public static string SingleDateTime( DateTime date ) {
+            return date.ToString( "dd MMM yyyy HH:mm" );
+        }
+
         /// Formats the passed in DateTime string into a standard method of displaying dates.
         /// If the passed in dateStr can not be parsed, today's date is used.
         /// </summary>

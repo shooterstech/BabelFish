@@ -64,7 +64,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //First try and use the RankingRule that's listed in the ResultList
             if (!string.IsNullOrEmpty( this.ResultList.RankingRuleDef ) && SetName.TryParse( this.ResultList.RankingRuleDef, out rankingRuleSetName )) {
                 this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Result List." );
+                logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Result List." );
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 if (@event.EventName == this.ResultList.EventName) {
                     if (!string.IsNullOrEmpty( @event.RankingRuleDef ) && SetName.TryParse( @event.RankingRuleDef, out rankingRuleSetName )) {
                         this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                        logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
+                        logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
 
                         return;
                     }
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //And if that didn't work, the user is pretty much screwed.
             //Guess we'll try and generate a Ranking Rule defintion based on the Event Name ... which is pretty clever is I do say so myself.
             this.RankingRule = RankingRule.GetDefault( this.ResultList.EventName, this.ResultList.ScoreConfigName );
-            logger.Warn( $"A default / generic Ranking Rule will be used to sort Result List '{this.ResultList.Name}', dynamically generated based on EventName '{this.ResultList.EventName}' and Score Config Name '{this.ResultList.ScoreConfigName}'." );
+            logger.Warn( $"A default / generic Ranking Rule will be used to sort Result List '{this.ResultList.ResultName}', dynamically generated based on EventName '{this.ResultList.EventName}' and Score Config Name '{this.ResultList.ScoreConfigName}'." );
 
         }
 

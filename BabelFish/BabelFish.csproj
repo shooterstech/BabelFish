@@ -21,6 +21,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Images\scopos_dark_transparent.png" />
+    <None Remove="Resources\Images\scopos_logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\scopos_logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.5.5" />
     <PackageReference Include="AwsSignatureVersion4" Version="4.0.6" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
@@ -43,6 +54,12 @@
 
   <ItemGroup>
     <Folder Include="DataModel\Athena\ESTUnitCommands\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\scopos_dark_transparent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

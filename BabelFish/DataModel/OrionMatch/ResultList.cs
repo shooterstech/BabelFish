@@ -174,12 +174,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 50 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 
-        /// <summary>
-        /// Deprecated, use ResultName
-        /// </summary>
-        [Obsolete( "Deprecated, use ResultName" )]
-        [JsonPropertyOrder ( 18 )]
-        public string Name { get; set; } = string.Empty;
+        [JsonPropertyOrder( 10 )]
+        public string MatchName { get; set; } = string.Empty;
 
         [JsonPropertyOrder ( 11 )]
         public string ResultName { get; set; } = string.Empty;
