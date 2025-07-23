@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    [Serializable]
+    /// <summary>
+    /// A Squadding object is effectively the same as a SquaddingList object.
+    /// When Orion generates a squadding list, it uses the Squadding class. When BabelFish downloads a squadding list
+    /// it uses the SquaddingList class. The two should be merged into a single class.
+    /// </summary>
     public class Squadding : BaseClass {
 
         public Squadding() { }

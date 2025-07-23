@@ -38,25 +38,26 @@ namespace Scopos.BabelFish.DataActors.PDF {
             ResultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( Match.CourseOfFireDef ) );
             RLF = new ResultListIntermediateFormatted( ResultList, ResultListFormat, _userProfileLookup );
-            await RLF.InitializeAsync();
 
             RLF.Engagable = false;
             RLF.ShowSupplementalInformation = false;
             RLF.GetParticipantAttributeRankDeltaPtr = this.RankDeltaFormatting;
+
+            await RLF.InitializeAsync();
         }
 
-        public override void GeneratePdf( PageSize pageSize, string filePath ) {
+        public override QuestPDF.Fluent.Document GeneratePdf( PageSize pageSize, string filePath ) {
             if (ResultListFormat == null)
                 throw new InitializeAsyncNotCompletedException();
 
-            QuestPDF.Fluent.Document.Create( container => {
+            var document = QuestPDF.Fluent.Document.Create( container => {
                 container.Page( page => {
                     page.Size( pageSize );
                     page.Margin( 2, Unit.Centimetre );
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 
-                    RLF.ResolutionWidth = (int) ((pageSize.Width - 114) * 1200 / 500);
+                    RLF.ResolutionWidth = (int)((pageSize.Width - 114) * 1200 / 500);
 
                     page.Content().Column( column => {
 
@@ -68,8 +69,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
                     page.Footer().Element( Footer );
                 } );
-            } )
-            .GeneratePdf( filePath );
+            } ); 
+
+            if (!string.IsNullOrEmpty( filePath ))
+                document.GeneratePdf( filePath );
+
+            return document;
         }
 
         protected override void ReportTitle( IContainer container ) {

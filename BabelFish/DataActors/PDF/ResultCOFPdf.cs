@@ -133,11 +133,11 @@ namespace Scopos.BabelFish.DataActors.PDF {
             } );
         }
 
-        public override void GeneratePdf( PageSize pageSize, string filePath ) {
+        public override QuestPDF.Fluent.Document GeneratePdf( PageSize pageSize, string filePath ) {
             if (CourseOfFire == null)
                 throw new InitializeAsyncNotCompletedException();
 
-            QuestPDF.Fluent.Document.Create( container => {
+            var document = QuestPDF.Fluent.Document.Create( container => {
                 container.Page( page => {
                     page.Size( pageSize );
                     page.Margin( 2, Unit.Centimetre );
@@ -154,8 +154,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
                     page.Footer().Element( Footer );
                 } );
-            } )
-            .GeneratePdf( filePath );
+            } );
+
+            if (!string.IsNullOrEmpty( filePath ))
+                document.GeneratePdf( filePath );
+
+            return document;
         }
     }
 }

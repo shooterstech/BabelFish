@@ -15,7 +15,7 @@ using ZXing.Rendering;
 namespace Scopos.BabelFish.DataActors.PDF {
     public abstract class PdfGenerator {
 
-        public abstract void GeneratePdf(PageSize pageSize, string filePath);
+        public abstract QuestPDF.Fluent.Document GeneratePdf(PageSize pageSize, string filePath);
 
         protected abstract void ReportTitle( IContainer container );
 
