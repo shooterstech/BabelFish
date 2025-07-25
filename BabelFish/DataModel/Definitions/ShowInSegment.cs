@@ -27,12 +27,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Display shots who's StageLabel is within this list. StageLabels are traditionally defined by a single character.
+        /// <para>An empty list means to display all shots regardless of Stage Label.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 1 ) ]
         public List<string> StageLabel { get; set; } = new List<string>();
 
 		/// <summary>
 		/// Display shots that are either competition shots (non sighters), sighters, or both.
+        /// <para>Default value is BOTH</para>
 		/// </summary>
 		[G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
 		public CompetitionType Competition { get; set; } = CompetitionType.BOTH;
