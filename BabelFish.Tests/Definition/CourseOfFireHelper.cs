@@ -210,12 +210,10 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventStyleMapping = new EventStyleMapping() {
                     EventAppellation = "Qualification3P",
                     DefaultDef = "v1.0:ntparc:Three-Position Precision Air Rifle"
-                },
-                RankingRuleMapping = new RankingRuleMapping() {
-                    { "DefaultDef", "v2.0:ntparc:Three-Position Air Rifle Qualification Decimal" },
-                    { "Integer", "v2.0:ntparc:Three-Position Air Rifle Qualification" }
                 }
             } );
+            cof.Events[0].RankingRuleMapping["DefaultDef"] = "v2.0:ntparc:Three-Position Air Rifle Qualification Decimal";
+            cof.Events[0].RankingRuleMapping["Integer"] = "v2.0:ntparc:Three-Position Air Rifle Qualification";
 
             /* STAGES */
             cof.Events.Add( new EventDerived() {
@@ -227,12 +225,10 @@ namespace Scopos.BabelFish.Tests.Definition {
                 StageStyleMapping = new StageStyleMapping() {
                     StageAppellation = "Prone",
                     DefaultDef = "v1.0:ntparc:Precision Air Rifle Prone"
-                },
-                RankingRuleMapping = new RankingRuleMapping(){
-                    { "DefaultDef", "v1.0:orion:Generic Decimal Prone" },
-                    { "Integer", "v1.0:ntparc:Prone Position" }
                 }
             } );
+            cof.Events[0].RankingRuleMapping["DefaultDef"] = "v1.0:orion:Generic Decimal Prone";
+            cof.Events[0].RankingRuleMapping["Integer"] = "v1.0:ntparc:Prone Position";
 
             cof.Events.Add( new EventDerived() {
                 EventName = "Standing",
@@ -243,12 +239,10 @@ namespace Scopos.BabelFish.Tests.Definition {
                 StageStyleMapping = new StageStyleMapping() {
                     StageAppellation = "Standing",
                     DefaultDef = "v1.0:ntparc:Precision Air Rifle Standing"
-                },
-                RankingRuleMapping = new RankingRuleMapping(){
-                    { "DefaultDef", "v1.0:orion:Generic Decimal Standing" },
-                    { "Integer", "v1.0:ntparc:Standing Position" }
                 }
             } );
+            cof.Events[0].RankingRuleMapping["DefaultDef"] = "v1.0:orion:Generic Decimal Standing";
+            cof.Events[0].RankingRuleMapping["Integer"] = "v1.0:ntparc:Standing Position";
 
             cof.Events.Add( new EventDerived() {
                 EventName = "Kneeling",
@@ -259,12 +253,10 @@ namespace Scopos.BabelFish.Tests.Definition {
                 StageStyleMapping = new StageStyleMapping() {
                     StageAppellation = "Kneeling",
                     DefaultDef = "v1.0:ntparc:Precision Air Rifle Kneeling"
-                },
-                RankingRuleMapping = new RankingRuleMapping(){
-                    { "DefaultDef", "v1.0:orion:Generic Decimal Kneeling" },
-                    { "Integer", "v1.0:ntparc:Kneeling Position" }
                 }
             } );
+            cof.Events[0].RankingRuleMapping["DefaultDef"] = "v1.0:orion:Generic Decimal Kneeling";
+            cof.Events[0].RankingRuleMapping["Integer"] = "v1.0:ntparc:Kneeling Position";
 
             /* STRINGS */
             cof.Events.Add( new EventExpand() {

@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             this.Projection = projection;
             this.AvgShots.Clear();
 
-            var stageEvents = this.TopLevelEvent.GetEvents( false, false, true, false, false, false );
+            var stageEvents = this.TopLevelEvent.GetEvents( EventtType.STAGE );
 
             EventScore topLevelEventScore;
             //If the event name doesn't exist in EventScores, which shouldn't ever happen, there isn't much we can do, so purposefully not setting a .Projection Score
@@ -56,7 +56,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     //Every EventScore *should* have a StageStyleDef, if it does not, we have no option but to skip it
 
                     //get singulars for stage I am in, then count those and that is how many shots to take total.
-                    var singulars = stageEvent.GetEvents( false, false, false, false, false, true );
+                    var singulars = stageEvent.GetAllSingulars();
                     var shotsFired = es.NumShotsFired;
                     //we want to always project shots if we have ANY remaining.
                     var shotsRemaining = singulars.Count - shotsFired;
@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 foreach (var stageEvent in stageEvents) { // loop through the stage styles again, this time hitting anything we dont have any shots for.
 
                     this.Projection.EventScores.TryGetValue( stageEvent.EventName, out es );
-                    var singulars = stageEvent.GetEvents( false, false, false, false, false, true );
+                    var singulars = stageEvent.GetAllSingulars();
                     var shotsFired = es.NumShotsFired;
                     if (shotsFired > 0) {
                         continue;

@@ -350,19 +350,19 @@ namespace Scopos.BabelFish.Tests.Definition
             EventComposite eventTree = EventComposite.GrowEventTree(cof);
 
             //Should be 1 Event, with name Qualification
-            var events = eventTree.GetEvents( false, true, false, false, false, false );
+            var events = eventTree.GetEvents( EventtType.EVENT );
             Assert.IsTrue( events.Count == 1 );
             Assert.AreEqual( "Qualification", events[0].EventName );
 
             //Should be 3 Stages
-            var stages = eventTree.GetEvents( false, false, true, false, false, false );
+            var stages = eventTree.GetEvents( EventtType.STAGE );
             Assert.IsTrue( stages.Count == 3 );
             Assert.AreEqual( "Kneeling", stages[0].EventName );
             Assert.AreEqual( "Prone", stages[1].EventName );
             Assert.AreEqual( "Standing", stages[2].EventName );
 
             //Should be 6 Strings
-            var strings = eventTree.GetEvents( false, false, false, false, true, false );
+            var strings = eventTree.GetEvents( EventtType.STRING );
             Assert.IsTrue( strings.Count == 6 );
             Assert.AreEqual( "KN 1", strings[0].EventName );
             Assert.AreEqual( "KN 2", strings[1].EventName );
@@ -372,7 +372,7 @@ namespace Scopos.BabelFish.Tests.Definition
             Assert.AreEqual( "ST 2", strings[5].EventName );
 
             //Should be 60 Singulars
-            var singulars = eventTree.GetEvents( false, false, false, false, false, true );
+            var singulars = eventTree.GetEvents( EventtType.SINGULAR );
             Assert.IsTrue( singulars.Count == 60 );
             for ( int i = 0; i < 20; i++) 
                 Assert.AreEqual( $"K{i+1}", singulars[i].EventName );

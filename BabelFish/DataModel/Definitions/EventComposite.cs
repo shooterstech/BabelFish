@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Returns a list of all descendants that are Singulars
         /// </summary>
         public List<EventComposite> GetAllSingulars() {
-            return GetEvents(false,false,false,false,false,true);
+            return GetEvents( EventtType.SINGULAR );
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (this.EventType == EventtType.SINGULAR && singular) {
                 descendants.Add(this);
             }
-            if (this.EventType == EventtType.ROUND && singular) {
+            if (this.EventType == EventtType.ROUND && round) {
                 descendants.Add( this );
             }
             foreach (var child in Children) {

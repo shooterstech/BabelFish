@@ -233,7 +233,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
         private Score ProjectStageScore(EventComposite stageEvent, EventScore es)
         {
             //get singulars for stage I am in, then count those and that is how many shots to take total.
-            var singulars = stageEvent.GetEvents(false, false, false, false, false, true);
+            var singulars = stageEvent.GetAllSingulars();
             var shotsFired = es.NumShotsFired;
             var numShotsInEvent = singulars.Count;
             //we want to always project shots if we have ANY remaining.

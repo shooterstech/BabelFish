@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Tests.Definition;
 
@@ -18,7 +19,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             //The Information COF has all three type of Event concrete classes. Explicit, Expand, and Derived
             var cof = CourseOfFireHelper.Get_Informal_Air_Rifle();
 
-            var topLevelEvent = EventComposite.GrowEventTree(cof);
+            var topLevelEvent = EventComposite.GrowEventTree( cof );
 
             Assert.AreEqual( "Top Level", topLevelEvent.EventName );
             Assert.AreEqual( EventtType.EVENT, topLevelEvent.EventType );
@@ -56,13 +57,24 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( EventtType.SINGULAR, shouldBeKneeling.Children[24].Children[4].EventType );
 
             var allStages = topLevelEvent.GetEvents( false, false, true, false, false, false );
+            var allStagesAlt = topLevelEvent.GetEvents( EventtType.STAGE );
             Assert.AreEqual( 3, allStages.Count );
+            Assert.AreEqual( 3, allStagesAlt.Count );
 
             var allStrings = topLevelEvent.GetEvents( false, false, false, false, true, false );
+            var allStringsAlt = topLevelEvent.GetEvents( EventtType.STRING );
             Assert.AreEqual( 150, allStrings.Count );
+            Assert.AreEqual( 150, allStringsAlt.Count );
 
             var allSingulars = topLevelEvent.GetEvents( false, false, false, false, false, true );
+            var allSingularsAlt = topLevelEvent.GetEvents( EventtType.SINGULAR );
             Assert.AreEqual( 1500, allSingulars.Count );
+            Assert.AreEqual( 1500, allSingularsAlt.Count );
+
+            var allRounds = topLevelEvent.GetEvents( false, false, false, false, false, false, true );
+            var allRoundsAlt = topLevelEvent.GetEvents( EventtType.ROUND );
+            Assert.AreEqual( 0, allRounds.Count );
+            Assert.AreEqual( 0, allRoundsAlt.Count );
 
             //PR AVG, ST AVG, and KN AVG are external to the event tree, and should not be found.
             var prAvgComp = topLevelEvent.FindEventComposite( "PR AVG" );
@@ -74,7 +86,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             //Compile all of the events
             List<Event> allCompiledEvents = new List<Event>();
-            foreach( var e in cof.Events ) {
+            foreach (var e in cof.Events) {
                 allCompiledEvents.AddRange( e.GetCompiledEvents() );
             }
 
@@ -87,6 +99,26 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var json = G_NS.JsonConvert.SerializeObject( allCompiledEvents, SerializerOptions.NewtonsoftJsonSerializer );
             Console.WriteLine( json );
+        }
+
+        [TestMethod]
+        public async Task GetRoundsTest() {
+
+            //Load a COF that has event type ROUNDS
+            var trapSetName = SetName.Parse( "v1.0:ata:Trap Singles 50 Targets" );
+            var trapCof = await DefinitionCache.GetCourseOfFireDefinitionAsync( trapSetName );
+
+            var topLevelEvent = EventComposite.GrowEventTree( trapCof );
+
+            var allRounds = topLevelEvent.GetEvents( false, false, false, false, false, false, true );
+            var allRoundsAlt = topLevelEvent.GetEvents( EventtType.ROUND );
+            Assert.AreEqual( 2, allRounds.Count );
+            Assert.AreEqual( 2, allRoundsAlt.Count );
+
+            foreach (var round in allRounds) {
+                var singulars = round.GetAllSingulars();
+                Assert.AreEqual( 25, singulars.Count );
+            }
         }
     }
 }
