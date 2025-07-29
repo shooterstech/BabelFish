@@ -26,10 +26,17 @@ namespace Scopos.BabelFish.Responses.ClubsAPI {
             var nextRequest = (GetClubListPublicRequest)Request.Copy();
             nextRequest.Token = Value.ClubList.NextToken;
             return nextRequest;
-        }
+		}
 
         /// <inheritdoc />
-        protected internal override DateTime GetCacheValueExpiryTime() {
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.ClubList.NextToken );
+			}
+		}
+
+		/// <inheritdoc />
+		protected internal override DateTime GetCacheValueExpiryTime() {
 
             return DateTime.UtcNow.AddMinutes( 10 );
         }

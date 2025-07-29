@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
     /// </summary>
-    public class SetName: IEquatable<SetName>, ICopy<SetName> {
+    public class SetName: IEquatable<SetName>, IEquatable<HierarchicalName> {
 
         private int majorVersion = 0;
         private int minorVersion = 0;
@@ -17,22 +18,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private string properName = "";
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static ConcurrentDictionary<string, SetName> _cache = new ConcurrentDictionary<string, SetName>();
 
         /// <summary>
         /// Default constructor. Should only be used in conjunction with a TryParse method.
         /// </summary>
         public SetName() { }
-
-        /// <inheritdoc/>
-        public SetName Copy() {
-            SetName copy = new SetName();
-            copy.majorVersion = majorVersion;
-            copy.minorVersion = minorVersion;
-            copy.nameSpace = nameSpace;
-            copy.properName = properName;
-
-            return copy;
-        }
 
         public static bool TryParseVersion(string version, out int majorVersion, out int minorVersion) {
 
@@ -58,8 +49,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
         public static SetName Parse(string setName) {
 
+            //Look up in cache first
+            SetName sn;
+			if (_cache.TryGetValue( setName, out sn ))
+                return sn;
+
             try {
-                SetName sn = new SetName();
+                sn = new SetName();
                 var foo = setName.Split( ':' );
                 string version = foo[0];
                 sn.nameSpace = foo[1];
@@ -68,6 +64,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 var bar = version.Substring( 1 ).Split( '.' );
                 sn.majorVersion = int.Parse( bar[0] );
                 sn.minorVersion = int.Parse( bar[1] );
+
+                _cache.TryAdd( setName, sn );
 
                 return sn;
             } catch (Exception ex) {
@@ -151,6 +149,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 logger.Error( msg, ex );
                 throw new ArgumentException( msg, ex );
             }
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="copy"></param>
+        public SetName( SetName copy ) {
+            this.majorVersion = copy.majorVersion;
+            this.minorVersion = copy.minorVersion;
+            this.nameSpace = copy.nameSpace;
+            this.properName= copy.properName;
         }
 
         public int MajorVersion {
@@ -246,6 +255,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public override int GetHashCode() {
             return ToString().GetHashCode();
+        }
+
+        public bool Equals( HierarchicalName other ) {
+            return this.ToHierarchicalNameString() == other.ToString();
+        }
+
+        public static void ClearCache() {
+            _cache.Clear();
         }
     }
 }

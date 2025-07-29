@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
         /// <summary>
         /// The command to send to the EST Unit
         /// </summary>
-        public ESTUnitCommands Command { get; set; }
+        public ESTUnitCommand Command { get; set; }
 
         /// <summary>
         /// The parameters to send with the command. NOTE, not all commands have parameters.

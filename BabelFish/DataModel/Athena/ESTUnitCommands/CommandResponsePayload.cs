@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataModel.Athena;
 
 namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
 
@@ -21,8 +20,7 @@ namespace Scopos.BabelFish.DataModel.Athena.ESTUnitCommands {
         /// <summary>
         /// The original command that was issued.
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public ESTUnitCommands Command { get; set; }
+        public ESTUnitCommand Command { get; set; }
 
         /// <summary>
         /// The original message id that was sent. 

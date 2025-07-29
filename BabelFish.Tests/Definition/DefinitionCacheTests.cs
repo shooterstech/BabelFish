@@ -1,30 +1,18 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Net;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using Scopos.BabelFish;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.DataModel.Definitions;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Diagnostics;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    public class DefinitionCacheTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class DefinitionCacheTests : BaseTestClass {
 
         /// <summary>
         /// Testing that the first request, that is not using cache, is faster than the second test that is. 
@@ -35,7 +23,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"g:\My Drive\Definitions" );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\\temp" );
             var requestNoCache = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             var requestWithCache = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             requestNoCache.IgnoreFileSystemCache = true;
@@ -60,8 +48,8 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var attributeNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
-            var attributeWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
+            var attributeNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonSerializer );
+            var attributeWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonSerializer );
             Assert.AreEqual( attributeWithCache, attributeNoCache );
         }
 
@@ -71,11 +59,18 @@ namespace Scopos.BabelFish.Tests.Definition {
         [TestMethod]
         public async Task FileSystemCacheTest() {
 
+
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
-            //TODO figure out how to read the value of the definition directory from a config file.
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\Users\erikkanderson\Documents\My Matches\DATABASE\DEFINITIONS\" ); // @"g:\My Drive\Definitions" );
+            //These next two lines (should) store the attribute in the local file system if it is not already there.
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
+            await DefinitionCache.GetAttributeDefinitionAsync( setName );
+
+            //Clear the cache so we are starting with a blank slate for the remainder of the test. 
+            //Note clearing the cache does not delete files from the file system,, only memory
+            Initializer.ClearCache( false );
+
             var attributeRequest = new GetDefinitionPublicRequest( setName, DefinitionType.ATTRIBUTE );
             attributeRequest.IgnoreFileSystemCache = false;
 
@@ -138,13 +133,16 @@ namespace Scopos.BabelFish.Tests.Definition {
             Assert.IsTrue( resultWithCache.InMemoryCachedResponse );
 
             //The definitions should be the same. Serialize the definitions to check
-            var cofNoCache = JsonConvert.SerializeObject( resultNoCache.Definition );
-            var cofWithCache = JsonConvert.SerializeObject( resultWithCache.Definition );
+            var cofNoCache = G_NS.JsonConvert.SerializeObject( resultNoCache.Definition, SerializerOptions.NewtonsoftJsonSerializer ); 
+            var cofWithCache = G_NS.JsonConvert.SerializeObject( resultWithCache.Definition, SerializerOptions.NewtonsoftJsonSerializer ); 
             Assert.AreEqual( cofWithCache, cofNoCache );
         }
 
         [TestMethod]
         public async Task RequestsThatShouldNotGetCached() {
+
+            //To perform this test, need to clear cache first, as other tests may have populated it.
+            Initializer.ClearCache(false);
 
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
@@ -171,6 +169,167 @@ namespace Scopos.BabelFish.Tests.Definition {
             //The non-cached response should tell us it wasn't from cache
             Assert.IsFalse( secondResult.InMemoryCachedResponse );
 
+        }
+
+        /// <summary>
+        /// Tests if the definition is saved to local file system after it is read from the Rest API
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task SaveToLocalStoreDirectoryAfterDownloadTest() {
+
+            //to run this test, first need to delete the file that the call would normally try and read.
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
+            var definitionFileName = $"c:\\temp\\DEFINITIONS\\STAGE STYLE\\v1.0 ntparc Sporter Air RIfle Kneeling.json";
+
+            if ( File.Exists( definitionFileName ) ) 
+                File.Delete( definitionFileName );
+
+            //Now clear the cache so we are starting with a blank slate
+            Initializer.ClearCache(false);
+
+            //Now we can try and retreive it in the normal way, which should save it to file system within the (above) set LocalStoreDirectory
+            var setName = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            await DefinitionCache.GetStageStyleDefinitionAsync( setName );
+
+            Assert.IsTrue( File.Exists( definitionFileName ) );
+        }
+
+        [TestMethod]
+        public async Task DefinitionNotFoundTest() {
+
+            SetName notARealAttrDefinition = SetName.Parse( "v1.0:orion:not a real attribute" );
+
+            //Now clear the cache so we are starting with a blank slate
+            Initializer.ClearCache( false );
+
+            var swFirstCall = Stopwatch.StartNew();
+            try {
+                await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
+            } catch ( DefinitionNotFoundException ) {
+                //This is expected
+                swFirstCall.Stop();
+            }
+
+            var swSecondCall = Stopwatch.StartNew();
+            try {
+                await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
+            } catch (DefinitionNotFoundException) {
+                //This is expected
+                swSecondCall.Stop();
+            }
+
+            //The second call, if it was cached, should be faster than the first
+            //Due to the time it takes to throw and catch an exception, the benefit is minimal, but still there.
+            Assert.IsTrue( swFirstCall.ElapsedMilliseconds > 2 * swSecondCall.ElapsedMilliseconds );
+        }
+
+        /// <summary>
+        /// Tests that the DefinitionCache's PreLoad, actually loads the expected definitiions into cache. Runs it twice, first using Rest API, second using local file system.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task DefinitionCachePreLoadTests() {
+
+            //Clear out the definitions directory, and the cache 
+            Directory.Delete( @"c:\temp\DEFINITIONS", true );
+            Initializer.ClearCache( false );
+
+            //Set the LocalStoreDirectory and preload. Which should also save to file system
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\temp" );
+            Stopwatch loadFromRestApi = Stopwatch.StartNew();
+            await DefinitionCache.PreLoad();
+            loadFromRestApi.Stop();
+
+            Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+
+            //Clear the cache and make sure it got cleared
+            Initializer.ClearCache( false );
+            Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+
+            //Re-run preload, which will read the files from the local file system (since they should exist now)
+            Stopwatch loadFromFileSystem = Stopwatch.StartNew();
+            await DefinitionCache.PreLoad();
+            loadFromFileSystem.Stop();
+
+            Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.TARGET ) );
+            Assert.AreEqual( 2, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
+
+            //Check that it is much faster
+            Assert.IsTrue( loadFromFileSystem.ElapsedMilliseconds * 10 < loadFromRestApi.ElapsedMilliseconds );
+        }
+
+        /// <summary>
+        /// Checks that the CheckForNewerVersion() method does indeed return true or false if there's a newer version
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task CheckForNewerVersionTest() {
+
+            var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
+            var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
+
+            //Initially, since we just grabbed it, there should not be a newer version
+            var hasNewerVersion = await cofDefinition.IsVersionUpdateAvaliableAsync();
+            Assert.IsFalse( hasNewerVersion );
+
+            var currentVersion = cofDefinition.GetDefinitionVersion();
+            var manipulatedVersion = $"{currentVersion.MajorVersion}.{currentVersion.MinorVersion - 1}";
+            cofDefinition.Version = manipulatedVersion;
+
+            //Since we manipulated the cached version, we need to clear the cache before checking again.
+            Initializer.ClearCache( false );
+
+            //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
+            hasNewerVersion = await cofDefinition.IsVersionUpdateAvaliableAsync();
+            Assert.IsTrue( hasNewerVersion );
+        }
+
+        /// <summary>
+        /// Checks that the DownloadNewMinorVersionIfAvaliableAsync method does download a new version if one 
+        /// is avaliable.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task DownloadNewMinorVersionIfAvaliableTest() {
+
+            /* TODO: This only tests the DownloadNewMinorVersionIfAvaliableAsync() method for Attributes. Should write other unit tests for the other definition types */             
+
+            //Set to auto download
+            DefinitionCache.AutoDownloadNewDefinitionVersions = true;
+
+            var setName = SetName.Parse( "v1.0:orion:Collegiate Class" );
+            var attrDefinition = await DefinitionCache.GetAttributeDefinitionAsync( setName );
+
+            //Decrement the version so when IsNewerVersionAvaliable is called, it returns true.
+            var currentVersion = attrDefinition.GetDefinitionVersion();
+            var manipulatedVersion = $"{currentVersion.MajorVersion}.{currentVersion.MinorVersion - 1}";
+            attrDefinition.Version = manipulatedVersion;
+
+            //After manipulating the version, to be lower, should get a rresponse that there is a newer version.
+            var hasNewerVersion = await attrDefinition.IsVersionUpdateAvaliableAsync();
+            Assert.IsTrue( hasNewerVersion );
+
+            //And we should also get a response back from DownloadNewMinorVersionIfAvaliableAsync() that the latest version was downloaded.
+            var downloadedNewVersion = await DefinitionCache.DownloadNewMinorVersionIfAvaliableAsync( attrDefinition );
+            Assert.IsTrue( downloadedNewVersion );
+
+            //Next, if we call GetAttributeDefinitionAsync() again, we should get the original value of currentVersion
+            var attrDefinitionSecondCall = await DefinitionCache.GetAttributeDefinitionAsync( setName );
+            Assert.IsTrue( currentVersion.ToString() == attrDefinitionSecondCall.Version.ToString() );
+        }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+            var setName = SetName.Parse( "v1.0:orion:Test Informal Practice Air Rifle" );
+            var definition = await DefinitionCache.GetDefinitionAsync( DefinitionType.COURSEOFFIRE, setName );
+
+            Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
         }
     }
 }

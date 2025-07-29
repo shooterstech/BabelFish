@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
@@ -17,12 +13,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
     /// Which does not use authapi authenticated calls.
     /// </summary>
     [TestClass]
-    public class GetPublicAttributeValueTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class GetPublicAttributeValueTests : BaseTestClass {
 
         /// <summary>
         /// Tests the retreival of a single Attribute Value who's visibility is PUBLIC

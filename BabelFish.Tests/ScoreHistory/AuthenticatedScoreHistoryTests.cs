@@ -1,7 +1,7 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.DataModel.SocialNetwork;
@@ -9,25 +9,16 @@ using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Tests.ScoreHistory
-{
+namespace Scopos.BabelFish.Tests.ScoreHistory {
 
     [TestClass]
-    public class AuthenticatedScoreHistoryTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class AuthenticatedScoreHistoryTests : BaseTestClass {
 
         [TestMethod]
-        public async Task PostScoreHistory()
+        public async Task PostScoreHistoryHappyPath()
         {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.BETA);
+            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.PRODUCTION);
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -39,29 +30,31 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
             const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
             const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
 
-
-
             var postRequest = new PostScoreHistoryRequest(userAuthentication);
             var body = new ScoreHistoryPostEntry();
             postRequest.ScoreHistoryPost = body;
 
-            body.LocalDate = new DateTime(2023, 04, 1);
-            body.CourseOfFireDef = "cofdef";
-            body.MatchType = "PRACTICE";
+            body.LocalDate = DateTime.Today;
+            body.CourseOfFireDef = "v3.0:ntparc:Three-Position Air Rifle 3x10";
+            body.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
-            body.EventStyleDef = "evstyledef";
+            body.EventStyleDef = eventStyleDef;
             body.Visibility = VisibilityOption.PUBLIC;
 
+            var scoreA = new Score() {
+                I = 94
+            };
+            var scoreB = new Score() {
+                I = 96
+            };
+            var scoreC = new Score() {
+                I = 84
+            };
 
-            var scoreA = new Score();
-            var entryA = new PostStageStyleScore("stageStyle_a", scoreA);
-
-            var scoreB = new Score();
-            var entryB = new PostStageStyleScore("stageStyle_b", scoreB);
-
-            var scoreC = new Score();
-            var entryC = new PostStageStyleScore("stageStyle_c", scoreB);
+            var entryA = new PostStageStyleScore( kneelingDef, scoreA, 10 );
+            var entryB = new PostStageStyleScore( proneDef, scoreB, 10 );
+            var entryC = new PostStageStyleScore(standingDef, scoreC, 10);
 
             body.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
 
@@ -70,47 +63,70 @@ namespace Scopos.BabelFish.Tests.ScoreHistory
             
             Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
 
-        }
+            var newScoreHistory = postResponse.ScoreHistoryPost;
+
+            Assert.IsFalse( string.IsNullOrEmpty( newScoreHistory.MatchID ) );
+			Assert.IsFalse( string.IsNullOrEmpty( newScoreHistory.ResultCOFID ) );
+
+		}
 
         [TestMethod]
-        public async Task PatchScoreHistory()
-        {
-            var scoreHistoryClient = new ScoreHistoryAPIClient(APIStage.BETA);
+        public async Task PatchScoreHistoryHappyPath() {
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
-                Constants.TestDev7Credentials.Password);
+                Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var postRequest = new PostScoreHistoryRequest(userAuthentication);
-            postRequest.ScoreHistoryPost.EventStyleDef = "evstyle";
-            var scoreA = new Score();
-            var entryA = new PostStageStyleScore("stageStyle_a", scoreA);
+            var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
+            const string kneelingDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
+            const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
+            const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
 
-            var scoreB = new Score();
-            var entryB = new PostStageStyleScore("stageStyle_b", scoreB);
+            var postRequest = new PostScoreHistoryRequest( userAuthentication );
+            var body = new ScoreHistoryPostEntry();
+            postRequest.ScoreHistoryPost = body;
 
-            var scoreC = new Score();
-            var entryC = new PostStageStyleScore("stageStyle_c", scoreB);
-
-            postRequest.ScoreHistoryPost.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
-            var postResponse = await scoreHistoryClient.PostScoreHistoryAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
-
-
-            var patchRequest = new PatchScoreHistoryRequest(userAuthentication);
-            var body = postResponse.ScoreHistoryPost;
-            patchRequest.ScoreHistoryPatch = body;
-            body.LocalDate = new DateTime(2012, 04, 1);
-            body.CourseOfFireDef = "newcofdef";
-            body.MatchType = "newPRACTICE";
-            body.MatchLocation = "newmosby";
-            body.MatchName = "newmatchname";
+            body.LocalDate = DateTime.Today;
+            body.CourseOfFireDef = "v3.0:ntparc:Three-Position Air Rifle 3x10";
+            body.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
+            body.MatchLocation = "mosby";
+            body.MatchName = "matchname";
+            body.EventStyleDef = eventStyleDef;
             body.Visibility = VisibilityOption.PUBLIC;
 
-            entryC.Score.I = 34;
+            var scoreA = new Score() {
+                I = 94
+            };
+            var scoreB = new Score() {
+                I = 96
+            };
+            var scoreC = new Score() {
+                I = 84
+            };
 
-            body.StageScores = new List<PostStageStyleScore> { entryC };
+            var entryA = new PostStageStyleScore( kneelingDef, scoreA, 10 );
+            var entryB = new PostStageStyleScore( proneDef, scoreB, 10 );
+            var entryC = new PostStageStyleScore( standingDef, scoreC, 10 );
+
+            body.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
+
+
+            var postResponse = await scoreHistoryClient.PostScoreHistoryAsync( postRequest );
+
+            var patchRequest = new PatchScoreHistoryRequest(userAuthentication);
+            var patchbody = postResponse.ScoreHistoryPost;
+            patchRequest.ScoreHistoryPatch = patchbody;
+            patchbody.LocalDate = new DateTime(2012, 04, 1);
+            patchbody.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
+            patchbody.MatchLocation = "newmosby";
+            patchbody.MatchName = "newmatchname";
+            patchbody.Visibility = VisibilityOption.PUBLIC;
+
+            entryC.Score.I = 74;
+
+            patchbody.StageScores = new List<PostStageStyleScore> { entryA, entryB, entryC };
 
             var patchResponse = await scoreHistoryClient.PatchScoreHistoryAsync(patchRequest);
 

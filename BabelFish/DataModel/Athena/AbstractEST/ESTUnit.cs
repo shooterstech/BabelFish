@@ -50,7 +50,7 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 
         public string IoTHost { get; set; }
 
-        public string IoTPort { get; set; }
+        public int IoTPort { get; set; }
 
         public string Qos { get; set; }
 
@@ -80,22 +80,26 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         [DefaultValue("")]
         public string Serial { get; set; }
 
-        /// <summary>
-        /// True if the CPU is reporting low voltage.
-        /// </summary>
-        [DefaultValue(false)]
+		/// <summary>
+		/// True if the CPU is reporting low voltage.
+		/// </summary>
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.BooleanConverter ) )]
+		[DefaultValue(false)]
         public bool LowVoltage { get; set; }
 
-        /// <summary>
-        /// True if the Unit was shutdown nicely last time.
-        /// </summary>
-        [DefaultValue(true)]
+		/// <summary>
+		/// True if the Unit was shutdown nicely last time.
+		/// </summary>
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.BooleanConverter ) )]
+		[DefaultValue(true)]
         public bool PreviousShutdown { get; set; } = true;
 
-        [DefaultValue( false )]
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.BooleanConverter ) )]
+		[DefaultValue( false )]
         public bool InternetConnection { get; set; }
 
-        [DefaultValue( false )]
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.BooleanConverter ) )]
+		[DefaultValue( false )]
         public bool IoTConnection { get; set; }
     }
 }

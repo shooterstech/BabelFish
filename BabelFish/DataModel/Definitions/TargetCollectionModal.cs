@@ -1,30 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using Newtonsoft.Json;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class TargetCollectionModal: ICopy<TargetCollectionModal>, IReconfigurableRulebookObject {
-
-
-        public TargetCollectionModal Copy() {
-            TargetCollectionModal copy = new TargetCollectionModal();
-
-            copy.TargetCollectionName = TargetCollectionName;
-            copy.TargetDefs.AddRange(TargetDefs);
-            copy.RangeDistance = RangeDistance;
-            copy.Comment = Comment;
-
-            return copy;
-        }
+    public class TargetCollectionModal: IReconfigurableRulebookObject, IGetTargetDefinitionList {
 
         /// <summary>
         /// A human readable name for this Target Collection. Will be used by the COURSE OF FIRE to reference this Target Collection.
         ///
         /// Required, may not be an empty string.
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string TargetCollectionName { get; set; } = string.Empty;
 
         /// <summary>
@@ -32,20 +19,35 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// Required, may not be an empty list. All values must be known TARGET definition set names.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public List<string> TargetDefs { get; set; } = new List<string>();
 
         /// <summary>
         /// This Target Collection Modal is intended for use on a range with thie Range Distance.
         /// </summary>
-        [JsonProperty( Order = 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
         public string RangeDistance { get; set; } = "10m";
 
-
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
+        /// <inheritdoc/>
+        public async Task<Dictionary<string, Target>> GetTargetDefinitionListAsync() {
+            Dictionary<string, Target> targets = new();
+
+            foreach (var targetDef in TargetDefs) {
+                var sn = SetName.Parse( targetDef );
+                targets.Add( targetDef, await DefinitionCache.GetTargetDefinitionAsync( sn ) );
+            }
+
+            return targets;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return $"TargetCollectionModal {TargetCollectionName}";
+        }
     }
 }

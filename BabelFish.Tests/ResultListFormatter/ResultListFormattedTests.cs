@@ -9,22 +9,24 @@ using Scopos.BabelFish.Helpers;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
+using Amazon.CognitoIdentityProvider.Model;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
     [TestClass]
-    public class ResultListFormattedTests {
+    public class ResultListFormattedTests : BaseTestClass {
 
         private OrionMatchAPIClient matchClient;
         private DefinitionAPIClient definitionClient;
         private IUserProfileLookup userProfileLookup;
 
         [TestInitialize]
-        public async Task InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = "wjM7eCb75aa3Okxj4FliXLY0VjHidoE2ei18pdg1"; // Constants.X_API_KEY;
+        public override void InitializeTest() {
+            base.InitializeTest();
 
             matchClient = new OrionMatchAPIClient( );
             definitionClient = new DefinitionAPIClient( );
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo(@"C:\temp");
 
             userProfileLookup = new BaseUserProfileLookup();
         }
@@ -213,7 +215,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task TestBBGunIndividualResultListCells() {
 
-            MatchID matchId = new MatchID( "1.1.2023062817085368.0" ); // "1.1.2023052011495618.0";
+            MatchID matchId = new MatchID( "1.15.2025030713204931.0" ); // "1.1.2023052011495618.0";
 
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
@@ -278,10 +280,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task TestIndividualResultListAsHTML() {
 
-            MatchID matchId = new MatchID( "1.3448.2022013116325242.0" );
+            MatchID matchId = new MatchID("1.15.2025030713204931.0");
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - Sporter";
+            var resultListName = "Individual - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -357,9 +359,57 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         }
 
         [TestMethod]
+        public async Task GetParticipantAttributeDelegateTest() {
+
+			MatchID matchId = new MatchID( "1.2413.2025050117240235.0" );
+			var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+			var match = matchDetailResponse.Match;
+			var resultListName = "Individual - All";
+
+			//Get the Result List from the API Server
+			var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
+			var resultList = resultListResponse.ResultList;
+			var resultEventName = resultList.EventName;
+
+			//Get the definition file that will tell us how to display the results.
+			var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+			var resultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+
+			//Convert the result list into the result event intermediate list that we can use
+			ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
+			await rlf.InitializeAsync();
+
+            //First loop through, looking at rank which should be 1 .. 8
+            for ( int i = 0; i < 8; i++ ) {
+                Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
+                Assert.AreEqual( (i + 1).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
+            }
+
+            //Point to a delegate that overrides getting rank. Then recalculate the value of the fields.
+            rlf.GetParticipantAttributeRankPtr = GetParticipantAttributeRank;
+            rlf.RefreshAllRowsParticipantAttributeFields();
+
+			//First loop through, looking at rank which should be 1 .. 8
+			for (int i = 0; i < 8; i++) {
+				Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
+				Assert.AreEqual( (i + 1001).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
+			}
+
+		}
+
+        public string GetParticipantAttributeRank( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {
+
+            var realRank = resultEvent.Rank;
+            var modifiedRank = 1000 + realRank;
+
+            return modifiedRank.ToString();
+        }
+
+		[TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.2457.2024103114463283.0" );
+            //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
+            MatchID matchId = new MatchID( "1.1.2025051614283290.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - Sporter";
@@ -370,8 +420,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultEventName = resultList.EventName;
 
             //Get the ResultListFormat to use for formatting
-            //var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
-            var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+            //var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
             var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             var resultListFormat = resultListFormatResponse.Definition;
             Assert.IsNotNull( resultListFormat );
@@ -381,13 +431,19 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
 
-            rlf.Engagable = true;
-            rlf.ResolutionWidth = 1800;
-            rlf.ChildrenToShow = 4000;
+            rlf.Engagable = false;
+            rlf.ResolutionWidth = 1000;
+            rlf.ShowNumberOfChildRows = 4000;
+            rlf.ShowRanks = 0;
+            rlf.ShowStatuses = null;
+            rlf.ShowSupplementalInformation = false;
+
+            //rlf.SetShowValuesToDefault();
+
 
             CellValues tryCellValues, cellValues;
             foreach (int i in rlf.GetShownColumnIndexes()) {
-                Console.Write( $"{i}, " );
+                Console.Write( $"{rlf.GetColumnHeaderCell(i).Text}, " );
             }
             Console.WriteLine();
 
@@ -397,6 +453,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
                     Console.Write( $"{cell.Text}, " );
                 }
+                Console.Write( " : " );
+                Console.Write( row.GetParticipant().RemarkList.ToString() );
+                Console.Write( " : " );
+                Console.Write( string.Join( ", ", row.GetClassList() ) );
                 Console.WriteLine();
             }
         }

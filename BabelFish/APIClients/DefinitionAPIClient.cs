@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
-using Newtonsoft.Json.Linq;
-using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using System.Runtime.CompilerServices;
-using Newtonsoft.Json;
 using Scopos.BabelFish.Helpers;
+using System.Net;
+using System.Text.Json;
+using Scopos.BabelFish.DataModel;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient<DefinitionAPIClient> {
@@ -58,39 +56,40 @@ namespace Scopos.BabelFish.APIClients {
 
             var definitionRequest = (GetDefinitionPublicRequest)request;
             try {
-                if (LocalStoreDirectory != null && LocalStoreDirectory.Exists) {
+                if (LocalDefinitionDirectory != null && LocalDefinitionDirectory.Exists) {
 
                     string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
-                    string filename = $"{LocalStoreDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
+                    string filename = $"{LocalDefinitionDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}\\{definitionFileName}";
 
                     logger.Trace( $"Attempting to read definition '{definitionRequest.SetName}' from the file '{filename}'." );
 
                     FileInfo fileInfo = new FileInfo( filename );
                     if (fileInfo.Exists) {
 
-                        using (StreamReader sr = File.OpenText( filename ))
-                        using (JsonTextReader reader = new JsonTextReader( sr )) {
-                            var jsonFromFile = await JObject.ReadFromAsync( reader );
+                        var definitionJsonAsSring = File.ReadAllText( filename );
+                        var responseAsString = $"{{ \"{definitionRequest.SetName}\" : {definitionJsonAsSring} }}";
+                        var responseBody = G_STJ.JsonDocument.Parse( responseAsString );
 
-                            var response = new ResponseIntermediateObject();
-                            response.Request = request;
-                            response.MessageResponse = new MessageResponse();
-                            //Format the JObject response as if it was read from the REST API
-                            response.Body = new JObject();
-                            response.Body[definitionRequest.SetName.ToString()] = jsonFromFile;
-                            response.ValidUntil = DateTime.UtcNow.AddDays( 1 ); //UMMMM, what's a good value to set here?
+                        var responseIntObj = new ResponseIntermediateObject();
+                        responseIntObj.StatusCode = HttpStatusCode.OK;
+                        responseIntObj.Body = responseBody;
+                        responseIntObj.Request = request;
+                        responseIntObj.ValidUntil = DateTime.UtcNow.AddDays( 1 );
 
-                            return new Tuple<bool, ResponseIntermediateObject?>( true, response );
-                        }
+                        logger.Info( $"Returning a file system cached Response for {request}." );
+
+
+                        return new Tuple<bool, ResponseIntermediateObject?>( true, responseIntObj );
+
                     } else {
                         logger.Warn( $"Can't read definition '{filename}' because the file does not exist." );
                     }
 
                 } else {
-                    if (LocalStoreDirectory == null)
+                    if (LocalDefinitionDirectory == null)
                         logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory has not been set." );
                     else
-                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory '{LocalStoreDirectory.FullName}' doesn't exist." );
+                        logger.Warn( $"Can't read definition for '{definitionRequest.SetName}', because the LocalStoreDirectory '{LocalDefinitionDirectory.FullName}' doesn't exist." );
                 }
             } catch (Exception ex) {
                 logger.Error( ex, $"Something unexpected happen while reading the definitions for '{definitionRequest.SetName}'." );
@@ -99,19 +98,90 @@ namespace Scopos.BabelFish.APIClients {
             return new Tuple<bool, ResponseIntermediateObject?>( false, null );
         }
 
+        protected override Task TryWriteToFileSystemAsync<T>( Response<T> response ) {
 
-        public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition {
+            var request = response.Request;
+
+            //No need to write to file system, if the response came from the file system or memory cache
+            if (response.FileSystemCachedResponse || response.InMemoryCachedResponse)
+                return Task.CompletedTask;
+
+            //As the DefinitionAPIClient handels more than just get definition requests, we can ignore anything that's not a GetDefinition request.
+            if (! response.WriteToFileSystemCacheOnSuccess)
+                return Task.CompletedTask;
+
+            var definitionRequest = (GetDefinitionPublicRequest)request;
+
+            try {
+                if (LocalDefinitionDirectory != null ) {
+
+                    //Create the directory structure
+                    string definitionTypeDirectory = $"{LocalDefinitionDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}";
+                    if ( ! Directory.Exists( definitionTypeDirectory ) )
+                        Directory.CreateDirectory( definitionTypeDirectory );
+
+                    string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
+                    string fullFilename = $"{definitionTypeDirectory}\\{definitionFileName}";
+
+                    bool writeThefile = false;
+                    if (!File.Exists( fullFilename )) {
+                        //Write the file if it doesn't exist
+                        writeThefile = true;
+                    } else {
+                        //if The file does exist, only write if its older than 5 mins
+                        DateTime lastWriteTime = File.GetLastWriteTime( fullFilename );
+                        if ((DateTime.Now - lastWriteTime).TotalMilliseconds > 5)
+                            writeThefile = true;
+                    }
+
+                    if (writeThefile) {
+                        string json = JsonConvert.SerializeObject( response.Value, SerializerOptions.NewtonsoftJsonSerializer );
+
+                        File.WriteAllText( fullFilename, json );
+                    }
+
+                } else {
+                    logger.Warn( $"Not writing {definitionRequest.DefinitionType.Description()} definition {definitionRequest.SetName} to the file system because the LocalStoreDirectory has not been set." );
+                }
+            } catch (Exception ex ) {
+                logger.Error( ex, $"Unable to write {definitionRequest.DefinitionType.Description()} definition {definitionRequest.SetName} to the file system due to an exception {ex}." );
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public static DirectoryInfo LocalDefinitionDirectory {
+            get {
+                if (LocalStoreDirectory == null)
+                    return null;
+
+                var definitionDirectory = $"{LocalStoreDirectory.FullName}\\DEFINITIONS";
+
+                return new DirectoryInfo( definitionDirectory );
+            }
+        }
+
+        /// <summary>
+        /// Makes a request to return a Definition file. 
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method, and instead use DefinitionCache.</remarks>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="request"></param>
+        /// <param name="response"></param>
+        /// <returns></returns>
+        public async Task<GetDefinitionPublicResponse<T>> GetDefinitionAsync<T>( GetDefinitionPublicRequest request, GetDefinitionPublicResponse<T> response ) where T : Definition, new() {
 
             await this.CallAPIAsync( request, response ).ConfigureAwait( false );
             return response;
 
         }
 
-        [Obsolete( "Use GetAttributeDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinition( SetName setName ) {
-            return await GetAttributeDefinitionAsync(setName);
-        }
-
+        /// <summary>
+        /// Makes a request to return an ATTRIBUTE Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetAttributeDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
         public virtual async Task<GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>> GetAttributeDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.ATTRIBUTE;
@@ -123,11 +193,12 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-        [Obsolete( "Use GetCourseOfFireDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinition( SetName setName ) {
-            return await GetCourseOfFireDefinitionAsync(setName);
-        }
-
+        /// <summary>
+        /// Makes a request to return an COURSE OF FIRE Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetCourseOfFireDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
         public virtual async Task<GetDefinitionPublicResponse<CourseOfFire>> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.COURSEOFFIRE;
@@ -139,11 +210,29 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-        [Obsolete( "Use GetEventStyleDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinition( SetName setName ) {
-            return await GetEventStyleDefinitionAsync( setName );
+        /// <summary>
+        /// Makes a request to return an EVENT AND STAGE STYLE MAPPING Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        public virtual async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+
+            var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
+
+            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+            GetDefinitionPublicResponse<EventAndStageStyleMapping> response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
+
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
+        /// <summary>
+        /// Makes a request to return an EVENT STYLE Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetEventStyleDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
         public virtual async Task<GetDefinitionPublicResponse<EventStyle>> GetEventStyleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.EVENTSTYLE;
@@ -155,11 +244,12 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-        [Obsolete( "Use GetRankingRuleDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinition( SetName setName ) {
-            return await GetRankingRuleDefinitionAsync(setName);
-        }
-
+        /// <summary>
+        /// Makes a request to return an RANKING RULE Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetRankingRuleDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
         public virtual async Task<GetDefinitionPublicResponse<RankingRule>> GetRankingRuleDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.RANKINGRULES;
@@ -171,59 +261,29 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-        [Obsolete( "Use GetStageStyleDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinition( SetName setName ) {
-            return await GetStageStyleDefinitionAsync(setName);
-        }
+        /// <summary>
+        /// Makes a request to return an RESULT LIST FORMAT Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetResultListFormatDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        public virtual async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
 
-        public virtual async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
-
-            var definitionType = DefinitionType.STAGESTYLE;
+            var definitionType = DefinitionType.RESULTLISTFORMAT;
 
             GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
 
-            GetDefinitionPublicResponse<StageStyle> response = new GetDefinitionPublicResponse<StageStyle>( request );
+            GetDefinitionPublicResponse<ResultListFormat> response = new GetDefinitionPublicResponse<ResultListFormat>( request );
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-        [Obsolete( "User GetTargetCollectionDefinitionAsync() instead." )]
-        public async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinition( SetName setName ) {
-            return await GetTargetCollectionDefinitionAsync( setName );
-        }
-
-        public virtual async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinitionAsync( SetName setName ) {
-
-            var definitionType = DefinitionType.TARGETCOLLECTION;
-
-            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
-
-            GetDefinitionPublicResponse<TargetCollection> response = new GetDefinitionPublicResponse<TargetCollection>( request );
-
-            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
-        }
-
-        [Obsolete( "Use GetTargetDefinitionAsync instead." )]
-        public async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinition( SetName setName ) {
-            return await GetTargetDefinitionAsync(setName);
-        }
-
-        public virtual async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
-
-            var definitionType = DefinitionType.TARGET;
-
-            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
-
-            GetDefinitionPublicResponse<Target> response = new GetDefinitionPublicResponse<Target>( request );
-
-            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
-        }
-
-        [Obsolete( "Use GetScoreFormatCollectionDefinitionAsync instead." )]
-        public async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinition( SetName setName ) {
-            return await GetScoreFormatCollectionDefinitionAsync( setName );
-        }
-
+        /// <summary>
+        /// Makes a request to return an SCORE FORMAT COLLECTION Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetScoreFormatCollectionDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
         public virtual async Task<GetDefinitionPublicResponse<ScoreFormatCollection>> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
 
             var definitionType = DefinitionType.SCOREFORMATCOLLECTION;
@@ -235,24 +295,53 @@ namespace Scopos.BabelFish.APIClients {
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
 
-		public virtual async Task<GetDefinitionPublicResponse<EventAndStageStyleMapping>> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// Makes a request to return an STAGE STYLE Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetStageStyleDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        public virtual async Task<GetDefinitionPublicResponse<StageStyle>> GetStageStyleDefinitionAsync( SetName setName ) {
 
-			var definitionType = DefinitionType.EVENTANDSTAGESTYLEMAPPING;
-
-			GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
-
-			GetDefinitionPublicResponse<EventAndStageStyleMapping> response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
-
-			return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
-		}
-
-		public virtual async Task<GetDefinitionPublicResponse<ResultListFormat>> GetResultListFormatDefinitionAsync( SetName setName ) {
-
-            var definitionType = DefinitionType.RESULTLISTFORMAT;
+            var definitionType = DefinitionType.STAGESTYLE;
 
             GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
 
-            GetDefinitionPublicResponse<ResultListFormat> response = new GetDefinitionPublicResponse<ResultListFormat>( request );
+            GetDefinitionPublicResponse<StageStyle> response = new GetDefinitionPublicResponse<StageStyle>( request );
+
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Makes a request to return an TARGET Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetTargetDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        public virtual async Task<GetDefinitionPublicResponse<Target>> GetTargetDefinitionAsync( SetName setName ) {
+
+            var definitionType = DefinitionType.TARGET;
+
+            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+            GetDefinitionPublicResponse<Target> response = new GetDefinitionPublicResponse<Target>( request );
+
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Makes a request to return an TARGET COLLECTION Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetTargetCollectionDefinitionAsync()</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        public virtual async Task<GetDefinitionPublicResponse<TargetCollection>> GetTargetCollectionDefinitionAsync( SetName setName ) {
+
+            var definitionType = DefinitionType.TARGETCOLLECTION;
+
+            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+            GetDefinitionPublicResponse<TargetCollection> response = new GetDefinitionPublicResponse<TargetCollection>( request );
 
             return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
         }
@@ -271,7 +360,27 @@ namespace Scopos.BabelFish.APIClients {
 
             return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
 
-		}
+        }
+
+        public async Task<GetDefinitionVersionPublicResponse> GetDefinitionVersionPublicAsync(
+            GetDefinitionVersionPublicRequest request ) {
+
+            GetDefinitionVersionPublicResponse response = new GetDefinitionVersionPublicResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait ( false );
+
+            return response;
+        }
+
+        public async Task<GetDefinitionVersionPublicResponse> GetDefinitionVersionPublicAsync( 
+            DefinitionType type, SetName setName ) {
+            GetDefinitionVersionPublicRequest request = new GetDefinitionVersionPublicRequest( setName, type );
+            //as we always want to return the latest version number, we will turn off cache
+            request.IgnoreFileSystemCache = true;
+            request.IgnoreInMemoryCache = true;
+
+            return await this.GetDefinitionVersionPublicAsync(request ).ConfigureAwait( false );
+        }
 
         /// <summary>
         /// Retreives a list of SparseDefinitions in order or relavancy to the provided searchTerm. Maximum 20 items are returned.

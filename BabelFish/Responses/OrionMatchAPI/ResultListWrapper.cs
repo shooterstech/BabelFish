@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     /// </summary>
     public class ResultListWrapper : BaseClass {
 
-        public ResultList ResultList = new ResultList();
+        public ResultList ResultList { get; set; } = new ResultList();
 
         public override string ToString() {
             StringBuilder foo = new StringBuilder();

@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Ping
 
         public DateTime GetSentTime() {
             try {
-                var st = DateTime.ParseExact( SentTime, Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
+                var st = DateTime.ParseExact( SentTime, DateTimeFormats.DATETIME_FORMAT, cultureInfo );
                 return st.ToUniversalTime();
                 //return st;
             } catch (Exception ex) {
@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Ping
 
         public DateTime GetReceivedTime() {
             try {
-                var rt = DateTime.ParseExact( ReceivedTime, Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATETIME_FORMAT, cultureInfo );
+                var rt = DateTime.ParseExact( ReceivedTime, DateTimeFormats.DATETIME_FORMAT, cultureInfo );
                 return rt.ToUniversalTime();
             } catch (Exception ex) {
                 return DateTime.MinValue;

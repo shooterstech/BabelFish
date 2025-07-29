@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -13,28 +13,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
 
     [Serializable]
-    public class AimingMark : ScoringShapeDimension, ICopy<AimingMark> {
+    public class AimingMark : ScoringShapeDimension {
 
         /// <summary>
         /// Public constructor
         /// </summary>
         public AimingMark() { }
 
-        /// <inheritdoc/>
-        public AimingMark Copy() {
-            AimingMark copy = new AimingMark();
-            copy.Color = this.Color;
-            copy.Comment = this.Comment;
-            copy.Shape = this.Shape;
-            copy.Dimension = this.Dimension;
-
-            return copy;
-        }
-
-        /// <summary>
-        /// the color of the aiming mark
-        /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public AimingMarkColor Color { get; set; } = AimingMarkColor.BLACK;
+		/// <summary>
+		/// the color of the aiming mark
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public AimingMarkColor Color { get; set; } = AimingMarkColor.BLACK;
     }
 }

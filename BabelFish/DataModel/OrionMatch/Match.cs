@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 using NLog;
+using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -39,10 +33,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// 
         /// To pull the full squadding, use GetSquaddingListRequest()
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder ( 1 )]
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         public string ParentID { 
             get {
                 if (string.IsNullOrEmpty( parentId ))
@@ -58,26 +52,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
         /// </summary>
-        [JsonProperty( Order = 3 )]
+        [JsonPropertyOrder ( 3 )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
         /// External Result URL
         /// </summary>
-        [JsonProperty( Order = 4 )]
+        [JsonPropertyOrder ( 4 )]
         public string ResultURL { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 5 )]
+        [JsonPropertyOrder ( 5 )]
         public DateTime ResultEventsLastUpdate { get; set; } = new DateTime();
 
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder ( 6 )]
         [Obsolete( "Use AttributeNames instead." )]
         public List<Attribute> Attributes { get; set; } = new List<Attribute>();
 
         /// <summary>
         /// List of Attribute SetNames used in this match.
         /// </summary>
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder ( 6 )]
         public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
@@ -94,15 +88,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
-        [JsonProperty( Order = 8 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 8 )]
+        
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
-        [JsonProperty( Order = 9 )]
+        [JsonPropertyOrder ( 9 )]
         public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
@@ -110,7 +104,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// 
         /// This is a required field.
         /// </summary>
-        [JsonProperty( Order = 11 )]
+        [JsonPropertyOrder ( 11 )]
         public string MatchID { get; set; } = string.Empty;
 
         public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.LOCAL_MATCH;
@@ -127,32 +121,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Version 2022-04-09 represents ResultCOF in a dictionary format
         /// Version < 2022 represent ResultCOF in a tree format
         /// </summary>
-        [JsonProperty( Order = 12 )]
+        [JsonPropertyOrder ( 12 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonConverter( typeof( DateConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
-        [JsonConverter( typeof( DateConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
-        [JsonProperty( Order = 15 )]
+        [JsonPropertyOrder ( 15 )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         /// <summary>
         /// SetName of the ScoreConfig used in this match.
         /// NOTE: The name of the ScoreFormatCollection is specified in the Course of Fire 
         /// </summary>
-        [JsonProperty( Order = 16 )]
+        [JsonPropertyOrder ( 16 )]
         public string ScoreConfigName { get; set; }
 
         /// <summary>
         /// Name of the TargetCollection used in this match.
         /// </summary>
-        [JsonProperty( Order = 17 )]
+        [JsonPropertyOrder ( 17 )]
         public string TargetCollectionName { get; set; }
 
-        [JsonProperty( Order = 18 )]
+        [JsonPropertyOrder ( 18 )]
         public Location Location { get; set; } = new Location();
 
         /// <summary>
@@ -160,7 +156,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// returned by the Rest API, but are not sent to the cloud. Instead 'AuthorizationList'
         /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
         /// </summary>
-        [JsonProperty( Order = 19 )]
+        [JsonPropertyOrder ( 19 )]
         public List<MatchAuthorizationRole> Authorization { get; set; } = new List<MatchAuthorizationRole>();
 
         /// <summary>
@@ -177,6 +173,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A list of match participants, but only the athletes, not the teams. 
+        /// 
+        /// This information is largely rhetotical with Get Participant List API call.
         ///
         /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
         /// sent back as part of an API request.
@@ -189,7 +187,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// scores the logged in user shot. If a user is not logged in, or the logged in user is
         /// not an athletes, then this will be an empty list.
         /// </summary>
-        [JsonProperty( Order = 20 )]
+        [JsonPropertyOrder ( 20 )]
         [Obsolete( "Format of this data is in the old ResultCOF (pre 2022). Make a separate call using GetResultCOF() instead, which returns data in the 2022 format." )]
         public List<ResultCOF> ParticipantResults { get; set; } = new List<ResultCOF>();
 
@@ -199,9 +197,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<Contact> MatchContacts { get; set; } = new List<Contact>();
 
         /// <summary>
-        /// A list of scoring systems used in this match.
+        /// A list of scoring system names used in this match.
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
+
+        public bool ShouldSerializeScoringSystems() {
+            return ScoringSystems != null && ScoringSystems.Count > 0;
+        }
+
+        /// <summary>
+        /// The type of scoring system used in this match.
+        /// </summary>
+        [DefaultValue( ScoringSystem.UNKNOWN )]
+        public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
 
 		/// <summary>
 		/// String holding the software (Orion Scoring System) and Version number of the software.

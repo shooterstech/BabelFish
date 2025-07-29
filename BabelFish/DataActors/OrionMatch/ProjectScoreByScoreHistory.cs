@@ -1,4 +1,6 @@
-﻿using Scopos.BabelFish.APIClients;
+﻿using BabelFish.DataModel.Athena;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoreHistory;
@@ -208,7 +210,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
             foreach (var childEvent in eventComposite.Children)
             {//To project the score for any stage, sum the projected scores of it's children
                 Score childScore = RecurProjectScores(childEvent);
-                if (eventComposite.Calculation != "SUM" && childEvent.Equals(eventComposite.Children[0])) 
+                if (eventComposite.Calculation != EventCalculation.SUM && childEvent.Equals(eventComposite.Children[0])) 
                 //I am not entirely sure what this does but I am copying the logic from the AvgShotFiredProjector
                 {//SUM(i,d) ... of which yes, we really ought to be parsing it, but i ain't got tiem for that
                     childScore.S = childScore.I;
@@ -231,7 +233,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
         private Score ProjectStageScore(EventComposite stageEvent, EventScore es)
         {
             //get singulars for stage I am in, then count those and that is how many shots to take total.
-            var singulars = stageEvent.GetEvents(false, false, false, false, false, true);
+            var singulars = stageEvent.GetAllSingulars();
             var shotsFired = es.NumShotsFired;
             var numShotsInEvent = singulars.Count;
             //we want to always project shots if we have ANY remaining.

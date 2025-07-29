@@ -16,4 +16,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
 		Task<RankingRule> GetRankingRuleDefinitionAsync();
     }
+
+
+    /// <summary>
+    /// Classes that reference RankingRule Definition Lists should implement this interface.
+    /// </summary>
+    public interface IGetRankingRuleDefinitionList {
+
+        /// <summary>
+        /// Retreives the RankingRule Definition referenced by the instantiating class.
+        /// Key is the set name, value is the definition.
+        /// </summary>
+        /// <returns></returns>
+        Task<Dictionary<string, RankingRule>> GetRankingRuleDefinitionListAsync();
+    }
 }

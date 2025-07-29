@@ -1,24 +1,10 @@
-﻿using System;
-using System.Net;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using System.Runtime.CompilerServices;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
     [TestClass]
-    public class ResultCOFTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class ResultCOFTests : BaseTestClass {
 
         [TestMethod]
         public async Task TranslateShotsToDictionaryUsingEventNames() {
@@ -75,7 +61,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var shots = resultCof.Shots;
 
-            var lastShot = resultCof.GetLastShot();
+            var lastShot = resultCof.GetLastCompetitionShot();
 
             Assert.AreEqual(shots["60.0"].TimeScored, lastShot.TimeScored);
 

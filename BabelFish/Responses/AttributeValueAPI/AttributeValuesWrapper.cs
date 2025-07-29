@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI {

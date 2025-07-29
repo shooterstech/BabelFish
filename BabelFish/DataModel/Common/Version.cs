@@ -13,55 +13,72 @@ namespace Scopos.BabelFish.DataModel.Common {
     /// </summary>
     public class Version : IComparable<Version>, IEquatable<Version> {
 
-        private NLog.Logger logger;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private bool buildVersionIncluded = false;
+
+        public Version() { }
 
         /// <summary>
         /// Constructor that takes in a version string (e.g. 1.2.3b4) and parses
         /// it for the Major, Minor, Patch, and Build Version
         /// </summary>
         /// <param name="versionString"></param>
+        /// <exception cref="ArgumentException">Thrown when the input versionString is not in the expected format.</exception>
         public Version( string versionString ) {
-            this.logger = NLog.LogManager.GetCurrentClassLogger();
-
-            TryParse( versionString );
+            this.Parse( versionString );
         }
 
-        private bool TryParse( string versionString ) {
+        public static bool TryParse( string versionString, out Version version ) {
+            version = new Version();
 
             //versionString might be false, if it got passed in from the RangeControl tab, before the state got updated.
             if (versionString == "UNKNOWN") {
-                MajorVersion = 0;
-                MinorVersion = 0;
-                PatchVersion = 0;
-                BuildVersion = 0;
+                version.MajorVersion = 0;
+                version.MinorVersion = 0;
+                version.PatchVersion = 0;
+                version.BuildVersion = 0;
                 return false;
             }
 
             try {
-                //Break the string down into it's components and assign it to the appropriate value.
-                var components = versionString.Split( new[] { '.', 'b' } );
-                Debug.Assert( components.Length == 3 || components.Length == 4, "Expected an Athena Version of either 3 or 4 components." );
-
-                MajorVersion = int.Parse( components[0] );
-                MinorVersion = int.Parse( components[1] );
-                PatchVersion = int.Parse( components[2] );
-                if (components.Length == 4) {
-                    BuildVersion = int.Parse( components[3] );
-                    buildVersionIncluded = true;
-                } else {
-                    BuildVersion = 0;
-                    buildVersionIncluded = false;
-                }
-
+                version.Parse( versionString );
                 return true;
+
             } catch (Exception ex) {
-                MajorVersion = 0;
-                MinorVersion = 0;
-                PatchVersion = 0;
-                BuildVersion = 0;
+                version.MajorVersion = 0;
+                version.MinorVersion = 0;
+                version.PatchVersion = 0;
+                version.BuildVersion = 0;
                 logger.Error( $"Unable to parse AthenaVersion string {versionString}. Received error {ex.Message}." );
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="versionString"></param>
+        /// <exception cref="ArgumentException">Thrown when the input versionString is not in the expected format.</exception>
+        private void Parse(string versionString) {
+
+            //Break the string down into it's components and assign it to the appropriate value.
+            var components = versionString.Split( new[] { '.', 'b' } );
+
+            if (components.Length < 3 || components.Length > 4) {
+                var msg = $"The version string {versionString} is not supported. Expecting a string in the format of x.y.z or x.y.z.b.";
+                logger.Error( msg );
+                throw new ArgumentException( msg );
+            }
+
+            MajorVersion = int.Parse( components[0] );
+            MinorVersion = int.Parse( components[1] );
+            PatchVersion = int.Parse( components[2] );
+            if (components.Length == 4) {
+                BuildVersion = int.Parse( components[3] );
+                buildVersionIncluded = true;
+            } else {
+                BuildVersion = 0;
+                buildVersionIncluded = false;
             }
         }
 
@@ -183,25 +200,25 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// Major Version number.
         /// Representing significant changes to the code.
         /// </summary>
-        public int MajorVersion { get; private set; }
+        public int MajorVersion { get; private set; } = 0;
 
         /// <summary>
         /// Minor Version number.
         /// Representing new features to the code.
         /// </summary>
-        public int MinorVersion { get; private set; }
+        public int MinorVersion { get; private set; } = 0;
 
         /// <summary>
         /// Patch Version number.
         /// Representing bug fixes.
         /// </summary>
-        public int PatchVersion { get; private set; }
+        public int PatchVersion { get; private set; } = 0;
 
         /// <summary>
         /// Build Version number.
         /// Representing internal builds, not for customer release.
         /// </summary>
-        public int BuildVersion { get; private set; }
+        public int BuildVersion { get; private set; } = 0;
 
         /// <summary>
         /// Returns a string in the form x.y.z.b

@@ -1,24 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.Tests;
-using Newtonsoft.Json;
-using System.ComponentModel;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.Tests.OrionMatch
-{
+namespace Scopos.BabelFish.Tests.OrionMatch {
 
     [TestClass]
-    public class CompareTests {
+    public class CompareTests : BaseTestClass {
 
         List<SquaddingAssignmentFiringPoint> SquaddingAssignmentFPList = new List<SquaddingAssignmentFiringPoint>();
         string JONES_CHRIS_R1_FP1 = "Jones, Chris";
@@ -26,8 +13,10 @@ namespace Scopos.BabelFish.Tests.OrionMatch
         string SMITH_DEREK_R2_FP1 = "Smith, Derek";
         string SMITH_JANET_R2_FP2 = "Smith, Janet";
 
-        [TestInitialize] 
-        public void TestInitialize() {
+        [TestInitialize]
+        public override void InitializeTest() {
+            base.InitializeTest();
+
             SquaddingAssignmentFPList = new List<SquaddingAssignmentFiringPoint>();
 
             SquaddingAssignmentFPList.Add(

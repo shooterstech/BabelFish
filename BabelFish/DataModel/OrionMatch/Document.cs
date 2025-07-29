@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 

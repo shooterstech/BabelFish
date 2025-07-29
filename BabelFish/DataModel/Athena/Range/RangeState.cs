@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Athena.Range {
     public class RangeState {
@@ -16,10 +16,10 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
         /// <summary>
         /// The Key is the FiringPointNumber, the value is the FirignPointState.
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder( 1 )]
         public Dictionary<string, FiringPointState> FiringPoints { get; set; }
 
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder( 2 )]
         public Dictionary<string, DisplayState> Displays { get; set; }
 
         [OnDeserialized]

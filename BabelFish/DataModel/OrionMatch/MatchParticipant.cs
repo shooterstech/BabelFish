@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 using System.Globalization;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -29,20 +29,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 MatchParticipantResults= new List<MatchParticipantResult>();
         }
 
-        /*
-         * Currently choosing not to have theise properties within a MatchParticipant. This is because these properties 
-         * are part of the MatchPartipantList.
-         * 
+
         public string MatchID { get; set; }
+
+        public string MatchName { get; set; }
 
         public string ParentID { get; set; }
 
-        public string MatchName { get; set; }
-        */
+        /// <summary>
+        /// Unique ID within this match, for this Match Participant.
+        /// </summary>
+        public string ParticipantID { get; set; }
+
+        /// <summary>
+        /// UUID formatted Orion Account user id. 
+        /// </summary>
+        public string UserID { get; set; }
+
         public string LocalDate { get; set; }
 
         public Participant Participant { get; set; }
 
+        /// <summary>
+        /// Intended to be a list of squadding events that the Participant competed it. However, the 
+        /// format is not well organize and needs to be updated.
+        /// </summary>
         public List<MatchParticipantResult> MatchParticipantResults { get; set; }
 
         /// <summary>

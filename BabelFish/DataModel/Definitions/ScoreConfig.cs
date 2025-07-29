@@ -1,45 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class ScoreConfig: IReconfigurableRulebookObject, ICopy<ScoreConfig>
+    public class ScoreConfig: IReconfigurableRulebookObject
     {
 
         public ScoreConfig() { }
 
-        public string ScoreConfigName { get; set; } = string.Empty;
+
+		[G_STJ_SER.JsonPropertyOrder( 1 )]
+		[G_NS.JsonProperty( Order = 1 )]
+		public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <summary>
         /// The Keys to the dictionary should be set by the parent SCORE FORMAT COLLECTION's ScoreFormats list.
         /// Values are a Score Format, eg. "{i} - {x}"
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public Dictionary<string, string> ScoreFormats { get; set; } = new Dictionary<string, string>();
 
+		/// <summary>
+		/// The ScoreCompoent to use to display a 'simple' score value.
+		/// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 3 )]
+		[G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public ScoreComponent ScoreComponent { get; set; } = ScoreComponent.D;
+
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+		[G_STJ_SER.JsonPropertyOrder( 100 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
-        public ScoreConfig Copy()
-        {
-            ScoreConfig sc = new ScoreConfig();
-            sc.ScoreConfigName = this.ScoreConfigName;
-            if (this.ScoreFormats != null)
-            {
-                foreach (KeyValuePair<string, string> pair in this.ScoreFormats)
-                {
-                    sc.ScoreFormats.Add(pair.Key, pair.Value);
-                }
-            }
-            return sc;
-        }
-
+        /// <inheritdoc/>
         public override string ToString() {
             return ScoreConfigName;
         }

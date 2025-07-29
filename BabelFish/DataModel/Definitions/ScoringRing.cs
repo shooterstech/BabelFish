@@ -9,23 +9,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// An Aiming Mark object defines the dimension, shape, and color of the mark an athlete aims on on a TARGET.
     /// </summary>
     [Serializable]
-    public class ScoringRing : ScoringShapeDimension, ICopy<ScoringRing> {
+    public class ScoringRing : ScoringShapeDimension {
 
         /// <summary>
         /// Public Constructor
         /// </summary>
         public ScoringRing() { }
-
-        public ScoringRing Copy() {
-
-            ScoringRing copy = new ScoringRing();
-            copy.Shape = this.Shape;
-            copy.Value = this.Value;
-            copy.Comment = this.Comment;
-            copy.Dimension = this.Dimension;
-
-            return copy;
-        }
 
 
         /// <summary>

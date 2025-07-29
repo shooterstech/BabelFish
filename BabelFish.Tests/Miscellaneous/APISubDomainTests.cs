@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Runtime;
-using Scopos.BabelFish.APIClients;
+﻿using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests.Miscellaneous {
 
     [TestClass]
-    public class APISubDomainTests
+    public class APISubDomainTests : BaseTestClass
     {
 
         [TestMethod]

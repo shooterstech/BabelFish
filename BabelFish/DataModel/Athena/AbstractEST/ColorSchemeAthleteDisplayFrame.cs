@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -20,28 +19,40 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             */
         }
 
-        [JsonProperty("athletebg", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Athlete background color.")]
+        /// <summary>
+        /// Athlete background color
+        /// </summary>
+        [JsonPropertyName( "athletebg" )]
         public String AthleteBG { set; get; } = "#5d84bc";
 
-        [JsonProperty("athletetext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Athlete text color.")]
+        /// <summary>
+        /// Athlete text color.
+        /// </summary>
+        [JsonPropertyName( "athletetext" )]
         public String AthleteText { set; get; } = "#ececec";
 
-        [JsonProperty("scorebg", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Score background color.")]
+        /// <summary>
+        /// Score background color
+        /// </summary>
+        [JsonPropertyName( "scorebg" )]
         public String ScoreBG { set; get; } = "#5c5c5c";
 
-        [JsonProperty("scoretext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Score text color.")]
+        /// <summary>
+        /// Score text color
+        /// </summary>
+        [JsonPropertyName( "scoretext" )]
         public String ScoreText { set; get; } = "#ececec";
 
-        [JsonProperty("aggbg", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Aggregate background color.")]
+        /// <summary>
+        /// Aggregate background color.
+        /// </summary>
+        [JsonPropertyName( "aggbg" )]
         public String AggBG { set; get; } = "#5c5c5c";
 
-        [JsonProperty("aggtext", DefaultValueHandling = DefaultValueHandling.Populate)]
-        [Description("Aggregate text color.")]
+        /// <summary>
+        /// Aggregate text color.
+        /// </summary>
+        [JsonPropertyName( "aggtext" )]
         public String AggText { set; get; } = "#ececec";
     }
 }

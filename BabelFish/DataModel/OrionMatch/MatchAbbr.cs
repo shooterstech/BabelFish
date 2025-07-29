@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.Helpers;
 using System.Globalization;

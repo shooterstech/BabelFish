@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Helpers;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -14,10 +12,48 @@ using System.Runtime.Serialization;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
 
+    public enum AbbreviatedFormatDerivedOptions {
+
+        [Description( "LAST(1)" )]
+        [EnumMember( Value = "LAST(1)" )]
+        LAST_1,
+
+		[Description( "LAST(2)" )]
+		[EnumMember( Value = "LAST(2)" )]
+		LAST_2,
+
+		[Description( "LAST(3)" )]
+		[EnumMember( Value = "LAST(3)" )]
+		LAST_3,
+
+		[Description( "LAST(4)" )]
+		[EnumMember( Value = "LAST(4)" )]
+		LAST_4,
+
+		[Description( "LAST(5)" )]
+		[EnumMember( Value = "LAST(5)" )]
+		LAST_5,
+
+		[Description( "LAST(6)" )]
+		[EnumMember( Value = "LAST(6)" )]
+		LAST_6,
+
+        [Description( "LAST(7)" )]
+        [EnumMember( Value = "LAST(7)" )]
+        LAST_7,
+
+        [Description( "LAST(8)" )]
+        [EnumMember( Value = "LAST(8)" )]
+        LAST_8,
+
+        [Description( "LAST(9)" )]
+        [EnumMember( Value = "LAST(9)" )]
+        LAST_9
+    }
+
     /// <summary>
     /// The color of the aiming mark.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum AimingMarkColor {
         /// <summary>
         /// The color white.
@@ -33,7 +69,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// Defines what type of entity an attribute can be assigned to.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum AttributeDesignation {
 
         [Description( "ATHLETE" )]
@@ -42,33 +77,38 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         [Description( "CLUB" )]
-        [EnumMember( Value = "CLUB" )] CLUB,
+        [EnumMember( Value = "CLUB" )] 
+        CLUB,
 
 
         [Description( "MATCH OFFICIAL" )]
-        [EnumMember( Value = "MATCH OFFICIAL" )] MATCH_OFFICIAL,
+        [EnumMember( Value = "MATCH OFFICIAL" )] 
+        MATCH_OFFICIAL,
 
 
         [Description( "TEAM" )]
-        [EnumMember( Value = "TEAM" )] TEAM,
+        [EnumMember( Value = "TEAM" )] 
+        TEAM,
 
 
         [Description( "TEAM OFFICIAL" )]
-        [EnumMember( Value = "TEAM OFFICIAL" )] TEAM_OFFICIAL,
+        [EnumMember( Value = "TEAM OFFICIAL" )] 
+        TEAM_OFFICIAL,
 
 
         [Description( "USER" )]
-        [EnumMember( Value = "USER" )] USER,
+        [EnumMember( Value = "USER" )] 
+        USER,
 
 
         [Description( "HIDDEN" )]
-        [EnumMember( Value = "HIDDEN" )] HIDDEN
+        [EnumMember( Value = "HIDDEN" )] 
+        HIDDEN
     }
 
     /// <summary>
     /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum BarcodeLabelSize { 
         /// <summary>
         /// "Small barcode labels"
@@ -81,31 +121,105 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         OL161 
     }
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum COFTypeOptions { COMPETITION, FORMALPRACTICE, INFORMALPRACTICE, DRILL, GAME };
+    public enum CalculationVariableType {
+        INTEGER,
+        FLOAT,
+        STRING,
+        SCORE //Score Component, e.g. I, D, X
+    }
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
+    [Obsolete("Use RangeScriptType instead.")]
+    public enum COFTypeOptions { 
+        COMPETITION, 
+        FORMALPRACTICE, 
+        INFORMALPRACTICE, 
+        DRILL, 
+        GAME 
+    };
+
     public enum CompetitionType {
         /// <summary>
         /// COMPETITION: Shows only record fire shots
         /// </summary>
-        [Description( "COMPETITION" )][EnumMember( Value = "COMPETITION" )] COMPETITION,
+        [Description( "COMPETITION" )]
+        [EnumMember( Value = "COMPETITION" )] 
+        COMPETITION,
 
         /// <summary>
         /// SIGHTER
         /// </summary>
-        [Description( "SIGHTER" )][EnumMember( Value = "SIGHTER" )] SIGHTER,
+        [Description( "SIGHTER" )]
+        [EnumMember( Value = "SIGHTER" )] 
+        SIGHTER,
 
         /// <summary>
         /// BOTH
         /// </summary>
-        [Description( "BOTH" )][EnumMember( Value = "BOTH" )] BOTH
+        [Description( "BOTH" )]
+        [EnumMember( Value = "BOTH" )] 
+        BOTH
+    }
+    public enum DefinitionType {
+        /*
+         * In order to get an Enum to serialize / deserialize to values with spaces have to do a couple of things.
+         * First use the EnumMember(Value = "   ") attribute. This is what does the serialzing / deserialzing.
+         * In order to get the Descriptions in code, have to use the Description attribute in conjunction with the
+         * ExtensionMethod .Description() (Located in the ExtensionMethods.cs class).
+        */
+        /// <summary>
+        /// ATTRIBUTE Definition
+        /// </summary>
+        [Description( "ATTRIBUTE" )][EnumMember( Value = "ATTRIBUTE" )] ATTRIBUTE,
+
+        /// <summary>
+        /// COURSE OF FIRE Definition
+        /// </summary>
+        [Description( "COURSE OF FIRE" )][EnumMember( Value = "COURSE OF FIRE" )] COURSEOFFIRE,
+
+        /// <summary>
+        /// EVENT STYLE Definition
+        /// </summary>
+        [Description( "EVENT STYLE" )][EnumMember( Value = "EVENT STYLE" )] EVENTSTYLE,
+
+        /// <summary>
+        /// EVENT AND STAGE STYLE MAPPING Definition
+        /// </summary>
+        [Description( "EVENT AND STAGE STYLE MAPPING" )][EnumMember( Value = "EVENT AND STAGE STYLE MAPPING" )] EVENTANDSTAGESTYLEMAPPING,
+
+        /// <summary>
+        /// RANKING RULES Definition
+        /// </summary>
+        [Description( "RANKING RULES" )][EnumMember( Value = "RANKING RULES" )] RANKINGRULES,
+
+        /// <summary>
+        /// RESULT Definition
+        /// </summary>
+        [Description( "RESULT LIST FORMAT" )][EnumMember( Value = "RESULT LIST FORMAT" )] RESULTLISTFORMAT,
+
+        /// <summary>
+        /// SCORE FORMAT COLLECTION Definition
+        /// </summary>
+        [Description( "SCORE FORMAT COLLECTION" )][EnumMember( Value = "SCORE FORMAT COLLECTION" )] SCOREFORMATCOLLECTION,
+
+        /// <summary>
+        /// STAGE STYLE Definition
+        /// </summary>
+        [Description( "STAGE STYLE" )][EnumMember( Value = "STAGE STYLE" )] STAGESTYLE,
+
+        /// <summary>
+        /// TARGET Definition
+        /// </summary>
+        [Description( "TARGET" )][EnumMember( Value = "TARGET" )] TARGET,
+
+        /// <summary>
+        /// TARGET COLLECTION Definition
+        /// </summary>
+        [Description( "TARGET COLLECTION" )][EnumMember( Value = "TARGET COLLECTION" )] TARGETCOLLECTION
     }
 
     /// <summary>
     /// Defines the different high level disciplines in use with Shooting. Largely defined by the ISSF.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum DisciplineType {
         /// <summary>
         /// The Discipline Archery
@@ -143,9 +257,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "SHOTGUN" )][EnumMember( Value = "SHOTGUN" )] SHOTGUN,
 
         /// <summary>
-        /// Not Applicable
+        /// Silhouette
         /// </summary>
-        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
+        [Description( "SILHOUETTE" )]
+        [EnumMember( Value = "SILHOUETTE" )]
+		SILHOUETTE,
+
+		/// <summary>
+		/// Not Applicable
+		/// </summary>
+		[Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
 
 		/// <summary>
 		/// Benchrest
@@ -154,7 +275,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 	}
 
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
+    /*
+     * IMPORTANT NOTE
+     * If one of the enum values in DisplayEventOptions gets updated, then the cooresponding
+     * property in EventAssignments also needs to be updated. Located in 
+     * Scopos.BabelFish.DataModel.Athena.AbstractEST
+     */
+
     public enum DisplayEventOptions {
         NONE, Default, QualificationPreEvent, QualificationPostEvent, QualificationCallToLine, QualificationRemoveEquipment,
         QualificationStart, QualificationStop, QualificationPreparationPeriodStart, QualificationPreparationPeriodStop, QualificationSightersStart, QualificationSightersStop,
@@ -166,27 +293,86 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SpecialEventOne, SpecialEventTwo, SpecialEventThree, SpecialEventFour, SafetyBriefing
     }
 
+    /// <summary>
+    /// Indicates how the Score of an Event Composite is calculated.
+    /// </summary>
+    public enum EventCalculation {
+        /// <summary>
+        /// Calculate the score of the Event by summing the score of its children
+        /// </summary>
+        [Description( "SUM" )]
+        [EnumMember( Value = "SUM" )]
+        SUM,
+
+        /// <summary>
+        /// Calculate the score of the Event by taking the average of its children
+        /// </summary>
+        [Description( "AVERAGE" )]
+        [EnumMember( Value = "AVERAGE" )]
+        AVERAGE,
+
+        /// <summary>
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the 10 in the CalculationMeta field
+        /// </summary>
+        [Description( "AVG(10)" )]
+        [EnumMember( Value = "AVG(10)" )]
+        [Obsolete("Use AVERAGE with CalculationVariables instead.")]
+        AVG_TEN,
+
+        /// <summary>
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
+        /// </summary>
+        [Description( "SUM(i, d)" )]
+        [EnumMember( Value = "SUM(i, d)" )]
+		[Obsolete( "Use SUM with CalculationVariables instead." )]
+		ACCUMULATIVE_FINALS,
+
+        /// <summary>
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
+        /// </summary>
+        [Description( "SUM(i,d)" )]
+        [EnumMember( Value = "SUM(i,d)" )]
+		[Obsolete( "Use SUM with CalculationVariables instead." )]
+		ACCUMULATIVE_FINALS_2,
+
+        /// <summary>
+        /// Reserved for Singularities that don't have children.
+        /// </summary>
+        [Description( "NONE" )]
+        [EnumMember( Value = "NONE" )]
+        NONE
+    }
+
+    public enum EventDerivationType {
+        /// <summary>
+        /// The Children of an Event are definted explicitly by name.
+        /// </summary>
+        EXPLICIT,
+
+        /// <summary>
+        /// The Children of an Event are derived based on the Event's Value Series
+        /// </summary>
+        DERIVED,
+
+        EXPAND
+    }
 
     /// <summary>
     /// The types of Events that exist. This is not meant to be an exhaustive list, but rather a well known list.
     /// NOTE EventtType is purposefully misspelled.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, SINGULAR }
+    public enum EventtType { NONE, EVENT, STAGE, SERIES, STRING, ROUND, SINGULAR }
 
     public enum FieldType {
         OPEN,
         CLOSED,
-        SUGGEST,
-        DERIVED
+        SUGGEST
     }
 
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum LightIllumination { NONE, ON, OFF, DIM };
 
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum LinkToOption {
         /// <summary>
         /// Indicates that the Cell should link to the ResultCOF Page (sometimes called Individual Score Page). 
@@ -210,11 +396,133 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         None
     }
 
+    public enum Months {
+
+        /// <summary>
+        /// The month of January
+        /// </summary>
+        [Description( "January" )]
+        [EnumMember( Value = "January" )]
+        January,
+
+        /// <summary>
+        /// The month of February
+        /// </summary>
+        [Description( "February" )]
+        [EnumMember( Value = "February" )]
+        February,
+
+        /// <summary>
+        /// The month of March
+        /// </summary>
+        [Description( "March" )]
+        [EnumMember( Value = "March" )]
+        March,
+
+        /// <summary>
+        /// The month of April
+        /// </summary>
+        [Description( "April" )]
+        [EnumMember( Value = "April" )]
+        April,
+
+        /// <summary>
+        /// The month of May
+        /// </summary>
+        [Description( "May" )]
+        [EnumMember( Value = "May" )]
+        May,
+
+        /// <summary>
+        /// The month of June
+        /// </summary>
+        [Description( "June" )]
+        [EnumMember( Value = "JanJuneuary" )]
+        June,
+
+        /// <summary>
+        /// The month of July
+        /// </summary>
+        [Description( "July" )]
+        [EnumMember( Value = "July" )]
+        July,
+
+        /// <summary>
+        /// The month of August
+        /// </summary>
+        [Description( "August" )]
+        [EnumMember( Value = "August" )]
+        August,
+
+        /// <summary>
+        /// The month of September
+        /// </summary>
+        [Description( "September" )]
+        [EnumMember( Value = "September" )]
+        September,
+
+        /// <summary>
+        /// The month of October
+        /// </summary>
+        [Description( "October" )]
+        [EnumMember( Value = "October" )]
+        October,
+
+        /// <summary>
+        /// The month of November
+        /// </summary>
+        [Description( "November" )]
+        [EnumMember( Value = "November" )]
+        November,
+
+        /// <summary>
+        /// The month of December
+        /// </summary>
+        [Description( "December" )]
+        [EnumMember( Value = "December" )]
+        December
+
+	}
+
+    public enum RangeScriptType {
+        /// <summary>
+        /// Range Script is designed to be ran by a Range Officer. Usually with multiple 
+        /// firiring point receiivng the RS Commands synchornously.
+        /// </summary>
+        FORMAL_MATCH,
+
+        /// <summary>
+        /// Mimics a FORMAL_MATCH but the RS Commands are all automated, and each competitor
+        /// can shoot asynchronously. 
+        /// </summary>
+        FORMAL_PRACTICE,
+
+        /// <summary>
+        /// Range Script is designed to allow the marksman to shoot slow fire on a target type
+        /// for as long as they want.
+        /// </summary>
+        INFORMAL_PRACTICE,
+
+        DRILL,
+
+        GAME
+    }
+
     /// <summary>
-    /// Specifies where the data is coming from for a Result List Field.
+    /// Mode given to the Result Engine telling it how it should calculate the Rank Delta.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum ResultFieldMethod {
+	public enum ResultEngineCompareType {
+		NONE,
+		NOW,
+		WINDOW_1_MINUTE,
+		WINDOW_3_MINUTE,
+		WINDOW_5_MINUTE
+	}
+
+	/// <summary>
+	/// Specifies where the data is coming from for a Result List Field.
+	/// </summary>
+	public enum ResultFieldMethod {
         /// <summary>
         /// This is the absolute score the Participant has shot.
         /// </summary>
@@ -261,10 +569,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
     }
 
+	/// <summary>
+	/// The Score Components from a Score object.
+	/// </summary>
+	public enum ScoreComponent {
+        X,
+        I,
+        D,
+        S,
+        J,
+        K,
+        L
+    }
+
     /// <summary>
     /// Describes the shape of an aiming mark.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ScoringShape {
         /// <summary>
         /// Circle
@@ -278,14 +598,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShotMappingMethodType { SEQUENTIAL }
 
     /// <summary>
     /// The type of Boolean operation to apply in a ShowWhenEquation instance.
     /// </summary>
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShowWhenBoolean {
         /// <summary>
         /// AND operation
@@ -321,7 +639,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// Conditional variables that evaluate to true or false at runtime, to help decide if a column should be displayed or not.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShowWhenCondition {
         /// <summary>
         /// Always evaluates to true.
@@ -429,6 +746,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         MATCH_TYPE_TOURNAMENT,
 
         /// <summary>
+        /// Evaluates to true when the Result List report scores were shot on ESTs.
+        /// </summary>
+        /// <remarks>In a Virtual Match, this evalutes to true if one or more of the VM locations was shot on ESTs.</remarks>
+        SHOT_ON_EST,
+
+        /// <summary>
+        /// Evalutes to true when the Result List reports scores were shot on paper targets.
+        /// </summary>
+        /// <remarks>In a Virtual Match, this evalutes to true if one or more of the VM locations was shot on Paper.</remarks>
+        SHOT_ON_PAPER,
+
+        /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is considered user interface engageable. 
         /// </summary>
         ENGAGEABLE,
@@ -436,13 +765,77 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that is not considered user interface engageable. 
         /// </summary>
-        NOT_ENGAGEABLE
+        NOT_ENGAGEABLE,
+
+        /// <summary>
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does want to see "supplemental" information. 
+        /// </summary>
+        SUPPLEMENTAL,
+
+        /// <summary>
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does not want to see "supplemental" information. 
+        /// </summary>
+        NOT_SUPPLEMENTAL,
+
+        /// <summary>
+        /// Evaluates to true on a column when any participant in the Result List has a shown Remark. In a row, evaluates to true with the participant has any Remark.
+        /// </summary>
+        HAS_ANY_SHOWN_REMARK,
+        
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Shoot
+        /// </summary>
+        HAS_SHOWN_REMARK_DNS,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Finish
+        /// </summary>
+        HAS_SHOWN_REMARK_DNF,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Disqualified
+        /// </summary>
+        HAS_SHOWN_REMARK_DSQ,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Bubble
+        /// </summary>
+        HAS_SHOWN_REMARK_BUBBLE,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Eliminated
+        /// </summary>
+        HAS_SHOWN_REMARK_ELIMINATED,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
+        /// </summary>
+        HAS_SHOWN_REMARK_QUALIFIED,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
+        /// </summary>
+        HAS_SHOWN_REMARK_FIRST,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
+        /// </summary>
+        HAS_SHOWN_REMARK_SECOND,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
+        /// </summary>
+        HAS_SHOWN_REMARK_THIRD,
+
+        /// <summary>
+        /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
+        /// </summary>
+        HAS_SHOWN_REMARK_LEADER
     }
 
     /// <summary>
     /// Concrete class id for a ShowWhenBase. Indicates if the ShowWhenBase abstract class is of concrete class ShowWhenVariable or ShowWhenEquation.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum ShowWhenOperation {
         /// <summary>
         /// ShowWhenBased class is of concrete type ShowWhenVariable
@@ -461,7 +854,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum SingularType {
         [Description( "Shot" )]
         [EnumMember( Value = "Shot" )]
@@ -472,90 +864,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         TEST
     }
 
-	[JsonConverter( typeof( StringEnumConverter ) )]
-	public enum SpecialOptions {
-		[Description( "GroupMode" )]
-		[EnumMember( Value = "GroupMode" )]
-		GROUP_MODE,
-
-		[Description( "ShotCalling" )]
-		[EnumMember( Value = "ShotCalling" )]
-		SHOT_CALLING
-	}
-
-
-	[JsonConverter( typeof( StringEnumConverter ) )]
-    public enum TimerCommandOptions { NONE, START, PAUSE, RESUME, STOP, CLOCK };
-
-
-    /// <summary>
-    /// The type of data that is stored within an AttributeField. 
-    /// C# Implementations should store and cast data as the following types.
-    /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
-    public enum ValueType {
-        /// <summary>
-        /// C# implementations should use DateTime objects. The time portion of the DateTime instance is ignored.
-        /// </summary>
-        [Description( "DATE" )]
-        [EnumMember( Value = "DATE" )]
-        DATE,
-
-        /// <summary>
-        /// C# implementations should use DateTime objects.
-        /// </summary>
-        [Description( "DATE TIME" )]
-        [EnumMember( Value = "DATE TIME" )]
-        DATE_TIME,
-
-        /// <summary>
-        /// C# implementations should use TimeSpan objects.
-        /// </summary>
-        [Description( "TIME" )]
-        [EnumMember( Value = "TIME" )]
-        TIME,
-
-        /// <summary>
-        /// C# implementations should use strings.
-        /// </summary>
-        [Description( "STRING" )]
-        [EnumMember( Value = "STRING" )]
-        STRING,
-
-        /// <summary>
-        /// C# implementations should use ints.
-        /// </summary>
-        [Description( "INTEGER" )]
-        [EnumMember( Value = "INTEGER" )]
-        INTEGER,
-
-        /// <summary>
-        /// C# implementations should use floats or doubles.
-        /// </summary>
-        [Description( "FLOAT" )]
-        [EnumMember( Value = "FLOAT" )]
-        FLOAT,
-
-        /// <summary>
-        /// C# implementations should use bools.
-        /// </summary>
-        [Description( "BOOLEAN" )]
-        [EnumMember( Value = "BOOLEAN" )]
-        BOOLEAN,
-
-
-        /// <summary>
-        /// C# implementations should use SetName objects.
-        /// </summary>
-        [Description( "SET NAME" )]
-        [EnumMember( Value = "SET NAME" )]
-        SETNAME
-    }
-
     /// <summary>
     /// Specifies the method to use to compare two competitors.
     /// </summary>
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum TieBreakingRuleMethod {
 
         /// <summary>
@@ -585,5 +896,153 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "Attribute" )]
         [EnumMember( Value = "Attribute" )]
         ATTRIBUTE
+    }
+
+    public enum TieBreakingRuleParticipantAttributeSource {
+        FamilyName,
+        GivenName,
+        MiddleName,
+        CompetitorNumber,
+        DisplayName,
+        DisplayNameShort,
+        HomeTown,
+        Country,
+        Club
+    }
+
+    public enum TieBreakingRuleScoreSource {
+        /// <summary>
+        /// Use the integer score
+        /// </summary>
+        I,
+
+        /// <summary>
+        /// Use the decimal score
+        /// </summary>
+        D,
+
+        /// <summary>
+        /// Use the special sum rulebook score
+        /// </summary>
+        S,
+
+        /// <summary>
+        /// Use the inner ten score
+        /// </summary>
+        X,
+
+        /// <summary>
+        /// Use the integer socre, and if still tied then use the inner ten score
+        /// </summary>
+        IX,
+
+        /// <summary>
+        /// Use the special use case J score
+        /// </summary>
+        J,
+
+        /// <summary>
+        /// Use the special use case K score
+        /// </summary>
+        K,
+
+        /// <summary>
+        /// Use the special use case L score
+        /// </summary>
+        L
+    }
+
+
+    public enum TimerCommandOptions { 
+        /// <summary>
+        /// Does not effect the Range Timer
+        /// </summary>
+        NONE, 
+
+        /// <summary>
+        /// Starts the Range Timer
+        /// </summary>
+        START, 
+
+        /// <summary>
+        /// Pauses the Range Timer
+        /// </summary>
+        PAUSE, 
+
+        /// <summary>
+        /// Resumes the Range Timer after a pause.
+        /// </summary>
+        RESUME, 
+
+        /// <summary>
+        /// Stops the Range Timer
+        /// </summary>
+        STOP, 
+
+        /// <summary>
+        /// Sets the Range Timer to act as a Clock
+        /// </summary>
+        CLOCK, 
+
+        /// <summary>
+        /// To be filled in by Ben. 
+        /// </summary>
+        SEGMENT 
+    };
+
+
+    /// <summary>
+    /// The type of data that is stored within an AttributeField. 
+    /// C# Implementations should store and cast data as the following types.
+    /// </summary>
+    public enum ValueType {
+        /// <summary>
+        /// C# implementations should use DateTime objects. The time portion of the DateTime instance is ignored.
+        /// </summary>
+        [Description( "DATE" )]
+        [EnumMember( Value = "DATE" )]
+        DATE,
+
+        /// <summary>
+        /// C# implementations should use DateTime objects. The time portion of the DateTime instance is ignored.
+        /// </summary>
+        [Description( "DATE TIME" )]
+        [EnumMember( Value = "DATE TIME" )]
+        DATE_TIME,
+
+        /// <summary>
+        /// C# implementations should use TimeSpan objects.
+        /// </summary>
+        [Description( "TIME SPAN" )]
+        [EnumMember( Value = "TIME SPAN" )]
+        TIME_SPAN,
+
+        /// <summary>
+        /// C# implementations should use strings.
+        /// </summary>
+        [Description( "STRING" )]
+        [EnumMember( Value = "STRING" )]
+        STRING,
+
+        /// <summary>
+        /// C# implementations should use ints.
+        /// </summary>
+        [Description( "INTEGER" )]
+        [EnumMember( Value = "INTEGER" )]
+        INTEGER,
+
+        /// <summary>
+        /// C# implementations should use floats or doubles.
+        /// </summary>
+        [Description( "FLOAT" )]
+        [EnumMember( Value = "FLOAT" )]
+        FLOAT,
+
+        /// <summary>
+        /// C# implementations should use bools.
+        /// </summary>
+        [Description( "BOOLEAN" )]
+        [EnumMember( Value = "BOOLEAN" )]
+        BOOLEAN
     }
 }

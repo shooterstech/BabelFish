@@ -32,10 +32,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 					parameterList.Add( "conference", new List<string>() { Conference } );
 
 				if (StartDate > DateTime.MinValue )
-					parameterList.Add( "start-date", new List<string>() { StartDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+					parameterList.Add( "start-date", new List<string>() { StartDate.ToString( DateTimeFormats.DATE_FORMAT ) } );
 
 				if (EndDate < DateTime.MaxValue )
-					parameterList.Add( "end-date", new List<string>() { EndDate.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+					parameterList.Add( "end-date", new List<string>() { EndDate.ToString( DateTimeFormats.DATE_FORMAT ) } );
 
 				if (TeamId > 0)
 					parameterList.Add( "team-id", new List<string> { TeamId.ToString() } );

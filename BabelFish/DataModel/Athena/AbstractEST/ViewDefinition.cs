@@ -5,21 +5,18 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using BabelFish.DataModel.Athena;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
     public class ViewDefinition
     {
 
-        public enum ReplaceVariableOptions { ResultList, ResultLists };
-
         public ViewDefinition()
         {
 
             ViewName = "Default";
-            EntityName = "AthleteDisplay";
+            EntityName = DisplayEntityType.AthleteDisplay;
             //Config = new Dictionary<string, string>();
             ReplaceAttributes = new List<ReplaceVariableOptions>();
         }
@@ -37,20 +34,18 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
             this.ShowBottomStrip = vd.ShowBottomStrip;
         }
 
-        [JsonProperty(Order = 1)]
+        [G_NS.JsonProperty( Order = 1 )]
         public string ViewName { get; set; }
 
-        [JsonProperty(Order = 2)]
-        public string Description { get; set; }
 
-        [JsonProperty(Order = 3)]
-        public string EntityName { get; set; }
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public DisplayEntityType EntityName { get; set; }
 
         /// <summary>
         /// EntityName specific configurations.
         /// </summary>
-        [JsonProperty(Order = 4)]
-        public dynamic Config { get; set; }
+        [G_NS.JsonProperty( Order = 3 )]
+        public DisplayEntityConfiguration Config { get; set; }
 
         /// <summary>
         /// If the Config attribute is a dictionary with Key type of string (which it should be)
@@ -59,14 +54,20 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         /// ResultLists: Which is a list of strings
         /// ResultList: Which is a string
         /// </summary>
-        [JsonProperty(Order = 5, ItemConverterType = typeof(StringEnumConverter))]
+        [G_NS.JsonProperty( Order = 4 )]
         public List<ReplaceVariableOptions> ReplaceAttributes { get; set; }
 
-        [JsonProperty(Order = 6)]
+
+        [G_NS.JsonProperty( Order = 5 )]
         public bool ShowTopStrip { get; set; }
 
-        [JsonProperty(Order = 7)]
+
+        [G_NS.JsonProperty( Order = 6 )]
         public bool ShowBottomStrip { get; set; }
+
+
+        [G_NS.JsonProperty( Order = 10 )]
+        public string Description { get; set; }
 
         public override string ToString()
         {

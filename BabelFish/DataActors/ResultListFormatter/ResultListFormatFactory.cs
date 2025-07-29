@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -31,6 +29,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="eventName"></param>
         /// <returns></returns>
         public async Task<SetName> GetResultListFormatSetNameAsync( ResultList resultList) {
+
+            if ( resultList == null )
+                return GetDefaultByEventName( "Qualification" );
 
             SetName resultListFormatSetName;
 
@@ -174,7 +175,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
 
-            return GetDefaultByEventName( eventName ); ;
+            return GetDefaultByEventName( eventName );
 
 
         }

@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 					parameterList.Add( "conference", new List<string>() { Conference } );
 
 				if (Date > DateTime.MinValue )
-					parameterList.Add( "date", new List<string>() { Date.ToString( Scopos.BabelFish.DataModel.Athena.DateTimeFormats.DATE_FORMAT ) } );
+					parameterList.Add( "date", new List<string>() { Date.ToString( DateTimeFormats.DATE_FORMAT ) } );
 
 				if ( Limit > 0 )
 					parameterList.Add( "limit", new List<string>() { Limit.ToString() } );

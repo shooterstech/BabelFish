@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Text;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -23,26 +22,56 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public string GameName { get; set; }
 
-		/// <summary>
-		/// The Virtual type of league game. Usually Not Set, Local, Virtual, Bye Week, or Cancelled.
-		/// </summary>
-		public LeagueVirtualType Virtual { get; set; }
+        /// <summary>
+        /// Human readable Name of the League Network
+        /// </summary>
+        public string LeagueNetworkName { get; set; }
 
-		/// <summary>
-		/// The date this league game started.
-		/// </summary>
-		[JsonConverter(typeof(DateConverter))]
-		public DateTime StartDate { get; set; }
+        public int LeagueNetworkID { get; set; }
 
-		/// <summary>
-		/// The date this league game ended.
-		/// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
+        /// <summary>
+        /// Human readable name of the League's Season
+        /// </summary>
+        public string SeasonName { get; set; }
+
+        public int SeasonID { get; set; }
+
+        /// <summary>
+        /// Human readabel name of the League
+        /// </summary>
+        public string LeagueName { get; set; }
+
+        /// <summary>
+        /// The Virtual type of league game. Usually Not Set, Local, Virtual, Bye Week, or Cancelled.
+        /// </summary>
+        public LeagueVirtualType Virtual { get; set; }
+
+        /// <summary>
+        /// The scheibentoni ID of the league
+        /// </summary>
+        public string LeagueID { get; set; }
+
+        /// <summary>
+        /// The date this league game started.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// The date this league game ended.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
 		public LeagueTeamResult HomeTeam { get; set; }
 
 		public LeagueTeamResult AwayTeam { get; set; }
+
+        public string ReportText { get; set; }
+
+        public string ReportHTML { get; set; }
 
         public override string ToString() {
 			return GameName;

@@ -4,7 +4,6 @@ using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Newtonsoft;
 using NLog;
 using System.Runtime.CompilerServices;
 using Scopos.BabelFish.APIClients;
@@ -69,6 +68,10 @@ namespace Scopos.BabelFish.Helpers {
         /// <returns></returns>
         public static string SingleDate( DateTime date ) {
             return date.ToString( "ddd, dd MMM yyyy" );
+        }
+
+        public static string SingleDateTime( DateTime date ) {
+            return date.ToString( "dd MMM yyyy HH:mm" );
         }
 
         /// Formats the passed in DateTime string into a standard method of displaying dates.
@@ -365,6 +368,19 @@ namespace Scopos.BabelFish.Helpers {
                     break;
             }
             return $"{number}{suffix}";
-        }
-    }
+		}
+
+		/// <summary>
+		/// Truncates a string at the given number of characters (default to 24).
+		/// </summary>
+		/// <param name="untruncatedValue"></param>
+		/// <returns></returns>
+		public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
+			if (untruncatedValue.Length >= numberOfCharacters) {
+				return $"{untruncatedValue.Substring( 0, numberOfCharacters-4 )}...";
+			} else {
+				return untruncatedValue;
+			}
+		}
+	}
 }

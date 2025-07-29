@@ -1,18 +1,12 @@
-﻿using System.Reflection;
-using System.IO;
-using NLog;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.Responses;
+﻿using System.Net;
 using Scopos.BabelFish.Requests;
-using System.Net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NLog.LayoutRenderers;
+using Scopos.BabelFish.Responses;
 
-namespace Scopos.BabelFish.APIClients
-{
-    public class ResponseCache {
+namespace Scopos.BabelFish.APIClients {
+    public class ResponseCache : IClearCache{
 		private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private int requestCount = 0;
 
 		/// <summary>
 		/// This is where previously called response/request objects
@@ -25,22 +19,9 @@ namespace Scopos.BabelFish.APIClients
 
         public static ResponseCache CACHE= new ResponseCache();
 
-        private static readonly JsonSerializerSettings JSETTINGS_WITHOUT_DEFAULTS = new JsonSerializerSettings() {
-			TypeNameHandling = TypeNameHandling.Auto,
-			NullValueHandling = NullValueHandling.Ignore,
-			Formatting = Formatting.Indented,
-			DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
-		};
-
 		private ResponseCache() {
 
         }
-
-        /// <summary>
-        /// The directory that BabelFish may use to store cached responses. 
-        /// </summary>
-        [Obsolete("Replaced with API Client's File System Cache")]
-        public DirectoryInfo? LocalStoreDirectory { get; set; } = null;
 
         /// <summary>
         /// Attempts to retreive a Response from memory based on the passed in request value. 
@@ -55,6 +36,10 @@ namespace Scopos.BabelFish.APIClients
         public bool TryGetResponse( Request request, out ResponseIntermediateObject value ) {
             var key = request.GetRequestCacheKey();
             lock (mutex) {
+                //Celan up the cache every 500 requests
+                if (requestCount++ % 500 == 0)
+                    CleanUpAsync();
+
                 if (cachedRequests.TryGetValue( key, out value )) {
                     if (value.ValidUntil > DateTime.UtcNow) {
                         return true;
@@ -79,22 +64,9 @@ namespace Scopos.BabelFish.APIClients
                 lock (mutex) {
                     cachedRequests[request.GetRequestCacheKey()] = response;
 
-                    if ( LocalStoreDirectory != null ) {
-                        string relativePath = request.GetRequestCacheKey();
-                        relativePath = relativePath.Replace( ':', ' ' );
-
-						string filename = $"{LocalStoreDirectory.FullName}\\{relativePath}.json";
-
-						FileInfo file = new FileInfo( filename );
-                        file.Directory.Create();
-
-                        var json = JsonConvert.SerializeObject( response, JSETTINGS_WITHOUT_DEFAULTS );
-
-						using (StreamWriter sw = File.CreateText( file.FullName )) {
-							sw.WriteLine( json );
-						}
-
-					}
+                    //EKA NOTE Feb 2025: Choosing not to write most response value to file system. As this takes time and I just don't
+                    //get a sense saving them to file system is needed. The one exception is definitions, which has their own 
+                    //mechanism to read and write definition files from disk.
                 }
             }
         }
@@ -126,10 +98,12 @@ namespace Scopos.BabelFish.APIClients
             }
         }
 
-        /// <summary>
-        /// Removes all items from cache
-        /// </summary>
-        public void Clear() {
+        public async Task CleanUpAsync() {
+            CleanUp();
+        }
+
+        /// <inheritdoc />
+        public void ClearCache() {
             lock(mutex) {
                 cachedRequests.Clear();
             }
@@ -145,7 +119,7 @@ namespace Scopos.BabelFish.APIClients
 
         public MessageResponse MessageResponse { get; set; }
 
-        public JToken Body { get; set; }
+        public G_STJ.JsonDocument Body { get; set; }
 
         public DateTime ValidUntil { get; set; }
     }

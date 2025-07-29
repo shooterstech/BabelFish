@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -11,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Given the Target Collection Name, AttributeValueAppellation, and EventAppellation / StageAppellation, the Event and Stage Style Mapping
     /// defines how to map these inputs to an EventStyle or StageStyle. This is then used in the generation of a ResultCOF data structure.
     /// </summary>
-    public class EventAndStageStyleMappingObj : IReconfigurableRulebookObject, ICopy<EventAndStageStyleMappingObj> {
+    public class EventAndStageStyleMappingObj : IReconfigurableRulebookObject, IGetEventStyleDefinition, IGetStageStyleDefinition {
 
         public EventAndStageStyleMappingObj() {
             EventStyleMappings = new List<EventStyleSelection>();
@@ -34,78 +35,91 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 TargetCollectionName = new List<string>();
         }
 
-        /// <inheritdoc />
-        public EventAndStageStyleMappingObj Copy()
-        {
-            EventAndStageStyleMappingObj e = new EventAndStageStyleMappingObj();
-            
-            e.DefaultEventStyleDef = this.DefaultEventStyleDef;
-            e.DefaultStageStyleDef = this.DefaultStageStyleDef;
-
-            if (this.AttributeValueAppellation != null)
-            {
-                foreach (var av in this.AttributeValueAppellation)
-                {
-                    e.AttributeValueAppellation.Add(av);
-                }
-            }
-            if (this.TargetCollectionName != null)
-            {
-                foreach (var av in this.TargetCollectionName)
-                {
-                    e.TargetCollectionName.Add(av);
-                }
-            }
-            if (this.EventStyleMappings != null)
-            {
-                foreach(var ess in this.EventStyleMappings)
-                {
-                    e.EventStyleMappings.Add(ess.Copy());
-                }
-            }
-            if (this.StageStyleMappings != null)
-            {
-                foreach (var sss in this.StageStyleMappings)
-                {
-                    e.StageStyleMappings.Add(sss.Copy());
-                }
-            }
-            return e;
-        }
-
         /// <summary>
-        /// The AttributeValueAppellation to use within this mapping.
+        /// The AttributeValueAppellations to use within this mapping.
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        /// <remarks>
+        /// This property is ignored in the EVENT AND STAGE STYLE MAPPING's DefaultMapping section.
+        /// </remarks>
+        [JsonPropertyOrder( 1 )]
         public List<string> AttributeValueAppellation { get; set; } = new List<string>();
 
         /// <summary>
         /// The TargetCollectionName to use within this mapping.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        /// <remarks>
+        /// This property is ignored in the EVENT AND STAGE STYLE MAPPING's DefaultMapping section.
+        /// </remarks>
+        [JsonPropertyOrder( 2 )]
         public List<string> TargetCollectionName { get; set; } = new List<string>();
 
         /// <summary>
         /// The EventStyle definition to use if a mappings could not be found.
         /// </summary>
-        [JsonProperty( Order = 3 )]
-        [DefaultValue( "" )] //Purposefully setting the JSON serializer default value to an empty string, which does not equal the object initialzer default value.
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "v1.0:orion:Default" )]
         public string DefaultEventStyleDef { get; set; } = "v1.0:orion:Default";
+
+        /// <summary>
+        /// The EventAppellation specific mappings to use for EVENT STYLES.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 4 )]
+        public List<EventStyleSelection> EventStyleMappings { get; set; } = new List<EventStyleSelection> { };
 
         /// <summary>
         /// The StageStyle definition to use if a mapping could not be found.
         /// </summary>
-        [JsonProperty( Order = 4 )]
-        [DefaultValue( "" )] //Purposefully setting the JSON serializer default value to an empty string, which does not equal the object initialzer default value.
+        [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "v1.0:orion:Default" )]
         public string DefaultStageStyleDef { get; set; } = "v1.0:orion:Default";
 
-        public List<EventStyleSelection> EventStyleMappings { get; set; } = new List<EventStyleSelection> { };
-
+        /// <summary>
+        /// The EventAppellation specific mappings to use for STAGE STYLES.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
         public List<StageStyleSelection> StageStyleMappings { get; set; } = new List<StageStyleSelection> { };
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
-        [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 100 )]
+        [DefaultValue( "" )]        
         public string Comment { get; set; } = string.Empty;
+
+        public bool ShouldSerializeEventStyleMappings() {
+            return EventStyleMappings != null && EventStyleMappings.Count > 0;
+        }
+
+        public bool ShouldSerializeStageStyleMappings() {
+            return StageStyleMappings != null && StageStyleMappings.Count > 0;
+        }
+
+        public bool ShouldSerializeAttributeValueAppellation() {
+            return AttributeValueAppellation != null && AttributeValueAppellation.Count > 0;
+        }
+
+        public bool ShouldSerializeTargetCollectionName() {
+            return TargetCollectionName != null && TargetCollectionName.Count > 0;
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>Returns the EVENT STYLE definition referenced by the property DefaultEventStyleDef </remarks>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        public async Task<EventStyle> GetEventStyleDefinitionAsync() {
+
+            var sb = SetName.Parse( DefaultEventStyleDef );
+            return await DefinitionCache.GetEventStyleDefinitionAsync( sb );
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>Returns the STAGE STYLE definition referenced by the property DefaultStageStyleDef </remarks>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        public async Task<StageStyle> GetStageStyleDefinitionAsync() {
+
+            var sb = SetName.Parse( DefaultStageStyleDef );
+            return await DefinitionCache.GetStageStyleDefinitionAsync( sb );
+        }
     }
 }

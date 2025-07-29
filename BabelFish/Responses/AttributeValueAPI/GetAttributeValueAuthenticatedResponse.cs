@@ -2,14 +2,13 @@
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.Definitions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using NLog;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI {
     public class GetAttributeValueAuthenticatedResponse : Response<AttributeValuesWrapper> {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public GetAttributeValueAuthenticatedResponse( GetAttributeValueAuthenticatedRequest request ) : base() {
             this.Request = request;

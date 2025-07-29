@@ -64,7 +64,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //First try and use the RankingRule that's listed in the ResultList
             if (!string.IsNullOrEmpty( this.ResultList.RankingRuleDef ) && SetName.TryParse( this.ResultList.RankingRuleDef, out rankingRuleSetName )) {
                 this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Result List." );
+                logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Result List." );
                 return;
             }
 
@@ -73,7 +73,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 if (@event.EventName == this.ResultList.EventName) {
                     if (!string.IsNullOrEmpty( @event.RankingRuleDef ) && SetName.TryParse( @event.RankingRuleDef, out rankingRuleSetName )) {
                         this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                        logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.Name}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
+                        logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
 
                         return;
                     }
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //And if that didn't work, the user is pretty much screwed.
             //Guess we'll try and generate a Ranking Rule defintion based on the Event Name ... which is pretty clever is I do say so myself.
             this.RankingRule = RankingRule.GetDefault( this.ResultList.EventName, this.ResultList.ScoreConfigName );
-            logger.Warn( $"A default / generic Ranking Rule will be used to sort Result List '{this.ResultList.Name}', dynamically generated based on EventName '{this.ResultList.EventName}' and Score Config Name '{this.ResultList.ScoreConfigName}'." );
+            logger.Warn( $"A default / generic Ranking Rule will be used to sort Result List '{this.ResultList.ResultName}', dynamically generated based on EventName '{this.ResultList.EventName}' and Score Config Name '{this.ResultList.ScoreConfigName}'." );
 
         }
 
@@ -92,6 +92,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public CourseOfFire CourseOfFire { get; private set; }
 
         public RankingRule RankingRule { get; private set; }
+
+		/// <summary>
+		/// Sets the Result List to use to calculate the Rank Delta for each participant.
+		/// The static class ResultListSlidingWindow is written to know which Result List
+		/// should be set to CompareResultList. 
+		/// <para>A value of null means dont' calculate a comparision.</para>
+		/// </summary>
+		public ResultList CompareResultList { get; set; } = null;
+
+		/// <summary>
+		/// Enables or disables projecting scores and ranking participants by their projection. 
+		/// This value is traditionally specified by the COURSE OF FIRE Range Scrip's Command.ResultEngineScoreProjection property.
+		/// A value of true (to disable) only has an effect if score projection would otherwise
+		/// be used (e.g. result list status is INTERMEDIATE). A value of false, has no effect.
+		/// </summary>
+		public bool DisableScoreProjection { get; set; } = false;
 
         /// <summary>
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
@@ -167,8 +183,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             //Project scores and perform a ranking by Projected Score
-            //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL)
-            if (this.ResultList.Status == ResultStatus.INTERMEDIATE) {
+            //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL), and the user has not turned it off.
+            if (this.ResultList.Status == ResultStatus.INTERMEDIATE && ! DisableScoreProjection) {
 
 
                 //Project (predict) the scores of athlets at the end of the match.
@@ -179,7 +195,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                 await ps.InitializeAsync( this.ResultList.Items.ToList<IEventScoreProjection>() );
                 foreach (var item in this.ResultList.Items) {
-                    item.ProjectScores( ps );
+                    //Do not project scores for anyone who has a DNS, DNF, DSQ, or ELIMINATED
+                    if (!item.Participant.RemarkList.HasNonCompletionRemark)
+                        item.ProjectScores( ps );
                 }
 
                 //When we are sorting by projected scores, we only will ever use the first Ranking Directive (which gets applied to all Result Events)
@@ -250,6 +268,36 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     resultEvent.ProjectedRank = 0;
                     resultEvent.ProjectedRankOrder = 0;
                 }
+            }
+
+            //Calculate the RankDelta 
+            ResultEvent compare;
+            if (this.CompareResultList != null 
+                && this.CompareResultList.ResultName == this.ResultList.ResultName
+                && this.ResultList.Status == ResultStatus.INTERMEDIATE ) {
+                foreach (var re in this.ResultList.Items) {
+                    if ((re.CurrentlyCompetingOrRecentlyDone())
+						&& this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )
+                        && compare.CurrentlyCompetingOrRecentlyDone()) {
+
+                        if (this.ResultList.Projected && this.CompareResultList.Projected) {
+                            re.RankDelta = compare.ProjectedRank - re.ProjectedRank;
+                        } else if (this.ResultList.Projected) { //And by deduction, the CompareResultList is not projected
+                            //This is a special case that is known to happen in Finals.
+                            //The Compare result list is generated during commentary, and uses only absolute ranking.
+                            //However the updated Result Lisst, generated when everyone is shooting, uses projected ranking.
+                            re.RankDelta = compare.Rank - re.ProjectedRank;
+                        } else {
+                            logger.Error( $"RE {re.Participant.DisplayName} {re.ResultCOFID} {re.Rank} {this.ResultList.LastUpdated}" );
+							logger.Error( $"Compare {compare.Participant.DisplayName} {compare.ResultCOFID} {compare.Rank} {CompareResultList.LastUpdated}" );
+                            logger.Error( $"{re.RankDelta}" );
+							re.RankDelta = compare.Rank - re.Rank;
+                        }
+                    } else {
+                        re.RankDelta = 0;
+                    }
+                }
+                this.ResultList.Metadata.First().Value.CompareResultListLastUpdated = this.CompareResultList.LastUpdated;
             }
         }
 

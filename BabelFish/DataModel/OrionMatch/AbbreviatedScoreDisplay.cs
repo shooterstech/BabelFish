@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -27,40 +29,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Generates a new AbbreviatedScoreDisplay instance, based on the defintion of an AbbreviatedFormat.
         /// </summary>
         /// <param name="abbreviatedFormat"></param>
-        public AbbreviatedScoreDisplay( Scopos.BabelFish.DataModel.Definitions.AbbreviatedFormat abbreviatedFormat) {
+        public AbbreviatedScoreDisplay( AbbreviatedFormat abbreviatedFormat, ResultEvent re) {
             this.FormatName = abbreviatedFormat.FormatName;
             this.EventName = abbreviatedFormat.EventName;
             this.EventDisplayName = abbreviatedFormat.EventDisplayName;
             
             this.Children = new List<AbbreviatedScoreDisplay>();
-            foreach ( var abChild in abbreviatedFormat.Children) {
-                this.Children.Add(new AbbreviatedScoreDisplay(abChild));
+            foreach ( var abChild in abbreviatedFormat.GetCompiledAbbreviatedFormatChildren( re ) ) {
+                this.Children.Add(new AbbreviatedScoreDisplay(abChild, re));
             }
         }
 
-        [OnDeserialized]
-        internal void OnDeserializedMethod( StreamingContext context ) {
-            if (FormatName == null)
-                FormatName = "";
-
-            if (EventName == null)
-                EventName = "";
-
-            if (Children == null)
-                Children = new List<AbbreviatedScoreDisplay>();
-        }
+        public AbbreviatedScoreDisplay( AbbreviatedFormatChild abbreviatedFormat, ResultEvent re ) {
+			this.EventName = abbreviatedFormat.EventName;
+			this.EventDisplayName = abbreviatedFormat.EventDisplayName;
+		}
 
         /// <summary>
         /// A unique name given to this AbbreviatedFormat.
         /// </summary>
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder ( 1 )]
         [DefaultValue( "" )]
         public string FormatName { get; set; }
 
         /// <summary>
         /// The name of the top level event.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         [DefaultValue( "" )]
         public string EventName { get; set; }
 
@@ -68,29 +63,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The name of the event to display to the athlete
         /// </summary>
         [DefaultValue( "" )]
-        [JsonProperty( Order = 3 )]
+        [JsonPropertyOrder ( 3 )]
         public string EventDisplayName { get; set; }
 
         /// <summary>
         /// A list of child events who scores should be included in the resulting AbbreviatedResultCOF.
         /// Must be List<AbbreviatedFormat> or ...
         /// </summary>
-        [JsonProperty( Order = 4 )]
+        [JsonPropertyOrder ( 4 )]
         [DefaultValue( null )]
         public List<AbbreviatedScoreDisplay> Children { get; set; }
+
+        public bool ShouldSerializeChildren() {
+            return ( Children != null && Children.Count > 0 );
+        }
 
         /// <summary>
         /// Human Readable score format string. defaults to decimal single value.
         /// </summary>
-        [JsonProperty( Order = 5 )]
+        [JsonPropertyOrder ( 5 )]
         [DefaultValue( "0 - 0" )]
         public string ScoreFormatted { get; set; }
 
         /// <summary>
         /// available shot attribute list.
         /// </summary>
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder ( 6 )]
         public List<string> AttributeList { get; set; } = new List<string>();
+
+        public bool ShouldSerializeAttributeList() {
+            return (AttributeList != null && AttributeList.Count > 0);
+        }
 
         public override string ToString() {
             if (FormatName != "")

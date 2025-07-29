@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
-using Newtonsoft.Json;
 using System.ComponentModel;
+using System.Dynamic;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
@@ -30,6 +30,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public const string SHOT_ATTRIBUTE_EMPTY = "EMPTY";
         /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
         public const string SHOT_ATTRIBUTE_UNKNOWN_COORDINATES = "UNKNOWN COORDINATES";
+        /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
+        public const string MANUALLY_MODIFIED = "MANUALLY MODIFIED";
 
         /// <summary>
         /// Public constructor
@@ -74,6 +76,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public Location Location { get; set; }
 
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime TimeScored { get; set; }
 
         /// <summary>
@@ -186,7 +190,11 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         public string MatchID { get; set; }
 
-        public dynamic Meta { get; set; }
+        /// <summary>
+        /// Additional information about the shot. Format is dependent of the type of EST system used to score the shot.
+        /// </summary>
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DynamicConverter ) ) ]
+		public ExpandoObject Meta { get; set; }
 
         /// <summary>
         /// EventName is only set when the shot is part of a Result COF .Shots dictionary
@@ -208,15 +216,18 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         {
             try
             {
-                float x = (float)Meta["VerImgBullXCoor"];
-                float y = (float)Meta["VerImgBullYCoor"];
+                var meta = (IDictionary<string, object>)Meta;
+
+				float x = Convert.ToSingle( meta["VerImgBullXCoor"] );
+                float y = Convert.ToSingle( meta["VerImgBullYCoor"] );
                 Tuple<float, float> coordinates = new Tuple<float, float>(x, y);
 
                 return coordinates;
             }
             catch (Exception e)
             {
-                throw new KeyNotFoundException("Unable to read the X and Y coorediantes of the aiming bull from the Shot's Meta data.");
+                var knf = new KeyNotFoundException("Unable to read the X and Y coorediantes of the aiming bull from the Shot's Meta data.", e);
+                throw knf;
             }
         }
 
@@ -228,13 +239,14 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <exception cref="KeyNotFoundException"></exception>
         public float GetVerificationImageDPMM()
         {
-            try
-            {
-                return (float)Meta["VerImgDPMM"];
+            try {
+				var meta = (IDictionary<string, object>)Meta;
+				return Convert.ToSingle( meta["VerImgDPMM"] );
             }
             catch (Exception e)
             {
-                throw new KeyNotFoundException("Unable to read the DPMM value from the Shot's Meta data.");
+				var knf = new KeyNotFoundException("Unable to read the DPMM value from the Shot's Meta data.", e);
+                throw knf;
             }
         }
 
@@ -245,9 +257,9 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <returns></returns>
         public float GetVerificationImageRotation()
         {
-            try
-            {
-                return (float)Meta["VerImgRotation"];
+            try {
+				var meta = (IDictionary<string, object>)Meta;
+				return Convert.ToSingle( meta["VerImgRotation"] );
             }
             catch (Exception e)
             {
@@ -261,7 +273,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Most likely a VIS.Shot
         /// Non serializable property.
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public object DataObjectTag { get; set; }
 
         /// <summary>
@@ -321,7 +334,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Helper property that indicates if this shot is marked as a deleted shot.
         /// A Deleted shot has "DELETED" as an Attribute
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool IsADeletedShot
         {
             get
@@ -334,7 +348,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Helper property that indicates if this shot is marked as a sighter shot.
         /// A Deleted shot has "SIGHTER" as an Attribute
         /// </summary>
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool IsASighter
         {
             get

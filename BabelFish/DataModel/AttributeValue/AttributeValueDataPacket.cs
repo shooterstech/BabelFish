@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataModel.AttributeValue {
+namespace Scopos.BabelFish.DataModel.AttributeValue
+{
 
     [Serializable]
-    [JsonConverter( typeof( AttributeValueDataPacketConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
     public abstract class AttributeValueDataPacket : IDeserializableAbstractClass {
 
         public const int CONCRETE_CLASS_ID = 1;
@@ -44,22 +41,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         public VisibilityOption Visibility { get; set; }
-
-        /// <inheritdoc/>
-        [Obsolete("Use JSON Customer Converters instead")]
-        public JToken ToJToken() {
-            
-            JObject json = new JObject();
-            json.Add( "AttributeDef", AttributeDef.ToString() );
-            json.Add( "Visibility", Visibility.ToString() );
-            json.Add( "AttributeValue", AttributeValue.ToJToken() );
-
-            var appellation = AttributeValue.AttributeValueAppellation;
-            if ( string.IsNullOrEmpty( appellation ) )
-                json.Add( "AttributeValueAppellation", appellation );
-
-            return json;
-        }
 
         /// <summary>
         /// Implementation of the IDeserializableAbstractClass interface.

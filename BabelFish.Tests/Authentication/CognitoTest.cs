@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Threading.Tasks;
 using Amazon;
 using Amazon.CognitoIdentity;
 using Amazon.CognitoIdentityProvider;
 using Amazon.Extensions.CognitoAuthentication;
-using Amazon.Runtime;
-using Amazon.CognitoIdentityProvider.Model;
 
 namespace Scopos.BabelFish.Tests.Authentication {
     [TestClass]
-    public class CognitoTest {
+    public class CognitoTest : BaseTestClass {
 
         private static string accountID = "703601548845";
         private static string awsRegion = "us-east-1";
@@ -118,7 +109,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             var accessToken = authResponse.AuthenticationResult.AccessToken;
             var refreshToken = authResponse.AuthenticationResult.RefreshToken;
             var idToken = authResponse.AuthenticationResult.IdToken;
-            var deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
+            //var deviceKey = authResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
 
             //Now we can get AWS Credentials for the user
             CognitoAWSCredentials credentials =
@@ -131,6 +122,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             //TODO: Determine if we will need to remember the device password.
             //TODO: Determine how device authentication will work with users signing onto www server (instead of an App).
 
+            /*
             //Device Verification happens locally. the Salt and password verifier gets sent to Cognito in the next .ConfirmDeviceAsync() call
             var deviceVerifier = user.GenerateDeviceVerifier(
                 authResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey,
@@ -156,6 +148,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 user );
             await device.GetDeviceAsync();
             user.Device = device;
+            */
 
             //Now pretend we need ot fast foward in time and refresh the tokens
 

@@ -30,6 +30,13 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
 		}
 
 		/// <inheritdoc />
+		public bool HasMoreItems {
+			get {
+				return !string.IsNullOrEmpty( Value.LeagueGames.NextToken );
+			}
+		}
+
+		/// <inheritdoc />
 		protected internal override DateTime GetCacheValueExpiryTime() {
 
 			return DateTime.UtcNow.AddMinutes( 1 );

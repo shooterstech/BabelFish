@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
@@ -24,28 +25,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Items = new List<ResultEvent>();
         }
 
-        [JsonProperty( Order = 1 )]
+        [JsonPropertyOrder ( 1 )]
 		[Obsolete( "Use .Metadata.MatchID" )]
 		public string MatchID { get; set; } = string.Empty;
 
         /// <summary>
         /// Set name of the Ranking Rule definition used to rank this result list.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         public string RankingRuleDef { get; set; } = string.Empty;
 
         /// <summary>
         /// Set name of the Result List Format definition to use when displaying this result list.
         /// </summary>
-        [JsonProperty( Order = 2 )]
+        [JsonPropertyOrder ( 2 )]
         public string ResultListFormatDef { get; set; } = string.Empty;
 
         /// <summary>
         /// Indicates the completion status of this Result List. 
         /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
         /// </summary>
-        [JsonProperty( Order = 3 )]
-        [JsonConverter( typeof( StringEnumConverter ) )]
+        [JsonPropertyOrder ( 3 )]
+        
         public ResultStatus Status {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -120,7 +121,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The start date that the underlying event, in this Result List, started on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -139,7 +141,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The end date that the underlying event, in this Result List, ended on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonConverter( typeof( DateConverter ) )]
+        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -157,66 +160,68 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The Version string of the JSON document
         /// </summary>
-        [JsonProperty( Order = 6 )]
+        [JsonPropertyOrder ( 6 )]
         public string JSONVersion { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 7, DefaultValueHandling = DefaultValueHandling.Include )]
+        [JsonPropertyOrder ( 7 )]
+        [JsonInclude]
         [DefaultValue( false )]
         public bool Team { get; set; } = false;
 
-        [JsonProperty( Order = 8 )]
+        [JsonPropertyOrder ( 8 )]
         public string ParentID { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 50 )]
+        [JsonPropertyOrder ( 50 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 
-        /// <summary>
-        /// Deprecated, use ResultName
-        /// </summary>
-        [Obsolete( "Deprecated, use ResultName" )]
-        [JsonProperty( Order = 18 )]
-        public string Name { get; set; } = string.Empty;
+        [JsonPropertyOrder( 10 )]
+        public string MatchName { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 11 )]
+        [JsonPropertyOrder ( 11 )]
         public string ResultName { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 12 )]
-        [JsonConverter( typeof( Scopos.BabelFish.Converters.DateTimeConverter ) )]
-		public DateTime LastUpdated { get; set; } = new DateTime();
+        /// <summary>
+        /// UTC time that this Result List was updated.
+        /// </summary>
+        [JsonPropertyOrder( 12 )]
+        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
         [Obsolete( "Use .MetaData.OwnerId")]
-        [JsonProperty( Order = 13 )]
+        [JsonPropertyOrder ( 13 )]
         public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
         /// Set to true if this ResultList is considered one of the most important and should be featured
         /// </summary>
-        [JsonProperty( Order = 14, DefaultValueHandling = DefaultValueHandling.Include )]
+        [JsonPropertyOrder ( 14 )]
+        [JsonInclude]
         [DefaultValue( false )]
         public bool Primary { get; set; } = false;
 
-        [JsonProperty( Order = 15 )]
+        [JsonPropertyOrder ( 15 )]
         public string UniqueID { get; set; } = string.Empty;
 
         /// <summary>
         /// EventName is the name of the top level Event for this Result List.
         /// </summary>
-        [JsonProperty( Order = 16 )]
+        [JsonPropertyOrder ( 16 )]
         public string EventName { get; set; } = string.Empty;
 
-        [JsonProperty( Order = 17 )]
+        [JsonPropertyOrder ( 17 )]
         public string ResultListID { get; set; } = string.Empty;
 
         /// <summary>
         /// If True, Participants are listed in order of their projected score. 
         /// Should only ever be true if Status is FUTURE or INTERMEDIATE
         /// </summary>
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         [DefaultValue(false)]
+        [JsonInclude]
         public bool Projected { get; set; } = false;
 
         /// <summary>
@@ -237,17 +242,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [DefaultValue( "" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
+        [JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />
         [DefaultValue(0)]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public int Limit { get; set; } = 0;
 
         /// <inheritdoc />
         [DefaultValue( false )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public bool HasMoreItems {
             get {
                 return !string.IsNullOrEmpty( NextToken );
@@ -256,17 +259,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [DefaultValue( "" )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public string PublishTransactionId { get; set; } = string.Empty;
 
         /// <inheritdoc />
         [DefaultValue( 0 )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public int TransactionSequence { get; set; } = 0;
 
         /// <inheritdoc />
         [DefaultValue( 1 )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate )]
         public int TransactionCount { get; set; } = 1;
 
         /// <summary>
@@ -320,6 +320,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return $"ResultList for {ResultName}" ;
+        }
+
+        public bool TryGetByResultCOFID( string resultCofId, out ResultEvent resultEvent ) {
+
+            foreach (var re in this.Items) {
+                if (re.ResultCOFID == resultCofId) {
+                    resultEvent = re;
+                    return true;
+                }
+            }
+
+            resultEvent = null;
+            return false;
         }
     }
 }

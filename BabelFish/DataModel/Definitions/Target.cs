@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -14,30 +8,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// A TARGET defines the appearance and scoring ring dimensions of a physical and scoring target.
     /// </summary>
     [Serializable]
-    public class Target : Definition, ICopy<Target> {
+    public class Target : Definition {
 
         /// <summary>
         /// Public constructor
         /// </summary>
         public Target() : base() {
             Type = DefinitionType.TARGET;
-        }
-
-        /// <inheritdoc />
-        public Target Copy() {
-            Target copy = new Target();
-
-            base.Copy(copy);
-
-            copy.InnerTen = this.InnerTen.Copy();
-            copy.BackgroundColor = this.BackgroundColor;
-            copy.Distance = this.Distance;
-            foreach( var sr in this.ScoringRings) 
-                copy.ScoringRings.Add(sr.Copy());
-            foreach (var am in this.AimingMarks)
-                copy.AimingMarks.Add( am.Copy() );
-
-            return copy;
         }
 
         [OnDeserialized]
@@ -48,33 +25,59 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// An ordered list, highest to lowest, of the scoring rings on the target.
         /// </summary>
-        [JsonProperty(Order = 10)]
+		[G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
         public List<ScoringRing> ScoringRings { get; set; } = new List<ScoringRing>();
 
         /// <summary>
         /// Definition of the inner ten ring (sometimes called 'X's or "Center Tens").
         /// </summary>
-        [JsonProperty(Order = 11)]
+		[G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
         public ScoringRing InnerTen { get; set; } = new ScoringRing();
 
         /// <summary>
         /// An ordered list, largest to smallest, of the aiming marks on the physical target.
         /// </summary>
-        [JsonProperty(Order = 12)]
+		[G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
         public List<AimingMark> AimingMarks { get; set; } = new List<AimingMark>();
 
         /// <summary>
         /// The background color of the target.
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        [JsonProperty(Order = 13)]
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public AimingMarkColor BackgroundColor { get; set; } = AimingMarkColor.WHITE;
 
         /// <summary>
         /// The expected distance that this target is shot at. Measured in mm.
         /// </summary>
-        [JsonProperty( Order = 14 )]
+		[G_STJ_SER.JsonPropertyOrder( 20 )]
+        [G_NS.JsonProperty( Order = 20 )]
         [DefaultValue( 10000 )]
         public int Distance { get; set; } = 10000;
-    }
+
+        /// <summary>
+        /// The maximum zoom that this target should be displayed in a square user interface window.
+        /// The width that is shown (on the physical target) would be the width of the widest scoirng ring
+        /// divided by the MaxZoom. So on an Air Rifle target, the width of the 1 ring is 45.5mm. If MaxZoom
+        /// is 4.5, then 45.5 / 4.5 = 10.1mm of the target would be shown (which is about the width of the 
+        /// 8 ring.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( 4.5f )]
+        public float MaxZoom { get; set; } = 4.5f;
+
+		/// <inheritdoc />
+		public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsTargetValid();
+
+			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+			SpecificationMessages = validation.Messages;
+
+			return meetsSpecification;
+		}
+	}
 }

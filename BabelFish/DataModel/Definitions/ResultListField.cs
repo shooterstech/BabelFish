@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -37,22 +34,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <item>TargetCollectionName</item>
     /// </list>"
     /// </remarks>
-    public class ResultListField : IReconfigurableRulebookObject, ICopy<ResultListField>
-    {
+    public class ResultListField : IReconfigurableRulebookObject    {
         /// <summary>
         /// Public constructor
         /// </summary>
         public ResultListField() {
             Source = new FieldSource();
-        }
-
-        /// <inheritdoc/>
-        public ResultListField Copy() {
-            ResultListField rlf = new ResultListField();
-            rlf.FieldName = this.FieldName;
-            rlf.Method = this.Method;
-            rlf.Source = this.Source.Copy();
-            return rlf;
         }
 
         [OnDeserialized]
@@ -72,8 +59,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Defines the type of data to be displayed.
         /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public ResultFieldMethod Method { get; set; }
 
         /// <summary>
@@ -88,7 +74,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc/>
-        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
     }

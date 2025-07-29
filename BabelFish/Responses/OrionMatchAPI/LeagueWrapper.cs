@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 	/// Helper class that creates the added structure in the data model needed for Deserialzing a League object from json.
 	/// </summary>
 	public class LeagueWrapper : BaseClass {
-        public League League = new League();
+        public League League { get; set; } = new League();
 
         public override string ToString() {
             return $"League {League.LeagueName}";

@@ -3,34 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
     /// Defines which shots should be displayed within the EST Athlete Monitor and EST Spectator Display during a Segment.
     /// </summary>
-    public class ShowInSegment: IReconfigurableRulebookObject, ICopy<ShowInSegment> {
+    public class ShowInSegment: IReconfigurableRulebookObject {
 
         /// <summary>
         /// Public constructor
         /// </summary>
         public ShowInSegment() {
 
-        }
-
-        /// <inheritdoc/>
-        public ShowInSegment Copy() {
-            ShowInSegment copy = new ShowInSegment();
-            copy.Competition = this.Competition;
-            copy.ShotPresentation = this.ShotPresentation;
-            copy.Comment = this.Comment;
-            if (this.StageLabel != null) {
-                copy.StageLabel.AddRange(this.StageLabel);
-            }
-
-            return copy;
         }
 
         [OnDeserialized]
@@ -42,26 +27,32 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Display shots who's StageLabel is within this list. StageLabels are traditionally defined by a single character.
+        /// <para>An empty list means to display all shots regardless of Stage Label.</para>
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 ) ]
         public List<string> StageLabel { get; set; } = new List<string>();
 
-        /// <summary>
-        /// Display shots that are either competition shots (non sighters), sighters, or both.
-        /// </summary>
-        [JsonConverter( typeof( StringEnumConverter ) )]
-        public CompetitionType Competition { get; set; } = CompetitionType.BOTH;
+		/// <summary>
+		/// Display shots that are either competition shots (non sighters), sighters, or both.
+        /// <para>Default value is BOTH</para>
+		/// </summary>
+		[G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public CompetitionType Competition { get; set; } = CompetitionType.BOTH;
 
         /// <summary>
         /// Must be one of the following values
         /// ALL
         /// STRING (default)
-        /// Past(n), where n is an integer
+        /// Past(1)
+        /// Past(5)
+        /// PAST(10)
         /// </summary>
+		[G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( "STRING" )]
         public string ShotPresentation { get; set; } = "STRING";
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

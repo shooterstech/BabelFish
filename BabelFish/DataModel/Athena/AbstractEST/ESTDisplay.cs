@@ -4,8 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
 {
@@ -30,7 +28,6 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         }
 
 
-        [JsonProperty( Order = 2 )]
         public Marquee Marquee { get; set; }
 
         public ActiveViewValues ActiveViewValues { get; set; }
@@ -38,16 +35,12 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         /// <summary>
         /// Formatted as a SetName
         /// </summary>
-        [JsonProperty( Order = 8 )]
         public CourseOfFire CourseOfFire { get; set; }
 
-        [JsonProperty( Order = 9 )]
         public RangeTimer RangeTimer { get; set; }
 
-        [JsonProperty( Order = 10 )]
         public Logging Logging { get; set; }
 
-        [JsonProperty( Order = 11 )]
         public List<AssignedTarget> AssignedTargets { get; set; }
     }
 }

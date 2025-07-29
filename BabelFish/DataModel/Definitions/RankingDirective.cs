@@ -1,13 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     [Serializable]
-    public class RankingDirective : IReconfigurableRulebookObject, ICopy<RankingDirective>
+    public class RankingDirective : IReconfigurableRulebookObject
     {
 
         private enum STATE { NOTHING_IS_SET, START_IS_SET, END_IS_SET };
@@ -19,10 +19,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         internal void OnDeserialized( StreamingContext context ) {
 
             if (Rules == null)
-                this.Rules = new List<TieBreakingRule>();
+                this.Rules = new List<TieBreakingRuleBase>();
 
             if (ListOnly == null)
-                this.ListOnly = new List<TieBreakingRule>();
+                this.ListOnly = new List<TieBreakingRuleBase>();
         }
 
         /// <summary>
@@ -33,6 +33,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// For example, “1..8” means to apply this RankingRule to participants currently in first through eighth place.
         /// Not required, assumed to be '*' if missing.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "*" )]
         public string AppliesTo { get; set; } = "*";
 
@@ -90,20 +91,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
                 return new Tuple<int, int>( 0, sizeOfList );
             }
-
-            /*
-             * 
-            if (string.IsNullOrEmpty( AppliesTo ) || AppliesTo == "*") {
-                return new Tuple<int, int>( 0, sizeOfList );
-            }
-
-            ValueSeries vs = new ValueSeries( AppliesTo );
-            if (vs.StartValue < vs.EndValue ) {
-                return new Tuple<int, int>( vs.StartValue-1, vs.EndValue-vs.StartValue );
-            } else {
-                return new Tuple<int, int>( 0, sizeOfList );
-            }
-            */
         }
 
         /// <summary>
@@ -114,7 +101,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// This attribute is required and must have one or more elements in the list.
         /// </summary>
-        public List<TieBreakingRule> Rules { get; set; } = new List<TieBreakingRule>();
+        [G_NS.JsonProperty( Order = 2 )]
+        public List<TieBreakingRuleBase> Rules { get; set; } = new List<TieBreakingRuleBase>();
 
         /// <summary>
         /// In the event that tie between two participants can not be broken, the TieBreakingRules in ListOnly are used to sort participants for display purposes only.
@@ -124,7 +112,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// 
         /// This attribute is not required.
         /// </summary>
-        public List<TieBreakingRule> ListOnly { get; set; } = new List<TieBreakingRule>();
+        [G_NS.JsonProperty( Order = 3 )]
+        public List<TieBreakingRuleBase> ListOnly { get; set; } = new List<TieBreakingRuleBase>();
 
         /// <summary>
         /// Generates a default RankingDirective based on the passed in top level event name.
@@ -144,11 +133,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 case "DEC":
                 case "D":
                 default:
-                    directive.Rules.Add( new TieBreakingRule() {
+                    directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        Source = "D"
+                        Source = TieBreakingRuleScoreSource.D
                     } );
                     break;
 
@@ -158,54 +147,33 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 case "CONVENTIONAL":
                 case "CONV":
                 case "C":
-                    directive.Rules.Add( new TieBreakingRule() {
+                    directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        Source = "I"
+                        Source = TieBreakingRuleScoreSource.I
                     } );
 
-                    directive.Rules.Add( new TieBreakingRule() {
+                    directive.Rules.Add( new TieBreakingRuleScore() {
                         EventName = topLevelEventName,
                         SortOrder = Helpers.SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        Source = "X"
+                        Source = TieBreakingRuleScoreSource.X
                     } );
                     break;
             }
 
-            directive.ListOnly.Add( new TieBreakingRule() {
+            directive.ListOnly.Add( new TieBreakingRuleParticipantAttribute() {
                 Method = TieBreakingRuleMethod.PARTICIPANT_ATTRIBUTE,
-                Source = "DisplayName",
+                Source =  TieBreakingRuleParticipantAttributeSource.DisplayName,
                 SortOrder = Helpers.SortBy.ASCENDING
             } );
 
             return directive;
         }
 
-        public RankingDirective Copy()
-        {
-            RankingDirective rd = new RankingDirective();
-            rd.AppliesTo = this.AppliesTo;
-            if (this.Rules != null)
-            {
-                foreach (var ori in this.Rules)
-                {
-                    rd.Rules.Add(ori.Copy());
-                }
-            }
-            if (this.ListOnly != null)
-            {
-                foreach (var ori in this.ListOnly)
-                {
-                    rd.ListOnly.Add(ori.Copy());
-                }
-            }
-            return rd;
-        }
-
         /// <inheritdoc/>
-        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonPropertyOrder( 99 )]
         [DefaultValue("")]
         public string Comment { get; set; } = string.Empty;
     }

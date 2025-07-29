@@ -5,13 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.APIClients {
 
-    [JsonConverter( typeof( StringEnumConverter ) )]
     public enum APISubDomain {
 
         /// <summary>

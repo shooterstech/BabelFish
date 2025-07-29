@@ -21,7 +21,9 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI
         /// </summary>
         public LeagueTeamDetail LeagueTeamDetail
         {
-            get { return Value.LeagueTeamDetail; }
+            get { 
+                return Value.LeagueTeamDetail; 
+            }
 		}
 
         public LeagueTeam LeagueTeam {

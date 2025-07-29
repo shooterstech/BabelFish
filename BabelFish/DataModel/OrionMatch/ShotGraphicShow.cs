@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch
@@ -19,11 +19,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         public string ShowName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Show Competition shots or sighter shots.
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public CompetitionType Competition { get; set; } = CompetitionType.COMPETITION;
+		/// <summary>
+		/// Show Competition shots or sighter shots.
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public CompetitionType Competition { get; set; } = CompetitionType.COMPETITION;
 
         /// <summary>
         /// If Competition == SIGHTER, then show all sighters that have a StageLabel equal to, well, this property.

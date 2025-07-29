@@ -32,4 +32,29 @@ namespace Scopos.BabelFish.APIClients {
             : base( message, inner, logger ) {
         }
     }
+
+    /// <summary>
+    /// Thrown when the Definition could not be found.
+    /// Thrown by the DefinitionCache.
+    /// </summary>
+    public class DefinitionNotFoundException : ScoposAPIException {
+
+        public DefinitionNotFoundException()
+            : base( "Attribute definition could not be found." ) {
+        }
+        public DefinitionNotFoundException( string message )
+            : base( message ) {
+        }
+        public DefinitionNotFoundException( string message, Logger logger )
+            : base( message ) {
+            logger.Error( this, message );
+        }
+        public DefinitionNotFoundException( string message, Exception inner )
+            : base( message, inner ) {
+        }
+        public DefinitionNotFoundException( string message, Exception inner, Logger logger )
+            : base( message, inner ) {
+            logger.Error( this, message );
+        }
+    }
 }

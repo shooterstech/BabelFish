@@ -2,6 +2,7 @@
 using Scopos.BabelFish.DataModel.OrionMatch;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
@@ -24,17 +25,43 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public bool Show( ShowWhenBase showWhen ) {
             if (showWhen is ShowWhenVariable)
-                return Show( (ShowWhenVariable)showWhen );
+                return Show( (ShowWhenVariable)showWhen, null );
 
             if (showWhen is ShowWhenSegmentGroup)
-                return Show( (ShowWhenSegmentGroup)showWhen );
+                return Show( (ShowWhenSegmentGroup)showWhen, null );
 
             //else showWhen is a ShowWhenEquation
 
-            return Show( (ShowWhenEquation)showWhen );
+            return Show( (ShowWhenEquation)showWhen, null );
         }
 
-        public bool Show( ShowWhenVariable showWhen ) {
+        public bool Show( ShowWhenBase showWhen, IParticipant ? participant ) {
+            /*
+             * TODO: Liam
+             * 1. Implement this and the other overridden version of Show() that includes the IParticipant. 
+             * 2. Make sure to deal with the case that participant is null.
+             * 3. Implement new ShowWhenConditions
+             *      HAS_REMARK_DNS
+             *      HAS_REMARK_DNF
+             *      HAS_REMARK_DSQ
+             *      HAS_REMARK_BUBBLE
+             *      HAS_REMARK_ELIMINATED
+             *      What others to include?
+             * 4. Document in H&M as part of ShowWhenCondition
+             * 5. Write Unit Tests
+             */
+            if (showWhen is ShowWhenVariable)
+                return Show((ShowWhenVariable)showWhen, participant);
+
+            if (showWhen is ShowWhenSegmentGroup)
+                return Show((ShowWhenSegmentGroup)showWhen, participant);
+
+            //else showWhen is a ShowWhenEquation
+
+            return Show((ShowWhenEquation)showWhen, participant);
+        }
+
+        public bool Show( ShowWhenVariable showWhen, IParticipant ? participant ) {
             bool answer = true;
 
             switch (showWhen.Condition) {
@@ -52,6 +79,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 case ShowWhenCondition.NOT_ENGAGEABLE:
                     answer = ! RLF.Engagable;
+                    break;
+
+                case ShowWhenCondition.SUPPLEMENTAL:
+                    answer = RLF.ShowSupplementalInformation;
+                    break;
+
+                case ShowWhenCondition.NOT_SUPPLEMENTAL:
+                    answer = ! RLF.ShowSupplementalInformation;
                     break;
 
                 case ShowWhenCondition.DIMENSION_SMALL:
@@ -106,6 +141,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = this.MatchID.VirtualMatch;
                     break;
 
+                case ShowWhenCondition.SHOT_ON_EST:
+                    //If one or more of the VM locations have ESTs, then this will evaluate to true.
+                    foreach( var md in RLF.ResultList.Metadata.Values ) {
+                        if ( md.ScoringSystemType == ScoringSystem.EST ) {
+                            return true;
+                        }
+                    }
+                    return false;
+
+                case ShowWhenCondition.SHOT_ON_PAPER:
+                    //If one or more of the VM locations have PAPER, then this will evaluate to true.
+                    foreach (var md in RLF.ResultList.Metadata.Values) {
+                        if (md.ScoringSystemType == ScoringSystem.PAPER) {
+                            return true;
+                        }
+                    }
+                    return false;
+
                 case ShowWhenCondition.RESULT_STATUS_FUTURE:
                     answer = RLF.ResultList.Status == ResultStatus.FUTURE;
                     break;
@@ -122,6 +175,113 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
+                case ShowWhenCondition.HAS_ANY_SHOWN_REMARK:
+                    if ( participant == null || participant.Participant == null ) {
+                        foreach ( var p in this.RLF.ResultList.Items ) {
+                            if ( p.Participant.RemarkList.HasAnyShownParticipantRemark) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    } else {
+                        return participant.Participant.RemarkList.HasAnyShownParticipantRemark;
+                    }
+
+
+				case ShowWhenCondition.HAS_SHOWN_REMARK_LEADER:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.LEADER);
+                    break;
+
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_FIRST:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.FIRST);
+                    break;
+
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_SECOND:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.SECOND);
+                    break;
+
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_THIRD:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.THIRD);
+                    break;
+
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_DNS:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DNS);
+                    break;
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_DNF:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DNF);
+                    break;
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_DSQ:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DSQ);
+                    break;
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_BUBBLE:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.BUBBLE);
+                    break;
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_ELIMINATED:
+                    if (participant == null || participant.Participant == null)
+                    {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.ELIMINATED);
+                    break;
+
+                case ShowWhenCondition.HAS_SHOWN_REMARK_QUALIFIED:
+                    if (participant == null || participant.Participant == null) {
+                        answer = false;
+                        break;
+                    }
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED );
+                    break;
+
+
                 default:
                     //Shouldnt' get here, as it means a value got added to the ShowWhenCondition enum, but not added here.
                     answer = true;
@@ -131,7 +291,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer;
         }
 
-        public bool Show( ShowWhenEquation showWhen ) {
+        public bool Show( ShowWhenEquation showWhen, IParticipant ? participant ) {
 
             bool answer = true;
             bool first = true;
@@ -140,35 +300,35 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             foreach (var argument in showWhen.Arguments) {
                 if (first) {
-                    answer = Show( argument );
+                    answer = Show( argument, participant );
                     first = false;
                 } else {
                     switch (showWhen.Boolean) {
                         case ShowWhenBoolean.AND:
-                            answer &= Show( argument );
+                            answer &= Show( argument, participant );
                             //If the answer is already false, we can stop evaluating
                             if (!answer)
                                 breakForeach = true;
                             break;
                         case ShowWhenBoolean.OR:
-                            answer |= Show( argument );
+                            answer |= Show( argument, participant );
                             //If the answer is already true, we can stop evaluating
                             if (answer)
                                 breakForeach = true;
                             break;
                         case ShowWhenBoolean.XOR:
-                            answer ^= Show( argument );
+                            answer ^= Show( argument, participant );
                             break;
                         case ShowWhenBoolean.NAND:
-                            answer &= Show( argument );
+                            answer &= Show( argument, participant );
                             apployNot = true;
                             break;
                         case ShowWhenBoolean.NOR:
-                            answer |= Show( argument );
+                            answer |= Show( argument, participant );
                             apployNot = true;
                             break;
                         case ShowWhenBoolean.NXOR:
-                            answer ^= Show( argument );
+                            answer ^= Show( argument, participant );
                             apployNot = true;
                             break;
                     }
@@ -181,7 +341,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer ^ apployNot;
         }
 
-        public bool Show( ShowWhenSegmentGroup showWhen ) {
+        public bool Show( ShowWhenSegmentGroup showWhen, IParticipant ? participant ) {
 
             ResultListMetadata metadata;
             if ( this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata ) ) {

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
     [TestClass]
-    public class SetNameTests {
+    public class SetNameTests : BaseTestClass {
 
         /// <summary>
         /// Tests that we can instantiate SetName objects with valid set name strings.
@@ -79,6 +73,20 @@ namespace Scopos.BabelFish.Tests.Definition {
         public void BadSetNameFormatThree() {
 
             var setName = SetName.Parse( null );
+        }
+
+        [TestMethod]
+        public void ParsingHierarchicalNameTests() {
+
+            var hnString = "ntparc:Three-Position Air Rifle Type";
+
+            HierarchicalName hn;
+            var parseSuccessful = HierarchicalName.TryParse( hnString, out hn );
+
+            Assert.IsTrue( parseSuccessful );
+            Assert.AreEqual( "ntparc", hn.Namespace );
+            Assert.AreEqual( "Three-Position Air Rifle Type", hn.ProperName );
+
         }
 
     }

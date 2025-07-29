@@ -1,28 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.Runtime;
-using Scopos.BabelFish.Tests;
-using Scopos.BabelFish.Requests.ClubsAPI;
-using Scopos.BabelFish.DataModel.Clubs;
+﻿using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Runtime.Authentication;
-using System.Collections;
 using Scopos.BabelFish.DataActors.Clubs;
+using Scopos.BabelFish.DataModel.Clubs;
+using Scopos.BabelFish.Requests.ClubsAPI;
+using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Tests.Clubs
-{
+namespace Scopos.BabelFish.Tests.Clubs {
 
     [TestClass]
-    public class ClubsTests {
-
-        [TestInitialize]
-        public void InitializeTest() {
-            Scopos.BabelFish.Runtime.Settings.XApiKey = Constants.X_API_KEY;
-        }
+    public class ClubsTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.

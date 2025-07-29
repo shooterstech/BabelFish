@@ -3,33 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
     /// A BarcodeLabel object details how physical barcode labels should be printed and for what type of target. It is a child object of PaperTargetLabel.
     /// </summary>
-    public class BarcodeLabel : IReconfigurableRulebookObject, ICopy<BarcodeLabel> {
+    public class BarcodeLabel : IReconfigurableRulebookObject {
 
         /// <summary>
         /// Public constructor
         /// </summary>
         public BarcodeLabel() {
-        }
-
-        /// <inheritdoc />
-        public BarcodeLabel Copy() {
-            BarcodeLabel copy = new BarcodeLabel();
-            copy.StageLabel = this.StageLabel;
-            copy.Series = this.Series;
-            copy.TargetName = this.TargetName;
-            copy.LabelSize = this.LabelSize;
-            copy.Comment = this.Comment;
-
-            return copy;
         }
 
         /// <summary>
@@ -57,16 +44,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public string TargetName { get; set; } = string.Empty;
 
-        /// <summary>
-        /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product. Value must be one of the following:
-        /// OL385(for Small barcode labels)
-        /// OL161(for Large barcode labels).
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public BarcodeLabelSize LabelSize { get; set; } = BarcodeLabelSize.OL385;
+		/// <summary>
+		/// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product. Value must be one of the following:
+		/// OL385(for Small barcode labels)
+		/// OL161(for Large barcode labels).
+		/// </summary>
+		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+		public BarcodeLabelSize LabelSize { get; set; } = BarcodeLabelSize.OL385;
 
         /// <inheritdoc/>
-        [JsonProperty( Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore )]
+        [JsonPropertyOrder(99)]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

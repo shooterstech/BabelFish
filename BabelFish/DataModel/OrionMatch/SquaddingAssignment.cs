@@ -1,18 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Abstract class representing the complete squadding assignment for one participant (athlete or team).
     /// </summary>
     [Serializable]
-    [JsonConverter( typeof( SquaddingAssignmentConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SquaddingAssignmentConverter ) )]
     public abstract class SquaddingAssignment: IDeserializableAbstractClass, IParticipant {
 
         /*

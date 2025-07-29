@@ -1,63 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
     /// Specifies how a row, in a ResultListIntermediatFormat should be decorated for styling.
     /// </summary>
-    public class ResultListDisplayPartition : IReconfigurableRulebookObject, ICopy<ResultListDisplayPartition>
-    {
+    public class ResultListDisplayPartition : IReconfigurableRulebookObject {
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         public ResultListDisplayPartition() {
-            RowClass = new List<string>();
+            //RowClass = new List<string>();
         }
 
-        public ResultListDisplayPartition( string rowClassDefault ) {
+        public ResultListDisplayPartition( string rowClassDefault )
+        {
+            if (!string.IsNullOrEmpty(rowClassDefault))
+                ClassSet.Add(new ClassSet(rowClassDefault, ShowWhenVariable.ALWAYS_SHOW.Clone() ));
+            /*
             if (!string.IsNullOrEmpty( rowClassDefault ))
                 RowClass.Add( rowClassDefault );
 
             if (!string.IsNullOrEmpty( rowClassDefault ))
                 ClassList.Add( rowClassDefault );
-
+            */
         }
 
         [OnDeserialized]
         internal void OnDeserializedMethod( StreamingContext context ) {
-            if (RowClass == null)
-                RowClass = new List<string>();
 
             if (ClassList == null)
                 ClassList = new List<string>();
-        }
 
-        /// <inheritdoc/>
-        public ResultListDisplayPartition Copy()
-        {
-            ResultListDisplayPartition rldp = new ResultListDisplayPartition();
-            if (this.ClassList != null)
-            {
-                foreach (var cl in this.ClassList)
-                {
-                    rldp.ClassList.Add(cl);
-                }
-            }
-            //may be unused, but I'd rather copy and not need it.
-            if (this.RowClass != null)
-            {
-                foreach (var cl in this.RowClass)
-                {
-                    rldp.RowClass.Add(cl);
-                }
-            }
-            return rldp;
+            if (ClassSet == null)
+                ClassSet = new List<ClassSet>();
         }
 
         /// <summary>
@@ -73,17 +52,45 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-row-footer</item>
         /// </list>"
         /// </remarks>
+        [Obsolete("Use .ClassSet instead.")]
         public List<string> ClassList { get; set; } = new List<string>();
 
         /// <summary>
-        /// The list of css classes to assign to the rows within this Partition.
+        /// A Newtonsoft Conditional Property to only serialize ClassSEt when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
         /// </summary>
-        [Obsolete( "Use .ClassList instead." )]
-        public List<string> RowClass { get; set; } = new List<string>();
+        /// <returns></returns>
+        public bool ShouldSerializeClassList() {
+            return (ClassList != null && ClassList.Count > 0);
+        }
+
+        /// <summary>
+        /// The list of ClassSet objects, each containing a CSS class (string) and ShowWhen object, to determine if the class should be used when displaying the row.
+        /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <listheader>While any css calss values may be used, the common values are:</listheader>
+        /// <item>rlf-row-header</item>
+        /// <item>rlf-row-athlete</item>
+        /// <item>rlf-row-team</item>
+        /// <item>rlf-row-child</item>
+        /// <item>rlf-row-footer</item>
+        /// </list>"
+        /// </remarks>
+        public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize ClassSEt when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeClassSet() {
+            return (ClassSet != null && ClassSet.Count > 0);
+        }
 
         /// <inheritdoc/>
-        [JsonProperty(Order = 99, DefaultValueHandling = DefaultValueHandling.Ignore)]
-        [DefaultValue("")]
+        [JsonPropertyOrder( 99 )]
+        [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
     }
 }
