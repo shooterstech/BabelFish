@@ -49,6 +49,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
             } );
         }
 
+        protected override string Title {
+            get {
+                return $"Results for {ResultCOF.Participant.DisplayName}";
+            }
+        }
+
         protected void ResultCOFTable( IContainer container ) {
 
             
@@ -155,6 +161,8 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     page.Footer().Element( Footer );
                 } );
             } );
+
+            InsertMetaData( document );
 
             if (!string.IsNullOrEmpty( filePath ))
                 document.GeneratePdf( filePath );

@@ -19,6 +19,20 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         protected abstract void ReportTitle( IContainer container );
 
+        protected virtual string Title {
+            get { return ""; }
+        }
+
+        public void InsertMetaData( QuestPDF.Fluent.Document document ) {
+            document.WithMetadata( new DocumentMetadata() {
+                Title = this.Title,
+                Author = "Scopos",
+                Producer = "BabelFish",
+                CreationDate = DateTime.UtcNow,
+                Language = "en-US"
+            } );
+        }
+
         protected virtual void Footer( IContainer container ) {
             foreach (var resourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()) {
                 Console.WriteLine( resourceName );

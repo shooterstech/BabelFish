@@ -297,7 +297,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                             Condition = ShowWhenCondition.MATCH_TYPE_VIRTUAL
                         },
                         new ShowWhenVariable() {
-                            Condition = ShowWhenCondition.DIMENSION_LARGE
+                            Condition = ShowWhenCondition.DIMENSION_EXTRA_LARGE
                         }
                     }
                 }
@@ -333,10 +333,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 					Name = "rlf-col-matchinfo",
 					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
 				}},
-				ShowWhen = new ShowWhenVariable() {
-					Condition = ShowWhenCondition.HAS_ANY_SHOWN_REMARK
-				}
-			} );
+                ShowWhen = new ShowWhenEquation() {
+                    Boolean = ShowWhenBoolean.AND,
+                    Arguments = new List<ShowWhenBase>() {
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.HAS_ANY_SHOWN_REMARK
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.DIMENSION_EXTRA_LARGE
+                        }
+                    }
+                }
+            } );
 
 			updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
