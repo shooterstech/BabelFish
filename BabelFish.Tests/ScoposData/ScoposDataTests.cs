@@ -27,12 +27,12 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         [TestMethod]
         public async Task GetReleaseTests()
         {
-            var client = new ScoposDataClient();
+            var client = new ScoposDataClient(APIStage.BETA);
 
             ReleasePhase level = ReleasePhase.PRODUCTION;
-            var appList = new List<string>() { "orion", "athena" };
+            var appList = new List<string>() { "orion", "athena", "greengrassv2Deployment" };
             var appVersion = new Scopos.BabelFish.DataModel.Common.Version("2.21.1");
-            var response = await client.GetReleasePublicAsync(level, "000015-orion-001", appVersion);
+            var response = await client.GetReleasePublicAsync(level,appList, "000015-orion-001", appVersion, false, false, "00015");
 
 
             Assert.IsNotNull(response.ApplicationRelease);
@@ -41,10 +41,11 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
             var releaseNotes = response.ApplicationRelease;
             foreach (var item in releaseNotes.Items) {
-                Console.Write(item.Application);
+                Console.Write(item.Application+": ");
+                Console.Write(item.Version.ToString()+"\n");
             }
             
-            Assert.AreEqual(2, releaseNotes.Items.Count);
+            Assert.AreEqual(appList.Count, releaseNotes.Items.Count);
 
             //We should have one ReleaseNote for Orion, and one for Athena
             var orionExists = releaseNotes.Items.Any( releaseInfo => releaseInfo.Application == ApplicationName.ORION );
