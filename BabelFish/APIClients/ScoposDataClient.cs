@@ -37,6 +37,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetVersionRequest object</param>
         /// <returns>List<VersionInfo> object</returns>
+        [Obsolete( "GetVersion is deprecated. Use GetRelease instead.")]
         public async Task<GetVersionPublicResponse> GetVersionPublicAsync( GetVersionPublicRequest requestParameters ) {
 
             GetVersionPublicResponse response = new GetVersionPublicResponse( requestParameters );
@@ -52,6 +53,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="service">VersionService enum</param>
         /// <param name="level">VersionLevel enum</param>
         /// <returns>List<VersionInfo> object</returns>
+        [Obsolete( "GetVersion is deprecated. Use GetRelease instead." )]
         public async Task<GetVersionPublicResponse> GetVersionPublicAsync(ApplicationName service, ReleasePhase level ) {
             GetVersionPublicRequest requestParameters = new GetVersionPublicRequest() {
                 Services = new List<ApplicationName>() { service },
