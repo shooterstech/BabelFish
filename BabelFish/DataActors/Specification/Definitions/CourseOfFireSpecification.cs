@@ -257,6 +257,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         }
     }
 
+    /// <summary>
+    /// Tests if the DefaultAttributreDef value is valid.
+    /// </summary>
     public class IsCourseOfFireDefaultAttributeDefValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
@@ -605,7 +608,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
 
     /// <summary>
-    /// Tests that there is at least one EventType STAGE.
+    /// Tests that there is at least one EventType STAGE that is within the Event Tree
     /// Tests that each EventType STAGE has a StageStyleMapping object.
     /// Tests that the StageStyleMapping object has a valid reference to an STAGE STYLE.
     /// Tests that the remaining (non EventType STAGE) events do not have a StageStyleMapping object.
@@ -617,20 +620,34 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             Messages.Clear();
             bool valid = true;
 
+            //Test that there is at least one Event Type STAGE within the Event Tree
+            //NOTE it is not enough just to have a STAGE. It must be within the Event Tree. Else things like score projection won't work.
+            var topLevelEvent = EventComposite.GrowEventTree( candidate );
+            var eventTypeStages = topLevelEvent.GetEvents( EventtType.STAGE );
+            if ( eventTypeStages.Count == 0 ) {
+                valid = false;
+                Messages.Add( $"An Event with EventType STAGE was not found within the Event Tree. A COURSE OF FIRE's Event Tree must have at least one EventType STAGE." );
+            }
+
             var index = 0;
-            bool foundEventTypeStage = false;
             foreach (var @event in candidate.Events) {
 
+                //Test that each Event of EventType STAGE has a .StageStyelMapping
                 if (@event.EventType == EventtType.STAGE) {
-                    //Test that there is at least one EventType STAGE.
-                    foundEventTypeStage = true;
 
-                    //Should have an StageStyleMapping object
-                    //With a valid STAGE STYLE definition reference
-                    if (@event.StageStyleMapping == null) {
+                    if (@event.ExternalToEventTree) {
+                        //Test that STAGE's are not outside the Event Tree
+
                         valid = false;
-                        Messages.Add( $"Event[{index}] is listed as an EventType STAGE, but does not have an StageStyleMapping" );
+                        Messages.Add( $"Event[{index}] is as an EventType STAGE, but is listed as outside the Event Tree. All STAGEs must be within the Event Tree." );
+                    } else if (@event.StageStyleMapping == null) {
+                        //Test that there is a valid StageStyleMapping object
+
+                        valid = false;
+                        Messages.Add( $"Event[{index}] is as an EventType STAGE, but does not have an StageStyleMapping" );
                     } else {
+
+                        //Test that the STAGE STYLE definition reference is valid
                         var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
                             $"Event[{index}].StageStyleMapping.DefaultDef",
                             @event.StageStyleMapping.DefaultDef,
@@ -641,6 +658,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                             Messages.Add( vm.Message );
                         }
                     }
+
                 } else {
                     //Test that other (non EventType STAGE) events do not have an StageStyleMapping object
                     if (@event.StageStyleMapping != null) {
@@ -651,11 +669,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 }
 
                 index++;
-            }
-
-            if (!foundEventTypeStage) {
-                valid = false;
-                Messages.Add( $"An Event with EventType STAGE was not found. A COURSE OF FIRE must have at least one EventType STAGE." );
             }
 
             return valid;
@@ -748,7 +761,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         }
 
                         var foo = eventTree.FindEventComposite( af.EventName );
-                        if (foo == null) {
+                        if (foo == null && ! externalEvents.ContainsKey( af.EventName ) ) {
                             valid = false;
                             Messages.Add( $"AbbreviatedFormats[{index}] names an Event '{af.EventName}' that does not exist." );
                         }
