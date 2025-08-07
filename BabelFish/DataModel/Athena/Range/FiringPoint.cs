@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.Athena.Range
-{
-    public class FiringPoint
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
+    public class FiringPoint {
 
-        public FiringPoint()
-        {
+        public FiringPoint() {
 
             Group = "";
         }
