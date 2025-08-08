@@ -14,6 +14,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
 
         public string FiringPointNumber { get; set; }
 
+        public string FiringPointAlias {  get; set; }
+
         public string Group { get; set; }
 
         public List<Target> Targets { get; set; }
