@@ -105,6 +105,10 @@ namespace Scopos.BabelFish.DataActors.PDF
                     stringBuilder.AppendLine("font: bold 20px sans-serif; ");
                     stringBuilder.AppendLine("    } ");
 
+                    stringBuilder.AppendLine(".shot { ");
+                    stringBuilder.AppendLine("fill: rgb(79, 132, 190); ");
+                    stringBuilder.AppendLine("    } ");
+
                     stringBuilder.AppendLine(" </style> ");
                     //Calculate the scale based on the widest shot in the group and the scoring diameter.
                     var widestShot = GetWidestShot();
@@ -127,17 +131,8 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                         //Draw the Aiming Mark
                         var aimingBlackRadius = Target.AimingMarks[0].Dimension / 2D;
-                        stringBuilder.AppendLine($"<circle cx=\"{center}\" cy=\"{center}\" r=\"{scale * aimingBlackRadius}\" stroke=\"black\" stroke-width=\".5\" fill=\"black\" />");
+                        stringBuilder.AppendLine($"<circle class=\"aiming-black\" cx=\"{center}\" cy=\"{center}\" r=\"{scale * aimingBlackRadius}\" stroke=\"black\" stroke-width=\".5\" fill=\"black\" />");
 
-                        //Draw the scoring rings
-                        foreach (var scoringRing in Target.ScoringRings)
-                        {
-                            var stroke = "black";
-                            if (scoringRing.Dimension < Target.AimingMarks[0].Dimension)
-                                stroke = "white";
-                            //TODO adjust stroke width based on dimension of target, bigger targets get bigger stroke widths. Need min of 2.0 so they may be seen.
-                            stringBuilder.AppendLine($"<circle cx=\"{center}\" cy=\"{center}\" r=\"{scale * scoringRing.Dimension / 2D}\" stroke=\"{stroke}\" stroke-width=\"2.0\" fill=\"transparent\" />");
-                        }
 
                         //Draw the shots
                         foreach (var shot in GetShotsToDisplay())
@@ -159,6 +154,17 @@ namespace Scopos.BabelFish.DataActors.PDF
                                 stringBuilder.AppendLine($"<circle id=\"{shot.EventName.Replace(" ", "_").Trim()}_shot\" class=\"shot\" cx=\"{x}\" cy=\"{y}\" r=\"{scale * 2.25D}\" stroke=\"transparent\" stroke-width=\".5\" />");
                                 stringBuilder.AppendLine($"<circle id=\"{shot.EventName.Replace(" ", "_").Trim()}_shotOutline\" cx=\"{x}\" cy=\"{y}\" r=\"{scale * 2.25D}\" class=\"shot-outline\" stroke=\"black\" stroke-width=\".5\" fill=\"transparent\" />");
                             }
+                        }
+
+
+                        //Draw the scoring rings
+                        foreach (var scoringRing in Target.ScoringRings)
+                        {
+                            var stroke = "black";
+                            if (scoringRing.Dimension < Target.AimingMarks[0].Dimension)
+                                stroke = "white";
+                            //TODO adjust stroke width based on dimension of target, bigger targets get bigger stroke widths. Need min of 2.0 so they may be seen.
+                            stringBuilder.AppendLine($"<circle class=\"aiming-circle\"  cx=\"{center}\" cy=\"{center}\" r=\"{scale * scoringRing.Dimension / 2D}\" stroke=\"{stroke}\" stroke-width=\"2.0\" fill=\"transparent\" />");
                         }
 
                         EventScore eventScore;
@@ -333,6 +339,58 @@ namespace Scopos.BabelFish.DataActors.PDF
             }
 
             // Return transformed SVG content
+            return svgDocument.ToString();
+        }
+
+        public string SvgWithoutCSS(string svgContent)
+        {
+            // Load SVG content into an XDocument
+            var svgDocument = XDocument.Parse(svgContent);
+            var namespaceManager = new XmlNamespaceManager(new NameTable());
+            namespaceManager.AddNamespace("svg", SvgNamespace);
+
+            // Select all elements with a fill attribute
+            var aimingCircleElements = svgDocument.XPathSelectElements("//*[(@class='aiming-circle')]", namespaceManager);
+
+            // Loop over selected elements and change fill to black
+            foreach (var element in aimingCircleElements)
+            {
+                element.SetAttributeValue("stroke", "white");
+                element.SetAttributeValue("fill", "white");
+                element.SetAttributeValue("fill-opacity", "0.0");
+            }
+
+            // Select all elements with a black stroke
+            var aimingBlackElements = svgDocument.XPathSelectElements("//*[(@class='aiming-black')]", namespaceManager);
+
+            // Loop over selected elements and change black stroke to white
+            foreach (var element in aimingBlackElements)
+            {
+                element.SetAttributeValue("stroke", "black");
+                element.SetAttributeValue("fill", "black");
+            }
+
+            // Select all elements with a black stroke
+            var shotElements = svgDocument.XPathSelectElements("//*[(@class='shot')]", namespaceManager);
+
+            // Loop over selected elements and change black stroke to white
+            foreach (var element in shotElements)
+            {
+                element.SetAttributeValue("stroke", "#369CCD");
+                element.SetAttributeValue("fill", "#369CCD");
+            }
+
+            // Select all elements with class 'shot-outline'
+            var shotOutlineElements = svgDocument.XPathSelectElements("//*[@class='shot-outline']", namespaceManager);
+
+            // Loop over selected elements and change fill color to #4f84be and fill opacity to 0.3 (30%)
+            foreach (var element in shotOutlineElements)
+            {
+                element.SetAttributeValue("stroke", "#4f84be");
+                element.SetAttributeValue("fill", "#4f84be");
+                element.SetAttributeValue("fill-opacity", "0.3");
+            }
+
             return svgDocument.ToString();
         }
 

@@ -56,5 +56,23 @@ namespace BabelFish.Tests.DataActors.PDF {
             pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
         }
+
+        [TestMethod]
+        public async Task GenerateGroupingTest()
+        {
+
+            var client = new OrionMatchAPIClient();
+
+            var resultCofId = "0f814586-3513-411a-8229-914d4608db05";
+
+            var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
+            var resultCof = getResultCofResponse.ResultCOF;
+
+            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.STAGE);
+            await pdf.InitializeAsync();
+
+            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloWHAT.pdf");
+
+        }
     }
 }
