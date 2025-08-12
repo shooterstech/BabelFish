@@ -7,6 +7,8 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using System.Xml.XPath;
+using SkiaSharp;
+using Svg.Skia;
 
 namespace Scopos.BabelFish.DataActors.PDF
 {
@@ -44,6 +46,7 @@ namespace Scopos.BabelFish.DataActors.PDF
         private EventComposite EventWeAreLookingFor { get; set; }
 
         private Dictionary<string, DataModel.Athena.Shot.Shot> ShotsByEventName { get; set; }
+        private List<Shot> ShotListToShow { get; set; }
         private List<EventComposite> DescendantEventComposites;
         private Logger logger = LogManager.GetCurrentClassLogger();
         private string ErrorMessage = "";
@@ -71,6 +74,14 @@ namespace Scopos.BabelFish.DataActors.PDF
                 return SvgMarkup;
             else
                 return null;
+        }
+        public string? GetScoreFormatted()
+        {
+            return ScoreFormatted;
+        }
+        public List<Shot>? GetShotListToShow()
+        {
+            return ShotListToShow;
         }
 
         private async Task StartRender()
@@ -135,7 +146,8 @@ namespace Scopos.BabelFish.DataActors.PDF
 
 
                         //Draw the shots
-                        foreach (var shot in GetShotsToDisplay())
+                        ShotListToShow = GetShotsToDisplay();
+                        foreach (var shot in ShotListToShow)
                         {
                             //Checking the shot attributes is the most predictable way to know if it's a missed shot withunkown coordinates.
                             if (shot.Attributes.Contains(Shot.SHOT_ATTRIBUTE_UNKNOWN_COORDINATES)
@@ -342,7 +354,7 @@ namespace Scopos.BabelFish.DataActors.PDF
             return svgDocument.ToString();
         }
 
-        public string SvgWithoutCSS(string svgContent, int size)
+        public string SvgWithoutCSS(string svgContent, int width, int height)
         {
             // Load SVG content into an XDocument
             var svgDocument = XDocument.Parse(svgContent);
@@ -351,8 +363,8 @@ namespace Scopos.BabelFish.DataActors.PDF
             var svgElement = svgDocument.Root;
 
             svgElement.SetAttributeValue("style", "overflow:hidden");
-            svgElement.SetAttributeValue("width", $"{size}");
-            svgElement.SetAttributeValue("height", $"{size}");
+            //svgElement.SetAttributeValue("width", $"{width}");
+            //svgElement.SetAttributeValue("height", $"{height}");
 
             // Select all elements with a fill attribute
             var aimingCircleElements = svgDocument.XPathSelectElements("//*[(@class='aiming-circle')]", namespaceManager);
@@ -383,6 +395,7 @@ namespace Scopos.BabelFish.DataActors.PDF
             {
                 element.SetAttributeValue("stroke", "#369CCD");
                 element.SetAttributeValue("fill", "#369CCD");
+                element.SetAttributeValue("fill-opacity", "1.0");
             }
 
             // Select all elements with class 'shot-outline'
@@ -391,12 +404,41 @@ namespace Scopos.BabelFish.DataActors.PDF
             // Loop over selected elements and change fill color to #4f84be and fill opacity to 0.3 (30%)
             foreach (var element in shotOutlineElements)
             {
-                element.SetAttributeValue("stroke", "#4f84be");
-                element.SetAttributeValue("fill", "#4f84be");
-                element.SetAttributeValue("fill-opacity", "0.3");
+                element.SetAttributeValue("stroke", "black");
+                element.SetAttributeValue("stroke-width", "1.5");
+                element.SetAttributeValue("fill", "#369CCD");
+                element.SetAttributeValue("fill-opacity", "0.1");
             }
 
             return svgDocument.ToString();
+        }
+
+        public byte[] ConvertSvgToPng(string svgMarkup, int targetWidth, int targetHeight)
+        {
+            // Load SVG into SKSvg
+            var svg = new SKSvg();
+            using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(svgMarkup)))
+            {
+                svg.Load(stream);
+            }
+
+            // Create a bitmap with desired dimensions
+            using var bitmap = new SKBitmap(targetWidth, targetHeight);
+            using var canvas = new SKCanvas(bitmap);
+            canvas.Clear(SKColors.Transparent);
+
+            // Calculate scale to fit SVG into target dimensions
+            var scaleX = targetWidth / svg.Picture.CullRect.Width;
+            var scaleY = targetHeight / svg.Picture.CullRect.Height;
+            var matrix = SKMatrix.CreateScale(scaleX, scaleY);
+
+            // Draw the SVG picture onto the canvas
+            canvas.DrawPicture(svg.Picture, ref matrix);
+
+            // Encode to PNG
+            using var image = SKImage.FromBitmap(bitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            return data.ToArray();
         }
 
 

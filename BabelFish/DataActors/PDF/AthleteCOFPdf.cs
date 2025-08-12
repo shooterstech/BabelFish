@@ -3,8 +3,11 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.PDF;
+using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using SkiaSharp;
+using Svg.Skia;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -22,7 +25,7 @@ namespace Scopos.BabelFish.DataActors.PDF
         public CourseOfFire? CourseOfFire { get; private set; } = null;
         public EventComposite TopLevelEvent { get; private set; } = null;
 
-        private List<(string label, string score)> EventFields { get; set; } = [];
+        private List<(string label, string score, byte[] img, List<Shot> shots)> EventFields { get; set; } = [];
 
         public AthleteCOFPdf(ResultCOF resultCOF, EventtType et)
         {
@@ -54,7 +57,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                 container.Page(page =>
                 {
                     page.Size(pageSize);
-                    page.Margin(2, Unit.Centimetre);
+                    page.Margin(1f, Unit.Centimetre);
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(x => x.FontSize(10));
 
@@ -108,7 +111,12 @@ namespace Scopos.BabelFish.DataActors.PDF
                 //give me only the most important events.
                 foreach (var eventToHighlight in eventsToHighlight)
                 {
-                    EventFields.Add((eventToHighlight.EventName, eventToHighlight.Calculation.ToString()));
+                    //getting target image will also set a bunch of other data, that we will also get here lol
+                    var shots = new List<Shot>();
+                    string eventScore = "";
+                    var img = TargetImage(eventToHighlight.EventName, 480, 480, out shots, out eventScore);
+
+                    EventFields.Add(( eventToHighlight.EventName, eventScore, img, shots ));
                 }
             }
 
@@ -152,25 +160,42 @@ namespace Scopos.BabelFish.DataActors.PDF
             });
             */
 
+            int eventIndex = 0;
             container.Border(2, "#fcba03")
             .CornerRadius(5)
             .Padding(2)
             .Column(column =>
             {
-                foreach ((var name, var score) in EventFields)
+                foreach ( int col in Enumerable.Range( 1, (EventFields.Count() / 2) ) )
                 {
-                    int size = 100;
-                    column.Item().Container().Height(size).Row(row =>
+                    int svgSize = 480;
+                    int rowHeight = 205;
+                    column.Item().Container().Height(rowHeight).Border(2, "#0bfc03").Row(row =>
                     {
-                        row.RelativeItem().Container().MaxHeight(size).Border(2, "#ec03fc").Width(size).Height(size).Element(TargetSVG(name, size));
+                        foreach (int ro in Enumerable.Range(1, 2))
+                        {
+                            row.RelativeItem(2).Column(col1 =>
+                            {
+                                col1.Item().Border(2, "#ec03fc").ScaleToFit().Image(EventFields[eventIndex].img);
+                                //this should always be overall score of the shown target.
+                                col1.Item().Text($"{EventFields[eventIndex].label} score is {EventFields[eventIndex].score}");
+                            });
                             
-                        row.RelativeItem().Text($"this is {name}");
+                            //maybe make this part a table, if less than 10 shots in this list them with (x,y,r) and value?
+                            row.RelativeItem(1).BorderRight(2).BorderColor("#0bfc03").Column(col2 =>
+                            {
+                                col2.Item().Text($"this is {EventFields[eventIndex].label}");
+                                col2.Item().Text($"Score is {EventFields[eventIndex].score}");
+                            });
+
+                            eventIndex++;
+                        }
                     });
                 }
             });
         }
 
-        protected Action<IContainer> TargetSVG(string name, int size)
+        protected byte[] TargetImage(string name, int width, int height, out List<Shot> shot, out string eventScore)
         {
             // this will be where target images are made, then adding in the NPA maths.
             TargetSVGCreator targetSVG = new TargetSVGCreator();
@@ -182,9 +207,13 @@ namespace Scopos.BabelFish.DataActors.PDF
                 svg = targetSVG.GetSVGMarkup();
             }
             //SO QuestPDF does NOT SUPPORT CSS Styling, all elemnts MUST include Fill and Stroke items.
-            svg = targetSVG.SvgWithoutCSS(svg, 100);
+            svg = targetSVG.SvgWithoutCSS(svg, width, height);
+            var png = targetSVG.ConvertSvgToPng(svg, width, height);
 
-            return container => container.Svg(svg);
+            eventScore = targetSVG.GetScoreFormatted();
+            shot = targetSVG.GetShotListToShow();
+
+            return png;
         }
     }
 }
