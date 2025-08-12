@@ -342,12 +342,17 @@ namespace Scopos.BabelFish.DataActors.PDF
             return svgDocument.ToString();
         }
 
-        public string SvgWithoutCSS(string svgContent)
+        public string SvgWithoutCSS(string svgContent, int size)
         {
             // Load SVG content into an XDocument
             var svgDocument = XDocument.Parse(svgContent);
             var namespaceManager = new XmlNamespaceManager(new NameTable());
             namespaceManager.AddNamespace("svg", SvgNamespace);
+            var svgElement = svgDocument.Root;
+
+            svgElement.SetAttributeValue("style", "overflow:hidden");
+            svgElement.SetAttributeValue("width", $"{size}");
+            svgElement.SetAttributeValue("height", $"{size}");
 
             // Select all elements with a fill attribute
             var aimingCircleElements = svgDocument.XPathSelectElements("//*[(@class='aiming-circle')]", namespaceManager);
@@ -393,6 +398,7 @@ namespace Scopos.BabelFish.DataActors.PDF
 
             return svgDocument.ToString();
         }
+
 
         private List<Scopos.BabelFish.DataModel.Athena.Shot.Shot> GetShotsToDisplay()
         {

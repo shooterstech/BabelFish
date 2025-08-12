@@ -5,8 +5,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.PDF;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using System;
-using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
@@ -22,6 +21,8 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         public CourseOfFire? CourseOfFire { get; private set; } = null;
         public EventComposite TopLevelEvent { get; private set; } = null;
+
+        private List<(string label, string score)> EventFields { get; set; } = [];
 
         public AthleteCOFPdf(ResultCOF resultCOF, EventtType et)
         {
@@ -59,11 +60,9 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                     page.Content().Column(column =>
                     {
-
-                        column.Spacing(10);
                         column.Item().Element(ReportTitle);
-                        column.Spacing(10);
-                        column.Item().Element(SvgImages);
+                        column.Spacing(5);
+                        column.Item().Element(PrettyRcof);
                         //column.Item().Width(50).Height(50).Svg(svg).FitArea();
                     });
 
@@ -97,32 +96,95 @@ namespace Scopos.BabelFish.DataActors.PDF
             });
         }
 
-        protected void SvgImages(IContainer container)
+        protected void PrettyRcof(IContainer container)
         {
 
+            foreach (var eventType in Enum.GetValues(typeof(EventtType)).Cast<EventtType>().ToList())
+            {
+                if (eventType == EventtType.NONE || eventType == EventtType.SINGULAR)
+                    continue;
+
+                var eventsToHighlight = TopLevelEvent.GetEvents(eventType);
+                //give me only the most important events.
+                foreach (var eventToHighlight in eventsToHighlight)
+                {
+                    EventFields.Add((eventToHighlight.EventName, eventToHighlight.Calculation.ToString()));
+                }
+            }
+
+            /*
+            container.Table(table =>
+            {
+                table.ColumnsDefinition(columns =>
+                {
+                    columns.RelativeColumn(1);
+                    columns.RelativeColumn(2);
+                });
+
+                table.Header(header =>
+                {
+                    header.Cell().Element(Style).Text("Target");
+                    header.Cell().Element(Style).Text("Description");
+
+                    IContainer Style(IContainer container)
+                    {
+                        return container
+                            .Background(Colors.Blue.Lighten5)
+                            .Padding(10)
+                            .DefaultTextStyle(TextStyle.Default.FontColor(Colors.Blue.Darken4).Bold());
+                    }
+                });
+
+                foreach ((var name, var score) in EventFields)
+                {
+                    int size = 100;
+                    table.Cell().Element(Style).MaxHeight(size).MaxWidth(size).Element(TargetSVG(name, size));
+
+                    table.Cell().Element(Style).Text($"this is {name}");
+                }
+                IContainer Style(IContainer container)
+                {
+                    return container
+                    .BorderTop(2)
+                    .BorderColor(Colors.Blue.Lighten3)
+                    .Padding(10);
+                }
+            });
+            */
+
+            container.Border(2, "#fcba03")
+            .CornerRadius(5)
+            .Padding(2)
+            .Column(column =>
+            {
+                foreach ((var name, var score) in EventFields)
+                {
+                    int size = 100;
+                    column.Item().Container().Height(size).Row(row =>
+                    {
+                        row.RelativeItem().Container().MaxHeight(size).Border(2, "#ec03fc").Width(size).Height(size).Element(TargetSVG(name, size));
+                            
+                        row.RelativeItem().Text($"this is {name}");
+                    });
+                }
+            });
+        }
+
+        protected Action<IContainer> TargetSVG(string name, int size)
+        {
             // this will be where target images are made, then adding in the NPA maths.
             TargetSVGCreator targetSVG = new TargetSVGCreator();
             //need to have a call for each stage.
-            targetSVG.TargetSVGCreatorAsync(480f, "Kneeling", null, this.ResultCOF);
+            targetSVG.TargetSVGCreatorAsync(480f, name, null, this.ResultCOF);
             string svg = null;
             while (svg == null)
             {
                 svg = targetSVG.GetSVGMarkup();
             }
             //SO QuestPDF does NOT SUPPORT CSS Styling, all elemnts MUST include Fill and Stroke items.
-            svg = targetSVG.SvgWithoutCSS(svg);
+            svg = targetSVG.SvgWithoutCSS(svg, 100);
 
-            container.Border(2, ScoposColors.BLUE_LIGHTEN_1)
-            .Background(ScoposColors.DARK_GREY_LIGHTEN_1)
-            .CornerRadius(5)
-            .Padding(10)
-            .Row(row =>
-            {
-                row.RelativeItem().Column(column =>
-                {
-                    column.Item().Svg(svg).FitArea();
-                });
-            });
+            return container => container.Svg(svg);
         }
     }
 }
