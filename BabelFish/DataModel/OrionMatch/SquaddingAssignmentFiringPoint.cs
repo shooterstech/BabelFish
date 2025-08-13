@@ -10,12 +10,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class SquaddingAssignmentFiringPoint : SquaddingAssignment, IComparable<SquaddingAssignmentFiringPoint> {
 
-        public const int CONCRETE_CLASS_ID = 1;
-
         public SquaddingAssignmentFiringPoint() : base() {
-            ConcreteClassId = CONCRETE_CLASS_ID;
+			SquaddingType = SquaddingAssignmentType.FIRING_POINT;
 
-            ReentryTag = "";
+			ReentryTag = "";
         }
 
         /// <summary>

@@ -17,25 +17,20 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                 JsonElement root = doc.RootElement;
-                int id;
+                string squaddingType = "FIRING_POINT";
                 JsonElement jsonElementValue;
-                if ( root.TryGetProperty( "ConcreteClassId", out jsonElementValue ) )
-                    id = jsonElementValue.GetInt32();
-                else
-                    id = SquaddingAssignmentFiringPoint.CONCRETE_CLASS_ID;
+                if ( root.TryGetProperty( "SquaddingType", out jsonElementValue ) )
+					squaddingType = jsonElementValue.ToString();
 
-                switch (id) {
-                    case SquaddingAssignmentFiringPoint.CONCRETE_CLASS_ID:
-                        return JsonSerializer.Deserialize<SquaddingAssignmentFiringPoint>( root.GetRawText(), options );
-                    case SquaddingAssignmentBank.CONCRETE_CLASS_ID:
-                        return JsonSerializer.Deserialize<SquaddingAssignmentBank>( root.GetRawText(), options );
-                    case SquaddingAssignmentSquad.CONCRETE_CLASS_ID:
-                        return JsonSerializer.Deserialize<SquaddingAssignmentSquad>( root.GetRawText(), options );
+                switch (squaddingType) {
+                    case "FIRING_POINT":
                     default:
-                        break;
+                        return JsonSerializer.Deserialize<SquaddingAssignmentFiringPoint>( root.GetRawText(), options );
+                    case "BANK":
+                        return JsonSerializer.Deserialize<SquaddingAssignmentBank>( root.GetRawText(), options );
+                    case "SQUAD":
+                        return JsonSerializer.Deserialize<SquaddingAssignmentSquad>( root.GetRawText(), options );
                 }
-
-                throw new NotImplementedException( $"Unable to convert type '{id}' to an Abstract class SquaddingAssignment." );
             }
         }
 

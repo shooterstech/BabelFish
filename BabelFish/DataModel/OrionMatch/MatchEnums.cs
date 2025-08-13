@@ -7,7 +7,21 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
-    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+
+	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+	public enum CommandAutomationSubject {
+		/// <summary>
+		/// No command automation should happen
+		/// </summary>
+		NONE,
+
+		/// <summary>
+		/// Command automation should happen to remarks, whether that is showing (adding) or Hiding
+		/// </summary>
+		REMARK
+	};
+
+	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueRankingRuleType {
 
         /// <summary>
@@ -449,19 +463,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         DELETE
     };
 
-
-    [G_NS.JsonConverter(typeof(G_NS_CONV.StringEnumConverter))]
-    public enum CommandAutomationSubject {
-        /// <summary>
-        /// No command automation should happen
-        /// </summary>
-        NONE,
-
-        /// <summary>
-        /// Command automation should happen to remarks, whether that is showing (adding) or Hiding
-        /// </summary>
-        REMARK
-    };
+	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+	public enum SquaddingAssignmentType {
+        BANK,
+        FIRING_POINT,
+        SQUAD
+    }
 
     /// <summary>
     /// The type of scoring system in use.

@@ -13,18 +13,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Response object for a request of Squadding Assignments for a specified match and squadding event name.
     /// </summary>
-    public class SquaddingList : ITokenItems<SquaddingAssignment>, IPublishTransactions {
+    public class SquaddingList : ITokenItems<Squadding>, IPublishTransactions {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
         public SquaddingList() {
-            Items = new List<SquaddingAssignment>();
+            Items = new List<Squadding>();
         }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
             if (Items == null)
-                Items = new List<SquaddingAssignment>();
+                Items = new List<Squadding>();
         }
 
         /// <summary>
@@ -36,7 +36,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Formatted as a string, the date and time this squadding list was last updated.
         /// Use GetLastUpdated() to return this value as a DateTime object.
         /// </summary>
-        [Obsolete("LastUpdated will soon be a property on each seperate SquaddingAssignment, instead of the list as a whole.")]
         [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; }
@@ -99,7 +98,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// List of SquaddingAssignments (e.g. Individuals and where and when they will shoot). 
         /// </summary>
-        public List<SquaddingAssignment> Items { get; set; }
+        public List<Squadding> Items { get; set; }
 
         /// <inheritdoc />
         [DefaultValue( "" )]

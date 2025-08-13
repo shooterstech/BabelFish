@@ -14,10 +14,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          * NOTE: In shotgun, where they use squads, there is no concept of a relay. There is such a concept of order of squads, but the term 'relay' is not used.
          */
 
-        public const int CONCRETE_CLASS_ID = 3;
-
         public SquaddingAssignmentSquad() : base() {
-            ConcreteClassId = CONCRETE_CLASS_ID;
+            SquaddingType = SquaddingAssignmentType.SQUAD;
         }
 
         /// <summary>
