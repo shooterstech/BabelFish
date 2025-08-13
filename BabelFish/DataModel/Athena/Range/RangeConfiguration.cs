@@ -122,6 +122,12 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
         [JsonProperty(Order = 11)] 
         public List<Display> Displays { get; set; }
 
+        [JsonProperty(Order = 12)]
+        public bool ExportShotData { get; set; } = false;
+
+        [JsonProperty(Order = 13)]
+        public bool IoTCoreDebug { get; set; } = false;
+
         /// <summary>
         /// Helper function to get the state address (aka thing name) for the passed in nickname.
         /// </summary>
