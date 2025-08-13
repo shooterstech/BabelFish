@@ -32,7 +32,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
             "Rank", 
             "RankOrder",
-            "RankDelta",
+            "RankDelta", //NOTE Externally, this is known as Rank Trends
             "Empty",
             "DisplayName", 
             "DisplayNameShort", 

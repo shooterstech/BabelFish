@@ -575,6 +575,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public int ResolutionWidth { get; set; } = int.MaxValue;
 
+        /// <summary>
+        /// Returns a boolean, indicating if some columns are hidden because the ResolutionWidth is too small.
+        /// </summary>
+        public bool HasColumnsForWiderScreen {
+            get {
+
+                foreach (var column in ResultListFormat.Format.Columns) {
+                    if (ShowWhenCalculator.GetLargestShowWhenResolution( column.ShowWhen ) > ResolutionWidth) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
 
         private int _showNumberOfChildren = int.MaxValue;
         private HashSet<ResultStatus> _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
