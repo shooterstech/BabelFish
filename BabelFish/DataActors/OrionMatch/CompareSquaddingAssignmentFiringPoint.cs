@@ -7,6 +7,7 @@ using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch
 {
+    /*
     /// <summary>
     /// Implements the IComparer interface to sort a list of SquaddingAssignmentFiringPoint, such as one
     /// would have if they called the GetSquaddingList REST API call. 
@@ -160,4 +161,5 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                 return -1 * compare;
         }
     }
+    */
 }

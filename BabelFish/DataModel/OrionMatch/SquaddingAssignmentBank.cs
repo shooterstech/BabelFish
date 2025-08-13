@@ -10,10 +10,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class SquaddingAssignmentBank : SquaddingAssignment, IComparable<SquaddingAssignmentBank> {
 
-        public const int CONCRETE_CLASS_ID = 2;
-
         public SquaddingAssignmentBank() : base() {
-            ConcreteClassId = CONCRETE_CLASS_ID;
+            SquaddingType = SquaddingAssignmentType.BANK;
         }
 
         /// <summary>

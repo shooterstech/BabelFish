@@ -3,9 +3,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Abstract class representing the complete squadding assignment for one participant (athlete or team).
     /// </summary>
-    [Serializable]
-    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SquaddingAssignmentConverter ) )]
-    public abstract class SquaddingAssignment: IDeserializableAbstractClass, IParticipant {
+    public abstract class SquaddingAssignment {
 
         /*
          * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
@@ -21,11 +19,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int FiringOrder { get; set; } = 0;
 
         /// <summary>
-        /// The Participant (team or individual) that this SquaddingAssignment is for
-        /// </summary>
-        public Participant Participant { get; set; } = new Individual();
-
-        /// <summary>
         /// If this is Event uses re-entry, this is the unique reentry tag for this individual. The values of an empty string ("") or "No Reentry" mean the same thing.
         /// </summary>
         public string ReentryTag { get; set; }
@@ -36,7 +29,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Concrete classes, the JSON should include a ConcreteClassId that specifies
         /// the Concrete class.
         /// </summary>
-        public int ConcreteClassId { get; set; }
+        public SquaddingAssignmentType SquaddingType { get; protected set; }
 
-    }
+	}
 }

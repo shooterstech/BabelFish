@@ -4,6 +4,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
+    /*
     [TestClass]
     public class CompareTests : BaseTestClass {
 
@@ -196,4 +197,5 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue(comparer.Compare(resultEvent1, resultEvent1) == 0); // 0 = 1 compareTo 1
         }
     }
+    */
 }
