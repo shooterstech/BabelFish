@@ -31,6 +31,10 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         public Match? Match { get; set; }
 
+        public bool includeGroupAnalysis { get; set; } = false;
+
+        public GroupAnalysisMaths? groupMaths { get; set; } = null;
+
         /// <summary>
         /// this stores whatever html we want into a string
         /// </summary>
@@ -57,8 +61,9 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         private string ScoreFormatted { get; set; } = string.Empty;
 
-        public async void TargetSVGCreatorAsync(float dimension, string? eventName, Match? match, ResultCOF? resultCoF)
+        public async void TargetSVGCreatorAsync(float dimension, string? eventName, Match? match, ResultCOF? resultCoF, bool includeGroupAnalysis)
         {
+            this.includeGroupAnalysis = includeGroupAnalysis;
             Dimension = dimension;
             EventName = eventName;
             Match = match;
@@ -168,7 +173,6 @@ namespace Scopos.BabelFish.DataActors.PDF
                             }
                         }
 
-
                         //Draw the scoring rings
                         foreach (var scoringRing in Target.ScoringRings)
                         {
@@ -177,6 +181,26 @@ namespace Scopos.BabelFish.DataActors.PDF
                                 stroke = "white";
                             //TODO adjust stroke width based on dimension of target, bigger targets get bigger stroke widths. Need min of 2.0 so they may be seen.
                             stringBuilder.AppendLine($"<circle class=\"aiming-circle\"  cx=\"{center}\" cy=\"{center}\" r=\"{scale * scoringRing.Dimension / 2D}\" stroke=\"{stroke}\" stroke-width=\"2.0\" fill=\"transparent\" />");
+                        }
+
+                        //Draw the Shot Group Analysis Stuff here.
+                        groupMaths = new GroupAnalysisMaths(ShotListToShow);
+                        //if you want the stuff added on there, this is where to to it.
+                        if (includeGroupAnalysis)
+                        {
+                            double WHATTHEFUCK = groupMaths.GetAngle();
+                            int crossLength = 15;
+                            double x  = center + scale * groupMaths.GetCenterX();
+                            double xr = scale * groupMaths.GetMajorAxis();
+                            double y  = center - scale * groupMaths.GetCenterY();
+                            double yr = scale * groupMaths.GetMinorAxis();
+                            double a  = WHATTHEFUCK * (180D / Math.PI);
+                            stringBuilder.AppendLine($"<g fill=\"transparent\" transform=\"rotate({a} {x} {y})\">\n" +
+                                $"\t<ellipse cx=\"{x}\" cy=\"{y}\" rx=\"{xr}\" ry=\"{yr}\" stroke=\"#{ScoposColors.ORANGE_LIGHTEN_2}\" stroke-width=\"1\" fill=\"#{ScoposColors.ORANGE_LIGHTEN_2}\" fill-opacity=\"0.5\"/>\n" +
+                                $"\t<line x1=\"{x}\" y1=\"{y-yr- crossLength}\" x2=\"{x}\" y2=\"{y+yr+ crossLength}\" stroke=\"black\" stroke-width=\"2\" />" + // Vertical 
+                                $"\t<line x1=\"{x-xr- crossLength}\" y1=\"{y}\" x2=\"{x+xr+ crossLength}\" y2=\"{y}\" stroke=\"black\" stroke-width=\"2\" />" + // Horizontal
+                                $"</g>");
+                            //stringBuilder.AppendLine($"<circle id=\"{shot.EventName.Replace(" ", "_").Trim()}_shot\" class=\"shot\" cx=\"{x}\" cy=\"{y}\" r=\"{scale * 2.25D}\" stroke=\"transparent\" stroke-width=\".5\" />");
                         }
 
                         EventScore eventScore;

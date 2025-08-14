@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.PDF
         public CourseOfFire? CourseOfFire { get; private set; } = null;
         public EventComposite TopLevelEvent { get; private set; } = null;
 
-        private List<(string label, string score, byte[] img, List<Shot> shots, EventComposite eventComposite)> EventFields { get; set; } = [];
+        private List<(string label, string score, byte[] img, List<Shot> shots, GroupAnalysisMaths groupMaths, EventComposite eventComposite)> EventFields { get; set; } = [];
 
         public AthleteCOFPdf(ResultCOF resultCOF, EventtType et)
         {
@@ -92,7 +92,12 @@ namespace Scopos.BabelFish.DataActors.PDF
             {
                 row.RelativeItem().Column(column =>
                 {
-                    column.Item().Text(ResultCOF.Participant.DisplayName).SemiBold().FontSize(16).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
+                    column.Item().ShrinkVertical().Row(row =>
+                    {
+                        row.RelativeItem(2).AlignLeft().Text(ResultCOF.Participant.DisplayName).SemiBold().FontSize(16).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
+                        //FYI need to get the top level even score.
+                        row.RelativeItem(1).AlignRight().Text(ResultCOF.EventScores[TopLevelEvent.EventName].ScoreFormatted).SemiBold().FontSize(16).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
+                    });
                     column.Item().Text($"{ResultCOF.MatchName} | {StringFormatting.SingleDate(ResultCOF.LocalDate)}").SemiBold().FontSize(12).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
                     column.Item().Text($"Course of Fire: {CourseOfFire.CommonName}").SemiBold().FontSize(12).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
                     column.Item().Text($"Status: {ResultCOF.Status} | Printed at {StringFormatting.SingleDateTime(DateTime.Now)}").FontSize(12).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
@@ -107,7 +112,6 @@ namespace Scopos.BabelFish.DataActors.PDF
             {
                 if (eventType == EventtType.NONE || eventType == EventtType.SINGULAR)
                     continue;
-
                 var eventsToHighlight = TopLevelEvent.GetEvents(eventType);
                 //give me only the most important events.
                 foreach (var eventToHighlight in eventsToHighlight)
@@ -115,9 +119,10 @@ namespace Scopos.BabelFish.DataActors.PDF
                     //getting target image will also set a bunch of other data, that we will also get here lol
                     var shots = new List<Shot>();
                     string eventScore = "";
-                    var img = TargetImage(eventToHighlight.EventName, 480, 480, out shots, out eventScore);
+                    GroupAnalysisMaths groupMaths = null;
+                    var img = TargetImage(eventToHighlight.EventName, 480, 480, out shots, out eventScore, out groupMaths);
 
-                    EventFields.Add(( eventToHighlight.EventName, eventScore, img, shots, eventToHighlight ));
+                    EventFields.Add(( eventToHighlight.EventName, eventScore, img, shots, groupMaths, eventToHighlight));
                 }
             }
 
@@ -162,7 +167,7 @@ namespace Scopos.BabelFish.DataActors.PDF
             */
 
             int eventIndex = 0;
-            container.Border(2, "#fcba03")
+            container.Border(2, ScoposColors.BLUE_LIGHTEN_1)
             .CornerRadius(5)
             .Padding(1)
             .Column(column =>
@@ -178,7 +183,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                         continue;
                     }
                     int rowHeight = 205;
-                    column.Item().Container().Height(rowHeight).Border(2, "#0bfc03").Row(row =>
+                    column.Item().Container().Height(rowHeight).Border(2, ScoposColors.BLUE_LIGHTEN_1).Row(row =>
                     {
                         foreach (int ro in Enumerable.Range(1, 2))
                         {
@@ -197,13 +202,25 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                             row.RelativeItem(2).Column(col1 =>
                             {
-                                col1.Item().Border(2, "#ec03fc").ScaleToFit().Image(EventFields[eventIndex].img);
+                                //this one is the image and group analysis
+                                col1.Item().BorderRight(2).BorderBottom(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
+                                .Container()
+                                .BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1)
+                                .ScaleToFit().Image(EventFields[eventIndex].img);
                                 //this should always be overall score of the shown target.
-                                col1.Item().Text($"GROUP ANALYSIS GOES HERE");
+                                int tinyFontSize = 7;
+                                col1.Item().ExtendVertical().BorderRight(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
+                                .AlignCenter().AlignMiddle().Text(text => 
+                                {
+                                    text.Span($"Area: {Math.Round(EventFields[eventIndex].groupMaths.GetArea(), 2)}mm").FontSize(tinyFontSize);
+                                    text.Span("2").FontSize(tinyFontSize).Superscript();
+                                    text.Span($"    Round: {Math.Round(EventFields[eventIndex].groupMaths.GetRoundness(), 2)}\n").FontSize(tinyFontSize);
+                                    text.Span($"Center: ({Math.Round(EventFields[eventIndex].groupMaths.GetCenterX(), 2)}mm, {Math.Round(EventFields[eventIndex].groupMaths.GetCenterY(), 2)}mm)").FontSize(tinyFontSize);
+                                });
                             });
                             
                             //maybe make this part a table, if less than 10 shots in this list them with (x,y,r) and value?
-                            row.RelativeItem(1).BorderRight(2).BorderColor("#0bfc03").Column(col2 =>
+                            row.RelativeItem(1).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Column(col2 =>
                             {
                                 col2.Item().Table(table =>
                                 {
@@ -212,11 +229,6 @@ namespace Scopos.BabelFish.DataActors.PDF
                                     {
                                         columns.RelativeColumn(1);
                                         columns.RelativeColumn(1);
-
-                                        //columns.RelativeColumn(2);
-                                        //columns.RelativeColumn(2);
-
-                                        //columns.RelativeColumn(2);
                                     });
 
                                     table.Header(header =>
@@ -224,17 +236,11 @@ namespace Scopos.BabelFish.DataActors.PDF
                                         header.Cell().Element(Style).Text("#").FontSize(tableFontSize);
                                         header.Cell().Element(Style).Text("Score").FontSize(tableFontSize);
 
-                                        //header.Cell().Element(Style).Text("X").FontSize(tableFontSize);
-                                        //header.Cell().Element(Style).Text("Y").FontSize(tableFontSize);
-
-                                        //header.Cell().Element(Style).Text("r").FontSize(tableFontSize);
-
                                         IContainer Style(IContainer container)
                                         {
                                             return container
-                                                .Background(Colors.Blue.Lighten5)
                                                 .Padding(1)
-                                                .DefaultTextStyle(TextStyle.Default.FontColor(Colors.Blue.Darken4).Bold());
+                                                .DefaultTextStyle(TextStyle.Default.FontColor("#000000").Bold());
                                         }
                                     });
 
@@ -267,17 +273,18 @@ namespace Scopos.BabelFish.DataActors.PDF
                                     IContainer Style(IContainer container)
                                     {
                                         return container
-                                        .BorderTop(2)
-                                        .BorderColor(Colors.Blue.Lighten3)
-                                        .Padding(1);
+                                            .BorderTop(2)
+                                            .BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
+                                            .Padding(1);
                                     }
 
                                     IContainer FooterStyle(IContainer container)
                                     {
                                         return container
-                                            .Background(Colors.Blue.Lighten5)
+                                            .BorderTop(2)
+                                            .BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
                                             .Padding(1)
-                                            .DefaultTextStyle(TextStyle.Default.FontColor(Colors.Blue.Darken4).Bold());
+                                            .DefaultTextStyle(TextStyle.Default.FontColor("#000000").Bold());
                                     }
 
                                 });
@@ -294,12 +301,12 @@ namespace Scopos.BabelFish.DataActors.PDF
             });
         }
 
-        protected byte[] TargetImage(string name, int width, int height, out List<Shot> shot, out string eventScore)
+        protected byte[] TargetImage(string name, int width, int height, out List<Shot> shot, out string eventScore, out GroupAnalysisMaths groupMaths)
         {
             // this will be where target images are made, then adding in the NPA maths.
             TargetSVGCreator targetSVG = new TargetSVGCreator();
             //need to have a call for each stage.
-            targetSVG.TargetSVGCreatorAsync(480f, name, null, this.ResultCOF);
+            targetSVG.TargetSVGCreatorAsync(480f, name, null, this.ResultCOF,true);
             string svg = null;
             while (svg == null)
             {
@@ -313,6 +320,7 @@ namespace Scopos.BabelFish.DataActors.PDF
 
             eventScore = targetSVG.GetScoreFormatted();
             shot = targetSVG.GetShotListToShow();
+            groupMaths = targetSVG.groupMaths;
 
             return png;
         }
