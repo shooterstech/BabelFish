@@ -68,7 +68,7 @@ namespace BabelFish.Tests.DataActors.PDF {
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
             var resultCof = getResultCofResponse.ResultCOF;
 
-            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.STAGE);
+            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
             await pdf.InitializeAsync();
 
             pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloWHAT.pdf");

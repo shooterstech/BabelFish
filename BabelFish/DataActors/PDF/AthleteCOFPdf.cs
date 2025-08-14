@@ -1,4 +1,5 @@
-﻿using QuestPDF.Fluent;
+﻿using NLog.Filters;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Scopos.BabelFish.APIClients;
@@ -25,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.PDF
         public CourseOfFire? CourseOfFire { get; private set; } = null;
         public EventComposite TopLevelEvent { get; private set; } = null;
 
-        private List<(string label, string score, byte[] img, List<Shot> shots)> EventFields { get; set; } = [];
+        private List<(string label, string score, byte[] img, List<Shot> shots, EventComposite eventComposite)> EventFields { get; set; } = [];
 
         public AthleteCOFPdf(ResultCOF resultCOF, EventtType et)
         {
@@ -116,7 +117,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                     string eventScore = "";
                     var img = TargetImage(eventToHighlight.EventName, 480, 480, out shots, out eventScore);
 
-                    EventFields.Add(( eventToHighlight.EventName, eventScore, img, shots ));
+                    EventFields.Add(( eventToHighlight.EventName, eventScore, img, shots, eventToHighlight ));
                 }
             }
 
@@ -163,34 +164,132 @@ namespace Scopos.BabelFish.DataActors.PDF
             int eventIndex = 0;
             container.Border(2, "#fcba03")
             .CornerRadius(5)
-            .Padding(2)
+            .Padding(1)
             .Column(column =>
             {
-                foreach ( int col in Enumerable.Range( 1, (EventFields.Count() / 2) ) )
+                foreach ( int col in Enumerable.Range( 1, (EventFields.Count()) ) )
                 {
-                    int svgSize = 480;
+                    if (EventFields[eventIndex].eventComposite.EventType != this.EventtType)
+                    {
+                        //failfirst!
+                        eventIndex++;
+                        if (eventIndex >= EventFields.Count())
+                            break;
+                        continue;
+                    }
                     int rowHeight = 205;
                     column.Item().Container().Height(rowHeight).Border(2, "#0bfc03").Row(row =>
                     {
                         foreach (int ro in Enumerable.Range(1, 2))
                         {
+                            if (EventFields[eventIndex].eventComposite.EventType != this.EventtType)
+                            {
+                                //failfirst!
+                                eventIndex++;
+                                //need to add filler row.col parts to make it think it's fine.
+                                row.RelativeItem(2).Column(col1 =>{});
+                                row.RelativeItem(1).Column(col2 =>{});
+
+                                if (eventIndex >= EventFields.Count())
+                                    break;
+                                continue;
+                            }
+
                             row.RelativeItem(2).Column(col1 =>
                             {
                                 col1.Item().Border(2, "#ec03fc").ScaleToFit().Image(EventFields[eventIndex].img);
                                 //this should always be overall score of the shown target.
-                                col1.Item().Text($"{EventFields[eventIndex].label} score is {EventFields[eventIndex].score}");
+                                col1.Item().Text($"GROUP ANALYSIS GOES HERE");
                             });
                             
                             //maybe make this part a table, if less than 10 shots in this list them with (x,y,r) and value?
                             row.RelativeItem(1).BorderRight(2).BorderColor("#0bfc03").Column(col2 =>
                             {
-                                col2.Item().Text($"this is {EventFields[eventIndex].label}");
-                                col2.Item().Text($"Score is {EventFields[eventIndex].score}");
-                            });
+                                col2.Item().Table(table =>
+                                {
+                                    int tableFontSize = 12;
+                                    table.ColumnsDefinition(columns =>
+                                    {
+                                        columns.RelativeColumn(1);
+                                        columns.RelativeColumn(1);
 
+                                        //columns.RelativeColumn(2);
+                                        //columns.RelativeColumn(2);
+
+                                        //columns.RelativeColumn(2);
+                                    });
+
+                                    table.Header(header =>
+                                    {
+                                        header.Cell().Element(Style).Text("#").FontSize(tableFontSize);
+                                        header.Cell().Element(Style).Text("Score").FontSize(tableFontSize);
+
+                                        //header.Cell().Element(Style).Text("X").FontSize(tableFontSize);
+                                        //header.Cell().Element(Style).Text("Y").FontSize(tableFontSize);
+
+                                        //header.Cell().Element(Style).Text("r").FontSize(tableFontSize);
+
+                                        IContainer Style(IContainer container)
+                                        {
+                                            return container
+                                                .Background(Colors.Blue.Lighten5)
+                                                .Padding(1)
+                                                .DefaultTextStyle(TextStyle.Default.FontColor(Colors.Blue.Darken4).Bold());
+                                        }
+                                    });
+
+                                    int limit = 20;
+                                    List<Shot> shotListCopy = EventFields[eventIndex].shots;
+
+                                    table.ExtendLastCellsToTableBottom();
+                                    foreach (var shot in shotListCopy)
+                                    {
+                                        if (limit == 0)
+                                        {
+                                            break;
+                                        }
+
+                                        table.Cell().Element(Style).Text($"{shot.EventName}").FontSize(tableFontSize);
+                                        table.Cell().Element(Style).Text($"{shot.ScoreFormatted}").FontSize(tableFontSize);
+
+                                        //table.Cell().Element(Style).Text($"{shot.Location.GetXToString()}").FontSize(tableFontSize);
+                                        //table.Cell().Element(Style).Text($"{shot.Location.GetYToString()}").FontSize(tableFontSize);
+
+                                        //table.Cell().Element(Style).Text($"{shot.Location.GetRadiusToString()}").FontSize(tableFontSize);
+                                        //table.Cell().Element(Style).Text($"{Math.Round(shot.Location.GetAngle()*(180/Math.PI))}").FontSize(tableFontSize);
+
+                                        limit--;
+                                    }
+
+                                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("Total").FontSize(tableFontSize);
+                                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text($"{EventFields[eventIndex].score}").FontSize(tableFontSize);
+
+                                    IContainer Style(IContainer container)
+                                    {
+                                        return container
+                                        .BorderTop(2)
+                                        .BorderColor(Colors.Blue.Lighten3)
+                                        .Padding(1);
+                                    }
+
+                                    IContainer FooterStyle(IContainer container)
+                                    {
+                                        return container
+                                            .Background(Colors.Blue.Lighten5)
+                                            .Padding(1)
+                                            .DefaultTextStyle(TextStyle.Default.FontColor(Colors.Blue.Darken4).Bold());
+                                    }
+
+                                });
+                            });
                             eventIndex++;
+                            if (eventIndex >= EventFields.Count())
+                                break;
                         }
                     });
+
+                    if (eventIndex >= EventFields.Count())
+                        break;
                 }
             });
         }
@@ -208,7 +307,9 @@ namespace Scopos.BabelFish.DataActors.PDF
             }
             //SO QuestPDF does NOT SUPPORT CSS Styling, all elemnts MUST include Fill and Stroke items.
             svg = targetSVG.SvgWithoutCSS(svg, width, height);
+            svg = targetSVG.MakePrinterFriendly(svg);
             var png = targetSVG.ConvertSvgToPng(svg, width, height);
+            
 
             eventScore = targetSVG.GetScoreFormatted();
             shot = targetSVG.GetShotListToShow();

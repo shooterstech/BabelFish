@@ -412,6 +412,63 @@ namespace Scopos.BabelFish.DataActors.PDF
 
             return svgDocument.ToString();
         }
+        public string MakePrinterFriendly(string svgContent)
+        {
+            // Load SVG content into an XDocument
+            var svgDocument = XDocument.Parse(svgContent);
+            var namespaceManager = new XmlNamespaceManager(new NameTable());
+            namespaceManager.AddNamespace("svg", SvgNamespace);
+            var svgElement = svgDocument.Root;
+
+            svgElement.SetAttributeValue("style", "overflow:hidden");
+            //svgElement.SetAttributeValue("width", $"{width}");
+            //svgElement.SetAttributeValue("height", $"{height}");
+
+            // Select all elements with a fill attribute
+            var aimingCircleElements = svgDocument.XPathSelectElements("//*[(@class='aiming-circle')]", namespaceManager);
+
+            // Loop over selected elements and change fill to black
+            foreach (var element in aimingCircleElements)
+            {
+                element.SetAttributeValue("stroke", "black");
+                element.SetAttributeValue("fill", "white");
+                element.SetAttributeValue("fill-opacity", "0.0");
+            }
+
+            // Select all elements with a black stroke
+            var aimingBlackElements = svgDocument.XPathSelectElements("//*[(@class='aiming-black')]", namespaceManager);
+
+            // Loop over selected elements and change black stroke to white
+            foreach (var element in aimingBlackElements)
+            {
+                element.SetAttributeValue("stroke", "white");
+                element.SetAttributeValue("fill", "white");
+                element.SetAttributeValue("fill-opacity", "1.0");
+            }
+
+            // Select all elements with a black stroke
+            var shotElements = svgDocument.XPathSelectElements("//*[(@class='shot')]", namespaceManager);
+
+            // Loop over selected elements and change black stroke to white
+            foreach (var element in shotElements)
+            {
+                element.SetAttributeValue("fill-opacity", "0.0");
+            }
+
+            // Select all elements with class 'shot-outline'
+            var shotOutlineElements = svgDocument.XPathSelectElements("//*[@class='shot-outline']", namespaceManager);
+
+            // Loop over selected elements and change fill color to #4f84be and fill opacity to 0.3 (30%)
+            foreach (var element in shotOutlineElements)
+            {
+                element.SetAttributeValue("stroke", "#"+ScoposColors.DARK_GREY.ToString());
+                element.SetAttributeValue("stroke-width", "1.5");
+                element.SetAttributeValue("fill", "#"+ScoposColors.DARK_GREY.ToString());
+                element.SetAttributeValue("fill-opacity", "0.2");
+            }
+
+            return svgDocument.ToString();
+        }
 
         public byte[] ConvertSvgToPng(string svgMarkup, int targetWidth, int targetHeight)
         {
