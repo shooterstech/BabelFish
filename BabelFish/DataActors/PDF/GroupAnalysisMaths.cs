@@ -21,6 +21,8 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         private double angle = 0;
 
+        private double distanceBetweenWidestShots = 0;
+
         public GroupAnalysisMaths(List<Shot> shots)
         {
             this.shots = shots;
@@ -93,6 +95,38 @@ namespace Scopos.BabelFish.DataActors.PDF
             majorAxis = Math.Sqrt(varX) * 1.645;
             minorAxis = Math.Sqrt(varY) * 1.645;
 
+            widestGroup();
+
+        }
+
+        private void widestGroup()
+        {
+            //get the widest shot
+            Scopos.BabelFish.DataModel.Athena.Shot.Shot widestShot = null;
+            double maxDistance = 0;
+            foreach (var shot1 in shotsToAnalyize)
+            {
+                if (shot1.Location.GetRadiusSquared() > maxDistance)
+                {
+                    maxDistance = shot1.Location.GetRadiusSquared();
+                    widestShot = shot1;
+                }
+            }
+            //Now find furthest shot from the widest one.
+            maxDistance = 0;
+            foreach (var shot1 in shotsToAnalyize)
+            {
+                var x1 = widestShot.Location.X;
+                var y1 = widestShot.Location.Y;
+                var x2 = shot1.Location.X;
+                var y2 = shot1.Location.Y;
+                var dist = Math.Sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+                if(dist > maxDistance)
+                {
+                    maxDistance = dist;
+                }
+            }
+            distanceBetweenWidestShots = maxDistance;
         }
 
         /// <summary>
@@ -168,6 +202,11 @@ namespace Scopos.BabelFish.DataActors.PDF
                 return 1D;
             else
                 return majorAxis / minorAxis;
+        }
+
+        public double GetDistanceBetweenWidestShots()
+        {
+            return distanceBetweenWidestShots;
         }
     }
 }

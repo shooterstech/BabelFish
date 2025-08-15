@@ -26,6 +26,8 @@ namespace Scopos.BabelFish.DataActors.PDF
         public CourseOfFire? CourseOfFire { get; private set; } = null;
         public EventComposite TopLevelEvent { get; private set; } = null;
 
+        public Target TargetDef = null;
+
         private List<(string label, string score, byte[] img, List<Shot> shots, GroupAnalysisMaths groupMaths, EventComposite eventComposite)> EventFields { get; set; } = [];
 
         public AthleteCOFPdf(ResultCOF resultCOF, EventtType et)
@@ -96,7 +98,12 @@ namespace Scopos.BabelFish.DataActors.PDF
                     {
                         row.RelativeItem(2).AlignLeft().Text(ResultCOF.Participant.DisplayName).SemiBold().FontSize(16).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
                         //FYI need to get the top level even score.
-                        row.RelativeItem(1).AlignRight().Text(ResultCOF.EventScores[TopLevelEvent.EventName].ScoreFormatted).SemiBold().FontSize(16).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
+                        row.RelativeItem(1).AlignRight().Text(text =>{
+                            text.Span($"{TopLevelEvent.EventName} : {ResultCOF.EventScores[TopLevelEvent.EventName].ScoreFormatted}")
+                                .SemiBold()
+                                .FontSize(16)
+                                .FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
+                        });
                     });
                     column.Item().Text($"{ResultCOF.MatchName} | {StringFormatting.SingleDate(ResultCOF.LocalDate)}").SemiBold().FontSize(12).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
                     column.Item().Text($"Course of Fire: {CourseOfFire.CommonName}").SemiBold().FontSize(12).FontColor(ScoposColors.LIGHT_GREY_LIGHTEN_3);
@@ -120,7 +127,9 @@ namespace Scopos.BabelFish.DataActors.PDF
                     var shots = new List<Shot>();
                     string eventScore = "";
                     GroupAnalysisMaths groupMaths = null;
-                    var img = TargetImage(eventToHighlight.EventName, 480, 480, out shots, out eventScore, out groupMaths);
+                    Target targetDef = null;
+                    var img = TargetImage(eventToHighlight.EventName, 480, 480, out shots, out eventScore, out groupMaths, out targetDef);
+                    TargetDef = targetDef;
 
                     EventFields.Add(( eventToHighlight.EventName, eventScore, img, shots, groupMaths, eventToHighlight));
                 }
@@ -212,10 +221,18 @@ namespace Scopos.BabelFish.DataActors.PDF
                                 col1.Item().ExtendVertical().BorderRight(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
                                 .AlignCenter().AlignMiddle().Text(text => 
                                 {
-                                    text.Span($"Area: {Math.Round(EventFields[eventIndex].groupMaths.GetArea(), 2)}mm").FontSize(tinyFontSize);
+                                    text.Span($"Area: {EventFields[eventIndex].groupMaths.GetArea().ToString("F")}mm").FontSize(tinyFontSize);
                                     text.Span("2").FontSize(tinyFontSize).Superscript();
-                                    text.Span($"    Round: {Math.Round(EventFields[eventIndex].groupMaths.GetRoundness(), 2)}\n").FontSize(tinyFontSize);
-                                    text.Span($"Center: ({Math.Round(EventFields[eventIndex].groupMaths.GetCenterX(), 2)}mm, {Math.Round(EventFields[eventIndex].groupMaths.GetCenterY(), 2)}mm)").FontSize(tinyFontSize);
+                                    text.Span($"    Round: {EventFields[eventIndex].groupMaths.GetRoundness().ToString("F")}\n").FontSize(tinyFontSize);
+                                    if (TargetDef.Distance != null)
+                                    {
+                                        var widestMM = EventFields[eventIndex].groupMaths.GetDistanceBetweenWidestShots();
+                                        var distanceInMeter = TargetDef.Distance / 1000D;
+                                        //we want to use radius of widest circle
+                                        var spreadMoa = Math.Atan( (widestMM / 2D) / distanceInMeter);
+                                        text.Span($"MOA: {spreadMoa.ToString("F")}    ").FontSize(tinyFontSize);
+                                    }
+                                    text.Span($"Center: ({EventFields[eventIndex].groupMaths.GetCenterX().ToString("F")}mm, {EventFields[eventIndex].groupMaths.GetCenterY().ToString("F")}mm)").FontSize(tinyFontSize);
                                 });
                             });
                             
@@ -258,12 +275,6 @@ namespace Scopos.BabelFish.DataActors.PDF
                                         table.Cell().Element(Style).Text($"{shot.EventName}").FontSize(tableFontSize);
                                         table.Cell().Element(Style).Text($"{shot.ScoreFormatted}").FontSize(tableFontSize);
 
-                                        //table.Cell().Element(Style).Text($"{shot.Location.GetXToString()}").FontSize(tableFontSize);
-                                        //table.Cell().Element(Style).Text($"{shot.Location.GetYToString()}").FontSize(tableFontSize);
-
-                                        //table.Cell().Element(Style).Text($"{shot.Location.GetRadiusToString()}").FontSize(tableFontSize);
-                                        //table.Cell().Element(Style).Text($"{Math.Round(shot.Location.GetAngle()*(180/Math.PI))}").FontSize(tableFontSize);
-
                                         limit--;
                                     }
 
@@ -301,7 +312,7 @@ namespace Scopos.BabelFish.DataActors.PDF
             });
         }
 
-        protected byte[] TargetImage(string name, int width, int height, out List<Shot> shot, out string eventScore, out GroupAnalysisMaths groupMaths)
+        protected byte[] TargetImage(string name, int width, int height, out List<Shot> shot, out string eventScore, out GroupAnalysisMaths groupMaths, out Target targetDef)
         {
             // this will be where target images are made, then adding in the NPA maths.
             TargetSVGCreator targetSVG = new TargetSVGCreator();
@@ -313,6 +324,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                 svg = targetSVG.GetSVGMarkup();
             }
             //SO QuestPDF does NOT SUPPORT CSS Styling, all elemnts MUST include Fill and Stroke items.
+            // ^ Does not matter, we are converting immediately into a PNG
             svg = targetSVG.SvgWithoutCSS(svg, width, height);
             svg = targetSVG.MakePrinterFriendly(svg);
             var png = targetSVG.ConvertSvgToPng(svg, width, height);
@@ -321,6 +333,7 @@ namespace Scopos.BabelFish.DataActors.PDF
             eventScore = targetSVG.GetScoreFormatted();
             shot = targetSVG.GetShotListToShow();
             groupMaths = targetSVG.groupMaths;
+            targetDef = targetSVG.TargetDef;
 
             return png;
         }

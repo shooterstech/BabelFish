@@ -72,7 +72,7 @@ namespace BabelFish.Tests.DataActors.PDF {
             var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
             await pdf.InitializeAsync();
 
-            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloWHAT.pdf");
+            pdf.GeneratePdf(PageSizes.A4, "c:\\temp\\helloWHAT.pdf");
 
         }
     }

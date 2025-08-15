@@ -35,6 +35,8 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         public GroupAnalysisMaths? groupMaths { get; set; } = null;
 
+        public Target TargetDef { get; set; }
+
         /// <summary>
         /// this stores whatever html we want into a string
         /// </summary>
@@ -137,7 +139,7 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                         //All targets definitions *should* be the same from the Stage level down. Therefore it's safe (maybe) to use the same target definition througout.
                         var Target = await APIClients.DefinitionCache.GetTargetDefinitionAsync(targetSetName);
-
+                        this.TargetDef = Target;
                         //Using divs, populate the even name and scores of each ancestor
                         PopulateParentScores(EventWeAreLookingFor);
                         //Using divs, populate the event name and score of each direct child.
@@ -196,7 +198,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                             double yr = scale * groupMaths.GetMinorAxis();
                             double a  = WHATTHEFUCK * (180D / Math.PI);
                             stringBuilder.AppendLine($"<g fill=\"transparent\" transform=\"rotate({a} {x} {y})\">\n" +
-                                $"\t<ellipse cx=\"{x}\" cy=\"{y}\" rx=\"{xr}\" ry=\"{yr}\" stroke=\"#{ScoposColors.ORANGE_LIGHTEN_2}\" stroke-width=\"1\" fill=\"#{ScoposColors.ORANGE_LIGHTEN_2}\" fill-opacity=\"0.5\"/>\n" +
+                                $"\t<ellipse cx=\"{x}\" cy=\"{y}\" rx=\"{xr}\" ry=\"{yr}\" stroke=\"#{ScoposColors.ORANGE_LIGHTEN_1}\" stroke-width=\"2\" fill=\"#{ScoposColors.ORANGE_LIGHTEN_1}\" fill-opacity=\"0.5\"/>\n" +
                                 $"\t<line x1=\"{x}\" y1=\"{y-yr- crossLength}\" x2=\"{x}\" y2=\"{y+yr+ crossLength}\" stroke=\"black\" stroke-width=\"2\" />" + // Vertical 
                                 $"\t<line x1=\"{x-xr- crossLength}\" y1=\"{y}\" x2=\"{x+xr+ crossLength}\" y2=\"{y}\" stroke=\"black\" stroke-width=\"2\" />" + // Horizontal
                                 $"</g>");
