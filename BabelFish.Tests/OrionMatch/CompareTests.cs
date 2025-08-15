@@ -4,11 +4,11 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
-    /*
+    
     [TestClass]
     public class CompareTests : BaseTestClass {
 
-        List<SquaddingAssignmentFiringPoint> SquaddingAssignmentFPList = new List<SquaddingAssignmentFiringPoint>();
+        List<Squadding> SquaddingAssignmentFPList = new List<Squadding>();
         string JONES_CHRIS_R1_FP1 = "Jones, Chris";
         string JONES_MONIKA_R1_FP2 = "Jones, Monika";
         string SMITH_DEREK_R2_FP1 = "Smith, Derek";
@@ -18,57 +18,65 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public override void InitializeTest() {
             base.InitializeTest();
 
-            SquaddingAssignmentFPList = new List<SquaddingAssignmentFiringPoint>();
+            SquaddingAssignmentFPList = new List<Squadding>();
 
             SquaddingAssignmentFPList.Add(
-                new SquaddingAssignmentFiringPoint() {
+                new Squadding() {
                     Participant = new Individual() {
                         LastName = "Jones",
                         GivenName = "Chris",
                         DisplayName = JONES_CHRIS_R1_FP1,
                         CompetitorNumber = "101"
                     },
-                    FiringPoint = "1",
-                    Relay = "1"
+                    SquaddingAssignment = new SquaddingAssignmentFiringPoint() {
+                        FiringPoint = "1",
+                        Relay = "1"
+                    }
                 }
                 );
 
             SquaddingAssignmentFPList.Add(
-                new SquaddingAssignmentFiringPoint() {
+                new Squadding() {
                     Participant = new Individual() {
                         LastName = "Jones",
                         GivenName = "Monika",
                         DisplayName = JONES_MONIKA_R1_FP2,
                         CompetitorNumber = "102"
                     },
-                    FiringPoint = "2",
-                    Relay = "1"
+					SquaddingAssignment = new SquaddingAssignmentFiringPoint() {
+                        FiringPoint = "2",
+                        Relay = "1"
+                    }
                 }
                 );
 
             SquaddingAssignmentFPList.Add(
-                new SquaddingAssignmentFiringPoint() {
+                new Squadding() {
                     Participant = new Individual() {
                         FamilyName = "Smith",
                         GivenName = "Derek",
                         DisplayName = SMITH_DEREK_R2_FP1,
                         CompetitorNumber = "103"
                     },
-                    FiringPoint = "1",
-                    Relay = "2"
+					SquaddingAssignment = new SquaddingAssignmentFiringPoint() {
+                        FiringPoint = "1",
+                        Relay = "2"
+                    }
                 }
                 );
 
             SquaddingAssignmentFPList.Add(
-                new SquaddingAssignmentFiringPoint() {
+                new Squadding() {
                     Participant = new Individual() {
                         FamilyName = "Smith",
                         GivenName = "Janet",
                         DisplayName = SMITH_JANET_R2_FP2,
                         CompetitorNumber = "104"
                     },
-                    FiringPoint = "2",
-                    Relay = "2"
+					SquaddingAssignment = new SquaddingAssignmentFiringPoint() {
+                        FiringPoint = "2",
+                        Relay = "2"
+                    }
                 }
                 );
         }
@@ -117,21 +125,21 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task CompareSquaddingTests() {
 
-            var sortByRelayFiringPointAsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
+            var sortByRelayFiringPointAsc = new CompareSquadding( CompareSquadding.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
             SquaddingAssignmentFPList.Sort( sortByRelayFiringPointAsc );
             Assert.AreEqual(JONES_CHRIS_R1_FP1, SquaddingAssignmentFPList[0].Participant.DisplayName);
             Assert.AreEqual(JONES_MONIKA_R1_FP2, SquaddingAssignmentFPList[1].Participant.DisplayName);
             Assert.AreEqual(SMITH_DEREK_R2_FP1, SquaddingAssignmentFPList[2].Participant.DisplayName);
             Assert.AreEqual(SMITH_JANET_R2_FP2, SquaddingAssignmentFPList[3].Participant.DisplayName);
 
-            var sortByRelayFiringPointDsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING );
+            var sortByRelayFiringPointDsc = new CompareSquadding( CompareSquadding.CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.DESCENDING );
             SquaddingAssignmentFPList.Sort( sortByRelayFiringPointDsc );
             Assert.AreEqual(SMITH_JANET_R2_FP2, SquaddingAssignmentFPList[0].Participant.DisplayName);
             Assert.AreEqual(SMITH_DEREK_R2_FP1, SquaddingAssignmentFPList[1].Participant.DisplayName);
             Assert.AreEqual(JONES_MONIKA_R1_FP2, SquaddingAssignmentFPList[2].Participant.DisplayName);
             Assert.AreEqual(JONES_CHRIS_R1_FP1, SquaddingAssignmentFPList[3].Participant.DisplayName);
 
-            var sortByRelayFirstLastAsc = new CompareSquaddingAssignmentFiringPoint( CompareSquaddingAssignmentFiringPoint.CompareMethod.RELAY_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
+            var sortByRelayFirstLastAsc = new CompareSquadding( CompareSquadding.CompareMethod.RELAY_DISPLAYNAME, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
             SquaddingAssignmentFPList.Sort( sortByRelayFirstLastAsc );
             Assert.AreEqual(JONES_CHRIS_R1_FP1, SquaddingAssignmentFPList[0].Participant.DisplayName);
             Assert.AreEqual(JONES_MONIKA_R1_FP2, SquaddingAssignmentFPList[1].Participant.DisplayName);
@@ -197,5 +205,5 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue(comparer.Compare(resultEvent1, resultEvent1) == 0); // 0 = 1 compareTo 1
         }
     }
-    */
+    
 }

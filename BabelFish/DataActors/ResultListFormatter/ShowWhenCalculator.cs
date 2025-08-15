@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             RLF = rlf;
 
             try {
-                var matchId = RLF.ResultList.Metadata.Keys.First();
+                var matchId = RLF.RLIFList.ParentID;
                 this.MatchID = new MatchID( matchId );
             } catch (Exception ex) {
                 //We shouldn't ever get here

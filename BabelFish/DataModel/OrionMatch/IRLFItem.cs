@@ -20,5 +20,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		DateTime EndDate { get; }
 
 		ResultStatus Status { get; }
+
+		string ParentID { get; set; }
 	}
 }
