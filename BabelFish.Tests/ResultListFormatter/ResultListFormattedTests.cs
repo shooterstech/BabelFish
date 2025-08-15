@@ -397,12 +397,17 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
 		}
 
-        public string GetParticipantAttributeRank( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {
+        public string GetParticipantAttributeRank( IRLIFItem item, ResultListIntermediateFormatted rlf ) {
 
-            var realRank = resultEvent.Rank;
-            var modifiedRank = 1000 + realRank;
+            if (item is ResultEvent) {
+                var resultEvent = (ResultEvent)item;
+                var realRank = resultEvent.Rank;
+                var modifiedRank = 1000 + realRank;
 
-            return modifiedRank.ToString();
+                return modifiedRank.ToString();
+            }
+
+            return "";
         }
 
 		[TestMethod]

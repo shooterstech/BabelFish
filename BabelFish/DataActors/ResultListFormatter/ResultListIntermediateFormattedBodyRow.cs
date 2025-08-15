@@ -11,7 +11,7 @@ using System.Diagnostics;
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ResultListIntermediateFormattedBodyRow : ResultListIntermediateFormattedRow {
 
-        public ResultListIntermediateFormattedBodyRow( ResultListIntermediateFormatted rlf, ResultEvent re ) : base (rlf, re) {
+        public ResultListIntermediateFormattedBodyRow( ResultListIntermediateFormatted rlf, IRLIFItem re ) : base (rlf, re) {
 
             _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = false;
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public override List<string> GetClassList() {
             List<string> classSetList = new List<string>();
             foreach ( var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet ){
-                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _resultEvent))
+                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _item))
                 {
                     classSetList.Add(setObj.Name);
                 }

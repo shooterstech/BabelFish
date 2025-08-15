@@ -151,7 +151,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
              } );
         }
 
-        public string RankDeltaFormatting( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {
+        public string RankDeltaFormatting( IRLIFItem resultEvent, ResultListIntermediateFormatted rlf ) {
             return "";
         }
     }

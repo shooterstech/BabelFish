@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultEvent : IEventScoreProjection, IRLFItem {
+    public class ResultEvent : IEventScoreProjection, IRLIFItem {
 
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;

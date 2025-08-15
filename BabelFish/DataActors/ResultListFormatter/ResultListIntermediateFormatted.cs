@@ -40,11 +40,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="resultListFormat"></param>
         /// <returns></returns>
         public ResultListIntermediateFormatted(
-            ResultList resultList,
+            IRLIFList resultList,
             ResultListFormat resultListFormat,
             IUserProfileLookup userProfileLookup ) {
 
-            this.ResultList = resultList;
+            this.RLIFList = resultList;
             this.ResultListFormat = resultListFormat;
             this.UserProfileLookup = userProfileLookup;
             this.ShowWhenCalculator = new ShowWhenCalculator( this );
@@ -73,13 +73,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
             lock (_rows) { //rows needs to be thread safe
-                foreach (var re in ResultList.Items) {
-                    var rei = new ResultListIntermediateFormattedBodyRow( this, re );
+                foreach (var item in RLIFList.GetAsIRLItemsList()) {
+                    var rei = new ResultListIntermediateFormattedBodyRow( this, item );
 
                     _rows.Add( rei );
                     _rowLookup.Clear();
 
-                    if (re.TeamMembers != null) {
+                    if (item is ResultEvent re &&  re.TeamMembers != null) {
                         foreach (var child in re.TeamMembers) {
                             var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
@@ -99,16 +99,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// to this instance. It assumes the user is passing in the same ResultList, just with a different tokenized chunk of result list items.
         /// </summary>
         /// <param name="tokenizedResultList"></param>
-        public void AppendTokenizedResultList( ResultList tokenizedResultList ) {
+        public void AppendTokenizedResultList( IRLIFList tokenizedResultList ) {
 
             lock (_rows) {
-                foreach (var re in tokenizedResultList.Items) {
-                    var rei = new ResultListIntermediateFormattedBodyRow( this, re );
+                foreach (var item in tokenizedResultList.GetAsIRLItemsList()) {
+                    var rei = new ResultListIntermediateFormattedBodyRow( this, item );
 
                     _rows.Add( rei );
                     _rowLookup.Clear();
 
-                    if (re.TeamMembers != null) {
+                    if (item is ResultEvent re && re.TeamMembers != null) {
                         foreach (var child in re.TeamMembers) {
                             var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
@@ -134,8 +134,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Does NOT effect the rows, ,use Clear() and AppendTokenizedResultList() to do this. 
         /// </summary>
         /// <param name="updatedResultList"></param>
-        public void RefreshResultList( ResultList updatedResultList ) {
-            this.ResultList = updatedResultList;
+        public void RefreshResultList( IRLIFList updatedResultList ) {
+            this.RLIFList = updatedResultList;
         }
 
         /// <summary>
@@ -310,7 +310,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <summary>
         /// Gets the Orion ResultList used in this translation.
         /// </summary>
-        public ResultList ResultList { get; private set; }
+        public IRLIFList RLIFList { get; private set; }
+
+        public ResultList ? ResultList {
+            get {
+                if (RLIFList is ResultList)
+                    return (ResultList)RLIFList;
+
+                return null;
+            }
+        }
 
         /// <summary>
         /// Gets the ScoreFormatCollection Definition used in this Result List
@@ -585,7 +594,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public ResultListDisplayPartitions DisplayPartitions {
             get {
-                if (ResultList.Team && ResultListFormat.Format.DisplayForTeam != null)
+                if (ResultList != null && ResultList.Team && ResultListFormat.Format.DisplayForTeam != null)
                     return ResultListFormat.Format.DisplayForTeam;
                 else
                     return ResultListFormat.Format.Display;

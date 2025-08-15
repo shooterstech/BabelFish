@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Response object for a request of Squadding Assignments for a specified match and squadding event name.
     /// </summary>
-    public class SquaddingList : ITokenItems<Squadding>, IPublishTransactions {
+    public class SquaddingList : ITokenItems<Squadding>, IRLIFList, IPublishTransactions {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -124,8 +124,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		[G_NS.JsonProperty( Order = 20 )]
 		public List<Squadding> Items { get; set; }
 
-        /// <inheritdoc />
-        [DefaultValue( "" )]
+		/// <inheritdoc />
+		public List<IRLIFItem> GetAsIRLItemsList() {
+			return Items.ToList<IRLIFItem>();
+		}
+
+		/// <inheritdoc />
+		[DefaultValue( "" )]
         [JsonConverter( typeof( NextTokenConverter ) )]
 		[G_NS.JsonProperty( Order = 21 )]
 		public string NextToken { get; set; } = string.Empty;
@@ -172,5 +177,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override string ToString() {
             return $"SquaddingList with {Items.Count} items";
         }
-    }
+	}
 }

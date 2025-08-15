@@ -15,7 +15,7 @@ using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
+    public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
@@ -173,6 +173,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [JsonPropertyOrder ( 50 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
+		
+        /// <inheritdoc />
+		public List<IRLIFItem> GetAsIRLItemsList() {
+            return Items.ToList<IRLIFItem>();
+        }
 
         [JsonPropertyOrder( 10 )]
         public string MatchName { get; set; } = string.Empty;

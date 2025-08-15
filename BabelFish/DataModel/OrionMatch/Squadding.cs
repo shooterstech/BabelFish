@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    public class Squadding : IRLFItem {
+    public class Squadding : IRLIFItem {
 
         public Squadding() { }
 
