@@ -733,10 +733,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 		}
 
-		/// <remarks>
-		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
-		/// method in the field value.
-		/// </remarks>
 		public async Task LoadSquaddingListAsync() {
 
             OrionMatchAPIClient orionMatchAPIClient = new OrionMatchAPIClient();
@@ -764,6 +760,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 					_logger.Error( ex );
 				}
 			}
+
+            RefreshAllRowsParticipantAttributeFields();
 
 		}
 

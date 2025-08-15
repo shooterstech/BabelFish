@@ -10,5 +10,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 	public interface IRLIFList {
 
 		List<IRLIFItem> GetAsIRLItemsList();
+
+		string ResultListFormatDef { get; }
+
+		string Name { get; }
+
+		DateTime StartDate { get; }
+
+		DateTime EndDate { get; }
+
+		ResultStatus Status { get; }
 	}
 }

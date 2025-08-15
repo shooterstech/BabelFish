@@ -322,6 +322,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
         }
 
+        [G_NS.JsonIgnore]
+        public string Name {
+            get {
+                return this.ResultName;
+            }
+        }
+
         /// <inheritdoc />
         public override string ToString() {
             return $"ResultList for {ResultName}" ;

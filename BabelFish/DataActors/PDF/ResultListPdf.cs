@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
         private static IUserProfileLookup _userProfileLookup = new BaseUserProfileLookup();
 
         public Match Match { get; private set; }
-        public ResultList ResultList { get; private set; }
+        public IRLIFList ItemList { get; private set; }
 
         public ResultListFormat? ResultListFormat { get; private set; } = null;
 
@@ -27,17 +27,17 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         public CourseOfFire CourseOfFire { get; private set; } = null;
 
-        public ResultListPdf( Match match, ResultList resultList ) {
-            this.ResultList = resultList;
+        public ResultListPdf( Match match, IRLIFList itemList ) {
+            this.ItemList = itemList;
             this.Match = match;
         }
 
         public async Task InitializeAsync() {
 
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( ResultList ).ConfigureAwait( false );
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( ItemList ).ConfigureAwait( false );
             ResultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( Match.CourseOfFireDef ) );
-            RLF = new ResultListIntermediateFormatted( ResultList, ResultListFormat, _userProfileLookup );
+            RLF = new ResultListIntermediateFormatted( ItemList, ResultListFormat, _userProfileLookup );
 
             RLF.Engagable = false;
             RLF.ShowSupplementalInformation = false;
@@ -88,10 +88,10 @@ namespace Scopos.BabelFish.DataActors.PDF {
             .Padding( 10 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( ResultList.ResultName ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"{Match.Name} | {StringFormatting.SpanOfDates( ResultList.StartDate, ResultList.EndDate )}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( ItemList.Name ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"{Match.Name} | {StringFormatting.SpanOfDates( ItemList.StartDate, ItemList.EndDate )}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"Status: {ResultList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"Status: {ItemList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"{StringFormatting.Location( Match.Location.City, Match.Location.State, Match.Location.Country )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                 } );
 
@@ -111,7 +111,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         protected override string Title {
             get {
-                return $"Results for {ResultList.ResultName}";
+                return $"Results for {ItemList.Name}";
             }
         }
 

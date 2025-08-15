@@ -174,7 +174,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		[G_NS.JsonProperty( Order = 46 )]
 		public int TransactionCount { get; set; } = 1;
 
-        public override string ToString() {
+		[G_NS.JsonIgnore]
+		public string Name {
+			get {
+				return this.EventName;
+			}
+		}
+
+		public ResultStatus Status {
+			get {
+				return ResultStatus.FUTURE;
+			}
+		}
+
+		public override string ToString() {
             return $"SquaddingList with {Items.Count} items";
         }
 	}
