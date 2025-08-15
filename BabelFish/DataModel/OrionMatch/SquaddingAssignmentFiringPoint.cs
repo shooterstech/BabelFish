@@ -46,17 +46,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return this.FiringOrder.CompareTo(other.FiringOrder);
         }
 
-        public override string ToString() {
-            StringBuilder str = new StringBuilder();
-            str.Append("Range: ");
-            str.Append(this.Range);
-            str.Append(" Relay: ");
-            str.Append(this.Relay);
-            str.Append(" FP: ");
-            str.Append(this.FiringPoint);
-            str.Append(" Firing Order: ");
-            str.Append(this.FiringOrder);
-            return str.ToString();
+        public override string ToString( bool useAbbreviation ) {
+            if (useAbbreviation) {
+                return $"R{this.Relay} FP{this.FiringPoint}";
+            } else {
+				return $"Relay {this.Relay} FP {this.FiringPoint}";
+			}
         }
     }
 }

@@ -31,5 +31,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public SquaddingAssignmentType SquaddingType { get; protected set; }
 
+        public abstract string ToString( bool useAbbreviation );
+
+		public override string ToString() {
+			return this.ToString( false );
+		}
+
 	}
 }

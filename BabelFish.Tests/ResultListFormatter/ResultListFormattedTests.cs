@@ -409,7 +409,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         public async Task EriksPlayground() {
 
             //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
-            MatchID matchId = new MatchID( "1.1.2025051614283290.0" );
+            MatchID matchId = new MatchID( "1.1.2025081213222434.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - Sporter";
@@ -426,12 +426,18 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
             Assert.IsNotNull( resultListFormat );
 
+            resultListFormat.Format.Columns[0].Body = "{Squadding}";
+
             //Test that the conversion was successful and has the same number of objects.
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
-            await rlf.InitializeAsync();
+			await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
 
-            rlf.Engagable = false;
+
+			await rlf.LoadSquaddingListAsync();
+            rlf.RefreshAllRowsParticipantAttributeFields();
+
+			rlf.Engagable = false;
             rlf.ResolutionWidth = 1000;
             rlf.ShowNumberOfChildRows = 4000;
             rlf.ShowRanks = 0;

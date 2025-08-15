@@ -445,7 +445,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ELLIPSES
     };
 
-    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum RemarkVisibility {
         /// <summary>
         /// Show the Remark
