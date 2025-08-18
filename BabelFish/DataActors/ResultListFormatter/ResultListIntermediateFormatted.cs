@@ -84,6 +84,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
                             _rows.Add( reiChild );
+                            rei.ChildRows.Add( reiChild );
+                            reiChild.ParentRow = rei;
                         }
                     }
 
@@ -113,6 +115,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
                             _rows.Add( reiChild );
+                            rei.ChildRows.Add( reiChild );
+                            reiChild.ParentRow = rei;
                         }
                     }
                 }
@@ -194,15 +198,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             childRowsRemaining = this.ShowNumberOfChildRows;
                             skipRemainingChildren = false;
 
-                            if (ShowRanks >= row.GetRank()) {
+                            if (ShowRanks > row.GetRank()) {
                                 //Always show scores with a rank value up to and including ShowRanks
                                 copyOfRows.Add( row );
                             } else {
 
-                                if (row.StatusIsInShownStatus()) {
+                                if (row.ShowRowBasedOnShownStatus()
+                                    && row.ShowRowBasedOnShowRelay() ) {
                                     //This row's status is one of the status we were told to include
 
-                                    if ( this.ResultList.Status == ResultStatus.OFFICIAL 
+                                    if ( this.ResultList != null
+                                        && this.ResultList.Status == ResultStatus.OFFICIAL 
                                         && ShowZeroScoresWithOFFICIAL 
                                         && row.GetScore( this.ResultList.EventName, false ).IsZero ) {
                                         //The result list status is official, and we were told to exclude rows with scores of zero
@@ -235,7 +241,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             if (childRowsRemaining > 0) {
                                 childRowsRemaining--;
 
-                                if (row.StatusIsInShownStatus()) {
+                                if (row.ShowRowBasedOnShownStatus()
+									&& row.ShowRowBasedOnShowRelay() ) {
                                     //This row's status is one of the status we were told to include
 
                                     if (this.ResultList.Status == ResultStatus.OFFICIAL
@@ -630,13 +637,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         private int _showNumberOfChildren = int.MaxValue;
         private HashSet<ResultStatus> _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
         private bool _showZeroScoresWithOFFICIAL = false;
-        private int _showRanks = 0;
+        private int _showRanks = 3;
+        private string _showRelay = string.Empty;
 
         public void SetShowValuesToDefault() {
             ShowNumberOfChildRows = int.MinValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
             ShowZeroScoresWithOFFICIAL = false;
-            ShowRanks = 0;
+            ShowRanks = 3;
+            ShowRelay = string.Empty;
         }
         /// <summary>
         /// Limits the number of child rows to show under a main body row.
@@ -678,20 +687,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <summary>
         /// Gets or sets a boolean indicating if scores with a zero score shold be displayed when the Result LIst's staus is OFFICIAL.
-        /// Scores that have a remark of DNS, DSQ, or DNF are still shown.
+        /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
+        /// <para>The defautl value is false.</para>
         /// </summary>
         public bool ShowZeroScoresWithOFFICIAL {
             get; set;
         }
-        
 
-        /// <summary>
-        /// Gets or sets the number of highest ranked athletes or teams to always show, regardless of othre row limiting properties, when .ShownRows is called.
-        /// For example, if RanksToShow is 3, then the athletes or teams ranked first, second, and third are always shown.
-        /// <para>A value of 0 indicates to show all athletes and teams.</para>
-        /// <para>This property only effects parent rows, it does not effect child rows.</para>
-        /// </summary>
-        public int ShowRanks {
+
+		/// <summary>
+		/// Gets or sets the number of highest ranked athletes or teams to always show, 
+        /// regardless of othre row limiting properties, when .ShownRows is called.
+		/// For example, if ShowRanks is 3, then the athletes or teams ranked first, second, and third are always shown.
+		/// <para>This property only effects parent rows, it does not effect child rows.</para>
+        /// <para>The default value is 3.</para>
+		/// </summary>
+		public int ShowRanks {
             get {
                 return _showRanks;
             }
@@ -700,6 +711,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     _showRanks = 0;
                 else
                     _showRanks = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the relay to show. When set, only athletes on that relay will be shown. 
+        /// Teams, who have one or more athltes on that relay will be shown, but only the team members on that
+        /// relay will be shown. 
+        /// <para>The default value is an empty string, which means to show all competitors from all relays.</para>
+        /// </summary>
+        public string ShowRelay {
+            get {
+                return _showRelay;
+            }
+            set {
+                if (string.IsNullOrEmpty( value ))
+                    _showRelay = string.Empty;
+                else
+                    _showRelay = value;
             }
         }
 

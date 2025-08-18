@@ -915,10 +915,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// shooting.
         /// </summary>
         /// <returns></returns>
-        public bool StatusIsInShownStatus( ) {
-
-			if (_resultEvent is null)
-				return false;
+        public virtual bool ShowRowBasedOnShownStatus( ) {
 			
             if (_resultListFormatted.ShowStatuses == null)
                 return false;
@@ -929,11 +926,38 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //This is a special carve out for marksmen who just finished shooting. So techncially they would be UNOFFICIAL
             //but as far as displaying them in shown rows we want to pretend they are INTERMEDIATE for a bit longer.
             if (_resultListFormatted.ShowStatuses.Contains( ResultStatus.INTERMEDIATE )
-                && _resultEvent.CurrentlyCompetingOrRecentlyDone())
+                && _resultEvent != null &&  _resultEvent.CurrentlyCompetingOrRecentlyDone())
                 return true;
 
             return false;
 		}
 
+        /// <summary>
+        /// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowRelay property.
+        /// Which provides the name of a relay to match, in order to show.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool ShowRowBasedOnShowRelay() {
+
+			//Always show, if .ShowRelay does not have a filter on it (aka empty string)
+			if (this._resultListFormatted.ShowRelay == string.Empty)
+				return true;
+
+			//If we don't have squadding, then don't apply the filter.
+			if (_item.SquaddingAssignment == null)
+				return true;
+
+			if (_item.SquaddingAssignment is SquaddingAssignmentFiringPoint safp
+				&& safp.Relay == this._resultListFormatted.ShowRelay)
+				return true;
+
+			if (_item.SquaddingAssignment is SquaddingAssignmentBank sab
+				&& sab.Relay == this._resultListFormatted.ShowRelay)
+				return true;
+
+			//SquaddingAssignmentSquad does not use relays
+
+			return false;
+		}
 	}
 }

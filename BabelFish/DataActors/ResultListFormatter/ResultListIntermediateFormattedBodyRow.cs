@@ -30,5 +30,32 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //NOTE .RowClass is deprecated
             //return resultListFormatted.DisplayPartitions.Body.ClassList.Concat( resultListFormatted.DisplayPartitions.Body.RowClass ).ToList<string>();
         }
-    }
+
+        /// <summary>
+        /// A list if child rows associated with this body row. 
+        /// </summary>
+        public List<ResultListIntermediateFormattedChildRow> ChildRows { get; internal set; } = new List<ResultListIntermediateFormattedChildRow>();
+
+        /// <inheritdoc />
+        public override bool ShowRowBasedOnShowRelay() {
+
+            //Always show, if .ShowRelay does not have a filter on it (aka empty string)
+            if (this._resultListFormatted.ShowRelay == string.Empty)
+                return true;
+
+            //Show the parent row, if there are not any child rows, and its on the same relay.
+            if (this.ChildRows.Count == 0)
+                return base.ShowRowBasedOnShowRelay();
+
+            //Show the parent rwo, if one or more of the children are on the relay.
+            foreach( var childRow in this.ChildRows ) {
+                if ( childRow.ShowRowBasedOnShowRelay()) {
+                    return true;
+                }
+            }
+
+            //Else, donw't show
+            return false;
+        }
+	}
 }

@@ -25,5 +25,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //NOTE .RowClass is deprecated
             //return resultListFormatted.DisplayPartitions.Children.ClassList.Concat( resultListFormatted.DisplayPartitions.Children.RowClass ).ToList<string>();
         }
+
+        public ResultListIntermediateFormattedBodyRow ParentRow { get; internal set; }
     }
 }

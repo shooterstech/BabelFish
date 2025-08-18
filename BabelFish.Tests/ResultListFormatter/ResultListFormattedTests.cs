@@ -410,6 +410,47 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             return "";
         }
 
+        [TestMethod]
+        public async Task TestShowRelay() {
+
+			//MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
+			MatchID matchId = new MatchID( "1.1.2025081213222434.0" );
+			var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+			var match = matchDetailResponse.Match;
+            var squaddingName = match.SquaddingEvents[0].Name;
+
+			//Get the Result List from the API Server
+			var squaddingListResponse = await matchClient.GetSquaddingListPublicAsync( matchId, squaddingName );
+            var squaddingList = squaddingListResponse.SquaddingList;
+
+			//Get the ResultListFormat to use for formatting
+			var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( squaddingList );
+			var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+			var resultListFormat = resultListFormatResponse.Definition;
+
+            //Instantiate the RLIF
+			ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( squaddingList, resultListFormat, userProfileLookup );
+			await rlf.InitializeAsync();
+
+            //Seet .ShowRanks to 0, so it doesn't show the top three (like it would by default).
+            rlf.ShowRanks = 0;
+
+            //Before specifying a relay to show, make sure the default case (show everyone) works.
+            Assert.AreEqual( 13, rlf.ShownRows.Count );
+
+            rlf.ShowRelay = "1"; 
+            Assert.AreEqual( 4, rlf.ShownRows.Count );
+
+			rlf.ShowRelay = "2";
+			Assert.AreEqual( 4, rlf.ShownRows.Count );
+
+			rlf.ShowRelay = "3";
+			Assert.AreEqual( 4, rlf.ShownRows.Count );
+
+			rlf.ShowRelay = "4";
+			Assert.AreEqual( 1, rlf.ShownRows.Count );
+		}
+
 		[TestMethod]
         public async Task EriksPlayground() {
 
@@ -440,7 +481,6 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
 
 			await rlf.LoadSquaddingListAsync();
-            rlf.RefreshAllRowsParticipantAttributeFields();
 
 			rlf.Engagable = false;
             rlf.ResolutionWidth = 1000;
