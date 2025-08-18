@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
     /// Implements the IComparer interface to sort a list of SquaddingAssignmentFiringPoint, such as one
     /// would have if they called the GetSquaddingList REST API call. 
     /// </summary>
-    public class CompareSquadding : IComparer<Squadding> {
+    public class CompareSquadding : IComparer<IRLIFItem> {
         public enum CompareMethod {
 
             /// <summary>
@@ -60,7 +60,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public SortBy SortBy { get; private set; }
 
         /// <inheritdoc/>
-        public int Compare( Squadding x, Squadding y ) {
+        public int Compare( IRLIFItem x, IRLIFItem y ) {
 
             int compare = 0;
             Individual X, Y;
@@ -84,7 +84,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     compare = X.GivenName.CompareTo( Y.GivenName );
                     if (compare == 0)
-                        compare = Y.GivenName.CompareTo( X.GivenName );
+                        compare = X.GivenName.CompareTo( Y.GivenName );
                     break;
 
                 case CompareMethod.FAMILYNAME_GIVENNAME:
@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     compare = X.FamilyName.CompareTo( Y.FamilyName );
                     if (compare == 0)
-                        compare = Y.GivenName.CompareTo( X.GivenName );
+                        compare = X.GivenName.CompareTo( Y.GivenName );
                     break;
 
                 case CompareMethod.RELAY_FIRINGPOINT_DISPLAYNAME:

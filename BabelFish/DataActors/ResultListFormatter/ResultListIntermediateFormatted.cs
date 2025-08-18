@@ -799,6 +799,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// method in the field value.
 		/// </remarks>
 		public void LoadSquaddingList( SquaddingList squaddingList ) {
+            if (squaddingList == null)
+                return;
+
             RefreshRowLookup();
 
             foreach( var item in squaddingList.Items ) {

@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         public ResultListFormat? ResultListFormat { get; private set; } = null;
 
-        public ResultListIntermediateFormatted? RLF { get; private set; } = null;
+        public ResultListIntermediateFormatted? RLIF { get; private set; } = null;
 
         public CourseOfFire CourseOfFire { get; private set; } = null;
 
@@ -37,13 +37,13 @@ namespace Scopos.BabelFish.DataActors.PDF {
             var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( ItemList ).ConfigureAwait( false );
             ResultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( Match.CourseOfFireDef ) );
-            RLF = new ResultListIntermediateFormatted( ItemList, ResultListFormat, _userProfileLookup );
+            RLIF = new ResultListIntermediateFormatted( ItemList, ResultListFormat, _userProfileLookup );
 
-            RLF.Engagable = false;
-            RLF.ShowSupplementalInformation = false;
-            RLF.GetParticipantAttributeRankDeltaPtr = this.RankDeltaFormatting;
+            RLIF.Engagable = false;
+            RLIF.ShowSupplementalInformation = false;
+            RLIF.GetParticipantAttributeRankDeltaPtr = this.RankDeltaFormatting;
 
-            await RLF.InitializeAsync();
+            await RLIF.InitializeAsync();
         }
 
         public override QuestPDF.Fluent.Document GeneratePdf( PageSize pageSize, string filePath ) {
@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 
-                    RLF.ResolutionWidth = (int)((pageSize.Width - 114) * 1200 / 500);
+                    RLIF.ResolutionWidth = (int)((pageSize.Width - 114) * 1200 / 500);
 
                     page.Content().Column( column => {
 
@@ -82,18 +82,29 @@ namespace Scopos.BabelFish.DataActors.PDF {
         protected override void ReportTitle( IContainer container ) {
             var rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
 
+            var typeOfList = "";
+            if (ItemList is ResultList) {
+                typeOfList = "Results for";
+                rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
+            } else if (ItemList is SquaddingList) {
+                typeOfList = "Squadding for";
+				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
+				//rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/squadding/";
+			}
+
             container.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
             .Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
             .CornerRadius( 5 )
             .Padding( 10 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( ItemList.Name ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"{typeOfList} ItemList.Name" ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"{Match.Name} | {StringFormatting.SpanOfDates( ItemList.StartDate, ItemList.EndDate )}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"Status: {ItemList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"{StringFormatting.Location( Match.Location.City, Match.Location.State, Match.Location.Country )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                 } );
+
 
                 if (Match.Visibility == DataModel.Common.VisibilityOption.PUBLIC) {
                     row.ConstantItem( 3, Unit.Centimetre )
@@ -117,12 +128,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         private void ResultListTable( IContainer container ) {
 
-            var columnIndexes = RLF.GetShownColumnIndexes();
+            var columnIndexes = RLIF.GetShownColumnIndexes();
 
             container.Table( table => {
                  table.ColumnsDefinition( columns => {
                      foreach (var colIndex in columnIndexes) {
-                         var headerCell = RLF.GetColumnHeaderCell( colIndex );
+                         var headerCell = RLIF.GetColumnHeaderCell( colIndex );
 
                          if (headerCell.ClassList.Contains( "rlf-col-rank" )
                              || headerCell.ClassList.Contains( "rlf-col-gap" ))
@@ -137,12 +148,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
                  table.Header( header => {
                      foreach (var colIndex in columnIndexes) {
-                         var headerCell = RLF.GetColumnHeaderCell( colIndex );
+                         var headerCell = RLIF.GetColumnHeaderCell( colIndex );
                          header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 2 ).Text( headerCell.Text ).Bold();
                      }
                  } );
 
-                 foreach (var row in RLF.Rows) {
+                 foreach (var row in RLIF.Rows) {
                      foreach (var colIndex in columnIndexes) {
                          var rowCell = row.GetColumnBodyCell( colIndex );
                          table.Cell().Padding( 2 ).Text( rowCell.Text );
