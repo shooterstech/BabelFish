@@ -56,7 +56,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 20 )]
         [G_NS.JsonProperty( Order = 20 )]
         [DefaultValue( 10000 )]
-        public int Distance { get; set; } = 10000;
+        public int? Distance { get; set; } = null;
 
         /// <summary>
         /// The maximum zoom that this target should be displayed in a square user interface window.
