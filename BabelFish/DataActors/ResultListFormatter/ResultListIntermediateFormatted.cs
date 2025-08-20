@@ -152,6 +152,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             UserProfileLookup.RefreshUserProfileVisibilityAsync();
         }
 
+        /// <summary>
+        /// Refreshes the _rowLookup dictionary. _rowLookup is a cache that looks up a row, in this RLIF based on the result cof id.
+        /// </summary>
         private void RefreshRowLookup() {
             lock (_rows) {
                 //_rowLookup is cleared when _rows is updated with new rows.
@@ -333,7 +336,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public ScoreFormatCollection ScoreFormatCollection { get; private set; }
 
-        private SetName ScoreFormatCollectionSetName {
+		/// <summary>
+		/// The set name of the SCORE FORMAT COLLECTION to use to format scores. 
+		/// <para>If one is not specified in the RESULT LIST FORMAT then the default v1.0:orion:Standard Score Formats
+        /// is used.</para>
+		/// </summary>
+		private SetName ScoreFormatCollectionSetName {
             get {
                 //The ScoreFormatCollection should be included in the ResultListFormat,
                 //but in case it isn't, ,pass back the default value of Standard Score Formats.
@@ -347,6 +355,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
+        /// <summary>
+        /// The ScoreConfigName, within the SCORE FORMAT COLLECTION, to use to format scores.
+        /// If a value is not found within the ResultLIst object, then the default value from 
+        /// the RESULT LIST FORMAT definition is returned.
+        /// </summary>
         private string ScoreConfigName {
             get {
                 if (ResultList != null && !string.IsNullOrEmpty( ResultList.ScoreConfigName ))
@@ -640,13 +653,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         private int _showRanks = 3;
         private string _showRelay = string.Empty;
 
+        /// <summary>
+        /// Resets all "Show" values to their default. Specifially:
+        /// <list type="bullet">
+        /// <item>Sets .ShowNumberofChildRows to show all children</item>
+        /// <item>Sets .ShowStatuses to show all rows (participants) regardless of status.</item>
+        /// <item>Sets .ShowZeroScoresWithOFFICIAL to hide scores of zero if the ResultStatus is OFFICIAL</item>
+        /// <item>Sets .ShowRanks to always show the top three ranked participants.</item>
+        /// <item>Sets .ShowRelay to show all participants from all relays.</item>
+        /// </list>
+        /// </summary>
         public void SetShowValuesToDefault() {
-            ShowNumberOfChildRows = int.MinValue;
+            ShowNumberOfChildRows = int.MaxValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
             ShowZeroScoresWithOFFICIAL = false;
             ShowRanks = 3;
             ShowRelay = string.Empty;
         }
+
         /// <summary>
         /// Limits the number of child rows to show under a main body row.
         /// <para>The default value is int.MaxValue, which means to show all children.</para>
@@ -762,6 +786,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 		}
 
+        /// <summary>
+        /// When a ResultListIntermediateFormatted is instantiated with a ResultList, the ResultList object generally
+        /// does not include Squadding (the values of .Squadding are null). This method uses GetSquaddingListPublic REST API call to read
+        /// in squadding, setting the values of .Squadding. 
+        /// <para>Participants are matched up, between the ResultLIst and SquaddingList using their ResultCofId. </para>
+        /// </summary>
+        /// <returns></returns>
 		public async Task LoadSquaddingListAsync() {
 
             OrionMatchAPIClient orionMatchAPIClient = new OrionMatchAPIClient();
@@ -794,6 +825,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 		}
 
+		/// <summary>
+		/// When a ResultListIntermediateFormatted is instantiated with a ResultList, the ResultList object generally
+		/// does not include Squadding (the values of .Squadding are null). This method uses the passed in Squadding List to read
+		/// in squadding, setting the values of .Squadding. 
+		/// <para>Participants are matched up, between the ResultLIst and SquaddingList using their ResultCofId. </para>
+		/// </summary>
 		/// <remarks>
 		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
 		/// method in the field value.
@@ -811,7 +848,6 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     }
                 }
             }
-
 		}
 
         /// <summary>

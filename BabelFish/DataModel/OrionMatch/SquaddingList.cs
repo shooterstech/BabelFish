@@ -154,6 +154,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// </summary>
 		public List<Relay> RelayInformation { get; set; }
 
+		/// <summary>
+		/// NewtonSoft helper method to determine if .RelayInformation should be serialized.
+		/// </summary>
+		/// <returns></returns>
 		public bool ShouldSerializeRelayInformation() {
 			return RelayInformation != null && RelayInformation.Count > 0;
 		}
@@ -174,6 +178,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		[G_NS.JsonProperty( Order = 46 )]
 		public int TransactionCount { get; set; } = 1;
 
+		/// <inheritdoc />
 		[G_NS.JsonIgnore]
 		public string Name {
 			get {
@@ -181,6 +186,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 			}
 		}
 
+		/// <inheritdoc />
+		[G_NS.JsonIgnore]
 		public ResultStatus Status {
 			get {
 				return ResultStatus.FUTURE;

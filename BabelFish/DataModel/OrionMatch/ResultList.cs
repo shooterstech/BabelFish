@@ -243,7 +243,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CourseOfFireDef { get; set; } = string.Empty;
 
-        public string ScoreConfigName { get; set; } = string.Empty;
+		/// <summary>
+		/// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
+		/// <para>NOTE: The SCORE FORMAT COLLECTION is specified within the RESULT LIST FORMAT definition.</para>
+		/// </summary>
+		public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <inheritdoc />
         [DefaultValue( "" )]
