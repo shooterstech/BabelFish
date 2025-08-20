@@ -38,6 +38,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="QuestPDF" Version="2025.7.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.0" />
+    <PackageReference Include="Svg.Skia" Version="3.0.5" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.10" />
