@@ -92,13 +92,16 @@ namespace Scopos.BabelFish.DataActors.PDF {
 				//rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/squadding/";
 			}
 
-            container.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
-            .Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
+            container.Border( 2 )
+			//.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
+			//.Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
+			.BorderLinearGradient( 45, [ScoposColors.BLUE_LIGHTEN_2, ScoposColors.DARK_GREY_LIGHTEN_1] )
+			.BackgroundLinearGradient( 45, [ScoposColors.DARK_GREY, ScoposColors.BLUE_LIGHTEN_1] )
             .CornerRadius( 5 )
             .Padding( 10 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( $"{typeOfList} ItemList.Name" ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( $"{typeOfList} {ItemList.Name}" ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"{Match.Name} | {StringFormatting.SpanOfDates( ItemList.StartDate, ItemList.EndDate )}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"Status: {ItemList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
@@ -149,14 +152,14 @@ namespace Scopos.BabelFish.DataActors.PDF {
                  table.Header( header => {
                      foreach (var colIndex in columnIndexes) {
                          var headerCell = RLIF.GetColumnHeaderCell( colIndex );
-                         header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 2 ).Text( headerCell.Text ).Bold();
+                         header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 1 ).Text( headerCell.Text ).Bold();
                      }
                  } );
 
                  foreach (var row in RLIF.Rows) {
                      foreach (var colIndex in columnIndexes) {
                          var rowCell = row.GetColumnBodyCell( colIndex );
-                         table.Cell().Padding( 2 ).Text( rowCell.Text );
+                         table.Cell().Padding( 1 ).Text( rowCell.Text );
                      }
                  }
              } );
