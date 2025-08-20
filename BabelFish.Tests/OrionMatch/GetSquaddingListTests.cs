@@ -78,9 +78,9 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var squaddingList = squaddingListResponse.SquaddingList;
 
             Assert.IsTrue( squaddingList.Items.Count > 0 );
-            foreach( var squaddingAssignment in  squaddingList.Items ) {
+            foreach( var squadding in  squaddingList.Items ) {
                 //Convert the SquaddingAssignment to their concrete class
-                var fpAssignment = (SquaddingAssignmentFiringPoint)squaddingAssignment;
+                var fpAssignment = (SquaddingAssignmentFiringPoint)squadding.SquaddingAssignment;
 
                 Assert.AreEqual( relayName, fpAssignment.Relay );
             }

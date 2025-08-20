@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             RLF = rlf;
 
             try {
-                var matchId = RLF.ResultList.Metadata.Keys.First();
+                var matchId = RLF.RLIFList.ParentID;
                 this.MatchID = new MatchID( matchId );
             } catch (Exception ex) {
                 //We shouldn't ever get here
@@ -142,6 +142,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
 
                 case ShowWhenCondition.SHOT_ON_EST:
+                    if (RLF.ResultList is null)
+                        return false;
+
                     //If one or more of the VM locations have ESTs, then this will evaluate to true.
                     foreach( var md in RLF.ResultList.Metadata.Values ) {
                         if ( md.ScoringSystemType == ScoringSystem.EST ) {
@@ -151,8 +154,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return false;
 
                 case ShowWhenCondition.SHOT_ON_PAPER:
+					if (RLF.ResultList is null)
+						return false;
+					
                     //If one or more of the VM locations have PAPER, then this will evaluate to true.
-                    foreach (var md in RLF.ResultList.Metadata.Values) {
+					foreach (var md in RLF.ResultList.Metadata.Values) {
                         if (md.ScoringSystemType == ScoringSystem.PAPER) {
                             return true;
                         }
@@ -160,24 +166,37 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return false;
 
                 case ShowWhenCondition.RESULT_STATUS_FUTURE:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.FUTURE;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_INTERMEDIATE:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.INTERMEDIATE;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_UNOFFICIAL:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.UNOFFICIAL;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_OFFICIAL:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
                 case ShowWhenCondition.HAS_ANY_SHOWN_REMARK:
+					
                     if ( participant == null || participant.Participant == null ) {
-                        foreach ( var p in this.RLF.ResultList.Items ) {
+                        foreach ( var p in this.RLF.RLIFList.GetAsIRLItemsList() ) {
                             if ( p.Participant.RemarkList.HasAnyShownParticipantRemark) {
                                 return true;
                             }

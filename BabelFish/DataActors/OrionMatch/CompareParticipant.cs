@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
     /// REST API call.
     /// </summary>
 
-    public class CompareParticipant : IComparer<IParticipant>
+    public class CompareParticipant : IComparer<IRLIFItem>
     {
 
         public enum CompareMethod
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
         public SortBy SortBy { get; private set; }
 
         /// <inheritdoc/>
-        public int Compare(IParticipant x, IParticipant y)
+        public int Compare( IRLIFItem x, IRLIFItem y )
         {
 
             int compare = 0;

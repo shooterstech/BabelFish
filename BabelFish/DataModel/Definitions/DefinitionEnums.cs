@@ -767,10 +767,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         NOT_ENGAGEABLE,
 
-        /// <summary>
-        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does want to see "supplemental" information. 
-        /// </summary>
-        SUPPLEMENTAL,
+		/// <summary>
+		/// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does want to see "supplemental" information. 
+		/// <para>Websites will generally have supplemental information turned on. Spectator displays and print outs generally do not.</para>
+		/// </summary>
+		SUPPLEMENTAL,
 
         /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does not want to see "supplemental" information. 

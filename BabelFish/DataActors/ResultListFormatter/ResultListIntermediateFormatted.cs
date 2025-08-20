@@ -3,6 +3,9 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
+using Scopos.BabelFish.Responses.OrionMatchAPI;
+using System.Linq.Expressions;
+using NLog;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -19,9 +22,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// </summary>
     public class ResultListIntermediateFormatted {
 
-        private readonly List<ResultListIntermediateFormattedRow> rows = new();
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly List<ResultListIntermediateFormattedRow> _rows = new();
         public ShowWhenCalculator ShowWhenCalculator;
-        private bool initialized = false;
+        private bool _initialized = false;
+		/// <summary>
+		/// Key is Result COF ID. Value is the ResultListIntermediateFormattedRow.
+        /// Dictionary is cleared when it is dirty (a row is added to _rows).
+		/// </summary>
+		private Dictionary<string, ResultListIntermediateFormattedRow> _rowLookup = new Dictionary<string, ResultListIntermediateFormattedRow>();
 
         /// <summary>
         /// Converts a list of ResultEvents, that is returned by the GetResultList API, to
@@ -31,11 +40,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="resultListFormat"></param>
         /// <returns></returns>
         public ResultListIntermediateFormatted(
-            ResultList resultList,
+            IRLIFList resultList,
             ResultListFormat resultListFormat,
             IUserProfileLookup userProfileLookup ) {
 
-            this.ResultList = resultList;
+            this.RLIFList = resultList;
             this.ResultListFormat = resultListFormat;
             this.UserProfileLookup = userProfileLookup;
             this.ShowWhenCalculator = new ShowWhenCalculator( this );
@@ -63,24 +72,27 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             }
 
-            lock (rows) { //rows needs to be thread safe
-                foreach (var re in ResultList.Items) {
-                    var rei = new ResultListIntermediateFormattedBodyRow( this, re );
+            lock (_rows) { //rows needs to be thread safe
+                foreach (var item in RLIFList.GetAsIRLItemsList()) {
+                    var rei = new ResultListIntermediateFormattedBodyRow( this, item );
 
-                    rows.Add( rei );
+                    _rows.Add( rei );
+                    _rowLookup.Clear();
 
-                    if (re.TeamMembers != null) {
+                    if (item is ResultEvent re &&  re.TeamMembers != null) {
                         foreach (var child in re.TeamMembers) {
                             var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
-                            rows.Add( reiChild );
+                            _rows.Add( reiChild );
+                            rei.ChildRows.Add( reiChild );
+                            reiChild.ParentRow = rei;
                         }
                     }
 
                 }
             }
 
-            initialized = true;
+            _initialized = true;
         }
 
         /// <summary>
@@ -89,19 +101,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// to this instance. It assumes the user is passing in the same ResultList, just with a different tokenized chunk of result list items.
         /// </summary>
         /// <param name="tokenizedResultList"></param>
-        public void AppendTokenizedResultList( ResultList tokenizedResultList ) {
+        public void AppendTokenizedResultList( IRLIFList tokenizedResultList ) {
 
-            lock (rows) {
-                foreach (var re in tokenizedResultList.Items) {
-                    var rei = new ResultListIntermediateFormattedBodyRow( this, re );
+            lock (_rows) {
+                foreach (var item in tokenizedResultList.GetAsIRLItemsList()) {
+                    var rei = new ResultListIntermediateFormattedBodyRow( this, item );
 
-                    rows.Add( rei );
+                    _rows.Add( rei );
+                    _rowLookup.Clear();
 
-                    if (re.TeamMembers != null) {
+                    if (item is ResultEvent re && re.TeamMembers != null) {
                         foreach (var child in re.TeamMembers) {
                             var reiChild = new ResultListIntermediateFormattedChildRow( this, child );
 
-                            rows.Add( reiChild );
+                            _rows.Add( reiChild );
+                            rei.ChildRows.Add( reiChild );
+                            reiChild.ParentRow = rei;
                         }
                     }
                 }
@@ -113,8 +128,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// going to be reloaded (using AppendTokenizedResultList).
         /// </summary>
         public void Clear() {
-            lock (rows) {
-                rows.Clear();
+            lock (_rows) {
+                _rows.Clear();
             }
         }
 
@@ -123,8 +138,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Does NOT effect the rows, ,use Clear() and AppendTokenizedResultList() to do this. 
         /// </summary>
         /// <param name="updatedResultList"></param>
-        public void RefreshResultList( ResultList updatedResultList ) {
-            this.ResultList = updatedResultList;
+        public void RefreshResultList( IRLIFList updatedResultList ) {
+            this.RLIFList = updatedResultList;
         }
 
         /// <summary>
@@ -135,6 +150,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public async Task RefreshCacheAsync() {
             //There is no need to await this method
             UserProfileLookup.RefreshUserProfileVisibilityAsync();
+        }
+
+        private void RefreshRowLookup() {
+            lock (_rows) {
+                //_rowLookup is cleared when _rows is updated with new rows.
+                //We populate it only when needed
+                if (_rowLookup.Count > 0)
+                    return;
+
+                foreach (var row in _rows) {
+                    if (row.GetParticipant() is Individual individual && !string.IsNullOrEmpty( individual.ResultCOFID ) ) {
+                        _rowLookup[individual.ResultCOFID] = row;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -152,15 +182,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<ResultListIntermediateFormattedRow> ShownRows {
             get {
-                if (!initialized)
+                if (!_initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
                 int childRowsRemaining = this.ShowNumberOfChildRows;
                 bool skipRemainingChildren = false;
 
-                lock (rows) {
+                lock (_rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>();
-                    foreach (var row in rows) {
+                    foreach (var row in _rows) {
                         if (!row.IsChildRow) {
                             //This is a parent row
 
@@ -168,15 +198,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             childRowsRemaining = this.ShowNumberOfChildRows;
                             skipRemainingChildren = false;
 
-                            if (ShowRanks >= row.GetRank()) {
+                            if (ShowRanks > row.GetRank()) {
                                 //Always show scores with a rank value up to and including ShowRanks
                                 copyOfRows.Add( row );
                             } else {
 
-                                if (row.StatusIsInShownStatus()) {
+                                if (row.ShowRowBasedOnShownStatus()
+                                    && row.ShowRowBasedOnShowRelay() ) {
                                     //This row's status is one of the status we were told to include
 
-                                    if ( this.ResultList.Status == ResultStatus.OFFICIAL 
+                                    if ( this.ResultList != null
+                                        && this.ResultList.Status == ResultStatus.OFFICIAL 
                                         && ShowZeroScoresWithOFFICIAL 
                                         && row.GetScore( this.ResultList.EventName, false ).IsZero ) {
                                         //The result list status is official, and we were told to exclude rows with scores of zero
@@ -209,7 +241,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             if (childRowsRemaining > 0) {
                                 childRowsRemaining--;
 
-                                if (row.StatusIsInShownStatus()) {
+                                if (row.ShowRowBasedOnShownStatus()
+									&& row.ShowRowBasedOnShowRelay() ) {
                                     //This row's status is one of the status we were told to include
 
                                     if (this.ResultList.Status == ResultStatus.OFFICIAL
@@ -249,12 +282,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<ResultListIntermediateFormattedRow> Rows {
             get {
-                if (!initialized)
+                if (!_initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
                 int childRowsRemaining = this.ShowNumberOfChildRows;
-                lock (rows) {
-                    List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>( rows );
+                lock (_rows) {
+                    List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>( _rows );
                     return copyOfRows;
                 }
             }
@@ -268,8 +301,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public ResultListIntermediateFormattedRow GetRowAtRankOrder( int rankOrder ) {
             //NOTE: This does a linear search, could be improved by using a dictionary lookup.
-            lock (rows) {
-                foreach (var row in rows) {
+            lock (_rows) {
+                foreach (var row in _rows) {
                     if (row.IsChildRow)
                         continue;
 
@@ -284,7 +317,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <summary>
         /// Gets the Orion ResultList used in this translation.
         /// </summary>
-        public ResultList ResultList { get; private set; }
+        public IRLIFList RLIFList { get; private set; }
+
+        public ResultList ? ResultList {
+            get {
+                if (RLIFList is ResultList)
+                    return (ResultList)RLIFList;
+
+                return null;
+            }
+        }
 
         /// <summary>
         /// Gets the ScoreFormatCollection Definition used in this Result List
@@ -347,7 +389,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<string> FieldNames {
             get {
-                if (!initialized)
+                if (!_initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
                 List<string> fieldNames = new();
@@ -408,7 +450,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public CellValues GetColumnHeaderCell( int columnIndex ) {
 
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             CellValues cellValues = new CellValues( this );
@@ -435,7 +477,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         /// <exception cref="InitializeAsyncNotCompletedException"></exception>
         public string GetColumnHeaderValue( int columnIndex ) {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             var format = ResultListFormat.Format.Columns[columnIndex];
@@ -449,7 +491,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<CellValues> GetHeaderRow() {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<CellValues> row = new();
@@ -462,7 +504,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<string> GetHeaderRowClassList() {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
@@ -478,7 +520,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<string> GetFooterRowClassList() {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<string> l = new();
@@ -500,7 +542,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <exception cref="IndexOutOfRangeException">Thrown when the index value is outside the range of columns.</exception>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public CellValues GetColumnFooterCell( int columnIndex ) {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             CellValues cellValues = new CellValues( this );
@@ -527,7 +569,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         /// <exception cref="InitializeAsyncNotCompletedException"></exception>
         public string GetColumnFooterValue( int columnIndex ) {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
 
@@ -542,7 +584,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
         public List<CellValues> GetFooterRow() {
-            if (!initialized)
+            if (!_initialized)
                 throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
             List<CellValues> row = new();
@@ -559,7 +601,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public ResultListDisplayPartitions DisplayPartitions {
             get {
-                if (ResultList.Team && ResultListFormat.Format.DisplayForTeam != null)
+                if (ResultList != null && ResultList.Team && ResultListFormat.Format.DisplayForTeam != null)
                     return ResultListFormat.Format.DisplayForTeam;
                 else
                     return ResultListFormat.Format.Display;
@@ -595,13 +637,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         private int _showNumberOfChildren = int.MaxValue;
         private HashSet<ResultStatus> _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
         private bool _showZeroScoresWithOFFICIAL = false;
-        private int _showRanks = 0;
+        private int _showRanks = 3;
+        private string _showRelay = string.Empty;
 
         public void SetShowValuesToDefault() {
             ShowNumberOfChildRows = int.MinValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
             ShowZeroScoresWithOFFICIAL = false;
-            ShowRanks = 0;
+            ShowRanks = 3;
+            ShowRelay = string.Empty;
         }
         /// <summary>
         /// Limits the number of child rows to show under a main body row.
@@ -643,20 +687,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <summary>
         /// Gets or sets a boolean indicating if scores with a zero score shold be displayed when the Result LIst's staus is OFFICIAL.
-        /// Scores that have a remark of DNS, DSQ, or DNF are still shown.
+        /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
+        /// <para>The defautl value is false.</para>
         /// </summary>
         public bool ShowZeroScoresWithOFFICIAL {
             get; set;
         }
-        
 
-        /// <summary>
-        /// Gets or sets the number of highest ranked athletes or teams to always show, regardless of othre row limiting properties, when .ShownRows is called.
-        /// For example, if RanksToShow is 3, then the athletes or teams ranked first, second, and third are always shown.
-        /// <para>A value of 0 indicates to show all athletes and teams.</para>
-        /// <para>This property only effects parent rows, it does not effect child rows.</para>
-        /// </summary>
-        public int ShowRanks {
+
+		/// <summary>
+		/// Gets or sets the number of highest ranked athletes or teams to always show, 
+        /// regardless of othre row limiting properties, when .ShownRows is called.
+		/// For example, if ShowRanks is 3, then the athletes or teams ranked first, second, and third are always shown.
+		/// <para>This property only effects parent rows, it does not effect child rows.</para>
+        /// <para>The default value is 3.</para>
+		/// </summary>
+		public int ShowRanks {
             get {
                 return _showRanks;
             }
@@ -665,6 +711,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     _showRanks = 0;
                 else
                     _showRanks = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the relay to show. When set, only athletes on that relay will be shown. 
+        /// Teams, who have one or more athltes on that relay will be shown, but only the team members on that
+        /// relay will be shown. 
+        /// <para>The default value is an empty string, which means to show all competitors from all relays.</para>
+        /// </summary>
+        public string ShowRelay {
+            get {
+                return _showRelay;
+            }
+            set {
+                if (string.IsNullOrEmpty( value ))
+                    _showRelay = string.Empty;
+                else
+                    _showRelay = value;
             }
         }
 
@@ -691,12 +755,64 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// to call if the user overrode one of the GetParticipantAttribute Pointers
 		/// </summary>
 		public void RefreshAllRowsParticipantAttributeFields() {
-            lock (rows) {
-                foreach (var r in rows) {
+            lock (_rows) {
+                foreach (var r in _rows) {
                     r.RefreshStandardParticipantAttributeFields();
                 }
             }
-        }
+		}
+
+		public async Task LoadSquaddingListAsync() {
+
+            OrionMatchAPIClient orionMatchAPIClient = new OrionMatchAPIClient();
+
+			List<Task<GetSquaddingListPublicResponse>> responses = new List<Task<GetSquaddingListPublicResponse>>();
+			foreach ( var metaData in this.ResultList.Metadata.Values ) {
+                //Make the request for all the squadding lists in parrallel
+                try {
+                    var matchId = new MatchID( metaData.MatchID );
+                    var squaddingListName = metaData.SquaddingListName;
+                    responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                } catch (Exception ex) {
+                    _logger.Error( ex );
+                }
+
+                //Now wait for each one
+                try {
+                    foreach( var response in responses ) {
+                        var getSquaddingListResponse = await response;
+                        if ( getSquaddingListResponse.StatusCode == System.Net.HttpStatusCode.OK ) {
+                            LoadSquaddingList( getSquaddingListResponse.SquaddingList );
+                        }
+                    }
+                } catch (Exception ex) {
+					_logger.Error( ex );
+				}
+			}
+
+            RefreshAllRowsParticipantAttributeFields();
+
+		}
+
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public void LoadSquaddingList( SquaddingList squaddingList ) {
+            if (squaddingList == null)
+                return;
+
+            RefreshRowLookup();
+
+            foreach( var item in squaddingList.Items ) {
+                if( item.SquaddingAssignment != null && item.Participant is Individual individual ) {
+                    if ( _rowLookup.TryGetValue( individual.ResultCOFID, out ResultListIntermediateFormattedRow row )) {
+                        row.SetSquaddingAssignment( item.SquaddingAssignment );
+                    }
+                }
+            }
+
+		}
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Rank field
@@ -727,6 +843,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// method in the field value.
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeRankDeltaPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the RankOrSquadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeRankOrSquaddingPtr { get; set; } = null;
 
 		/// <summary>
 		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Empty field
@@ -937,6 +1063,86 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// method in the field value.
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeRemarkPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeSquaddingPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeRelayPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeFiringPointPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeFiringOrderPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeSquadPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeBankPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeReentryPtr { get; set; } = null;
+
+		/// <summary>
+		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
+		/// in each row. 
+		/// </summary>
+		/// <remarks>
+		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+		/// method in the field value.
+		/// </remarks>
+		public ParticipantAttributeOverload GetParticipantAttributeRangePtr { get; set; } = null;
 
 		#endregion
 	}

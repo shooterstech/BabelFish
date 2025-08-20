@@ -227,27 +227,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Rank",
-                Body = "{Rank} {RankDelta}",
+                Body = "{RankOrSquadding} {RankDelta}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-rank",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-                }},
-                ShowWhen = new ShowWhenVariable() {
-                    Condition = ShowWhenCondition.DIMENSION_MEDIUM
-                }
+                }}
             } );
-
-			this.Format.Columns.Add( new ResultListDisplayColumn() {
-				Header = "Rk",
-				Body = "{Rank}",
-				ClassSet = new List<ClassSet>() { new ClassSet() {
-					Name = "rlf-col-rank",
-					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-				}},
-				ShowWhen = new ShowWhenVariable() {
-					Condition = ShowWhenCondition.DIMENSION_LT_MEDIUM
-				}
-			} );
 
 			this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
@@ -298,8 +283,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         },
                         new ShowWhenVariable() {
                             Condition = ShowWhenCondition.DIMENSION_EXTRA_LARGE
-                        }
-                    }
+                        },
+						new ShowWhenVariable() {
+							Condition = ShowWhenCondition.SUPPLEMENTAL
+						}
+					}
                 }
             } );
 

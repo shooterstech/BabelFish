@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -23,7 +24,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string GivenName { get; set; } = string.Empty;
 
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        [Obsolete( "Use GivenName")]
         public string FirstName {
             get { return this.GivenName; }
             set { this.GivenName = value; }
@@ -39,7 +42,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string FamilyName { get; set; } = string.Empty;
 
-        public string LastName {
+		[G_STJ_SER.JsonIgnore]
+		[G_NS.JsonIgnore]
+		[Obsolete( "Use FamilyName" )]
+		public string LastName {
             get { return this.FamilyName; }
             set { this.FamilyName = value; }
         }

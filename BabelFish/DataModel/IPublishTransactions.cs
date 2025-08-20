@@ -5,7 +5,7 @@ using System.Text;
 namespace Scopos.BabelFish.DataModel {
 
     /// <summary>
-    /// Intended for use with publshing messages with lists on IoT. Definines an interface that allows messages
+    /// Intended for use with publshing messages with lists on IoT (not REST API). Definines an interface that allows messages
     /// to be broken up and published in smaller chuncks, to re-assembled by the receiver. 
     /// </summary>
     public interface IPublishTransactions {
