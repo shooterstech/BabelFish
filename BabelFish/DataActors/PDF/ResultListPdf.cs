@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             var document = QuestPDF.Fluent.Document.Create( container => {
                 container.Page( page => {
                     page.Size( pageSize );
-                    page.Margin( 2, Unit.Centimetre );
+                    page.Margin( 1.5f, Unit.Centimetre );
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 
@@ -82,12 +82,22 @@ namespace Scopos.BabelFish.DataActors.PDF {
         protected override void ReportTitle( IContainer container ) {
             var rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
 
-            var typeOfList = "";
-            if (ItemList is ResultList) {
-                typeOfList = "Results for";
-                rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
+            string titleText = string.Empty, line1Text = string.Empty, line2Text = string.Empty, line3Text = string.Empty, line4Text = string.Empty;
+			
+			line1Text = $"{Match.Name} | {StringFormatting.SpanOfDates( ItemList.StartDate, ItemList.EndDate )}";
+			line2Text = $"Course of Fire: {CourseOfFire.CommonName}";
+			if (string.IsNullOrEmpty( SubTitle ))
+				line4Text = $"{StringFormatting.Location( Match.Location.City, Match.Location.State, Match.Location.Country )}";
+			else
+				line4Text = SubTitle;
+
+			if (ItemList is ResultList) {
+                titleText = $"Results for {ItemList.Name}";
+                line3Text = $"Status: {ItemList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}";
+				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
             } else if (ItemList is SquaddingList) {
-                typeOfList = "Squadding for";
+				titleText = $"{ItemList.Name} Squadding";
+				line3Text = $"Printed at {StringFormatting.SingleDateTime( DateTime.Now )}";
 				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
 				//rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/squadding/";
 			}
@@ -101,11 +111,11 @@ namespace Scopos.BabelFish.DataActors.PDF {
             .Padding( 10 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( $"{typeOfList} {ItemList.Name}" ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"{Match.Name} | {StringFormatting.SpanOfDates( ItemList.StartDate, ItemList.EndDate )}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"Status: {ItemList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"{StringFormatting.Location( Match.Location.City, Match.Location.State, Match.Location.Country )}" ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( titleText ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( line1Text ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( line2Text ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( line3Text ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( line4Text ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                 } );
 
 
@@ -156,7 +166,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                      }
                  } );
 
-                 foreach (var row in RLIF.Rows) {
+                 foreach (var row in RLIF.ShownRows) {
                      foreach (var colIndex in columnIndexes) {
                          var rowCell = row.GetColumnBodyCell( colIndex );
                          table.Cell().Padding( 1 ).Text( rowCell.Text );

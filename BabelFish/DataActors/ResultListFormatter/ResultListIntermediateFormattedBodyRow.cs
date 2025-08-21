@@ -57,5 +57,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //Else, donw't show
             return false;
         }
+
+		/// <inheritdoc/>
+		public override bool ShowRowBasedOnShowNumberOfChildren() {
+            //As this is a Body / Parent row, always show it based on this criteria
+            return true;
+		}
+
+        int _numberOfChildRowsLeftToShow = 0;
+        internal bool GetTokenToShowChildRow( ResultListIntermediateFormattedChildRow childRow ) {
+            _numberOfChildRowsLeftToShow--;
+            return _numberOfChildRowsLeftToShow > -1;
+		}
+
+        internal override void ResetNumberOfChildRowsLeftToShow() {
+            this._numberOfChildRowsLeftToShow = this._resultListFormatted.ShowNumberOfChildRows;
+        }
 	}
 }

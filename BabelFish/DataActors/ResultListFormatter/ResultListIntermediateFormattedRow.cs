@@ -24,31 +24,31 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// <returns></returns>
     public delegate string ParticipantAttributeOverload( IRLIFItem item, ResultListIntermediateFormatted rlf );
 
-	public abstract class ResultListIntermediateFormattedRow {
+    public abstract class ResultListIntermediateFormattedRow {
 
         /// <summary>
         /// List of feild values that are always included (the user doesn't have to define these in their definition).
         /// these values are pulled from the .Participant dictionary within the Result COF.
         /// </summary>
-        public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> { 
-            "Rank", 
+        public static readonly IList<string> StandardParticipantAttributeFields = new ReadOnlyCollection<string>( new List<string> {
+            "Rank",
             "RankOrder",
             "RankDelta", //NOTE Externally, this is known as Rank Trends
             "Empty",
-            "DisplayName", 
-            "DisplayNameShort", 
+            "DisplayName",
+            "DisplayNameShort",
             "DisplayNameAbbreviated", //Deprecated
             "FamilyName",
             "GivenName",
             "MiddleName",
             "HomeTown",
-            "Country", 
+            "Country",
             "Club",
-            "CompetitorNumber", 
-            "MatchLocation", 
+            "CompetitorNumber",
+            "MatchLocation",
             "MatchID", //If this is a Virtual Match, will differ from the ParentID
-			"LocalDate", 
-            "ResultCOFID", 
+			"LocalDate",
+            "ResultCOFID",
             "UserID",
             "Creator",
             "Owner",
@@ -84,8 +84,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             _resultListFormatted = rlf;
             _item = re;
 
-			//When _item comes from a ResultList object, then _item is a ResultEvent. Which is rather common. So we will have a special helper variable to use it.
-			if (_item is ResultEvent)
+            //When _item comes from a ResultList object, then _item is a ResultEvent. Which is rather common. So we will have a special helper variable to use it.
+            if (_item is ResultEvent)
                 _resultEvent = (ResultEvent)_item;
             else
                 _resultEvent = null;
@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     continue;
 
                 switch (field.Method) {
-                    case ResultFieldMethod.PARTICIPANT_ATTRIBUTE :
+                    case ResultFieldMethod.PARTICIPANT_ATTRIBUTE:
                         _fields[fieldName] = GetTruncatedValue( source, GetParticipantAttribute( source.Name.ToString() ) );
                         break;
 
@@ -136,11 +136,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// to call if the user overrode one of the GetParticipantAttribute Pointers
         /// </summary>
         public void RefreshStandardParticipantAttributeFields() {
-			//Pull in the standard ParticipantAttribute Fields that are always included
-			foreach (var field in StandardParticipantAttributeFields) {
-				_fields[field] = GetParticipantAttribute( field );
-			}
-		}
+            //Pull in the standard ParticipantAttribute Fields that are always included
+            foreach (var field in StandardParticipantAttributeFields) {
+                _fields[field] = GetParticipantAttribute( field );
+            }
+        }
 
         /// <summary>
         /// Helper method that basically indicates if the standard fields should be truncated because the screen resolution is shorten. 
@@ -157,9 +157,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="source"></param>
         /// <param name="untruncatedValue"></param>
         /// <returns></returns>
-        private string GetTruncatedValue( FieldSource source , string untruncatedValue ) {
-            if ( source.TruncateAt > 3 && untruncatedValue.Length > source.TruncateAt)
-            {
+        private string GetTruncatedValue( FieldSource source, string untruncatedValue ) {
+            if (source.TruncateAt > 3 && untruncatedValue.Length > source.TruncateAt) {
                 return $"{untruncatedValue.Substring( 0, source.TruncateAt - 3 )}...";
             } else {
                 return untruncatedValue;
@@ -194,10 +193,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeRankOrderPtr != null)
                         return _resultListFormatted.GetParticipantAttributeRankOrderPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					int rankOrder = GetRankOrder();
+                    int rankOrder = GetRankOrder();
 
                     if (rankOrder > 0)
                         return rankOrder.ToString();
@@ -209,10 +208,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeRankDeltaPtr != null)
                         return _resultListFormatted.GetParticipantAttributeRankDeltaPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					if (this._resultEvent.CurrentlyCompetingOrRecentlyDone()
+                    if (this._resultEvent.CurrentlyCompetingOrRecentlyDone()
                         && this._resultListFormatted.ShowSupplementalInformation) {
                         int rankDelta = GetRankDelta();
 
@@ -231,9 +230,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultEvent is null)
                         return GetParticipantAttribute( "Squadding" );
 
-					//Return squadding if the athlete hasn't started. Return rank if they have.
+                    //Return squadding if the athlete hasn't started. Return rank if they have.
 
-					if (_resultEvent.GetStatus() == ResultStatus.FUTURE)
+                    if (_resultEvent.GetStatus() == ResultStatus.FUTURE)
                         return GetParticipantAttribute( "Squadding" );
 
                     return GetParticipantAttribute( "Rank" );
@@ -343,10 +342,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeResultCOFIDPtr != null)
                         return _resultListFormatted.GetParticipantAttributeResultCOFIDPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					return _resultEvent.ResultCOFID;
+                    return _resultEvent.ResultCOFID;
 
                 case "UserID":
                     if (_resultListFormatted.GetParticipantAttributeUserIDPtr != null)
@@ -361,30 +360,30 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeLocalDatePtr != null)
                         return _resultListFormatted.GetParticipantAttributeLocalDatePtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					return _resultEvent.LocalDate.ToString();
+                    return _resultEvent.LocalDate.ToString();
 
                 case "MatchID":
                     if (_resultListFormatted.GetParticipantAttributeMatchIDPtr != null)
                         return _resultListFormatted.GetParticipantAttributeMatchIDPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					//This is the local match id, which likely different from the Parent ID in a virtual match
-					return _resultEvent.MatchID;
+                    //This is the local match id, which likely different from the Parent ID in a virtual match
+                    return _resultEvent.MatchID;
 
                 case "MatchLocation":
                 case "MatchLocationAbbreviation": //Deprecated
                     if (_resultListFormatted.GetParticipantAttributeMatchLocationPtr != null)
                         return _resultListFormatted.GetParticipantAttributeMatchLocationPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata )) {
+                    if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata )) {
                         if (this.LessThanLarge) {
                             return StringFormatting.GetTruncatedString( metadata.MatchLocation );
                         } else {
@@ -398,10 +397,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeCreatorPtr != null)
                         return _resultListFormatted.GetParticipantAttributeCreatorPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
+                    if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
                         return metadata.Creator;
                     else
                         return "";
@@ -412,10 +411,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeOwnerPtr != null)
                         return _resultListFormatted.GetParticipantAttributeOwnerPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
+                    if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
                         return metadata.OwnerId;
                     else
                         return "";
@@ -424,10 +423,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeTargetCollectionNamePtr != null)
                         return _resultListFormatted.GetParticipantAttributeTargetCollectionNamePtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
+                    if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
                         return metadata.TargetCollectionName;
                     else
                         return "";
@@ -436,19 +435,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeStatusPtr != null)
                         return _resultListFormatted.GetParticipantAttributeStatusPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					return GetStatus().Description();
+                    return GetStatus().Description();
 
                 case "LastShot":
                     if (_resultListFormatted.GetParticipantAttributeLastShotPtr != null)
                         return _resultListFormatted.GetParticipantAttributeLastShotPtr( this._item, this._resultListFormatted );
 
-					if (_resultEvent is null)
-						return "";
+                    if (_resultEvent is null)
+                        return "";
 
-					var lastShot = _resultEvent.LastShot;
+                    var lastShot = _resultEvent.LastShot;
                     if (lastShot != null && (DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalSeconds < 300) {
 
                         string scoreFormat = _resultListFormatted.GetScoreFormat( "Shots" );
@@ -555,22 +554,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         private bool TryGetResultListMetadata( string matchID, out ResultListMetadata metadata ) {
-		    metadata = null;
+            metadata = null;
 
-			if (_resultListFormatted.ResultList == null
+            if (_resultListFormatted.ResultList == null
                 || _resultListFormatted.ResultList.Metadata == null
-                || string.IsNullOrEmpty( matchID) )
+                || string.IsNullOrEmpty( matchID ))
                 return false;
 
-            return _resultListFormatted.ResultList.Metadata.TryGetValue(matchID, out metadata);
+            return _resultListFormatted.ResultList.Metadata.TryGetValue( matchID, out metadata );
 
         }
 
-		/// <summary>
-		/// Gets/Sets boolean indicating if this row is considered a child row
-		/// A child row is, for example, a team member row under a team result row.
-		/// </summary>
-		public bool IsChildRow { get; protected set; } = false;
+        /// <summary>
+        /// Gets/Sets boolean indicating if this row is considered a child row
+        /// A child row is, for example, a team member row under a team result row.
+        /// </summary>
+        public bool IsChildRow { get; protected set; } = false;
 
         private string GetAttributeValue( FieldSource source ) {
             /*
@@ -582,11 +581,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
              * written to expect only Attributer Values with only one field.
              */
 
-            foreach ( var av in _item.Participant.AttributeValues ) { 
+            foreach (var av in _item.Participant.AttributeValues) {
                 if (av.AttributeDef == source.Name) {
                     try {
-                        return av.AttributeValue.GetFieldValue( );
-                    } catch ( Exception ex ) {
+                        return av.AttributeValue.GetFieldValue();
+                    } catch (Exception ex) {
                         _logger.Error( ex, "Likely casued by the user specifying an Attribute that is not a Simple Attribute." );
                         return "";
                     }
@@ -615,17 +614,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public Score GetScore( string eventName, bool tryAndUseProjected = false ) {
 
-			if (_resultEvent is null)
-				return new Score();
+            if (_resultEvent is null)
+                return new Score();
 
-			EventScore scoreToReturn;
+            EventScore scoreToReturn;
 
             if (_resultEvent.EventScores != null) {
                 if (_resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
 
-                    if (tryAndUseProjected 
+                    if (tryAndUseProjected
                         && scoreToReturn.Projected != null
-                        && ( scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE) ) {
+                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -640,9 +639,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                  * changing of event names. Hopefully, this chunk of code can be removed soon.
                  */
                 var aliasEventName = "";
-                if (AliasEventNames.TryGetValue( eventName , out aliasEventName )) {
+                if (AliasEventNames.TryGetValue( eventName, out aliasEventName )) {
                     if (_resultEvent.EventScores.TryGetValue( aliasEventName, out scoreToReturn )) {
-                        if (tryAndUseProjected 
+                        if (tryAndUseProjected
                             && scoreToReturn.Projected != null
                             && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
                             //If the Projected Score is known, try and return it
@@ -665,7 +664,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private string GetGap( FieldSource source ) {
             if (IsChildRow
-                || this._item.Participant.RemarkList.HasNonCompletionRemark ) {
+                || this._item.Participant.RemarkList.HasNonCompletionRemark) {
                 return "";
             }
 
@@ -713,9 +712,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public int GetRank() {
 
-			if (_resultEvent is null)
-				return 0;
-			
+            if (_resultEvent is null)
+                return 0;
+
             if (this._resultListFormatted.ResultList.Projected
                 && this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
                 && _resultEvent.ProjectedRank > 0)
@@ -735,10 +734,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public int GetRankOrder() {
 
-			if (_resultEvent is null)
-				return 0;
+            if (_resultEvent is null)
+                return 0;
 
-			if (this._resultListFormatted.ResultList.Projected
+            if (this._resultListFormatted.ResultList.Projected
                 && this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE) {
                 if (_resultEvent.ProjectedRankOrder > 0)
                     return _resultEvent.ProjectedRankOrder;
@@ -754,18 +753,18 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public int GetRankDelta() {
 
-			if (_resultEvent is null)
-				return 0;
+            if (_resultEvent is null)
+                return 0;
 
-			return _resultEvent.RankDelta;
-		}
+            return _resultEvent.RankDelta;
+        }
 
         public ResultStatus GetStatus() {
 
             if (_resultEvent is null)
                 return ResultStatus.FUTURE; //Not sure what lese to use ? 
 
-			return _resultEvent.GetStatus();
+            return _resultEvent.GetStatus();
         }
 
         /// <summary>
@@ -807,13 +806,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             var column = _resultListFormatted.ResultListFormat.Format.Columns[index];
 
             string source = column.Body;
-            if (this.IsChildRow && ! string.IsNullOrEmpty( column.Child ))
+            if (this.IsChildRow && !string.IsNullOrEmpty( column.Child ))
                 source = column.Child;
             string value = source.Replace( _fields );
 
             var classes = new List<string>();
-            
-            foreach (var c in column.ClassSet){
+
+            foreach (var c in column.ClassSet) {
                 if (_resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )) {
                     classes.Add( (string)c.Name );
                 }
@@ -898,16 +897,37 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public string GetRemarks( bool useAbbreviation ) {
             return this._item.Participant.RemarkList.GetSummary( useAbbreviation );
-		}
+        }
 
-		public void SetSquaddingAssignment( SquaddingAssignment squadding ) {
-            if ( squadding != null) 
+        public void SetSquaddingAssignment( SquaddingAssignment squadding ) {
+            if (squadding != null)
                 this._item.SquaddingAssignment = squadding;
         }
 
-        public SquaddingAssignment GetSquaddingAssignment(  ) {
+        public SquaddingAssignment GetSquaddingAssignment() {
             return this._item.SquaddingAssignment;
         }
+
+		/// <summary>
+		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowRanks property.
+		/// </summary>
+        /// <remarks>If true, this property overrides the other "Show" properties</remarks>
+		/// <returns></returns>
+		public virtual bool ShowRowBasedOnShowRanks() {
+
+            //If _resultEvent is null,, then this row is from a SquaddingList, and there are no rankings
+            if (_resultEvent is null)
+                return false;
+
+            return this._resultListFormatted.ShowRanks > this.GetRank();
+
+        }
+
+		/// <summary>
+		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowNumberOfChildren property.
+		/// </summary>
+		/// <returns></returns>
+		public abstract bool ShowRowBasedOnShowNumberOfChildren();
 
         /// <summary>
         /// Returns true if this row has a status that is part of the RLF's ShowStatuses property.
@@ -915,22 +935,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// shooting.
         /// </summary>
         /// <returns></returns>
-        public virtual bool ShowRowBasedOnShownStatus( ) {
-			
+        public virtual bool ShowRowBasedOnShownStatus() {
+
             if (_resultListFormatted.ShowStatuses == null)
                 return false;
 
-			if ( _resultListFormatted.ShowStatuses.Contains( this.GetStatus() ))
-				return true;
+            if (_resultListFormatted.ShowStatuses.Contains( this.GetStatus() ))
+                return true;
 
             //This is a special carve out for marksmen who just finished shooting. So techncially they would be UNOFFICIAL
             //but as far as displaying them in shown rows we want to pretend they are INTERMEDIATE for a bit longer.
             if (_resultListFormatted.ShowStatuses.Contains( ResultStatus.INTERMEDIATE )
-                && _resultEvent != null &&  _resultEvent.CurrentlyCompetingOrRecentlyDone())
+                && _resultEvent != null && _resultEvent.CurrentlyCompetingOrRecentlyDone())
                 return true;
 
             return false;
-		}
+        }
 
         /// <summary>
         /// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowRelay property.
@@ -939,25 +959,60 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <returns></returns>
         public virtual bool ShowRowBasedOnShowRelay() {
 
-			//Always show, if .ShowRelay does not have a filter on it (aka empty string)
-			if (this._resultListFormatted.ShowRelay == string.Empty)
-				return true;
+            //Always show, if .ShowRelay does not have a filter on it (aka empty string)
+            if (this._resultListFormatted.ShowRelay == string.Empty)
+                return true;
 
-			//If we don't have squadding, then don't apply the filter.
-			if (_item.SquaddingAssignment == null)
-				return true;
+            //If we don't have squadding, then don't apply the filter.
+            if (_item.SquaddingAssignment == null)
+                return true;
 
-			if (_item.SquaddingAssignment is SquaddingAssignmentFiringPoint safp
-				&& safp.Relay == this._resultListFormatted.ShowRelay)
-				return true;
+            if (_item.SquaddingAssignment is SquaddingAssignmentFiringPoint safp
+                && safp.Relay == this._resultListFormatted.ShowRelay)
+                return true;
 
-			if (_item.SquaddingAssignment is SquaddingAssignmentBank sab
-				&& sab.Relay == this._resultListFormatted.ShowRelay)
-				return true;
+            if (_item.SquaddingAssignment is SquaddingAssignmentBank sab
+                && sab.Relay == this._resultListFormatted.ShowRelay)
+                return true;
 
-			//SquaddingAssignmentSquad does not use relays
+            //SquaddingAssignmentSquad does not use relays
 
-			return false;
-		}
+            return false;
+        }
+
+		/// <summary>
+		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresWithOFFICIAL property.
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool ShowRowBasedOnShowZeroScoresWithOFFICIAL() {
+            //if _resutlEvent is null, then it's from a squadding list
+            if (this._resultEvent is null)
+                return true;
+
+            //This criteria only applies if we are at the OFFICIAL status
+            if (this._resultListFormatted.ResultList.Status != ResultStatus.OFFICIAL)
+                return true;
+
+            if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL
+                && this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
+                //The result list status is official, and we were told to exclude rows with scores of zero
+
+                //We do however show this row if the score is zero due to DNS, DNF, or DSQ
+                if (GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
+                    || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
+                    || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        internal virtual void ResetNumberOfChildRowsLeftToShow() {
+            ; //default behavior is to do nothing, and let the BodyRow implement it;
+        }
+
 	}
 }

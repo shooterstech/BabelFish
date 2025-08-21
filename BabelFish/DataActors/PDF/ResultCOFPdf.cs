@@ -149,7 +149,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             var document = QuestPDF.Fluent.Document.Create( container => {
                 container.Page( page => {
                     page.Size( pageSize );
-                    page.Margin( 2, Unit.Centimetre );
+                    page.Margin( 1.5f, Unit.Centimetre );
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 

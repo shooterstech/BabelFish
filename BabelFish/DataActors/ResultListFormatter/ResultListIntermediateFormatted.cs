@@ -188,91 +188,25 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (!_initialized)
                     throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
 
-                int childRowsRemaining = this.ShowNumberOfChildRows;
-                bool skipRemainingChildren = false;
 
                 lock (_rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>();
                     foreach (var row in _rows) {
-                        if (!row.IsChildRow) {
-                            //This is a parent row
+                        //Reset the count of child rows to show. Note this only effects Body/Parent rows
+                        row.ResetNumberOfChildRowsLeftToShow();
 
-                            //Reset the count of child rows to show, and skip remaining children
-                            childRowsRemaining = this.ShowNumberOfChildRows;
-                            skipRemainingChildren = false;
-
-                            if (ShowRanks > row.GetRank()) {
-                                //Always show scores with a rank value up to and including ShowRanks
-                                copyOfRows.Add( row );
-                            } else {
-
-                                if (row.ShowRowBasedOnShownStatus()
-                                    && row.ShowRowBasedOnShowRelay() ) {
-                                    //This row's status is one of the status we were told to include
-
-                                    if ( this.ResultList != null
-                                        && this.ResultList.Status == ResultStatus.OFFICIAL 
-                                        && ShowZeroScoresWithOFFICIAL 
-                                        && row.GetScore( this.ResultList.EventName, false ).IsZero ) {
-                                        //The result list status is official, and we were told to exclude rows with scores of zero
-
-                                        if (row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
-                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
-                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
-                                            //Do include these rows since the athlete / team did somethign bad and we want to shame them
-                                            copyOfRows.Add( row );
-                                        } else {
-                                            //Don't incldue this row
-                                            skipRemainingChildren = true;
-                                        }
-
-                                    } else {
-                                        copyOfRows.Add( row );
-                                    }
-                                } else {
-                                    //Don't show this row b/c the status is not in the lists of statuses we were told to show
-                                    skipRemainingChildren = true;
-                                }
-                            }
-                            
+                        if (row.ShowRowBasedOnShowRanks()) {
+                            //Always show scores with a rank value up to and including ShowRanks
+                            copyOfRows.Add( row );
                         } else {
-                            //This is a child row
-                            if (skipRemainingChildren)
-                                continue;
 
-                            //Check if we can show any more child rows
-                            if (childRowsRemaining > 0) {
-                                childRowsRemaining--;
-
-                                if (row.ShowRowBasedOnShownStatus()
-									&& row.ShowRowBasedOnShowRelay() ) {
-                                    //This row's status is one of the status we were told to include
-
-                                    if (this.ResultList.Status == ResultStatus.OFFICIAL
-                                        && ShowZeroScoresWithOFFICIAL
-                                        && row.GetScore( this.ResultList.EventName, false ).IsZero) {
-                                        //The result list status is official, and we were told to exclude rows with scores of zero
-
-                                        if (row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
-                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
-                                            || row.GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
-                                            //Do include these rows since the athlete / team did somethign bad and we want to shame them
-                                            copyOfRows.Add( row );
-                                        } else {
-                                            //Don't incldue this row
-                                            ;
-                                        }
-
-                                    } else {
-                                        copyOfRows.Add( row );
-                                    }
-                                } else {
-                                    //Don't show this row b/c the status is not in the lists of statuses we were told to show
-                                    ;
-                                }
+                            if (row.ShowRowBasedOnShownStatus()
+                                && row.ShowRowBasedOnShowRelay()
+                                && row.ShowRowBasedOnShowNumberOfChildren()
+                                && row.ShowRowBasedOnShowZeroScoresWithOFFICIAL()) {
+                                copyOfRows.Add( row );
                             }
                         }
-
                     }
                     return copyOfRows;
                 }
@@ -666,7 +600,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public void SetShowValuesToDefault() {
             ShowNumberOfChildRows = int.MaxValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
-            ShowZeroScoresWithOFFICIAL = false;
+            ShowZeroScoresWithOFFICIAL = true;
             ShowRanks = 3;
             ShowRelay = string.Empty;
         }
@@ -712,7 +646,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <summary>
         /// Gets or sets a boolean indicating if scores with a zero score shold be displayed when the Result LIst's staus is OFFICIAL.
         /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
-        /// <para>The defautl value is false.</para>
+        /// <para>The defautl value is true.</para>
         /// </summary>
         public bool ShowZeroScoresWithOFFICIAL {
             get; set;
