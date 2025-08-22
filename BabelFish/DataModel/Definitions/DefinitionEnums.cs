@@ -854,6 +854,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SEGMENT_GROUP
     }
 
+    public enum TargetModel {
+        SCORING_RING,
+        HIT_MISS,
+        TEST
+    }
 
     public enum SingularType {
         [Description( "Shot" )]

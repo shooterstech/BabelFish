@@ -54,8 +54,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 		/// <inheritdoc/>
 		public override bool ShowRowBasedOnShowRelay() {
-			return this.ParentRow.ShowRowBasedOnShowRelay()
-                && base.ShowRowBasedOnShowRelay();
+			return base.ShowRowBasedOnShowRelay();
 		}
 	}
 }
