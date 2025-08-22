@@ -315,7 +315,9 @@ namespace Scopos.BabelFish.DataActors.PDF
                 });
 
                 List<Shot> shotListCopy = Details.ShotEventFields[Details.CurrentEventIndex].shots;
-                List<Shot> shotListSection = shotListCopy.GetRange(Details.ShotNumberToStartOn, Details.MaxShotNumber);
+                List<Shot> shotListSection = shotListCopy;
+                if (shotListCopy.Count() > Details.MaxShotNumber)
+                    shotListSection = shotListCopy.GetRange(Details.ShotNumberToStartOn, Details.MaxShotNumber);
 
                 table.ExtendLastCellsToTableBottom();
                 foreach (var shot in shotListSection)
@@ -387,18 +389,21 @@ namespace Scopos.BabelFish.DataActors.PDF
                 col1.Item().ExtendVertical().BorderRight(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
                 .AlignCenter().AlignMiddle().Text(text =>
                 {
-                    text.Span($"Area: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetArea().ToString("F")}mm").FontSize(Details.GroupInfoFontSize);
-                    text.Span("2").FontSize(Details.GroupInfoFontSize).Superscript();
-                    text.Span($"    Round: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetRoundness().ToString("F")}\n").FontSize(Details.GroupInfoFontSize);
-                    if (Details.TargetDef.Distance != null)
+                    if(Details.ImageEventFields[Details.CurrentEventIndex].groupMaths != null)
                     {
-                        var widestMM = Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetDistanceBetweenWidestShots();
-                        var distanceInMeter = (double)Details.TargetDef.Distance / 1000D;
-                        //we want to use radius of widest circle
-                        var spreadMoa = Math.Atan((widestMM / 2D) / distanceInMeter);
-                        text.Span($"MOA: {spreadMoa.ToString("F")}    ").FontSize(Details.GroupInfoFontSize);
+                        text.Span($"Area: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetArea().ToString("F")}mm").FontSize(Details.GroupInfoFontSize);
+                        text.Span("2").FontSize(Details.GroupInfoFontSize).Superscript();
+                        text.Span($"    Round: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetRoundness().ToString("F")}\n").FontSize(Details.GroupInfoFontSize);
+                        if (Details.TargetDef.Distance != null)
+                        {
+                            var widestMM = Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetDistanceBetweenWidestShots();
+                            var distanceInMeter = (double)Details.TargetDef.Distance / 1000D;
+                            //we want to use radius of widest circle
+                            var spreadMoa = Math.Atan((widestMM / 2D) / distanceInMeter);
+                            text.Span($"MOA: {spreadMoa.ToString("F")}    ").FontSize(Details.GroupInfoFontSize);
+                        }
+                        text.Span($"Center: ({Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterX().ToString("F")}mm, {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterY().ToString("F")}mm)").FontSize(Details.GroupInfoFontSize);
                     }
-                    text.Span($"Center: ({Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterX().ToString("F")}mm, {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterY().ToString("F")}mm)").FontSize(Details.GroupInfoFontSize);
                 });
             });
         }
