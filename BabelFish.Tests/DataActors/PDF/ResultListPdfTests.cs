@@ -14,7 +14,7 @@ namespace BabelFish.Tests.DataActors.PDF {
     public class ResultListPdfTests  : BaseTestClass {
 
         [TestMethod]
-        public async Task GenerateResultListTest() {
+        public async Task GenerateResultListPDFTest() {
 
             var client = new OrionMatchAPIClient( );
 
@@ -35,13 +35,39 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             var pdf = new ResultListPdf(  match, resultList );
             await pdf.InitializeAsync();
+            await pdf.RLIF.LoadSquaddingListAsync();
+            pdf.RLIF.ShowRelay = "2";
+            pdf.RLIF.ShowRanks = 3;
 
             pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
-        }
+		}
 
-        [TestMethod]
-        public async Task GenerateResultCOFTest() {
+		[TestMethod]
+		public async Task GenerateSquaddingtListPDFTest() {
+
+			var client = new OrionMatchAPIClient();
+
+			//This match id has three relays of 20 athletes
+			var matchId = new MatchID( "1.1.2025081213222434.0" );
+			var squaddingListName = "Qualification";
+
+			var getResultListResponse = await client.GetSquaddingListPublicAsync( matchId, squaddingListName );
+			var resultList = getResultListResponse.SquaddingList;
+
+			var match = (await client.GetMatchAsync( matchId )).Match;
+
+			var pdf = new ResultListPdf( match, resultList );
+			await pdf.InitializeAsync();
+            pdf.RLIF.ShowRelay = "1";
+            pdf.SubTitle = "Relay 1";
+
+			pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+
+		}
+
+		[TestMethod]
+        public async Task GenerateResultCOFPDFTest() {
 
             var client = new OrionMatchAPIClient();
 
@@ -54,6 +80,25 @@ namespace BabelFish.Tests.DataActors.PDF {
             await pdf.InitializeAsync();
 
             pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+
+        }
+
+        [TestMethod]
+        public async Task GenerateAthleteCofPdfTest()
+        {
+
+            var client = new OrionMatchAPIClient();
+
+            //var resultCofId = "0f814586-3513-411a-8229-914d4608db05"; // sim air rifle
+            var resultCofId = "a85a5ed4-daeb-4488-a535-513bd590dfa1"; // air pistol
+
+            var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
+            var resultCof = getResultCofResponse.ResultCOF;
+
+            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
+            await pdf.InitializeAsync();
+
+            pdf.GeneratePdf(PageSizes.A4, "c:\\temp\\helloWHAT.pdf");
 
         }
     }

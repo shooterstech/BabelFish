@@ -8,8 +8,10 @@ namespace Scopos.BabelFish.Requests.ScoposData {
 
         public GetCupsOfCoffeePublicRequest() : base( "GetCoffee" ) { }
 
+		
+
         /// <inheritdoc />
-        public override string RelativePath  {
+		public override string RelativePath  {
             get { return $"/coffee"; }
         }
     }

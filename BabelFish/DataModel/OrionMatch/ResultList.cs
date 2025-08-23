@@ -15,7 +15,7 @@ using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
+    public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
@@ -173,6 +173,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [JsonPropertyOrder ( 50 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
+		
+        /// <inheritdoc />
+		public List<IRLIFItem> GetAsIRLItemsList() {
+            return Items.ToList<IRLIFItem>();
+        }
 
         [JsonPropertyOrder( 10 )]
         public string MatchName { get; set; } = string.Empty;
@@ -238,7 +243,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CourseOfFireDef { get; set; } = string.Empty;
 
-        public string ScoreConfigName { get; set; } = string.Empty;
+		/// <summary>
+		/// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
+		/// <para>NOTE: The SCORE FORMAT COLLECTION is specified within the RESULT LIST FORMAT definition.</para>
+		/// </summary>
+		public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <inheritdoc />
         [DefaultValue( "" )]
@@ -315,6 +324,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
+        }
+
+        [G_NS.JsonIgnore]
+        public string Name {
+            get {
+                return this.ResultName;
+            }
         }
 
         /// <inheritdoc />

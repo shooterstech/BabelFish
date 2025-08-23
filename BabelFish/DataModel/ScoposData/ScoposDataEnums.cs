@@ -18,9 +18,9 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         [EnumMember( Value = "athena" )]
         ATHENA,
 
-        [Description("greengrass")]
-        [EnumMember(Value = "greengrass")]
-        GREENGRASS
+        [Description("greengrassv2Deployment")]
+        [EnumMember(Value = "greengrassv2Deployment")]
+        GREENGRASSDEPLOYMENT
     }
 
     public enum ReleasePhase

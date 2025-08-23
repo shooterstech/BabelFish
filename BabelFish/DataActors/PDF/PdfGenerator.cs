@@ -23,6 +23,11 @@ namespace Scopos.BabelFish.DataActors.PDF {
             get { return ""; }
         }
 
+        /// <summary>
+        /// Optional text to include in the header.
+        /// </summary>
+        public string SubTitle { get; set; } = string.Empty;
+
         public void InsertMetaData( QuestPDF.Fluent.Document document ) {
             document.WithMetadata( new DocumentMetadata() {
                 Title = this.Title,

@@ -589,7 +589,17 @@ namespace Scopos.BabelFish.APIClients {
 
             return await GetLeagueTeamDetailPublicAsync( request ).ConfigureAwait( false );
         }
-        #endregion
 
-    }
+		public async Task<GetPressReleaseGenerationAuthenticatedResponse> GetPressReleaseGenerationAuthenticatedAsync(GetPressReleaseGenerationAuthenticatedRequest requestParameters)
+		{
+			GetPressReleaseGenerationAuthenticatedResponse response = new GetPressReleaseGenerationAuthenticatedResponse(requestParameters);
+
+			await this.CallAPIAsync(requestParameters, response);
+
+			return response;
+		}
+
+		#endregion
+
+	}
 }

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.Athena.Range {
+
     public class RangeState {
 
         public RangeState() {
@@ -16,15 +17,18 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
         /// <summary>
         /// The Key is the FiringPointNumber, the value is the FirignPointState.
         /// </summary>
-        [JsonPropertyOrder( 1 )]
-        public Dictionary<string, FiringPointState> FiringPoints { get; set; }
+        [JsonProperty(Order =1 )]
+        public Dictionary< string, FiringPointState> FiringPoints { get; set; }
 
-        [JsonPropertyOrder( 2 )]
+        /// <summary>
+        /// Key is the Display thing name (aka address), value is the current state.
+        /// </summary>
+        [JsonProperty(Order = 2)]
         public Dictionary<string, DisplayState> Displays { get; set; }
 
         [OnDeserialized]
-        internal void OnDeserializedMethod( StreamingContext context ) {
-            foreach (string fp in FiringPoints.Keys) {
+        internal void OnDeserializedMethod(StreamingContext context) {
+            foreach(string fp in FiringPoints.Keys) {
                 FiringPoints[fp].FiringPointNumber = fp;
             }
 
@@ -38,6 +42,10 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
                 Competition = new Competition();
                 Competition.SetNoCurrentCompetition();
             }
+
+            if (Orion == null) {
+                Orion = new OrionState();
+            }
         }
 
         /// <summary>
@@ -45,23 +53,23 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
         /// </summary>
         /// <param name="fpName"></param>
         /// <returns></returns>
-        public List<string> GetDisplaysForFiringPoint( string firingPointNumber ) {
+        public List<string> GetDisplaysForFiringPoint(string firingPointNumber) {
             //This is a bit of a brute force algorithm.
             List<string> displayList = new List<string>();
-            foreach (var display in Displays) {
+            foreach( var display in Displays) {
                 //display.Key is the Display State Address
                 //display.Value is the DisplayState dictionary
-                if (display.Value.FiringPoints.Contains( firingPointNumber ))
-                    displayList.Add( display.Key );
+                if (display.Value.FiringPoints.Contains(firingPointNumber))
+                    displayList.Add(display.Key);
             }
 
             return displayList;
         }
 
-        public string GetActiveTargetForFiringPoint( string firingPointNumber ) {
+        public string GetActiveTargetForFiringPoint( string firingPointNumber) {
             try {
                 var fpState = FiringPoints[firingPointNumber];
-                foreach (var target in fpState.Targets) {
+                foreach( var target in fpState.Targets) {
                     if (target.Value.Active)
                         return target.Key;
                 }
@@ -72,7 +80,12 @@ namespace Scopos.BabelFish.DataModel.Athena.Range {
             return "";
         }
 
-        public NetworkManagerState NetworkManager { get; set; }
+        public NetworkManagerState NetworkManager { get; set; } = new NetworkManagerState();
+
+        /// <summary>
+        /// Information about the Orion Instance that controls this range.
+        /// </summary>
+        public OrionState Orion { get; set; } = new OrionState();
 
         /// <summary>
         /// Information about the current Competition going on (if any).

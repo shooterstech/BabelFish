@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.Athena.Range
-{
-    public class FiringLine
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
+    public class FiringLine {
 
-        public FiringLine()
-        {
+        public FiringLine() {
 
         }
 
@@ -28,5 +25,16 @@ namespace Scopos.BabelFish.DataModel.Athena.Range
         /// A human readable description of the Firing LIne.
         /// </summary>
         public string Description { get; set; }
+
+        public static FiringLine DefaultFiringLine {
+            get {
+                var fl = new FiringLine() {
+                    FiringLineLabel = "10m",
+                    FiringLineName = "10m Air Gun",
+                    Description = "10m air gun firing line."
+                };
+                return fl;
+            }
+        }
     }
 }

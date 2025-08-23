@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.Athena.Range
-{
-    public class TargetLine
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
+    public class TargetLine {
 
-        public TargetLine()
-        {
+        public TargetLine() {
 
         }
 
@@ -28,5 +25,17 @@ namespace Scopos.BabelFish.DataModel.Athena.Range
         /// A human readable description of the Target LIne.
         /// </summary>
         public string Description { get; set; }
+
+        public static TargetLine DefaultTargetLine {
+            get {
+                var tl = new TargetLine() {
+                    TargetLineLabel = "10m",
+                    TargetLineName = "10m Air Gun",
+                    Description = "10m air gun target line."
+                };
+
+                return tl;
+            }
+        }
     }
 }

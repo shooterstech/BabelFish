@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.Athena.Range
-{
-    public class Monitor
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
+    public class Monitor {
 
-        public Monitor()
-        {
+        public Monitor() {
 
         }
 
@@ -27,6 +24,6 @@ namespace Scopos.BabelFish.DataModel.Athena.Range
         /// <summary>
         /// Human readable name for this Monitor.
         /// </summary>
-        public string Nickname { get; set; }
+        public string Nickname{ get; set; }
     }
 }

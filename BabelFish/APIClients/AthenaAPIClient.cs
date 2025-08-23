@@ -82,5 +82,14 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
-    }
+		public async Task<MoveGGv2CoreToAthenaDeploymentGroupPublicResponse> MoveGGv2CoreToAthenaDeploymentGroupPublicAsync(MoveGGv2CoreToAthenaDeploymentGroupPublicRequest request)
+		{
+			var response = new MoveGGv2CoreToAthenaDeploymentGroupPublicResponse(request);
+
+			await this.CallAPIAsync(request, response).ConfigureAwait(false);
+
+			return response;
+		}
+
+	}
 }

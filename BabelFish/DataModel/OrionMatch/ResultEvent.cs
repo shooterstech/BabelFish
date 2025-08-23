@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultEvent : IEventScoreProjection {
+    public class ResultEvent : IEventScoreProjection, IRLIFItem {
 
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
@@ -95,6 +95,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 9 )]
         [G_NS.JsonProperty( Order = 9 )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
+
+        /// <inheritdoc />
+        /// <remarks>Squadding Assignmetn is not a part of the REST API response for GetResultList. It is included here to allow the Result
+        /// List Formatter access to squadding information, so it may display it on a formatted result list.</remarks>
+        [G_NS.JsonIgnore ]
+        [G_STJ_SER.JsonIgnore ]
+		public SquaddingAssignment SquaddingAssignment { get; set; }
 
 
         /// <inheritdoc />
