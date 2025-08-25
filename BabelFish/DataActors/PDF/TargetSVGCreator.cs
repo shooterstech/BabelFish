@@ -129,9 +129,11 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                     stringBuilder.AppendLine(" </style> ");
                     //Calculate the scale based on the widest shot in the group and the scoring diameter.
+                    bool OneTargetStyle = FindIfOneTargetStyle();
+
                     var widestShot = GetWidestShot();
                     double center = Dimension / 2D;
-                    if (widestShot != null && widestShot.Location.GetRadiusSquared() > 0)
+                    if (OneTargetStyle && widestShot != null && widestShot.Location.GetRadiusSquared() > 0)
                     {
                         SetName targetSetName = SetName.Parse(widestShot.TargetSetName);
 
@@ -218,10 +220,15 @@ namespace Scopos.BabelFish.DataActors.PDF
                         if (ResultCOF.EventScores.TryGetValue(EventWeAreLookingFor.EventName, out eventScore))
                         {
                             if (eventScore.NumShotsFired == 0)
+                            {
                                 stringBuilder.AppendLine($"<text x=\"10\" y=\"{center}\" class=\"heavy\">No shots fired</text>");
+                            }
                             else
+                            {
+                                ShotListToShow = GetShotsToDisplay();
                                 //If we get here, could be a BB Gun test, or a hit/miss target.
                                 stringBuilder.AppendLine($"<text x=\"10\" y=\"{center}\" class=\"heavy\">{eventScore.ScoreFormatted}</text>");
+                            }
 
                             ScoreFormatted = eventScore.ScoreFormatted;
                         }
@@ -536,7 +543,6 @@ namespace Scopos.BabelFish.DataActors.PDF
                 Scopos.BabelFish.DataModel.Athena.Shot.Shot shot;
                 foreach (var ec in DescendantEventComposites)
                 {
-
                     if (ShotsByEventName.TryGetValue(ec.EventName, out shot))
                     {
                         shots.Add(shot);
@@ -550,7 +556,6 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         private Scopos.BabelFish.DataModel.Athena.Shot.Shot GetWidestShot()
         {
-
             Scopos.BabelFish.DataModel.Athena.Shot.Shot widestShot = null;
             Scopos.BabelFish.DataModel.Athena.Shot.Shot shot = null;
             double maxDistance = 0;
@@ -567,6 +572,23 @@ namespace Scopos.BabelFish.DataActors.PDF
             }
 
             return widestShot;
+        }
+
+        private bool FindIfOneTargetStyle()
+        {
+            Scopos.BabelFish.DataModel.Athena.Shot.Shot widestShot = null;
+            Scopos.BabelFish.DataModel.Athena.Shot.Shot shot = null;
+            List<string> TargetSetNames = new List<string>();
+            foreach (var ec in DescendantEventComposites)
+            {
+                if (ShotsByEventName.TryGetValue(ec.EventName, out shot)
+                && !TargetSetNames.Contains(shot.TargetSetName))
+                {
+                    TargetSetNames.Add(shot.TargetSetName);
+                }
+            }
+
+            return TargetSetNames.Count() == 1 ? true : false;
         }
 
         private void PopulateParentScores(EventComposite ec)
