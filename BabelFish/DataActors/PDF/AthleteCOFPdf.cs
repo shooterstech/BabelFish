@@ -127,7 +127,8 @@ namespace Scopos.BabelFish.DataActors.PDF
             var ShotTableDetails = new ShotTableDetails
             {
                 ShotEventFields = EventFields,
-                CurrentEventIndex = eventIndex
+                CurrentEventIndex = eventIndex,
+                ShowTotal = false
             };
             var TargetImageDetails = new TargetImageDetails
             {
@@ -141,6 +142,7 @@ namespace Scopos.BabelFish.DataActors.PDF
             .Padding(1)
             .Column(column =>
             {
+                bool nextRow = false;
                 foreach ( int col in Enumerable.Range( 1, (EventFields.Count()) ) )
                 {
                     if (EventFields[eventIndex].eventComposite.EventType != this.EventtType)
@@ -154,29 +156,53 @@ namespace Scopos.BabelFish.DataActors.PDF
                     int rowHeight = 205;
                     column.Item().Container().Height(rowHeight).Border(2, ScoposColors.BLUE_LIGHTEN_1).Row(row =>
                     {
+                        nextRow = false;
+                        ShotTableDetails.ShowTotal = false;
                         foreach (int ro in Enumerable.Range(1, 2))
                         {
-                            if (EventFields[eventIndex].eventComposite.EventType != this.EventtType)
+                            if (EventFields[eventIndex].eventComposite.EventType != this.EventtType || nextRow)
                             {
                                 //failfirst!
-                                eventIndex++;
-                                //need to add filler row.col parts to make it think it's fine.
-                                row.RelativeItem(2).Column(col1 =>{});
-                                row.RelativeItem(1).Column(col2 =>{});
-
+                                if (!nextRow)
+                                {
+                                    eventIndex++;
+                                    //need to add filler row.col parts to make it think it's fine.
+                                    row.RelativeItem(2).Column(col1 => { });
+                                    row.RelativeItem(1).Column(col2 => { });
+                                }
                                 if (eventIndex >= EventFields.Count())
                                     break;
                                 continue;
                             }
 
                             TargetImageDetails.CurrentEventIndex = eventIndex;
-                            row.RelativeItem(2).BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new TargetImage(TargetImageDetails));
+                            row.RelativeItem(2).MaxWidth(180).BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new TargetImage(TargetImageDetails));
 
                             //maybe make this part a table, if less than 10 shots in this list them with (x,y,r) and value?
                             ShotTableDetails.CurrentEventIndex = eventIndex;
-                            row.RelativeItem(1).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new ShotTable(ShotTableDetails));
-
+                            var shotTablesNumber = (int)Math.Ceiling((double)EventFields[eventIndex].shots.Count() / (double)ShotTableDetails.MaxShotNumber);
+                            if (shotTablesNumber > 1)
+                            {
+                                nextRow = true;
+                            }
+                            foreach (var number in Enumerable.Range(1, shotTablesNumber))
+                            {
+                                if(number == 6 || number == shotTablesNumber)
+                                {
+                                    ShotTableDetails.ShowTotal = true;
+                                }
+                                if(number <= 6)
+                                {
+                                    ShotTableDetails.ShotNumberToStartOn = ShotTableDetails.MaxShotNumber * (number - 1);
+                                    row.RelativeItem(1).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1)
+                                        .Container().BorderLeft(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
+                                        .Component(new ShotTable(ShotTableDetails));
+                                }
+                            }
+                            //total should be the total of the targets shown, maybe put the total of the target on the target image?
                             eventIndex++;
+                            if (nextRow)
+                                break;
                             if (eventIndex >= EventFields.Count())
                                 break;
                         }
@@ -246,9 +272,13 @@ namespace Scopos.BabelFish.DataActors.PDF
         public string TextColor { get; set; } = "#000000";
         public string InnerBorderColors { get; set; } = ScoposColors.DARK_GREY_LIGHTEN_2;
 
+        public bool ShowTotal { get; set; } = false;
+
         public int TableFontSize { get; set; } = 12;
 
         public int MaxShotNumber { get; set; } = 10;
+
+        public int ShotNumberToStartOn { get; set; } = 0;
 
         public int CurrentEventIndex { get; set; } = 0;
 
@@ -287,25 +317,28 @@ namespace Scopos.BabelFish.DataActors.PDF
                     }
                 });
 
-                int limit = Details.MaxShotNumber;
                 List<Shot> shotListCopy = Details.ShotEventFields[Details.CurrentEventIndex].shots;
+                List<Shot> shotListSection = shotListCopy;
+                if (shotListCopy.Count() > Details.MaxShotNumber)
+                    shotListSection = shotListCopy.GetRange(Details.ShotNumberToStartOn, Details.MaxShotNumber);
 
                 table.ExtendLastCellsToTableBottom();
-                foreach (var shot in shotListCopy)
+                foreach (var shot in shotListSection)
                 {
-                    if (limit == 0)
-                    {
-                        break;
-                    }
-
                     table.Cell().Element(Style).Text($"{shot.EventName}").FontSize(Details.TableFontSize);
                     table.Cell().Element(Style).Text($"{shot.ScoreFormatted}").FontSize(Details.TableFontSize);
-
-                    limit--;
                 }
 
-                table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("Total").FontSize(Details.TableFontSize);
-                table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text($"{Details.ShotEventFields[Details.CurrentEventIndex].score}").FontSize(Details.TableFontSize);
+                if(Details.ShowTotal)
+                {
+                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("Total").FontSize(Details.TableFontSize);
+                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text($"{Details.ShotEventFields[Details.CurrentEventIndex].score}").FontSize(Details.TableFontSize);
+                }
+                else
+                {
+                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("").FontSize(Details.TableFontSize);
+                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("").FontSize(Details.TableFontSize);
+                }
 
                 IContainer Style(IContainer container)
                 {
@@ -359,18 +392,21 @@ namespace Scopos.BabelFish.DataActors.PDF
                 col1.Item().ExtendVertical().BorderRight(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
                 .AlignCenter().AlignMiddle().Text(text =>
                 {
-                    text.Span($"Area: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetArea().ToString("F")}mm").FontSize(Details.GroupInfoFontSize);
-                    text.Span("2").FontSize(Details.GroupInfoFontSize).Superscript();
-                    text.Span($"    Round: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetRoundness().ToString("F")}\n").FontSize(Details.GroupInfoFontSize);
-                    if (Details.TargetDef.Distance != null)
+                    if(Details.ImageEventFields[Details.CurrentEventIndex].groupMaths != null)
                     {
-                        var widestMM = Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetDistanceBetweenWidestShots();
-                        var distanceInMeter = (double)Details.TargetDef.Distance / 1000D;
-                        //we want to use radius of widest circle
-                        var spreadMoa = Math.Atan((widestMM / 2D) / distanceInMeter);
-                        text.Span($"MOA: {spreadMoa.ToString("F")}    ").FontSize(Details.GroupInfoFontSize);
+                        text.Span($"Area: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetArea().ToString("F")}mm").FontSize(Details.GroupInfoFontSize);
+                        text.Span("2").FontSize(Details.GroupInfoFontSize).Superscript();
+                        text.Span($"    Round: {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetRoundness().ToString("F")}\n").FontSize(Details.GroupInfoFontSize);
+                        if (Details.TargetDef.Distance != null)
+                        {
+                            var widestMM = Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetDistanceBetweenWidestShots();
+                            var distanceInMeter = (double)Details.TargetDef.Distance / 1000D;
+                            //we want to use radius of widest circle
+                            var spreadMoa = Math.Atan((widestMM / 2D) / distanceInMeter);
+                            text.Span($"MOA: {spreadMoa.ToString("F")}    ").FontSize(Details.GroupInfoFontSize);
+                        }
+                        text.Span($"Center: ({Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterX().ToString("F")}mm, {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterY().ToString("F")}mm)").FontSize(Details.GroupInfoFontSize);
                     }
-                    text.Span($"Center: ({Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterX().ToString("F")}mm, {Details.ImageEventFields[Details.CurrentEventIndex].groupMaths.GetCenterY().ToString("F")}mm)").FontSize(Details.GroupInfoFontSize);
                 });
             });
         }
