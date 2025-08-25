@@ -31,6 +31,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
         public void InsertMetaData( QuestPDF.Fluent.Document document ) {
             document.WithMetadata( new DocumentMetadata() {
                 Title = this.Title,
+                Subject = SubTitle,
                 Author = "Scopos",
                 Producer = "BabelFish",
                 CreationDate = DateTime.UtcNow,

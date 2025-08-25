@@ -197,7 +197,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [Description( "Delete Entries" )]
         [EnumMember( Value = "Delete Entries" )]
-        DELETE_ENTRIES
+        DELETE_ENTRIES,
+
+        [Description( "Create Match Details" )]
+        [EnumMember( Value = "Create Match Details" )]
+        CREATE_MATCH_DETAILS,
+
+        [Description( "Read Match Details" )]
+        [EnumMember( Value = "Read Match Details" )]
+        READ_MATCH_DETAILS,
+
+        [Description( "Update Match Details" )]
+        [EnumMember( Value = "Update Match Details" )]
+        UPDATE_MATCH_DETAILS,
+
+        [Description( "Delete Match Details" )]
+        [EnumMember( Value = "Delete Match Details" )]
+        DELETE_MATCH_DETAILS
+
     };
 
 

@@ -594,7 +594,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Square
         /// </summary>
-        SQUARE
+        SQUARE,
+
+        SVG
     }
 
 

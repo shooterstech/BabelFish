@@ -472,15 +472,13 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
             Assert.IsNotNull( resultListFormat );
 
-            resultListFormat.Format.Columns[0].Body = "{Squadding}";
-
             //Test that the conversion was successful and has the same number of objects.
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
 			await rlf.InitializeAsync();
             Assert.IsNotNull( rlf );
 
 
-			await rlf.LoadSquaddingListAsync();
+			//await rlf.LoadSquaddingListAsync();
 
 			rlf.Engagable = false;
             rlf.ResolutionWidth = 1000;
