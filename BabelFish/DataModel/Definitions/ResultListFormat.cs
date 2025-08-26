@@ -309,8 +309,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     Name = "rlf-col-gap",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
                 }},
-                ShowWhen = new ShowWhenVariable() {
-                    Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                ShowWhen = new ShowWhenEquation() {
+                    Boolean = ShowWhenBoolean.AND,
+                    Arguments = new List<ShowWhenBase>() {
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.DIMENSION_EXTRA_SMALL
+                        }
+                    }
                 }
             } );
 

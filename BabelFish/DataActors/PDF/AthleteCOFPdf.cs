@@ -80,10 +80,12 @@ namespace Scopos.BabelFish.DataActors.PDF
 
             InsertMetaData(document);
 
+
             if (!string.IsNullOrEmpty(filePath))
                 document.GeneratePdf(filePath);
 
-            return document;
+
+            return document ;
         }
 
         protected override void ReportTitle(IContainer container)
@@ -261,6 +263,20 @@ namespace Scopos.BabelFish.DataActors.PDF
                     EventFields.Add((eventToHighlight.EventName, eventScore, img, shots, groupMaths, eventToHighlight));
                 }
             }
+        }
+
+        public static async Task GeneratePdfs( List<ResultCOF> resultCofs, EventtType eventtType, PageSize pageSize, string filePath ) {
+
+            List<QuestPDF.Fluent.Document> documentsToPrint = new List<QuestPDF.Fluent.Document>();
+            foreach (var resultCof in resultCofs) {
+                var pdf = new AthleteCOFPdf( resultCof, eventtType );
+                await pdf.InitializeAsync();
+                documentsToPrint.Add( pdf.GeneratePdf( pageSize, null ) );
+            }
+
+            var mergedPdf = QuestPDF.Fluent.Document.Merge( documentsToPrint );
+            mergedPdf.UseOriginalPageNumbers();
+            mergedPdf.GeneratePdf( filePath );
         }
 
     }

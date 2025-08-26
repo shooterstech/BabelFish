@@ -30,8 +30,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <inheritdoc/>
 		public override bool ShowRowBasedOnShowRanks() {
-			//Show this row, because it is a child row, if the parent row is shown.
-            return  this.ParentRow.ShowRowBasedOnShowRanks();
+            //Rule doesn't apply to child rows
+            return false;
 		}
 
 		/// <inheritdoc/>
@@ -40,15 +40,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return this.ParentRow.GetTokenToShowChildRow( this );
 		}
 
-		/// <inheritdoc/>
-		public override bool ShowRowBasedOnShowZeroScoresWithOFFICIAL() {
+        /// <inheritdoc/>
+        public override bool ShowRowBasedOnShowNumberOfBodies() {
+            return this.ParentRow.RowIsShown;
+        }
+
+        /// <inheritdoc/>
+        public override bool ShowRowBasedOnShowZeroScoresWithOFFICIAL() {
 			return this.ParentRow.ShowRowBasedOnShowZeroScoresWithOFFICIAL() 
                 && base.ShowRowBasedOnShowZeroScoresWithOFFICIAL();
 		}
 
 		/// <inheritdoc/>
 		public override bool ShowRowBasedOnShownStatus() {
-			return this.ParentRow.ShowRowBasedOnShownStatus()
+			return this.ParentRow.RowIsShown
                 && base.ShowRowBasedOnShownStatus();
 		}
 

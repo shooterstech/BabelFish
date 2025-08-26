@@ -89,6 +89,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = ! RLF.ShowSupplementalInformation;
                     break;
 
+                case ShowWhenCondition.DIMENSION_EXTRA_SMALL:
+                    //This is a made-for-scopos ;) dimension
+                    answer = RLF.ResolutionWidth >= 325;
+                    break;
+
                 case ShowWhenCondition.DIMENSION_SMALL:
                     answer = RLF.ResolutionWidth >= 576;
                     break;
@@ -375,6 +380,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public static Dictionary<ShowWhenCondition, int> BreakPoints = new Dictionary<ShowWhenCondition, int>() {
             { ShowWhenCondition.DIMENSION_LT_SMALL, 0 },
+            { ShowWhenCondition.DIMENSION_EXTRA_SMALL, 325 }, //This is a made-for-scopos ;) dimension
 			{ ShowWhenCondition.DIMENSION_SMALL, 576 },
 			{ ShowWhenCondition.DIMENSION_MEDIUM, 768 },
 			{ ShowWhenCondition.DIMENSION_LARGE, 992 },

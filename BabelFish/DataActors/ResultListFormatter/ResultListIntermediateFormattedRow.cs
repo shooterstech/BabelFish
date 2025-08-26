@@ -911,7 +911,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// <summary>
 		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowRanks property.
 		/// </summary>
-        /// <remarks>If true, this property overrides the other "Show" properties</remarks>
+        /// <remarks>If true, this property overrides the other "Show" properties for the body rows</remarks>
 		/// <returns></returns>
 		public virtual bool ShowRowBasedOnShowRanks() {
 
@@ -928,6 +928,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// </summary>
 		/// <returns></returns>
 		public abstract bool ShowRowBasedOnShowNumberOfChildren();
+
+        /// <summary>
+        /// Returns a boolean indicating if this row should be shown based on teh RLIF's .ShowNumberOfBodyRows property
+        /// </summary>
+        /// <returns></returns>
+        public abstract bool ShowRowBasedOnShowNumberOfBodies();
 
         /// <summary>
         /// Returns true if this row has a status that is part of the RLF's ShowStatuses property.
@@ -1013,6 +1019,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         internal virtual void ResetNumberOfChildRowsLeftToShow() {
             ; //default behavior is to do nothing, and let the BodyRow implement it;
         }
+
+        public bool RowIsShown { get; internal set; } = false;
 
 	}
 }

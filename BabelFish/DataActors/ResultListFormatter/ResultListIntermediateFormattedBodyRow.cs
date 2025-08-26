@@ -64,7 +64,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return true;
 		}
 
-        int _numberOfChildRowsLeftToShow = 0;
+        private int _numberOfChildRowsLeftToShow = 0;
         internal bool GetTokenToShowChildRow( ResultListIntermediateFormattedChildRow childRow ) {
             _numberOfChildRowsLeftToShow--;
             return _numberOfChildRowsLeftToShow > -1;
@@ -73,5 +73,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         internal override void ResetNumberOfChildRowsLeftToShow() {
             this._numberOfChildRowsLeftToShow = this._resultListFormatted.ShowNumberOfChildRows;
         }
-	}
+
+        public override bool ShowRowBasedOnShowNumberOfBodies() {
+            return this._resultListFormatted.GetTokenToShowBodyRow( this );
+        }
+    }
 }

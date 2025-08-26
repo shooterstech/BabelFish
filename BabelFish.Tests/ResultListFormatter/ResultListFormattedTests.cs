@@ -455,10 +455,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         public async Task EriksPlayground() {
 
             //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
-            MatchID matchId = new MatchID( "1.1.2025081213222434.0" );
+            MatchID matchId = new MatchID( "1.1.2025080109150751.1" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - Sporter";
+            var resultListName = "Team - Sporter";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -474,18 +474,20 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             //Test that the conversion was successful and has the same number of objects.
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
-			await rlf.InitializeAsync();
+			await rlf.InitializeAsync( false );
             Assert.IsNotNull( rlf );
 
 
 			//await rlf.LoadSquaddingListAsync();
 
 			rlf.Engagable = false;
-            rlf.ResolutionWidth = 1000;
-            rlf.ShowNumberOfChildRows = 4000;
-            rlf.ShowRanks = 0;
+            rlf.ResolutionWidth = 100;
+            rlf.ShowNumberOfChildRows = 0;
+            rlf.ShowRanks = 3;
             rlf.ShowStatuses = null;
             rlf.ShowSupplementalInformation = false;
+            rlf.ShowNumberOfBodyRows = 3;
+            rlf.RefreshAllRowsParticipantAttributeFields();
 
             //rlf.SetShowValuesToDefault();
 

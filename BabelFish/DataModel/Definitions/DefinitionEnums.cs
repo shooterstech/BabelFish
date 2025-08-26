@@ -673,6 +673,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         RESULT_STATUS_OFFICIAL,
 
         /// <summary>
+        /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 325.
+        /// </summary>
+        /// <remarks>Value made up. As sometimes we need screen resolution less than a bootstrap SMALL.</remarks>
+        DIMENSION_EXTRA_SMALL,
+
+        /// <summary>
         /// Evaluates to true when the Result List Intermedaite Fromat .ResolutionWidth >= 576.
         /// </summary>
         /// <remarks>Value taken from Bootstrap 5's breakpoints.</remarks>

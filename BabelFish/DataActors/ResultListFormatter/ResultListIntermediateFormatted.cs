@@ -6,6 +6,7 @@ using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 using System.Linq.Expressions;
 using NLog;
+using Scopos.BabelFish.DataModel.AthenaLogin;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -53,12 +54,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <summary>
         /// Completes the constructor process, makes necessary Async calls that can not be done within the Constructor.
         /// </summary>
-        /// <param name="definitionApiClient"></param>
+        /// <param name="runRefreshUserProfileVisibilityAsync">If the caller selects no, they should run this method manually, later.</param>
         /// <returns></returns>
-        public async Task InitializeAsync() {
+        public async Task InitializeAsync(bool runRefreshUserProfileVisibilityAsync = true) {
 
             //NOTE: Don't need to wait for the profile visibility initialization. 
-            this.UserProfileLookup.RefreshUserProfileVisibilityAsync();
+            if (runRefreshUserProfileVisibilityAsync) 
+                this.UserProfileLookup.RefreshUserProfileVisibilityAsync();
 
             ScoreFormatCollection = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionSetName );
 
@@ -191,22 +193,29 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 lock (_rows) {
                     List<ResultListIntermediateFormattedRow> copyOfRows = new List<ResultListIntermediateFormattedRow>();
+                    this.ResetNumberOfChildRowsLeftToShow();
+
                     foreach (var row in _rows) {
                         //Reset the count of child rows to show. Note this only effects Body/Parent rows
                         row.ResetNumberOfChildRowsLeftToShow();
 
                         if (row.ShowRowBasedOnShowRanks()) {
                             //Always show scores with a rank value up to and including ShowRanks
+                            row.RowIsShown = true;
                             copyOfRows.Add( row );
                         } else {
 
                             if (row.ShowRowBasedOnShownStatus()
                                 && row.ShowRowBasedOnShowRelay()
+                                && row.ShowRowBasedOnShowNumberOfBodies()
                                 && row.ShowRowBasedOnShowNumberOfChildren()
                                 && row.ShowRowBasedOnShowZeroScoresWithOFFICIAL()) {
+                                row.RowIsShown = true;
                                 copyOfRows.Add( row );
+                            } else {
+                                row.RowIsShown = false;
                             }
-                        }
+                        } 
                     }
                     return copyOfRows;
                 }
@@ -580,7 +589,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-
+        private int _showNumberOfBodies = int.MaxValue;
         private int _showNumberOfChildren = int.MaxValue;
         private HashSet<ResultStatus> _showStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
         private bool _showZeroScoresWithOFFICIAL = false;
@@ -599,6 +608,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public void SetShowValuesToDefault() {
             ShowNumberOfChildRows = int.MaxValue;
+            ShowNumberOfBodyRows = int.MaxValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
             ShowZeroScoresWithOFFICIAL = true;
             ShowRanks = 3;
@@ -620,7 +630,35 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 else
                     _showNumberOfChildren = value;
             }
-        }        
+        }     
+        
+        /// <summary>
+        /// Limits the number of body roes to show.
+        /// <para>The default value is int.MaxValue, which means to show all body rows.</para>
+        /// <para>This show parameter is over ruled by the ShowRanks parameter.</para>
+        /// </summary>
+        public int ShowNumberOfBodyRows {
+            get {
+                return _showNumberOfBodies;
+            }
+            set {
+                if (value <= 0)
+                    _showNumberOfBodies = 0;
+                else
+                    _showNumberOfBodies = value;
+            }
+        }
+
+
+        private int _numberOfBodyRowsLeftToShow = 0;
+        internal bool GetTokenToShowBodyRow( ResultListIntermediateFormattedBodyRow childRow ) {
+            _numberOfBodyRowsLeftToShow--;
+            return _numberOfBodyRowsLeftToShow > -1;
+        }
+
+        internal virtual void ResetNumberOfChildRowsLeftToShow() {
+            _numberOfBodyRowsLeftToShow = ShowNumberOfBodyRows;
+        }
 
         /// <summary>
         /// Gets or sets the set of ResultStatus (e.g. INTERMEDIATE, UNOFFICIAL) to show when .ShownRows is called. 

@@ -143,7 +143,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// For exmaple, if you were to call this method on the top level of a 3P COF, the return should be the
         /// stages for prone, standing, and kneeling. 
         /// <para>A second example, if you were to call this method on the top level of a 1600 prone aggregate,
-        /// the return should be the events 50yd, 50m, dewer 50yd, dewer 50m, and 100yd.</para></remarks>
+        /// the return should be the events 50yd, 50m, dewer 50yd, dewer 100yd, and 100yd.</para></remarks>
         /// <returns></returns>
         public List<EventComposite> GetEventsOfDistinctStageStyles() {
 			List<EventComposite> list = new List<EventComposite>();

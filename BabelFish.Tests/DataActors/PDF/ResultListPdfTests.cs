@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.PDF;
@@ -81,6 +82,29 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
+        }
+
+        [TestMethod]
+        public async Task GenerateMergedAthleteCOFPDFTest() {
+
+            var client = new OrionMatchAPIClient();
+
+            //This match id has three relays of 20 athletes
+            var matchId = new MatchID( "1.1.2025072316000865.0" );
+            var resultListName = "Individual - All";
+
+            var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
+            var resultList = getResultListResponse.ResultList;
+
+            List<ResultCOF> documentsToPrint = new List<ResultCOF>();
+            foreach ( var resultEvent in resultList.Items ) {
+                var resultCofId = resultEvent.ResultCOFID;
+                var getResultCof = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
+                var resultCof = getResultCof.ResultCOF;
+                documentsToPrint.Add( resultCof );
+            }
+
+            await AthleteCOFPdf.GeneratePdfs( documentsToPrint, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES, PageSizes.Letter, "c:\\temp\\hello.pdf" );
         }
 
         [TestMethod]
