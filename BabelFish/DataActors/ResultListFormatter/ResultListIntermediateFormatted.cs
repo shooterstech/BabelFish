@@ -7,6 +7,7 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 using System.Linq.Expressions;
 using NLog;
 using Scopos.BabelFish.DataModel.AthenaLogin;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -102,10 +103,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// is initialize with only the first chunck of results. This function allows the user to append additional tokenized ResultList
         /// to this instance. It assumes the user is passing in the same ResultList, just with a different tokenized chunk of result list items.
         /// </summary>
+        /// <remarks>The caller may wish to call .ReSort() on the Result List prior to calling .AppendTokenizedREsultList().
+        /// This is an exstension method that checks to see if the status of the Result List is official, but remains sorted by
+        /// projected ranking (happens when the orion user closes match too soon). </remarks>
         /// <param name="tokenizedResultList"></param>
         public void AppendTokenizedResultList( IRLIFList tokenizedResultList ) {
 
             lock (_rows) {
+
                 foreach (var item in tokenizedResultList.GetAsIRLItemsList()) {
                     var rei = new ResultListIntermediateFormattedBodyRow( this, item );
 
