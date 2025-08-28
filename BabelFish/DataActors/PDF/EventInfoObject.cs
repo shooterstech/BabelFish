@@ -19,5 +19,7 @@ namespace Scopos.BabelFish.DataActors.PDF
         public string ScoreFormatted { get; set; }
 
         public string EventLabel { get; set; }
+
+        public Target TargetDef { get; set; }
     }
 }

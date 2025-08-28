@@ -29,6 +29,8 @@ namespace Scopos.BabelFish.DataActors.PDF
         /// </summary>
         public string? EventName { get; set; }
 
+        public EventComposite? eventComposite { get; set; }
+
         public Match? Match { get; set; }
 
         public bool includeGroupAnalysis { get; set; } = false;
@@ -63,16 +65,30 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         private string ScoreFormatted { get; set; } = string.Empty;
 
-        public async void TargetSVGCreatorAsync(float dimension, string? eventName, Match? match, ResultCOF? resultCoF, bool includeGroupAnalysis)
+        public EventInfoObject EventInfo { get; set; }
+
+        public async void TargetSVGCreatorAsync(float dimension, string? eventName, EventComposite? eventComp, Match? match, ResultCOF? resultCoF, bool includeGroupAnalysis)
         {
             this.includeGroupAnalysis = includeGroupAnalysis;
             Dimension = dimension;
-            EventName = eventName;
+            EventName = eventName != null ? eventName : eventComp.EventName;
+            eventComposite = eventComp;
             Match = match;
             ResultCOF = resultCoF;
             SVGDone = false;
             await StartRender().ConfigureAwait(false);
             SVGDone = true;
+
+            EventInfo = new EventInfoObject()
+            {
+                eventComposite = eventComp,
+                ObjectImage = null,
+                GroupMaths = this.groupMaths,
+                ShotList = ShotListToShow,
+                ScoreFormatted = ScoreFormatted,
+                EventLabel = EventName,
+                TargetDef = TargetDef
+            };
         }
 
         public string? GetSVGMarkup()
