@@ -12,7 +12,7 @@ using Svg.Skia;
 
 namespace Scopos.BabelFish.DataActors.PDF
 {
-    class TargetSVGCreator
+    class TargetAnalysisAndGraphic
     {
 
 
