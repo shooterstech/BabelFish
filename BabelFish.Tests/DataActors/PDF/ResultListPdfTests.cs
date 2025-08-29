@@ -98,10 +98,17 @@ namespace BabelFish.Tests.DataActors.PDF {
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
             var resultCof = getResultCofResponse.ResultCOF;
 
-            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.EVENT);
-            await pdf.InitializeAsync();
+            var pdfEvent = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.EVENT);
+            await pdfEvent.InitializeAsync();
+            pdfEvent.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloEVENT.pdf");
 
-            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloWHAT.pdf");
+            var pdfStage = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.STAGE);
+            await pdfStage.InitializeAsync();
+            pdfStage.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloSTAGE.pdf");
+
+            var pdfSeries = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
+            await pdfSeries.InitializeAsync();
+            pdfSeries.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloSeries.pdf");
 
         }
     }

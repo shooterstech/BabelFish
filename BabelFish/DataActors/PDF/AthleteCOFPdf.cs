@@ -146,26 +146,39 @@ namespace Scopos.BabelFish.DataActors.PDF
                 foreach ( int col in Enumerable.Range( 1, (eventsToShow.Count()) ) )
                 {
                     int rowHeight = 205;
-                    column.Item().Container().Height(rowHeight).Border(2, ScoposColors.BLUE_LIGHTEN_1).Row(row =>
+                    column.Item().Container().Height(rowHeight).Border(2, ScoposColors.BLUE_LIGHTEN_1).Table(table =>
                     {
+
                         nextRow = false;
                         ShotTableDetails.ShowTotal = false;
-                        foreach (int ro in Enumerable.Range(1, 2))
-                        {
-                            if(eventsToShow.Count() <= 3)
-                            {
-                                nextRow = true;
-                            }
-                            TargetImageDetails.EventInfo = eventsToShow[eventIndex];
-                            row.RelativeItem(2).MaxWidth(183).BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new TargetImage(TargetImageDetails));
+                        var giveMeAtLeast1 = Math.Floor(eventsToShow.Count() / 2d) == 0 ? 1 : Math.Floor(eventsToShow.Count() / 2d);
+                        var colsToHave = Math.Min(giveMeAtLeast1, 2d);
 
-                            //maybe make this part a table, if less than 10 shots in this list them with (x,y,r) and value?
-                            ShotTableDetails.EventInfo = eventsToShow[eventIndex];
-                            var shotTablesNumber = (int)Math.Ceiling((double)eventsToShow[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
-                            if (shotTablesNumber > 1)
+                        ShotTableDetails.EventInfo = eventsToShow[eventIndex];
+                        var shotTablesNumber = (int)Math.Ceiling((double)eventsToShow[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
+                        if (shotTablesNumber > 1 || (int)colsToHave < 2)
+                        {
+                            nextRow = true;
+                        }
+
+                        //define columns once we have decided what we are showing. right now they're relative cols.... I am not sure I love it but we can go with it.
+                        table.ColumnsDefinition(columns =>
+                        {
+                            foreach (var cols in Enumerable.Range(1, (int)colsToHave))
                             {
-                                nextRow = true;
+                                columns.RelativeColumn(2);
+                                foreach (var item in Enumerable.Range(1, shotTablesNumber))
+                                {
+                                    columns.RelativeColumn(1);
+                                }
                             }
+                        });
+
+                        foreach (int ro in Enumerable.Range(1, (int)colsToHave))
+                        {
+                            TargetImageDetails.EventInfo = eventsToShow[eventIndex];
+                            table.Cell().MaxWidth(183).BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new TargetImage(TargetImageDetails));
+
                             foreach (var number in Enumerable.Range(1, shotTablesNumber))
                             {
                                 if(number == 6 || number == shotTablesNumber)
@@ -175,7 +188,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                                 if(number <= 6)
                                 {
                                     ShotTableDetails.ShotNumberToStartOn = ShotTableDetails.MaxShotNumber * (number - 1);
-                                    row.RelativeItem(1).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1)
+                                    table.Cell().MinWidth(10).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1)
                                         .Container().BorderLeft(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
                                         .Component(new ShotTable(ShotTableDetails));
                                 }
@@ -283,7 +296,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                 table.Header(header =>
                 {
                     header.Cell().Element(Style).Text("#").FontSize(Details.TableFontSize);
-                    header.Cell().Element(Style).Text("Score").FontSize(Details.TableFontSize);
+                    header.Cell().Element(Style).Text("Score").ClampLines(1).FontSize(Details.TableFontSize);
 
                     IContainer Style(IContainer container)
                     {
@@ -307,8 +320,8 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                 if(Details.ShowTotal)
                 {
-                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("Total").FontSize(Details.TableFontSize);
-                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text($"{Details.EventInfo.ScoreFormatted}").FontSize(Details.TableFontSize);
+                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text("Total").ClampLines(1).FontSize(Details.TableFontSize);
+                    table.Cell().Element(FooterStyle).ExtendVertical().AlignMiddle().Text($"{Details.EventInfo.ScoreFormatted}").ClampLines(1).FontSize(Details.TableFontSize);
                 }
                 else
                 {
