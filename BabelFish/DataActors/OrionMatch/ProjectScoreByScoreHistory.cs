@@ -107,7 +107,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                     ScoreHistoryAPIClient scoreHistoryClient = new ScoreHistoryAPIClient(APIStage); ;
                     var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync(scoreAverageRequest);
 
-                    if (scoreAverageResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (scoreAverageResponse.RestApiStatusCode == System.Net.HttpStatusCode.OK)
                     {
                         foreach (ScoreAverageStageStyleEntry scoreAvg in scoreAverageResponse.ScoreAverageList.Items)
                         {
@@ -118,7 +118,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch
                     else
                     {
                         // Handle non-successful response
-                        Console.WriteLine($"Error when retrieving score history: {scoreAverageResponse.StatusCode}");
+                        Console.WriteLine($"Error when retrieving score history: {scoreAverageResponse.RestApiStatusCode}");
                     }
                 }
                 catch (Exception ex)

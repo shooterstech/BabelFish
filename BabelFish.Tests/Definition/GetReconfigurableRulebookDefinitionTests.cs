@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.Tests.Definition
 
             var taskResponse = client.GetAttributeDefinitionAsync(setName);
             var result = taskResponse.Result;
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
 
             var result = await client.GetCourseOfFireDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -78,7 +78,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Precision Air Rifle" );
 
             var result = await client.GetEventStyleDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -100,7 +100,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse("v1.0:nra:BB Gun Qualification");
 
             var result = await client.GetRankingRuleDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -131,7 +131,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse("v1.0:ntparc:Sporter Air Rifle Standing");
 
             var result = await client.GetStageStyleDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -152,7 +152,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse("v1.0:ntparc:Air Rifle");
 
             var result = await client.GetTargetCollectionDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -173,7 +173,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse("v1.0:issf:10m Air Rifle");
 
             var result = await client.GetTargetDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -195,7 +195,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -216,7 +216,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse( "v1.0:orion:3P Individual" );
 
             var result = await client.GetResultListFormatDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -241,7 +241,7 @@ namespace Scopos.BabelFish.Tests.Definition
             var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
 
             var result = await client.GetCourseOfFireDefinitionAsync(setName);
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+            Assert.AreEqual(HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}.");
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
@@ -274,12 +274,12 @@ namespace Scopos.BabelFish.Tests.Definition
             var mappingResponse = client.GetEventAndStageStyleMappingDefinitionAsync(mappingSetName);
             var mappingResult = mappingResponse.Result;
             var mapping = mappingResult.Definition;
-            Assert.AreEqual(HttpStatusCode.OK, mappingResult.StatusCode, $"Expecting and OK status code, instead received {mappingResult.StatusCode}.");
+            Assert.AreEqual(HttpStatusCode.OK, mappingResult.RestApiStatusCode, $"Expecting and OK status code, instead received {mappingResult.RestApiStatusCode}.");
 
             var cofResponse = client.GetCourseOfFireDefinitionAsync(cofSetName);
             var cofResult = cofResponse.Result;
             var cofDefinition = cofResult.Definition;
-            Assert.AreEqual(HttpStatusCode.OK, cofResult.StatusCode, $"Expecting and OK status code, instead received {cofResult.StatusCode}.");
+            Assert.AreEqual(HttpStatusCode.OK, cofResult.RestApiStatusCode, $"Expecting and OK status code, instead received {cofResult.RestApiStatusCode}.");
 
             EventAndStageStyleMappingCalculation mappingCalc = new EventAndStageStyleMappingCalculation(mapping);
             foreach (var thing in cofDefinition.Events) {
@@ -311,12 +311,12 @@ namespace Scopos.BabelFish.Tests.Definition
             var mappingResponse = client.GetEventAndStageStyleMappingDefinitionAsync( mappingSetName );
             var mappingResult = mappingResponse.Result;
             var mapping = mappingResult.Definition;
-            Assert.AreEqual( HttpStatusCode.OK, mappingResult.StatusCode, $"Expecting and OK status code, instead received {mappingResult.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, mappingResult.RestApiStatusCode, $"Expecting and OK status code, instead received {mappingResult.RestApiStatusCode}." );
 
             var cofResponse = client.GetCourseOfFireDefinitionAsync( cofSetName );
             var cofResult = cofResponse.Result;
             var cofDefinition = cofResult.Definition;
-            Assert.AreEqual( HttpStatusCode.OK, cofResult.StatusCode, $"Expecting and OK status code, instead received {cofResult.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, cofResult.RestApiStatusCode, $"Expecting and OK status code, instead received {cofResult.RestApiStatusCode}." );
 
 
             EventAndStageStyleMappingCalculation mappingCalc = new EventAndStageStyleMappingCalculation( mapping );

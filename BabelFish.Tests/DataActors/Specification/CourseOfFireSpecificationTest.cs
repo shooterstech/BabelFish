@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.DataActors
             var setName = SetName.Parse("v1.0:orion:Test Informal Practice Air Rifle");
 
             var result = await client.GetCourseOfFireDefinitionAsync(setName);
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+            Assert.AreEqual(HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}.");
 
             var definition = result.Definition;
             Assert.IsNotNull(definition);
@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.Tests.DataActors
             var setName = SetName.Parse("v1.0:orion:Test Informal Practice Air Rifle");
 
             var result = await client.GetCourseOfFireDefinitionAsync(setName);
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}.");
+            Assert.AreEqual(HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}.");
 
             var definition = result.Definition;
             Assert.IsNotNull(definition);

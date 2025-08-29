@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponseBad = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequestBad );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponseBad.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponseBad.RestApiStatusCode );
 
 
         }
@@ -52,7 +52,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
             //delete the role
             var deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( userAuthentication );
@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.RestApiStatusCode );
         }
 
         [TestMethod]
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user3Authentication );
             deleteRequest.RelationshipName = SocialRelationshipName.BLOCK;
@@ -91,7 +91,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             //user 7 can't make user 3 block them
             var blockRequest = new CreateRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -100,7 +100,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var blockResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( blockRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, blockResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, blockResponse.RestApiStatusCode );
 
             //user 7 blocks user 3
             blockRequest = new CreateRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -109,7 +109,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             blockResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( blockRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, blockResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, blockResponse.RestApiStatusCode );
 
             //user 7 can read block
             var readRequest = new ReadRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -118,7 +118,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.RestApiStatusCode );
 
             //user 3 cannot read block
             readRequest = new ReadRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -127,7 +127,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, readResponse.RestApiStatusCode );
 
 
             //user 7 can't follow user 3
@@ -137,7 +137,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, createResponse.RestApiStatusCode );
 
             //user 7 can't read follows relationship
             readRequest = new ReadRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -146,7 +146,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, readResponse.RestApiStatusCode );
 
             //user 7 can't approve follows relationship
             var approveRequest = new ApproveRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -154,7 +154,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             approveRequest.ActiveId = Constants.TestDev3UserId;
             var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, approveResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, approveResponse.RestApiStatusCode );
 
             //user 7 can't delete follows relationship
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -163,7 +163,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, deleteResponse.RestApiStatusCode );
 
             //now try all operations for user 3 to user 7
             //user 3 can't follow user 7
@@ -173,7 +173,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, createResponse.RestApiStatusCode );
 
             //user 3 can't read follows relationship
             readRequest = new ReadRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -182,7 +182,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, readResponse.RestApiStatusCode );
 
             //user 3 can't approve follows relationship
             approveRequest = new ApproveRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -190,7 +190,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             approveRequest.ActiveId = Constants.TestDev7UserId;
             approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, approveResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, approveResponse.RestApiStatusCode );
 
             //user 3 can't delete follows relationship
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -199,7 +199,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, deleteResponse.RestApiStatusCode );
 
             //user 3 can't delete user 7's block
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -208,7 +208,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.Unauthorized == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.Unauthorized == deleteResponse.RestApiStatusCode );
 
             //user 3 CAN still block user 7
             blockRequest = new CreateRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -217,7 +217,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             blockResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( blockRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, blockResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, blockResponse.RestApiStatusCode );
 
             //user 7 can still read block against user 3
             readRequest = new ReadRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -226,7 +226,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.RestApiStatusCode );
 
 
 
@@ -237,7 +237,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode );
 
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user3Authentication );
             deleteRequest.RelationshipName = SocialRelationshipName.BLOCK;
@@ -245,7 +245,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode );
 
             //check follow does not exist between either
             readRequest = new ReadRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -254,7 +254,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, readResponse.RestApiStatusCode );
 
             readRequest = new ReadRelationshipRoleAuthenticatedRequest( user7Authentication );
             readRequest.RelationshipName = SocialRelationshipName.FOLLOW;
@@ -262,7 +262,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, readResponse.RestApiStatusCode );
         }
 
         [TestMethod]
@@ -284,7 +284,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             //ensure follow doesnt exist already
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -293,7 +293,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             //user 7 follows user 3
             var createRequest = new CreateRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -302,7 +302,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
             SocialRelationship followSocialRelationship = createResponse.SocialRelationship; //save to make sure is unchanged
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
 
             //user 7 blocks user 3
@@ -312,7 +312,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var blockResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( blockRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, blockResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, blockResponse.RestApiStatusCode );
 
             //user 3 can't approve follows relationship
             var approveRequest = new ApproveRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -320,7 +320,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             approveRequest.ActiveId = Constants.TestDev7UserId;
             var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, approveResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, approveResponse.RestApiStatusCode );
 
             //user 7 can't delete follows relationship
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -329,7 +329,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.BadRequest, deleteResponse.RestApiStatusCode );
 
             //user 7 unblocks
             deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -338,7 +338,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode );
 
             //user 3 reads relationshipship unchanged
             var readRequest = new ReadRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -348,7 +348,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.RestApiStatusCode );
 
             Assert.IsTrue( readResponse.SocialRelationship.Equals( followSocialRelationship ) );
 
@@ -359,7 +359,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode );
 
         }
 
@@ -378,7 +378,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             //user 7 requests to follow user 3
             var createRequest = new CreateRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -387,7 +387,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
             var expectedRelationship = new SocialRelationship();
             expectedRelationship.RelationshipName = createRequest.RelationshipName;
@@ -408,16 +408,16 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.RestApiStatusCode );
 
             Assert.IsTrue( readResponse.SocialRelationship.Equals( expectedRelationship ) );
 
             //user 7 unfollows user 3
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.RestApiStatusCode );
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest ); //make sure role was actually deleted
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, deleteResponse.RestApiStatusCode );
 
         }
 
@@ -436,7 +436,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             //user 7 requests to follow user 3
             var createRequest = new CreateRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -445,7 +445,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
             var expectedRelationship = new SocialRelationship();
             expectedRelationship.RelationshipName = createRequest.RelationshipName;
@@ -469,7 +469,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, approveResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, approveResponse.RestApiStatusCode );
 
             expectedRelationship.PassiveApproved = true;
             Assert.IsTrue( approveResponse.SocialRelationship.Equals( expectedRelationship ) );
@@ -481,16 +481,16 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.RestApiStatusCode );
 
             Assert.IsTrue( readResponse.SocialRelationship.Equals( expectedRelationship ) );
 
             //user 7 unfollows user 3
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.RestApiStatusCode );
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest ); //make sure role was actually deleted
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, deleteResponse.RestApiStatusCode );
 
         }
 
@@ -528,7 +528,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             coachDeleteReq.LicenseNumber = validLicense;
             coachDeleteReq.UserId.Add( coachUserId );
             var coachDeleteResp = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync( coachDeleteReq );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachDeleteResp.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachDeleteResp.RestApiStatusCode );
             //coachDeleteReq.LicenseNumber = expiredLicense;
             //coachDeleteResp = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(coachDeleteReq);
             //Assert.AreEqual(System.Net.HttpStatusCode.OK, coachDeleteResp.StatusCode);
@@ -538,7 +538,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             deleteRequest.RelationshipName = SocialRelationshipName.COACH;
             deleteRequest.ActiveId = coachUserId;
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
             //unauthorized coach requests to coach an athlete
             var createRequestFromCoach = new CreateRelationshipRoleAuthenticatedRequest( coachAuthentication );
@@ -546,7 +546,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             createRequestFromCoach.ActiveId = coachUserId;
             createRequestFromCoach.PassiveId = athleteUserId;
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequestFromCoach );
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponse.RestApiStatusCode );
 
             //athlete requests to be coached by unauthorized coach 
             var createRequestFromAthlete = new CreateRelationshipRoleAuthenticatedRequest( athleteAuthentication );
@@ -554,7 +554,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             createRequestFromAthlete.ActiveId = coachUserId;
             createRequestFromAthlete.PassiveId = athleteUserId;
             createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequestFromAthlete );
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponse.RestApiStatusCode );
 
             //add coach to expired license
             //var coachCreateReq = new CreateCoachAssignmentAuthenticatedRequest(pocAuthentication);
@@ -576,18 +576,18 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             coachCreateReq.UserId.Add( coachUserId );
             coachCreateReq.LicenseNumber = validLicense;
             var coachCreateResp = await clubsClient.CreateCoachAssignmentAuthenticatedAsync( coachCreateReq );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachCreateResp.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachCreateResp.RestApiStatusCode );
 
             //BEGIN COACH REQUEST ATHLETE TESTS
 
             //valid coach requests athlete
             createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequestFromCoach );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
             //coach is removed from valid license (now unauthorized) //(all licenses now expired)
             coachDeleteReq.LicenseNumber = validLicense;
             coachDeleteResp = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync( coachDeleteReq );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachDeleteResp.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachDeleteResp.RestApiStatusCode );
 
             //athlete attempts to accept coah request from expired coach
             //var approveRequestFromAthlete = new ApproveRelationshipRoleAuthenticatedRequest(athleteAuthentication);
@@ -608,30 +608,30 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             approveRequestFromAthlete.ActiveId = coachUserId;
             approveRequestFromAthlete.PassiveId = athleteUserId;
             var approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequestFromAthlete );
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, approveResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, approveResponse.RestApiStatusCode );
 
             //athlete deletes request
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode );
 
             //BEGIN ATHLETE REQUEST COACH TESTS
 
             //Add coach to valid license
             coachCreateReq.LicenseNumber = validLicense;
             coachCreateResp = await clubsClient.CreateCoachAssignmentAuthenticatedAsync( coachCreateReq );
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == coachCreateResp.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == coachCreateResp.RestApiStatusCode );
 
             //athlete requests to coach a valid coach (athlete is not a valid coach)
             createRequestFromAthlete.ActiveId = athleteUserId;
             createRequestFromAthlete.PassiveId = coachUserId;
             createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequestFromAthlete );
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, createResponse.RestApiStatusCode );
 
             //athlete requests valid coach
             createRequestFromAthlete.ActiveId = coachUserId;
             createRequestFromAthlete.PassiveId = athleteUserId;
             createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequestFromAthlete );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
             //add coach to expired license
             //coachCreateReq.LicenseNumber = expiredLicense;
@@ -641,7 +641,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             //coach is removed from valid license (now unauthorized) //(all licenses now expired)
             coachDeleteReq.LicenseNumber = validLicense;
             coachDeleteResp = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync( coachDeleteReq );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachDeleteResp.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, coachDeleteResp.RestApiStatusCode );
 
             ////expired coach attempts to accept athlete request
             //var approveRequestFromCoach = new ApproveRelationshipRoleAuthenticatedRequest(coachAuthentication);
@@ -662,11 +662,11 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             approveRequestFromCoach.ActiveId = coachUserId;
             approveRequestFromCoach.PassiveId = athleteUserId;
             approveResponse = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequestFromCoach );
-            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, approveResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.Unauthorized, approveResponse.RestApiStatusCode );
 
             //athlete deletes request
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode );
 
 
 
@@ -698,7 +698,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             createCoachReq.LicenseNumber = licenseNumber;
             createCoachReq.UserId.Add( Constants.TestDev3UserId );
             var createCoachResp = await clubsClient.CreateCoachAssignmentAuthenticatedAsync( createCoachReq );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createCoachResp.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createCoachResp.RestApiStatusCode );
 
             //ensure role doesnt exist already
             var deleteRequest = new DeleteRelationshipRoleAuthenticatedRequest( user7Authentication );
@@ -707,7 +707,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
 
-            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.StatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.StatusCode );
+            Assert.IsTrue( System.Net.HttpStatusCode.OK == deleteResponse.RestApiStatusCode || System.Net.HttpStatusCode.NotFound == deleteResponse.RestApiStatusCode );
 
 
             //athlete (user 7) requests that user3 coaches them
@@ -717,7 +717,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var createResponse = await socialNetworkClient.CreateRelationshipRoleAuthenticatedAsync( createRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, createResponse.RestApiStatusCode );
 
             var expectedRelationship = new SocialRelationship();
             expectedRelationship.RelationshipName = createRequest.RelationshipName;
@@ -736,7 +736,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var approveResponseBad = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequestBad );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, approveResponseBad.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, approveResponseBad.RestApiStatusCode );
 
             //user3 successfully approves the coach request
             var approveRequestGood = new ApproveRelationshipRoleAuthenticatedRequest( user3Authentication );
@@ -745,7 +745,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var approveResponseGood = await socialNetworkClient.ApproveRelationshipRoleAuthenticatedAsync( approveRequestGood );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, approveResponseGood.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, approveResponseGood.RestApiStatusCode );
 
             expectedRelationship.ActiveApproved = true;
             Assert.IsTrue( approveResponseGood.SocialRelationship.Equals( expectedRelationship ) );
@@ -757,7 +757,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
             var readResponse = await socialNetworkClient.ReadRelationshipRoleAuthenticatedAsync( readRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, readResponse.RestApiStatusCode );
 
             Assert.IsTrue( readResponse.SocialRelationship.Equals( expectedRelationship ) );
 
@@ -766,10 +766,10 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             deleteRequest.RelationshipName = SocialRelationshipName.COACH;
             deleteRequest.PassiveId = Constants.TestDev7UserId;
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, deleteResponse.RestApiStatusCode );
 
             deleteResponse = await socialNetworkClient.DeleteRelationshipRoleAuthenticatedAsync( deleteRequest ); //make sure role was actually deleted
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, deleteResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, deleteResponse.RestApiStatusCode );
 
         }
 

@@ -91,7 +91,12 @@ namespace Scopos.BabelFish.Responses
         /// <summary>
         /// Gets or Sets the Status Code returned by the Rest API call.
         /// </summary>
-        public HttpStatusCode StatusCode { get; internal set; }
+        public HttpStatusCode RestApiStatusCode { get; internal set; }
+
+        /// <summary>
+        /// Gets or Sets the overall status code. Pinpointing errors other than from the Rest API.
+        /// </summary>
+        public RequestStatusCode OverallStatusCode { get; internal set; }
 
         /// <summary>
         /// Boolean indicating if the response should be written to file system cache on a successful call.
@@ -128,7 +133,7 @@ namespace Scopos.BabelFish.Responses
         /// is a JToken object, into the Value, which is of type T.
         /// </summary>
         protected virtual void ConvertBodyToValue() {
-            if (StatusCode == HttpStatusCode.OK)
+            if (RestApiStatusCode == HttpStatusCode.OK)
                 Value = G_STJ.JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.SystemTextJsonDeserializer );
             else 
                 Value = new T();
@@ -148,5 +153,13 @@ namespace Scopos.BabelFish.Responses
         public string Json { get; set; }
 
         public string ExceptionMessage { get; set; }
+    }
+
+    public enum RequestStatusCode { 
+        OK, 
+        RestApiServerError, 
+        DeserializaingError,
+        TimeOutError,
+        UnknownError //If we get this, we should discover why and update ReqeustStatusCode
     }
 }

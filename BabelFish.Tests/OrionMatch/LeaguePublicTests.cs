@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             //Pass in a fake match id
             var leagueDetailResponse = await client.GetLeagueDetailPublicAsync( "1.1.2023091512010588.3" );
 
-            Assert.AreEqual( HttpStatusCode.OK, leagueDetailResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, leagueDetailResponse.RestApiStatusCode );
 
             var league = leagueDetailResponse.League;
             Assert.IsNotNull( league );
@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var response = await client.GetLeagueGamesPublicAsync ( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var leagueGameList = response.LeagueGames;
 
@@ -92,7 +92,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var response = await client.GetLeagueGamesPublicAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var leagueGameList = response.LeagueGames;
 
@@ -126,7 +126,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var response = await client.GetLeagueGamesPublicAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var leagueGameList = response.LeagueGames;
 
@@ -164,7 +164,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 response = await client.GetLeagueGamesPublicAsync( request );
 
                 //Expect a OK response
-                Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+                Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
                 allTheGames.AddRange( response.LeagueGames.Items );
 
@@ -200,7 +200,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var response = await client.GetLeagueTeamsPublicAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var leagueTeamList = response.LeagueTeams;
 
@@ -240,7 +240,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 response = await client.GetLeagueTeamsPublicAsync( request );
 
                 //Expect a OK response
-                Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+                Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
                 allTheTeams.AddRange( response.LeagueTeams.Items );
 
@@ -276,7 +276,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var response = await client.GetLeagueTeamDetailPublicAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var leagueTeamDetail = response.LeagueTeamDetail;
 
@@ -311,9 +311,9 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var responseGames = await client.GetLeagueGamesPublicAsync(requestGames);
             var leagueDetailResponse = await client.GetLeagueDetailPublicAsync("1.1.2023091512010588.3");
 
-            Assert.AreEqual(HttpStatusCode.OK, responseTeamDetail.StatusCode);
-            Assert.AreEqual(HttpStatusCode.OK, responseGames.StatusCode);
-            Assert.AreEqual(HttpStatusCode.OK, leagueDetailResponse.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, responseTeamDetail.RestApiStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, responseGames.RestApiStatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, leagueDetailResponse.RestApiStatusCode);
 
             var leagueTeamDetail = responseTeamDetail.LeagueTeamDetail;
             var leagueGame = responseGames.LeagueGames;

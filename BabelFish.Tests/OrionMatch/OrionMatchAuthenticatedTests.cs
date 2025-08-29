@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchAuthenticatedAsync( matchId, userAuthentication );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var match = response.Match;
 

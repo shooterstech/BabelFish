@@ -34,10 +34,9 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             var appVersion = new Scopos.BabelFish.DataModel.Common.Version("2.21.1");
             var response = await client.GetReleasePublicAsync(level,appList, "000015-orion-001", appVersion, false, false, "00015");
 
+            Assert.AreEqual( Responses.RequestStatusCode.OK , response.OverallStatusCode, $"Expecting and OK status code, instead received Overall {response.OverallStatusCode} with REST API Status {response.RestApiStatusCode}, and message {response.ExceptionMessage}." );
 
             Assert.IsNotNull(response.ApplicationRelease);
-
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode, $"Expecting and OK status code, instead received {response.StatusCode}." );
 
             var releaseNotes = response.ApplicationRelease;
             foreach (var item in releaseNotes.Items) {
@@ -72,7 +71,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
             var result = response.Result;
             Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
             Assert.AreEqual( 1, result.VersionList.Count );
             Assert.AreEqual( service, result.VersionList[0].Service );
         }
@@ -87,7 +86,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
             var result = response.Result;
             Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
             Assert.AreEqual(1, result.VersionList.Count );
             Assert.AreEqual(service, result.VersionList[0].Service );
         }
@@ -105,7 +104,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
 
             var result = response.Result;
             Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
             Assert.AreEqual( result.VersionList.Count, 2 );
             Assert.IsTrue( result.VersionList.Any( x => x.Service == ApplicationName.ATHENA ) );
         }
@@ -122,7 +121,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             var result = response.Result;
 
             Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
             Assert.IsTrue( result.CupsOfCoffeeConsumed > 1000, $"Expecting the number of coffee cups consumed to be greater than 1000, instead received {result.CupsOfCoffeeConsumed}." );
             Assert.AreEqual( result.CupsOfCoffeeConsumed, result.Value.CupsOfCoffeeConsumed );
         }
@@ -135,7 +134,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             var result = response.Result;
 
             Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
             Assert.IsTrue( result.CupsOfCoffeeConsumed > 1000, $"Expecting the number of coffee cups consumed to be greater than 1000, instead received {result.CupsOfCoffeeConsumed}." );
             Assert.AreEqual( result.CupsOfCoffeeConsumed, result.Value.CupsOfCoffeeConsumed );
         }

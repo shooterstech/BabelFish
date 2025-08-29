@@ -45,6 +45,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //If we get here the Result List does not have a Ranking List Format definition.
             //Which brings us to our second attempt by reading the COF definition and and matching the event name
 
+            //Well, unless this is a SquaddingList, in which case return a default
+            if ( itemList is SquaddingList ) {
+                return SetName.Parse( "v1.0:orion:Generic Squadding for Firing Points" );
+            }
+
             if (itemList is ResultList resultList) {
                 string courseOfFireDef = resultList.CourseOfFireDef;
                 string eventName = resultList.EventName;

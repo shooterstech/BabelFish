@@ -789,7 +789,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 try {
                     foreach( var response in responses ) {
                         var getSquaddingListResponse = await response;
-                        if ( getSquaddingListResponse.StatusCode == System.Net.HttpStatusCode.OK ) {
+                        if ( getSquaddingListResponse.RestApiStatusCode == System.Net.HttpStatusCode.OK ) {
                             LoadSquaddingList( getSquaddingListResponse.SquaddingList );
                         }
                     }

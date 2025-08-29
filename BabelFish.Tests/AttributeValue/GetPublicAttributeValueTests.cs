@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Now the test is to read the value using the PUBLIC api call
             var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
             var response = taskResponse.Result;
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             //The returned data should have one AttriuteValueDataPacket if the Profile Name set name.
             var attributeValueDataPackets = response.AttributeValues;
@@ -110,7 +110,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 			var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
 			var response = taskResponse.Result;
 			//The overall status code for the call should be .OK (only the status code for reading the specific attribure value is .NotFound)
-			Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
 			//The returned data should have one AttriuteValueDataPacket if the Profile Name set name.
 			var attributeValueDataPackets = response.AttributeValues;
@@ -138,7 +138,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
             var response = taskResponse.Result;
             //The overall status code for the call should be a 200 (OK).
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             //The returned data should have one AttriuteValueDataPacket.
             var attributeValueDataPackets = response.AttributeValues;
@@ -193,7 +193,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 			var response = taskResponse.Result;
 
 			//The overall status code for the call should be a 200 (OK).
-			Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
 			//The returned data should have one AttriuteValueDataPacket.
 			var attributeValueDataPackets = response.AttributeValues;

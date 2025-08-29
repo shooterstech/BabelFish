@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.Athena
 			request.Redeploy = false;
 
 			var response = await client.MoveGGv2CoreToAthenaDeploymentGroupPublicAsync(request);
-			Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+			Assert.AreEqual(System.Net.HttpStatusCode.OK, response.RestApiStatusCode);
 			Assert.AreEqual("AthenaRangeDeployment_1-0-0-0", response.AthenaCoreDeployment.AthenaCoreDeploymentName); //may be in different deployment group in the future
 			
 		}

@@ -57,11 +57,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             
             var response = await definitionAPIClient.GetDefinitionVersionPublicAsync( definitionType, setName );
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            if (response.RestApiStatusCode == System.Net.HttpStatusCode.NotFound)
                 return false;
 
-            if (response.StatusCode != System.Net.HttpStatusCode.OK) {
-                throw new ScoposAPIException( $"Received Status Code {response.StatusCode} when retreiving the Sparse Definition for {definitionType} {setName}." );
+            if (response.RestApiStatusCode != System.Net.HttpStatusCode.OK) {
+                throw new ScoposAPIException( $"Received Status Code {response.RestApiStatusCode} when retreiving the Sparse Definition for {definitionType} {setName}." );
             }
 
             var sd = response.SparseDefinition;

@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             };
             var taskResponse = client.GetAttributeValueAuthenticatedAsync( myAttributes, userAuthentication );
             var response = taskResponse.Result;
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             //The returned data should have one AttriuteValueDataPacket if the Profile Name set name.
             var attributeValueDataPackets = response.AttributeValues;
@@ -95,7 +95,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var taskResponse = client.GetAttributeValueAuthenticatedAsync( request );
             var response = taskResponse.Result;
             //This is the overall status code for the call
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             //The returned data should have three AttriuteValueDataPacket
             var attributeValueDataPackets = response.AttributeValues;
@@ -196,7 +196,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var taskResponse = client.GetAttributeValueAuthenticatedAsync( myAttributes, userAuthentication );
             var response = taskResponse.Result;
             //The overall status code for the call should be a 200 (OK).
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             //The returned data should have one AttriuteValueDataPacket.
             var attributeValueDataPackets = response.AttributeValues;

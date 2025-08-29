@@ -128,7 +128,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             //The .GetClubDetail call includes a list of namespaces this owner owns.
             var clubDetailResponse = await DefinitionValidationHelper.ClubsAPIClient.GetClubDetailPublicAsync( candidate.Owner );
 
-            if (clubDetailResponse.StatusCode != System.Net.HttpStatusCode.OK) {
+            if (clubDetailResponse.RestApiStatusCode != System.Net.HttpStatusCode.OK) {
                 Messages.Add( $"Could not validate Owner, because could not successfully make the GetClubDetailPublicAsync REST API call." );
                 return false;
             }

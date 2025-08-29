@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
 
-            Assert.AreEqual( HttpStatusCode.OK, getResultListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, getResultListResponse.RestApiStatusCode );
             var resultList = getResultListResponse.ResultList;
 
             Assert.AreEqual( matchId.ToString(), resultList.MatchID );
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskResultListResponse = client.GetResultListAuthenticatedAsync( matchId, resultListName, userAuthentication );
             var resultListResponse = taskResultListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, resultListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, resultListResponse.RestApiStatusCode );
             var resultList = resultListResponse.ResultList;
 
             Assert.AreEqual( matchId.ToString(), resultList.MatchID );
@@ -70,7 +70,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskResultListResponseInit = client.GetResultListPublicAsync( requestInit );
             var resultListResponseInit = taskResultListResponseInit.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, resultListResponseInit.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, resultListResponseInit.RestApiStatusCode );
             var resultListInit = resultListResponseInit.ResultList;
 
             Assert.AreEqual( matchId.ToString(), resultListInit.MatchID );
@@ -85,7 +85,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskResultListResponseNext = client.GetResultListPublicAsync( requestNext );
             var resultListResponseNext = taskResultListResponseNext.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, resultListResponseNext.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, resultListResponseNext.RestApiStatusCode );
             var resultListNext = resultListResponseNext.ResultList;
 
             Assert.AreEqual( matchId.ToString(), resultListNext.MatchID );

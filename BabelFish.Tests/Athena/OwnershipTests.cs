@@ -16,7 +16,7 @@ namespace Scopos.BabelFish.Tests.Athena {
             request.CpuSerial = ""; //ESTMonitor-000002139
 
             var response  = await ownershipClient.RemoveThingOwnershipAsync(request);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.RestApiStatusCode);
         }
     }
 }

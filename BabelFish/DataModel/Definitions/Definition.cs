@@ -177,16 +177,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             var versionRequest = new GetDefinitionVersionPublicRequest( currentSetName, this.Type );
             var versionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( versionRequest );
 
-            if (versionResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+            if (versionResponse.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
                 //The happy path
                 var apiVersion = versionResponse.Value.GetDefinitionVersion();
                 return specificVersion < apiVersion;
-            } else if ( versionResponse.StatusCode == System.Net.HttpStatusCode.NotFound ) {
+            } else if ( versionResponse.RestApiStatusCode == System.Net.HttpStatusCode.NotFound ) {
                 //Likely means that this is a new Definition, that's not been uploaded before
                 return false;
             } else {
                 //Throw an error as something unexpected happen.
-                throw new ScoposAPIException( $"Unable to complete GetDefinitionVersionPublicAsync request with status code {versionResponse.StatusCode}." );
+                throw new ScoposAPIException( $"Unable to complete GetDefinitionVersionPublicAsync request with status code {versionResponse.RestApiStatusCode}." );
             }
         }
 

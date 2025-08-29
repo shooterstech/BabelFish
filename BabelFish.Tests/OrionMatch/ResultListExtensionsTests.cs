@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
 
-            Assert.AreEqual( HttpStatusCode.OK, getResultListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, getResultListResponse.RestApiStatusCode );
             var resultList = getResultListResponse.ResultList;
             ResultStatus status = ResultStatus.FUTURE;
             //resultList.CalculateResultListStatus(status);

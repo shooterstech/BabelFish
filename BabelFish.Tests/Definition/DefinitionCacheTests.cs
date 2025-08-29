@@ -34,13 +34,13 @@ namespace Scopos.BabelFish.Tests.Definition {
             var responseWithCache = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( requestWithCache );
 
             var resultNoCache = await client.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( requestNoCache, responseNoCache );
-            Assert.AreEqual( HttpStatusCode.OK, resultNoCache.StatusCode, $"Expecting and OK status code, instead received {resultNoCache.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, resultNoCache.RestApiStatusCode, $"Expecting and OK status code, instead received {resultNoCache.RestApiStatusCode}." );
             //The non-cached response should tell us it wasn't from cache
             Assert.IsFalse( resultNoCache.InMemoryCachedResponse );
 
 
             var resultWithCache = await client.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( requestWithCache, responseWithCache );
-            Assert.AreEqual( HttpStatusCode.OK, resultWithCache.StatusCode, $"Expecting and OK status code, instead received {resultWithCache.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, resultWithCache.RestApiStatusCode, $"Expecting and OK status code, instead received {resultWithCache.RestApiStatusCode}." );
 
             //With cache should be quite a bit faster than without
             Assert.IsTrue( resultNoCache.TimeToRun > resultWithCache.TimeToRun * 100 );
@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var attributeResponse = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest );
 
             var attributeResult = await client.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest, attributeResponse );
-            Assert.AreEqual( HttpStatusCode.OK, attributeResult.StatusCode, $"Expecting and OK status code, instead received {attributeResult.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, attributeResult.RestApiStatusCode, $"Expecting and OK status code, instead received {attributeResult.RestApiStatusCode}." );
 
             //The non-cached response should tell us it was from file system
             Assert.IsTrue( attributeResult.FileSystemCachedResponse );
@@ -93,7 +93,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var attributeResponse2 = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest2 );
 
             var attributeResult2 = await client.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( attributeRequest2, attributeResponse2 );
-            Assert.AreEqual( HttpStatusCode.OK, attributeResult2.StatusCode, $"Expecting and OK status code, instead received {attributeResult.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, attributeResult2.RestApiStatusCode, $"Expecting and OK status code, instead received {attributeResult.RestApiStatusCode}." );
 
             //The non-cached response should tell us it was from file system
             Assert.IsFalse( attributeResult2.FileSystemCachedResponse );
@@ -119,13 +119,13 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 
             var resultNoCache = await client.GetDefinitionAsync<CourseOfFire>( requestNoCache, responseNoCache );
-            Assert.AreEqual( HttpStatusCode.OK, resultNoCache.StatusCode, $"Expecting and OK status code, instead received {resultNoCache.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, resultNoCache.RestApiStatusCode, $"Expecting and OK status code, instead received {resultNoCache.RestApiStatusCode}." );
             //The non-cached response should tell us it wasn't from cache
             Assert.IsFalse( resultNoCache.InMemoryCachedResponse );
 
 
             var resultWithCache = await client.GetDefinitionAsync<CourseOfFire>( requestWithCache, responseWithCache );
-            Assert.AreEqual( HttpStatusCode.OK, resultWithCache.StatusCode, $"Expecting and OK status code, instead received {resultWithCache.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, resultWithCache.RestApiStatusCode, $"Expecting and OK status code, instead received {resultWithCache.RestApiStatusCode}." );
 
             //With cache should be quite a bit faster than without
             Assert.IsTrue( resultNoCache.TimeToRun > resultWithCache.TimeToRun * 10 );
@@ -158,14 +158,14 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 
             var firstResult = await client.GetDefinitionAsync<CourseOfFire>( firstRequest, firstResponse );
-            Assert.AreEqual( HttpStatusCode.OK, firstResult.StatusCode, $"Expecting and OK status code, instead received {firstResult.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, firstResult.RestApiStatusCode, $"Expecting and OK status code, instead received {firstResult.RestApiStatusCode}." );
             //The non-cached response should tell us it wasn't from cache
             Assert.IsFalse( firstResult.InMemoryCachedResponse );
             //The size of the cache should be 1
             Assert.AreEqual( 1, ResponseCache.CACHE.Count );
 
             var secondResult = await client.GetDefinitionAsync<CourseOfFire>( secondRequest, secondResponse );
-            Assert.AreEqual( HttpStatusCode.OK, secondResult.StatusCode, $"Expecting and OK status code, instead received {secondResult.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, secondResult.RestApiStatusCode, $"Expecting and OK status code, instead received {secondResult.RestApiStatusCode}." );
             //The non-cached response should tell us it wasn't from cache
             Assert.IsFalse( secondResult.InMemoryCachedResponse );
 

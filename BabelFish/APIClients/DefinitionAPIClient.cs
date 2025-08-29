@@ -71,7 +71,8 @@ namespace Scopos.BabelFish.APIClients {
                         var responseBody = G_STJ.JsonDocument.Parse( responseAsString );
 
                         var responseIntObj = new ResponseIntermediateObject();
-                        responseIntObj.StatusCode = HttpStatusCode.OK;
+                        responseIntObj.RestApiStatusCode = HttpStatusCode.OK;
+                        responseIntObj.OverallStatusCode = RequestStatusCode.OK;
                         responseIntObj.Body = responseBody;
                         responseIntObj.Request = request;
                         responseIntObj.ValidUntil = DateTime.UtcNow.AddDays( 1 );

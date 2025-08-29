@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync( scoreAverageRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreAverageResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreAverageResponse.RestApiStatusCode );
 
             bool hasAtLeastOneKneeling = false;
             bool hasAtLeastOneProne = false;
@@ -81,7 +81,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync( scoreAverageRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreAverageResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreAverageResponse.RestApiStatusCode );
 
             bool hasAtLeastOneKneeling = false;
             bool hasAtLeastOneProne = false;
@@ -156,7 +156,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.RestApiStatusCode );
         }
     }
 }
