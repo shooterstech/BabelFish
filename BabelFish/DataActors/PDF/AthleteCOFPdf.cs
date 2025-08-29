@@ -148,14 +148,14 @@ namespace Scopos.BabelFish.DataActors.PDF
                     int rowHeight = 205;
                     column.Item().Container().Height(rowHeight).Border(2, ScoposColors.BLUE_LIGHTEN_1).Table(table =>
                     {
-
-                        nextRow = false;
-                        ShotTableDetails.ShowTotal = false;
                         var giveMeAtLeast1 = Math.Floor(eventsToShow.Count() / 2d) == 0 ? 1 : Math.Floor(eventsToShow.Count() / 2d);
                         var colsToHave = Math.Min(giveMeAtLeast1, 2d);
 
+                        ShotTableDetails.ShowTotal = false;
                         ShotTableDetails.EventInfo = eventsToShow[eventIndex];
                         var shotTablesNumber = (int)Math.Ceiling((double)eventsToShow[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
+
+                        nextRow = false;
                         if (shotTablesNumber > 1 || (int)colsToHave < 2)
                         {
                             nextRow = true;
@@ -188,7 +188,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                                 if(number <= 6)
                                 {
                                     ShotTableDetails.ShotNumberToStartOn = ShotTableDetails.MaxShotNumber * (number - 1);
-                                    table.Cell().MinWidth(10).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1)
+                                    table.Cell().MinWidth(15).BorderRight(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1)
                                         .Container().BorderLeft(2).BorderColor(ScoposColors.DARK_GREY_LIGHTEN_2)
                                         .Component(new ShotTable(ShotTableDetails));
                                 }
