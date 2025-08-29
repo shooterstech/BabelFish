@@ -93,11 +93,12 @@ namespace BabelFish.Tests.DataActors.PDF {
             //var resultCofId = "a85a5ed4-daeb-4488-a535-513bd590dfa1"; // air pistol
             //var resultCofId = "57b49cc3-db5d-4384-90eb-5be05d617664"; // Test scores
             //var resultCofId = "0c9a775a-6390-4cb4-91f3-9724b699b5a9"; // Hit Miss
+            //var resultCofId = "7e9ab808-025e-42b6-886e-bf3f2423ae13"; // 3x10
 
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
             var resultCof = getResultCofResponse.ResultCOF;
 
-            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
+            var pdf = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.EVENT);
             await pdf.InitializeAsync();
 
             pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloWHAT.pdf");

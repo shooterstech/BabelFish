@@ -125,9 +125,17 @@ namespace Scopos.BabelFish.DataActors.PDF
             {
                 ShowTotal = false
             };
-            var TargetImageDetails = new TargetImageDetails
+            var TargetImageDetails = new TargetImageDetails{};
+
+            List<EventInfoObject> eventsToShow = new List<EventInfoObject>();
+
+            foreach (var thing in EventFields)
             {
-            };
+                if(thing.eventComposite.EventType == this.EventtType)
+                {
+                    eventsToShow.Add(thing);
+                }
+            }
 
             container.Border(2, ScoposColors.BLUE_LIGHTEN_1)
             .CornerRadius(5)
@@ -135,16 +143,8 @@ namespace Scopos.BabelFish.DataActors.PDF
             .Column(column =>
             {
                 bool nextRow = false;
-                foreach ( int col in Enumerable.Range( 1, (EventFields.Count()) ) )
+                foreach ( int col in Enumerable.Range( 1, (eventsToShow.Count()) ) )
                 {
-                    if (EventFields[eventIndex].eventComposite.EventType != this.EventtType)
-                    {
-                        //failfirst!
-                        eventIndex++;
-                        if (eventIndex >= EventFields.Count())
-                            break;
-                        continue;
-                    }
                     int rowHeight = 205;
                     column.Item().Container().Height(rowHeight).Border(2, ScoposColors.BLUE_LIGHTEN_1).Row(row =>
                     {
@@ -152,27 +152,16 @@ namespace Scopos.BabelFish.DataActors.PDF
                         ShotTableDetails.ShowTotal = false;
                         foreach (int ro in Enumerable.Range(1, 2))
                         {
-                            if (EventFields[eventIndex].eventComposite.EventType != this.EventtType || nextRow)
+                            if(eventsToShow.Count() <= 3)
                             {
-                                //failfirst!
-                                if (!nextRow)
-                                {
-                                    eventIndex++;
-                                    //need to add filler row.col parts to make it think it's fine.
-                                    row.RelativeItem(2).Column(col1 => { });
-                                    row.RelativeItem(1).Column(col2 => { });
-                                }
-                                if (eventIndex >= EventFields.Count())
-                                    break;
-                                continue;
+                                nextRow = true;
                             }
-
-                            TargetImageDetails.EventInfo = EventFields[eventIndex];
+                            TargetImageDetails.EventInfo = eventsToShow[eventIndex];
                             row.RelativeItem(2).MaxWidth(183).BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new TargetImage(TargetImageDetails));
 
                             //maybe make this part a table, if less than 10 shots in this list them with (x,y,r) and value?
-                            ShotTableDetails.EventInfo = EventFields[eventIndex];
-                            var shotTablesNumber = (int)Math.Ceiling((double)EventFields[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
+                            ShotTableDetails.EventInfo = eventsToShow[eventIndex];
+                            var shotTablesNumber = (int)Math.Ceiling((double)eventsToShow[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
                             if (shotTablesNumber > 1)
                             {
                                 nextRow = true;
@@ -195,12 +184,12 @@ namespace Scopos.BabelFish.DataActors.PDF
                             eventIndex++;
                             if (nextRow)
                                 break;
-                            if (eventIndex >= EventFields.Count())
+                            if (eventIndex >= eventsToShow.Count())
                                 break;
                         }
                     });
 
-                    if (eventIndex >= EventFields.Count())
+                    if (eventIndex >= eventsToShow.Count())
                         break;
                 }
             });
