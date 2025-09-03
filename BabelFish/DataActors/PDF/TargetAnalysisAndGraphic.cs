@@ -208,13 +208,14 @@ namespace Scopos.BabelFish.DataActors.PDF
                         //if you want the stuff added on there, this is where to to it.
                         if (includeGroupAnalysis)
                         {
-                            double WHATTHEFUCK = groupMaths.GetAngle();
+                            //The negative 1 is needed, on the next line, because the SVG coordinate system has the y axis pointed down.
+                            double WHATTHEFUCK = -1 * groupMaths.GetAngle(); //In radians, the angle of the shot group
                             int crossLength = 15;
                             double x  = center + scale * groupMaths.GetCenterX();
                             double xr = scale * groupMaths.GetMajorAxis();
                             double y  = center - scale * groupMaths.GetCenterY();
                             double yr = scale * groupMaths.GetMinorAxis();
-                            double a  = WHATTHEFUCK * (180D / Math.PI);
+                            double a  = WHATTHEFUCK * (180D / Math.PI); //In degrees, the angle of the shot group
                             stringBuilder.AppendLine($"<g fill=\"transparent\" transform=\"rotate({a} {x} {y})\">\n" +
                                 $"\t<ellipse cx=\"{x}\" cy=\"{y}\" rx=\"{xr}\" ry=\"{yr}\" stroke=\"#{ScoposColors.ORANGE_LIGHTEN_1}\" stroke-width=\"2\" fill=\"#{ScoposColors.ORANGE_LIGHTEN_1}\" fill-opacity=\"0.5\"/>\n" +
                                 $"\t<line x1=\"{x}\" y1=\"{y-yr- crossLength}\" x2=\"{x}\" y2=\"{y+yr+ crossLength}\" stroke=\"black\" stroke-width=\"2\" />" + // Vertical 

@@ -79,9 +79,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// </summary>
 		/// <remarks>Intended for TargetType = SCORING_RING </remarks>
 		[G_STJ_SER.JsonPropertyOrder( 20 )]
-        [G_NS.JsonProperty( Order = 20 )]
+        [G_NS.JsonProperty( Order = 20, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( 10000 )]
-        public int? Distance { get; set; } = null;
+        public int Distance { get; set; } = 10000;
 
 		/// <summary>
 		/// The maximum value that can be awarded to this test.

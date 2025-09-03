@@ -203,7 +203,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"Attribute definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 AttributeCache.TryAdd( setName, definition );
@@ -213,7 +213,7 @@ namespace Scopos.BabelFish.APIClients {
                 AttributeNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"Attribute definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -265,7 +265,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<Scopos.BabelFish.DataModel.Definitions.Attribute>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<Scopos.BabelFish.DataModel.Definitions.Attribute>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         AttributeCache[setName] = response.Definition;
                         return true;
                     }
@@ -306,7 +306,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"CourseOfFire definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetCourseOfFireDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 CourseOfFireCache.TryAdd( setName, definition );
@@ -316,7 +316,7 @@ namespace Scopos.BabelFish.APIClients {
                 CourseOfFireNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"CourseOfFire definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive CourseOfFire definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
         }
 
@@ -368,7 +368,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<CourseOfFire>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<CourseOfFire>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         CourseOfFireCache[setName] = response.Definition;
                         return true;
                     }
@@ -409,7 +409,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"EventAndStageStyleMapping definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetEventAndStageStyleMappingDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 EventAndStageStyleMappingCache.TryAdd( setName, definition );
@@ -419,7 +419,7 @@ namespace Scopos.BabelFish.APIClients {
                 EventAndStageStyleMappingNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"EventAndStageStyleMapping definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -471,7 +471,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<EventAndStageStyleMapping>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<EventAndStageStyleMapping>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         EventAndStageStyleMappingCache[setName] = response.Definition;
                         return true;
                     }
@@ -512,7 +512,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"EventStyle definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetEventStyleDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 EventStyleCache.TryAdd( setName, definition );
@@ -522,7 +522,7 @@ namespace Scopos.BabelFish.APIClients {
                 EventStyleNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"EventStyle definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -574,7 +574,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<EventStyle>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<EventStyle>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         EventStyleCache[setName] = response.Definition;
                         return true;
                     }
@@ -615,7 +615,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"RankingRule definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetRankingRuleDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 RankingRuleCache.TryAdd( setName, definition );
@@ -625,7 +625,7 @@ namespace Scopos.BabelFish.APIClients {
                 RankingRuleNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"RankingRule definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -677,7 +677,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<RankingRule>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<RankingRule>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         RankingRuleCache[setName] = response.Definition;
                         return true;
                     }
@@ -718,7 +718,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"ResultListFormat definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetResultListFormatDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 ResultListFormatCache.TryAdd( setName, definition );
@@ -728,7 +728,7 @@ namespace Scopos.BabelFish.APIClients {
                 ResultListFormatNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"ResultListFormat definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -780,7 +780,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<ResultListFormat>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<ResultListFormat>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         ResultListFormatCache[setName] = response.Definition;
                         return true;
                     }
@@ -821,7 +821,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"ScoreFormatCollection definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetScoreFormatCollectionDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 ScoreFormatCollectionCache.TryAdd( setName, definition );
@@ -831,7 +831,7 @@ namespace Scopos.BabelFish.APIClients {
                 ScoreFormatCollectionNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"ScoreFormatCollection definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -883,7 +883,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<ScoreFormatCollection>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<ScoreFormatCollection>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         ScoreFormatCollectionCache[setName] = response.Definition;
                         return true;
                     }
@@ -924,7 +924,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"StageStyle definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetStageStyleDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 StageStyleCache.TryAdd( setName, definition );
@@ -934,7 +934,7 @@ namespace Scopos.BabelFish.APIClients {
                 StageStyleNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"StageStyle definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. Overall:  {response.OverallStatusCode} , REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -986,7 +986,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<StageStyle>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<StageStyle>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         StageStyleCache[setName] = response.Definition;
                         return true;
                     }
@@ -1027,7 +1027,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"TargetCollection definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetTargetCollectionDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 TargetCollectionCache.TryAdd( setName, definition );
@@ -1037,7 +1037,7 @@ namespace Scopos.BabelFish.APIClients {
                 TargetCollectionNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"TargetCollection definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. Overall:  {response.OverallStatusCode} , REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -1089,7 +1089,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<TargetCollection>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<TargetCollection>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         TargetCollectionCache[setName] = response.Definition;
                         return true;
                     }
@@ -1130,7 +1130,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new DefinitionNotFoundException( $"Target definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetTargetDefinitionAsync( setName );
-            if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+            if (response.HasOkStatusCode) {
                 var definition = response.Definition;
 
                 TargetCache.TryAdd( setName, definition );
@@ -1140,7 +1140,7 @@ namespace Scopos.BabelFish.APIClients {
                 TargetNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"Target definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. Overall:  {response.OverallStatusCode} , REST API {response.RestApiStatusCode}" );
             }
 		}
 
@@ -1192,7 +1192,7 @@ namespace Scopos.BabelFish.APIClients {
                     var response = new GetDefinitionPublicResponse<Target>( request );
 
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<Target>( request, response );
-                    if (response.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                    if (response.HasOkStatusCode) {
                         TargetCache[setName] = response.Definition;
                         return true;
                     }

@@ -99,6 +99,15 @@ namespace Scopos.BabelFish.Responses
         public RequestStatusCode OverallStatusCode { get; internal set; }
 
         /// <summary>
+        /// Helper function. Returns true if .OverallStausCode is OK.
+        /// </summary>
+        public bool HasOkStatusCode {
+            get {
+                return (OverallStatusCode == RequestStatusCode.OK);
+            }
+        }
+
+        /// <summary>
         /// Boolean indicating if the response should be written to file system cache on a successful call.
         /// Default value is false.
         /// </summary>

@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         public GroupAnalysisMaths GroupMaths { get; set; }
 
-        public List<Shot> ShotList { get; set; }
+        public List<Shot> ShotList { get; set; } = new List<Shot>();
 
         public string ScoreFormatted { get; set; }
 

@@ -72,7 +72,7 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             var client = new OrionMatchAPIClient();
 
-            var resultCofId = "0f814586-3513-411a-8229-914d4608db05";
+            var resultCofId = "e49aeb69-d009-4c9c-9fdb-66a359a46e59";
 
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
             var resultCof = getResultCofResponse.ResultCOF;
@@ -119,8 +119,10 @@ namespace BabelFish.Tests.DataActors.PDF {
             //var resultCofId = "0c9a775a-6390-4cb4-91f3-9724b699b5a9"; // Hit Miss
             //var resultCofId = "7e9ab808-025e-42b6-886e-bf3f2423ae13"; // 3x10
             var resultCofId = "5c36dd5a-1ffe-4b0d-8469-cb5dd75c9dd6"; // 3x40
+            //var resultCofId = "ccc4d957-7df6-4666-9e59-25381beb6767"; //3x10 but incomplete
 
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
+            
             var resultCof = getResultCofResponse.ResultCOF;
             /*
             var pdfEvent = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.EVENT);
@@ -133,7 +135,7 @@ namespace BabelFish.Tests.DataActors.PDF {
             */
             var pdfSeries = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
             await pdfSeries.InitializeAsync();
-            pdfSeries.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloSeries.pdf");
+            pdfSeries.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf");
 
         }
     }

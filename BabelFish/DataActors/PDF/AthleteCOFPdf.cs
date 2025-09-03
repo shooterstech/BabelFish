@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                     page.Size(pageSize);
                     page.Margin(1f, Unit.Centimetre);
                     page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(10));
+                    page.DefaultTextStyle(x => x.FontSize(9.0f) );
 
                     page.Content().Column(column =>
                     {
@@ -133,7 +133,7 @@ namespace Scopos.BabelFish.DataActors.PDF
 
             foreach (var thing in EventFields)
             {
-                if(thing.eventComposite.EventType == this.EventtType)
+                if(thing.eventComposite.EventType == this.EventtType) 
                 {
                     eventsToShow.Add(thing);
                 }
@@ -155,7 +155,9 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                         ShotTableDetails.ShowTotal = false;
                         ShotTableDetails.EventInfo = eventsToShow[eventIndex];
-                        var shotTablesNumber = (int)Math.Ceiling((double)eventsToShow[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
+                        int shotTablesNumber = 1;
+                        if ( eventsToShow[eventIndex].ShotList is not null )
+                            shotTablesNumber = (int)Math.Ceiling((double)eventsToShow[eventIndex].ShotList.Count() / (double)ShotTableDetails.MaxShotNumber);
 
                         nextRow = false;
                         if (shotTablesNumber > 1 || (int)colsToHave < 2)
@@ -281,7 +283,7 @@ namespace Scopos.BabelFish.DataActors.PDF
 
         public bool ShowTotal { get; set; } = false;
 
-        public int TableFontSize { get; set; } = 12;
+        public float TableFontSize { get; set; } = 11.0f;
 
         public int MaxShotNumber { get; set; } = 10;
 
@@ -322,7 +324,7 @@ namespace Scopos.BabelFish.DataActors.PDF
                     }
                 });
 
-                List<Shot> shotListCopy = Details.EventInfo.ShotList;
+                List<Shot> shotListCopy = Details.EventInfo?.ShotList ?? new List<Shot>();
                 List<Shot> shotListSection = shotListCopy;
                 if (shotListCopy.Count() > Details.MaxShotNumber)
                     shotListSection = shotListCopy.GetRange(Details.ShotNumberToStartOn, Details.MaxShotNumber);
@@ -403,10 +405,12 @@ namespace Scopos.BabelFish.DataActors.PDF
                         if (Details.EventInfo.TargetDef.Distance != null)
                         {
                             var widestMM = Details.EventInfo.GroupMaths.GetDistanceBetweenWidestShots();
-                            var distanceInMeter = (double)Details.EventInfo.TargetDef.Distance / 1000D;
+                            var distance = (double)Details.EventInfo.TargetDef.Distance; // in mm
                             //we want to use radius of widest circle
-                            var spreadMoa = Math.Atan((widestMM / 2D) / distanceInMeter);
-                            text.Span($"MOA: {spreadMoa.ToString("F")}    ").FontSize(Details.GroupInfoFontSize);
+                            var spreadInRadians = 2 * Math.Atan((widestMM / 2D) / distance); //in radians
+                            var spreadInDegrees = 108D * spreadInRadians / Math.PI;
+                            var moa = spreadInDegrees * 60;
+                            text.Span($"MOA: {moa.ToString("F")}    ").FontSize(Details.GroupInfoFontSize);
                         }
                         text.Span($"Center: ({Details.EventInfo.GroupMaths.GetCenterX().ToString("F")}mm, {Details.EventInfo.GroupMaths.GetCenterY().ToString("F")}mm)").FontSize(Details.GroupInfoFontSize);
                     }

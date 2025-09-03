@@ -63,17 +63,18 @@ namespace Scopos.BabelFish.DataActors.PDF
             foreach (Shot s in shotsToAnalyize)
             {
                 varX += (s.Location.X - xCenter) * (s.Location.X - xCenter);
-                //varY += (s.GetCoorY() - yCenter) * (s.GetCoorY() - yCenter);
+                varY += (s.Location.Y - yCenter) * (s.Location.Y - yCenter);
                 //varR += (s.GetRadius() - averageR) * (s.GetRadius() - averageR);
                 coVar += (s.Location.X - xCenter) * (s.Location.Y - yCenter);
             }
             varX /= count;
-            //varY /= count;
+            varY /= count;
             //varR /= count;
             coVar /= count;
 
             //Calculate the angle of the group
             angle = Math.Atan(coVar / varX);
+            var angleDegress = angle * 180.0 / Math.PI;
 
             //Transfrom the center of the group to the origin, and rotate the major axis of the group to the X axis
             double shotAngle, newX, newY, newR;
@@ -90,6 +91,8 @@ namespace Scopos.BabelFish.DataActors.PDF
             }
             varX /= count;
             varY /= count;
+
+            var foo = shotsToAnalyize[0].EventName;
 
             //1.645 is the norminv(.95)
             majorAxis = Math.Sqrt(varX) * 1.645;

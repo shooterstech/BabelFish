@@ -270,6 +270,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         /// <returns></returns>
         [TestMethod]
         public async Task CheckForNewerVersionTest() {
+            //DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
             var setName = SetName.Parse( "v2.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
