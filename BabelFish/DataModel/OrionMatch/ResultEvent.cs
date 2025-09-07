@@ -138,10 +138,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
-        public Dictionary<MatchID, EventScore> ResultCOFScores { get; set; }
+        public Dictionary<string, EventScore> ResultCofScores { get; set; }
 
         public bool ShouldSerializeResultCOFScores() {
-            return ( ResultCOFScores != null && ResultCOFScores.Count > 0 );
+            return (ResultCofScores != null && ResultCofScores.Count > 0 );
+        }
+
+        public static string KeyForResultCofScore(string matchId, string eventName ) {
+            return $"{matchId}: {eventName}";
         }
 
         /// <summary>

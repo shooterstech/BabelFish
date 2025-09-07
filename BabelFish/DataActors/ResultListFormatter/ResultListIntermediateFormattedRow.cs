@@ -654,6 +654,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             }
 
+
+            if (_resultEvent.ResultCofScores != null) {
+                if (_resultEvent.ResultCofScores.TryGetValue( eventName, out scoreToReturn )) {
+
+                    if (tryAndUseProjected
+                        && scoreToReturn.Projected != null
+                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                        //If the Projected Score is known, try and return it
+                        return scoreToReturn.Projected;
+                    } else {
+                        //Else return the regular,, good old fashion, .Score instance
+                        return scoreToReturn.Score;
+                    }
+                }
+            }
+
             //For now return an empty Score data object
             return new Score();
         }

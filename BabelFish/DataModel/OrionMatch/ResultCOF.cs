@@ -211,6 +211,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return shotsByEventName;
         }
 
+        /// <inheritdoc />
+        public Dictionary<string, EventScore> ResultCofScores { get; set; } = null;
+
+        public bool ShouldSerializeResultCofScores() {
+            return this.ResultCofScores is not null
+                && this.ResultCofScores.Count > 0;
+        }
+
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
         /// LAE: Changed to ShotGraphicDisplays from Show. was not functioning properly.

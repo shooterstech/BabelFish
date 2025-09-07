@@ -15,8 +15,10 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             EventScore mergedEventScore = new EventScore();
 
-            foreach (var subMatch in TournamentMerger.MatchesToMerge) {
-                if (re.ResultCOFScores.TryGetValue( subMatch.GetParentId(), out EventScore eventScore )) {
+            foreach (var mergingResultList in TournamentMerger.ResultListsToMerge) {
+                var key = ResultEvent.KeyForResultCofScore( mergingResultList.MatchID, mergingResultList.EventName );
+
+                if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore )) {
                     if (eventScore.Score != null) {
                         mergedEventScore.Score += eventScore.Score;
 
@@ -31,7 +33,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 }
             }
 
-            re.ResultCOFScores[ TournamentMerger.Tournament.GetParentId() ] = mergedEventScore;
+            re.ResultCofScores[ TournamentMerger.KeyToResultCofEventScore ] = mergedEventScore;
         }
     }
 }

@@ -10,27 +10,26 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
     public class TournamentMerger {
 
         public Match Tournament { get; private set; }
-        public List<Match> MatchesToMerge { get; private set; } = new List<Match>();
-        public string ResultListNameToMerge { get; set; } = string.Empty;
+        public string MergedEventName { get; private set; }
 
         private Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
-        private Dictionary<MatchID, ResultList> _subMatchResultLists = new Dictionary<MatchID, ResultList>();
+        public List<ResultList> ResultListsToMerge { get; private set; } = new List<ResultList>();
         private Dictionary<int, ResultEvent> _mergedResultEvents = new Dictionary<int, ResultEvent>();
 
         public ResultListFormat? ResultListFormat { get; set; } = null;
 
         public RankingRule RankingRule { get; set; } = null;
 
-        public TournamentMerger( Match tournament, string resultListNameToMerge ) {
+        public TournamentMerger( Match tournament, string mergedEventName ) {
             this.Tournament = tournament;
-            this.ResultListNameToMerge = resultListNameToMerge;
+            this.MergedEventName = mergedEventName;
         }
 
-        public void AddMatch( Match match ) {
-            if (MatchesToMerge.Contains( match )) return;
-            MatchesToMerge.Add( match );
+        public void AddResultList( ResultList resultList ) {
+            if (ResultListsToMerge.Contains( resultList )) return;
+            ResultListsToMerge.Add( resultList );
         }
 
         public void AutoGenerateResultListFormat () {
@@ -38,41 +37,66 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         }
 
         public void AutoGenerateRankingRule() {
-            throw new NotImplementedException();
+            var rr = new RankingRule();
+            rr.SetDefaultValues();
+            var rankingRule = rr.RankingRules[0];
+            rankingRule.Rules.Clear();
+
+            rankingRule.Rules.Add( new TieBreakingRuleScore() {
+                EventName = this.KeyToResultCofEventScore,
+                SortOrder = SortBy.DESCENDING,
+                Source = TieBreakingRuleScoreSource.IX,
+                Comment = "Auto generated default Tie Breaking Rule"
+            } );
+
+            for( int i = this.ResultListsToMerge.Count - 1; i>=0; i-- ) {
+                var resultList = this.ResultListsToMerge[i];
+                var key = ResultEvent.KeyForResultCofScore( resultList.MatchID, resultList.EventName );
+
+                rankingRule.Rules.Add( new TieBreakingRuleScore() {
+                    EventName = key,
+                    SortOrder = SortBy.DESCENDING,
+                    Source = TieBreakingRuleScoreSource.IX,
+                    Comment = "Auto generated default Tie Breaking Rule"
+                } );
+            }
+
+            this.RankingRule = rr;
+        }
+
+        public string KeyToResultCofEventScore {
+            get {
+                return ResultEvent.KeyForResultCofScore( this.Tournament.MatchID, this.MergedEventName );
+            }
         }
 
         public async Task<ResultList> MergeAsync() {
 
-            foreach (var subMatch in MatchesToMerge) {
-                //TODO Write in to parallel code
-                //Make safe
-                //Load rest of result lis
-                var getResultListResponse = await _apiClient.GetResultListPublicAsync( subMatch.GetParentId(), this.ResultListNameToMerge );
-                if ( getResultListResponse.HasOkStatusCode )
-                    _subMatchResultLists.Add( subMatch.GetParentId(), getResultListResponse.ResultList );
-            }
+            foreach (var mergingResultList in ResultListsToMerge) {
+                //key to save to the ResultEvent.ResultCofScores dictionary
+                var key = ResultEvent.KeyForResultCofScore( mergingResultList.MatchID, mergingResultList.EventName );
 
-            foreach (var subMatchResultList in _subMatchResultLists) {
-                foreach( var subMatchResultEvent in subMatchResultList.Value.Items ) { 
-                    if ( _mergedResultEvents.TryGetValue( subMatchResultEvent.Participant.UniqueMergeId, out ResultEvent mergedResultEvent )) {
+                foreach( var mergingResultEvent in mergingResultList.Items ) { 
+                    if ( _mergedResultEvents.TryGetValue( mergingResultEvent.Participant.UniqueMergeId, out ResultEvent mergedResultEvent )) {
                         //This is from a Participant we previously found
-                        if (subMatchResultEvent.EventScores.TryGetValue( subMatchResultList.Value.EventName, out EventScore eventScore )) {
-                            mergedResultEvent.ResultCOFScores.Add( subMatchResultList.Key, eventScore );
+                        if (mergingResultEvent.EventScores.TryGetValue( mergingResultList.EventName, out EventScore eventScore )) {
+                            mergedResultEvent.ResultCofScores.Add( key, eventScore );
                         }
                     } else {
                         //This is from a Participant we have not previously found
                         var newResultEvent = new ResultEvent();
-                        newResultEvent.Participant = subMatchResultEvent.Participant.Clone();
-                        newResultEvent.ResultCOFScores = new Dictionary<MatchID, EventScore>();
-                        if (subMatchResultEvent.EventScores.TryGetValue( subMatchResultList.Value.EventName, out EventScore eventScore )) {
-                            newResultEvent.ResultCOFScores.Add( subMatchResultList.Key, eventScore );
+                        newResultEvent.Participant = mergingResultEvent.Participant.Clone();
+                        newResultEvent.ResultCofScores = new Dictionary<string, EventScore>();
+                        if (mergingResultEvent.EventScores.TryGetValue( mergingResultList.EventName, out EventScore eventScore )) {
+                            newResultEvent.ResultCofScores.Add( key, eventScore );
                         }
-                        _mergedResultEvents.Add( subMatchResultEvent.Participant.UniqueMergeId, newResultEvent );
+                        _mergedResultEvents.Add( mergingResultEvent.Participant.UniqueMergeId, newResultEvent );
                     }
                 }
             }
 
             ResultList rl = new ResultList();
+            rl.CourseOfFireDef = "v1.0:ntparc:40 Shot Standing";
             rl.Items.AddRange( _mergedResultEvents.Values );
 
             SumMethod sumMethodMerger = new SumMethod( this );

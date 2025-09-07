@@ -25,9 +25,36 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Items = new List<ResultEvent>();
         }
 
-        [JsonPropertyOrder ( 1 )]
-		[Obsolete( "Use .Metadata.MatchID" )]
-		public string MatchID { get; set; } = string.Empty;
+        /// <summary>
+        /// If this is a local match, returns the local match id.
+        /// If this is from a virtual match, retur s the virtual match id.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+		public string MatchID {
+            get {
+                if (this.Metadata.Count == 0) {
+                    //This shouldn't happen
+                    return "1.1.1.1";
+                }
+
+                if (this.Metadata.Count == 1)
+                    return this.Metadata.First().Key;
+
+                //Likely a Virtual Match
+                foreach (var mId in this.Metadata.Keys) {
+                    if (Scopos.BabelFish.DataModel.OrionMatch.MatchID.TryParse( mId, out var matchID )) {
+                        if ( matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup ) {
+                            return mId;
+                        }
+                    }
+                }
+
+                //Um, not really sure how we got this far.
+                return this.Metadata.First().Key;
+
+            }
+        }
 
         /// <summary>
         /// Set name of the Ranking Rule definition used to rank this result list.
