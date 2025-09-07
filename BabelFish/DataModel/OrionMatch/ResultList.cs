@@ -100,6 +100,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 bool oneIsIntermediate = false;
                 bool oneIsUnofficial = false;
                 foreach (var rlmd in Metadata.Values) {
+                    if (rlmd.Creator == "No creator found.")
+                        //Skip, since this child match was created with an old version of Orion that is unreliable reporting status.
+                        continue;
                     allFuture &= rlmd.Status == ResultStatus.FUTURE;
                     oneIsIntermediate |= rlmd.Status == ResultStatus.INTERMEDIATE;
                     oneIsUnofficial |= (rlmd.Status == ResultStatus.UNOFFICIAL || rlmd.Status == ResultStatus.OFFICIAL || rlmd.EndDate < DateTime.Today);

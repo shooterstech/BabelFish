@@ -60,5 +60,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults.")]
         public string ResultCOFID { get; set;} = string.Empty;
+
+        /// <inheritdoc />
+        public override int UniqueMergeId {
+            get {
+                if (!string.IsNullOrEmpty( UserID ))
+                    return this.UserID.GetHashCode();
+                else 
+                    return this.DisplayName.GetHashCode();
+            }
+        }
     }
 }

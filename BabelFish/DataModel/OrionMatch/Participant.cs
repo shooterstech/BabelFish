@@ -132,5 +132,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// the Concrete class.
         /// </summary>
         public int ConcreteClassId { get; set; }
+
+        public virtual int UniqueMergeId { get; }
     }
 }

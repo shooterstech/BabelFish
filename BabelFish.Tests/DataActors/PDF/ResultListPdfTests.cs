@@ -138,5 +138,32 @@ namespace BabelFish.Tests.DataActors.PDF {
             pdfSeries.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf");
 
         }
+
+        [TestMethod]
+        public async Task TestClubQRCodePDF() {
+
+            var client = new ClubsAPIClient();
+            var getClubResonse = await client.GetClubDetailPublicAsync( "OrionAcct002022" );
+
+            var clubDetail = getClubResonse.ClubDetail;
+
+            var pdf = new ClubQRCodePDF( clubDetail );
+            await pdf.InitializeAsync();
+            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+        }
+
+        [TestMethod]
+        public async Task TestMatchQRCodePDF() {
+
+            var client = new OrionMatchAPIClient();
+            var matchId = new MatchID( "1.1.2025081316001310.1" );
+            var getMatchResponse = await client.GetMatchPublicAsync( matchId );
+
+            var matchDetail = getMatchResponse.Match;
+
+            var pdf = new MatchQRCodePDF( matchDetail );
+            await pdf.InitializeAsync();
+            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+        }
     }
 }

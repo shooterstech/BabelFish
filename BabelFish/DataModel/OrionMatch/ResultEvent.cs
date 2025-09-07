@@ -133,7 +133,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
-        public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
+        public Dictionary<string, EventScore> EventScores { get; set; }
+
+
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
+        public Dictionary<MatchID, EventScore> ResultCOFScores { get; set; }
+
+        public bool ShouldSerializeResultCOFScores() {
+            return ( ResultCOFScores != null && ResultCOFScores.Count > 0 );
+        }
 
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
@@ -148,8 +157,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
 
         /// <inheritdoc />
-        [G_STJ_SER.JsonPropertyOrder( 12 )]
-        [G_NS.JsonProperty( Order = 12 )]
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
         public Athena.Shot.Shot? LastShot { get; set; } = null;
 
         //Cached copy of the name of the top level event.

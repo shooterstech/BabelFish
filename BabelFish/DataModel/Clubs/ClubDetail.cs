@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Clubs
     /// </summary>
     public class ClubDetail : IObjectRelationalMapper {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private DateTime memberSince = DateTime.Today;
 
         public ClubDetail() {

@@ -66,5 +66,9 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// </summary>
         [DefaultValue( 0 )]
         public double Distance { get; set; } = 0;
+
+        public override string ToString() {
+            return StringFormatting.Hometown( this );
+        }
     }
 }
