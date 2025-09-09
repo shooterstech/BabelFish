@@ -171,12 +171,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
 		public ResultStatus GetStatus() {
             if (string.IsNullOrEmpty( _topLevelEventName )) {
-                foreach (var es in this.EventScores.Values) {
-                    if (es.EventType == "EVENT") {
-                        _topLevelEventName = es.EventName;
-                        return es.Status;
+                if (this.EventScores is not null) {
+                    foreach (var es in this.EventScores.Values) {
+                        if (es.EventType == "EVENT") {
+                            _topLevelEventName = es.EventName;
+                            return es.Status;
+                        }
                     }
                 }
+
+                //EKA NOTE: Should we check .EventScores.ResultCofScores ? 
+
             } else if ( this.EventScores.TryGetValue( _topLevelEventName, out EventScore es)) {
                 return es.Status;
             }
