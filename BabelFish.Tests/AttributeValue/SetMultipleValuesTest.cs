@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var setResponse = taskSetResponse.Result;
 
             //Check the status of the overall call
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, setResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, setResponse.RestApiStatusCode );
 
             var getRequest = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
                 AttributeNames = myAttributes,
@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var getResponse = taskGetResponse.Result;
 
             //Check the status of the overall call
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode );
 
             //Pull the Attribute Value Data Packet for Phone Number
             var readPhoneNumberAttrValueDataPacket = getResponse.AttributeValues[setNamePhoneNumber];
@@ -126,7 +126,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 			var setResponse = taskSetResponse.Result;
 
 			//Check the status of the overall call
-			Assert.AreEqual( System.Net.HttpStatusCode.OK, setResponse.StatusCode );
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, setResponse.RestApiStatusCode );
 
 			var getRequest = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
 				AttributeNames = myAttributes,
@@ -136,7 +136,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 			var getResponse = taskGetResponse.Result;
 
 			//Check the status of the overall call
-			Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.StatusCode );
+			Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode );
 
 			//Pull the Attribute Value Data Packet for Phone Number
 			var readSocialMediaAttrValueDataPacket = getResponse.AttributeValues[setNameSocialMedia];

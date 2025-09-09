@@ -31,12 +31,12 @@ namespace Scopos.BabelFish.Tests.Clubs {
             postRequest.LicenseNumber = 7; 
             postRequest.UserId.Add(Constants.TestDev1UserId);//try to add new designated user
             var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
 
             //TestDev1 retrieves the list of clubs that assign them as coach
             var getRequest = new GetCoachClubListAuthenticatedRequest(userAuthentication);
             var getResponse = await clubsClient.GetCoachClubListAuthenticatedAsync(getRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             Assert.IsTrue(getResponse.ClubList.Items.Count > 0);
         }
 
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
         {
             var getRequest = new GetCoachClubListPublicRequest(Constants.TestDev1UserId);
             var getResponse = await clubsClient.GetCoachClubListPublicAsync(getRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, getResponse.RestApiStatusCode);
         }
 
         [TestMethod]
@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
         {
             var getRequest = new GetCoachClubListPublicRequest("fakeuserid");
             var getResponse = await clubsClient.GetCoachClubListPublicAsync(getRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, getResponse.RestApiStatusCode);
         }
 
         [TestMethod]
@@ -68,12 +68,12 @@ namespace Scopos.BabelFish.Tests.Clubs {
             postRequest.LicenseNumber = 7;
             postRequest.UserId.Add(Constants.TestDev3UserId);//try to add new designated user
             var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
 
 
             var getRequest = new GetCoachClubListPublicRequest(Constants.TestDev3UserId); //TestDev3 has public profile, no userAuthentication used
             var getResponse = await clubsClient.GetCoachClubListPublicAsync(getRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             Assert.IsTrue(getResponse.ClubList.Items.Count > 0);
         }
 
@@ -82,7 +82,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
         {
             var getRequest = new GetCoachClubListPublicRequest(Constants.TestDev7UserId); //TestDev7 has public profile but is not an assigned coach
             var getResponse = await clubsClient.GetCoachClubListPublicAsync(getRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             Assert.IsTrue(getResponse.ClubList.Items.Count == 0);
         }
 
@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var getRequest = new GetCoachClubListAuthenticatedRequest(userAuthentication);
             var getResponse = await clubsClient.GetCoachClubListAuthenticatedAsync(getRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             Assert.IsTrue(getResponse.ClubList.Items.Count == 0);
         }
 

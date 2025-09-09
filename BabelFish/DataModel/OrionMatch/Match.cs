@@ -49,6 +49,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        private MatchID ? _parentIDAsObject = null;
+
+        /// <summary>
+        /// Returns the .ParentID as a MatchID instance.
+        /// </summary>
+        public MatchID GetParentId() {
+            if ( _parentIDAsObject is null ) {
+                _parentIDAsObject = new MatchID( ParentID );
+            }
+            return _parentIDAsObject;
+        }
+
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
         /// </summary>

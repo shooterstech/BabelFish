@@ -35,9 +35,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         protected override void ReportTitle( IContainer container ) {
 
-            container.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
-            .Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
-            .CornerRadius( 5 )
+            container.Border( 2 )
+			//.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
+			//.Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
+			.BorderLinearGradient( 45, [ScoposColors.BLUE_LIGHTEN_2, ScoposColors.DARK_GREY_LIGHTEN_1] )
+			.BackgroundLinearGradient( 45, [ScoposColors.DARK_GREY, ScoposColors.BLUE_LIGHTEN_1] )
+			.CornerRadius( 5 )
             .Padding( 10 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
@@ -146,7 +149,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             var document = QuestPDF.Fluent.Document.Create( container => {
                 container.Page( page => {
                     page.Size( pageSize );
-                    page.Margin( 2, Unit.Centimetre );
+                    page.Margin( 1.5f, Unit.Centimetre );
                     page.PageColor( Colors.White );
                     page.DefaultTextStyle( x => x.FontSize( 10 ) );
 

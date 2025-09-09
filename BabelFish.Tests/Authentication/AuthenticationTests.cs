@@ -236,11 +236,11 @@ namespace Scopos.BabelFish.Tests.Authentication {
 
             OrionMatchAPIClient matchClient = new OrionMatchAPIClient( );
             var getMatch1 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2038.2024071609575863.0" ), userAuthentication1 );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch1.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch1.RestApiStatusCode );
 
             userAuthentication1.RefreshTokensAsync( true );
             var getMatch2 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.1.2024061414175605.0" ), userAuthentication1 );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch2.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch2.RestApiStatusCode );
 
             //var userAuthentication2 = new UserAuthentication( email, refreshToken, accessToken, idToken, expirationTime, issuedTime, deviceKey, deviceGroupKey );
             //await userAuthentication2.InitializeAsync();

@@ -134,7 +134,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
 		/// <summary>
-		/// Intended for future use. THe name of the Squadding List (that hopefully can be ready through the 
+		/// THe name of the Squadding List (that hopefully can be ready through the 
 		/// REST API) that holds the squadding for competitors in this Result List.
 		/// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 14 )]

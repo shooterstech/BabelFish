@@ -12,6 +12,7 @@ using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.Converters;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -41,8 +42,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
         public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
-        private readonly Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public HttpClient httpClient = new HttpClient();
+        private static Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static TimeSpan _timeOut = TimeSpan.FromSeconds(15);
+        public HttpClient httpClient = new HttpClient() {
+            Timeout = _timeOut,
+        };
 
         /// <summary>
         /// 
@@ -89,7 +93,10 @@ namespace Scopos.BabelFish.APIClients {
             ResponseIntermediateObject cachedResponse = null;
             if (!IgnoreInMemoryCache && !request.IgnoreInMemoryCache && request.HttpMethod == HttpMethod.Get && ResponseCache.CACHE.TryGetResponse( request, out cachedResponse )) {
 
-                response.StatusCode = HttpStatusCode.OK;
+                //We'll assume everythning will go A-OK ;) 
+                response.RestApiStatusCode = HttpStatusCode.OK;
+                response.OverallStatusCode = RequestStatusCode.OK;
+
                 //response.MessageResponse = cachedResponse.MessageResponse.Copy();
                 //response.MessageResponse.Message.Add( "In memory cached response" );
                 //var stopWatch = Stopwatch.StartNew();
@@ -108,7 +115,8 @@ namespace Scopos.BabelFish.APIClients {
                 var fileSystemReadResponse = await TryReadFromFileSystemAsync( request ).ConfigureAwait( false );
 
                 if (fileSystemReadResponse.Item1) {
-                    response.StatusCode = HttpStatusCode.OK;
+                    response.RestApiStatusCode = HttpStatusCode.OK;
+                    response.OverallStatusCode = RequestStatusCode.OK;
                     //response.MessageResponse.Message.Add( "Read from file system response" );
                     response.Body = fileSystemReadResponse.Item2.Body;
                     response.TimeToRun = DateTime.Now - startTime;
@@ -171,7 +179,7 @@ namespace Scopos.BabelFish.APIClients {
                     logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );
                 }
 
-                response.StatusCode = responseMessage.StatusCode;
+                response.RestApiStatusCode = responseMessage.StatusCode;
 
                 using (Stream s = await responseMessage.Content.ReadAsStreamAsync())
                 using (StreamReader sr = new StreamReader( s )) {
@@ -187,7 +195,7 @@ namespace Scopos.BabelFish.APIClients {
                     //stopWatch.Stop();
 
                     G_STJ.JsonElement messageArray;
-                    if ( response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array ) {
+                    if (response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array) {
                         foreach (var message in messageArray.EnumerateArray()) {
                             response.MessageResponse.Message.Add( message.GetString() );
                         }
@@ -197,12 +205,13 @@ namespace Scopos.BabelFish.APIClients {
                 if (responseMessage.IsSuccessStatusCode) {
                     //Caching is only valid for GET calls
                     if (request.HttpMethod == HttpMethod.Get) {
-                        
+
                         //Purposefully not awaiting this call
                         TryWriteToFileSystemAsync( response );
 
                         cachedResponse = new ResponseIntermediateObject() {
-                            StatusCode = response.StatusCode,
+                            RestApiStatusCode = response.RestApiStatusCode,
+                            OverallStatusCode = RequestStatusCode.OK,
                             //MessageResponse = response.MessageResponse.Copy(),
                             Request = request,
                             Body = response.Body,
@@ -215,18 +224,40 @@ namespace Scopos.BabelFish.APIClients {
                     var msg = $"API error with: {responseMessage.ReasonPhrase}";
                     logger.Error( msg );
                     logger.Debug( jsonAsString );
-                    response.ExceptionMessage = msg; 
+                    response.RestApiStatusCode = responseMessage.StatusCode;
+                    response.OverallStatusCode = RequestStatusCode.RestApiServerError;
+                    response.ExceptionMessage = msg;
                 }
+
+            } catch (JsonException je ) {
+                //Likely could not deserialize
+                response.OverallStatusCode = RequestStatusCode.DeserializaingError;
+                response.ExceptionMessage = je.Message;
+                response.Json = jsonAsString;
+                response.TimeToRun = DateTime.Now - startTime;
+                logger.Fatal( je, $"JsonException: {je.Message}" );
+                logger.Debug( jsonAsString );
+
+            } catch (TaskCanceledException tce) {
+                //This is a timeout exception. The request took longer than allowed (which is set by _tiemOut, or 15s).
+                //Likely a network issue of some sort. Up to including firewall blocking request, or Internet is down.
+                response.RestApiStatusCode = HttpStatusCode.InternalServerError;
+                response.OverallStatusCode = RequestStatusCode.TimeOutError;
+                response.ExceptionMessage = tce.Message;
+                response.Json = jsonAsString;
+                response.TimeToRun = DateTime.Now - startTime;
+                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
+                logger.Fatal( tce, "API Call timed out: {failmsg}", tce.Message );
 
             } catch (Exception ex) {
 
                 //Keep NotFound exceptions, otherwise replace with internal server error
-                if (response.StatusCode != HttpStatusCode.NotFound)
-                    response.StatusCode = HttpStatusCode.InternalServerError;
+                response.OverallStatusCode = RequestStatusCode.UnknownError;
                 response.ExceptionMessage = ex.Message;
                 response.Json = jsonAsString;
+                response.TimeToRun = DateTime.Now - startTime;
                 //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                logger.Fatal( ex, "API Call failed: {failmsg}", ex.Message );
+                logger.Fatal( ex, $"API Call failed: {ex.Message}" );
                 logger.Debug( jsonAsString );
             }
         }

@@ -8,6 +8,7 @@ using NLog;
 using System.Runtime.CompilerServices;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.Helpers {
     /// <summary>
@@ -318,7 +319,7 @@ namespace Scopos.BabelFish.Helpers {
         }
 
         /// <summary>
-        /// Formats city, state and country is a standard format.
+        /// Formats city, state and country in a standard format.
         /// </summary>
         /// <param name="hometown"></param>
         /// <returns></returns>
@@ -352,6 +353,16 @@ namespace Scopos.BabelFish.Helpers {
                     }
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Formats a Location instance in a standard format.
+        /// </summary>
+        /// <param name="hometown"></param>
+        /// <returns></returns>
+        public static string Hometown( Scopos.BabelFish.DataModel.Common.Location location ) {
+            return Hometown( location.City, location.State, location.Country );
         }
 
         private static string GetNumberWithOrdinal( int number ) {

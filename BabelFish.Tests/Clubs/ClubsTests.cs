@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var response = await client.GetClubListAuthenticatedAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             var clubList = response.ClubList;
 
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var response1 = await client.GetClubListAuthenticatedAsync( request1 );
 
-            Assert.AreEqual( response1.StatusCode, System.Net.HttpStatusCode.OK );
+            Assert.AreEqual( response1.RestApiStatusCode, System.Net.HttpStatusCode.OK );
 
             var clubList = response1.ClubList;
 
@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
             request2.Token = clubList.NextToken;
 
             var response2 = await client.GetClubListAuthenticatedAsync( request2 );
-            Assert.AreEqual( response2.StatusCode, System.Net.HttpStatusCode.OK );
+            Assert.AreEqual( response2.RestApiStatusCode, System.Net.HttpStatusCode.OK );
 
             Assert.AreNotEqual( response1.ClubList.NextToken, response2.ClubList.NextToken );
         }
@@ -95,7 +95,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var response = await client.GetClubDetailAuthenticatedAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             var clubDetail = response.ClubDetail;
 
@@ -117,7 +117,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var response = await client.GetClubDetailPublicAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             var clubDetail = response.ClubDetail;
 
@@ -136,7 +136,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var getAllClubsResponse = await client.GetClubListPublicAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getAllClubsResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getAllClubsResponse.RestApiStatusCode );
 
             var clubList = getAllClubsResponse.ClubList;
 
@@ -157,7 +157,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var getClubCurrentlyShooting = await client.GetClubListPublicAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getClubCurrentlyShooting.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getClubCurrentlyShooting.RestApiStatusCode );
 
             var clubList = getClubCurrentlyShooting.ClubList.Items;
 

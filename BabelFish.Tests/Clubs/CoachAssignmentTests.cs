@@ -29,7 +29,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         {
             //list coach assignments for license number 7
             var getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
 
             if (getResponse.CoachAssignmentList.Items.Count == 0) return;
 
@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Tests.Clubs
             deleteAllRequest.LicenseNumber = licenseNumber;
             deleteAllRequest.UserId = getResponse.CoachAssignmentList.Items;
             var deleteAllResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteAllRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteAllResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteAllResponse.RestApiStatusCode);
             Assert.IsTrue(deleteAllResponse.CoachAssignmentList.Items.Count == 0);
         }
 
@@ -53,19 +53,19 @@ namespace Scopos.BabelFish.Tests.Clubs
 
             //TestDev3 is not a POC for license 7, and should not be able to perform any CRUD functions
             var getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);
-            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, getResponse.RestApiStatusCode);
 
             var postRequest = new CreateCoachAssignmentAuthenticatedRequest(userAuthentication);
             postRequest.LicenseNumber = licenseNumber;
             postRequest.UserId.Add(Constants.TestDev3UserId);//try to add themself as designated coach
             var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, postResponse.RestApiStatusCode);
 
             var deleteRequest = new DeleteCoachAssignmentAuthenticatedRequest(userAuthentication);
             deleteRequest.LicenseNumber = licenseNumber;
             deleteRequest.UserId.Add(Constants.TestDev3UserId); //try to delete themself as designated coach
             var deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, deleteResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.Unauthorized, deleteResponse.RestApiStatusCode);
 
         }
 
@@ -80,19 +80,19 @@ namespace Scopos.BabelFish.Tests.Clubs
 
             //TestDev1 is a POC for license 2, but license 2 is expired, so none of the operations should succeed
             var getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, getResponse.RestApiStatusCode);
 
             var postRequest = new CreateCoachAssignmentAuthenticatedRequest(userAuthentication);
             postRequest.LicenseNumber = licenseNumber;
             postRequest.UserId.Add(Constants.TestDev3UserId);//try to add new designated user
             var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, postResponse.RestApiStatusCode);
 
             var deleteRequest = new DeleteCoachAssignmentAuthenticatedRequest(userAuthentication);
             deleteRequest.LicenseNumber = licenseNumber;
             deleteRequest.UserId.Add(Constants.TestDev3UserId); //try to delete existing designated user
             var deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, deleteResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, deleteResponse.RestApiStatusCode);
 
         }
 
@@ -118,17 +118,17 @@ namespace Scopos.BabelFish.Tests.Clubs
             };
 
             var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
 
             //try to add all of them again, should still be ok because we didnt add anyone new
             postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
 
 
             //try to add new user as coach, this should not work because we have exceeded the limit
             postRequest.UserId = new List<string> { Constants.TestDev1UserId };
             postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, postResponse.RestApiStatusCode);
             Assert.AreEqual(postResponse.MessageResponse.Message[0], "Maximum of 4 coach designtions allowed per license");
 
             //delete all assignments
@@ -140,7 +140,7 @@ namespace Scopos.BabelFish.Tests.Clubs
                 Constants.TestDev3UserId
             };
             postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
 
             //try to more than allowed all at once
             postRequest.UserId = new List<string> {
@@ -149,7 +149,7 @@ namespace Scopos.BabelFish.Tests.Clubs
                 Constants.TestDev1UserId
             };
             postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, postResponse.RestApiStatusCode);
             Assert.AreEqual(postResponse.MessageResponse.Message[0], "Maximum of 4 coach designtions allowed per license");
 
             //delete all assignments
@@ -174,12 +174,12 @@ namespace Scopos.BabelFish.Tests.Clubs
             postRequest.LicenseNumber = licenseNumber;
             postRequest.UserId.Add(Constants.TestDev9UserId);
             var postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
             Assert.IsTrue(Enumerable.SequenceEqual(postResponse.CoachAssignmentList.Items, postRequest.UserId));
 
             //read single user
             var getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             Assert.IsTrue(Enumerable.SequenceEqual(getResponse.CoachAssignmentList.Items, postRequest.UserId));
 
 
@@ -187,14 +187,14 @@ namespace Scopos.BabelFish.Tests.Clubs
             postRequest.UserId.Add(Constants.TestDev7UserId);
             postRequest.UserId.Add(Constants.TestDev3UserId);
             postResponse = await clubsClient.CreateCoachAssignmentAuthenticatedAsync(postRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, postResponse.RestApiStatusCode);
             postRequest.UserId.Sort();
             postResponse.CoachAssignmentList.Items.Sort();
             Assert.IsTrue(Enumerable.SequenceEqual(postResponse.CoachAssignmentList.Items, postRequest.UserId));
 
             //read multiple user
             getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             getResponse.CoachAssignmentList.Items.Sort();
             Assert.IsTrue(Enumerable.SequenceEqual(getResponse.CoachAssignmentList.Items, postRequest.UserId));
 
@@ -203,7 +203,7 @@ namespace Scopos.BabelFish.Tests.Clubs
             deleteRequest.LicenseNumber = licenseNumber;
             deleteRequest.UserId.Add(Constants.TestDev7UserId);
             var deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.RestApiStatusCode);
             List<string> expected = new List<string> { Constants.TestDev3UserId, Constants.TestDev9UserId };
             expected.Sort();
             deleteResponse.CoachAssignmentList.Items.Sort();
@@ -211,14 +211,14 @@ namespace Scopos.BabelFish.Tests.Clubs
 
             //read deletion
             getResponse = await clubsClient.GetCoachAssignmentAuthenticatedAsync(licenseNumber, userAuthentication);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             getResponse.CoachAssignmentList.Items.Sort();
             Assert.IsTrue(Enumerable.SequenceEqual(getResponse.CoachAssignmentList.Items, expected));
 
             //delete remaining users
             deleteRequest.UserId = getResponse.CoachAssignmentList.Items;
             deleteResponse = await clubsClient.DeleteCoachAssignmentAuthenticatedAsync(deleteRequest);
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode);
             Assert.IsTrue(deleteResponse.CoachAssignmentList.Items.Count == 0);
 
         }

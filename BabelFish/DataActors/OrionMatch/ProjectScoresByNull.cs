@@ -23,8 +23,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         public override void ProjectEventScores( IEventScoreProjection projection ) {
 
-            foreach (var eventScore in projection.EventScores.Values) {
-                eventScore.Projected = null;
+            if (projection.EventScores is not null) {
+                foreach (var eventScore in projection.EventScores.Values) {
+                    eventScore.Projected = null;
+                }
             }
 
             foreach( var tm in projection.GetTeamMembersAsIEventScoreProjection() ) {
@@ -33,16 +35,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         }
 
         public override void ProjectAthleteScores( IEventScoreProjection projection ) {
-            
-            foreach( var eventScore in projection.EventScores.Values) {
-                eventScore.Projected = null;
+
+            if (projection.EventScores != null) {
+                foreach (var eventScore in projection.EventScores.Values) {
+                    eventScore.Projected = null;
+                }
             }
         }
 
         public override void ProjectTeamScores( IEventScoreProjection teamToProject, EventComposite eventToProject, int recusionDepth ) {
 
-            foreach (var eventScore in teamToProject.EventScores.Values) {
-                eventScore.Projected = null;
+            if (teamToProject.EventScores != null) {
+                foreach (var eventScore in teamToProject.EventScores.Values) {
+                    eventScore.Projected = null;
+                }
             }
         }
     }

@@ -59,8 +59,7 @@ namespace Scopos.BabelFish.Helpers {
 					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
 					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ParticipantConverter() );
-					//SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateOnlyConverter() );
-					//SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoposDateTimeConverter() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.RelayConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreAverageBaseConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreHistoryBaseConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.SetAttributeValueListConverter() );
@@ -101,7 +100,8 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ShowWhenOperation>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SingularType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SortBy>() );
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TieBreakingRuleMethod>() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TargetModel>() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TieBreakingRuleMethod>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TieBreakingRuleParticipantAttributeSource>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TieBreakingRuleScoreSource>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<TimerCommandOptions>() );
@@ -123,9 +123,10 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchParticipantRole>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchTypeOptions>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultStatus>() );
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SquaddingAssignmentType>() );
 
-                    //Other Enums
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APIStage>() );
+					//Other Enums
+					SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APIStage>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<APISubDomain>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubLicenseCapability>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SocialRelationshipName>() );

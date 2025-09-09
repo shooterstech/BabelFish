@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.AthenaOwner {
             var getRequest = new GetUserOwnershipValuesAuthenticatedRequest( userAuthentication );
             var getResponse = await athenaOwnerClient.GetUserOwnershipValuesAuthenticatedAsync( getRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, getResponse.RestApiStatusCode );
             Assert.AreEqual( getResponse.AthenaOwnerValues.OwnerId, "AtHomeAcct000004" );
 
         }

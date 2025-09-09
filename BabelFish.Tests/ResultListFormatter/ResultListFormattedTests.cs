@@ -397,22 +397,68 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
 		}
 
-        public string GetParticipantAttributeRank( ResultEvent resultEvent, ResultListIntermediateFormatted rlf ) {
+        public string GetParticipantAttributeRank( IRLIFItem item, ResultListIntermediateFormatted rlf ) {
 
-            var realRank = resultEvent.Rank;
-            var modifiedRank = 1000 + realRank;
+            if (item is ResultEvent) {
+                var resultEvent = (ResultEvent)item;
+                var realRank = resultEvent.Rank;
+                var modifiedRank = 1000 + realRank;
 
-            return modifiedRank.ToString();
+                return modifiedRank.ToString();
+            }
+
+            return "";
         }
+
+        [TestMethod]
+        public async Task TestShowRelay() {
+
+			//MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
+			MatchID matchId = new MatchID( "1.1.2025081213222434.0" );
+			var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+			var match = matchDetailResponse.Match;
+            var squaddingName = match.SquaddingEvents[0].Name;
+
+			//Get the Result List from the API Server
+			var squaddingListResponse = await matchClient.GetSquaddingListPublicAsync( matchId, squaddingName );
+            var squaddingList = squaddingListResponse.SquaddingList;
+
+			//Get the ResultListFormat to use for formatting
+			var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( squaddingList );
+			var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+			var resultListFormat = resultListFormatResponse.Definition;
+
+            //Instantiate the RLIF
+			ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( squaddingList, resultListFormat, userProfileLookup );
+			await rlf.InitializeAsync();
+
+            //Seet .ShowRanks to 0, so it doesn't show the top three (like it would by default).
+            rlf.ShowRanks = 0;
+
+            //Before specifying a relay to show, make sure the default case (show everyone) works.
+            Assert.AreEqual( 13, rlf.ShownRows.Count );
+
+            rlf.ShowRelay = "1"; 
+            Assert.AreEqual( 4, rlf.ShownRows.Count );
+
+			rlf.ShowRelay = "2";
+			Assert.AreEqual( 4, rlf.ShownRows.Count );
+
+			rlf.ShowRelay = "3";
+			Assert.AreEqual( 4, rlf.ShownRows.Count );
+
+			rlf.ShowRelay = "4";
+			Assert.AreEqual( 1, rlf.ShownRows.Count );
+		}
 
 		[TestMethod]
         public async Task EriksPlayground() {
 
             //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
-            MatchID matchId = new MatchID( "1.1.2025051614283290.0" );
+            MatchID matchId = new MatchID( "1.1.2025080109150751.1" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - Sporter";
+            var resultListName = "Team - Sporter";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -428,15 +474,20 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             //Test that the conversion was successful and has the same number of objects.
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
-            await rlf.InitializeAsync();
+			await rlf.InitializeAsync( false );
             Assert.IsNotNull( rlf );
 
-            rlf.Engagable = false;
-            rlf.ResolutionWidth = 1000;
-            rlf.ShowNumberOfChildRows = 4000;
-            rlf.ShowRanks = 0;
+
+			//await rlf.LoadSquaddingListAsync();
+
+			rlf.Engagable = false;
+            rlf.ResolutionWidth = 100;
+            rlf.ShowNumberOfChildRows = 0;
+            rlf.ShowRanks = 3;
             rlf.ShowStatuses = null;
             rlf.ShowSupplementalInformation = false;
+            rlf.ShowNumberOfBodyRows = 3;
+            rlf.RefreshAllRowsParticipantAttributeFields();
 
             //rlf.SetShowValuesToDefault();
 

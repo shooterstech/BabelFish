@@ -5,13 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.Athena.Range
-{
-    public class NetworkManagerState
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
+    public class NetworkManagerState {
 
-        public NetworkManagerState()
-        {
+        public NetworkManagerState() {
 
         }
 

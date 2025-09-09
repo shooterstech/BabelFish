@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.RestApiStatusCode );
 
             bool hasAtLeastOneEventStyleEntry = false;
 
@@ -68,7 +68,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.RestApiStatusCode );
 
             bool hasAtLeastOneStageStyleEntry = false;
 
@@ -105,7 +105,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.RestApiStatusCode );
 
             bool hasAtLeastOneKneeling = false;
             bool hasAtLeastOneProne = false;
@@ -153,7 +153,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.RestApiStatusCode );
 
             bool hasAtLeastOneEventStyleEntry = false;
 
@@ -190,7 +190,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, scoreHistoryResponse.RestApiStatusCode );
 
             bool hasAtLeastOneKneeling = false;
             bool hasAtLeastOneProne = false;

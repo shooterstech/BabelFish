@@ -133,6 +133,35 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
+        /// When an Event defines a StageStyleMapping, it means that all descendent shots fired within that Event
+        /// will have been fired on the same target and withing the same STAGE STYLE. This method returns a list of 
+        /// EventComposites that have defined StageStyleMappings, and thus have distinct STAGE STYLES.
+        /// <para>It is possible for this method to return a list of one EventCompsite, if the Event
+        /// itself defines a StageStyleMapping.</para>
+        /// </summary>
+        /// <remarks>
+        /// For exmaple, if you were to call this method on the top level of a 3P COF, the return should be the
+        /// stages for prone, standing, and kneeling. 
+        /// <para>A second example, if you were to call this method on the top level of a 1600 prone aggregate,
+        /// the return should be the events 50yd, 50m, dewer 50yd, dewer 100yd, and 100yd.</para></remarks>
+        /// <returns></returns>
+        public List<EventComposite> GetEventsOfDistinctStageStyles() {
+			List<EventComposite> list = new List<EventComposite>();
+
+            //This is the recursive stop condition
+            if (this.StageStyleMapping != null) {
+                list.Add( this );
+                return list;
+            }
+
+            foreach (var child in this.Children) {
+                list.AddRange( child.GetEventsOfDistinctStageStyles() );
+            }
+
+            return list;
+		}
+
+        /// <summary>
         /// Searches the children of this Event Composite, for one with the passed in eventName and returns it.
         /// Returns null, if it could not be found.
         /// </summary>

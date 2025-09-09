@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Tests.Athena {
 
             var response = await client.AthenaEmployLoginCodeAuthenticatedAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
             var estTarget = response.ESTUnitLogin.ThingName;
             var loggedInUserId = response.ESTUnitLogin.Session.User.UserID;
@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.Tests.Athena {
             var response = await client.AthenaEmployLoginCodeAuthenticatedAsync( request );
 
             //When the auth code is wrong, unknown, or expired, and 404 is returned.
-            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.NotFound, response.RestApiStatusCode );
 
         }
 
@@ -87,7 +87,7 @@ namespace Scopos.BabelFish.Tests.Athena {
 
             //NOTE this is kinda difficult to write a unit test for, since there is no way to control
             //if there are legit active user sessions. At best we can test the response was expected.
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
         }
 
@@ -108,7 +108,7 @@ namespace Scopos.BabelFish.Tests.Athena {
 
             var response = await client.AthenaLogoutSessionAuthenticatedAsync( request );
 
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
 
         }
     }

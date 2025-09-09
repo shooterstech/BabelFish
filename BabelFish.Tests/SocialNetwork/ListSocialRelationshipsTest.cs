@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             listRequest.OutgoingRequests = true;
 
             var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.RestApiStatusCode );
         }
 
 
@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
 
             var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.RestApiStatusCode );
 
             foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
                 Assert.AreEqual( sr.PassiveId, Constants.TestDev3UserId );
@@ -80,7 +80,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             listRequest.AsActive = true;
 
             var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.RestApiStatusCode );
 
             foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
                 Assert.AreEqual( sr.ActiveId, Constants.TestDev3UserId );
@@ -102,7 +102,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             listRequest.IncomingRequests = true;
 
             var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.RestApiStatusCode );
 
             foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
                 Assert.AreEqual( sr.PassiveId, Constants.TestDev3UserId );
@@ -125,7 +125,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
             listRequest.OutgoingRequests = true;
 
             var listResponse = await socialNetworkClient.ListSocialRelationshipsAuthenticatedAsync( listRequest );
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+            Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.RestApiStatusCode );
 
             foreach (SocialRelationship sr in listResponse.SocialRelationshipList.Items) {
                 Assert.AreEqual( sr.ActiveId, Constants.TestDev3UserId );
@@ -160,7 +160,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
 
                 Assert.IsTrue( listResponse.SocialRelationshipList.Items.Count() <= listRequest.Limit );
                 Assert.AreNotEqual( lastToken, listResponse.SocialRelationshipList.NextToken );
-                Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.StatusCode );
+                Assert.AreEqual( System.Net.HttpStatusCode.OK, listResponse.RestApiStatusCode );
 
                 lastToken = listResponse.SocialRelationshipList.NextToken;
 

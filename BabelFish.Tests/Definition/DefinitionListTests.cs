@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 			var getDefinitionListResponse = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE );
 
-			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse.StatusCode );
+			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse.RestApiStatusCode );
 			Assert.AreEqual( DefinitionType.ATTRIBUTE, getDefinitionListResponse.DefinitionType );
 
 			var definitionList = getDefinitionListResponse.DefinitionList;
@@ -44,14 +44,14 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 			var getDefinitionListResponse1 = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE );
 
-			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse1.StatusCode );
+			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse1.RestApiStatusCode );
 			Assert.AreEqual( DefinitionType.ATTRIBUTE, getDefinitionListResponse1.DefinitionType );
 			Assert.IsFalse( getDefinitionListResponse1.InMemoryCachedResponse );
 
 
 			var getDefinitionListResponse2 = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE ); 
 
-			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse2.StatusCode );
+			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse2.RestApiStatusCode );
 			Assert.AreEqual( DefinitionType.ATTRIBUTE, getDefinitionListResponse2.DefinitionType );
 			Assert.IsTrue( getDefinitionListResponse2.InMemoryCachedResponse );
 
@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
 			var getDefinitionListResponse = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE, "Air Rifle Category" );
 
-			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse.StatusCode );
+			Assert.AreEqual( HttpStatusCode.OK, getDefinitionListResponse.RestApiStatusCode );
 			Assert.AreEqual( DefinitionType.ATTRIBUTE, getDefinitionListResponse.DefinitionType );
 			//Caching should always be disabled when doing a search term.
 			Assert.IsFalse( getDefinitionListResponse.InMemoryCachedResponse );

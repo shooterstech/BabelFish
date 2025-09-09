@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             RLF = rlf;
 
             try {
-                var matchId = RLF.ResultList.Metadata.Keys.First();
+                var matchId = RLF.RLIFList.ParentID;
                 this.MatchID = new MatchID( matchId );
             } catch (Exception ex) {
                 //We shouldn't ever get here
@@ -89,6 +89,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = ! RLF.ShowSupplementalInformation;
                     break;
 
+                case ShowWhenCondition.DIMENSION_EXTRA_SMALL:
+                    //This is a made-for-scopos ;) dimension
+                    answer = RLF.ResolutionWidth >= 325;
+                    break;
+
                 case ShowWhenCondition.DIMENSION_SMALL:
                     answer = RLF.ResolutionWidth >= 576;
                     break;
@@ -142,6 +147,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
 
                 case ShowWhenCondition.SHOT_ON_EST:
+                    if (RLF.ResultList is null)
+                        return false;
+
                     //If one or more of the VM locations have ESTs, then this will evaluate to true.
                     foreach( var md in RLF.ResultList.Metadata.Values ) {
                         if ( md.ScoringSystemType == ScoringSystem.EST ) {
@@ -151,8 +159,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return false;
 
                 case ShowWhenCondition.SHOT_ON_PAPER:
+					if (RLF.ResultList is null)
+						return false;
+					
                     //If one or more of the VM locations have PAPER, then this will evaluate to true.
-                    foreach (var md in RLF.ResultList.Metadata.Values) {
+					foreach (var md in RLF.ResultList.Metadata.Values) {
                         if (md.ScoringSystemType == ScoringSystem.PAPER) {
                             return true;
                         }
@@ -160,24 +171,37 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return false;
 
                 case ShowWhenCondition.RESULT_STATUS_FUTURE:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.FUTURE;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_INTERMEDIATE:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.INTERMEDIATE;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_UNOFFICIAL:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.UNOFFICIAL;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_OFFICIAL:
+					if (RLF.ResultList is null)
+						return false;
+					
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
                 case ShowWhenCondition.HAS_ANY_SHOWN_REMARK:
+					
                     if ( participant == null || participant.Participant == null ) {
-                        foreach ( var p in this.RLF.ResultList.Items ) {
+                        foreach ( var p in this.RLF.RLIFList.GetAsIRLItemsList() ) {
                             if ( p.Participant.RemarkList.HasAnyShownParticipantRemark) {
                                 return true;
                             }
@@ -349,6 +373,49 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Bootstrap 5 breakpoints
+        /// </summary>
+        public static Dictionary<ShowWhenCondition, int> BreakPoints = new Dictionary<ShowWhenCondition, int>() {
+            { ShowWhenCondition.DIMENSION_LT_SMALL, 0 },
+            { ShowWhenCondition.DIMENSION_EXTRA_SMALL, 325 }, //This is a made-for-scopos ;) dimension
+			{ ShowWhenCondition.DIMENSION_SMALL, 576 },
+			{ ShowWhenCondition.DIMENSION_MEDIUM, 768 },
+			{ ShowWhenCondition.DIMENSION_LARGE, 992 },
+			{ ShowWhenCondition.DIMENSION_EXTRA_LARGE, 1200 },
+			{ ShowWhenCondition.DIMENSION_EXTRA_EXTRA_LARGE, 1400 }};
+
+        /// <summary>
+        /// Helper method to return the screen resolution necessary to evaluate all
+        /// show wehn operations "DIMENSION_SIZE" to true. 
+        /// </summary>
+        /// <param name="showWhen"></param>
+        /// <param name="largestResolutionSoFar"></param>
+        /// <returns></returns>
+        public static int GetLargestShowWhenResolution( ShowWhenBase showWhen, int largestResolutionSoFar = 0 ) {
+            //Uses recusion
+
+            if (showWhen is ShowWhenVariable showWhenVariable) {
+                //This is the stop condition
+                if (BreakPoints.TryGetValue( showWhenVariable.Condition, out int result ) && 
+                    result > largestResolutionSoFar) {
+                    return result;
+				}
+            } else if ( showWhen is ShowWhenEquation showWhenEquation) {
+                //Use recusion to learn the largest resultion of each of the arguments
+                foreach( var sw in showWhenEquation.Arguments) {
+                    var result = GetLargestShowWhenResolution( sw );
+                    if (result > largestResolutionSoFar) {
+                        largestResolutionSoFar = result;
+                    }
+                }
+            }
+            //NOTE no need to evaluate ShowWHenSegmentGroup as they don't involve screen resolutions.
+
+            //Also a stop condition
+            return largestResolutionSoFar;
         }
     }
 }

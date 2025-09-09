@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DefinitionConverter ) )]
     public abstract class Definition : SparseDefinition, IReconfigurableRulebookObject {
 
-        private string commonName = string.Empty;
+        private string _commonName = string.Empty;
 
         /// <summary>
         /// Public constructor for Definition class.
@@ -58,7 +58,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 5 )]
         public string CommonName {
             get {
-                if (string.IsNullOrEmpty( commonName )) {
+                if (string.IsNullOrEmpty( _commonName )) {
                     SetName sn;
                     if (Scopos.BabelFish.DataModel.Definitions.SetName.TryParse( this.SetName, out sn )) {
                         return sn.ProperName;
@@ -66,12 +66,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     //Shouldn't ever really get here, b/c every Definition should/better have a SetName.
                     return "Unknown";
                 } else {
-                    return commonName;
+                    return _commonName;
                 }
             }
             set {
                 if (!string.IsNullOrEmpty( value )) {
-                    commonName = value;
+                    _commonName = value;
                 }
             }
         }
@@ -177,16 +177,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             var versionRequest = new GetDefinitionVersionPublicRequest( currentSetName, this.Type );
             var versionResponse = await DefinitionFetcher.FETCHER.GetDefinitionVersionPublicAsync( versionRequest );
 
-            if (versionResponse.StatusCode == System.Net.HttpStatusCode.OK) {
+
+            if (versionResponse.HasOkStatusCode) {
                 //The happy path
                 var apiVersion = versionResponse.Value.GetDefinitionVersion();
                 return specificVersion < apiVersion;
-            } else if ( versionResponse.StatusCode == System.Net.HttpStatusCode.NotFound ) {
+            } else if ( versionResponse.OverallStatusCode == Responses.RequestStatusCode.TimeOutError ) {
+                //Likely user is not connected to Internet
+                return false;
+            } else if ( versionResponse.RestApiStatusCode == System.Net.HttpStatusCode.NotFound ) {
                 //Likely means that this is a new Definition, that's not been uploaded before
                 return false;
             } else {
                 //Throw an error as something unexpected happen.
-                throw new ScoposAPIException( $"Unable to complete GetDefinitionVersionPublicAsync request with status code {versionResponse.StatusCode}." );
+                _logger.Warn( $"Unable to complete GetDefinitionVersionPublicAsync request with status code {versionResponse.OverallStatusCode} and api status code {versionResponse.RestApiStatusCode}." );
+                return false;
             }
         }
 

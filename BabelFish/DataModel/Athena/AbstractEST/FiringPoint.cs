@@ -35,6 +35,11 @@ namespace Scopos.BabelFish.DataModel.Athena.AbstractEST
         public string FiringPointNumber { get; set; }
 
         /// <summary>
+        /// A (usually) temporary firing point number given to this firing point. Usually represented as a character for Finals. 
+        /// </summary>
+        public string FiringPointAlias { get; set; }
+
+        /// <summary>
         /// The IOT ThingName and address for the ESTTarget assigned to this firing point
         /// </summary>
         public string TargetStateAddress { get; set; }

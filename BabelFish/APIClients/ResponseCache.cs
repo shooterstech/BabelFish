@@ -115,7 +115,9 @@ namespace Scopos.BabelFish.APIClients {
 
         public Request Request { get; set; }
 
-        public HttpStatusCode StatusCode { get; set; }
+        public HttpStatusCode RestApiStatusCode { get; set; }
+
+        public RequestStatusCode OverallStatusCode { get; set; }
 
         public MessageResponse MessageResponse { get; set; }
 

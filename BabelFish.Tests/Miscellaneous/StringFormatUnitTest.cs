@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
             var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var formatDefinition = result.Definition;
             Assert.IsNotNull( formatDefinition );
@@ -66,7 +66,7 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
             var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
-            Assert.AreEqual( HttpStatusCode.OK, result.StatusCode, $"Expecting and OK status code, instead received {result.StatusCode}." );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var formatDefinition = result.Definition;
             Assert.IsNotNull( formatDefinition );

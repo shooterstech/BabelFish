@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -23,7 +24,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string GivenName { get; set; } = string.Empty;
 
-        [JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        [Obsolete( "Use GivenName")]
         public string FirstName {
             get { return this.GivenName; }
             set { this.GivenName = value; }
@@ -39,7 +42,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string FamilyName { get; set; } = string.Empty;
 
-        public string LastName {
+		[G_STJ_SER.JsonIgnore]
+		[G_NS.JsonIgnore]
+		[Obsolete( "Use FamilyName" )]
+		public string LastName {
             get { return this.FamilyName; }
             set { this.FamilyName = value; }
         }
@@ -54,5 +60,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults.")]
         public string ResultCOFID { get; set;} = string.Empty;
+
+        /// <inheritdoc />
+        public override int UniqueMergeId {
+            get {
+                if (!string.IsNullOrEmpty( UserID ))
+                    return this.UserID.GetHashCode();
+                else 
+                    return this.DisplayName.GetHashCode();
+            }
+        }
     }
 }

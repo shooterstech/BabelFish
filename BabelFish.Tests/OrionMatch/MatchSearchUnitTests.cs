@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var matchSearchResponse = await client.GetMatchSearchPublicAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.RestApiStatusCode );
 
             //It is possible, however unlikely, that the search comes back without any items.
             Assert.IsTrue( matchSearchResponse.MatchSearchList.Items.Count > 0 );
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var matchSearchResponse = await client.GetMatchSearchAuthenticatedAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.RestApiStatusCode );
 
             //It is possible, however unlikely, that the search comes back without any items.
             Assert.IsTrue( matchSearchResponse.MatchSearchList.Items.Count > 0 );
@@ -79,7 +79,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var matchSearchResponse = await client.GetMatchSearchPublicAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.RestApiStatusCode );
 
             var matchSearchList = matchSearchResponse.MatchSearchList;
             Assert.AreEqual( limit, matchSearchList.Items.Count );
@@ -133,7 +133,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchSearchResponse1 = client.GetMatchSearchPublicAsync( request1 );
             var matchSearchResponse1 = taskMatchSearchResponse1.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse1.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse1.RestApiStatusCode );
             Assert.AreEqual( limit, matchSearchResponse1.MatchSearchList.Items.Count );
 
             var request2 = (MatchSearchPublicRequest) matchSearchResponse1.GetNextRequest();
@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchSearchResponse2 = client.GetMatchSearchPublicAsync( request2 );
             var matchSearchResponse2 = taskMatchSearchResponse2.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse2.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse2.RestApiStatusCode );
             Assert.AreEqual( limit, matchSearchResponse2.MatchSearchList.Items.Count );
 
             var request3 = matchSearchResponse2.GetNextRequest();

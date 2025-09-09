@@ -5,7 +5,7 @@ using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 	[Serializable]
-	public class MatchID : IEquatable<MatchID> {
+	public class MatchID : IEquatable<MatchID>, IEqualityComparer<MatchID> {
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -290,7 +290,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode() {
-            return this.DomainID.GetHashCode() | this.ComponentID.GetHashCode() | this.PrimaryMatchID.GetHashCode() | this.SubMatchID.GetHashCode();
+            return this.ToString().GetHashCode();
+        }
+
+        public bool Equals( MatchID x, MatchID y ) {
+            return x.Equals( y );
+        }
+
+        public int GetHashCode( MatchID obj ) {
+            return obj.GetHashCode();
         }
 
         #endregion

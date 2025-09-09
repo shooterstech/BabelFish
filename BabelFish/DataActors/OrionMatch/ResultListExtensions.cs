@@ -51,6 +51,24 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             return resultList.Status;
         }
 
+
+        /// <summary>
+        /// Checks for the unusual condition that the returned result list is ordered by projected rank, 
+        /// but the status is UNOFFICIAL or OFFICIAL. This could happen if a user turns Orion off, 
+        /// before having all scores turned in, and we're past the end date of the match.
+        /// </summary>
+        public static void ReSortIfOfficial(this ResultList resultList) {
+
+            if (resultList is not null
+                && resultList.Projected &&
+                (resultList.Status == ResultStatus.UNOFFICIAL || resultList.Status == ResultStatus.OFFICIAL)) {
+                var sorter = new CompareResultByRank( CompareResultByRank.CompareMethod.RANK_ORDER, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
+                resultList.Items.Sort( sorter );
+
+                resultList.Projected = false;
+            }
+        }
+
         /// <summary>
         /// Determines the status of an Event for an Athlete. This method does not work for Teams
         /// </summary>

@@ -3,6 +3,11 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Requests.ScoposData {
+
+    /// <summary>
+    /// The GetVersion API call is deprecated. Use GetRelease instead.
+    /// </summary>
+    [Obsolete( "GetVersion is deprecated. Use GetRelease instead." )]
     public class GetVersionPublicRequest : Request {
         /// <summary>
         /// Public constructor. 

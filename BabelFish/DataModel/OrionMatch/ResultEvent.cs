@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultEvent : IEventScoreProjection {
+    public class ResultEvent : IEventScoreProjection, IRLIFItem {
 
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
@@ -96,6 +96,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 9 )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
+        /// <inheritdoc />
+        /// <remarks>Squadding Assignmetn is not a part of the REST API response for GetResultList. It is included here to allow the Result
+        /// List Formatter access to squadding information, so it may display it on a formatted result list.</remarks>
+        [G_NS.JsonIgnore ]
+        [G_STJ_SER.JsonIgnore ]
+		public SquaddingAssignment SquaddingAssignment { get; set; }
+
 
         /// <inheritdoc />
 		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
@@ -126,7 +133,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
-        public Dictionary<string, Scopos.BabelFish.DataModel.OrionMatch.EventScore> EventScores { get; set; }
+        public Dictionary<string, EventScore> EventScores { get; set; }
+
+
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
+        public Dictionary<string, EventScore> ResultCofScores { get; set; }
+
+        public bool ShouldSerializeResultCOFScores() {
+            return (ResultCofScores != null && ResultCofScores.Count > 0 );
+        }
+
+        public static string KeyForResultCofScore(string matchId, string eventName ) {
+            return $"{matchId}: {eventName}";
+        }
 
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
@@ -141,8 +161,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
 
         /// <inheritdoc />
-        [G_STJ_SER.JsonPropertyOrder( 12 )]
-        [G_NS.JsonProperty( Order = 12 )]
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
         public Athena.Shot.Shot? LastShot { get; set; } = null;
 
         //Cached copy of the name of the top level event.
@@ -151,12 +171,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
 		public ResultStatus GetStatus() {
             if (string.IsNullOrEmpty( _topLevelEventName )) {
-                foreach (var es in this.EventScores.Values) {
-                    if (es.EventType == "EVENT") {
-                        _topLevelEventName = es.EventName;
-                        return es.Status;
+                if (this.EventScores is not null) {
+                    foreach (var es in this.EventScores.Values) {
+                        if (es.EventType == "EVENT") {
+                            _topLevelEventName = es.EventName;
+                            return es.Status;
+                        }
                     }
                 }
+
+                //EKA NOTE: Should we check .EventScores.ResultCofScores ? 
+
             } else if ( this.EventScores.TryGetValue( _topLevelEventName, out EventScore es)) {
                 return es.Status;
             }

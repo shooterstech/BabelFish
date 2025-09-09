@@ -15,7 +15,7 @@ using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
+    public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
@@ -25,9 +25,36 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Items = new List<ResultEvent>();
         }
 
-        [JsonPropertyOrder ( 1 )]
-		[Obsolete( "Use .Metadata.MatchID" )]
-		public string MatchID { get; set; } = string.Empty;
+        /// <summary>
+        /// If this is a local match, returns the local match id.
+        /// If this is from a virtual match, retur s the virtual match id.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+		public string MatchID {
+            get {
+                if (this.Metadata.Count == 0) {
+                    //This shouldn't happen
+                    return "1.1.1.1";
+                }
+
+                if (this.Metadata.Count == 1)
+                    return this.Metadata.First().Key;
+
+                //Likely a Virtual Match
+                foreach (var mId in this.Metadata.Keys) {
+                    if (Scopos.BabelFish.DataModel.OrionMatch.MatchID.TryParse( mId, out var matchID )) {
+                        if ( matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup ) {
+                            return mId;
+                        }
+                    }
+                }
+
+                //Um, not really sure how we got this far.
+                return this.Metadata.First().Key;
+
+            }
+        }
 
         /// <summary>
         /// Set name of the Ranking Rule definition used to rank this result list.
@@ -100,6 +127,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 bool oneIsIntermediate = false;
                 bool oneIsUnofficial = false;
                 foreach (var rlmd in Metadata.Values) {
+                    if (rlmd.Creator == "No creator found.")
+                        //Skip, since this child match was created with an old version of Orion that is unreliable reporting status.
+                        continue;
                     allFuture &= rlmd.Status == ResultStatus.FUTURE;
                     oneIsIntermediate |= rlmd.Status == ResultStatus.INTERMEDIATE;
                     oneIsUnofficial |= (rlmd.Status == ResultStatus.UNOFFICIAL || rlmd.Status == ResultStatus.OFFICIAL || rlmd.EndDate < DateTime.Today);
@@ -173,6 +203,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [JsonPropertyOrder ( 50 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
+		
+        /// <inheritdoc />
+		public List<IRLIFItem> GetAsIRLItemsList() {
+            return Items.ToList<IRLIFItem>();
+        }
 
         [JsonPropertyOrder( 10 )]
         public string MatchName { get; set; } = string.Empty;
@@ -238,7 +273,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CourseOfFireDef { get; set; } = string.Empty;
 
-        public string ScoreConfigName { get; set; } = string.Empty;
+		/// <summary>
+		/// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
+		/// <para>NOTE: The SCORE FORMAT COLLECTION is specified within the RESULT LIST FORMAT definition.</para>
+		/// </summary>
+		public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <inheritdoc />
         [DefaultValue( "" )]
@@ -315,6 +354,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
+        }
+
+        [G_NS.JsonIgnore]
+        public string Name {
+            get {
+                return this.ResultName;
+            }
         }
 
         /// <inheritdoc />

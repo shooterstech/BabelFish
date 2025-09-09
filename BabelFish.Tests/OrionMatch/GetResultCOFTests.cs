@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             string resultCofId = "4608b306-8b6d-40c2-b608-e5375d05bd12";
 
             var response = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             //This result cof should of 30 shots, and 8 event scores
             var resultCof = response.ResultCOF;
@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             string resultCofId = "4608b306-8b6d-40c2-b608-e5375d05bd12";
 
             var response = await client.GetResultCourseOfFireDetailAuthenticatedAsync( resultCofId, userAuthentication );
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var resultCof = response.ResultCOF;
             Assert.AreEqual( 30, resultCof.Shots.Count );

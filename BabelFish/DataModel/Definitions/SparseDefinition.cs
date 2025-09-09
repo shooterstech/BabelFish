@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class SparseDefinition : BaseClass {
 
-        protected Logger Logger { get; set; } = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger _logger { get; set; } = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// The Definition Type

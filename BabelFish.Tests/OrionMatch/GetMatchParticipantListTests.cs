@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchParticipantListResponse = client.GetMatchParticipantListPublicAsync( matchId );
             var matchParticipantListResponse = taskMatchParticipantListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse.RestApiStatusCode );
             var matchParticipantList = matchParticipantListResponse.MatchParticipantList;
 
             Assert.AreEqual( matchId.ToString(), matchParticipantList.MatchID );
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchParticipantListResponse = client.GetMatchParticipantListAuthenticatedAsync( matchId, userAuthentication );
             var matchParticipantListResponse = taskMatchParticipantListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse.RestApiStatusCode );
             var matchParticipantList = matchParticipantListResponse.MatchParticipantList;
 
             Assert.AreEqual( matchId.ToString(), matchParticipantList.MatchID );
@@ -69,7 +69,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchParticipantListResponse = client.GetMatchParticipantListPublicAsync( matchId, role );
             var matchParticipantListResponse = taskMatchParticipantListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse.RestApiStatusCode );
             var matchParticipantList = matchParticipantListResponse.MatchParticipantList;
 
             Assert.IsTrue( matchParticipantList.Items.Count > 0 );
@@ -94,7 +94,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchParticipantListResponse1 = client.GetMatchParticipantListPublicAsync( matchId );
             var matchParticipantListResponse1 = taskMatchParticipantListResponse1.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse1.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse1.RestApiStatusCode );
             var matchParticipantList1 = matchParticipantListResponse1.MatchParticipantList;
 
             //We should have a token, and should have 50 items inthe list.
@@ -106,7 +106,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskMatchParticipantListResponse2 = client.GetMatchParticipantListPublicAsync( nextRequest );
             var matchParticipantListResponse2 = taskMatchParticipantListResponse2.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse2.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, matchParticipantListResponse2.RestApiStatusCode );
             var matchParticipantList2 = matchParticipantListResponse2.MatchParticipantList;
             Assert.AreEqual( "", matchParticipantList2.NextToken );
             Assert.AreEqual( 10, matchParticipantList2.Items.Count );

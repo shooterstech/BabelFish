@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskSquaddingListResponse = client.GetSquaddingListPublicAsync( matchId, squaddingListName );
             var squaddingListResponse = taskSquaddingListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.RestApiStatusCode );
             var squaddingList = squaddingListResponse.SquaddingList;
 
             Assert.AreEqual( matchId.ToString(), squaddingList.MatchID );
@@ -48,7 +48,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskSquaddingListResponse = client.GetSquaddingListAuthenticatedAsync( matchId, squaddingListName, userAuthentication );
             var squaddingListResponse = taskSquaddingListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.RestApiStatusCode );
             var squaddingList = squaddingListResponse.SquaddingList;
 
             Assert.AreEqual( matchId.ToString(), squaddingList.MatchID );
@@ -74,13 +74,13 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskSquaddingListResponse = client.GetSquaddingListPublicAsync( matchId, squaddingListName, relayName );
             var squaddingListResponse = taskSquaddingListResponse.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse.RestApiStatusCode );
             var squaddingList = squaddingListResponse.SquaddingList;
 
             Assert.IsTrue( squaddingList.Items.Count > 0 );
-            foreach( var squaddingAssignment in  squaddingList.Items ) {
+            foreach( var squadding in  squaddingList.Items ) {
                 //Convert the SquaddingAssignment to their concrete class
-                var fpAssignment = (SquaddingAssignmentFiringPoint)squaddingAssignment;
+                var fpAssignment = (SquaddingAssignmentFiringPoint)squadding.SquaddingAssignment;
 
                 Assert.AreEqual( relayName, fpAssignment.Relay );
             }
@@ -102,7 +102,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskSquaddingListResponse1 = client.GetSquaddingListPublicAsync( matchId, squaddingListName );
             var squaddingListResponse1 = taskSquaddingListResponse1.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse1.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse1.RestApiStatusCode );
             var squaddingList1 = squaddingListResponse1.SquaddingList;
 
             //We should have a token, and should have 50 items inthe list.
@@ -114,7 +114,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskSquaddingListResponse2 = client.GetSquaddingListPublicAsync( nextRequest );
             var squaddingListResponse2 = taskSquaddingListResponse2.Result;
 
-            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse2.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, squaddingListResponse2.RestApiStatusCode );
             var squaddingList2 = squaddingListResponse2.SquaddingList;
             Assert.AreEqual( "", squaddingList2.NextToken );
             Assert.AreEqual( 10, squaddingList2.Items.Count );

@@ -23,9 +23,17 @@ namespace Scopos.BabelFish.DataActors.PDF {
             get { return ""; }
         }
 
+        protected bool IncludePageNumberInFooter { get; set; } = true;
+
+        /// <summary>
+        /// Optional text to include in the header.
+        /// </summary>
+        public string SubTitle { get; set; } = string.Empty;
+
         public void InsertMetaData( QuestPDF.Fluent.Document document ) {
             document.WithMetadata( new DocumentMetadata() {
                 Title = this.Title,
+                Subject = SubTitle,
                 Author = "Scopos",
                 Producer = "BabelFish",
                 CreationDate = DateTime.UtcNow,
@@ -34,19 +42,23 @@ namespace Scopos.BabelFish.DataActors.PDF {
         }
 
         protected virtual void Footer( IContainer container ) {
-            foreach (var resourceName in Assembly.GetExecutingAssembly().GetManifestResourceNames()) {
-                Console.WriteLine( resourceName );
-            }
 
             container.Row( row => {
-                row.RelativeItem( 1 )
-                .AlignLeft()
-                .Text( x => {
-                    x.Span( "Page " );
-                    x.CurrentPageNumber();
-                    x.Span( " / " );
-                    x.TotalPages();
-                } );
+
+                if (IncludePageNumberInFooter) {
+                    row.RelativeItem( 1 )
+                    .AlignLeft()
+                    .Text( x => {
+                        x.Span( "Page " );
+                        x.CurrentPageNumber();
+                        x.Span( " / " );
+                        x.TotalPages();
+                    } );
+                } else {
+                    row.RelativeItem( 1 )
+                    .AlignRight()
+                    .Text( "" );
+                }
 
                 using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Resources.Images.scopos_logo.png" )) {
                     row.RelativeItem( 1 )

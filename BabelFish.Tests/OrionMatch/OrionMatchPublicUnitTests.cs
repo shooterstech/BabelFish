@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskNotFound = client.GetMatchPublicAsync( new MatchID("1.2345.6789012345678901.0") );
 
             var matchNotFoundResponse = taskNotFound.Result;
-            Assert.AreEqual( HttpStatusCode.NotFound, matchNotFoundResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.NotFound, matchNotFoundResponse.RestApiStatusCode );
             Assert.IsTrue( matchNotFoundResponse.MessageResponse.Message.Count > 0 );
             Assert.IsTrue( matchNotFoundResponse.MessageResponse.Message.Any( x => x.Contains( "could not be found" ) ) );
 
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var taskUnauthorized = client.GetMatchPublicAsync( new MatchID( "1.1.2021031511174545.0" ) );
 
             var matchUnauthorizedResponse = taskUnauthorized.Result;
-            Assert.AreEqual( HttpStatusCode.Unauthorized, matchUnauthorizedResponse.StatusCode );
+            Assert.AreEqual( HttpStatusCode.Unauthorized, matchUnauthorizedResponse.RestApiStatusCode );
             Assert.IsTrue( matchUnauthorizedResponse.MessageResponse.Message.Count > 0 );
             Assert.IsTrue( matchUnauthorizedResponse.MessageResponse.Message.Any( x => x.Contains( "does not have permission" ) ) );
         }
@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchPublicAsync( matchId );
 
-            Assert.AreEqual( HttpStatusCode.OK, response.StatusCode );
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
 
             var match = response.Match;
 

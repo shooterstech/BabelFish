@@ -12,6 +12,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         Dictionary<string, Shot> Shots { get; }
 
         /// <summary>
+        /// Scores from Merged matches (e.g. tournaments, e.g. match groups)
+        /// Key is (not sure yet) $"{MatchID}: {EventName}"
+        /// </summary>
+        Dictionary<string, EventScore> ResultCofScores { get; }
+
+        /// <summary>
         /// Returns a copy of the Shots dictionary, but with the key being the Singular's EventName.
         /// </summary>
         /// <returns></returns>

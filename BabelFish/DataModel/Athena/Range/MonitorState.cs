@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.DataModel.Athena.Range
-{
-    public class MonitorState
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Range {
+    public class MonitorState {
 
-        public MonitorState()
-        {
+        public MonitorState() {
 
         }
 

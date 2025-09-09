@@ -364,9 +364,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (string.IsNullOrEmpty( eventName ))
                 return false;
 
-            if (eventScores.EventScores != null && eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
+            if (eventScores.EventScores is not null && eventScores.EventScores.TryGetValue( eventName, out eventScore )) {
                 //Try and get the Projected Score instance first, if and only if we're told to use it
-                if (Projected && eventScore.Projected != null && 
+                if (Projected && eventScore.Projected is not null && 
                     (eventScore.Status == ResultStatus.FUTURE || eventScore.Status == ResultStatus.INTERMEDIATE)) {
                     score = eventScore.Projected;
                     return true;
@@ -378,8 +378,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             Shot shot;
-            if (eventScores.Shots != null && eventScores.GetShotsByEventName().TryGetValue( eventName, out shot)) {
+            if (eventScores.Shots is not null && eventScores.GetShotsByEventName().TryGetValue( eventName, out shot)) {
                 score = shot.Score;
+                return true;
+            }
+
+            if ( eventScores.ResultCofScores is not null && eventScores.ResultCofScores.TryGetValue( eventName, out eventScore )) {
+
+                //Try and get the Projected Score instance first, if and only if we're told to use it
+                if (Projected && eventScore.Projected is not null &&
+                    (eventScore.Status == ResultStatus.FUTURE || eventScore.Status == ResultStatus.INTERMEDIATE)) {
+                    score = eventScore.Projected;
+                    return true;
+                }
+
+                //Normally, we would get the .Score dictionary
+                score = eventScore.Score;
                 return true;
             }
 

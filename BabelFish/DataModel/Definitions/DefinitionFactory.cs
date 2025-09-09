@@ -24,8 +24,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			var clubDetailResponse = await ClubsAPIClient.GetClubDetailPublicAsync( owner );
 			
 			//Check that the club / owner the user passed in could be looked up.
-			if (clubDetailResponse.StatusCode != System.Net.HttpStatusCode.OK) {
-				var msg = $"Could not learn information about the Orion Club '{owner}' when looking them up received status code '{clubDetailResponse.StatusCode}'.";
+			if (clubDetailResponse.RestApiStatusCode != System.Net.HttpStatusCode.OK) {
+				var msg = $"Could not learn information about the Orion Club '{owner}' when looking them up received status code '{clubDetailResponse.RestApiStatusCode}'.";
 				Logger.Error( msg );
 				throw new ScoposAPIException( msg );
 			}

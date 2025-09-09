@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Requests.ScoposData
         /// <summary>
         /// List of application names as strings the caller would like to recieve release notes for
         /// </summary>
-        public List<string> ApplicationItems { get; set; } = new List<string>( ["orion", "athena"] );
+        public List<string> ApplicationItems { get; set; } = new List<string>();
         /// <summary>
         /// The ThingName of whoever is making the call, not required. 
         /// </summary>
@@ -74,7 +74,10 @@ namespace Scopos.BabelFish.Requests.ScoposData
 
                 parameterList.Add("release-phase", new List<string>() { ReleasePhase.Description() });
 
-                parameterList.Add("application-items", ApplicationItems );
+                if (ApplicationItems != null && ApplicationItems.Count > 0)
+                {
+                    parameterList.Add("application-items", ApplicationItems);
+                }
 
                 if ( !string.IsNullOrEmpty( this.ThingName ) )
                     parameterList.Add("thing-name", new List<string>() { ThingName });

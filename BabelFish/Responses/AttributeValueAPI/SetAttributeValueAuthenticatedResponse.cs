@@ -32,7 +32,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI
 
         protected override void ConvertBodyToValue() {
 
-            if (StatusCode == System.Net.HttpStatusCode.OK) {
+            if (RestApiStatusCode == System.Net.HttpStatusCode.OK) {
                 var rootElement = Body.RootElement;
                 var setAttrValueListElement = rootElement.GetProperty( OBJECT_LIST_NAME );
 
