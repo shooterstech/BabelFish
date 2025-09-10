@@ -609,9 +609,10 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
     /// <summary>
     /// Tests that there is at least one EventType STAGE that is within the Event Tree
-    /// Tests that each EventType STAGE has a StageStyleMapping object.
-    /// Tests that the StageStyleMapping object has a valid reference to an STAGE STYLE.
-    /// Tests that the remaining (non EventType STAGE) events do not have a StageStyleMapping object.
+    /// -- Tests that each EventType STAGE has a StageStyleMapping object.
+    /// Tests that each StageStyleMapping object has a valid reference to an STAGE STYLE.
+    /// -- Tests that the remaining (non EventType STAGE) events do not have a StageStyleMapping object.
+    /// ++ Tests that all paths have exactly one Event with a StageStyleMapping
     /// </summary>
     public class IsCourseOfFireEventStageStyleMappingValid : CompositeSpecification<CourseOfFire> {
 
@@ -640,12 +641,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
                         valid = false;
                         Messages.Add( $"Event[{index}] is as an EventType STAGE, but is listed as outside the Event Tree. All STAGEs must be within the Event Tree." );
-                    } else if (@event.StageStyleMapping == null) {
-                        //Test that there is a valid StageStyleMapping object
+                    }
 
-                        valid = false;
-                        Messages.Add( $"Event[{index}] is as an EventType STAGE, but does not have an StageStyleMapping" );
-                    } else {
+                    if (@event.IsATopLevelStageStyle) { 
 
                         //Test that the STAGE STYLE definition reference is valid
                         var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
@@ -659,16 +657,44 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         }
                     }
 
-                } else {
-                    //Test that other (non EventType STAGE) events do not have an StageStyleMapping object
-                    if (@event.StageStyleMapping != null) {
-                        valid = false;
-                        Messages.Add( $"Event[{index}] is listed as an EventType {@event.EventType}, but includes an StageStyleMapping" );
-                    }
-
-                }
+                } 
 
                 index++;
+            }
+
+            //Find the Events that define a StageStyleMapping (aka top level stage style events)
+            var topLevelStageStyleEvents = topLevelEvent.GetTopLevelStageStyleEvents();
+
+            //Test that there is at least one of these.
+            if ( topLevelStageStyleEvents.Count == 0 ) {
+                valid = false;
+                Messages.Add( $"There must be at least one Event that defines a StageStyleMapping." );
+            }
+
+            //Test that each of these top level stage style events, do not have descendants that also define a StageStyleMapping.
+            foreach( var tlsse in topLevelStageStyleEvents ) {
+                //Find the descendants if there are any
+                var listOfEvents = tlsse.GetTopLevelStageStyleEvents();
+                listOfEvents.RemoveAt( 0 ); //Remove the first top level stage style event.
+
+                if (listOfEvents.Count != 0 ) {
+                    valid = false;
+                    string offendingEvents = string.Join( ", ", listOfEvents.Select( p => p.EventName ) );
+                    Messages.Add( $"The Event '{tlsse.EventName}' defines a StageStyleMapping. However it has one or more children that also define a StageStyleMapping. These are {offendingEvents}." );
+                }
+            }
+
+            //Test that all paths have one TopLevelStageStyleEvent
+            //Well do this by counting the number of singularities
+            int count = topLevelEvent.GetAllSingulars().Count();
+            int sum = 0;
+            foreach (var tlsse in topLevelStageStyleEvents) {
+                sum += tlsse.GetAllSingulars().Count();
+            }
+
+            if ( count != sum ) {
+                valid = false;
+                Messages.Add( "All paths in the Course of Fire Tree must have one Event that defines a StageStyleMapping." );
             }
 
             return valid;

@@ -145,21 +145,35 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>A second example, if you were to call this method on the top level of a 1600 prone aggregate,
         /// the return should be the events 50yd, 50m, dewer 50yd, dewer 100yd, and 100yd.</para></remarks>
         /// <returns></returns>
-        public List<EventComposite> GetEventsOfDistinctStageStyles() {
+        public List<EventComposite> GetTopLevelStageStyleEvents() {
 			List<EventComposite> list = new List<EventComposite>();
 
             //This is the recursive stop condition
-            if (this.StageStyleMapping != null) {
+            if (this.IsATopLevelStageStyle) {
                 list.Add( this );
                 return list;
             }
 
             foreach (var child in this.Children) {
-                list.AddRange( child.GetEventsOfDistinctStageStyles() );
+                list.AddRange( child.GetTopLevelStageStyleEvents() );
             }
 
             return list;
 		}
+
+        /// <summary>
+        /// Helper method to identify Events that define a StageStyleMapping.
+        /// <para>
+        /// When an Event defines a StageStyleMapping, it means that all descendent shots fired within that Event
+        /// will have been fired on the same target and withing the same STAGE STYLE. This method returns a list of 
+        /// EventComposites that have defined StageStyleMappings, and thus have distinct STAGE STYLES.
+        /// </para>
+        /// </summary>
+        public bool IsATopLevelStageStyle {
+            get {
+                return this.StageStyleMapping != null;
+            }
+        }
 
         /// <summary>
         /// Searches the children of this Event Composite, for one with the passed in eventName and returns it.
@@ -306,8 +320,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 					parent.ScoreFormat = t.ScoreFormat;
                     parent.Calculation = t.Calculation;
 
-                    if (t.EventType == EventtType.STAGE)
+                    if (t.IsATopLevelStageStyle)
                         parent.StageStyleMapping = t.StageStyleMapping;
+
 					foreach ( var childName in t.Children ) {
                         EventComposite child;
                         if (t.EventType == EventtType.STAGE) {

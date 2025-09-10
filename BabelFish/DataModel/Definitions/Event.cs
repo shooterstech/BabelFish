@@ -111,10 +111,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// StageStyleSelection determines how the resulting Result COF is mapped to a STAGE STYLE.
+        /// <para>
+        /// When an Event defines a StageStyleMapping, it means that all descendent shots fired within that Event
+        /// will have been fired on the same target and withing the same STAGE STYLE. This method returns a list of 
+        /// EventComposites that have defined StageStyleMappings, and thus have distinct STAGE STYLES.
+        /// </para>
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         public StageStyleMapping StageStyleMapping { get; set; }
+
+        /// <summary>
+        /// Helper method to identify Events that define a StageStyleMapping.
+        /// <para>
+        /// When an Event defines a StageStyleMapping, it means that all descendent shots fired within that Event
+        /// will have been fired on the same target and withing the same STAGE STYLE. This method returns a list of 
+        /// EventComposites that have defined StageStyleMappings, and thus have distinct STAGE STYLES.
+        /// </para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool IsATopLevelStageStyle {
+            get {
+                return this.StageStyleMapping != null;
+            }
+        }
 
         /// <summary>
         /// EventStyleSelection determines how the resulting Result COF is mapped to a EVENT STYLE.

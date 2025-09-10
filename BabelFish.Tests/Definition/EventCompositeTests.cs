@@ -138,18 +138,18 @@ namespace Scopos.BabelFish.Tests.Definition
             var threePositionCofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( threePositionSetName);
             var threePositionCofTopLevel = EventComposite.GrowEventTree( threePositionCofDefinition);
 
-            var threePositionListOfStages = threePositionCofTopLevel.GetEventsOfDistinctStageStyles();
+            var threePositionListOfStages = threePositionCofTopLevel.GetTopLevelStageStyleEvents();
             //Should return the Evetns Prone, Standing, Kneeling
             Assert.AreEqual( 3, threePositionListOfStages.Count );
 
             var proneEventComp = threePositionCofTopLevel.FindEventComposite( "Prone" );
-            var proneListOfStages = proneEventComp.GetEventsOfDistinctStageStyles();
+            var proneListOfStages = proneEventComp.GetTopLevelStageStyleEvents();
             //Should return itself, Prone
             Assert.AreEqual( 1, proneListOfStages.Count );
 
             //Now go too far down the event try, and list returned should be empty
             var pr1EventComp = threePositionCofTopLevel.FindEventComposite( "PR 1" );
-            var pr1ListOfStages = pr1EventComp.GetEventsOfDistinctStageStyles();
+            var pr1ListOfStages = pr1EventComp.GetTopLevelStageStyleEvents();
             Assert.AreEqual( 0, pr1ListOfStages.Count );   
 
 		}
