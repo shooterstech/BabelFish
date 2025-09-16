@@ -68,5 +68,22 @@ namespace Scopos.BabelFish.Helpers {
             }
             return returnEnum;
         }
+
+        /// <summary>
+        /// Generates a 32 bit hash code for a list of enums.
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="enums"></param>
+        /// <returns></returns>
+        public static int GetHashValue<TEnum>( this IEnumerable<TEnum> enums ) where TEnum : struct, Enum {
+            //NOTE: Using GetHashValue since GetHashCode already has a well known meaning
+            unchecked {
+                int hash = 17;
+                foreach (var e in enums) {
+                    hash = hash * 31 + Convert.ToInt32( e );
+                }
+                return hash;
+            }
+        }
     }
 }

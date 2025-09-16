@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public MatchAuthorization() {
         }
 
-        public MatchAuthorization(string email, string role) {
+        public MatchAuthorization(string email, MatchParticipantRole role ) {
             UserEmail = email;
             Role = role;
         }
@@ -23,18 +23,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string UserEmail { get; set; }
 
         /// <summary>
-        /// The role the participant is assigned. If a participant has multiple roles use multiple MatchAuthorization Valid values are
-        /// Match Director
-        /// Range Officer
-        /// Chief Range Officer
-        /// Stat Officer
-        /// Chief Stat Officer
-        /// Jury Member
-        /// Jury Chairmen
-        /// Athlete
-        /// Coach
-        /// Team Official
+        /// The authorization role given to this user.
         /// </summary>
-        public string Role { get; set; }
+        public MatchParticipantRole Role { get; set; }
     }
 }

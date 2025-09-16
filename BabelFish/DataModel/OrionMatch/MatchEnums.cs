@@ -138,7 +138,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     }
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
-    public enum MatchAuthorizationRole {
+    public enum MatchAuthorizationCapability {
         [Description( "Create Incident Reports" )]
         [EnumMember( Value = "Create Incident Reports" )]
         CREATE_INCIDENT_REPORTS,

@@ -20,6 +20,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public EventtType EventType { get; private set; }
 
+        /// <summary>
+        /// If and only if, this is a Singular, this field tells why kind of Singular it is. This field has no meaning
+        /// if the EventThype is not Singular.
+        /// </summary>
+        public SingularType SingularType { get; private set; } = SingularType.SHOT;
+
         public List<EventComposite> Children { get; private set; }
 
         public string EventAppellation {
@@ -349,6 +355,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 				parent.EventType = EventtType.SINGULAR;
                 parent.ScoreFormat = s.ScoreFormat;
                 parent.Calculation = EventCalculation.NONE;
+                parent.SingularType = s.Type;
                 return;
 			}
 

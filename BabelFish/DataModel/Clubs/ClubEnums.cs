@@ -8,6 +8,20 @@ using System.Text.Json;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
 
+    public enum ClubAuthorizationRole {
+        /*
+         * These values should align with the enum values defined in the sql table orion_account_authorization, role column
+         */
+        ADMIN,
+
+        MANAGER,
+
+        MEMBER, 
+        
+        COACH, 
+        
+        PAYER
+    }
 
     /// <summary>
     /// Medea called these LicenseFeature
