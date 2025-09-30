@@ -180,9 +180,12 @@ namespace Scopos.BabelFish.DataActors.PDF
 
                         foreach (int ro in Enumerable.Range(1, (int)colsToHave))
                         {
+                            //place the image
                             TargetImageDetails.EventInfo = eventsToShow[eventIndex];
                             table.Cell().MaxWidth(183).BorderLeft(2).BorderTop(2).BorderColor(ScoposColors.BLUE_LIGHTEN_1).Component(new TargetImage(TargetImageDetails));
 
+                            //place the shot table.
+                            ShotTableDetails.EventInfo = eventsToShow[eventIndex];
                             foreach (var number in Enumerable.Range(1, shotTablesNumber))
                             {
                                 if(number == 6 || number == shotTablesNumber)
