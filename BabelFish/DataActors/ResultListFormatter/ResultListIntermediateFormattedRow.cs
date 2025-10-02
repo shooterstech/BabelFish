@@ -1003,33 +1003,41 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
 		/// <summary>
-		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresWithOFFICIAL property.
+		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresBeforeOFFICIAL and .ShowZeroScoresWithOFFICIAL properties.
 		/// </summary>
 		/// <returns></returns>
-		public virtual bool ShowRowBasedOnShowZeroScoresWithOFFICIAL() {
+		public virtual bool ShowRowBasedZeroScores() {
             //if _resutlEvent is null, then it's from a squadding list
             if (this._resultEvent is null)
                 return true;
 
-            //This criteria only applies if we are at the OFFICIAL status
-            if (this._resultListFormatted.ResultList.Status != ResultStatus.OFFICIAL)
-                return true;
+            //Check if the score is zero
+            if (this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
+                //If we get here, the score is zero.
 
-            if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL
-                && this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
-                //The result list status is official, and we were told to exclude rows with scores of zero
+                if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL
+                    && this._resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL)
+                    return true;
 
-                //We do however show this row if the score is zero due to DNS, DNF, or DSQ
+                if (this._resultListFormatted.ShowZeroScoresBeforeOFFICIAL
+                    && (this._resultListFormatted.ResultList.Status == ResultStatus.FUTURE
+                        || this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
+                        || this._resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL) )
+                    return true;
+
+                //We do show this row if the score is zero due to DNS, DNF, or DSQ
                 if (GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
                     || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
                     || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
                     return true;
-                } else {
-                    return false;
-                }
-            }
+                } 
 
-            return true;
+                return false;
+
+            } else {
+                //If we get here, the score is above zero
+                return true;
+            }
         }
 
         internal virtual void ResetNumberOfChildRowsLeftToShow() {

@@ -13,6 +13,7 @@ using Scopos.BabelFish.Converters;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Collections.Concurrent;
 
 namespace Scopos.BabelFish.APIClients {
     public abstract class APIClient<T> {
@@ -42,11 +43,13 @@ namespace Scopos.BabelFish.APIClients {
         /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
         public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
-        private static Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static TimeSpan _timeOut = TimeSpan.FromSeconds(15);
-        public HttpClient httpClient = new HttpClient() {
-            Timeout = _timeOut,
-        };
+        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// Key is the timeout in seconds.
+        /// Value is the httpClient 
+        /// </summary>
+        private ConcurrentDictionary<int, HttpClient> _httpClients = new ConcurrentDictionary<int, HttpClient>();
 
         /// <summary>
         /// 
@@ -58,7 +61,7 @@ namespace Scopos.BabelFish.APIClients {
 
             this.ApiStage = APIStage.PRODUCTION;
 
-            logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
+            _logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
 
         /// <summary>
@@ -70,7 +73,7 @@ namespace Scopos.BabelFish.APIClients {
 
             this.ApiStage = apiStage;
 
-            logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
+            _logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
 
         #region properties
@@ -83,6 +86,19 @@ namespace Scopos.BabelFish.APIClients {
         #endregion properties
 
         #region Methods
+        private HttpClient GetHttpClient( int timeout ) {
+            if (_httpClients.TryGetValue( timeout, out HttpClient client )) { return client; }
+
+            client = new HttpClient() {
+                Timeout = TimeSpan.FromSeconds( timeout )
+            };
+
+            _httpClients.TryAdd( timeout, client );
+
+            return client;
+        }
+
+
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass, new() {
             // Get Uri for call
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
@@ -105,7 +121,7 @@ namespace Scopos.BabelFish.APIClients {
                 //stopWatch.Stop();
                 response.InMemoryCachedResponse = true;
 
-                logger.Info( $"Returning a in-memory cached Response for {request}." );
+                _logger.Info( $"Returning a in-memory cached Response for {request}." );
                 return;
             }
 
@@ -123,7 +139,7 @@ namespace Scopos.BabelFish.APIClients {
                     response.FileSystemCachedResponse = true;
 
                     ResponseCache.CACHE.SaveResponse( fileSystemReadResponse.Item2 );
-                    logger.Info( $"Returning a file system cached Response for {request}." );
+                    _logger.Info( $"Returning a file system cached Response for {request}." );
                     return;
                 }
             }
@@ -159,8 +175,9 @@ namespace Scopos.BabelFish.APIClients {
                         requestMessage.Content = request.PostParameters;
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
-                    logger.Info( $"Calling {request} on {uri}." );
+                    _logger.Info( $"Calling {request} on {uri}." );
                     Statistics.Increment();
+                    var httpClient = this.GetHttpClient( request.Timeout );
 
                     startTime = DateTime.Now;
                     if (request.RequiresCredentials) {
@@ -176,7 +193,7 @@ namespace Scopos.BabelFish.APIClients {
                         responseMessage = await httpClient.SendAsync( requestMessage );
                     }
 
-                    logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );
+                    _logger.Info( $"{request} has returned with {responseMessage.StatusCode} in {response.TimeToRun.TotalSeconds:f4} seconds." );
                 }
 
                 response.RestApiStatusCode = responseMessage.StatusCode;
@@ -222,8 +239,8 @@ namespace Scopos.BabelFish.APIClients {
                     }
                 } else {
                     var msg = $"API error with: {responseMessage.ReasonPhrase}";
-                    logger.Error( msg );
-                    logger.Debug( jsonAsString );
+                    _logger.Error( msg );
+                    _logger.Debug( jsonAsString );
                     response.RestApiStatusCode = responseMessage.StatusCode;
                     response.OverallStatusCode = RequestStatusCode.RestApiServerError;
                     response.ExceptionMessage = msg;
@@ -235,8 +252,8 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = je.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                logger.Fatal( je, $"JsonException: {je.Message}" );
-                logger.Debug( jsonAsString );
+                _logger.Fatal( je, $"JsonException: {je.Message}" );
+                _logger.Debug( jsonAsString );
 
             } catch (TaskCanceledException tce) {
                 //This is a timeout exception. The request took longer than allowed (which is set by _tiemOut, or 15s).
@@ -247,7 +264,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
                 //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                logger.Fatal( tce, "API Call timed out: {failmsg}", tce.Message );
+                _logger.Fatal( tce, "API Call timed out: {failmsg}", tce.Message );
 
             } catch (Exception ex) {
 
@@ -257,8 +274,8 @@ namespace Scopos.BabelFish.APIClients {
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
                 //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                logger.Fatal( ex, $"API Call failed: {ex.Message}" );
-                logger.Debug( jsonAsString );
+                _logger.Fatal( ex, $"API Call failed: {ex.Message}" );
+                _logger.Debug( jsonAsString );
             }
         }
 

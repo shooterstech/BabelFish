@@ -90,6 +90,9 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <param name="other"></param>
         /// <returns></returns>
         public int CompareTo( Version other ) {
+            if ( other is null )
+                return 1;
+
             //Compare Major Versions
             if (this.MajorVersion > other.MajorVersion)
                 return -1;
@@ -124,7 +127,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <param name="other"></param>
         /// <returns></returns>
         public bool Equals( Version other ) {
-            if (other == null)
+            if (other is null)
                 return false;
 
             return this.MajorVersion == other.MajorVersion
@@ -139,7 +142,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <param name="obj"></param>
         /// <returns></returns>
         public override bool Equals( object obj ) {
-            if (obj == null)
+            if (obj is null)
                 return false;
             if (!(obj is Version))
                 return false;

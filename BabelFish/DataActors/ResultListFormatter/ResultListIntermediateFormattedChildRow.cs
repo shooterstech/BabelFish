@@ -46,9 +46,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <inheritdoc/>
-        public override bool ShowRowBasedOnShowZeroScoresWithOFFICIAL() {
-			return this.ParentRow.ShowRowBasedOnShowZeroScoresWithOFFICIAL() 
-                && base.ShowRowBasedOnShowZeroScoresWithOFFICIAL();
+        public override bool ShowRowBasedZeroScores() {
+			return this.ParentRow.ShowRowBasedZeroScores() 
+                && base.ShowRowBasedZeroScores();
 		}
 
 		/// <inheritdoc/>

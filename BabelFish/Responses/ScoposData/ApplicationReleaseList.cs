@@ -27,5 +27,22 @@ namespace Scopos.BabelFish.Responses.ScoposData
                 return !string.IsNullOrEmpty(NextToken);
             }
         }
+
+        /// <summary>
+        /// Helper method to return only the ReleaseInfo with the passed in applicationName.
+        /// </summary>
+        /// <param name="applicationName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If applicationName can not be found.</exception>
+        public ReleaseInfo GetByApplicationName( ApplicationName applicationName ) {
+            foreach (var item in Items) {
+                if (item.Application == applicationName) {
+                    return item;
+                }
+            }
+
+            throw new ArgumentException( $"Could not find an application with name {applicationName}." );
+
+        }
     }
 }
