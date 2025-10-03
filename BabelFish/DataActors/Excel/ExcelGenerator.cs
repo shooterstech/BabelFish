@@ -8,6 +8,7 @@ namespace Scopos.BabelFish.DataActors.Excel
 {
     public abstract class ExcelGenerator
     {
-        public abstract ExcelPackage GenerateExcel(List<string> data, string filePath);
+        public abstract ExcelPackage GenerateExcel(string filePath);
+
     }
 }
