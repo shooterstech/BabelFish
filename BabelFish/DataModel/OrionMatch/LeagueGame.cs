@@ -23,6 +23,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		public string GameName { get; set; }
 
         /// <summary>
+        /// The Virtual type of league game. Usually Not Set, Local, Virtual, Bye Week, or Cancelled.
+        /// </summary>
+        public LeagueVirtualType Virtual { get; set; }
+
+        /// <summary>
+        /// The date this league game started.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime StartDate { get; set; }
+
+        /// <summary>
+        /// The date this league game ended.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// The URL to the post-game press release.
+        /// <para>An empty string means a press release does not exist.</para>
+        /// </summary>
+        public string PressReleaseUrl { get; set; }
+
+        /// <summary>
         /// Human readable Name of the League Network
         /// </summary>
         public string LeagueNetworkName { get; set; }
@@ -42,30 +67,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string LeagueName { get; set; }
 
         /// <summary>
-        /// The Virtual type of league game. Usually Not Set, Local, Virtual, Bye Week, or Cancelled.
-        /// </summary>
-        public LeagueVirtualType Virtual { get; set; }
-
-        /// <summary>
         /// The scheibentoni ID of the league
         /// </summary>
         public string LeagueID { get; set; }
 
-        /// <summary>
-        /// The date this league game started.
-        /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
-        public DateTime StartDate { get; set; }
 
-        /// <summary>
-        /// The date this league game ended.
-        /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
-        public DateTime EndDate { get; set; }
-
-		public LeagueTeamResult HomeTeam { get; set; }
+        public LeagueTeamResult HomeTeam { get; set; }
 
 		public LeagueTeamResult AwayTeam { get; set; }
 
