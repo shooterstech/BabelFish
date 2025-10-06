@@ -18,7 +18,7 @@ namespace BabelFish.Tests.DataActors.Excel
         {
             var client = new OrionMatchAPIClient();
 
-            //This match id has three relays of 20 athletes
+            //12 athletes, one relay.
             var matchId = new MatchID("1.1.2025072316000865.0");
             var resultListName = "Individual - All";
 
