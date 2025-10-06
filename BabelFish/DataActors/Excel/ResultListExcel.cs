@@ -81,7 +81,7 @@ namespace Scopos.BabelFish.DataActors.Excel
             this.ResultList = resultList;
         }
 
-        public override ExcelPackage GenerateExcel(string filePath)
+        public override string GenerateExcel(string ? filePath = null)
         {
             //uncomment IF testing.
             //ExcelPackage.License.SetCommercial("1VeFo1xFNO0YNHS3Kqf2b/hoiDBi3yxU65Ti/jU1vXs+VVsEmxQsCh4+SLL9mtZu1UYE5lwjtqOMrNGfn+kHuwEGRDMzQTYz5wc+ARkEAQIA");
@@ -180,8 +180,15 @@ namespace Scopos.BabelFish.DataActors.Excel
                     Worksheet1.View.FreezePanes(2, 1);
                 }
 
-                package.SaveAs(filePath);
-                return package;
+                if(filePath != null)
+                {
+                    package.SaveAs(filePath);
+                }
+                // Setting the buffer to hold the bytes of the Excel file
+                var buffer = package.GetAsByteArray();
+
+                //I think I should simply return the buffer, then the website handles displaying it.
+                return Convert.ToBase64String(buffer);
             }
         }
 
