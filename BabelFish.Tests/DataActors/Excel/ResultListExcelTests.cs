@@ -35,6 +35,7 @@ namespace BabelFish.Tests.DataActors.Excel
             var match = (await client.GetMatchAsync(matchId)).Match;
 
             var excel = new ResultListExcel(resultList);
+            await excel.InitalizeAsync();
             var package = excel.GenerateExcel( "c:\\temp\\hello.xlsx" );
 
             //await package.SaveAsAsync("c:\\temp\\hello.xlsx");

@@ -16,6 +16,7 @@ namespace Scopos.BabelFish.DataActors.Excel
     {
 
         private ResultList ResultList { get; set; } = null;
+        private ResultList PassedResultList { get; set; } = null;
 
         private List<string> resultEventsToInclude = new List<string>();
 
@@ -28,13 +29,16 @@ namespace Scopos.BabelFish.DataActors.Excel
 
         public ResultListExcel(ResultList resultList)
         {
-            CreateEventTreeAsync(resultList);
-            while (this.ResultList == null) ; // what's the right way to do this??
+            ResultList = resultList;
         }
 
-        private async void CreateEventTreeAsync(ResultList resultList)
+        public async Task InitalizeAsync()
         {
+            await CreateEventTreeAsync(ResultList);
+        }
 
+        private async Task CreateEventTreeAsync(ResultList resultList)
+        {
             #region CreateEventTree
 
             SetName cofSetName;
@@ -77,8 +81,6 @@ namespace Scopos.BabelFish.DataActors.Excel
                 ;
             }
             #endregion
-
-            this.ResultList = resultList;
         }
 
         public override string GenerateExcel(string ? filePath = null)
@@ -192,17 +194,11 @@ namespace Scopos.BabelFish.DataActors.Excel
 
         private ExcelWorksheet PopulateHeader(ExcelWorksheet worksheet, List<string> headers)
         {
-            using (var range = worksheet.Cells[1, headers.Count])
-            {
-                range.Style.Font.Color.SetColor(System.Drawing.Color.White);
-                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
-            }
-
             int currentCol = 1;
             foreach (string colName in headers)
             {
                 worksheet.Cells[1, currentCol].Value = colName;
+                worksheet.Cells[1, currentCol].Style.Font.Bold = true;
                 currentCol++;
             }
             return worksheet;
