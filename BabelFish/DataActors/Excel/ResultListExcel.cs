@@ -83,7 +83,6 @@ namespace Scopos.BabelFish.DataActors.Excel
 
         public override string GenerateExcel(string ? filePath = null)
         {
-            //ExcelPackage.License.SetCommercial("1VeFo1xFNO0YNHS3Kqf2b/hoiDBi3yxU65Ti/jU1vXs+VVsEmxQsCh4+SLL9mtZu1UYE5lwjtqOMrNGfn+kHuwEGRDMzQTYz5wc+ARkEAQIA");
             using (var package = new ExcelPackage())
             {
                 Worksheet1 = package.Workbook.Worksheets.Add(this.ResultList.Status + " ResultList");
