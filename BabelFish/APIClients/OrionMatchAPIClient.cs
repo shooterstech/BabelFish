@@ -599,6 +599,15 @@ namespace Scopos.BabelFish.APIClients {
 			return response;
 		}
 
+        public async Task<PostSendPressReleaseEmailResponse> PostSendPressReleaseEmailAsync( PostSendPressReleaseEmailRequest requestParameters ) {
+            PostSendPressReleaseEmailResponse response = new PostSendPressReleaseEmailResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+
+        }
+
 		#endregion
 
 	}
