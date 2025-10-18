@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 }
 
                 if (SendToDistribution) {
-                    parameterList.Add( "send-to-distribution", new List<string> { TestOnly.ToString() } );
+                    parameterList.Add( "send-to-distribution", new List<string> { SendToDistribution.ToString() } );
                 }
 
                 if (Resend) {

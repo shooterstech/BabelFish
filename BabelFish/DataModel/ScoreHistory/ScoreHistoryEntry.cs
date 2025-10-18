@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// NOTE: Current this field is TypeOfMatch, but it will soon be renmaed int eh API
         /// </summary>
         
-        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
+        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.TRAINING;
 
         public string MatchName { get; set; } = "";
 

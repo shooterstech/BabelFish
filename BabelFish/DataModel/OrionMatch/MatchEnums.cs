@@ -276,7 +276,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
-    public enum MatchTypeOptions {
+    public enum CompetitionTypeOptions {
         /// <summary>
         /// Unknown
         /// </summary>
@@ -368,6 +368,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [EnumMember( Value = "National Championship" )]
         NATIONAL_CHAMPIONSHIP
 
+    }
+
+    /// <summary>
+    /// Concreate class identifier for MatchBase abstract class.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum MatchType {
+        [Description( "Match" )]
+        [EnumMember( Value = "Match" )]
+        MATCH,
+
+        [Description( "League" )]
+        [EnumMember( Value = "League" )]
+        LEAGUE,
+
+        [Description( "Tournament" )]
+        [EnumMember( Value = "Tournament" )]
+        TOURNAMENT            
     }
 
     /// <summary>

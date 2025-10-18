@@ -47,7 +47,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 		public VisibilityOption Visibility { get; set; } = VisibilityOption.PROTECTED;
 
 		
-		public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.PRACTICE;
+		public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.PRACTICE;
 
         public string MatchName { get; set; } = string.Empty;
 

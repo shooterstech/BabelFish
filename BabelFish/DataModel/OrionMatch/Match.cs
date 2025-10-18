@@ -119,7 +119,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 11 )]
         public string MatchID { get; set; } = string.Empty;
 
-        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.LOCAL_MATCH;
+        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.LOCAL_MATCH;
 
         /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to

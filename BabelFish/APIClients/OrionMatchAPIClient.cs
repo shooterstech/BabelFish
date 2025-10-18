@@ -608,7 +608,85 @@ namespace Scopos.BabelFish.APIClients {
 
         }
 
-		#endregion
+        #endregion
 
-	}
+        #region Tournament API Calls
+
+        /// <summary>
+        /// Get Tournament Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetMatchRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<GetTournamentPublicResponse> GetTournamentPublicAsync( GetTournamentPublicRequest requestParameters ) {
+
+            GetTournamentPublicResponse response = new GetTournamentPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Tournament Detail API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <returns>Tournament Object</returns>
+        public async Task<GetTournamentPublicResponse> GetTournamentPublicAsync( MatchID tournamentId ) {
+            var request = new GetTournamentPublicRequest( tournamentId );
+
+            return await GetTournamentPublicAsync( request );
+        }
+
+        /// <summary>
+        /// Get Tournament Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetTournamentRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<GetTournamentAuthenticatedResponse> GetTournamentAuthenticatedAsync( GetTournamentAuthenticatedRequest requestParameters ) {
+
+            GetTournamentAuthenticatedResponse response = new GetTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Tournament Detail API
+        /// </summary>
+        /// <param name="matchid"></param>
+        /// <param name="withAuthentication">default false</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<GetTournamentAuthenticatedResponse> GetTournamentAuthenticatedAsync( MatchID tournamentId, UserAuthentication credentials ) {
+            var request = new GetTournamentAuthenticatedRequest( tournamentId, credentials );
+
+            return await GetTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
+        public async Task<GetTournamentAbstractResponse> GetTournamentAsync( MatchID tournamentId, UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetTournamentPublicAsync( tournamentId );
+            } else {
+                return await GetTournamentAuthenticatedAsync( tournamentId, credentials );
+            }
+        }
+
+        public async Task<GetTournamentAbstractResponse> GetTournamentAsync( GetTournamentAbstractRequest requestParameters ) {
+            if (requestParameters is GetTournamentPublicRequest)
+                return await this.GetTournamentPublicAsync( (GetTournamentPublicRequest)requestParameters );
+            else if (requestParameters is GetTournamentAuthenticatedRequest)
+                return await this.GetTournamentAuthenticatedAsync( (GetTournamentAuthenticatedRequest)requestParameters );
+            else
+                //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
+        #endregion
+    }
 }

@@ -102,7 +102,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
 
-        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
+        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.TRAINING;
 
         /// <summary>
         /// The Local Date that this score was shot. 

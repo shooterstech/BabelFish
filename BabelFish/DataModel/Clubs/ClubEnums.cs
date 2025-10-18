@@ -10,16 +10,31 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
     public enum ClubAuthorizationRole {
         /*
-         * These values should align with the enum values defined in the sql table orion_account_authorization, role column
+         * These values should align with the enum values defined in the sql table orion_account_authorization, role column.
+         * Use Proper case to be considtent with the Role names for Match Authorization.
          */
+
+        /// <summary>
+        /// Can do everything a Manager can plus assign the Admin role to other Club members.
+        /// </summary>
+        [Description( "Admin" )]
+        [EnumMember( Value = "Admin" )]
         ADMIN,
 
+        [Description( "Manager" )]
+        [EnumMember( Value = "Manager" )]
         MANAGER,
 
-        MEMBER, 
-        
-        COACH, 
-        
+        [Description( "Member" )]
+        [EnumMember( Value = "Member" )]
+        MEMBER,
+
+        [Description( "Coach" )]
+        [EnumMember( Value = "Coach" )]
+        COACH,
+
+        [Description( "Payer" )]
+        [EnumMember( Value = "Payer" )]
         PAYER
     }
 
