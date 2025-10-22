@@ -5,17 +5,24 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
-    public class SumMethod : TournamentMergeMethod {
+    public class SumMethod : MergeMethod {
 
-        public SumMethod( TournamentMerger tournamentMerger ) : base( tournamentMerger ) { 
-        
+
+        public SumMethod( TournamentMerger tournamentMerger, SumMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
+
+        }
+
+        public SumMethodConfiguration MergeConfiguration {
+            get {
+                return (SumMethodConfiguration)_mergeConfiguration;
+            }
         }
 
         public override void Merge( ResultEvent re ) {
 
             EventScore mergedEventScore = new EventScore();
 
-            foreach (var mergingResultList in TournamentMerger.ResultListsToMerge) {
+            foreach (var mergingResultList in TournamentMerger.ResultListsMembers) {
                 var key = ResultEvent.KeyForResultCofScore( mergingResultList.MatchID, mergingResultList.EventName );
 
                 if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore )) {
