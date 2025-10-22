@@ -324,33 +324,42 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for CourseOfFireDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef is empty, known to happen with older versions of Orion. </exception>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
             if (string.IsNullOrEmpty( CourseOfFireDef ))
-                throw new ScoposAPIException( $"The value for CourseOfFireDef is empty or null.", Logger );
+                throw new ArgumentNullException( $"The value for CourseOfFireDef is empty or null.", Logger );
 
             SetName cofSetName = SetName.Parse( CourseOfFireDef );
             return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
         public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
 
             if (string.IsNullOrEmpty( RankingRuleDef ))
-                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+                throw new ArgumentNullException( $"The value for RankingRuleDef is empty or null." );
 
             SetName rrSetName = SetName.Parse( RankingRuleDef );
             return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
             if (string.IsNullOrEmpty( ResultListFormatDef ))
-                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
+                throw new ArgumentNullException( $"The value for ResultListFormatDef is empty or null." );
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );

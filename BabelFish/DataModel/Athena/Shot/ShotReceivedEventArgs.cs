@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BabelFish.DataModel.Athena.Shot
+namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
     public class ShotReceivedEventArgs : EventArgs
     {
