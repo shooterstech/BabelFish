@@ -1,5 +1,4 @@
-﻿using BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Athena {
     [Serializable]

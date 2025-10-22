@@ -1,11 +1,4 @@
-﻿using BabelFish.DataModel;
-using Scopos.BabelFish.DataModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Scopos.BabelFish.Responses {
 
     /// <summary>

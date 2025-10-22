@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
-        private Logger Logger = LogManager.GetCurrentClassLogger();
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         public ResultList() {
             Items = new List<ResultEvent>();
@@ -331,7 +331,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
             if (string.IsNullOrEmpty( CourseOfFireDef ))
-                throw new ArgumentNullException( $"The value for CourseOfFireDef is empty or null.", Logger );
+                throw new ArgumentNullException( $"The value for CourseOfFireDef is empty or null." );
 
             SetName cofSetName = SetName.Parse( CourseOfFireDef );
             return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );

@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {

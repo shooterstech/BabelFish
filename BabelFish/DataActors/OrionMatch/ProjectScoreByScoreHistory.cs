@@ -1,11 +1,9 @@
-﻿using BabelFish.DataModel.Athena;
-using Scopos.BabelFish.APIClients;
+﻿using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
-using System.Linq;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch
