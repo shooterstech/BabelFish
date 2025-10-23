@@ -133,6 +133,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public int ConcreteClassId { get; set; }
 
-        public virtual int UniqueMergeId { get; }
+        public abstract int UniqueMergeId { get; }
     }
 }

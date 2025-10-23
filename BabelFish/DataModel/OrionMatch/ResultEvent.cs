@@ -144,7 +144,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (ResultCofScores != null && ResultCofScores.Count > 0 );
         }
 
+        /// <summary>
+        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
+        /// match has to be unique, and each matchId is unique, then the key too will be unique.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
         public static string KeyForResultCofScore(string matchId, string eventName ) {
+            return $"{matchId}: {eventName}";
+        }
+
+        /// <summary>
+        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
+        /// match has to be unique, and each matchId is unique, then the key too will be unique.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        public static string KeyForResultCofScore( MatchID matchId, string eventName ) {
             return $"{matchId}: {eventName}";
         }
 

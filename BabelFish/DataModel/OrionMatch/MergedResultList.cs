@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Tournaments;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    public class MergedResultList {
+    public class MergedResultList : IGetScoreFormatCollectionDefinition {
 
         /// <summary>
         /// Globally unique identifier assigned to this MergedResultList.
@@ -26,14 +28,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 3 )]
         public string Method {  get; set; } = string.Empty;
 
+        /// <summary>
+        /// The SCORE FORMAT COLLECTION to use while displaying scores for this MergedResultList
+        /// </summary>
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
         [G_NS.JsonProperty( Order = 4 )]
+        public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
+
+        /// <summary>
+        /// The ScoreConfigName to use, from the SCORE FORMAT COLLECTION, while displaying scores for this MergedResultList
+        /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
+        public string ScoreConfigName { get; set; } = "Decimal";
+
+
+        [G_NS.JsonProperty( Order = 6 )]
         public List<ResultListMember> ResultListMembers { get; set; } = new List<ResultListMember>();
 
         /// <summary>
         /// Method specific Configuration
         /// </summary>
-        [G_NS.JsonProperty( Order = 5 )]
+        [G_NS.JsonProperty( Order = 7 )]
         [G_STJ_SER.JsonIgnore] //Ignore until I can figure out what this will look like.
         public MergeConfiguration Configuration { get; set; }
+
+        /// <inheritdoc />
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( this.ScoreFormatCollectionDef );
+        }
     }
 }

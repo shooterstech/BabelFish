@@ -18,20 +18,11 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            List<string> matchIds = new List<string>() { "1.1.2025090710463248.0", "1.1.2025090710380473.0", "1.1.2025090710280588.0" };
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
-            var tournament = new Match();
-            tournament.MatchID = "1.1.2025090710351868.2";
-            var tournamentMerger = new Scopos.BabelFish.DataActors.Tournaments.TournamentMerger( tournament, "Aggregate" );
+            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2025100211025190.2" ) );
+            var tournamentMerger = await Scopos.BabelFish.DataActors.Tournaments.TournamentMerger.FactoryAsync( getTournamentResponse.Tournament, "Team Rankings" );
 
-            foreach (var matchId in matchIds) {
-                var getMatchResponse = await _apiClient.GetResultListPublicAsync( new MatchID( matchId ), "Individual - All" );
-                tournamentMerger.AddResultList( getMatchResponse.ResultList );
-            }
-
-            tournamentMerger.AutoGenerateRankingRule();
-            tournamentMerger.AutoGenerateResultListFormat();
             var mergedResultList = await tournamentMerger.MergeAsync();
             Assert.IsNotNull( mergedResultList );
 

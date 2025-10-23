@@ -7,9 +7,17 @@ using Score = Scopos.BabelFish.DataModel.Athena.Score;
 namespace Scopos.BabelFish.DataActors.Tournaments {
     public class SumMethod : MergeMethod {
 
+        /// <summary>
+        /// Each MergeMethod concrete class has a unique identifier. It is used in the serialization of MergedResultLists instances
+        /// to identify how the Merged Result List should be calculated.
+        /// </summary>
+        public const string IDENTIFIER = "Sum";
+
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public SumMethod( TournamentMerger tournamentMerger, SumMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
 
+            this.TopLevelEventname = "Aggregate";
         }
 
         public SumMethodConfiguration MergeConfiguration {
@@ -18,12 +26,14 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             }
         }
 
+        /// <inheritdoc />
         public override void Merge( ResultEvent re ) {
 
             EventScore mergedEventScore = new EventScore();
+            
 
-            foreach (var mergingResultList in TournamentMerger.ResultListsMembers) {
-                var key = ResultEvent.KeyForResultCofScore( mergingResultList.MatchID, mergingResultList.EventName );
+            foreach (var resultListMember in TournamentMerger.ResultListsMembers) {
+                var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
 
                 if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore )) {
                     if (eventScore.Score != null) {
@@ -40,7 +50,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 }
             }
 
-            re.ResultCofScores[ TournamentMerger.KeyToResultCofEventScore ] = mergedEventScore;
+            re.ResultCofScores[ResultEvent.KeyForResultCofScore( TournamentMerger.Tournament.TournamentId, this.TopLevelEventname) ] = mergedEventScore;
         }
     }
 }

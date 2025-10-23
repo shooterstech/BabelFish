@@ -18,5 +18,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
         public string ResultName { get; set; }
+
+        /// <summary>
+        /// The string to use as the column header.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        public string HeaderName { get; set; }
     }
 }
