@@ -25,6 +25,10 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 case SumMethod.IDENTIFIER:
                     //TODO deserialize MergedResultLists.Configuration
                     return new SumMethod( tournamentMerger, new SumMethodConfiguration() );
+
+                case AverageMethod.IDENTIFIER:
+                    //TODO deserialize MergedResultLists.Configuration
+                    return new AverageMethod( tournamentMerger, new AverageMethodConfiguration() );
             }
 
             var msg = $"Unrecognized MergeMethod '{mrl.Method}.'";

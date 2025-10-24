@@ -94,6 +94,8 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         public void AutoGenerateResultListFormat() {
             var rlf = new ResultListFormat();
             rlf.SetDefaultValues();
+            rlf.ScoreConfigDefault = _mergeResultList.ScoreConfigName;
+            rlf.ScoreFormatCollectionDef = _mergeResultList.ScoreFormatCollectionDef.ToString();
             rlf.Fields.Clear();
 
             rlf.Fields.Add( new ResultListField() {
@@ -141,7 +143,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 }}
             } );
 
-            for (int i = this.ResultListsMembers.Count - 1; i >= 0; i--) {
+            for (int i = 0; i < this.ResultListsMembers.Count; i++) {
                 var resultList = this.ResultListsMembers[i];
                 var resultListMember = this._mergeResultList.ResultListMembers[i];
 
@@ -177,10 +179,15 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             var rankingRule = rr.RankingRules[0];
             rankingRule.Rules.Clear();
 
+            //TODO: The next three lines of code assumes the Standard Score Formats. Need to make this more generic.
+            var source = TieBreakingRuleScoreSource.D;
+            if (_mergeResultList.ScoreConfigName != "Decimal")
+                source = TieBreakingRuleScoreSource.IX;
+
             rankingRule.Rules.Add( new TieBreakingRuleScore() {
                 EventName = ResultEvent.KeyForResultCofScore( this.Tournament.TournamentId, _mergeMethod.TopLevelEventname ),
                 SortOrder = SortBy.DESCENDING,
-                Source = TieBreakingRuleScoreSource.IX,
+                Source = source,
                 Comment = "Auto generated default Tie Breaking Rule"
             } );
 
@@ -193,7 +200,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 rankingRule.Rules.Add( new TieBreakingRuleScore() {
                     EventName = key,
                     SortOrder = SortBy.DESCENDING,
-                    Source = TieBreakingRuleScoreSource.IX,
+                    Source = source,
                     Comment = "Auto generated default Tie Breaking Rule"
                 } );
             }

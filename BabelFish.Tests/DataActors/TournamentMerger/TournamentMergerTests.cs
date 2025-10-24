@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
             var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2025100211025190.2" ) );
-            var tournamentMerger = await Scopos.BabelFish.DataActors.Tournaments.TournamentMerger.FactoryAsync( getTournamentResponse.Tournament, "Team Rankings" );
+            var tournamentMerger = await Scopos.BabelFish.DataActors.Tournaments.TournamentMerger.FactoryAsync( getTournamentResponse.Tournament, "Individual Rankings" );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
             Assert.IsNotNull( mergedResultList );

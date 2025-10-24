@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 if (!string.IsNullOrEmpty( UserID ))
                     return this.UserID.GetHashCode();
                 else 
-                    return this.DisplayName.GetHashCode();
+                    return this.DisplayName.ToUpper().Trim().GetHashCode();
             }
         }
     }

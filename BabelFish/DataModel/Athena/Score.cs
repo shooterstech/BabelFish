@@ -101,6 +101,24 @@ namespace Scopos.BabelFish.DataModel.Athena {
             };
         }
 
+        public static Score operator /( Score left, int right ) {
+            //EKA QUESTION: Oct 2025: Should the devide operator return a Score or an AveragedScore ? 
+
+            if ( left is null || left.IsZero || right == 0 )
+                return new Score();
+
+            return new Score {
+                X = left.X / right,
+                D = left.D / right,
+                I = left.I / right,
+                S = left.S / right,
+                J = left.J / right,
+                K = left.K / right,
+                L = left.L / right,
+                NumShotsFired = left.NumShotsFired, //Its debatable how .NumberShotsFired should be calculated.
+            };
+        }
+
         public void Add( Score right, ScoreComponent s ) {
             this.X += right.X;
             this.D += right.D;
