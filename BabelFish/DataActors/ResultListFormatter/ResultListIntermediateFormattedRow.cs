@@ -124,6 +124,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         _fields[fieldName] = GetGap( source );
                         break;
 
+                    case ResultFieldMethod.COMPLETION:
+                        //NOT IMPLEMENTED YET. Exists for future expansion.
+                        _fields[fieldName] = string.Empty;
+                        break;
+
+                    case ResultFieldMethod.RECORD:
+                        //NOT IMPLEMENTED YET. Exists for future expansion.
+                        _fields[fieldName] = string.Empty;
+                        break;
+
                     default:
                         //Should never get here
                         break;
@@ -606,10 +616,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
              */
 
-            Score score = GetScore( (string)source.Name, tryAndUseProjected );
+            var eventName = (string)source.Name;
+            Score score = GetScore( eventName, tryAndUseProjected );
             string scoreFormat = _resultListFormatted.GetScoreFormat( source.ScoreFormat );
 
-            return Scopos.BabelFish.Helpers.StringFormatting.FormatScore( scoreFormat, score );
+            var formattedScore = StringFormatting.FormatScore( scoreFormat, score );
+
+            //If we are returning a projected score, demarcate it with "(P)".
+            //EKA NOTE: November 2025: I would really like how a projected score is demarcated to be configurable.
+            //Just not sure how best to do that right now. One possibility is to use ResultFieldMethod.Completion in 
+            //conjunction with the projected score.
+            if ( tryAndUseProjected
+                && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
+                && scoreToReturn.Projected != null
+                && scoreToReturn.Status == ResultStatus.INTERMEDIATE) {
+                formattedScore += "(P)";
+            }
+
+            return formattedScore;
         }
 
         public Score GetScore( string eventName, bool tryAndUseProjected = false ) {
