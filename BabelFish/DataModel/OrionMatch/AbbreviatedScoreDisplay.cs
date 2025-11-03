@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -29,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Generates a new AbbreviatedScoreDisplay instance, based on the defintion of an AbbreviatedFormat.
         /// </summary>
         /// <param name="abbreviatedFormat"></param>
-        public AbbreviatedScoreDisplay( AbbreviatedFormat abbreviatedFormat, ResultEvent re) {
+        public AbbreviatedScoreDisplay( AbbreviatedFormat abbreviatedFormat, IEventScoreProjection re ) {
             this.FormatName = abbreviatedFormat.FormatName;
             this.EventName = abbreviatedFormat.EventName;
             this.EventDisplayName = abbreviatedFormat.EventDisplayName;
@@ -40,7 +41,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
-        public AbbreviatedScoreDisplay( AbbreviatedFormatChild abbreviatedFormat, ResultEvent re ) {
+        public AbbreviatedScoreDisplay( AbbreviatedFormatChild abbreviatedFormat, IEventScoreProjection re ) {
 			this.EventName = abbreviatedFormat.EventName;
 			this.EventDisplayName = abbreviatedFormat.EventDisplayName;
 		}
