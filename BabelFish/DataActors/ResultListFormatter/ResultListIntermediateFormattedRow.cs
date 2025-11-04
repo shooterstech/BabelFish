@@ -622,7 +622,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             var formattedScore = StringFormatting.FormatScore( scoreFormat, score );
 
-            //If we are returning a projected score, demarcate it with "(P)".
+            //If we are returning a projected score, demarcate it with "(p)".
             //EKA NOTE: November 2025: I would really like how a projected score is demarcated to be configurable.
             //Just not sure how best to do that right now. One possibility is to use ResultFieldMethod.Completion in 
             //conjunction with the projected score.
@@ -630,7 +630,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
                 && scoreToReturn.Projected != null
                 && scoreToReturn.Status == ResultStatus.INTERMEDIATE) {
-                formattedScore += "(P)";
+                formattedScore += "(p)";
             }
 
             return formattedScore;
