@@ -22,10 +22,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// FUTURE
-        /// INTERMEDIATE
-        /// UNOFFICIAL
-        /// OFFICIAL
+        /// The status of this Result COF. It is generally best to call .GetStatus() instead of reading the value from
+        /// .Status, as the status may be updated if the last updated time is more than an hour old.
+        /// <list type="bullet">
+        /// <item>FUTURE</item>
+        /// <item>INTERMEDIATE</item>
+        /// <item>UNOFFICIAL</item>
+        /// <item>OFFICIAL</item>
+        /// </list>
         /// </summary>
         [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
         [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Populate )]

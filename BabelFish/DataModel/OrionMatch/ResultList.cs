@@ -12,6 +12,7 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
@@ -73,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
         /// </summary>
         [JsonPropertyOrder ( 3 )]
-        
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public ResultStatus Status {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -171,7 +172,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The end date that the underlying event, in this Result List, ended on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate {
             get {
@@ -281,7 +282,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [DefaultValue( "" )]
-        [JsonConverter( typeof( NextTokenConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />

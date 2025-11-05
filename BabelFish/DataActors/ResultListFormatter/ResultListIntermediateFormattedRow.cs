@@ -616,6 +616,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
              */
 
+            //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
+            if (tryAndUseProjected &&
+                _resultListFormatted.ResultList is not null
+                && ( _resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL) )
+                tryAndUseProjected = false;
+
             var eventName = (string)source.Name;
             Score score = GetScore( eventName, tryAndUseProjected );
             string scoreFormat = _resultListFormatted.GetScoreFormat( source.ScoreFormat );
@@ -629,7 +635,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if ( tryAndUseProjected
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
                 && scoreToReturn.Projected != null
-                && scoreToReturn.Status == ResultStatus.INTERMEDIATE) {
+                && scoreToReturn.Status == ResultStatus.INTERMEDIATE
+                && _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE) {
                 formattedScore += "(p)";
             }
 
@@ -641,14 +648,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (_resultEvent is null)
                 return new Score();
 
+            //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
+            if (tryAndUseProjected &&
+                _resultListFormatted.ResultList is not null
+                && (_resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL))
+                tryAndUseProjected = false;
+
             EventScore scoreToReturn;
 
             if (_resultEvent.EventScores != null) {
                 if (_resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
 
+                    //Checking scoreToResturn.Status checks the specific score for the event asked for. 
+                    //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
-                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
+                        && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE ) ) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -665,9 +681,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 var aliasEventName = "";
                 if (AliasEventNames.TryGetValue( eventName, out aliasEventName )) {
                     if (_resultEvent.EventScores.TryGetValue( aliasEventName, out scoreToReturn )) {
+                        //Checking scoreToResturn.Status checks the specific score for the event asked for. 
+                        //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                         if (tryAndUseProjected
                             && scoreToReturn.Projected != null
-                            && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                            && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
+                            && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                             //If the Projected Score is known, try and return it
                             return scoreToReturn.Projected;
                         } else {
@@ -682,9 +701,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (_resultEvent.ResultCofScores != null) {
                 if (_resultEvent.ResultCofScores.TryGetValue( eventName, out scoreToReturn )) {
 
+                    //Checking scoreToResturn.Status checks the specific score for the event asked for. 
+                    //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
-                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
+                        && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -802,7 +824,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public ResultStatus GetStatus() {
 
             if (_resultEvent is null)
-                return ResultStatus.FUTURE; //Not sure what lese to use ? 
+                return ResultStatus.FUTURE; //Not sure what else to use ? 
+
+            //If the Result List's status if OFFICIAL, so is everything else
+            if (_resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL)
+                return ResultStatus.OFFICIAL;
 
             return _resultEvent.GetStatus();
         }
