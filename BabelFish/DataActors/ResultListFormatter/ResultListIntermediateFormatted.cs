@@ -50,6 +50,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             this.ResultListFormat = resultListFormat;
             this.UserProfileLookup = userProfileLookup;
             this.ShowWhenCalculator = new ShowWhenCalculator( this );
+
+            if (this.UserProfileLookup is null)
+                this.UserProfileLookup = new BaseUserProfileLookup();
         }
 
         /// <summary>

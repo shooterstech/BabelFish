@@ -83,5 +83,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// ScoreFormatted may only be set when the Shot is part of a Result COF .Events dictrionary
         /// </summary>
         public string ScoreFormatted { get; set; }
+
+        /// <summary>
+        /// A Temporary field that's needed by the TournamentMerger
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public string MatchId {  get; set; } = string.Empty;
     }
 }
