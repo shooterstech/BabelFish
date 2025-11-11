@@ -95,7 +95,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
             protected void ClubQRCode( IContainer container ) {
 
-            var uri = $"https://rezults.scopos.tech/club/{ClubDetail.URLPath}/?ClubQRCode";
+            var uri = $"https://rezults.scopos.tech/club/{ClubDetail.URLPath}/?src=club-qr-code";
 
             container.Column( column => {
                 column.Spacing( 4 );

@@ -11,11 +11,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     public class LeagueWeek {
 
-        public string Name { get; set; }
+        public string Name { 
+            get {
+                return $"Week {Week}";
+            }
+        }
+
+        public int Week {  get; set; }
 
         public DateTime StartOfWeek { get; set; }
 
         public DateTime EndOfWeek { get; set; }
+
+        /// <summary>
+        /// Human readable remark about what makes this week special.
+        /// </summary>
+        /// <remarks>
+        /// Intended to be feed into AI.
+        /// </remarks>
+        public string Noteworthiness { get; set; }
 
         public override string ToString() {
             return $"{Name}: {StringFormatting.SpanOfDates( StartOfWeek, EndOfWeek )}";

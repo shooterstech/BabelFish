@@ -419,7 +419,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return false;
 
             //Check for default value
-            if ((Show.StageLabel == null || Show.StageLabel.Count > 0) &&
+            if ((Show.StageLabel == null || Show.StageLabel.Count == 0) &&
                 Show.Competition == CompetitionType.BOTH) {
                 return false;
             }

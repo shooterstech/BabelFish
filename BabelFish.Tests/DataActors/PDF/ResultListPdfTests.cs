@@ -115,10 +115,11 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             //var resultCofId = "0f814586-3513-411a-8229-914d4608db05"; // sim air rifle
             //var resultCofId = "5486e765-73db-4973-b97e-5c423e9395dc"; // air pistol
-            //var resultCofId = "57b49cc3-db5d-4384-90eb-5be05d617664"; // Test scores
+            var resultCofId = "57b49cc3-db5d-4384-90eb-5be05d617664"; // Test scores
             //var resultCofId = "0c9a775a-6390-4cb4-91f3-9724b699b5a9"; // Hit Miss
+            //var resultCofId = "9c47822f-c668-4b08-b7a1-ede5f9aae6c7"; // 3x20
             //var resultCofId = "7e9ab808-025e-42b6-886e-bf3f2423ae13"; // 3x10
-            var resultCofId = "5c36dd5a-1ffe-4b0d-8469-cb5dd75c9dd6"; // 3x40
+            //var resultCofId = "5c36dd5a-1ffe-4b0d-8469-cb5dd75c9dd6"; // 3x40
             //var resultCofId = "ccc4d957-7df6-4666-9e59-25381beb6767"; //3x10 but incomplete
 
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);

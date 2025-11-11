@@ -95,6 +95,29 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
+        public async Task LiamsPlayground()
+        {
+
+            var client = new OrionMatchAPIClient(APIStage.PRODUCTION);
+
+            var matchId = new MatchID("1.15.2025102016585824.0");
+            //var resultListName = "Individual - All";
+            //var resultListName = "Individual - Sporter";
+            var resultListName = "Individual - Precision";
+
+            var response = await client.GetResultListPublicAsync(matchId, resultListName);
+            DataModel.Definitions.CommandAutomationRemark automation = new DataModel.Definitions.CommandAutomationRemark() {
+                ParticipantRanks = "1..8"
+            };
+            var listOfParticipantsInRL = automation.GetParticipantListToApply(response.ResultList);
+            foreach (var m in listOfParticipantsInRL)
+            {
+                Debug.WriteLine(m.ToString());
+            }
+
+        }
+
+        [TestMethod]
         public async Task EriksPlayground() {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );

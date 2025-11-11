@@ -94,12 +94,11 @@ namespace Scopos.BabelFish.DataActors.PDF {
 			if (ItemList is ResultList) {
                 titleText = $"Results for {ItemList.Name}";
                 line3Text = $"Status: {ItemList.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}";
-				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
+				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/?src=result-list";
             } else if (ItemList is SquaddingList) {
 				titleText = $"{ItemList.Name} Squadding";
 				line3Text = $"Printed at {StringFormatting.SingleDateTime( DateTime.Now )}";
-				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/";
-				//rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/squadding/";
+				rezultsUrl = $"https://rezults.scopos.tech/match/{this.Match.ParentID}/?src=squad-list";
 			}
 
             container.Border( 2 )
@@ -125,7 +124,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                         .Background( Colors.White )
                         .Svg( size => {
                             var writer = new QRCodeWriter();
-                            var qrCode = writer.encode( rezultsUrl, BarcodeFormat.QR_CODE, (int)size.Width, (int)size.Height );
+                            var qrCode = writer.encode( rezultsUrl, BarcodeFormat.QR_CODE, 4 * (int)size.Width, 4 * (int)size.Height );
                             var renderer = new SvgRenderer { FontName = "Lato" };
                             return renderer.Render( qrCode, BarcodeFormat.QR_CODE, null ).Content;
                         } );

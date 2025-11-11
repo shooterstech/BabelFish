@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using System.ComponentModel;
 
-namespace BabelFish.DataModel.Definitions {
-	public abstract class CalculationVariable : IReconfigurableRulebookObject {
+namespace Scopos.BabelFish.DataModel.Definitions {
+    public abstract class CalculationVariable : IReconfigurableRulebookObject {
 
 		[G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
 		public CalculationVariableType VariableType { get; set; } = CalculationVariableType.INTEGER;

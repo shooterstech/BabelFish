@@ -119,7 +119,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 11 )]
         public string MatchID { get; set; } = string.Empty;
 
-        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.LOCAL_MATCH;
+        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.LOCAL_MATCH;
 
         /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to
@@ -164,12 +164,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Location Location { get; set; } = new Location();
 
         /// <summary>
-        /// A list of authorizations the caller has for this match. These values are 
+        /// A list of authorized capabilities the caller has for this match. These values are 
         /// returned by the Rest API, but are not sent to the cloud. Instead 'AuthorizationList'
         /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
         /// </summary>
+        /// <remarks>Should really rename this to Capabilities or AuthorizedCapabilities</remarks>
         [JsonPropertyOrder ( 19 )]
-        public List<MatchAuthorizationRole> Authorization { get; set; } = new List<MatchAuthorizationRole>();
+        public List<MatchAuthorizationCapability> Authorization { get; set; } = new List<MatchAuthorizationCapability>();
 
         /// <summary>
         /// A list of Authorization roles participants in the match have.

@@ -116,6 +116,12 @@ namespace Scopos.BabelFish.Requests {
         public HttpMethod HttpMethod { get; protected set; } = HttpMethod.Get;
 
         /// <summary>
+        /// Timeout, in seconds, on the http client when making requests.
+        /// Default is 15s.
+        /// </summary>
+        public int Timeout { get; set; } = 15;
+
+        /// <summary>
         /// Key / Value pairs of data that should be included in the request header.
         /// x-api-key is not generally included in this list, and instead is specified in the APIClient.
         /// </summary>

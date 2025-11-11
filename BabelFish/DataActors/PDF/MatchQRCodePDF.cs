@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
             protected void MatchQRCode( IContainer container ) {
 
-            var uri = $"https://rezults.scopos.tech/match/{MatchDetail.ParentID}/?MatchQRCode";
+            var uri = $"https://rezults.scopos.tech/match/{MatchDetail.ParentID}/?src=match-qr-code";
 
             container.Column( column => {
                 column.Spacing( 4 );

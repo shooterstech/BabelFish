@@ -157,6 +157,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        public bool IsVirtualMatch {
+            get {
+                try {
+                    var mId = new MatchID( this.MatchID );
+                    return mId.VirtualMatch;
+                } catch (Exception ex) {
+                    return false;
+                }
+            }
+        }
+
         public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "MatchAbbr for " );

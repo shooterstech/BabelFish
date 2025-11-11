@@ -91,7 +91,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// </summary>
         public string Creator { get; set; }
 
-		public string Boilerplate { get; set; } = string.Empty;
+        /// <summary>
+        /// Human readable description of the league. 
+        /// </summary>
+        /// <remarks>
+        /// Intended to be feed into AI.
+        /// </remarks>
+		public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// A list of documents associated with thsi league. Common documents might include
@@ -108,28 +114,41 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
             return (Documents != null && Documents.Count > 0);
         }
 
-        public List<LeagueWeek> LeagueWeeks {
+        private List<LeagueWeek> _weekList = new List<LeagueWeek>();
+        public List<LeagueWeek> WeekList { 
             get {
-                List<LeagueWeek> weeks = new List<LeagueWeek>();
+                if (_weekList is null || _weekList.Count == 0) {
+                    return this.DefaultValueForWeekList();
+                }
 
-                DateTime beginingOfWeek = StartDate;
-                DateTime endOfWeek = beginingOfWeek.AddDays( 6 );
-                int weekNumber = 1;
-                do {
-                    LeagueWeek lw = new LeagueWeek() {
-                        Name = $"Week {weekNumber}",
-                        StartOfWeek = beginingOfWeek,
-                        EndOfWeek = endOfWeek
-                    };
-                    weeks.Add( lw );
-
-                    weekNumber++;
-                    beginingOfWeek = endOfWeek.AddDays( 1 );
-                    endOfWeek = beginingOfWeek.AddDays( 6 );
-                } while ( beginingOfWeek <= EndDate );
-
-                return weeks;
+                return _weekList;
             }
+            set {
+                _weekList = value;
+            }
+        }
+
+        public List<LeagueWeek> DefaultValueForWeekList() {
+            List<LeagueWeek> weeks = new List<LeagueWeek>();
+
+            DateTime beginingOfWeek = StartDate;
+            DateTime endOfWeek = beginingOfWeek.AddDays( 6 );
+            int weekNumber = 1;
+            do {
+                LeagueWeek lw = new LeagueWeek() {
+                    Week = weekNumber,
+                    StartOfWeek = beginingOfWeek,
+                    EndOfWeek = endOfWeek,
+                    Noteworthiness = string.Empty
+                };
+                weeks.Add( lw );
+
+                weekNumber++;
+                beginingOfWeek = endOfWeek.AddDays( 1 );
+                endOfWeek = beginingOfWeek.AddDays( 6 );
+            } while (beginingOfWeek <= EndDate);
+
+            return weeks;
         }
 
         public override string ToString() {

@@ -214,7 +214,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                 && row.ShowRowBasedOnShowRelay()
                                 && row.ShowRowBasedOnShowNumberOfBodies()
                                 && row.ShowRowBasedOnShowNumberOfChildren()
-                                && row.ShowRowBasedOnShowZeroScoresWithOFFICIAL()) {
+                                && row.ShowRowBasedZeroScores()) {
                                 row.RowIsShown = true;
                                 copyOfRows.Add( row );
                             } else {
@@ -616,6 +616,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             ShowNumberOfBodyRows = int.MaxValue;
             ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.FUTURE, ResultStatus.INTERMEDIATE, ResultStatus.UNOFFICIAL, ResultStatus.OFFICIAL };
             ShowZeroScoresWithOFFICIAL = true;
+            ShowZeroScoresBeforeOFFICIAL = true;
             ShowRanks = 3;
             ShowRelay = string.Empty;
         }
@@ -695,15 +696,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             get; set;
         }
 
+        /// <summary>
+        /// Gets or sets a boolean indicating if scores with a zero score shold be displayed when the Result List status is FUTURE, INTERMEDIATE, or UNOFFICIAL
+        /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
+        /// <para>The defautl value is true.</para>
+        /// </summary>
+        public bool ShowZeroScoresBeforeOFFICIAL {
+            get; set;
+        }
 
-		/// <summary>
-		/// Gets or sets the number of highest ranked athletes or teams to always show, 
+
+        /// <summary>
+        /// Gets or sets the number of highest ranked athletes or teams to always show, 
         /// regardless of othre row limiting properties, when .ShownRows is called.
-		/// For example, if ShowRanks is 3, then the athletes or teams ranked first, second, and third are always shown.
-		/// <para>This property only effects parent rows, it does not effect child rows.</para>
+        /// For example, if ShowRanks is 3, then the athletes or teams ranked first, second, and third are always shown.
+        /// <para>This property only effects parent rows, it does not effect child rows.</para>
         /// <para>The default value is 3.</para>
-		/// </summary>
-		public int ShowRanks {
+        /// </summary>
+        public int ShowRanks {
             get {
                 return _showRanks;
             }

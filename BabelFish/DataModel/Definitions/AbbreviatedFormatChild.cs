@@ -89,8 +89,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
 			ValueSeries vs = new ValueSeries( "100..1,-1" );
 			var eventNameList = vs.GetAsList( this.EventName );
-			var displayNameList = vs.GetAsList( this.EventDisplayName );
-			var count = eventNameList.Count;
+			var displayNameList = string.IsNullOrEmpty( this.EventDisplayName ) ? vs.GetAsList( this.EventName ) : vs.GetAsList( this.EventDisplayName );
+            var count = eventNameList.Count;
 
 			var numberToInclude = 0;
 			switch (this.Values) {
@@ -161,7 +161,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
 			ValueSeries vs = new ValueSeries( this.Values );
 			var eventNameList = vs.GetAsList( this.EventName );
-			var displayNameList = vs.GetAsList( this.EventDisplayName );
+			var displayNameList = string.IsNullOrEmpty( this.EventDisplayName ) ? vs.GetAsList( this.EventName ) : vs.GetAsList( this.EventDisplayName );
 			var count = eventNameList.Count;
 
 			for (int i = 0; i < count; i++) {

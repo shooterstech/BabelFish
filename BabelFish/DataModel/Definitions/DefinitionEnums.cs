@@ -560,6 +560,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         GAP,
 
         /// <summary>
+        /// The percent complete the marksment is for an Event. 0 means not started (aka FUTURE), 100 means finsihed (aka UNOFFICIAL or OFFICIAL).
+        /// </summary>
+        /// <remarks>Added November 2025 for the Orion 2.24 release.</remarks>
+        [Description( "Completion" )]
+        [EnumMember( Value = "Completion" )]
+        COMPLETION,
+
+        /// <summary>
         /// Information about any record this score may represent for  the participant. For example "PR" for personal record, 
         /// "RR" for Range Record, "SH" for Season High.
         /// </summary>

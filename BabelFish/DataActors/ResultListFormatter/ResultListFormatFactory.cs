@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using NLog;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     public class ResultListFormatFactory {
 
         public static ResultListFormatFactory FACTORY = new ResultListFormatFactory();
+        public static Logger _logger = LogManager.GetCurrentClassLogger();
 
         private ResultListFormatFactory() { }
 
@@ -54,7 +50,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 string courseOfFireDef = resultList.CourseOfFireDef;
                 string eventName = resultList.EventName;
 
-                var cof = await resultList.GetCourseOfFireDefinitionAsync().ConfigureAwait( false );
+                CourseOfFire cof;
+                try {
+                    cof = await resultList.GetCourseOfFireDefinitionAsync().ConfigureAwait( false );
+                } catch (Exception ex ) {
+                    //Few reasons why we would get here. 1. Old version of Orion. 2. networking issue. 3. other. None of which are really recoverable from here.
+                    _logger.Error( ex );
+                    cof = null;
+                    courseOfFireDef = "v1.0:orion:Not a real Course of Fire";
+                }
+
                 if (cof != null) {
                     foreach (var e in cof.Events) {
                         if (e.EventName == eventName) {
@@ -182,11 +187,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 return GetDefaultByEventName( eventName );
 
-            } else {
+            }
 
 				return SetName.Parse( $"v1.0:orion:Default Qualification" );
-			}
-
+			
         }
 
         private SetName GetDefaultByEventName( string eventName ) {

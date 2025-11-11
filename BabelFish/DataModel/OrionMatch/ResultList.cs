@@ -12,6 +12,7 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using NLog;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
@@ -19,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
 
-        private Logger Logger = LogManager.GetCurrentClassLogger();
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         public ResultList() {
             Items = new List<ResultEvent>();
@@ -73,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
         /// </summary>
         [JsonPropertyOrder ( 3 )]
-        
+        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
         public ResultStatus Status {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -171,7 +172,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The end date that the underlying event, in this Result List, ended on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate {
             get {
@@ -281,7 +282,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [DefaultValue( "" )]
-        [JsonConverter( typeof( NextTokenConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />
@@ -324,33 +325,42 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for CourseOfFireDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef is empty, known to happen with older versions of Orion. </exception>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
             if (string.IsNullOrEmpty( CourseOfFireDef ))
-                throw new ScoposAPIException( $"The value for CourseOfFireDef is empty or null.", Logger );
+                throw new ArgumentNullException( $"The value for CourseOfFireDef is empty or null." );
 
             SetName cofSetName = SetName.Parse( CourseOfFireDef );
             return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
         public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
 
             if (string.IsNullOrEmpty( RankingRuleDef ))
-                throw new ScoposAPIException( $"The value for RankingRuleDef is empty or null." );
+                throw new ArgumentNullException( $"The value for RankingRuleDef is empty or null." );
 
             SetName rrSetName = SetName.Parse( RankingRuleDef );
             return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ScoposAPIException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
+        /// <exception cref="XApiKeyNotSetException" ></exception>
+        /// <exception cref="DefinitionNotFoundException" ></exception>
+        /// <exception cref="ScoposAPIException" ></exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
             if (string.IsNullOrEmpty( ResultListFormatDef ))
-                throw new ScoposAPIException( $"The value for ResultListFormatDef is empty or null." );
+                throw new ArgumentNullException( $"The value for ResultListFormatDef is empty or null." );
 
             SetName rlfSetName = SetName.Parse( ResultListFormatDef );
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );

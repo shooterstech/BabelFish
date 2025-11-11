@@ -124,6 +124,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         _fields[fieldName] = GetGap( source );
                         break;
 
+                    case ResultFieldMethod.COMPLETION:
+                        //NOT IMPLEMENTED YET. Exists for future expansion.
+                        _fields[fieldName] = string.Empty;
+                        break;
+
+                    case ResultFieldMethod.RECORD:
+                        //NOT IMPLEMENTED YET. Exists for future expansion.
+                        _fields[fieldName] = string.Empty;
+                        break;
+
                     default:
                         //Should never get here
                         break;
@@ -606,10 +616,31 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
              */
 
-            Score score = GetScore( (string)source.Name, tryAndUseProjected );
+            //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
+            if (tryAndUseProjected &&
+                _resultListFormatted.ResultList is not null
+                && ( _resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL) )
+                tryAndUseProjected = false;
+
+            var eventName = (string)source.Name;
+            Score score = GetScore( eventName, tryAndUseProjected );
             string scoreFormat = _resultListFormatted.GetScoreFormat( source.ScoreFormat );
 
-            return Scopos.BabelFish.Helpers.StringFormatting.FormatScore( scoreFormat, score );
+            var formattedScore = StringFormatting.FormatScore( scoreFormat, score );
+
+            //If we are returning a projected score, demarcate it with "(p)".
+            //EKA NOTE: November 2025: I would really like how a projected score is demarcated to be configurable.
+            //Just not sure how best to do that right now. One possibility is to use ResultFieldMethod.Completion in 
+            //conjunction with the projected score.
+            if ( tryAndUseProjected
+                && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
+                && scoreToReturn.Projected != null
+                && scoreToReturn.Status == ResultStatus.INTERMEDIATE
+                && _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE) {
+                formattedScore += "(p)";
+            }
+
+            return formattedScore;
         }
 
         public Score GetScore( string eventName, bool tryAndUseProjected = false ) {
@@ -617,14 +648,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (_resultEvent is null)
                 return new Score();
 
+            //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
+            if (tryAndUseProjected &&
+                _resultListFormatted.ResultList is not null
+                && (_resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL))
+                tryAndUseProjected = false;
+
             EventScore scoreToReturn;
 
             if (_resultEvent.EventScores != null) {
                 if (_resultEvent.EventScores.TryGetValue( eventName, out scoreToReturn )) {
 
+                    //Checking scoreToResturn.Status checks the specific score for the event asked for. 
+                    //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
-                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
+                        && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE ) ) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -641,9 +681,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 var aliasEventName = "";
                 if (AliasEventNames.TryGetValue( eventName, out aliasEventName )) {
                     if (_resultEvent.EventScores.TryGetValue( aliasEventName, out scoreToReturn )) {
+                        //Checking scoreToResturn.Status checks the specific score for the event asked for. 
+                        //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                         if (tryAndUseProjected
                             && scoreToReturn.Projected != null
-                            && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                            && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
+                            && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                             //If the Projected Score is known, try and return it
                             return scoreToReturn.Projected;
                         } else {
@@ -658,9 +701,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (_resultEvent.ResultCofScores != null) {
                 if (_resultEvent.ResultCofScores.TryGetValue( eventName, out scoreToReturn )) {
 
+                    //Checking scoreToResturn.Status checks the specific score for the event asked for. 
+                    //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
-                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)) {
+                        && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
+                        && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -778,7 +824,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public ResultStatus GetStatus() {
 
             if (_resultEvent is null)
-                return ResultStatus.FUTURE; //Not sure what lese to use ? 
+                return ResultStatus.FUTURE; //Not sure what else to use ? 
+
+            //If the Result List's status if OFFICIAL, so is everything else
+            if (_resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL)
+                return ResultStatus.OFFICIAL;
 
             return _resultEvent.GetStatus();
         }
@@ -1003,33 +1053,41 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
 		/// <summary>
-		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresWithOFFICIAL property.
+		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresBeforeOFFICIAL and .ShowZeroScoresWithOFFICIAL properties.
 		/// </summary>
 		/// <returns></returns>
-		public virtual bool ShowRowBasedOnShowZeroScoresWithOFFICIAL() {
+		public virtual bool ShowRowBasedZeroScores() {
             //if _resutlEvent is null, then it's from a squadding list
             if (this._resultEvent is null)
                 return true;
 
-            //This criteria only applies if we are at the OFFICIAL status
-            if (this._resultListFormatted.ResultList.Status != ResultStatus.OFFICIAL)
-                return true;
+            //Check if the score is zero
+            if (this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
+                //If we get here, the score is zero.
 
-            if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL
-                && this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
-                //The result list status is official, and we were told to exclude rows with scores of zero
+                if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL
+                    && this._resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL)
+                    return true;
 
-                //We do however show this row if the score is zero due to DNS, DNF, or DSQ
+                if (this._resultListFormatted.ShowZeroScoresBeforeOFFICIAL
+                    && (this._resultListFormatted.ResultList.Status == ResultStatus.FUTURE
+                        || this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
+                        || this._resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL) )
+                    return true;
+
+                //We do show this row if the score is zero due to DNS, DNF, or DSQ
                 if (GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
                     || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
                     || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
                     return true;
-                } else {
-                    return false;
-                }
-            }
+                } 
 
-            return true;
+                return false;
+
+            } else {
+                //If we get here, the score is above zero
+                return true;
+            }
         }
 
         internal virtual void ResetNumberOfChildRowsLeftToShow() {

@@ -1,13 +1,4 @@
-﻿using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static QuestPDF.Helpers.Colors;
-using ZXing.Aztec.Internal;
+﻿using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI
 {
@@ -16,6 +7,8 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
 
 		public GetPressReleaseGenerationAuthenticatedRequest(UserAuthentication credentials) : base("PressReleaseGenerator_v2", credentials)
 		{
+			//Press release generator is known to take a long time. Increasing the timeout to 3 minutes. 
+			Timeout = 3 * 60;
 		}
 
 		public string GameID { get; set; }
@@ -27,7 +20,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
 		/// <inheritdoc />
 		public override string RelativePath
 		{
-			get { return $"/league/{LeagueID}/press-release"; }
+			get { 
+				return $"/league/{LeagueID}/press-release"; 
+			}
 		}
 
 		public override Dictionary<string, List<string>> QueryParameters

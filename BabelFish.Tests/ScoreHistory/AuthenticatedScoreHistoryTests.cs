@@ -36,7 +36,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             body.LocalDate = DateTime.Today;
             body.CourseOfFireDef = "v3.0:ntparc:Three-Position Air Rifle 3x10";
-            body.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
+            body.MatchType = DataModel.OrionMatch.CompetitionTypeOptions.PRACTICE;
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
             body.EventStyleDef = eventStyleDef;
@@ -90,7 +90,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             body.LocalDate = DateTime.Today;
             body.CourseOfFireDef = "v3.0:ntparc:Three-Position Air Rifle 3x10";
-            body.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
+            body.MatchType = DataModel.OrionMatch.CompetitionTypeOptions.PRACTICE;
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
             body.EventStyleDef = eventStyleDef;
@@ -119,7 +119,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var patchbody = postResponse.ScoreHistoryPost;
             patchRequest.ScoreHistoryPatch = patchbody;
             patchbody.LocalDate = new DateTime(2012, 04, 1);
-            patchbody.MatchType = DataModel.OrionMatch.MatchTypeOptions.PRACTICE;
+            patchbody.MatchType = DataModel.OrionMatch.CompetitionTypeOptions.PRACTICE;
             patchbody.MatchLocation = "newmosby";
             patchbody.MatchName = "newmatchname";
             patchbody.Visibility = VisibilityOption.PUBLIC;

@@ -5,7 +5,11 @@ using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    [Serializable]
+    
+    /// <summary>
+    /// A ResultEvent represents the score one participant earned in an Event. ResultEvents often contain the score
+    /// not just for the top level Event, but for the children as well.
+    /// </summary>
     public class ResultEvent : IEventScoreProjection, IRLIFItem {
 
         //Key is the Singular Event Name, Value is the Shot
@@ -144,7 +148,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (ResultCofScores != null && ResultCofScores.Count > 0 );
         }
 
+        /// <summary>
+        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
+        /// match has to be unique, and each matchId is unique, then the key too will be unique.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
         public static string KeyForResultCofScore(string matchId, string eventName ) {
+            return $"{matchId}: {eventName}";
+        }
+
+        /// <summary>
+        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
+        /// match has to be unique, and each matchId is unique, then the key too will be unique.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        public static string KeyForResultCofScore( MatchID matchId, string eventName ) {
             return $"{matchId}: {eventName}";
         }
 
@@ -164,6 +186,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
         public Athena.Shot.Shot? LastShot { get; set; } = null;
+
+        /// <inheritdoc />
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonProperty( Order = 15 )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        //EKA NOTE Nov 2025: Choosing to use .UtcNow instead of .MinValue. The idea is, if LastUpdated is not a part of the REST API
+        //returned json (as would be the case for Orion 2.23 or before)
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         //Cached copy of the name of the top level event.
         private string _topLevelEventName = "";
@@ -185,7 +216,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             } else if ( this.EventScores.TryGetValue( _topLevelEventName, out EventScore es)) {
                 return es.Status;
             }
-
+            
             return ResultStatus.OFFICIAL;
         }    
 

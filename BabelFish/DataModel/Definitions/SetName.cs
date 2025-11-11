@@ -12,13 +12,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class SetName: IEquatable<SetName>, IEquatable<HierarchicalName> {
 
+
         private int majorVersion = 0;
         private int minorVersion = 0;
         private string nameSpace = "";
         private string properName = "";
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private static ConcurrentDictionary<string, SetName> _cache = new ConcurrentDictionary<string, SetName>();
+        public static readonly SetName DEFAULT = SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
         /// Default constructor. Should only be used in conjunction with a TryParse method.
@@ -34,7 +36,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return true;
             } catch(Exception ex) {
                 var msg = $"Unable to parse the version string '{version}'";
-                logger.Error(msg, ex);
+                _logger.Error(msg, ex);
                 majorVersion = 1;
                 minorVersion = 1;
                 return false;
@@ -70,7 +72,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return sn;
             } catch (Exception ex) {
                 var msg = $"Unable to parse the set name string '{setName}'";
-                logger.Error( msg, ex );
+                _logger.Error( msg, ex );
                 throw new ArgumentException( msg, ex );
             }
         }
@@ -81,7 +83,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return true;
             } catch(Exception ex) {
                 var msg = $"Unable to parse the set name string '{setName}'";
-                logger.Error( msg, ex );
+                _logger.Error( msg, ex );
                 sn = null;
                 return false;
             }
@@ -102,7 +104,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return true;
             } catch (Exception ex) {
                 var msg = $"Unable to parse the version string '{version}'";
-                logger.Error( msg, ex );
+                _logger.Error( msg, ex );
                 sn = null;
                 return false;
             }
@@ -146,7 +148,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 this.minorVersion = int.Parse(bar[1]);
             } catch (Exception ex) {
                 var msg = $"Unable to parse the version string '{version}'";
-                logger.Error( msg, ex );
+                _logger.Error( msg, ex );
                 throw new ArgumentException( msg, ex );
             }
         }

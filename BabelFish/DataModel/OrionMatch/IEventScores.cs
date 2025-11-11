@@ -36,6 +36,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         Shot? LastShot { get; set; }
 
         /// <summary>
+        /// The UTC time this IEventScore was last updated.
+        /// </summary>
+        public DateTime LastUpdated { get; set; }
+
+        /// <summary>
         /// Returns the Status of the top level Event (Event Type Event).
         /// </summary>
         /// <returns></returns>

@@ -27,7 +27,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
-        /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
+        /// The status of this Result COF. It is generally best to call .GetStatus() instead of reading the value from
+        /// .Status, as the status may be updated if the last updated time is more than an hour old.
+        /// <list type="bullet">
+        /// <item>FUTURE</item>
+        /// <item>INTERMEDIATE</item>
+        /// <item>UNOFFICIAL</item>
+        /// <item>OFFICIAL</item>
+        /// </list>
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 3 )]
         [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Populate )]
@@ -57,7 +64,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonProperty( Order = 6 )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime LastUpdated { get; set; } = new DateTime();
+        public DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// Boolean indicating if this is a partial Result COF that contains only delta (Delta is true),
@@ -102,7 +109,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
 
-        public MatchTypeOptions MatchType { get; set; } = MatchTypeOptions.TRAINING;
+        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.TRAINING;
 
         /// <summary>
         /// The Local Date that this score was shot. 

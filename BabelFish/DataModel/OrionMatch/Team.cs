@@ -26,5 +26,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The designated team captains for this team. A Team captain may also be a coach and may also be a member.
         /// </summary>
         public List<Individual> TeamCaptains { get; set; }
+
+        /// <inheritdoc/>
+        public override int UniqueMergeId {
+            get {
+                return this.DisplayName.GetHashCode();
+            }
+        }
     }
 }

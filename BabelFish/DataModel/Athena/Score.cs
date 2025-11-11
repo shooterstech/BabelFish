@@ -1,5 +1,4 @@
-﻿using BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Athena {
     [Serializable]
@@ -99,6 +98,24 @@ namespace Scopos.BabelFish.DataModel.Athena {
                 K = left.K + right.K,
                 L = left.L + right.L,
                 NumShotsFired = left.NumShotsFired + right.NumShotsFired,
+            };
+        }
+
+        public static Score operator /( Score left, int right ) {
+            //EKA QUESTION: Oct 2025: Should the devide operator return a Score or an AveragedScore ? 
+
+            if ( left is null || left.IsZero || right == 0 )
+                return new Score();
+
+            return new Score {
+                X = left.X / right,
+                D = left.D / right,
+                I = left.I / right,
+                S = left.S / right,
+                J = left.J / right,
+                K = left.K / right,
+                L = left.L / right,
+                NumShotsFired = left.NumShotsFired, //Its debatable how .NumberShotsFired should be calculated.
             };
         }
 

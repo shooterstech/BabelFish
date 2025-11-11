@@ -209,7 +209,7 @@ namespace Scopos.BabelFish.Helpers {
             listOfReplacements.Add( new Tuple<string, string>( "{d}", score.D.ToString( "F1" ) ) ); // decimal
             listOfReplacements.Add( new Tuple<string, string>( "{x}", score.X.ToString() ) ); // X count
             listOfReplacements.Add( new Tuple<string, string>( "{X}", score.X > 0 ? "*" : "" ) ); //asterisk for inners
-            listOfReplacements.Add( new Tuple<string, string>( "{s}", score.S > 0 ? score.S.ToString() : score.D.ToString() ) ); // summed score, if no score, then decimal is here.
+            listOfReplacements.Add( new Tuple<string, string>( "{s}", score.S > 0 ? score.S.ToString( "F1" ) : score.D.ToString( "F1" ) ) ); // summed score, if no score, then decimal is here.
             listOfReplacements.Add( new Tuple<string, string>( "{m}", "" ) ); // Attributes of a shot. Currently not supported
             listOfReplacements.Add( new Tuple<string, string>( "{j}", score.J.ToString( "F1" ) ) ); // Special use case score. 
             listOfReplacements.Add( new Tuple<string, string>( "{k}", score.K.ToString( "F1" ) ) ); // Special use case score. 
@@ -250,6 +250,16 @@ namespace Scopos.BabelFish.Helpers {
             if (conditionalIndex >= 0) {
 
                 if (score.D == 0) {
+                    formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
+                } else {
+                    formattedScore = formattedScore.Substring( 0, conditionalIndex );
+                }
+            }
+
+            conditionalIndex = formattedScore.IndexOf( "{?s}" );
+            if (conditionalIndex >= 0) {
+
+                if (score.S == 0) {
                     formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
                 } else {
                     formattedScore = formattedScore.Substring( 0, conditionalIndex );

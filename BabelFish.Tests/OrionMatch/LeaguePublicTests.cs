@@ -353,7 +353,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
             var league = response.League;
 
-            var leagueWeeks = league.LeagueWeeks;
+            var leagueWeeks = league.WeekList;
 
             //Should have 10 weeks
             Assert.IsTrue( leagueWeeks.Count == 10 );
@@ -374,7 +374,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
             var league = response.League;
 
-            var leagueWeeks = league.LeagueWeeks;
+            var leagueWeeks = league.WeekList;
 
             //Today should be well after week 10
             Assert.AreEqual( "Week 10", leagueWeeks.Default().Name );
