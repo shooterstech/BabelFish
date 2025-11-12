@@ -20,6 +20,13 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             this.TopLevelEventname = "Average";
         }
 
+        /// <inheritdoc />
+        public override async Task InitializeAsync() {
+
+            this.TournamentMerger.AutoGenerateResultListFormat();
+            this.TournamentMerger.AutoGenerateRankingRule();
+        }
+
         public AverageMethodConfiguration MergeConfiguration {
             get {
                 return (AverageMethodConfiguration)_mergeConfiguration;

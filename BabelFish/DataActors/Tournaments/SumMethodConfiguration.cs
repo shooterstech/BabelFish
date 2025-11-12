@@ -5,8 +5,13 @@ using System.Text;
 namespace Scopos.BabelFish.DataActors.Tournaments {
     public class SumMethodConfiguration : MergeConfiguration {
 
-        public SumMethodConfiguration() : base() { 
-        
+        public SumMethodConfiguration() : base() {
+
+            /*
+             * NOTE: MergeConfiguration classes use the same concrete class identifier
+             * as the cooresponding MergeMethod classes.
+             */
+            this.Method = "Sum";
         }
 
         /// <summary>

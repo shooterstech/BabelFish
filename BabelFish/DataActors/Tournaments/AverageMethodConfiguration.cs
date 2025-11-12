@@ -5,8 +5,14 @@ using System.Text;
 namespace Scopos.BabelFish.DataActors.Tournaments {
     public class AverageMethodConfiguration : MergeConfiguration {
 
-        public AverageMethodConfiguration() : base() { 
-        
+        public AverageMethodConfiguration() : base() {
+
+            /*
+             * NOTE: MergeConfiguration classes use the same concrete class identifier
+             * as the cooresponding MergeMethod classes.
+             */
+
+            this.Method = "Average";
         }
 
         /// <summary>

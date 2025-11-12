@@ -17,24 +17,39 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             this._mergeConfiguration = configuration;
         }
 
-        public static MergeMethod Factory( TournamentMerger tournamentMerger, MergedResultList mrl ) {
+        /// <summary>
+        /// Asynchronous portion of the constructor. Concrete classes do not have to immplemnet this
+        /// method if they do not have any asynchronous calls.
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task InitializeAsync() { }
+
+        public static async Task<MergeMethod> FactoryAsync( TournamentMerger tournamentMerger, MergedResultList mrl ) {
 
             MergeMethod mm;
 
             switch ( mrl.Method ) {
                 case SumMethod.IDENTIFIER:
-                    //TODO deserialize MergedResultLists.Configuration
-                    return new SumMethod( tournamentMerger, new SumMethodConfiguration() );
+                    mm = new SumMethod( tournamentMerger, (SumMethodConfiguration) mrl.Configuration );
+                    break;
 
                 case AverageMethod.IDENTIFIER:
-                    //TODO deserialize MergedResultLists.Configuration
-                    return new AverageMethod( tournamentMerger, new AverageMethodConfiguration() );
+                    mm = new AverageMethod( tournamentMerger, (AverageMethodConfiguration)mrl.Configuration );
+                    break;
+
+                case ReentryMethod.IDENTIFIER:
+                    mm = new ReentryMethod( tournamentMerger, (ReentryMethodConfiguration)mrl.Configuration );
+                    break;
+
+                default:
+                    var msg = $"Unrecognized MergeMethod '{mrl.Method}.'";
+                    _logger.Error( msg );
+
+                    throw new ArgumentException( msg );
             }
 
-            var msg = $"Unrecognized MergeMethod '{mrl.Method}.'";
-            _logger.Error( msg );
-
-            throw new ArgumentException( msg );
+            await mm.InitializeAsync();
+            return mm;
         }
 
         /// <summary>
