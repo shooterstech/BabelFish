@@ -22,9 +22,6 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
         /// <inheritdoc />
         public override async Task InitializeAsync() {
-
-            this.TournamentMerger.AutoGenerateResultListFormat();
-            this.TournamentMerger.AutoGenerateRankingRule();
         }
 
         public SumMethodConfiguration MergeConfiguration {

@@ -18,6 +18,11 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <summary>
         /// If true, an event representing each participants high score will be included.
         /// </summary>
-        public bool IncludeHighScoreEvent { get; set; } = false;
+        public bool AddHighScoreEvent { get; set; } = false;
+
+        /// <summary>
+        /// If true, scores with a DNF are excluded when calculating a participant's average.
+        /// </summary>
+        public bool ExcludeDNFFromAverage { get; set; } = false;
     }
 }

@@ -47,6 +47,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public StageStyleMapping StageStyleMapping { get; private set; }
 
+        public string ResultListFormatDef { get; private set; }
+
+        public RankingRuleMapping RankingRuleMapping { get; set; } = new RankingRuleMapping();
+
         public EventComposite Parent { get; private set; }
 
         public string ScoreFormat { get; private set; }
@@ -271,7 +275,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventName = topLevelEvent.EventName,
 				EventStyleMapping = topLevelEvent.EventStyleMapping,
                 ScoreFormat = topLevelEvent.ScoreFormat,
-                Calculation = topLevelEvent.Calculation
+                Calculation = topLevelEvent.Calculation,
+                ResultListFormatDef = topLevelEvent.ResultListFormatDef,
+                RankingRuleMapping = topLevelEvent.RankingRuleMapping
             };
             //this should be where we go through 
             GrowChildren( listOfEvents, cofRef.Singulars, top, 0 );
@@ -305,7 +311,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     EventName = e.EventName,
                     EventStyleMapping = e.EventStyleMapping,
                     ScoreFormat = e.ScoreFormat,
-                    Calculation = e.Calculation
+                    Calculation = e.Calculation,
+                    ResultListFormatDef= e.ResultListFormatDef,
+                    RankingRuleMapping= e.RankingRuleMapping
                 };
 
                 dictionary.Add( e.EventName, eventComposite );
@@ -325,6 +333,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     parent.EventType = t.EventType;
 					parent.ScoreFormat = t.ScoreFormat;
                     parent.Calculation = t.Calculation;
+                    parent.ResultListFormatDef = t.ResultListFormatDef;
+                    parent.RankingRuleMapping = t.RankingRuleMapping;
 
                     if (t.IsATopLevelStageStyle)
                         parent.StageStyleMapping = t.StageStyleMapping;

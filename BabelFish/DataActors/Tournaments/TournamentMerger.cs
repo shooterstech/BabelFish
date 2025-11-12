@@ -85,6 +85,12 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             tm._mergeMethod = await MergeMethod.FactoryAsync( tm, tm._mergeResultList );
 
+            //If the MergeMethod does not set values for ResultListFormat or RankingRule, then try and auto generate them.
+            if (tm.ResultListFormat is null )
+                tm.AutoGenerateResultListFormat();
+            if ( tm.RankingRule is null )
+                tm.AutoGenerateRankingRule();
+
             return tm;
         }
 
@@ -238,6 +244,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                             eventScore = es.Value;
                             key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, eventName );
                             mergedResultEvent.ResultCofScores[ key ] = eventScore;
+                            eventScore.Participant = mergingResultEvent.Participant;
                         }
                     } else {
                         //This is from a Participant we have not previously found. Create a new ResultEvent and store the top level score in it.
@@ -253,6 +260,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                             eventScore = es.Value;
                             key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, eventName );
                             newResultEvent.ResultCofScores[key] = eventScore;
+                            eventScore.Participant = mergingResultEvent.Participant;
                         }
 
                         _mergedResultEvents.Add( mergingResultEvent.Participant.UniqueMergeId, newResultEvent );

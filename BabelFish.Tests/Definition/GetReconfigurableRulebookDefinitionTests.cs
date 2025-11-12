@@ -401,72 +401,51 @@ namespace Scopos.BabelFish.Tests.Definition
             userProfileLookup = new BaseUserProfileLookup();
         }
 
-        /*
+        
         [TestMethod]
-        public async Task CommandAutomationIntermediateTest()
+        public async Task EriksPlayground()
         {
-            Runtime.Initializer.UpdateLocalStoreDirectory( @"c:\temp" );
-            var setName = SetName.Parse("v1.0:ntparc:40 Shot Standing");
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
-            var definition = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
+            //A SetName uniquely ideentifies a definition
+            var threePositionCourseOfFireSetName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
 
-            Assert.IsNotNull(definition);
+            //Retreives the COURSE OF FIRE definition.
+            var threePositionCourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( threePositionCourseOfFireSetName );
 
-            Assert.AreEqual(setName.ToString(), definition.SetName);
-            Assert.AreEqual(DefinitionType.COURSEOFFIRE, definition.Type);
-            Assert.IsTrue(definition.RangeScripts.Count > 0);
-            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].SegmentGroupName == "Standing Sighters");
-            Assert.IsTrue(definition.RangeScripts[0].SegmentGroups[1].Commands[0].Automation.Count > 0);
-            var firstCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].Automation[0];
-            var secondCommandAutomation = (CommandAutomationRemark)definition.RangeScripts[0].SegmentGroups[1].Commands[0].Automation[1];
-            Assert.IsTrue( firstCommandAutomation.Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);
-            Assert.IsTrue( firstCommandAutomation.ParticipantRanks == "1..8");
-            Assert.IsTrue(secondCommandAutomation.Subject == DataModel.OrionMatch.CommandAutomationSubject.REMARK);
-            Assert.IsTrue(secondCommandAutomation.ParticipantRanks == "8");
+            //Print basic information about this definition
+            Console.WriteLine( threePositionCourseOfFire.CommonName );
+            Console.WriteLine( threePositionCourseOfFire.Description );
+            Console.WriteLine( threePositionCourseOfFire.Discipline );
+            Console.WriteLine();
 
-            MatchID matchId = new MatchID("1.15.2025032511494954.0");
-            var matchDetailResponse = await matchClient.GetMatchPublicAsync(matchId);
-            var match = matchDetailResponse.Match;
-            var resultListName = "Individual - All";
+            //Build the Event Tree which is the structure of the course of fire.
+            var topLevelEvent = EventComposite.GrowEventTree( threePositionCourseOfFire );
 
-            //Get the Result List from the API Server
-            var resultListResponse = await matchClient.GetResultListPublicAsync(matchId, resultListName);
-            var resultList = resultListResponse.ResultList;
-            var resultEventName = resultList.EventName;
+            //Print out the stages to the COF
+            foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
+                Console.WriteLine( $"{stage.EventName} has {stage.GetAllSingulars().Count} number of shots." );
 
-            //Get the definition file that will tell us how to display the results.
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync(resultList);
-            definitionClient.IgnoreInMemoryCache = true;
-            var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync(resultListFormatSetName);
-            var resultListFormat = resultListFormatResponse.Definition;
+                //Load the recommended RESULT LIST FORMAT definition
+                var resultListFormatSetName = SetName.Parse( stage.ResultListFormatDef );
+                var resultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+                Console.WriteLine( $"The recommended RESULT LIST FORMAT is '{resultListFormat.CommonName}' which has a total of {resultListFormat.Format.Columns.Count} columns." );
 
-            //Convert the result list into the result event intermediate list that we can use
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted(resultList, resultListFormat, userProfileLookup);
-            await rlf.InitializeAsync();
+                //Load the default RANKING RULE
+                var rankingRuleSetName = SetName.Parse( stage.RankingRuleMapping["DefaultDef"] );
+                var rankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
+                Console.WriteLine( $"The recommended RANKING RULE for this event is '{ rankingRule.CommonName}' which defines {rankingRule.RankingRules[0].Rules.Count} rules." );
+            }
 
-            var thing = firstCommandAutomation.IntermediateCommandAutomationRemarkList(resultList);
-            var thing1 = secondCommandAutomation.IntermediateCommandAutomationRemarkList(resultList);
-
-            foreach (var item in thing)
-            {
-                if (item is CommandAutomationIntermediateRemark)
-                {
-                    var rightItem = (CommandAutomationIntermediateRemark)item;
-                    Console.WriteLine(rightItem.participant.DisplayName + " " + rightItem.subject.ToString() + " " + rightItem.visibility.ToString() + " " + rightItem.condition.ToString());
+            Console.WriteLine();
+            //Print out each range command
+            foreach ( var sg in threePositionCourseOfFire.RangeScripts[0].SegmentGroups ) {
+                foreach( var command in sg.Commands ) {
+                    Console.WriteLine( command.Command );
                 }
             }
-            Console.WriteLine("CA1 DONE, moving to CA2");
-            foreach (var item in thing1)
-            {
-                if (item is CommandAutomationIntermediateRemark)
-                {
-                    var rightItem = (CommandAutomationIntermediateRemark)item;
-                    Console.WriteLine(rightItem.participant.DisplayName + " " + rightItem.subject.ToString() + " " + rightItem.visibility.ToString() + " " + rightItem.condition.ToString());
-                }
-            }
-            Console.Write("DONE - THANKS");
+
         }
-        */
 
     }
 }

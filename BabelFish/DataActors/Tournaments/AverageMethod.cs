@@ -23,8 +23,6 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <inheritdoc />
         public override async Task InitializeAsync() {
 
-            this.TournamentMerger.AutoGenerateResultListFormat();
-            this.TournamentMerger.AutoGenerateRankingRule();
         }
 
         public AverageMethodConfiguration MergeConfiguration {
@@ -43,8 +41,14 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
 
                 if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore )) {
-                    
-                    if (eventScore.Score != null && ! eventScore.Score.IsZero) {
+
+                    if (eventScore.Score != null && !eventScore.Score.IsZero) {
+                        //Don't include this score if it is a DNF and the configureation says not to use DNFs
+                        if (MergeConfiguration.ExcludeDNFFromAverage
+                            && eventScore.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )) {
+                            continue;
+                        }
+
                         mergedEventScore.Score += eventScore.Score;
                         count++;
 
@@ -55,6 +59,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                                 mergedEventScore.Projected += eventScore.Projected;
                             }
                         }
+
                     }
                 }
             }

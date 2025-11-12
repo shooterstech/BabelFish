@@ -89,5 +89,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonIgnore]
         public string MatchId {  get; set; } = string.Empty;
+
+        /// <summary>
+        /// A Temporary field that's needed by the TournamentMerger
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public Participant ? Participant { get; set; } = null;
     }
 }

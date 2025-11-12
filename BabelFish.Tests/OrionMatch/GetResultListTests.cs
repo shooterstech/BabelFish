@@ -2,6 +2,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -120,16 +122,69 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient();
 
-            var matchId = new MatchID( "1.3987.2025012213525977.0" );
-            var resultListName = "Individual - All";
-           
-            var response = await client.GetResultListPublicAsync( matchId, resultListName );
-            foreach (var m in response.MessageResponse.Message) {
-                Debug.WriteLine( m );
+            var matchId = new MatchID( "1.1.2025100109364878.1" );
+
+            //Retreives information about the match
+            var getMatchResponse = await client.GetMatchAsync(matchId);
+            if (getMatchResponse.HasOkStatusCode) {
+                var match = getMatchResponse.Match;
+                Console.WriteLine( match.Name );
+                Console.WriteLine( match.StartDate );
+                Console.WriteLine( match.EndDate );
+
+                //Loop through and find the primary result lists
+                foreach( var resultEvent in match.ResultEvents ) {
+                    foreach (var resultListAbbr in resultEvent.ResultLists) {
+                        if (resultListAbbr.Primary) {
+
+                            //Retreives the result list (note this command only reteives the start of the list).
+                            var getResultListResponse = await client.GetResultListAsync( matchId, resultListAbbr.ResultName );
+                            if (getResultListResponse.HasOkStatusCode) {
+
+                                var resultList = getResultListResponse.ResultList;
+
+                                //Reteive the recommended RESULT LIST FORMAT to use on this Result List
+                                var resultListFormat = await resultList.GetResultListFormatDefinitionAsync();
+
+                                //Instantiate a Result List Intermediate Formatted instance, to easily allow us to print out the results.
+                                var rlif = new ResultListIntermediateFormatted( resultList, resultListFormat, new BaseUserProfileLookup() );
+                                await rlif.InitializeAsync();
+
+                                //For demo purposes, just show the top 3 participants.
+                                rlif.ShowNumberOfBodyRows = 0;
+                                rlif.ShowNumberOfChildRows = 0;
+                                rlif.ShowRanks = 3;
+
+                                //Pretend we are on a wide screen.
+                                rlif.ResolutionWidth = 5000;
+
+
+                                Console.WriteLine( $"Show results for {resultList.Name}" );
+
+                                //Print the header row
+                                foreach (var colIndex in rlif.GetShownColumnIndexes()) {
+                                    Console.Write( rlif.GetColumnHeaderCell( colIndex ).Text );
+                                    Console.Write( "  " );
+                                }
+                                Console.WriteLine();
+
+                                //Print the results, one row at a time.
+                                foreach (var row in rlif.ShownRows) {
+                                    foreach( var colIndex in rlif.GetShownColumnIndexes() ) {
+                                        Console.Write( row.GetColumnBodyCell( colIndex ).Text );
+                                        Console.Write( "  " );
+                                    }
+                                    Console.WriteLine();
+                                }
+
+                            }
+                            Console.WriteLine();
+                        }
+                    }
+                }
             }
-
         }
     }
 }
