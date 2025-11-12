@@ -34,8 +34,11 @@ public async Task OrionMatchDemo() {
 
     //You may use GyaHV300my60rs2ylKug5aUgFnYBj6GrU6V1WE33 to start working with our API. However, this api key is limited in its use.
     Initializer.Initialize( "your-x-api-key", false );
+    DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
+
     var client = new OrionMatchAPIClient();
 
+    //A MatchID uniquely identifies a match
     var matchId = new MatchID( "1.1.2025100109364878.1" );
 
     //Retreives information about the match
@@ -137,6 +140,9 @@ using Scopos.BabelFish.DataModel.Definitions;
 
 public async Task EriksPlayground()
 {
+
+    //You may use GyaHV300my60rs2ylKug5aUgFnYBj6GrU6V1WE33 to start working with our API. However, this api key is limited in its use.
+    Initializer.Initialize( "your-x-api-key", false );
     DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
     //A SetName uniquely ideentifies a definition
