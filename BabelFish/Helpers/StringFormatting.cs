@@ -397,7 +397,10 @@ namespace Scopos.BabelFish.Helpers {
 		/// <param name="untruncatedValue"></param>
 		/// <returns></returns>
 		public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
-			if (untruncatedValue.Length >= numberOfCharacters) {
+            if ( numberOfCharacters <= 4 ) {
+                //We can't truncate less than 4 characters
+                return untruncatedValue;
+            } else if (untruncatedValue.Length >= numberOfCharacters) {
 				return $"{untruncatedValue.Substring( 0, numberOfCharacters-4 )}...";
 			} else {
 				return untruncatedValue;
