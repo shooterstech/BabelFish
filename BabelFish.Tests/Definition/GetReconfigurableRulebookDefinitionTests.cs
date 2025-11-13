@@ -2,10 +2,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.Definition
 {
@@ -444,7 +442,6 @@ namespace Scopos.BabelFish.Tests.Definition
                     Console.WriteLine( command.Command );
                 }
             }
-
         }
 
     }
