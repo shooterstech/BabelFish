@@ -1,7 +1,11 @@
 # BabelFish
-Dot Net Library that provides a façade for Shooter's Tech REST API interface.
+Scopos' dot net library that provides:
+ * Scopos' data model for the sport of shooting.
+ * A façade for Scopos' REST API interface to interact with match data, score history, and definitions.
+ * Scopos' data actors for formatting results, calculating results lists, and tournament calculations.
+ * And more!
 
-While the code is stable and used in Scopos' production environment, the accompnaing documentation is not ready yet.
+BabelFish classes are document at [cdn.scopos.tech/Documentation/Babelfish/index.html](https://cdn.scopos.tech/Documentation/Babelfish/index.html).
 
 ## NuGet Package Avaliable
 
