@@ -20,7 +20,11 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             get { return Value.ResultList; }
         }
 
+        /// <inheritdoc/>
 		public GetResultListAbstractRequest GetNextRequest() {
+            if (!this.HasMoreItems)
+                throw new NoMoreItemsException( "GetNextRequest() can not return a new request object because there are no more items to return. Always check .HasMoreItems before calling .GetNextRequest()." );
+
             if (Request is GetResultListPublicRequest) {
                 var nextRequest = (GetResultListPublicRequest)Request.Copy();
                 nextRequest.Token = Value.ResultList.NextToken;
@@ -37,7 +41,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// <inheritdoc />
 		public bool HasMoreItems {
 			get {
-				return !string.IsNullOrEmpty( Value.ResultList.NextToken );
+				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.ResultList.NextToken );
 			}
 		}
 

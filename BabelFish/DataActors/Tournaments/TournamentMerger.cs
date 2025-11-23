@@ -4,6 +4,8 @@ using System.Text;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Responses.OrionMatchAPI;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
 
@@ -73,14 +75,36 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             tm._mergeResultList = tournament.MergedResultLists.First( mrl => mrl.ResultName == resultName );
 
+            GetResultListPublicRequest getResultListRequest;
+            GetResultListPublicResponse getResultListResponse;
+            ResultList resultList = null;
             foreach( var rlm in tm._mergeResultList.ResultListMembers ) {
-                var getResultListResponse = await _apiClient.GetResultListPublicAsync( rlm.MatchId, rlm.ResultName );
-                if (getResultListResponse.HasOkStatusCode) {
-                    tm.ResultListsMembers.Add( getResultListResponse.ResultList );
-                }  else {
-                    var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
-                    _logger.Error( msg );
-                }
+
+                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId , rlm.ResultName );
+
+                do {
+                    getResultListResponse = await _apiClient.GetResultListPublicAsync( getResultListRequest );
+                    if (getResultListResponse.HasOkStatusCode) {
+                        if (resultList is null) {
+                            //This is the first set of result list items. the result list may have more
+                            resultList = getResultListResponse.ResultList;
+                            tm.ResultListsMembers.Add( resultList );
+                        } else {
+                            //This is the second or more set of result list items.
+                            resultList.Items.AddRange( getResultListResponse.ResultList.Items );
+                        }
+
+                        //Check if we have more items.
+                        if (getResultListResponse.HasMoreItems)
+                            getResultListRequest = (GetResultListPublicRequest) getResultListResponse.GetNextRequest();
+                    } else {
+                        var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
+                        _logger.Error( msg );
+                    }
+                } while (getResultListResponse.HasMoreItems);
+
+                //By setting resultList ot null, we indicate the next loop is a new result list.
+                resultList = null;
             }
 
             tm._mergeMethod = await MergeMethod.FactoryAsync( tm, tm._mergeResultList );

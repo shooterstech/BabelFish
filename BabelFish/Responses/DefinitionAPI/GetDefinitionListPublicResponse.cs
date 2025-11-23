@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+﻿using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 
 namespace Scopos.BabelFish.Responses.DefinitionAPI
@@ -27,6 +28,9 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
 
 		/// <inheritdoc/>
 		public GetDefinitionListPublicRequest GetNextRequest() {
+            if (!this.HasMoreItems)
+                throw new NoMoreItemsException( "GetNextRequest() can not return a new request object because there are no more items to return. Always check .HasMoreItems before calling .GetNextRequest()." );
+            
 			var nextRequest = (GetDefinitionListPublicRequest)Request.Copy();
 			nextRequest.Token = Value.DefinitionList.NextToken;
 			return nextRequest;
@@ -35,7 +39,7 @@ namespace Scopos.BabelFish.Responses.DefinitionAPI
 		/// <inheritdoc />
 		public bool HasMoreItems {
 			get {
-				return !string.IsNullOrEmpty( Value.DefinitionList.NextToken );
+				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.DefinitionList.NextToken );
 			}
 		}
 

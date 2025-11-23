@@ -36,7 +36,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 			var response = await client.GetPressReleaseGenerationAuthenticatedAsync(request);
 
 			Assert.AreEqual(HttpStatusCode.OK, response.RestApiStatusCode);
-			Assert.AreEqual(response.PressReleaseGeneration.S3Url, "https://s3.us-east-1.amazonaws.com/cdn.scopos.tech/matches/1.1.2024092612083256.1/pressrelease.html");
+			Assert.AreEqual(response.PressReleaseGeneration.PressReleaseUrl, "https://s3.us-east-1.amazonaws.com/cdn.scopos.tech/matches/1.1.2024092612083256.1/pressrelease.html");
 			Assert.IsTrue(response.PressReleaseGeneration.Regenerated);
 
 		}

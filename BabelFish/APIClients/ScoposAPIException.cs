@@ -57,4 +57,34 @@ namespace Scopos.BabelFish.APIClients {
             logger.Error( this, message );
         }
     }
+
+    /// <summary>
+    /// Thrown when a Response object, that has implemented the ITokenResponse interface, 
+    /// GetNextRequest() method is called and there are no more items to fetch (e.g. 
+    /// .HasMoreItems is false).
+    /// <para>A caller can prevent NoMoreItemsException from being thrown by checking
+    /// .HasMoreItems first. </para>
+    /// </summary>
+    public class NoMoreItemsException : ScoposAPIException {
+
+        public NoMoreItemsException()
+            : base( "There are no more items to return." ) {
+        }
+        public NoMoreItemsException( string message )
+            : base( message ) {
+        }
+        public NoMoreItemsException( string message, Logger logger )
+            : base( message ) {
+            logger.Error( this, message );
+        }
+        public NoMoreItemsException( string message, Exception inner )
+            : base( message, inner ) {
+        }
+        public NoMoreItemsException( string message, Exception inner, Logger logger )
+            : base( message, inner ) {
+            logger.Error( this, message );
+        }
+    }
+
+
 }

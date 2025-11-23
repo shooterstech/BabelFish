@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
@@ -22,6 +23,9 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
         /// <inheritdoc/>
         public GetLeagueTeamsPublicRequest GetNextRequest() {
+            if (!this.HasMoreItems)
+                throw new NoMoreItemsException( "GetNextRequest() can not return a new request object because there are no more items to return. Always check .HasMoreItems before calling .GetNextRequest()." );
+
             var nextRequest = (GetLeagueTeamsPublicRequest)Request.Copy();
             nextRequest.Token = Value.LeagueTeams.NextToken;
             return nextRequest;
@@ -30,7 +34,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 		/// <inheritdoc />
 		public bool HasMoreItems {
 			get {
-				return !string.IsNullOrEmpty( Value.LeagueTeams.NextToken );
+				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.LeagueTeams.NextToken );
 			}
 		}
 

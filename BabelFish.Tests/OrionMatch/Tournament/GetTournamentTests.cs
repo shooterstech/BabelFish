@@ -41,7 +41,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
         public async Task EriksPlayground() {
 
             var client = new OrionMatchAPIClient();
-            var mId = new MatchID( "1.1.2025100211025190.2" );
+            //var mId = new MatchID( "1.1.2025100211025190.2" );
+            var mId = new MatchID( "1.2255.2025111109531371.2" );
 
             var request = new GetTournamentPublicRequest( mId );
             var response = await client.GetTournamentPublicAsync( request );
@@ -50,7 +51,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
 
             var tournament = response.Tournament;
             var mergedResultList = tournament.MergedResultLists[0];
-            var configuration = (AverageMethodConfiguration) mergedResultList.Configuration;
+            var configuration = (ReentryMethodConfiguration) mergedResultList.Configuration;
             var tournamentMerger = await TournamentMerger.FactoryAsync( tournament, mergedResultList.ResultName );
 
             var resultList = await tournamentMerger.MergeAsync();
