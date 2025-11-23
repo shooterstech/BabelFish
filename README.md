@@ -7,6 +7,9 @@ Scopos' dot net library that provides:
 
 BabelFish classes are document at [cdn.scopos.tech/Documentation/Babelfish/index.html](https://cdn.scopos.tech/Documentation/Babelfish/index.html).
 
+## License
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
 ## NuGet Package Avaliable
 
 BabelFish is avaliable as a NuGet package. To download it, create a Package Source to our NuGet feed.

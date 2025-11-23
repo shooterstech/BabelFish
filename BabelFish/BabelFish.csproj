@@ -8,8 +8,9 @@
     <AssemblyVersion>1.10.2.23</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
 	<Version>1.10.2.23</Version>
-	<Authors>Scopos</Authors>
-	<Company>Scopos</Company>
+	<Authors>Scopos LLC</Authors>
+	<Company>Scopos LLC</Company>
+  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 	<PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
 	<PackageTags>scopos;API</PackageTags>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -68,6 +69,11 @@
   <ItemGroup>
     <Folder Include="DataModel\Athena\ESTUnitCommands\" />
   </ItemGroup>
+	
+	<ItemGroup>
+		<None Include="..\LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\NOTICE" Pack="true" PackagePath="" />
+	</ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\scopos_dark_transparent.png">
