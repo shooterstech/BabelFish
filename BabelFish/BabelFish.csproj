@@ -69,11 +69,11 @@
   <ItemGroup>
     <Folder Include="DataModel\Athena\ESTUnitCommands\" />
   </ItemGroup>
-
-<ItemGroup>
-  <None Include="LICENSE" Pack="true" PackagePath="" />
-  <None Include="NOTICE" Pack="true" PackagePath="" />
-</ItemGroup>
+	
+	<ItemGroup>
+		<None Include="..\LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\NOTICE" Pack="true" PackagePath="" />
+	</ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\scopos_dark_transparent.png">
