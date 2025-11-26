@@ -50,7 +50,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Method specific Configuration
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
-        [G_STJ_SER.JsonIgnore] //Ignore until I can figure out what this will look like.
         public MergeConfiguration Configuration { get; set; }
 
         /// <inheritdoc />

@@ -58,7 +58,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A list of Authorization Roles the participant has.
+        /// <para>Obsolete as of Orion version 2.25. </para>
         /// </summary>
+        [Obsolete( "Use Participant.RoleList instead." )]
         public List<MatchParticipantRole> RoleList { get; set; }
 
         public override string ToString() {

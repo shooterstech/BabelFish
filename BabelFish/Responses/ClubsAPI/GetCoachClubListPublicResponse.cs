@@ -5,6 +5,7 @@ using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Responses.ClubsAPI;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Responses.ClubsAPI
 {
@@ -26,8 +27,10 @@ namespace Scopos.BabelFish.Responses.ClubsAPI
         }
 
         /// <inheritdoc/>
-        GetCoachClubListPublicRequest ITokenResponse<GetCoachClubListPublicRequest>.GetNextRequest()
-        {
+        GetCoachClubListPublicRequest ITokenResponse<GetCoachClubListPublicRequest>.GetNextRequest() {
+            if (!this.HasMoreItems)
+                throw new NoMoreItemsException( "GetNextRequest() can not return a new request object because there are no more items to return. Always check .HasMoreItems before calling .GetNextRequest()." );
+
             var nextRequest = (GetCoachClubListPublicRequest)Request.Copy();
             nextRequest.Token = Value.ClubList.NextToken;
             return nextRequest;
@@ -36,7 +39,7 @@ namespace Scopos.BabelFish.Responses.ClubsAPI
 		/// <inheritdoc />
 		public bool HasMoreItems {
 			get {
-				return !string.IsNullOrEmpty( Value.ClubList.NextToken );
+				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.ClubList.NextToken );
 			}
 		}
 

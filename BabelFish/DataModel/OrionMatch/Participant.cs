@@ -23,13 +23,55 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Coaches = new List<Individual>();
         }
 
+
+        /// <summary>
+        /// When a competitor's name is displayed, this is the default display value.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
+        public string DisplayName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// When a competitor's name is displayed, and there is limited number of characters, use this value. 
+        /// 
+        /// There is no rule as to how long the Short value could be, but by convention 12 characters or less.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
+        public string DisplayNameShort { get; set; } = string.Empty;
+
+        /*
+         * JsonProperty Order values 5 .. 9 reserved for concrete classes
+         */
+
         /// <summary>
         /// A unique, human readable, value assigned to all Participants in a match.
         /// 
         /// In most cases the CompetitorNumber will be numeric, but it can also be alphabetical.
         /// </summary>
+        [G_NS.JsonProperty( Order = 10 )]
         public string CompetitorNumber { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The three letter country code the participant is from.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 11 )]
+        public string Country { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The Hometown the participant is from.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 12 )]
+        public string HomeTown { get; set; } = string.Empty;
+
+        //TODO: Club, ReentryTag not in API return data
+        /// <summary>
+        /// The Hometown Club the Participant represents. Note, this is NOT the same as any team the Participant is shooting with. 
+        /// </summary>
+        [G_NS.JsonProperty( Order = 13 )]
+        public string Club { get; set; } = string.Empty;
+
+        /*
+         * JsonProperty Order values 15 .. 19 reserved for concrete classes
+         */
 
         /*
          * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
@@ -44,6 +86,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of AttributeValues assigned to this Participant.
         /// </summary>
+        [G_NS.JsonProperty( Order = 21 )]
         public List<AttributeValueDataPacketMatch> AttributeValues { get; set; } = new List<AttributeValueDataPacketMatch>();
 
         /// <summary>
@@ -67,6 +110,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
+        [G_NS.JsonProperty( Order = 22 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
 
         /// <summary>
@@ -81,7 +125,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
+        [G_NS.JsonProperty( Order = 23 )]
         public List<Individual> Coaches { get; set; }
+
+        /*
+         * JsonProperty Order values 25 .. 29 reserved for concrete classes
+         */
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
@@ -92,35 +141,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (Coaches != null && Coaches.Count > 0);
         }
 
-
-        /// <summary>
-        /// When a competitor's name is displayed, this is the default display value.
-        /// </summary>
-        public string DisplayName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The three letter country code the participant is from.
-        /// </summary>
-        public string Country { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The Hometown the participant is from.
-        /// </summary>
-        public string HomeTown { get; set; } = string.Empty;
-
-        /// <summary>
-        /// When a competitor's name is displayed, and there is limited number of characters, use this value. 
-        /// 
-        /// There is no rule as to how long the Short value could be, but by convention 12 characters or less.
-        /// </summary>
-        public string DisplayNameShort { get; set; } = string.Empty;
-
-        //TODO: Club, ReentryTag not in API return data
-        /// <summary>
-        /// The Hometown Club the Participant represents. Note, this is NOT the same as any team the Participant is shooting with. 
-        /// </summary>
-        public string Club { get; set; } = string.Empty;
-
+        /// <inheritdoc />
         public override string ToString() {
             return this.DisplayName;
         }
@@ -133,6 +154,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public int ConcreteClassId { get; set; }
 
+        /// <summary>
+        /// Calculated value to use to identify the same particpant accross multiple result lists.
+        /// Primarily used in TournamentMerge.
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public abstract int UniqueMergeId { get; }
     }
 }

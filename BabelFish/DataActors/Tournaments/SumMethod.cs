@@ -20,6 +20,10 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             this.TopLevelEventname = "Aggregate";
         }
 
+        /// <inheritdoc />
+        public override async Task InitializeAsync() {
+        }
+
         public SumMethodConfiguration MergeConfiguration {
             get {
                 return (SumMethodConfiguration)_mergeConfiguration;

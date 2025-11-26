@@ -1,0 +1,11 @@
+{
+  "sources": [
+    {
+      "name": "s3",
+      "type": "s3",
+      "bucketName": "scopos-nuget",
+      "region": "us-east-1",
+      "URI": "https://scopos-nuget.s3.us-east-1.amazonaws.com/"
+    }
+  ]
+}

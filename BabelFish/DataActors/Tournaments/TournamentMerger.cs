@@ -4,6 +4,8 @@ using System.Text;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Responses.OrionMatchAPI;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
 
@@ -73,20 +75,45 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             tm._mergeResultList = tournament.MergedResultLists.First( mrl => mrl.ResultName == resultName );
 
+            GetResultListPublicRequest getResultListRequest;
+            GetResultListPublicResponse getResultListResponse;
+            ResultList resultList = null;
             foreach( var rlm in tm._mergeResultList.ResultListMembers ) {
-                var getResultListResponse = await _apiClient.GetResultListPublicAsync( rlm.MatchId, rlm.ResultName );
-                if (getResultListResponse.HasOkStatusCode) {
-                    tm.ResultListsMembers.Add( getResultListResponse.ResultList );
-                }  else {
-                    var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
-                    _logger.Error( msg );
-                }
+
+                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId , rlm.ResultName );
+
+                do {
+                    getResultListResponse = await _apiClient.GetResultListPublicAsync( getResultListRequest );
+                    if (getResultListResponse.HasOkStatusCode) {
+                        if (resultList is null) {
+                            //This is the first set of result list items. the result list may have more
+                            resultList = getResultListResponse.ResultList;
+                            tm.ResultListsMembers.Add( resultList );
+                        } else {
+                            //This is the second or more set of result list items.
+                            resultList.Items.AddRange( getResultListResponse.ResultList.Items );
+                        }
+
+                        //Check if we have more items.
+                        if (getResultListResponse.HasMoreItems)
+                            getResultListRequest = (GetResultListPublicRequest) getResultListResponse.GetNextRequest();
+                    } else {
+                        var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
+                        _logger.Error( msg );
+                    }
+                } while (getResultListResponse.HasMoreItems);
+
+                //By setting resultList ot null, we indicate the next loop is a new result list.
+                resultList = null;
             }
 
-            tm._mergeMethod = MergeMethod.Factory( tm, tm._mergeResultList );
+            tm._mergeMethod = await MergeMethod.FactoryAsync( tm, tm._mergeResultList );
 
-            tm.AutoGenerateResultListFormat();
-            tm.AutoGenerateRankingRule();
+            //If the MergeMethod does not set values for ResultListFormat or RankingRule, then try and auto generate them.
+            if (tm.ResultListFormat is null )
+                tm.AutoGenerateResultListFormat();
+            if ( tm.RankingRule is null )
+                tm.AutoGenerateRankingRule();
 
             return tm;
         }
@@ -226,24 +253,40 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
                 //key to save to the ResultEvent.ResultCofScores dictionary
                 //EKA Question: Can the key just be the Result List member's Match ID ? 
-                var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
+                string key;
+                string eventName;
+                EventScore eventScore;
 
                 //Foreach participant in the Result List Member list of people or teams who shot.
                 foreach( var mergingResultEvent in resultListMember.Items ) { 
 
                     if ( _mergedResultEvents.TryGetValue( mergingResultEvent.Participant.UniqueMergeId, out ResultEvent mergedResultEvent )) {
-                        //This is from a Participant we previously found. Add the top level scores to existing Result Event instance.
-                        if (mergingResultEvent.EventScores.TryGetValue( resultListMember.EventName, out EventScore eventScore )) {
-                            mergedResultEvent.ResultCofScores.Add( key, eventScore );
+                        //This is from a Participant we previously found. 
+                        //Add each of the EventScores to the mergedResultEvent under the ResultCofScores dictionary.
+                        foreach( var es in mergingResultEvent.EventScores ) {
+                            eventName = es.Key;
+                            eventScore = es.Value;
+                            key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, eventName );
+                            mergedResultEvent.ResultCofScores[ key ] = eventScore;
+                            eventScore.Participant = mergingResultEvent.Participant;
                         }
                     } else {
                         //This is from a Participant we have not previously found. Create a new ResultEvent and store the top level score in it.
                         var newResultEvent = new ResultEvent();
                         newResultEvent.Participant = mergingResultEvent.Participant.Clone();
                         newResultEvent.ResultCofScores = new Dictionary<string, EventScore>();
-                        if (mergingResultEvent.EventScores.TryGetValue( resultListMember.EventName, out EventScore eventScore )) {
-                            newResultEvent.ResultCofScores.Add( key, eventScore );
+                        newResultEvent.EventScores = new Dictionary<string, EventScore>();
+
+                        //This is from a Participant we previously found. 
+                        //Add each of the EventScores to the mergedResultEvent under the ResultCofScores dictionary.
+                        foreach (var es in mergingResultEvent.EventScores) {
+                            eventName = es.Key;
+                            eventScore = es.Value;
+                            key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, eventName );
+                            newResultEvent.ResultCofScores[key] = eventScore;
+                            eventScore.Participant = mergingResultEvent.Participant;
                         }
+
                         _mergedResultEvents.Add( mergingResultEvent.Participant.UniqueMergeId, newResultEvent );
                     }
                 }

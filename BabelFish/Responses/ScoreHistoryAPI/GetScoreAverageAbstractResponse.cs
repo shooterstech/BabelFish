@@ -5,6 +5,7 @@ using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 	public abstract class GetScoreAverageAbstractResponse : Response<ScoreAverageWrapper>, ITokenResponse<GetScoreHistoryAbstractRequest> {
@@ -17,6 +18,9 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 
 		/// <inheritdoc/>
 		public GetScoreHistoryAbstractRequest GetNextRequest() {
+            if (!this.HasMoreItems)
+                throw new NoMoreItemsException( "GetNextRequest() can not return a new request object because there are no more items to return. Always check .HasMoreItems before calling .GetNextRequest()." );
+            
 			if (Request is GetScoreAveragePublicRequest) {
 				var nextRequest = (GetScoreAveragePublicRequest)Request.Copy();
 				nextRequest.Token = Value.ScoreAverageList.NextToken;
@@ -33,7 +37,7 @@ namespace Scopos.BabelFish.Responses.ScoreHistoryAPI {
 		/// <inheritdoc />
 		public bool HasMoreItems {
 			get {
-				return !string.IsNullOrEmpty( Value.ScoreAverageList.NextToken );
+				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.ScoreAverageList.NextToken );
 			}
 		}
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
 
@@ -18,8 +19,11 @@ namespace Scopos.BabelFish.Responses.SocialNetworkAPI
             get { return Value.SocialRelationshipList; }
         }
 
-        public ListSocialRelationshipsAuthenticatedRequest GetNextRequest()
-        {
+        /// <inheritdoc/>
+        public ListSocialRelationshipsAuthenticatedRequest GetNextRequest() {
+            if (!this.HasMoreItems)
+                throw new NoMoreItemsException( "GetNextRequest() can not return a new request object because there are no more items to return. Always check .HasMoreItems before calling .GetNextRequest()." );
+
             var nextRequest = (ListSocialRelationshipsAuthenticatedRequest)Request.Copy();
             nextRequest.Token = Value.SocialRelationshipList.NextToken;
             return nextRequest;
@@ -28,7 +32,7 @@ namespace Scopos.BabelFish.Responses.SocialNetworkAPI
 		/// <inheritdoc />
 		public bool HasMoreItems {
 			get {
-				return !string.IsNullOrEmpty( Value.SocialRelationshipList.NextToken );
+				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.SocialRelationshipList.NextToken );
 			}
 		}
 	}
