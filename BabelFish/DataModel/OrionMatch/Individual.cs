@@ -15,45 +15,66 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public const int CONCRETE_CLASS_ID = 1;
 
+        /// <summary>
+        /// Default public constructor
+        /// </summary>
         public Individual() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
         }
 
         /// <summary>
+        /// Individual's Family or Last name
+        /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
+        public string FamilyName { get; set; } = string.Empty;
+
+        /// <summary>
         /// Individual's Given or First Name
         /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
         public string GivenName { get; set; } = string.Empty;
-
-        [G_STJ_SER.JsonIgnore]
-        [G_NS.JsonIgnore]
-        [Obsolete( "Use GivenName")]
-        public string FirstName {
-            get { return this.GivenName; }
-            set { this.GivenName = value; }
-        }
 
         /// <summary>
         /// Individual's middle or secondary Given name
         /// </summary>
+        [G_NS.JsonProperty( Order = 7 )]
         public string MiddleName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Individual's Family or Last name
-        /// </summary>
-        public string FamilyName { get; set; } = string.Empty;
-
-		[G_STJ_SER.JsonIgnore]
-		[G_NS.JsonIgnore]
-		[Obsolete( "Use FamilyName" )]
-		public string LastName {
-            get { return this.FamilyName; }
-            set { this.FamilyName = value; }
-        }
 
         /// <summary>
         /// If the Individual has a Scopos account, this is their unique identifier. Formatted as a UUID. A value null or empty string means the Indivdual does not have a Scopos account, or the Id is not known.
         /// </summary>
+        [G_NS.JsonProperty( Order = 9 )]
         public string UserID { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The list of Match Authorization Roles this Individual has for a match.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 25 )]
+        public RoleList RoleList { get; set; } = new RoleList();
+
+        /// <summary>
+        /// NewtonSoft helper method to determine when to serialize .RoleList.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRoleList() {
+            return RoleList != null && RoleList.Count > 0;
+        }
+
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        [Obsolete( "Use FamilyName" )]
+        public string LastName {
+            get { return this.FamilyName; }
+            set { this.FamilyName = value; }
+        }
+
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        [Obsolete( "Use GivenName" )]
+        public string FirstName {
+            get { return this.GivenName; }
+            set { this.GivenName = value; }
+        }
 
         /// <summary>
         /// The unique identifier that represents the score (result cof object) this Individual had in this match. 
