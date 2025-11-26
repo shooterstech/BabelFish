@@ -122,13 +122,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.LOCAL_MATCH;
 
         /// <summary>
-        /// The SharedKey is a defacto password. Allowing systems on the outside to
-        /// make change requests to the match, such as add athletes or teams, insert
-        /// shot data, etc.
-        /// </summary>
-        public string SharedKey { get; set; } = String.Empty;
-
-        /// <summary>
         /// The Version string of the JSON document.
         /// Version 2022-04-09 represents ResultCOF in a dictionary format
         /// Version < 2022 represent ResultCOF in a tree format
@@ -199,6 +192,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<MatchAuthorization> AuthorizationList { get; set; } = new List<MatchAuthorization>();
         */
 
+        /*
+         * EKA Note November 2025
+         * Removed as a property, because its been marked as deprecated for so long.
+         * 
         /// <summary>
         /// A list of match participants, but only the athletes, not the teams. 
         /// 
@@ -209,7 +206,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [Obsolete( "Will be replaced soon with a more proper participant list." )]
         public List<MatchParticipantResult> MatchParticipantResults { get; set; } = new List<MatchParticipantResult>();
+        */
 
+        /*
+         * EKA Note November 2025
+         * Removed as a property, because its been marked as deprecated for so long.
+         * 
         /// <summary>
         /// A list of Result COF that the logged in user owns for this match. Meaning, these are the
         /// scores the logged in user shot. If a user is not logged in, or the logged in user is
@@ -218,6 +220,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 20 )]
         [Obsolete( "Format of this data is in the old ResultCOF (pre 2022). Make a separate call using GetResultCOF() instead, which returns data in the 2022 format." )]
         public List<ResultCOF> ParticipantResults { get; set; } = new List<ResultCOF>();
+        */
 
         /// <summary>
         /// Contact information for the match, i.e. person's name, phone, email.
@@ -228,6 +231,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A list of scoring system names used in this match.
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Boolean, indicating if the owner of this match wants this Match to be returned on a search result.
+        /// </summary>
+        public bool ShowOnSearch { get; set; } = false;
+
+        /// <summary>
+        /// The SharedKey is a defacto password. Allowing systems on the outside to
+        /// make change requests to the match, such as add athletes or teams, insert
+        /// shot data, etc.
+        /// </summary>
+        [Obsolete( "Replaced with user based Authorization with RoleAuthorization" )]
+        public string SharedKey { get; set; } = String.Empty;
 
         public bool ShouldSerializeScoringSystems() {
             return ScoringSystems != null && ScoringSystems.Count > 0;
