@@ -160,6 +160,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 17 )]
         public string TargetCollectionName { get; set; }
 
+        /// <summary>
+        /// The location of the match.
+        /// </summary>
         [JsonPropertyOrder ( 18 )]
         public Location Location { get; set; } = new Location();
 
@@ -173,6 +176,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<MatchAuthorizationCapability> Authorization { get; set; } = new List<MatchAuthorizationCapability>();
 
         /// <summary>
+        /// NewtonSoft helper method to determine if Authoirazation should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAuthorization() {
+            return Authorization is not null && Authorization.Count > 0;
+        }
+
+        /*
+         * EKA Note November 2025
+         * Removed as a property, because Role Authorization is saved instead to the MatchParticipant object. No need to replicate that data here.
+         *
+        /// <summary>
         /// A list of Authorization roles participants in the match have.
         /// This list is sent to the Cloud, but is never seen as part of the Rest API. Instead
         /// the Rest API sends back a list of Authorizations the caller has in the match, with 
@@ -182,7 +197,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// sent back as part of an API request. 
         /// </summary>
         public List<MatchAuthorization> AuthorizationList { get; set; } = new List<MatchAuthorization>();
-
+        */
 
         /// <summary>
         /// A list of match participants, but only the athletes, not the teams. 

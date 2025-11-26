@@ -333,11 +333,11 @@ namespace Scopos.BabelFish.Helpers {
         /// </summary>
         /// <param name="hometown"></param>
         /// <returns></returns>
-        public static string Hometown( string city, string state, string country ) {
+        public static string Hometown( string city, string region, string country ) {
             if (string.IsNullOrWhiteSpace( country ) || country == "USA" || country == "US") {
-                if (!string.IsNullOrWhiteSpace( state )) {
+                if (!string.IsNullOrWhiteSpace( region )) {
                     if (!string.IsNullOrWhiteSpace( city )) {
-                        return $"{city}, {state}";
+                        return $"{city}, {region}";
                     } else {
                         return city;
                     }
@@ -349,7 +349,7 @@ namespace Scopos.BabelFish.Helpers {
                     }
                 }
             } else {
-                if (!string.IsNullOrWhiteSpace( state )) {
+                if (!string.IsNullOrWhiteSpace( region )) {
                     if (!string.IsNullOrWhiteSpace( city )) {
                         return "{city}, {country}";
                     } else {
@@ -372,7 +372,7 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="hometown"></param>
         /// <returns></returns>
         public static string Hometown( Scopos.BabelFish.DataModel.Common.Location location ) {
-            return Hometown( location.City, location.State, location.Country );
+            return Hometown( location.City, location.Region, location.Country );
         }
 
         private static string GetNumberWithOrdinal( int number ) {
