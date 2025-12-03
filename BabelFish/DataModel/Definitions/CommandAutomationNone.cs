@@ -7,6 +7,7 @@ namespace Scopos.BabelFish.DataModel.Definitions
 {
     /// <summary>
     /// No Command Automation, used as default when handling Command automation.
+    /// <para>Effectively a no-op.</para>
     /// </summary>
     class CommandAutomationNone : CommandAutomation
     {

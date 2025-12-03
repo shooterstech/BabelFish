@@ -7,7 +7,8 @@ using System.Text;
 namespace Scopos.BabelFish.DataModel.Definitions
 {
     /// <summary>
-    /// Automation to happen during this command segment, typically like show/hide remarks on a participant.
+    /// Automatize action to happen when the associated SegmentGroupCommand is in focus.
+    /// <para>Commonly used to show or hide remarks on a participant.</para>
     /// </summary>
     public abstract class CommandAutomation
     {

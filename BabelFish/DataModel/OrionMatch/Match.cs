@@ -233,11 +233,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
         /// <summary>
-        /// Boolean, indicating if the owner of this match wants this Match to be returned on a search result.
-        /// </summary>
-        public bool ShowOnSearch { get; set; } = false;
-
-        /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to
         /// make change requests to the match, such as add athletes or teams, insert
         /// shot data, etc.

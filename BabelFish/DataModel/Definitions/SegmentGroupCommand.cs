@@ -396,8 +396,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// Directive given to the Result Engine, to tell it to record the current Result List as the
-        /// one to compare against. Only valid when the ResultEngineCompareType is NOW.
+        /// Directive command given to the Result Engine, when this command is issued. 
+        /// Providing instructions such as to possible disable the current score projection 
+        /// algorithm or which previous Result List to use to evaluate the Rank Trends.
         /// <para>Does (kinda) follow the <a href="https://support.scopos.tech/index.html?segment-and-command-value-inhe.html">value inheritance rules.</a></para>
         /// </summary>
         [G_NS.JsonProperty( Order = 25, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
@@ -433,12 +434,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 || this.ResultEngineDirectives.RecordCompareResultListNow;
         }
 
-		/// <summary>
-		/// A list of Command Automations, these are currently Remark additions or None.
-		/// Commands: Not required, missing or null uses DefaultCommand.ShotAttributes
-		/// DefaultCommand: Required, may be empty list []
-		/// </summary>
-		[G_NS.JsonProperty( Order = 90 )]
+        /// <summary>
+        /// A list of Command Automations to perform when this Command is issued by the Range Officer.
+        /// <para>Required, may be empty list [].</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 90 )]
         public CommandAutomationList Automation { get; set; } = new CommandAutomationList();
 
         /// <summary>

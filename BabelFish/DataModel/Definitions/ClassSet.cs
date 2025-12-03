@@ -2,7 +2,10 @@
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-    [Serializable]
+    /// <summary>
+    /// A ClassSet specifies the css class name to include and the (ShowWhen) condition to when to include it. 
+    /// <para>Used on a ResultListDisplayColumn and ResultListDisplayPartition.</para>
+    /// </summary>
     [G_NS.JsonConverter(typeof(G_BF_NS_CONV.ShowWhenBaseConverter))]
     public class ClassSet : IReconfigurableRulebookObject {
         public ClassSet() { }
@@ -14,13 +17,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// The name of the css class to apply, when ShowWhen evalutes to true.
+        /// The name of the css class to apply, when ShowWhen evaluates to true.
         /// </summary>
         [G_NS.JsonProperty( Order = 1 )]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// Conditional opeartion that determiens if this Name is included.
+        /// Conditional operation that determines if this css .Name is included.
+        /// <para>Defaults to always including the css .Name.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
         public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
