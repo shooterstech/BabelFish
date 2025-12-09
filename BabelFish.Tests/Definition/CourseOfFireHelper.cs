@@ -9,17 +9,17 @@ namespace Scopos.BabelFish.Tests.Definition {
             cof.Singulars.Add( new Singular() {
                 EventName = "K{}",
                 StageLabel = "K",
-                Values = "1..20"
+                Values = new ValueSeries( "1..20" )
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "P{}",
                 StageLabel = "P",
-                Values = "1..20"
+                Values = new ValueSeries( "1..20" )
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "S{}",
                 StageLabel = "S",
-                Values = "1..20"
+                Values = new ValueSeries( "1..20" )
             } );
 
             cof.Events.Add( new EventExplicit() {
@@ -82,7 +82,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             cof.Singulars.Add( new Singular() {
                 EventName = "S{}",
                 StageLabel = "S",
-                Values = "1..60"
+                Values = new ValueSeries( "1..60" )
             } );
 
             cof.Events.Add( new EventExplicit() {
@@ -126,22 +126,22 @@ namespace Scopos.BabelFish.Tests.Definition {
             cof.Singulars.Add( new Singular() {
                 EventName = "K{}",
                 StageLabel = "K",
-                Values = "1..10"
+                Values = new ValueSeries( "1..10" )
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "P{}",
                 StageLabel = "P",
-                Values = "1..10"
+                Values = new ValueSeries( "1..10" )
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "S{}",
                 StageLabel = "S",
-                Values = "1..10"
+                Values = new ValueSeries( "1..10" )
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "I{}",
                 StageLabel = "I",
-                Values = "1..10"
+                Values = new ValueSeries( "1..10" )
             } );
 
             cof.Events.Add( new EventExplicit() {
@@ -221,7 +221,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventType = EventtType.STAGE,
                 ScoreFormat = "Events",
                 ChildEventName = "PR {}",
-                ChildValues = "1..50",
+                ChildValues = new ValueSeries( "1..50" ),
                 StageStyleMapping = new StageStyleMapping() {
                     StageAppellation = "Prone",
                     DefaultDef = "v1.0:ntparc:Precision Air Rifle Prone"
@@ -235,7 +235,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventType = EventtType.STAGE,
                 ScoreFormat = "Events",
                 ChildEventName = "ST {}",
-                ChildValues = "1..50",
+                ChildValues = new ValueSeries( "1..50" ),
                 StageStyleMapping = new StageStyleMapping() {
                     StageAppellation = "Standing",
                     DefaultDef = "v1.0:ntparc:Precision Air Rifle Standing"
@@ -249,7 +249,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventType = EventtType.STAGE,
                 ScoreFormat = "Events",
                 ChildEventName = "KN {}",
-                ChildValues = "1..50",
+                ChildValues = new ValueSeries( "1..50" ),
                 StageStyleMapping = new StageStyleMapping() {
                     StageAppellation = "Kneeling",
                     DefaultDef = "v1.0:ntparc:Precision Air Rifle Kneeling"
@@ -263,7 +263,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "PR {}",
                 EventType = EventtType.STRING,
                 ScoreFormat = "Events",
-                Values = "1..50",
+                Values = new ValueSeries( "1..50" ),
                 ChildEventName = "P{}",
                 ChildStringSize = 10
             } );
@@ -272,7 +272,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "ST {}",
                 EventType = EventtType.STRING,
                 ScoreFormat = "Events",
-                Values = "1..50",
+                Values = new ValueSeries( "1..50" ),
                 ChildEventName = "S{}",
                 ChildStringSize = 10
             } );
@@ -281,7 +281,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "KN {}",
                 EventType = EventtType.STRING,
                 ScoreFormat = "Events",
-                Values = "1..50",
+                Values = new ValueSeries( "1..50" ),
                 ChildEventName = "K{}",
                 ChildStringSize = 10
             } );
@@ -291,21 +291,21 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "K{}",
                 StageLabel = "K",
                 ScoreFormat = "Shots",
-                Values = "1..500",
+                Values = new ValueSeries( "1..500" ),
                 ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "P{}",
                 StageLabel = "P",
                 ScoreFormat = "Shots",
-                Values = "1..500",
+                Values = new ValueSeries( "1..500" ),
                 ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL
             } );
             cof.Singulars.Add( new Singular() {
                 EventName = "S{}",
                 StageLabel = "S",
                 ScoreFormat = "Shots",
-                Values = "1..500",
+                Values = new ValueSeries( "1..500" ),
                 ShotMappingMethod = ShotMappingMethodType.SEQUENTIAL
             } );
 
@@ -314,7 +314,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "PR AVG",
                 Calculation = EventCalculation.AVG_TEN,
                 ScoreFormat = "Events",
-                ChildValues = "1..500",
+                ChildValues = new ValueSeries( "1..500" ),
                 ChildEventName = "P{}",
                 ExternalToEventTree = true
             } );
@@ -322,7 +322,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "ST AVG",
                 Calculation = EventCalculation.AVG_TEN,
                 ScoreFormat = "Events",
-                ChildValues = "1..500",
+                ChildValues = new ValueSeries( "1..500" ),
                 ChildEventName = "S{}",
                 ExternalToEventTree = true
             } );
@@ -330,7 +330,7 @@ namespace Scopos.BabelFish.Tests.Definition {
                 EventName = "KN AVG",
                 Calculation = EventCalculation.AVG_TEN,
                 ScoreFormat = "Events",
-                ChildValues = "1..500",
+                ChildValues = new ValueSeries( "1..500" ),
                 ChildEventName = "K{}",
                 ExternalToEventTree = true
             } );

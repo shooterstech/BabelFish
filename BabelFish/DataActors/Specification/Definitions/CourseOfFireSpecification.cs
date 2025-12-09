@@ -80,9 +80,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var abbrFormats = new IsCourseOfFireAbbreviatedFormatsValid();
             var commandAutomationIds = new IsCourseOfFireRangeScriptAutomationIdsValid();
             var calculationVariables = new IsCourseOfFireEventCalculationVariablesValid();
+            var targetCollectionIndexes = new IsTargetCollectionIndexValid();
 
 
-			if (!await tc.IsSatisfiedByAsync( candidate )) {
+
+            if (!await tc.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( tc.Messages );
             }
@@ -150,6 +152,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await calculationVariables.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( calculationVariables.Messages );
+            }
+
+            if (!await targetCollectionIndexes.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( targetCollectionIndexes.Messages );
             }
 
             return valid;
@@ -762,7 +769,58 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             return valid;
         }
     }
-    public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<CourseOfFire> {
+    
+    /// <summary>
+    /// Tests if the TargetCollectionIndex values, found in either the Singular or SegmentGroupSegment are valid values.
+    /// Values must be less than the size of the TARGET COLLECTION's .TargetCollections[].TargetDefs[] length.
+    /// </summary>
+    public class IsTargetCollectionIndexValid : CompositeSpecification<CourseOfFire> {
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            try {
+                var targetCollectionDef = await candidate.GetTargetCollectionDefinitionAsync();
+                //NOTE each TargetCollectionModal, within a TARGET COLLECTION must have the same number of .TargetDefs, so we can get away with only looking at the first one.
+                var targetDefsListLength = targetCollectionDef.TargetCollections[0].TargetDefs.Count;
+
+                int index = 0;
+                //Test each of the singulars
+                foreach (var singular in candidate.Singulars) {
+                    if ( singular.TargetCollectionIndex < 0
+                        || singular.TargetCollectionIndex >= targetDefsListLength ) {
+                        valid = false;
+                        var msg = $"The Singular {singular.EventName} has a TargetCollectionIndex that is out of range. {singular.TargetCollectionIndex} is listed. Must instead be between 0 and {targetDefsListLength - 1}.";
+                        Messages.Add( msg );
+                    }
+                }
+
+                //Test each of the Segment Group Segments
+                foreach (var rangeScript in candidate.RangeScripts) {
+                    foreach (var segmentGroup in rangeScript.SegmentGroups) {
+                        foreach (var segment in segmentGroup.Segments) {
+                            var targetCollectionIndex = segment.GetTargetCollectionIndex();
+                            if (targetCollectionIndex < 0
+                                || targetCollectionIndex >= targetDefsListLength) {
+                                valid = false;
+                                var msg = $"The Segment {segment.SegmentName} has a TargetCollectionIndex that is out of range. {targetCollectionIndex} is listed. Must instead be between 0 and {targetDefsListLength - 1}. NOTE: The TargetCollectionIndex might be being set using either the SegmentGroup's default values or the RangeScript's default values.";
+                                Messages.Add( msg );
+                            }
+                        }
+                    }
+                }
+
+            } catch (Exception ex) {
+                valid = false;
+                Messages.Add( ex.ToString() );
+            }
+
+            return valid;
+        }
+    }
+
+public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
 
@@ -806,7 +864,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                                     break;
 
                                 case EventDerivationType.EXPAND:
-                                    var vs1 = new ValueSeries( ((AbbreviatedFormatChildExpand)child).Values );
+                                    var vs1 = ((AbbreviatedFormatChildExpand)child).Values;
                                     foreach (var eventName in vs1.GetAsList( child.EventName )) {
 
 										//Check if the Event name is in the Event Tree

@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Required, may not be an empty list. All values must be known TARGET definition set names.
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        public List<string> TargetDefs { get; set; } = new List<string>();
+        public List<SetName> TargetDefs { get; set; } = new List<SetName>();
 
         /// <summary>
         /// This Target Collection Modal is intended for use on a range with thie Range Distance.
@@ -34,12 +34,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc/>
-        public async Task<Dictionary<string, Target>> GetTargetDefinitionListAsync() {
-            Dictionary<string, Target> targets = new();
+        public async Task<Dictionary<SetName, Target>> GetTargetDefinitionListAsync() {
+            Dictionary<SetName, Target> targets = new();
 
             foreach (var targetDef in TargetDefs) {
-                var sn = SetName.Parse( targetDef );
-                targets.Add( targetDef, await DefinitionCache.GetTargetDefinitionAsync( sn ) );
+                targets.Add( targetDef, await DefinitionCache.GetTargetDefinitionAsync( targetDef ) );
             }
 
             return targets;

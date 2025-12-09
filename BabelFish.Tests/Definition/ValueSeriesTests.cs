@@ -98,27 +98,27 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             var vs1 = new ValueSeries( "abcdefg" );
             Assert.AreEqual( 1, vs1.StartValue );
-            Assert.AreEqual( int.MaxValue, vs1.EndValue );
+            Assert.AreEqual( 1, vs1.EndValue );
             Assert.AreEqual( 1, vs1.Step );
 
             var vs2 = new ValueSeries( "1-2-3" );
             Assert.AreEqual( 1, vs2.StartValue );
-            Assert.AreEqual( int.MaxValue, vs2.EndValue );
+            Assert.AreEqual( 1, vs2.EndValue );
             Assert.AreEqual( 1, vs2.Step );
 
             var vs3 = new ValueSeries( "abcd...123" );
             Assert.AreEqual( 1, vs3.StartValue );
-            Assert.AreEqual( int.MaxValue, vs3.EndValue );
+            Assert.AreEqual( 1, vs3.EndValue );
             Assert.AreEqual( 1, vs3.Step );
 
             var vs7 = new ValueSeries( string.Empty );
             Assert.AreEqual( 1, vs7.StartValue );
-            Assert.AreEqual( int.MaxValue, vs7.EndValue );
+            Assert.AreEqual( 1, vs7.EndValue );
             Assert.AreEqual( 1, vs7.Step );
 
             var vs8 = new ValueSeries( null );
             Assert.AreEqual( 1, vs8.StartValue );
-            Assert.AreEqual( int.MaxValue, vs8.EndValue );
+            Assert.AreEqual( 1, vs8.EndValue );
             Assert.AreEqual( 1, vs8.Step );
         }
     }

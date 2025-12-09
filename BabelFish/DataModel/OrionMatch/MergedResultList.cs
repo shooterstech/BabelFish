@@ -31,8 +31,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The SCORE FORMAT COLLECTION to use while displaying scores for this MergedResultList
         /// </summary>
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
+        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+        //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
         [G_NS.JsonProperty( Order = 4 )]
         public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 

@@ -6,12 +6,13 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI
 {
-    public class PostSendPressReleaseEmailResponse : Response<SentPressReleaseEmailWrapper> {
+    public class PostSendPressReleaseEmailAuthenticatedResponse : Response<SentPressReleaseEmailWrapper> {
 
 
-        public PostSendPressReleaseEmailResponse( PostSendPressReleaseEmailRequest request ) : base( ) { 
+        public PostSendPressReleaseEmailAuthenticatedResponse( PostSendPressReleaseEmailAuthenticatedRequest request ) : base( ) { 
             this.Request = request;
         }
+
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>

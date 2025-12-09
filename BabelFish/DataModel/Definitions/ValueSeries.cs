@@ -107,8 +107,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private void Parse() {
 
             //Check for the special case of "*"
-            if ( string.IsNullOrEmpty( _format) 
-                || _format == APPLY_TO_ALL_FORMAT) {
+            if ( string.IsNullOrEmpty( _format) ) {
+                StartValue = 1;
+                EndValue = 1;
+                Step = 1;
+                return;
+            }
+
+            if (_format == APPLY_TO_ALL_FORMAT) {
                 StartValue = 1;
                 EndValue = int.MaxValue;
                 Step = 1;
@@ -128,7 +134,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             switch (list.Count) {
                 case 0:
                     StartValue = 1;
-                    EndValue = int.MaxValue;
+                    EndValue = 1;
                     Step = 1;
                     break;
                 case 1:

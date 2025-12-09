@@ -159,14 +159,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 							Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].EventName must not be an empty string." );
                         }
 
-                        //If EventName has {} then Values needs to be a Values Series
-                        //TODO Check that .Values is a ValueSeries
-                        if (tbRule.EventName.Contains( "{}" ) && string.IsNullOrEmpty( tbRule.Values )) {
-                            valid = false;
-                            Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Values must not be an empty string when EventName contains the wildcard replacement characters '{{}}'." );
-
-                        }
-
                     } else if (rule is TieBreakingRuleScore) {
                         var tbRule = rule as TieBreakingRuleScore;
 
@@ -174,14 +166,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         if (string.IsNullOrEmpty( tbRule.EventName )) {
                             valid = false;
                             Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].EventName must not be an empty string." );
-                        }
-
-						//If EventName has {} then Values needs to be a Values Series
-						//TODO Check that .Values is a ValueSeries
-						if ( tbRule.EventName.Contains( "{}" ) && string.IsNullOrEmpty( tbRule.Values) ) {
-                            valid = false;
-                            Messages.Add( $"RankingRules[{rankingRuleIndex}].Rules[{ruleIndex}].Values must not be an empty string when EventName contains the wildcard replacement characters '{{}}'." );
-
                         }
                     }
 

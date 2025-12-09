@@ -43,6 +43,21 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             return new ValidationModel( true, string.Empty ) ;
         }
 
+        public static async Task<ValidationModel> IsValidSetNameAndExistsAsync( string propertyName, SetName setNameUnderTest, DefinitionType definitionType ) {
+
+            if ( setNameUnderTest is null ) {
+                var message = $"{propertyName} is required and may not be null or an empty string.";
+                return new ValidationModel( false, message );
+            }
+
+            if (!await IsValidDefinitionAsync( setNameUnderTest, definitionType )) {
+                var message = $"{propertyName} value '{setNameUnderTest}' is not a known {definitionType} Definition or it is discontinued.";
+                return new ValidationModel( false, message );
+            }
+
+            return new ValidationModel( true, string.Empty );
+        }
+
         /// <summary>
         /// Returns a boolean if the passed in setName is a known Definition.
         /// May return false if the Definition could not be found, if the Definition

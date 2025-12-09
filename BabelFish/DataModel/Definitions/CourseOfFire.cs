@@ -198,12 +198,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         public async Task<SetName> GetDefaultTargetDefinition( string targetCollectionName ) {
             var targetCollectionDef = await GetTargetCollectionDefinitionAsync();
-            foreach (var collection in targetCollectionDef.TargetCollections) {
-                if (targetCollectionName == collection.TargetCollectionName) {
-                    return Scopos.BabelFish.DataModel.Definitions.SetName.Parse( collection.TargetDefs.FirstOrDefault() );
-                }
-            }
-            return Scopos.BabelFish.DataModel.Definitions.SetName.Parse( targetCollectionDef.TargetCollections[0].TargetDefs.FirstOrDefault() );
+            return targetCollectionDef.GetTargetCollection( targetCollectionName ).TargetDefs[0];
         }
 
         /// <inheritdoc />
@@ -264,7 +259,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventName = "String Event",
                 EventType = EventtType.STRING,
                 ChildEventName = "S{}",
-                ChildValues = "1..10"
+                ChildValues = new ValueSeries( "1..10" )
             };
 
             Events.Add( topLvelEvent );
@@ -273,7 +268,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             Singulars.Add( new Singular() {
                 EventName = "S{}",
-                Values = "1..10",
+                Values = new ValueSeries( "1..10" ),
                 StageLabel = "S"
             } );
 

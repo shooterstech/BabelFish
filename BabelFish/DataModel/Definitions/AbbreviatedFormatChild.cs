@@ -154,18 +154,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		/// Formatted as a Value Series
 		/// </summary>
 		[G_NS.JsonProperty( Order = 16 )]
-		public string Values { get; set; } = string.Empty;
+		[G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ValueSeriesConverter ) )]
+		public ValueSeries Values { get; set; } = new ValueSeries( "1" );
 
 		/// <inheritdoc />
 		public override List<AbbreviatedFormatChild> GetCompiledAbbreviatedFormatChildren( IEventScoreProjection re ) {
 			List<AbbreviatedFormatChild> list = new List<AbbreviatedFormatChild>();
-			ValueSeries vs = new ValueSeries( this.Values );
-			var eventNameList = vs.GetAsList( this.EventName );
-			var displayNameList = string.IsNullOrEmpty( this.EventDisplayName ) ? vs.GetAsList( this.EventName ) : vs.GetAsList( this.EventDisplayName );
-			var count = eventNameList.Count;
+			var displayNameList = string.IsNullOrEmpty( this.EventDisplayName ) ? Values.GetAsList( this.EventName ) : Values.GetAsList( this.EventDisplayName );
+			var count = Values.GetAsList().Count;
 
 			for (int i = 0; i < count; i++) {
-				list.Add( new AbbreviatedFormatChildExplicit( this, eventNameList[i], displayNameList[i] ) );
+				list.Add( new AbbreviatedFormatChildExplicit( this, Values.GetAsList( this.EventName )[i], displayNameList[i] ) );
 			}
 
 			return list;

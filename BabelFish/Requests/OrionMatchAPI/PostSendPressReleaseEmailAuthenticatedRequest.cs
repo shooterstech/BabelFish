@@ -4,9 +4,9 @@ using System.Text;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class PostSendPressReleaseEmailRequest : Request {
+    public class PostSendPressReleaseEmailAuthenticatedRequest : Request {
 
-        public PostSendPressReleaseEmailRequest( UserAuthentication credentials ) : base( "SendPressReleaseEmail", credentials ) {
+        public PostSendPressReleaseEmailAuthenticatedRequest( UserAuthentication credentials ) : base( "SendPressReleaseEmail", credentials ) {
             HttpMethod = HttpMethod.Post;
         }
 

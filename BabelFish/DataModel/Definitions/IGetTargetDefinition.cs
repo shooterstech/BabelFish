@@ -26,6 +26,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Key is the set name, value is the definition.
         /// </summary>
         /// <returns></returns>
-        Task<Dictionary<string, Target>> GetTargetDefinitionListAsync();
+        Task<Dictionary<SetName, Target>> GetTargetDefinitionListAsync();
     }
 }
