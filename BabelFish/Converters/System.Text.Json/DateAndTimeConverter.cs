@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
         /// <inheritdoc />
         public override void Write( Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options ) {
-            writer.WriteStringValue(value.ToString( DateTimeFormat ) );
+            writer.WriteStringValue(value.ToString( DateTimeFormat, CultureInfo.InvariantCulture ) );
         }
     }
 

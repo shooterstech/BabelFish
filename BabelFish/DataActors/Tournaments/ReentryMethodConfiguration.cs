@@ -26,22 +26,22 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// The SetName of the COURSE OF FIRE definition that all result lists are 
         /// expected to be composed from.
         /// </summary>
-        [G_STJ_SER.JsonConverter(typeof(G_BF_STJ_CONV.SetNameConverter))]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ))]
+        //[G_STJ_SER.JsonConverter(typeof(G_BF_STJ_CONV.SetNameConverter))]
+        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ))]
         public SetName CourseOfFireDef {  get; set; }
 
         /// <summary>
         /// The SetName of the RANKING RULE definition that should be used to rank the merged results.
         /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+        //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
+        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
         public SetName RankingRuleDef { get; set; }
 
         /// <summary>
         /// The SetName of the RESULT LIST FORMAT definition that should be used to format the merged results.
         /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+        //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
+        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
         public SetName ResultListFormatDef { get; set; }
 
         /// <inheritdoc />

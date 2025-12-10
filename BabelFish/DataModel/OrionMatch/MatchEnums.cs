@@ -7,7 +7,9 @@ using System.Text;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
-
+    /// <summary>
+    /// Concrete class identifier for the abstract class CommandAutomation.
+    /// </summary>
 	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
 	public enum CommandAutomationSubject {
 		/// <summary>
@@ -422,6 +424,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         OFFICIAL
     }
 
+    /// <summary>
+    /// Defines the possible remarks that may be assigned to Participants.
+    /// </summary>
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum ParticipantRemark {
         /// <summary>
@@ -480,6 +485,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ELLIPSES
     };
 
+    /// <summary>
+    /// Specifies the type of action to take on a CommandAutomationRemark.
+    /// </summary>
 	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum RemarkVisibility {
         /// <summary>

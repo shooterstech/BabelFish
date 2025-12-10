@@ -14,6 +14,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 			var setName = SetName.Parse( "v1.0:ntparc:Air Rifle" );
 
 			var candidate = (await client.GetTargetCollectionDefinitionAsync( setName )).Value;
+            Assert.IsNotNull( candidate );
 
 			var validation = new IsTargetCollectionValid();
 
@@ -84,7 +85,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             //Set the TargetDefs to an empty list.
             definition.TargetCollections[0].TargetDefs.Clear();
-            definition.TargetCollections[0].TargetDefs.Add( "v1.0:orion:not a real target" );
+            definition.TargetCollections[0].TargetDefs.Add( SetName.Parse( "v1.0:orion:not a real target" ) );
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
         }

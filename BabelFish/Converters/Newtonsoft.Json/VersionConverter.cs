@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Version = Scopos.BabelFish.DataModel.Common.Version;
 
 namespace Scopos.BabelFish.Converters.Newtonsoft {
     public class VersionConverter : JsonConverter<Version> {

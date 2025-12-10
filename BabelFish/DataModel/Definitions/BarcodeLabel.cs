@@ -28,16 +28,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The series numbers to print on the barcode labels. Must be formated as a ValueSeries
         /// </summary>
-        public string Series { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Interprets Series and returns a list of ints that it represents.
-        /// </summary>
-        /// <returns></returns>
-        public List<int> GetSeriesAsList() {
-            ValueSeries vs = new ValueSeries(Series);
-            return vs.GetAsList();
-        }
+        [DefaultValue( "1" )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ValueSeriesConverter ) )]
+        public ValueSeries Series { get; set; } = new ValueSeries( "1" );
 
         /// <summary>
         /// The formal name of the paper target to use with this BarcodeLabel option.

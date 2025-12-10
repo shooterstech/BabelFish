@@ -49,6 +49,27 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return list;
         }
 
+        /// <summary>
+        /// Helper method to return the TargetCollectionModal with th e passed in target collection name.
+        /// </summary>
+        /// <param name="targetCollectionName"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">Thrown if the passed in targetCollectionName is not found.</exception>
+        public TargetCollectionModal GetTargetCollection( string targetCollectionName ) {
+            foreach (var item in TargetCollections) {
+                if (item.TargetCollectionName == targetCollectionName) {
+                    return item;
+                }
+            }
+
+            var listOfNames = string.Join( ", ", this.GetTargetCollectionNames() );
+            throw new InvalidOperationException( $"A TargetCollectionModal with name {targetCollectionName} was not found in {this.SetName}. The list of known TargetCollectionModals are " );
+        }
+
+        /// <summary>
+        /// Returns the default target collection name.
+        /// </summary>
+        /// <returns></returns>
         public string GetDefaultTargetCollectionName() {
             if (TargetCollections.Count > 0)
                 return TargetCollections[0].TargetCollectionName;
@@ -56,6 +77,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return "";
         }
 
+        /// <summary>
+        /// Helper method, returns a booleann indicating if the passed in target collection name is part of this TARGET COLLECTION
+        /// </summary>
+        /// <param name="targetCollectionName"></param>
+        /// <returns></returns>
         public bool IsValidTargetCollectionName( string targetCollectionName ) {
             foreach (var tc in TargetCollections) {
                 if (tc.TargetCollectionName == targetCollectionName)
@@ -84,7 +110,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             var defaultTcm = new TargetCollectionModal();
             defaultTcm.RangeDistance = "10m";
             defaultTcm.TargetCollectionName = "Default Collection";
-            defaultTcm.TargetDefs.Add( "v1.0:issf:10m Air Rifle" );
+            defaultTcm.TargetDefs.Add( Definitions.SetName.Parse( "v1.0:issf:10m Air Rifle" ) );
             this.TargetCollections.Add( defaultTcm );
 
             return true;

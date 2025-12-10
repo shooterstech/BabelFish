@@ -32,8 +32,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Required when EventName has a placeholder, ignored otherwise.
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        [DefaultValue( "" )]
-        public string Values { get; set; } = string.Empty;
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ValueSeriesConverter ) )]
+        public ValueSeries Values { get; set; } = new ValueSeries( "1" );
+
+        /// <summary>
+        /// Newtonsoft.json helper method to determine if .Values should be serialized.
+        /// If .EventName contains the interpolation variable "{}" then .Values will be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeValues() {
+            return EventName?.Contains( "{}" ) ?? false;
+        }
 
         /// <summary>
         /// The Score dictionary property to use to compare.
@@ -66,11 +76,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return new List<TieBreakingRuleBase>() { this };
             } else {
                 List<TieBreakingRuleBase> list = new List<TieBreakingRuleBase>();
-                ValueSeries vs = new ValueSeries( this.Values );
-                foreach (var eventName in vs.GetAsList( this.EventName )) {
+                foreach (var eventName in Values.GetAsList( this.EventName )) {
                     var newTieBreakingRule = this.Clone();
                     newTieBreakingRule.EventName = eventName;
-                    newTieBreakingRule.Values = "";
+                    newTieBreakingRule.Values = new ValueSeries( "1" );
                     list.Add( newTieBreakingRule );
                 }
                 return list;

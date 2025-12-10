@@ -7,26 +7,60 @@ using System.Threading.Tasks;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
-    /// Strings formatted as value series will have the form
-    /// *        Applies to all 
-    /// n        Applies to the nth value in the list.
-    /// n..m     Applies to the nth through the mth values in the list.
-    /// n..m,s   Applies to the nth through the mth values in the list, with a step of s.
-    /// where n is start value, m is end value, s is step
+    /// Strings formatted as value series will have the form:
+    /// <list type="bullet">
+    /// <item>*        Applies to all </item>
+    /// <item>n        Applies to the nth value in the list.</item>
+    /// <item>n..m     Applies to the nth through the mth values in the list.</item>
+    /// <item>n..m,s   Applies to the nth through the mth values in the list, with a step of s.</item>
+    /// </list>
+    /// where n is start value, m is end value, s is step. If unable to parse then "*" is assumed. 
     /// </summary>
     public class ValueSeries {
 
-        private string format = "";
+        public const string APPLY_TO_ALL_FORMAT = "*";
 
-        public ValueSeries(string format) {
-            this.format = format;
+        private string ? _format = "";
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="format">
+        /// format must be one of the following. If unable to parse then "*" is assumed. 
+        /// <list type="bullet">
+        /// <item>*        Applies to all </item>
+        /// <item>n        Applies to the nth value in the list.</item>
+        /// <item>n..m     Applies to the nth through the mth values in the list.</item>
+        /// <item>n..m,s   Applies to the nth through the mth values in the list, with a step of s.</item>
+        /// </list>
+        /// where n is start value, m is end value, s is step
+        /// </param>
+        public ValueSeries(string ? format) {
+            this._format = format;
             Parse();
         }
 
+        /// <summary>
+        /// The starting value of this Value Series.
+        /// </summary>
+        /// <remarks>
+        /// Value series have a starting index value of 1, not 0 (we do apologize emphatically for this). 
+        /// </remarks>
         public int StartValue { get; private set;}
 
+
+        /// <summary>
+        /// The ending value of this Value Series.
+        /// </summary>
+        /// <remarks>
+        /// Value series have a starting index value of 1, not 0 (we do apologize emphatically for this). 
+        /// </remarks>
         public int EndValue { get; private set; }
 
+        /// <summary>
+        /// The step value for this Value Series.
+        /// </summary>
+        /// <remarks>Step values are almost always 1 or -1.</remarks>
         public int Step { get; private set; }
 
         /// <summary>
@@ -72,7 +106,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         private void Parse() {
 
-            var intStrings = format.Split(new string[] { "..", "," }, StringSplitOptions.RemoveEmptyEntries);
+            //Check for the special case of "*"
+            if ( string.IsNullOrEmpty( _format) ) {
+                StartValue = 1;
+                EndValue = 1;
+                Step = 1;
+                return;
+            }
+
+            if (_format == APPLY_TO_ALL_FORMAT) {
+                StartValue = 1;
+                EndValue = int.MaxValue;
+                Step = 1;
+                return;
+            }
+
+            var intStrings = _format.Split(new string[] { "..", "," }, StringSplitOptions.RemoveEmptyEntries);
 
             List<int> list = new List<int>();
 
@@ -105,6 +154,28 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     Step = Math.Abs( list[2] );
                     break;
             }
+
+            //Do not allow Step values of 0. Which would cause an infinite loop if allowed.
+            if (Step == 0)
+                Step = 1;
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>Returns this ValueSeries in the fomat "n..m,s"</remarks>
+        public override string ToString() {
+            if ( Step == 1 
+                && StartValue == EndValue )
+                return StartValue.ToString();
+
+            if (Step == 1)
+                return $"{StartValue}..{EndValue}";
+
+            if (Step == 1 
+                && StartValue == 1 
+                && EndValue == int.MaxValue)
+                return APPLY_TO_ALL_FORMAT;
+
+            return $"{StartValue}..{EndValue}, {Step}";
         }
     }
 }

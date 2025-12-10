@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.PressRelease {
                 Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            PostSendPressReleaseEmailRequest request = new PostSendPressReleaseEmailRequest( userAuthentication ) {
+            PostSendPressReleaseEmailAuthenticatedRequest request = new PostSendPressReleaseEmailAuthenticatedRequest( userAuthentication ) {
                 TestOnly = true,
                 SendTo = new List<string>() { "erik@scopos.tech" },
                 LeagueID = "1.1.2024072509092300.3",

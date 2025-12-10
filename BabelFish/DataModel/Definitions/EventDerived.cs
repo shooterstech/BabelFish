@@ -29,14 +29,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Derivation = EventDerivationType.DERIVED;
         }
 
+
         /// <summary>
-        /// String formatted as a Value Series.
-        /// <para><see href="https://support.scopos.tech/index.html?string-formatting-value-series.html">Value Series documentation.</see></para>
+        /// Numberic values to use to interpolation .ChildEventName
         /// </summary>
+        /// <remarks>Default value is "1"</remarks>
 		[G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
-        [DefaultValue( "" )]
-        public string ChildValues { get; set; } = string.Empty;
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ValueSeriesConverter ) )]
+        public ValueSeries ChildValues { get; set; } = new ValueSeries( "1" );
+
+        /// <summary>
+        /// Newtonsoft.json helper method to determine if .Values should be serialized.
+        /// If .ChildEventName contains the interpolation variable "{}" then .ChildValues will be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeChildValues() {
+            return ChildEventName?.Contains( "{}" ) ?? false;
+        }
 
         /// <summary>
         /// Must include the place holder {}. For example "PR {}".
@@ -57,8 +68,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     throw new ScoposException( "Can not calculate the list of Event Children. The value for ChildEventName is incorrectly formatted. It is empty, null, or does not contain a placeholder." );
 
                 _children = new List<string>();
-                ValueSeries vs = new ValueSeries( this.ChildValues );
-                foreach (var eventName in vs.GetAsList( this.ChildEventName )) {
+                foreach (var eventName in ChildValues.GetAsList( this.ChildEventName )) {
                     _children.Add( eventName );
                 }
 

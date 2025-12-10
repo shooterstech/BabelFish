@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var match = response.Match;
 
             //Perform some simple tests on the returned data.
-            Assert.AreEqual( matchId.ToString(), match.MatchID );
+            Assert.AreEqual( matchId.ToString(), match.MatchID.ToString() );
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( "2023-01-19", match.StartDate.ToString( DateTimeFormats.DATE_FORMAT ) );

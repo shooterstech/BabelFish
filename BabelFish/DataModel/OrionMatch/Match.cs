@@ -11,7 +11,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class Match {
 
-        private string parentId = "";
         private Logger logger = LogManager.GetCurrentClassLogger();
 
         public Match() { }
@@ -36,29 +35,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder ( 1 )]
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
-        [JsonPropertyOrder ( 2 )]
-        public string ParentID { 
-            get {
-                if (string.IsNullOrEmpty( parentId ))
-                    return MatchID;
-                else
-                    return parentId;
-            }
-            set {
-                parentId = value;
-            }
-        }
-
-        private MatchID ? _parentIDAsObject = null;
+        [JsonPropertyOrder( 2 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
+        public MatchID? ParentID { get; set; }
 
         /// <summary>
         /// Returns the .ParentID as a MatchID instance.
         /// </summary>
+        [Obsolete( "Use .ParentID" )]
         public MatchID GetParentId() {
-            if ( _parentIDAsObject is null ) {
-                _parentIDAsObject = new MatchID( ParentID );
-            }
-            return _parentIDAsObject;
+            return ParentID;
         }
 
         /// <summary>
@@ -117,7 +104,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// This is a required field.
         /// </summary>
         [JsonPropertyOrder ( 11 )]
-        public string MatchID { get; set; } = string.Empty;
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
+        public MatchID MatchID { get; set; }
 
         public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.LOCAL_MATCH;
 
@@ -231,11 +220,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A list of scoring system names used in this match.
         /// </summary>
         public List<string> ScoringSystems { get; set; } = new List<string>();
-
-        /// <summary>
-        /// Boolean, indicating if the owner of this match wants this Match to be returned on a search result.
-        /// </summary>
-        public bool ShowOnSearch { get; set; } = false;
 
         /// <summary>
         /// The SharedKey is a defacto password. Allowing systems on the outside to

@@ -109,7 +109,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var response = await client.GetResultListPublicAsync(matchId, resultListName);
             DataModel.Definitions.CommandAutomationRemark automation = new DataModel.Definitions.CommandAutomationRemark() {
-                ParticipantRanks = "1..8"
+                ParticipantRanks = new DataModel.Definitions.ValueSeries( "1..8" )
             };
             var listOfParticipantsInRL = automation.GetParticipantListToApply(response.ResultList);
             foreach (var m in listOfParticipantsInRL)

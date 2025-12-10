@@ -32,13 +32,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// String formatted as a Value Series.
-        /// <para><see href="https://support.scopos.tech/index.html?string-formatting-value-series.html">Value Series documentation.</see></para>
+        /// Numberic values to use to interpolation .ChildEventName
         /// </summary>
+        /// <remarks>Default value is "1"</remarks>
 		[G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
-        [DefaultValue( "" )]
-        public string Values { get; set; } = string.Empty;
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ValueSeriesConverter ) )]
+        public ValueSeries Values { get; set; } = new ValueSeries( "1" );
 
         [G_STJ_SER.JsonPropertyOrder( 7 )]
         [G_NS.JsonProperty( Order = 7, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
@@ -55,15 +56,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc />
         public override List<EventExplicit> GetCompiledEvents() {
-            if (string.IsNullOrEmpty( Values )
-                || !this.EventName.Contains( "{}" ))
+            if (!this.EventName.Contains( "{}" ))
                 throw new ScoposException( $"Can not compile the list of expanded Events. The value for EventName is incorrectly formatted, '{this.EventName}'. It is empty, null, or does not contain a placeholder." );
 
             List<EventExplicit> events = new List<EventExplicit>();
 
             int childIndex = 1;
-            ValueSeries vs = new ValueSeries( this.Values );
-            foreach (var eventName in vs.GetAsList( this.EventName )) {
+            foreach (var eventName in Values.GetAsList( this.EventName )) {
                 var eventExplicit = new EventExplicit();
                 eventExplicit.EventName = eventName;
                 eventExplicit.Calculation = this.Calculation;
