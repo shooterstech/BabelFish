@@ -391,11 +391,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             //If we get here, then the parent must be a Singular ... or at least *should* be a Singular
             foreach( Singular s in singulars ) {
-				parent.EventType = EventtType.SINGULAR;
-                parent.ScoreFormat = s.ScoreFormat;
-                parent.Calculation = EventCalculation.NONE;
-                parent.SingularType = s.Type;
-                return;
+                foreach (var ss in s.GetSingularEventList()) {
+                    if (parent.EventName == ss.EventName) {
+                        parent.EventType = EventtType.SINGULAR;
+                        parent.ScoreFormat = s.ScoreFormat;
+                        parent.Calculation = EventCalculation.NONE;
+                        parent.SingularType = s.Type;
+                        parent.StageLabel = s.StageLabel;
+                        return;
+                    }
+                }
 			}
 
             //We shouldn't get here if the cof is defined correctly.
@@ -405,7 +410,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Helper method to return the SetName of the TARGET definition that is expected to be used with this
-        /// Singular. Calculated in conjunction with the COURSE OF FIRE and targetCollectionName.
+        /// EventComposite. Calculated in conjunction with the COURSE OF FIRE and targetCollectionName.
         /// </summary>
         /// <param name="courseOfFire"></param>
         /// <param name="targetCollectionName"></param>
@@ -416,14 +421,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="XApiKeyNotSetException"></exception>
         /// <exception cref="DefinitionNotFoundException"></exception>
         /// <exception cref="ScoposAPIException"></exception>
-        public async Task<SetName> GetTargetCollectionAsync( SetName courseOfFire, string targetCollectionName ) {
+        public async Task<Target> GetTargetAsync( CourseOfFire cofDefinition, string targetCollectionName ) {
             if ( ! HasUniformTargetDefinitions ) {
                 throw new InvalidOperationException( $"{this.EventName} is shot on multiple different TARGETs." );
             }
-            var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( courseOfFire );
             var targetCollectionDefinition = await cofDefinition.GetTargetCollectionDefinitionAsync();
             var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
-            return targetCollection.TargetDefs[TargetCollectionIndex];
+            var targetSetName = targetCollection.TargetDefs[TargetCollectionIndex];
+            return await DefinitionCache.GetTargetDefinitionAsync( targetSetName );
         }
 
         /// <summary>
@@ -435,6 +440,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return this.TargetCollectionIndex != EventComposite.MIX_TARGET_EVENT;
             }
         }
+
+        public string StageLabel { get; set; }
 
         /// <inheritdoc/>
         public bool Equals( EventComposite other ) {

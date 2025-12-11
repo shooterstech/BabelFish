@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+﻿using System.ComponentModel;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Athena {
     [Serializable]
@@ -51,22 +52,38 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold a averaged integer score, or in Group Mode to display the Area of the shot group. 
         /// </summary>
+        [DefaultValue( 0 )]
         public float J { get; set; } = 0;
 
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged decimal score, or in Group Mode to display the Roundness of the shot group.
         /// </summary>
+        [DefaultValue( 0 )]
         public float K { get; set; } = 0;
 
         /// <summary>
         /// Special use case score. Value is displayed to one decimal place. Known to be used to hold an averaged inner ten score, or in Group Mode to display the distance the center of the group is from the center of the target. 
         /// </summary>
+        [DefaultValue( 0 )]
         public float L { get; set; } = 0;
+
+        public bool ShouldSerializeJ() {
+            return !(Math.Abs( J ) < .00001f || float.IsNaN( J ) || float.IsInfinity( J ));
+        }
+
+        public bool ShouldSerializeK() {
+            return !(Math.Abs( K ) < .00001f || float.IsNaN( K ) || float.IsInfinity( K ));
+        }
+
+        public bool ShouldSerializeL() {
+            return !(Math.Abs( L ) < .00001f || float.IsNaN( L ) || float.IsInfinity( L ));
+        }
 
         /// <summary>
         /// Returns a boolean indicating if this Score is 0 (all values are zero). 
         /// </summary>
         [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public bool IsZero {
             get {
                 return (X == 0 && D == 0 && I == 0 && S == 0 && J == 0 && K == 0 && L == 0);
@@ -77,6 +94,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// This field is used internally to BabelFish only. Its value is neither written to or read from JSON.
         /// </summary>
         [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
         public int NumShotsFired { get; set; } = 0;
 
         public AveragedScore GetAvgShotFired() {

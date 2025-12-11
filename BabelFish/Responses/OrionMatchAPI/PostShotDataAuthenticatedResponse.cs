@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.DataModel;
+﻿using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.Athena.Shot;
-using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
@@ -40,6 +36,8 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
 
     public class RejectedShot : Shot {
 
+        [G_STJ_SER.JsonPropertyName( "REJECTION_MESSAGES" )]
+        [G_NS.JsonProperty( "REJECTION_MESSAGES" )]
         public List<string> RejectionMessages { get; set; }
 
     }

@@ -8,6 +8,8 @@ using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using System.ComponentModel;
 using System.Dynamic;
+using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot
 {
@@ -188,7 +190,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         public string ResultCOFID { get; set; }
 
-        public string MatchID { get; set; }
+        public MatchID MatchID { get; set; }
 
         /// <summary>
         /// Additional information about the shot. Format is dependent of the type of EST system used to score the shot.
@@ -202,9 +204,25 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         public string EventName { get; set; }
 
         /// <summary>
+        /// Newtonsoft helper method.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeEventName() {
+            return ! string.IsNullOrEmpty( EventName );
+        }
+
+        /// <summary>
         /// ScoreFormatted may only be set when the Shot is part of a Result COF .Shots dictrionary
         /// </summary>
         public string ScoreFormatted { get; set; }
+
+        /// <summary>
+        /// Newtonsoft helper method.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerialiaeScoreFormatted() {
+            return ! string.IsNullOrEmpty( ScoreFormatted );
+        }
 
         /// <summary>
         /// Returns the x and y coordinates, measured in pixels, of the aiming bull center in the verification photo.
@@ -315,6 +333,14 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         public string ValidationPhoto { get; set; }
 
+        /// <summary>
+        /// Newtonsoft helper method, to determine if ValidationPhoto should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeValidationPhoto() {
+            return ! string.IsNullOrEmpty( ValidationPhoto );
+        }
+
         public bool Equals(Shot other)
         {
             return this.GetHashCode() == other.GetHashCode();
@@ -360,6 +386,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 
         /// <inheritdoc/>
         public List<Penalty> Penalties { get; set; }
+
+        public VisibilityOption Privacy { get; set; } = VisibilityOption.PUBLIC;
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize Penalties when the list has something in it.

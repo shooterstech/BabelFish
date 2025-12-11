@@ -23,6 +23,8 @@ namespace Scopos.BabelFish.Helpers {
 
         public static G_NS.JsonSerializerSettings NewtonsoftJsonSerializer = null;
 
+        public static G_NS.JsonSerializerSettings NewtonsoftJsonSerializerOneLine = null;
+
         /// <summary>
         /// Initializes the standard serializers used by and with BabelFish.
         /// </summary>
@@ -161,6 +163,16 @@ namespace Scopos.BabelFish.Helpers {
 
             //Lets enums get deserizlized from their stirng or description representation.
             NewtonsoftJsonSerializer.Converters.Add( new G_NS_CONV.StringEnumConverter() );
+
+            NewtonsoftJsonSerializerOneLine = new G_NS.JsonSerializerSettings();
+
+            NewtonsoftJsonSerializerOneLine.TypeNameHandling = G_NS.TypeNameHandling.None;
+            NewtonsoftJsonSerializerOneLine.NullValueHandling = G_NS.NullValueHandling.Ignore;
+            NewtonsoftJsonSerializerOneLine.Formatting = G_NS.Formatting.None;
+            NewtonsoftJsonSerializerOneLine.DefaultValueHandling = G_NS.DefaultValueHandling.Ignore;
+
+            //Lets enums get deserizlized from their stirng or description representation.
+            NewtonsoftJsonSerializerOneLine.Converters.Add( new G_NS_CONV.StringEnumConverter() );
         }
     }
 }

@@ -4,8 +4,10 @@ using System.Text;
 using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-	[Serializable]
-	public class MatchID : IEquatable<MatchID>, IEqualityComparer<MatchID> {
+
+    [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
+    public class MatchID : IEquatable<MatchID>, IEqualityComparer<MatchID> {
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 

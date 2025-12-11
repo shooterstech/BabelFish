@@ -39,7 +39,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 shotDataWrapper.Shots = this.Shots;
 
                 var shotsJsonAsString = G_NS.JsonConvert.SerializeObject( shotDataWrapper, SerializerOptions.NewtonsoftJsonSerializer );
-                return new StringContent( G_NS.JsonConvert.SerializeObject( shotsJsonAsString ), Encoding.UTF8, "application/json" );
+                return new StringContent( shotsJsonAsString, Encoding.UTF8, "application/json" );
 
             }
         }
