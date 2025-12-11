@@ -154,5 +154,33 @@ namespace Scopos.BabelFish.Tests.Definition
 
 		}
 
+        [TestMethod]
+        public async Task EriksPlayground() {
+            var nmcSetName = SetName.Parse( "v1.0:cmp:Smallbore Rifle 3x20" ); // "v1.0:cmp:High Power Rifle National Match Course" );
+            var nmcDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( nmcSetName );
+
+            foreach (var e in nmcDefinition.Events) {
+                switch (e.EventName) {
+                    case "Standing Slow":
+                        e.TargetCollectionIndex = 0;
+                        break;
+                    case "Sitting Rapid":
+                        e.TargetCollectionIndex = 0;
+                        break;
+                    case "Prone Rapid":
+                        e.TargetCollectionIndex = 1;
+                        break;
+                    case "Prone Slow":
+                        e.TargetCollectionIndex = 2;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var topLevelEvent = EventComposite.GrowEventTree( nmcDefinition );
+            foreach (var child in topLevelEvent.GetEvents())
+                Console.WriteLine( $"{child.EventName} {child.TargetCollectionIndex}" );
+        }
 	}
 }

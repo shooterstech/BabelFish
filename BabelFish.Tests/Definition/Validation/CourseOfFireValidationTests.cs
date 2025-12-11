@@ -26,6 +26,10 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
         }
 
+        /// <summary>
+        /// Tests IsTargetCollectionIndexValid class, which verifies .TargetCollectionIndex has a valid value.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task TargetCollectionIndexInvalidTest() {
 
@@ -35,21 +39,29 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             Assert.IsNotNull( candidate );
 
-            var validation = new IsCourseOfFireValid();
+            var validation = new IsTargetCollectionIndexValid();
 
             //Should initially pass validation
             Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
 
+            Event firstStageEvent = null;
+            foreach (var e in candidate.Events) {
+                if (e.EventType == EventtType.STAGE) {
+                    firstStageEvent = e;
+                    break;
+                }
+            }
+
             //Set a singular's target colleciton index to an illegal value. Should fail validation.
-            candidate.Singulars[0].TargetCollectionIndex = -1;
+            firstStageEvent.TargetCollectionIndex = -1;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
 
             //Set a singular's target colleciton index to an illegal value. Should fail validation.
-            candidate.Singulars[0].TargetCollectionIndex = 100;
+            firstStageEvent.TargetCollectionIndex = 100;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
 
             //Restore the original (legal) value
-            candidate.Singulars[0].TargetCollectionIndex = -0;
+            firstStageEvent.TargetCollectionIndex = -0;
 
             candidate.RangeScripts[0].SegmentGroups[0].Segments[0].TargetCollectionIndex = -1;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );

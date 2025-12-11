@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -9,6 +10,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <para>Use the GrowEventTree() method to determine the Event Tree from a COURSE OF FIRE.</para>
     /// </summary>
     public class EventComposite : IEquatable<EventComposite> {
+
+        /// <summary>
+        /// Special value for TargetCollectionIndex, to indicate the EventComposite does not have a uniform value (meaning its children are shot on different targets).
+        /// </summary>
+        private const int MIX_TARGET_EVENT = -1;
 
         public EventComposite() {
             this.Children = new List<EventComposite>();
@@ -203,6 +209,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return null;
         }
 
+        public int TargetCollectionIndex { get; set; } = MIX_TARGET_EVENT;
+
         /// <inheritdoc/>
         public override string ToString() {
             return $"{EventName} of {EventType}";
@@ -277,7 +285,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 ScoreFormat = topLevelEvent.ScoreFormat,
                 Calculation = topLevelEvent.Calculation,
                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
-                RankingRuleMapping = topLevelEvent.RankingRuleMapping
+                RankingRuleMapping = topLevelEvent.RankingRuleMapping,
+                TargetCollectionIndex = MIX_TARGET_EVENT
             };
             //this should be where we go through 
             GrowChildren( listOfEvents, cofRef.Singulars, top, 0 );
@@ -336,25 +345,45 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     parent.ResultListFormatDef = t.ResultListFormatDef;
                     parent.RankingRuleMapping = t.RankingRuleMapping;
 
-                    if (t.IsATopLevelStageStyle)
+                    if (t.IsATopLevelStageStyle) {
                         parent.StageStyleMapping = t.StageStyleMapping;
+                        if (t.TargetCollectionIndex >= 0)
+                            parent.TargetCollectionIndex = t.TargetCollectionIndex;
+                        else
+                            parent.TargetCollectionIndex = 0;
+                    }
 
 					foreach ( var childName in t.Children ) {
                         EventComposite child;
                         if (t.EventType == EventtType.STAGE) {
                             child = new EventComposite() {
                                 EventName = childName,
-                                Parent = parent
+                                Parent = parent,
+                                TargetCollectionIndex = t.TargetCollectionIndex
                             };
                         } else {
                             child = new EventComposite() {
                                 EventName = childName,
-                                Parent = parent
+                                Parent = parent,
+                                TargetCollectionIndex = parent.TargetCollectionIndex
                             };
                         }
                         parent.Children.Add( child );
 
                         GrowChildren( listOfEvents, singulars, child, level );
+                    }
+
+                    if ( parent.TargetCollectionIndex == MIX_TARGET_EVENT ) {
+                        var tcIndex = parent.Children[0].TargetCollectionIndex;
+                        var allTheSame = true;
+                        foreach( var c in parent.Children ) {
+                            if ( c.TargetCollectionIndex != tcIndex ) {
+                                allTheSame = false;
+                                break;
+                            }
+                        }
+                        if (allTheSame) 
+                            parent.TargetCollectionIndex = tcIndex;
                     }
                     return;
                 }
@@ -373,7 +402,40 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             parent.EventType = EventtType.SINGULAR;
             parent.ScoreFormat = "Shots";
         }
-        
+
+        /// <summary>
+        /// Helper method to return the SetName of the TARGET definition that is expected to be used with this
+        /// Singular. Calculated in conjunction with the COURSE OF FIRE and targetCollectionName.
+        /// </summary>
+        /// <param name="courseOfFire"></param>
+        /// <param name="targetCollectionName"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">Thrown if either 1) the targetCollectionName is not a member of the 
+        /// TARGET COLLECTION as specified by the passed in COURSE OF FIRE or 2) this Event Composite is shot on multiple
+        /// different TARGETs.</exception>
+        /// <exception cref="XApiKeyNotSetException"></exception>
+        /// <exception cref="DefinitionNotFoundException"></exception>
+        /// <exception cref="ScoposAPIException"></exception>
+        public async Task<SetName> GetTargetCollectionAsync( SetName courseOfFire, string targetCollectionName ) {
+            if ( ! HasUniformTargetDefinitions ) {
+                throw new InvalidOperationException( $"{this.EventName} is shot on multiple different TARGETs." );
+            }
+            var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( courseOfFire );
+            var targetCollectionDefinition = await cofDefinition.GetTargetCollectionDefinitionAsync();
+            var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
+            return targetCollection.TargetDefs[TargetCollectionIndex];
+        }
+
+        /// <summary>
+        /// Returns a boolean, indicating if this EventComposite is shot all on the same TARGET. If it is true
+        /// then it is safe to call GetTargetCollectionAsync() to learn the SetName of the TARGET it is shot on.
+        /// </summary>
+        public bool HasUniformTargetDefinitions {
+            get {
+                return this.TargetCollectionIndex != EventComposite.MIX_TARGET_EVENT;
+            }
+        }
+
         /// <inheritdoc/>
         public bool Equals( EventComposite other ) {
             return this.GetHashCode() == other.GetHashCode();

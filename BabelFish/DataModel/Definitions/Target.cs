@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
+using Scopos.BabelFish.DataModel.Athena;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -91,6 +92,37 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_NS.JsonProperty( Order = 20 )]
 		[DefaultValue( 10000 )]
 		public int? MaxValue { get; set; } = 100;
+
+		public Score Score( float x, float y, float bulletScoringDiameter ) {
+
+			float centerOfShot = (float) Math.Sqrt( x * x + y * y );
+			float previousScoringRadius = 0.0f;			
+			int integerScore = 0;
+			float decimalPart = 0f;
+			if (centerOfShot < .001f) {
+				//Scoring radius of 0 is a non-linear use case. If left to the normal algorithm, would return 11.0 instead of 10.9
+				integerScore = this.ScoringRings[0].Value;
+				decimalPart = .9f;
+			} else {
+				foreach (var scoringShape in this.ScoringRings) {
+					if (scoringShape.HitsScoringShape( x, y, bulletScoringDiameter )) {
+						integerScore = scoringShape.Value;
+						float scoringRingWidth = scoringShape.GetScoringRadius( bulletScoringDiameter ) - previousScoringRadius;
+						decimalPart = 1.0f - ((centerOfShot - previousScoringRadius) / scoringRingWidth);
+						break;
+					}
+					previousScoringRadius = scoringShape.GetScoringRadius( bulletScoringDiameter );
+				}
+			}
+
+			Score score = new Score() {
+				I = integerScore,
+				D = (float) Math.Truncate( 10f * (integerScore + decimalPart) ) / 10.0f,
+				X = this.InnerTen.HitsScoringShape( x, y, bulletScoringDiameter ) ? 1 : 0
+			};
+
+			return score;
+		}
 
 		/// <inheritdoc />
 		public override async Task<bool> GetMeetsSpecificationAsync() {

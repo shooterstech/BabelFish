@@ -786,13 +786,15 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 var targetDefsListLength = targetCollectionDef.TargetCollections[0].TargetDefs.Count;
 
                 int index = 0;
-                //Test each of the singulars
-                foreach (var singular in candidate.Singulars) {
-                    if ( singular.TargetCollectionIndex < 0
-                        || singular.TargetCollectionIndex >= targetDefsListLength ) {
-                        valid = false;
-                        var msg = $"The Singular {singular.EventName} has a TargetCollectionIndex that is out of range. {singular.TargetCollectionIndex} is listed. Must instead be between 0 and {targetDefsListLength - 1}.";
-                        Messages.Add( msg );
+                //Test each of the Event of EventType STAGE
+                foreach (var e in candidate.Events) {
+                    if (e.EventType == EventtType.STAGE) {
+                        if (e.TargetCollectionIndex < 0
+                            || e.TargetCollectionIndex >= targetDefsListLength) {
+                            valid = false;
+                            var msg = $"The Event {e.EventName} has a TargetCollectionIndex that is out of range. {e.TargetCollectionIndex} is listed. Must instead be between 0 and {targetDefsListLength - 1}.";
+                            Messages.Add( msg );
+                        }
                     }
                 }
 

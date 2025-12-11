@@ -230,6 +230,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
 
+            foreach (var e in this.Events) {
+                if ( e.EventType == EventtType.STAGE && e.TargetCollectionIndex < 0 ) {
+                    e.TargetCollectionIndex = 0;
+                }
+            }
+
             return true;
 		}
 

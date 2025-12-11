@@ -91,26 +91,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonPropertyOrder( 6 )]
         public ShotMappingMethodType ShotMappingMethod { get; set; } = ShotMappingMethodType.SEQUENTIAL;
 
-        /// <summary>
-        /// Specifies the *expected* TargetDef to use during this Segment. Specifically, this is the index into the 
-        /// CourseOfFire.TargetCollectionDef.TargetCollections.TargetDefs array.
-        /// <para>This value has no precise programmatic control. Instead it is used as a helper to more easily learn
-        /// what type of Target this singular is being shot on. Programmatically, the SegmentGroupSegment, in the 
-        /// range script controls the selected target. The definition author  is expected to compose the values
-        /// so they are consistent.</para>
-        /// </summary>
-        [DefaultValue( 0 )]
-        [JsonPropertyOrder( 7 )]
-        [G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include, Order = 7 )]
-        public int TargetCollectionIndex { get; set; } = 0;
-
-        public async Task<SetName> GetTargetCollectionAsync( SetName courseOfFire, string targetCollectionName ) {
-            var cofDefinition = await DefinitionCache.GetCourseOfFireDefinitionAsync( courseOfFire );
-            var targetCollectionDefinition = await cofDefinition.GetTargetCollectionDefinitionAsync();
-            var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
-            return targetCollection.TargetDefs[TargetCollectionIndex];
-        }
-
         /// <inheritdoc/>
         [JsonPropertyOrder ( 99 )]
         [G_NS.JsonProperty( Order = 99 )]

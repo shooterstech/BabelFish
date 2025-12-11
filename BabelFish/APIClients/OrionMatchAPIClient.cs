@@ -688,5 +688,17 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion
+
+        #region Post a Shot API Calls
+
+        public async Task<PostShotDataAuthenticatedResponse> PostShotDataAuthenticatedAsync( PostShotDataAuthenticatedRequest requestParameters ) {
+            PostShotDataAuthenticatedResponse response = new PostShotDataAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        #endregion
     }
 }

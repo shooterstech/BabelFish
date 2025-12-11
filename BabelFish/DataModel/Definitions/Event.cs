@@ -192,6 +192,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool ExternalToEventTree { get; set; } = false;
 
         /// <summary>
+        /// Specifies the *expected* TargetDef to use during this Event. Specifically, this is the zero based index into the 
+        /// CourseOfFire.TargetCollectionDef.TargetCollections.TargetDefs array.
+        /// <para>This value has no precise programmatic control. Instead it is used as a helper to more easily learn which 
+        /// TARGET this Event is being shot on. Programmatically, the SegmentGroupSegment, in the range script controls 
+        /// the selected TARGET (via its TargetCollectionIndex). The definition's author is responsible for composing values 
+        /// that are consistent.</para>
+        /// <para>This value may only be seet on Event with EventType Stage. All children on a Event, of EventType Stage
+        /// are assumed to use the same TargetCollectionIndex.</para>
+        /// <para>Value must be between 0 and n - 1, where n is the number of TargetDefs in the TARGET COLLECTION definition. 
+        /// The special value of -9999 means not to set a value.</para>
+        /// </summary>
+        /// <remarks>The best way to learn the Taget Colleciton Modal is in use, is to grow the event tree and look up the
+        /// Event Name from the Event Tree.</remarks>
+        [DefaultValue( -9999 )]
+        [G_STJ_SER.JsonPropertyOrder( 70 )]
+        [G_NS.JsonProperty( Order = 70 )]
+        public int TargetCollectionIndex { get; set; } = -9999;
+
+        /// <summary>
         /// If the fields EventName and Values require interpretation, GetCompiledEvents
         /// interpres them and returns a new list of TieBreakingRules cooresponding to the interpretation.
         /// If interpretation is not required, then it returns a list of one tie breaking rule, itself.
@@ -212,6 +231,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             copy.EventStyleMapping = this.EventStyleMapping;  
             copy.RankingRuleMapping = this.RankingRuleMapping;
             copy.ExternalToEventTree = this.ExternalToEventTree;
+            copy.TargetCollectionIndex = this.TargetCollectionIndex;
             if ( this.Derivation == EventDerivationType.EXPLICIT )
                 copy.Comment = this.Comment;
             else
