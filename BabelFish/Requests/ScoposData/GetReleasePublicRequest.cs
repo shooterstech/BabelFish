@@ -44,6 +44,11 @@ namespace Scopos.BabelFish.Requests.ScoposData
         public bool AthenaEulaAccepted { get; set; } = false;
 
         /// <summary>
+        /// boolean to return the list of all prior production versions of the applications listed.
+        /// </summary>
+        public bool ReturnHistory { get; set; } = false;
+
+        /// <summary>
         /// Owner ID of the caller, to track their EULA accepted-ness, without this the DB table will not update and there will be no download link in the response.
         /// </summary>
         public string OwnerID { get; set; } = "";
@@ -89,6 +94,8 @@ namespace Scopos.BabelFish.Requests.ScoposData
                 parameterList.Add("orion-eula-accepted", new List<string>() { OrionEulaAccepted.ToString() });
 
                 parameterList.Add("athena-eula-accepted", new List<string>() { AthenaEulaAccepted.ToString() });
+
+                parameterList.Add("return-history", new List<string>() { AthenaEulaAccepted.ToString() });
 
                 if ( !string.IsNullOrEmpty( this.OwnerID ) )
                 {
