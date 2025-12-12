@@ -152,13 +152,105 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// <summary>
 		/// Call to line and start times for each relay. 
 		/// </summary>
-		public List<Relay> RelayInformation { get; set; }
+		public List<RelayInformation> RelayInformation { get; set; }
 
 		/// <summary>
-		/// NewtonSoft helper method to determine if .RelayInformation should be serialized.
+		/// Helper method to generate a list of Relays for RelayInformation.
+		/// <para>If .RelayInformation alreayd has values, then this method does not change anything.</para>
+		/// <para>Currently only works with FiringPoints.</para>
 		/// </summary>
+		public void GenerateRelayInformation() {
+			if (!( RelayInformation is null || RelayInformation.Count == 0 ))
+				return;
+
+			HashSet<string> seenRelays = new HashSet<string>();
+			RelayInformation = new List<RelayInformation>();
+			foreach( var item in Items ) {
+				
+				if ( item.SquaddingAssignment is SquaddingAssignmentFiringPoint squaddingFiringPoint 
+					&& ! seenRelays.Contains( squaddingFiringPoint.Relay ) ) {
+					this.RelayInformation.Add( new RelayInformationFiringPoint() { RelayName = squaddingFiringPoint.Relay } );
+					seenRelays.Add( squaddingFiringPoint.Relay );
+				}
+
+			}
+		}
+
+        /// <summary>
+        /// Returns a subset of .Items, specically Squadding instances that are both SquaddingAssignmentFiringPoint
+        /// and has the same Relay name as the passed in RelayInformation.
+        /// </summary>
+        /// <param name="relayInformation"></param>
+        /// <returns></returns>
+        public List<Squadding> FilterByRelayInformation( RelayInformationFiringPoint relayInformation ) {
+			List<Squadding> list = new List<Squadding>();
+
+			foreach( var squadding in this.Items ) {
+				if ( squadding.SquaddingAssignment is SquaddingAssignmentFiringPoint sa
+					&& sa.Relay == relayInformation.RelayName ) {
+					list.Add( squadding );
+				}
+			}
+
+			return list;
+        }
+
+        /// <summary>
+        /// Returns a subset of .Items, specically Squadding instances that are both SquaddingAssignmentBank
+        /// and has the same Relay name as the passed in RelayInformation.
+        /// </summary>
+        /// <param name="relayInformation"></param>
+        /// <returns></returns>
+        public List<Squadding> FilterByRelayInformation( RelayInformationBank relayInformation ) {
+            List<Squadding> list = new List<Squadding>();
+
+            foreach (var squadding in this.Items) {
+                if (squadding.SquaddingAssignment is SquaddingAssignmentBank sa
+                    && sa.Relay == relayInformation.RelayName) {
+                    list.Add( squadding );
+                }
+            }
+
+            return list;
+        }
+
+		public List<Squadding> FilterByRelayInformation( RelayInformation relayInformation ) {
+			if ( relayInformation is RelayInformationFiringPoint )
+				return FilterByRelayInformation((RelayInformationFiringPoint) relayInformation );
+
+			if ( relayInformation is RelayInformationBank )
+				return FilterByRelayInformation((RelayInformationBank) relayInformation );
+
+			if ( relayInformation is RelayInformationSquad)
+				return FilterByRelayInformation((RelayInformationSquad) relayInformation );
+
+			throw new NotImplementedException( $"Unable to identify the concrete class for {relayInformation}.");
+		}
+
+		/// <summary>
+		/// Returns a subset of .Items, specically Squadding instances that are both SquaddingAssignmentSquad
+		/// and has the same Squad name as the passed in RelayInformation.
+		/// </summary>
+		/// <param name="relayInformation"></param>
 		/// <returns></returns>
-		public bool ShouldSerializeRelayInformation() {
+        public List<Squadding> FilterByRelayInformation( RelayInformationSquad relayInformation ) {
+            List<Squadding> list = new List<Squadding>();
+
+            foreach (var squadding in this.Items) {
+                if (squadding.SquaddingAssignment is SquaddingAssignmentSquad sa
+                    && sa.Squad == relayInformation.RelayName) {
+                    list.Add( squadding );
+                }
+            }
+
+            return list;
+        }
+
+        /// <summary>
+        /// NewtonSoft helper method to determine if .RelayInformation should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRelayInformation() {
 			return RelayInformation != null && RelayInformation.Count > 0;
 		}
 

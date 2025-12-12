@@ -13,9 +13,9 @@ namespace Scopos.BabelFish.Converters.Microsoft {
     /// Custom converter class to deserialize the abstract class TieBreakingRule into one of its
     /// Concrete classes.
     /// </summary>
-    public class RelayConverter : JsonConverter<Relay> {
+    public class RelayConverter : JsonConverter<RelayInformation> {
 
-        public override Relay? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+        public override RelayInformation? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
             try {
                 using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                     JsonElement root = doc.RootElement;
@@ -30,19 +30,19 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                         case "FIRING_POINT":
                         case "":
                         default:
-                            return JsonSerializer.Deserialize<RelayFiringPoint>( root.GetRawText(), options );
+                            return JsonSerializer.Deserialize<RelayInformationFiringPoint>( root.GetRawText(), options );
                         case "BANK":
-                            return JsonSerializer.Deserialize<RelayBank>( root.GetRawText(), options );
+                            return JsonSerializer.Deserialize<RelayInformationBank>( root.GetRawText(), options );
                         case "SQUAD":
-                            return JsonSerializer.Deserialize<RelaySquad>( root.GetRawText(), options );
+                            return JsonSerializer.Deserialize<RelayInformationSquad>( root.GetRawText(), options );
                     }
                 }
             } catch (Exception ex) {
-                return new RelayFiringPoint();
+                return new RelayInformationFiringPoint();
             }
         }
 
-        public override void Write( Utf8JsonWriter writer, Relay value, JsonSerializerOptions options ) {
+        public override void Write( Utf8JsonWriter writer, RelayInformation value, JsonSerializerOptions options ) {
             JsonSerializer.Serialize(writer, value, value.GetType(), options );
         }
     }
