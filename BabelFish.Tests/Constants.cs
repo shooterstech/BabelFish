@@ -2,11 +2,6 @@
 namespace Scopos.BabelFish.Tests {
     public static class Constants {
 
-        /// <summary>
-        /// x-api-key assigned to BabelFish for unit testing.
-        /// </summary>
-        public const string X_API_KEY = "uONGn6tHGw14kreLdqbfJ9rwR2C55uS8a9rGnmIf";
-
 
         public static BasicUserCredentials TestDev1Credentials = new BasicUserCredentials() {
             Username = "test_dev_1@shooterstech.net",

@@ -62,7 +62,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                     var sequence = 1;
                     foreach (var stage in cofTree.GetEvents( EventtType.STAGE )) {
                         var targetDefinition = await stage.GetTargetAsync( cofDefinition, matchObj.TargetCollectionName );
-                        var tenRingDiameter = targetDefinition.ScoringRings[0].Dimension;
+                        var tenRingDiameter = targetDefinition.ScoringRings[1].Dimension;
                         Console.WriteLine( $"Generating shots for {stage.EventName}. using {targetDefinition.CommonName}" );
                         PostShotDataAuthenticatedRequest request = new PostShotDataAuthenticatedRequest( userAuthentication, matchId );
                         foreach (var singular in stage.GetAllSingulars()) {

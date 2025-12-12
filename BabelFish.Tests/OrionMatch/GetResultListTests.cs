@@ -15,15 +15,15 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         [TestMethod]
         public async Task GetResultListBasicPublicTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //This match id has three relays of 20 athletes
-            var matchId = new MatchID( "1.1.2023011915575119.0" );
+            var matchId = new MatchID( "1.1.2023040310065430.1" );
             var resultListName = "Individual - All";
 
             var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
 
-            Assert.AreEqual( HttpStatusCode.OK, getResultListResponse.RestApiStatusCode );
+            Assert.IsTrue( getResultListResponse.HasOkStatusCode );
             var resultList = getResultListResponse.ResultList;
 
             Assert.AreEqual( matchId.ToString(), resultList.MatchID );

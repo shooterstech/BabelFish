@@ -1,4 +1,5 @@
 ﻿
+using System.Configuration;
 using OfficeOpenXml;
 
 namespace Scopos.BabelFish.Tests {
@@ -8,10 +9,13 @@ namespace Scopos.BabelFish.Tests {
 
         [TestInitialize]
         public virtual void InitializeTest() {
+            var xApiKey = Environment.GetEnvironmentVariable("ScoposXApiKey");
+            var excelPackageLicense = Environment.GetEnvironmentVariable( "ExcelPackageLicense" );
+
             //Initialize the system, without pre-poulating the Definitino Cache (which avoids unnecessary API calls).
-            Initializer.Initialize( Constants.X_API_KEY, false );
+            Initializer.Initialize( xApiKey , false );
             //add EPPlus license, was unable to add it to app.config
-            ExcelPackage.License.SetCommercial("1VeFo1xFNO0YNHS3Kqf2b/hoiDBi3yxU65Ti/jU1vXs+VVsEmxQsCh4+SLL9mtZu1UYE5lwjtqOMrNGfn+kHuwEGRDMzQTYz5wc+ARkEAQIA");
+            ExcelPackage.License.SetCommercial( excelPackageLicense );
         }
     }
 }
