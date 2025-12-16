@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using NLog;
@@ -7,7 +8,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
-    public class MatchID : IEquatable<MatchID>, IEqualityComparer<MatchID> {
+    public class MatchID : IEquatable<MatchID>, IEqualityComparer<MatchID>, IEqualityComparer {
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -97,6 +98,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 result = null;
                 return false; ;
             }
+        }
+
+        /// <summary>
+        /// Returns null if the passed in string could not be parsed
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return null.</param>
+        /// <returns></returns>
+        public static MatchID? Parse( string matchId, bool throwExceptionOnError = false ) {
+            if ( TryParse( matchId, out MatchID result ) )
+                return result;
+
+            if (throwExceptionOnError)
+                throw new ArgumentException();
+
+            return null;
         }
 
         private long newPrimatchMatchID() {
@@ -301,6 +318,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public int GetHashCode( MatchID obj ) {
             return obj.GetHashCode();
+        }
+
+        public new bool Equals( object x, object y ) {
+            if ( x is MatchID xx && y is MatchID yy )
+                return xx.Equals( yy );
+
+            return false;
+        }
+
+        public int GetHashCode( object obj ) {
+            if ( obj is MatchID xx )
+                return xx.GetHashCode();
+
+            return 0;
         }
 
         #endregion

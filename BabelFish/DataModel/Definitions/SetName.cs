@@ -49,9 +49,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Parses the passed in setName string, and returns a SetName object.
         /// </summary>
         /// <param name="setName"></param>
+        /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return null.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
-        public static SetName Parse(string setName) {
+        public static SetName Parse(string setName, bool throwExceptionOnError = false) {
 
             //Look up in cache first
             SetName sn;
@@ -75,7 +76,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             } catch (Exception ex) {
                 var msg = $"Unable to parse the set name string '{setName}'";
                 _logger.Error( msg, ex );
-                throw new ArgumentException( msg, ex );
+
+                if (  throwExceptionOnError )
+                    throw new ArgumentException( msg, ex );
+
+                return null;
             }
         }
 

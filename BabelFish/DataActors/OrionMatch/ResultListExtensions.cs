@@ -89,7 +89,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 return;
             }
 
-            if ((lastShot != null && (DateTime.Now - lastShot.TimeScored).TotalHours > 1.0) ||
+            if ((lastShot != null && (DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalHours > 1.0) ||
                  (remarkList.HasNonCompletionRemark)) {
                 eventScore.Status = ResultStatus.UNOFFICIAL;
                 return;

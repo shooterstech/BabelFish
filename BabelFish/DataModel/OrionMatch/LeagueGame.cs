@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 		/// <summary>
 		/// The unique Match ID for this game. 
 		/// </summary>
-		public string GameID { get; set; }
+		public MatchID GameID { get; set; }
 
 		/// <summary>
 		/// Human readable name for this game.
@@ -69,7 +69,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The scheibentoni ID of the league
         /// </summary>
-        public string LeagueID { get; set; }
+        public MatchID LeagueID { get; set; }
 
 
         public LeagueTeamResult HomeTeam { get; set; }

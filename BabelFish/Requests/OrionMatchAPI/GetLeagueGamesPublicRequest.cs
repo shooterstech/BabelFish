@@ -9,15 +9,15 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
     public class GetLeagueGamesPublicRequest : Request, ITokenRequest {
 
-        public GetLeagueGamesPublicRequest( string leagueId ) : base( "GetLeagueGames" ) {
-			if (string.IsNullOrEmpty( leagueId ) ) {
+        public GetLeagueGamesPublicRequest( MatchID leagueId ) : base( "GetLeagueGames" ) {
+			if (leagueId is null ) {
 				throw new ArgumentNullException( "Parameter leagueId may not be null or an empty string." );
 			}
 
 			LeagueId = leagueId;
         }
 
-        public string LeagueId { get; private set; } = string.Empty;
+        public MatchID ? LeagueId { get; private set; } = null;
 
 
 		/// <inheritdoc />
@@ -40,8 +40,8 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 				if (TeamId > 0)
 					parameterList.Add( "team-id", new List<string> { TeamId.ToString() } );
 
-				if (!string.IsNullOrEmpty( GameId ))
-                    parameterList.Add( "game-id", new List<string>() { GameId } );
+				if ( GameId is not null)
+                    parameterList.Add( "game-id", new List<string>() { GameId.ToString() } );
 
                 if ( Limit > 0 )
 					parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
@@ -121,7 +121,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 		/// <summary>
 		/// Returns only the League Game specified by GameId.
 		/// </summary>
-		public string GameId { get; set; } = string.Empty;
+		public MatchID ? GameId { get; set; } = null;
 
 		/// <summary>
 		/// Adds a filter to the returned list. Will include games that have not yet been set to Virtual, Local, or Cancelled.

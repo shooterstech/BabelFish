@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
@@ -10,9 +11,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             HttpMethod = HttpMethod.Post;
         }
 
-        public string GameID { get; set; }
+        public MatchID ? GameID { get; set; }
 
-        public string LeagueID { get; set; }
+        public MatchID ? LeagueID { get; set; }
 
         /// <summary>
         /// Resend must be true to send the press release email to the team's distribution list more than once.
@@ -50,6 +51,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// <inheritdoc />
         public override string RelativePath {
             get {
+                if (LeagueID is null)
+                    throw new ArgumentNullException( $"The LeaugeId must be set in order to request the press release to be sent" );
+
                 return $"/league/{LeagueID}/press-release";
             }
         }
@@ -60,14 +64,14 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
 
-                if (string.IsNullOrEmpty( GameID )) {
+                if (GameID is null) {
                     throw new ArgumentNullException( $"The GameId (aka MatchId) must be set in order to request the press release to be sent" );
                 } else { 
-                    parameterList.Add( "game-id", new List<string> { GameID } );
+                    parameterList.Add( "game-id", new List<string> { GameID.ToString() } );
                 }
 
                 if (!string.IsNullOrEmpty( Subject )) {
-                    parameterList.Add( "subject", new List<string> { GameID } );
+                    parameterList.Add( "subject", new List<string> { Subject } );
                 }
 
                 if (SendTo != null && SendTo.Count > 0) {

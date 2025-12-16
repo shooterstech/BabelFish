@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
     public class GetLeagueTeamsPublicRequest : Request, ITokenRequest {
 
-        public GetLeagueTeamsPublicRequest( string leagueId ) : base( "GetLeagueTeamList" ) {
-			if (string.IsNullOrEmpty( leagueId ) ) {
+        public GetLeagueTeamsPublicRequest( MatchID ? leagueId ) : base( "GetLeagueTeamList" ) {
+			if ( leagueId is null ) {
 				throw new ArgumentNullException( "Parameter leagueId may not be null or an empty string." );
 			}
 
 			LeagueId = leagueId;
         }
 
-        public string LeagueId { get; private set; } = string.Empty;
+        public MatchID ? LeagueId { get; private set; }
 
 
 		/// <inheritdoc />

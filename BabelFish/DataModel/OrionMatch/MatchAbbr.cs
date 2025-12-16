@@ -34,9 +34,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Unique MatchID for the competition to get squadding for. Will match exactly (assuming no errors) of the MatchID in the GetMatchDetailRequest.
         /// </summary>
-        public string MatchID { get; set; } = string.Empty;
+        public MatchID ? MatchID { get; set; }
 
-        public string ParentID { get; set; } = string.Empty;
+        public MatchID ? ParentID { get; set; }
 
         /// <summary>
         /// External Result URL
@@ -160,8 +160,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public bool IsVirtualMatch {
             get {
                 try {
-                    var mId = new MatchID( this.MatchID );
-                    return mId.VirtualMatch;
+                    return this.MatchID.VirtualMatch;
                 } catch (Exception ex) {
                     return false;
                 }

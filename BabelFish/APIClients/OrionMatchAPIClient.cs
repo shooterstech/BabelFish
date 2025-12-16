@@ -514,7 +514,7 @@ namespace Scopos.BabelFish.APIClients {
 		/// Get League Detail API
 		/// </summary>
 		/// <param name="leagueId"></param>
-		public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( string leagueId ) {
+		public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( MatchID ? leagueId ) {
 			var request = new GetLeaguePublicRequest( leagueId );
 
 			return await GetLeagueDetailPublicAsync( request ).ConfigureAwait( false );
@@ -537,7 +537,7 @@ namespace Scopos.BabelFish.APIClients {
 		/// Get League Games API
 		/// </summary>
 		/// <param name="leagueId"></param>
-		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( string leagueId ) {
+		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( MatchID ? leagueId ) {
 			var request = new GetLeagueGamesPublicRequest( leagueId );
 
 			return await GetLeagueGamesPublicAsync( request ).ConfigureAwait( false );
@@ -560,7 +560,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Get League Teams API
         /// </summary>
         /// <param name="leagueId"></param>
-        public async Task<GetLeagueTeamsPublicResponse> GetLeagueTeamsPublicAsync( string leagueId ) {
+        public async Task<GetLeagueTeamsPublicResponse> GetLeagueTeamsPublicAsync( MatchID ? leagueId ) {
             var request = new GetLeagueTeamsPublicRequest( leagueId );
 
             return await GetLeagueTeamsPublicAsync( request ).ConfigureAwait( false );
@@ -584,7 +584,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="leagueId"></param>
         /// <param name="teamId"></param>
-        public async Task<GetLeagueTeamDetailPublicResponse> GetLeagueTeamDetailPublicAsync( string leagueId, int teamId ) {
+        public async Task<GetLeagueTeamDetailPublicResponse> GetLeagueTeamDetailPublicAsync( MatchID leagueId, int teamId ) {
             var request = new GetLeagueTeamDetailPublicRequest( leagueId, teamId );
 
             return await GetLeagueTeamDetailPublicAsync( request ).ConfigureAwait( false );

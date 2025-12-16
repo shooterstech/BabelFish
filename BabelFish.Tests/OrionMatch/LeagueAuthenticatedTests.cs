@@ -26,8 +26,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch
 				Constants.TestDev7Credentials.Password);
 			await userAuthentication.InitializeAsync();
 
-			var gameId = "1.1.2024092612083256.1";
-			var leagueId = "1.1.2024072509092300.3";
+			var gameId = new MatchID ( "1.1.2024092612083256.1" );
+			var leagueId = new MatchID( "1.1.2024072509092300.3" );
 			var request = new GetPressReleaseGenerationAuthenticatedRequest(userAuthentication);
 			request.GameID = gameId;
 			request.LeagueID = leagueId;

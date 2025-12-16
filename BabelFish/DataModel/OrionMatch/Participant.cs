@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Scopos.BabelFish.Converters;
 
@@ -36,6 +37,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// There is no rule as to how long the Short value could be, but by convention 12 characters or less.
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
+        [DefaultValue( "" )]
         public string DisplayNameShort { get; set; } = string.Empty;
 
         /*
@@ -48,6 +50,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// In most cases the CompetitorNumber will be numeric, but it can also be alphabetical.
         /// </summary>
         [G_NS.JsonProperty( Order = 10 )]
+        [DefaultValue( "" )]
         public string CompetitorNumber { get; set; } = string.Empty;
 
         /// <summary>
@@ -60,6 +63,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Hometown the participant is from.
         /// </summary>
         [G_NS.JsonProperty( Order = 12 )]
+        [DefaultValue( "" )]
         public string HomeTown { get; set; } = string.Empty;
 
         //TODO: Club, ReentryTag not in API return data
@@ -67,6 +71,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The Hometown Club the Participant represents. Note, this is NOT the same as any team the Participant is shooting with. 
         /// </summary>
         [G_NS.JsonProperty( Order = 13 )]
+        [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
         /*

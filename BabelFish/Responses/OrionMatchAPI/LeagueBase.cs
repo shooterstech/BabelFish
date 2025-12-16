@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// Unique LeagueID for this League. Takes the form of a MatchID
         /// </summary>
         [G_NS.JsonProperty( Order = 1 )]
-        public string LeagueID { get; set; } = string.Empty;
+        public MatchID ? LeagueID { get; set; }
 
         /// <summary>
         /// Human readable name of the league.

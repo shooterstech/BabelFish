@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.Runtime.Authentication;
+﻿using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI
 {
@@ -11,9 +12,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
 			Timeout = 3 * 60;
 		}
 
-		public string GameID { get; set; }
+		public MatchID ? GameID { get; set; }
 
-		public string LeagueID { get; set; } = "";
+		public MatchID ? LeagueID { get; set; } = null;
 
 		public bool Regenerate { get; set; } = false;
 
@@ -32,9 +33,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
 
 				Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
 
-				if (!string.IsNullOrEmpty(GameID))
+				if (GameID is not null)
 				{
-					parameterList.Add("game-id", new List<string> { GameID });
+					parameterList.Add("game-id", new List<string> { GameID.ToString() });
 				}
 
 				parameterList.Add("regenerate", new List<string> { Regenerate.ToString() });

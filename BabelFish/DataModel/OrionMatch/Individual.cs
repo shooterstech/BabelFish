@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -38,12 +39,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Individual's middle or secondary Given name
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
+        [DefaultValue( "" )]
         public string MiddleName { get; set; } = string.Empty;
 
         /// <summary>
         /// If the Individual has a Scopos account, this is their unique identifier. Formatted as a UUID. A value null or empty string means the Indivdual does not have a Scopos account, or the Id is not known.
         /// </summary>
         [G_NS.JsonProperty( Order = 9 )]
+        [DefaultValue( "" )]
         public string UserID { get; set; } = string.Empty;
 
         /// <summary>

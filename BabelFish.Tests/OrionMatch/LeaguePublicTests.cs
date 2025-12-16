@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Pass in a fake match id
-            var leagueDetailResponse = await client.GetLeagueDetailPublicAsync( "1.1.2023091512010588.3" );
+            var leagueDetailResponse = await client.GetLeagueDetailPublicAsync( new MatchID( "1.1.2023091512010588.3") );
 
             Assert.AreEqual( HttpStatusCode.OK, leagueDetailResponse.RestApiStatusCode );
 
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
-            var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" ) {
+            var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
                 ByeWeeks = true,
                 TeamId = 2208
             };
@@ -62,7 +62,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( "2023 National Precision Air Rifle League", leagueGameList.LeagueName );
 
             foreach ( var game in leagueGameList.Items ) {
-                Assert.AreEqual( "1.1.2023100215285812.1", game.GameID );
+                Assert.AreEqual( "1.1.2023100215285812.1", game.GameID.ToString() );
                 Assert.AreEqual( LeagueVirtualType.BYE_WEEK, game.Virtual );
                 Assert.AreEqual( new DateTime( 2023, 10, 09 ), game.StartDate );
                 Assert.AreEqual( new DateTime( 2023, 10, 15 ), game.EndDate );
@@ -86,7 +86,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
-            var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" ) {
+            var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
                 Conference = "Junior Rifle Club"
             };
 
@@ -120,7 +120,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
-            var request = new GetLeagueGamesPublicRequest( "1.1.2023091512010588.3" ) {
+            var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
                 Division = "Champions"
             };
 
@@ -154,7 +154,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var request = new GetLeagueGamesPublicRequest( "1.1.2023091512052862.3" ); // 1.1.2023091512010588.3" );
+            var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512052862.3" ) ); // 1.1.2023091512010588.3" );
 
             GetLeagueGamesPublicResponse response;
             List<LeagueGame> allTheGames = new List<LeagueGame>();
@@ -179,7 +179,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             } while (response.LeagueGames.HasMoreItems);
 
             //Now go through and check that each returned game is unique.
-            Dictionary<string, bool> seenGames = new Dictionary<string, bool>();
+            Dictionary<MatchID, bool> seenGames = new Dictionary<MatchID, bool>();
             foreach( var game in allTheGames ) {
                 Assert.IsFalse( seenGames.ContainsKey( game.GameID ) );
                 seenGames[game.GameID] = true;
@@ -196,7 +196,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var request = new GetLeagueTeamsPublicRequest( "1.1.2023091512010588.3" );
+            var request = new GetLeagueTeamsPublicRequest( new MatchID( "1.1.2023091512010588.3" ) );
 
             var response = await client.GetLeagueTeamsPublicAsync( request );
 
@@ -228,7 +228,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var request = new GetLeagueTeamsPublicRequest( "1.1.2023091512010588.3" ) {
+            var request = new GetLeagueTeamsPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
                 Limit = 10 //Set a small limit so there will be a token on the first call.
             };
 
@@ -272,7 +272,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var request = new GetLeagueTeamDetailPublicRequest( "1.1.2023091512010588.3", 2213 );
+            var request = new GetLeagueTeamDetailPublicRequest( new MatchID( "1.1.2023091512010588.3" ), 2213 );
 
             var response = await client.GetLeagueTeamDetailPublicAsync( request );
 
@@ -289,7 +289,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( 9, leagueTeamDetail.LeagueTeam.Schedule.Count );
 
             foreach( var game in leagueTeamDetail.LeagueTeam.Schedule ) {
-                Assert.AreNotEqual( "", game.GameID );
+                Assert.AreNotEqual( "", game.GameID.ToString() );
                 Assert.AreNotEqual( "", game.GameName );
             }
         }
@@ -304,12 +304,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient(APIStage.PRODUCTION);
 
-            var requestTeamDetail = new GetLeagueTeamDetailPublicRequest("1.1.2023091512010588.3", 2213);
-            var requestGames = new GetLeagueGamesPublicRequest("1.1.2023091512010588.3");
+            var requestTeamDetail = new GetLeagueTeamDetailPublicRequest(new MatchID( "1.1.2023091512010588.3" ), 2213);
+            var requestGames = new GetLeagueGamesPublicRequest(new MatchID( "1.1.2023091512010588.3" ) );
 
             var responseTeamDetail = await client.GetLeagueTeamDetailPublicAsync(requestTeamDetail);
             var responseGames = await client.GetLeagueGamesPublicAsync(requestGames);
-            var leagueDetailResponse = await client.GetLeagueDetailPublicAsync("1.1.2023091512010588.3");
+            var leagueDetailResponse = await client.GetLeagueDetailPublicAsync(new MatchID( "1.1.2023091512010588.3" ) );
 
             Assert.AreEqual(HttpStatusCode.OK, responseTeamDetail.RestApiStatusCode);
             Assert.AreEqual(HttpStatusCode.OK, responseGames.RestApiStatusCode);
@@ -350,7 +350,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
             //2024 National Air Pistol League
-            var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
+            var response = await client.GetLeagueDetailPublicAsync( new MatchID( "1.1.2023122017132108.3" ) );
             var league = response.League;
 
             var leagueWeeks = league.WeekList;
@@ -371,7 +371,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
             //2024 National Air Pistol League
-            var response = await client.GetLeagueDetailPublicAsync( "1.1.2023122017132108.3" );
+            var response = await client.GetLeagueDetailPublicAsync( new MatchID( "1.1.2023122017132108.3") );
             var league = response.League;
 
             var leagueWeeks = league.WeekList;
@@ -439,7 +439,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var request = new GetLeagueTeamDetailPublicRequest( "1.1.2024072509092300.3", 2502 );
+            var request = new GetLeagueTeamDetailPublicRequest( new MatchID( "1.1.2024072509092300.3" ), 2502 );
 
             var response = await client.GetLeagueTeamDetailPublicAsync( request );
 
