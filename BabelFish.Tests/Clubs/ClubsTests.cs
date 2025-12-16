@@ -132,7 +132,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             //Should return all clubs without any parameters ... or at least up to the token limit
             var request = new GetClubListPublicRequest( );
-            request.CurrentlyShooting = false;
+            request.CurrentlyShooting = GetClubListPublicRequest.SearchParameterState.IGNORE;
 
             var getAllClubsResponse = await client.GetClubListPublicAsync( request );
 
@@ -153,7 +153,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             //as this call requires clubs to be shooting, the list may be empty (b/c no one is shooting)
             var request = new GetClubListPublicRequest();
-            request.CurrentlyShooting = true;
+            request.CurrentlyShooting = GetClubListPublicRequest.SearchParameterState.MUST_HAVE;
 
             var getClubCurrentlyShooting = await client.GetClubListPublicAsync( request );
 
@@ -165,6 +165,33 @@ namespace Scopos.BabelFish.Tests.Clubs {
             foreach( var club in clubList ) {
                 Assert.IsTrue( (DateTime.UtcNow - club.LastPublicShot).TotalMinutes < 11.0);
             }
+
+        }
+
+        [TestMethod]
+        public async Task GetClubSearchStuff()
+        {
+
+            //Using production, to get more real values.
+            var client = new ClubsAPIClient(APIStage.PRODUCTION);
+
+            //as this call requires clubs to be shooting, the list may be empty (b/c no one is shooting)
+            var request = new GetClubListPublicRequest();
+            request.ShowAll = GetClubListPublicRequest.SearchParameterState.IGNORE;
+            request.EnabledRezults = GetClubListPublicRequest.SearchParameterState.MUST_HAVE;
+            request.ActiveLicense = GetClubListPublicRequest.SearchParameterState.MUST_HAVE;
+            request.OrionForClubs = GetClubListPublicRequest.SearchParameterState.IGNORE;
+            request.OrionAtHome = GetClubListPublicRequest.SearchParameterState.IGNORE;
+            request.AthenaForClubs = GetClubListPublicRequest.SearchParameterState.IGNORE;
+            request.CurrentlyShooting = GetClubListPublicRequest.SearchParameterState.IGNORE;
+
+            var getClubCurrentlyShooting = await client.GetClubListPublicAsync(request);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, getClubCurrentlyShooting.RestApiStatusCode);
+
+            var clubList = getClubCurrentlyShooting.ClubList.Items;
+
+            Assert.IsTrue(clubList.Count == 50, "The response's ClubList should have 50 clubs.");
 
         }
 
