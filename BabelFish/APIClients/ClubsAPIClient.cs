@@ -71,9 +71,22 @@ namespace Scopos.BabelFish.APIClients {
         /// Generally this ia a parameterless call.
         /// </summary>
         /// <param name="currentlyShooting">If true, limits the returned list of clubs, to only the clubs that are currently shooting</param>
-        public async Task<GetClubListPublicResponse> GetClubListPublicAsync( bool currentlyShooting = false  ) {
+        public async Task<GetClubListPublicResponse> GetClubListPublicAsync(
+            GetClubListPublicRequest.SearchParameterState showAll = GetClubListPublicRequest.SearchParameterState.IGNORE,
+            GetClubListPublicRequest.SearchParameterState enabledRezults = GetClubListPublicRequest.SearchParameterState.IGNORE,
+            GetClubListPublicRequest.SearchParameterState activeLicense = GetClubListPublicRequest.SearchParameterState.IGNORE,
+            GetClubListPublicRequest.SearchParameterState orionForClubs = GetClubListPublicRequest.SearchParameterState.IGNORE,
+            GetClubListPublicRequest.SearchParameterState orionAtHome = GetClubListPublicRequest.SearchParameterState.IGNORE,
+            GetClubListPublicRequest.SearchParameterState athenaForClubs = GetClubListPublicRequest.SearchParameterState.IGNORE,
+            GetClubListPublicRequest.SearchParameterState currentlyShooting = GetClubListPublicRequest.SearchParameterState.IGNORE ) {
 
             var request = new GetClubListPublicRequest( );
+            request.ShowAll = currentlyShooting;
+            request.EnabledRezults = currentlyShooting;
+            request.ActiveLicense = currentlyShooting;
+            request.OrionForClubs = currentlyShooting;
+            request.OrionAtHome = currentlyShooting;
+            request.AthenaForClubs = currentlyShooting;
             request.CurrentlyShooting = currentlyShooting;
 
             return await GetClubListPublicAsync( request );
