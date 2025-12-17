@@ -5,9 +5,9 @@
 	  <LangVersion>latest</LangVersion>
 	  <ImplicitUsings>enable</ImplicitUsings>
 	  <Nullable>enable</Nullable>
-    <AssemblyVersion>1.11.2.1</AssemblyVersion>
+    <AssemblyVersion>1.11.2.2</AssemblyVersion>
 	<PackageId>Scopos.BabelFish</PackageId>
-	<Version>1.11.2.1</Version>
+	<Version>1.11.2.2</Version>
 	<Authors>Scopos LLC</Authors>
 	<Company>Scopos LLC</Company>
   <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
