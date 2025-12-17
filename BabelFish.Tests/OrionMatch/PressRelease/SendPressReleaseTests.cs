@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
@@ -22,8 +23,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch.PressRelease {
             PostSendPressReleaseEmailAuthenticatedRequest request = new PostSendPressReleaseEmailAuthenticatedRequest( userAuthentication ) {
                 TestOnly = true,
                 SendTo = new List<string>() { "erik@scopos.tech" },
-                LeagueID = "1.1.2024072509092300.3",
-                GameID = "1.1.2024092612083260.1"
+                LeagueID = new MatchID("1.1.2024072509092300.3"),
+                GameID = new MatchID("1.1.2024092612083260.1")
             };
 
             var client = new OrionMatchAPIClient();
