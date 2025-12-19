@@ -192,6 +192,13 @@ namespace Scopos.BabelFish.Tests.Clubs {
             var clubList = getClubCurrentlyShooting.ClubList.Items;
 
             Assert.IsTrue(clubList.Count == 50, "The response's ClubList should have 50 clubs.");
+            
+            var club1 = clubList[0]; //This should just be eriks account.
+            Console.WriteLine(club1);
+            Assert.IsNotNull(club1.Location);
+            Assert.IsTrue(club1.Location.IsKnown);
+            Assert.IsNotNull(club1.Location.Longitude);
+            Assert.IsNotNull(club1.Location.Latitude);
 
         }
 
