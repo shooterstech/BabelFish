@@ -58,28 +58,28 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// </summary>
         [DefaultValue( 0.00 )]
         [G_NS.JsonProperty( Order = 10 )]
-        public float? Longitude { get; set; }
+        public double? Longitude { get; set; }
 
         /// <summary>
         /// The Latitude coordinates. A value of 0 likely means the coordinates are now known
         /// </summary>
         [DefaultValue( 0.00 )]
         [G_NS.JsonProperty( Order = 11 )]
-        public float? Latitude { get; set; }
+        public double? Latitude { get; set; }
 
         /// <summary>
         /// The Altitude of this location, measured in meters. A value of 0 likely means the altitude is not known.
         /// </summary>
         [DefaultValue(0.00)]
         [G_NS.JsonProperty( Order = 12 )]
-        public float? Altitude { get; set; }
+        public double? Altitude { get; set; }
 
         /// <summary>
         /// If known the location of the caller, this is the distance from the caller, measured in kilometers.
         /// </summary>
         [DefaultValue(0.00)]
         [G_NS.JsonProperty( Order = 15 )]
-        public float? Distance { get; set; }
+        public double? Distance { get; set; }
 
         /// <summary>
         /// Boolean indicatingif the location is truly known. If the value is false, then that data in this 
