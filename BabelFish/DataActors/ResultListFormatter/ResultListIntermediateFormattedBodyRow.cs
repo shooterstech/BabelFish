@@ -15,6 +15,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = false;
+
+            int columnSubRowCount = 1;
+            foreach (var column in _resultListFormatted.ResultListFormat.Format.Columns) {
+                columnSubRowCount = column.BodyValues.Count;
+
+                if ( column.Spanning is not null 
+                    && ! column.Spanning.IsEmpty
+                    && rlf.ShowSpanningRows ) {
+                    this.HasSpanningRow = true;
+                }
+
+                if (this.HasSpanningRow)
+                    columnSubRowCount++;
+
+                if (columnSubRowCount > this.SubRowCount) {
+                    SubRowCount = columnSubRowCount;
+                }
+            }
         }
 
         public override List<string> GetClassList() {
@@ -76,6 +94,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public override bool ShowRowBasedOnShowNumberOfBodies() {
             return this._resultListFormatted.GetTokenToShowBodyRow( this );
+        }
+
+        public override ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column ) {
+            
+            if ( IsSpanningRow ) {
+                if ( column.Spanning is null || column.Spanning.IsEmpty ) {
+                    return ResultListCellValue.EMPTY;
+                } else {
+                    return column.Spanning;
+                }
+            }
+
+            if ( column.BodyValues.Count > this._SubRowIndex ) {
+                return column.BodyValues[this._SubRowIndex];
+            }
+
+            return ResultListCellValue.EMPTY;                
         }
     }
 }

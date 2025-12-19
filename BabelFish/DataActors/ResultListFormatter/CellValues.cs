@@ -43,6 +43,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public List<string> ClassList { get; set; }
 
+        public int ColumnSpan { get; set; } = 1;
+
         /// <summary>
         /// Indicates what page or view this Cell should link to.
         /// The data to link to this page is found in the LinkToData property.
@@ -57,7 +59,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return $"CellValues: {Text}";
         }
 
+        /*
+         * I think these existed only for debug reasons
         public string Body { get; set; } = "";
         public string Child { get; set; } = "";
+        */
     }
 }

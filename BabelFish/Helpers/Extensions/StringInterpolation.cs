@@ -9,6 +9,8 @@ namespace Scopos.BabelFish.Helpers.Extensions
 {
     public static class StringInterpolation
     {
+        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <summary>
         /// Performs string interpolation using a dictionary for the source of the values. 
         /// </summary>
@@ -17,10 +19,18 @@ namespace Scopos.BabelFish.Helpers.Extensions
         /// <returns></returns>
         public static string Replace(this string source, Dictionary<string, string> values)
         {
-            return values.Aggregate(
-                source,
-                (current, parameter) => current
-                    .Replace($"{{{parameter.Key}}}", parameter.Value));
+            try {
+                if (string.IsNullOrEmpty( source ))
+                    return string.Empty;
+
+                return values.Aggregate(
+                    source,
+                    ( current, parameter ) => current
+                        .Replace( $"{{{parameter.Key}}}", parameter.Value ) );
+            } catch (Exception e) {
+                _logger.Error( $"Could not interpolate {source}." );
+                return string.Empty;
+            }
         }
 
         /// <summary>

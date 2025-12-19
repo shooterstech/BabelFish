@@ -219,6 +219,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                                 && row.ShowRowBasedOnShowNumberOfChildren()
                                 && row.ShowRowBasedZeroScores()) {
                                 row.RowIsShown = true;
+                                row.Reset();
                                 copyOfRows.Add( row );
                             } else {
                                 row.RowIsShown = false;
@@ -763,12 +764,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public bool ShowSupplementalInformation {  get; set; } = true;
 
-		#region Participant Attribute Delegates
-		/// <summary>
-		/// Recalculates the standard participant attribute fields (e.g. rank, display name, club, etc). Is useful
-		/// to call if the user overrode one of the GetParticipantAttribute Pointers
-		/// </summary>
-		public void RefreshAllRowsParticipantAttributeFields() {
+        /// <summary>
+        /// Boolean, indicating if the Spanning row should be included. 
+        /// </summary>
+        public bool ShowSpanningRows { get; set; } = true;
+
+        public string OptionText1 { get; set; } = "Home Town {Hometown} Bib {CompetitorNumber}";
+
+        public string OptionText2 { get; set; } = string.Empty;
+
+        public string OptionText3 { get; set; } = string.Empty;
+        
+        #region Participant Attribute Delegates
+        /// <summary>
+        /// Recalculates the standard participant attribute fields (e.g. rank, display name, club, etc). Is useful
+        /// to call if the user overrode one of the GetParticipantAttribute Pointers
+        /// </summary>
+        public void RefreshAllRowsParticipantAttributeFields() {
             lock (_rows) {
                 foreach (var r in _rows) {
                     r.RefreshStandardParticipantAttributeFields();

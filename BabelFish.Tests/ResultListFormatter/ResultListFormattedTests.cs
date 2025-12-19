@@ -458,7 +458,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             MatchID matchId = new MatchID( "1.1.2025092613274424.1" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Team - All";
+            var resultListName = "Individual - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -499,16 +499,20 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Console.WriteLine();
 
             foreach (var row in rlf.ShownRows) {
-                foreach (int i in rlf.GetShownColumnIndexes()) {
-                    var cell = row.GetColumnBodyCell( i );
+                foreach (var subrow in row) {
+                    foreach (int i in rlf.GetShownColumnIndexes()) {
+                        var cell = subrow.GetColumnBodyCell( i );
 
-                    Console.Write( $"{cell.Text}, " );
+                        Console.Write( $"{cell.Text}, " );
+                        if (cell.ColumnSpan > 1)
+                            break;
+                    }
+                    Console.Write( " : " );
+                    Console.Write( subrow.GetParticipant().RemarkList.ToString() );
+                    Console.Write( " : " );
+                    Console.Write( string.Join( ", ", subrow.GetClassList() ) );
+                    Console.WriteLine();
                 }
-                Console.Write( " : " );
-                Console.Write( row.GetParticipant().RemarkList.ToString() );
-                Console.Write( " : " );
-                Console.Write( string.Join( ", ", row.GetClassList() ) );
-                Console.WriteLine();
             }
         }
     }

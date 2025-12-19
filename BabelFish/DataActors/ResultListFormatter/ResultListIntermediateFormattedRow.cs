@@ -12,6 +12,8 @@ using Score = Scopos.BabelFish.DataModel.Athena.Score;
 using Scopos.BabelFish.Helpers;
 using System.Security.Cryptography;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
+using System.Collections;
+using System.Globalization;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -24,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// <returns></returns>
     public delegate string ParticipantAttributeOverload( IRLIFItem item, ResultListIntermediateFormatted rlf );
 
-    public abstract class ResultListIntermediateFormattedRow {
+    public abstract class ResultListIntermediateFormattedRow: IEnumerator<ResultListIntermediateFormattedRow>, IEnumerable<ResultListIntermediateFormattedRow> {
 
         /// <summary>
         /// List of feild values that are always included (the user doesn't have to define these in their definition).
@@ -41,12 +43,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "FamilyName",
             "GivenName",
             "MiddleName",
-            "HomeTown",
+            "HomeTown", //Deprecated
+            "Hometown",
             "Country",
             "Club",
             "CompetitorNumber",
             "MatchLocation",
-            "MatchID", //If this is a Virtual Match, will differ from the ParentID
+            "MatchID",          //If this is a Virtual Match, will differ from the ParentID
 			"LocalDate",
             "ResultCOFID",
             "UserID",
@@ -54,7 +57,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Owner",
             "TargetCollectionName",
             "Status",
-            "LastShot",    //Only avaliable on individual result lists
+            "LastShot",         //Only avaliable on individual result lists
             "Remark",
             "RankOrSquadding",  //Avaliable only with Squadding information
             "Squadding",        //Avaliable only with Squadding information
@@ -64,7 +67,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Squad",            //Avaliable only with Squadding information
             "Bank",             //Avaliable only with Squadding information
             "Range",            //Avaliable only with Squadding information
-            "Reentry"           //Avaliable only with Squadding information
+            "Reentry",          //Avaliable only with Squadding information
+            //NOTE the OptionText fields should be included last in this list, so all other fields are computed first. 
+            "OptionText1",
+            "OptionText2",
+            "OptionText3"
         } );
 
         public static readonly Dictionary<string, string> AliasEventNames = new Dictionary<string, string>() {
@@ -323,6 +330,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return "";
 
                 case "HomeTown":
+                case "Hometown":
                     if (_resultListFormatted.GetParticipantAttributeHomeTownPtr != null)
                         return _resultListFormatted.GetParticipantAttributeHomeTownPtr( this._item, this._resultListFormatted );
 
@@ -373,7 +381,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultEvent is null)
                         return "";
 
-                    return _resultEvent.LocalDate.ToString();
+                    return _resultEvent.LocalDate.ToString( DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
 
                 case "MatchID":
                     if (_resultListFormatted.GetParticipantAttributeMatchIDPtr != null)
@@ -558,6 +566,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     return "";
 
+                case "OptionText1":
+
+                    string optionText1 = this._resultListFormatted.OptionText1 ?? string.Empty;
+                    optionText1.Replace( _fields );
+                    return optionText1;
+
+                case "OptionText2":
+
+                    string optionText2 = this._resultListFormatted.OptionText2 ?? string.Empty;
+                    optionText2.Replace( _fields );
+                    return optionText2;
+
+                case "OptionText3":
+
+                    string optionText3 = this._resultListFormatted.OptionText3 ?? string.Empty;
+                    optionText3.Replace( _fields );
+                    return optionText3;
+
                 default:
                     return "UNKNOWN";
             }
@@ -580,6 +606,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// A child row is, for example, a team member row under a team result row.
         /// </summary>
         public bool IsChildRow { get; protected set; } = false;
+
+        public bool IsSpanningRow { 
+            get {
+                return (HasSpanningRow &&
+                    (_SubRowIndex + 1) == this.SubRowCount);
+            }
+        }
 
         private string GetAttributeValue( FieldSource source ) {
             /*
@@ -870,23 +903,25 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public CellValues GetColumnBodyCell( int index ) {
 
             var column = _resultListFormatted.ResultListFormat.Format.Columns[index];
-
-            string source = column.Body;
-            if (this.IsChildRow && !string.IsNullOrEmpty( column.Child ))
-                source = column.Child;
-            string value = source.Replace( _fields );
+            
+            ResultListCellValue rlcf = this.GetResultListCellValue( column );
+            string value = rlcf.Text.Replace( _fields );
 
             var classes = new List<string>();
 
-            foreach (var c in column.ClassSet) {
+            foreach (var c in rlcf.ClassSet) {
                 if (_resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )) {
                     classes.Add( (string)c.Name );
                 }
             }
 
             var cellValues = new CellValues( this._resultListFormatted, value, classes );
-            cellValues.Body = column.Body;
-            cellValues.Child = column.Child;
+            //cellValues.Body = column.Body;
+            //cellValues.Child = column.Child;
+
+            if ( this.IsSpanningRow && ! rlcf.IsEmpty ) {
+                cellValues.ColumnSpan = this._resultListFormatted.GetShownColumnIndexes().Count - index;
+            }
 
             //Check if the Column definition requires us to link to another page.
             if (this._resultListFormatted.Engagable) {
@@ -1096,5 +1131,58 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public bool RowIsShown { get; internal set; } = false;
 
-	}
+        /// <summary>
+        /// The number of sub-rows this row has. Will be at least 1.
+        /// </summary>
+        /// <remarks>Value is set in the concrete class constructors.</remarks>
+        public int SubRowCount { get; protected set; }
+
+        public int _SubRowIndex { get; private set; }
+
+        public bool HasSpanningRow {  get; protected set; } = false;
+        public abstract ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column );
+
+        #region IEnumerator interface
+
+        /// <inheritdoc />
+        public ResultListIntermediateFormattedRow Current => this;
+
+        /// <inheritdoc />
+        object IEnumerator.Current => this;
+
+        /// <inheritdoc />
+        public bool MoveNext() {
+            if (_firstTimeCaller) {
+                _SubRowIndex = 0;
+                _firstTimeCaller = false;
+                return true;
+            } else {
+                _SubRowIndex = _SubRowIndex + 1;
+                return (_SubRowIndex < SubRowCount);
+            }
+        }
+
+        private bool _firstTimeCaller = true;
+
+        /// <inheritdoc />
+        public void Reset() {
+            _SubRowIndex = 0;
+            _firstTimeCaller = true;
+        }
+
+        /// <inheritdoc />
+        public void Dispose() {
+            _SubRowIndex = 0; 
+            _firstTimeCaller = true;
+        }
+
+        public IEnumerator<ResultListIntermediateFormattedRow> GetEnumerator() {
+            return this;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return this;
+        }
+        #endregion
+    }
 }

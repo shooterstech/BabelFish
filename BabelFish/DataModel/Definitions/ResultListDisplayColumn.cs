@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using NLog.Targets;
+using QuestPDF.Infrastructure;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -45,6 +47,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue(LinkToOption.None)]
         public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
 
+        public List<ResultListCellValue> BodyValues { get; set; } = new List<ResultListCellValue>();
+
+        public List<ResultListCellValue> ? ChildValues { get; set; } = new List<ResultListCellValue>();
+
+        public bool ShouldSerializeBodyValues() {
+            return true;
+        }
+
+        public bool ShouldSerializeChildValues() {
+            return ChildValues is not null && ChildValues.Count > 0;
+        }
+
         /// <summary>
         /// Text, with field interpolation, to display in each cell in a child row.
         /// <para>If .Child is null or an empty stirng, the value of .Body is displayed in its place. </para>
@@ -62,7 +76,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string Footer { get; set; } = string.Empty;
 
         /// <summary>
-        /// Logic to determine when this column should be shown.
+        /// Logic to determine when this column should be included (or shown).
         /// <para>Default is to always show the column.</para>
         /// </summary>
         [JsonProperty( Order = 6 )]
@@ -134,6 +148,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool ShouldSerializeClassList() {
             return (ClassList != null && ClassList.Count > 0);
         }
+
+        public ResultListCellValue Spanning {  get; set; }
 
         /// <inheritdoc/>
         [DefaultValue("")]

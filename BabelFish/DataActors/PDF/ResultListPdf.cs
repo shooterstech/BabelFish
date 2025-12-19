@@ -165,12 +165,16 @@ namespace Scopos.BabelFish.DataActors.PDF {
                      }
                  } );
 
-                 foreach (var row in RLIF.ShownRows) {
-                     foreach (var colIndex in columnIndexes) {
-                         var rowCell = row.GetColumnBodyCell( colIndex );
-                         table.Cell().Padding( 1 ).Text( rowCell.Text );
-                     }
-                 }
+                foreach (var row in RLIF.ShownRows) {
+                    foreach (var subRow in row) {
+                        foreach (var colIndex in columnIndexes) {
+                            var rowCell = subRow.GetColumnBodyCell( colIndex );
+                            table.Cell().ColumnSpan( (uint) rowCell.ColumnSpan ).Padding( 1 ).Text( rowCell.Text );
+                            if (rowCell.ColumnSpan > 1)
+                                break;
+                        }
+                    }
+                }
              } );
         }
 

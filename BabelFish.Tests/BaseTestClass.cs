@@ -1,6 +1,7 @@
 ﻿
 using System.Configuration;
 using OfficeOpenXml;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Tests {
 
@@ -16,6 +17,8 @@ namespace Scopos.BabelFish.Tests {
             Initializer.Initialize( xApiKey , false );
             //add EPPlus license, was unable to add it to app.config
             ExcelPackage.License.SetCommercial( excelPackageLicense );
+
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
         }
     }
 }

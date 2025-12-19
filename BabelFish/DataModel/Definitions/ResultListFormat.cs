@@ -162,6 +162,37 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     }
                 }
 
+                //Convert from the deprecated .Body to .BodyValues
+                if (col.BodyValues.Count == 0) {
+                    ResultListCellValue rlcv = new ResultListCellValue();
+                    rlcv.Text = col.Body;
+                    if (col.ClassSet is null) {
+                        rlcv.ClassSet = col.ClassSet.Clone();
+                    } else {
+                        rlcv.ClassSet = new List<ClassSet>();
+                    }
+                    rlcv.LinkTo = col.BodyLinkTo;
+                    rlcv.Comment = "Converted from deprecated .Body";
+                    col.BodyValues.Add( rlcv );
+                }
+
+                //Convert from the deprecated .Child to .ChildValues.
+                if (col.ChildValues is null || col.ChildValues.Count == 0 ) {
+                    col.ChildValues = new List<ResultListCellValue>();
+
+                    if ( ! string.IsNullOrEmpty( col.Child ) ) {
+                        ResultListCellValue rlcv = new ResultListCellValue();
+                        rlcv.Text = col.Child;
+                        if (col.ClassSet is null) {
+                            rlcv.ClassSet = col.ClassSet.Clone();
+                        } else {
+                            rlcv.ClassSet = new List<ClassSet>();
+                        }
+                        rlcv.LinkTo = col.BodyLinkTo;
+                        rlcv.Comment = "Converted from deprecated .Child";
+                        col.ChildValues.Add( rlcv );
+                    } 
+                }
             }
 
             //On Rows
