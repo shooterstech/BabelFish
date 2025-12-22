@@ -101,6 +101,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return this._resultListFormatted.GetTokenToShowBodyRow( this );
         }
 
+        /// <inheritdoc/>
         public override ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column ) {
             
             if ( IsSpanningRow ) {

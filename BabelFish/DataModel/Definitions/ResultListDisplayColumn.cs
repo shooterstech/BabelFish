@@ -189,6 +189,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 12 )]
         public ShowWhenBase ShowSpanningWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
 
+        public bool ShouldSerializeShowSpanningWhen() {
+
+            //Dont serialize ShowWhen if it says to always show
+            if (ShowSpanningWhen is ShowWhenVariable showWhen && showWhen.Condition == ShowWhenCondition.TRUE) {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <inheritdoc/>
         [DefaultValue("")]
         [JsonProperty( Order = 99  )]

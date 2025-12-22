@@ -1,0 +1,26 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <!-- Add new configuration sections here -->
+  <configSections>
+    <!-- Example:
+    <section name="myLibrary" type="MyNamespace.MyConfigSection, MyAssembly" />
+    -->
+  </configSections>
+
+  <!-- Add your custom settings here -->
+  <!--
+  <myLibrary someSetting="true" />
+  -->
+
+  <!-- Runtime configuration additions -->
+  <runtime>
+    <!-- Example binding redirect:
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="MyAssembly" publicKeyToken="abcdef1234567890" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-9.9.9.9" newVersion="1.2.3.4" />
+      </dependentAssembly>
+    </assemblyBinding>
+    -->
+  </runtime>
+</configuration>
