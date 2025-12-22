@@ -13,7 +13,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             int columnSubRowCount = 1;
             foreach (var column in _resultListFormatted.ResultListFormat.Format.Columns) {
-                columnSubRowCount = column?.ChildValues.Count ?? 0;
+                if (column.ChildValues is not null && column.ChildValues.Count > 0) {
+                    columnSubRowCount = column.ChildValues.Count;
+                } else { 
+                    columnSubRowCount = column?.BodyValues?.Count ?? 0;
+                }
 
                 if (columnSubRowCount > this.SubRowCount) {
                     this.SubRowCount = columnSubRowCount;
