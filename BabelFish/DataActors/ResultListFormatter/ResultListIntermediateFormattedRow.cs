@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using System.Collections;
 using System.Globalization;
+using ShimSkiaSharp;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -610,7 +611,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public bool IsSpanningRow { 
             get {
                 return (HasSpanningRow &&
-                    (_SubRowIndex + 1) == this.SubRowCount);
+                    _SubRowIndex == this.SubRowCount);
             }
         }
 
@@ -909,6 +910,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             var classes = new List<string>();
 
+            //Add the classes from the columns .ClassSet
+            foreach (var c in column.ClassSet ) {
+                if (_resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )
+                    && ! classes.Contains( c.Name ) ) {
+                    classes.Add( (string)c.Name );
+                }
+            }
+
+            //Next add the classes from the ResultListCellValue's .ClassSet
             foreach (var c in rlcf.ClassSet) {
                 if (_resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )) {
                     classes.Add( (string)c.Name );
@@ -925,7 +935,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             //Check if the Column definition requires us to link to another page.
             if (this._resultListFormatted.Engagable) {
-                switch (column.BodyLinkTo.ToString()) {
+                switch (rlcf.LinkTo.ToString()) {
                     case "ResultCOF":
                         cellValues.LinkTo = LinkToOption.ResultCOF;
                         cellValues.LinkToData = _fields["ResultCOFID"];
@@ -958,6 +968,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             return cellValues;
 
+        }
+
+        /// <summary>
+        /// Returns a list of CellValues, representing the shown cells within this row.
+        /// </summary>
+        /// <returns></returns>
+        public List<CellValues> GetShownRow() {
+            List < CellValues> row = new List<CellValues>();
+
+            foreach ( int i in this._resultListFormatted.GetShownColumnIndexes() ) {
+                var cv = this.GetColumnBodyCell( i );
+                row.Add( cv );
+                if ( cv.ColumnSpan > 1 ) {
+                    break;
+                }
+            }
+
+            return row;
         }
 
         /// <summary>
@@ -1139,7 +1167,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public int _SubRowIndex { get; private set; }
 
-        public bool HasSpanningRow {  get; protected set; } = false;
+        /// <summary>
+        /// The protected variable _hasSpanningRow, set in the constructor, indicates if the 
+        /// RESULT LIST FORMAT defines a spanning row. The property .HasSpanningRow indicates 
+        /// if a spanning row is defined and the RLIF says to show it. 
+        /// </summary>
+        protected bool _hasSpanningRow = false;
+
+        /// <summary>
+        /// Returns a boolean, indicating if there is a spanning row defined and the RLIF says
+        /// to show it. 
+        /// </summary>
+        public bool HasSpanningRow {   
+            get {
+                return _hasSpanningRow && this._resultListFormatted.ShowSpanningRows;
+            }
+        }
+
         public abstract ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column );
 
         #region IEnumerator interface
@@ -1158,7 +1202,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return true;
             } else {
                 _SubRowIndex = _SubRowIndex + 1;
-                return (_SubRowIndex < SubRowCount);
+
+                if (_SubRowIndex < SubRowCount)
+                    return true;
+
+                if (_SubRowIndex == SubRowCount && this.HasSpanningRow)
+                    return true;
+
+                return false;
+
             }
         }
 

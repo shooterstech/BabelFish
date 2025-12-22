@@ -21,7 +21,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         /// <summary>
-        /// List of ClassSet objects, each holds a name of a CSS class (string) and a ShowWhen object to determine if it should be added the the classes used when displaying the column.
+        /// List of ClassSet to augment the cell with.
+        /// <para>These classes are added to the class list in addition to the .ClassSet specified in the ResultListDisplayColumn instance.</para>.
         /// </summary>
         /// <remarks> Examples include:
         /// <list type="bullet">

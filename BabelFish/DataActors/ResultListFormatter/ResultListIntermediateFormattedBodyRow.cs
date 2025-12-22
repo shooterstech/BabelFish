@@ -21,13 +21,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 columnSubRowCount = column.BodyValues.Count;
 
                 if ( column.Spanning is not null 
-                    && ! column.Spanning.IsEmpty
-                    && rlf.ShowSpanningRows ) {
-                    this.HasSpanningRow = true;
+                    && ! column.Spanning.IsEmpty) {
+                    _hasSpanningRow = true;
                 }
-
-                if (this.HasSpanningRow)
-                    columnSubRowCount++;
 
                 if (columnSubRowCount > this.SubRowCount) {
                     SubRowCount = columnSubRowCount;
@@ -37,11 +33,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public override List<string> GetClassList() {
             List<string> classSetList = new List<string>();
-            foreach ( var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet ){
-                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _item))
-                {
-                    classSetList.Add(setObj.Name);
+            if (this.IsSpanningRow) {
+                foreach (var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet) {
+                    if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
+                        classSetList.Add( setObj.Name );
+                    }
                 }
+            }
+            else {
+                foreach (var setObj in _resultListFormatted.DisplayPartitions.Spanning.ClassSet) {
+                    if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
+                        classSetList.Add( setObj.Name );
+                    }
+                }
+
             }
             return classSetList;
 

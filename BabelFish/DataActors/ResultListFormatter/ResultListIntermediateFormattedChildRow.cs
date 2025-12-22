@@ -9,13 +9,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = true;
-            HasSpanningRow = false;
+            _hasSpanningRow = false;//NOTE Child rows are not allowed to have a Spanning row
 
             int columnSubRowCount = 1;
             foreach (var column in _resultListFormatted.ResultListFormat.Format.Columns) {
                 columnSubRowCount = column?.ChildValues.Count ?? 0;
-
-                //NOTE Child rows are not allowed to have a Spanning row, so no need to count it.
 
                 if (columnSubRowCount > this.SubRowCount) {
                     this.SubRowCount = columnSubRowCount;

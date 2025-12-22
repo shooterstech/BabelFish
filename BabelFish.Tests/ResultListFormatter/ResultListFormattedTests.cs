@@ -487,25 +487,22 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             rlf.ShowStatuses = null;
             rlf.ShowSupplementalInformation = false;
             rlf.ShowNumberOfBodyRows = int.MaxValue;
+            rlf.ShowSpanningRows =true;
             rlf.RefreshAllRowsParticipantAttributeFields();
 
             //rlf.SetShowValuesToDefault();
 
 
             CellValues tryCellValues, cellValues;
-            foreach (int i in rlf.GetShownColumnIndexes()) {
-                Console.Write( $"{rlf.GetColumnHeaderCell(i).Text}, " );
+            foreach (var cv in rlf.GetShownHeaderRow() ) {
+                Console.Write( $"{cv.Text}, " );
             }
             Console.WriteLine();
 
             foreach (var row in rlf.ShownRows) {
                 foreach (var subrow in row) {
-                    foreach (int i in rlf.GetShownColumnIndexes()) {
-                        var cell = subrow.GetColumnBodyCell( i );
-
-                        Console.Write( $"{cell.Text}, " );
-                        if (cell.ColumnSpan > 1)
-                            break;
+                    foreach( var cv in subrow.GetShownRow() ) { 
+                        Console.Write( $"{cv.Text}, " );
                     }
                     Console.Write( " : " );
                     Console.Write( subrow.GetParticipant().RemarkList.ToString() );

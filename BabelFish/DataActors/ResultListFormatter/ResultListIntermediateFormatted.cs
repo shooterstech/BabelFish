@@ -383,13 +383,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return ResultListFormat.Format.Columns.Count;
         }
 
+        //Chached values for .GetShownColumnIndexes()
+        List<int> _shownColumnIndexes = new List<int>();
+        DateTime _shownColumnIndexesCachedTime = DateTime.MinValue;
+
         /// <summary>
         /// Returns a list of columnIndex values, Each columnIndex is shown (e.g. not .Hide), as it 
         /// will not contain a CSS Class that's listed in .HideColumnsWithTheseClasses.
         /// </summary>
         /// <returns></returns>
         public List<int> GetShownColumnIndexes() {
-            List<int> shownColumnIndexes = new List<int>();
+
+            //Becuase GetShownColumnIndexes() gets called a lot, we will cache the return value
+            //And only recalculate it ever 2 seconds.
+            if ((DateTime.UtcNow - _shownColumnIndexesCachedTime) < TimeSpan.FromSeconds( 2 ))
+                return _shownColumnIndexes;
+
+            _shownColumnIndexes.Clear();
             bool include = true;
             for (int i = 0; i < ResultListFormat.Format.Columns.Count; i++) {
                 var column = ResultListFormat.Format.Columns[i];
@@ -400,10 +410,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
 
                 if (include)
-                    shownColumnIndexes.Add( i );
+                    _shownColumnIndexes.Add( i );
             }
 
-            return shownColumnIndexes;
+            _shownColumnIndexesCachedTime = DateTime.UtcNow;
+            return _shownColumnIndexes;
         }
 
         /// <summary>
@@ -452,6 +463,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <summary>
         /// Returns the entire header row, as a List of CellValues.
+        /// <para>To get a list of only the columns that are shown, use .GetShownHeaderRow() instead.</para>
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
@@ -462,6 +474,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             List<CellValues> row = new();
 
             for (int i = 0; i < GetColumnCount(); i++)
+                row.Add( GetColumnHeaderCell( i ) );
+
+            return row;
+        }
+
+        /// <summary>
+        /// Returns the shown header row, as a List of CellValues.
+        /// <para>Similiar to .GetHeaderRow() but only includes CellValues for the columns that are shown.</para>
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
+        public List<CellValues> GetShownHeaderRow() {
+            if (!_initialized)
+                throw new InitializeAsyncNotCompletedException( "InitializeAsync() was not called after the ResultListIntermediateFormatted constructor. Can not proceed until after this call was successful." );
+
+            List<CellValues> row = new();
+
+            foreach (int i in this.GetShownColumnIndexes())
                 row.Add( GetColumnHeaderCell( i ) );
 
             return row;
@@ -545,6 +575,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <summary>
         /// Returns the entire header row, as a List of CellValues.
+        /// <para>To get a list of only the shown columns, use .GetShownFooterRow() instead.</para>
         /// </summary>
         /// <returns></returns>
         /// <exception cref="InitializeAsyncNotCompletedException">Thrown if the caller does not complete the initilization process by calling InitializeAsync()</exception>
@@ -558,6 +589,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 row.Add( GetColumnFooterCell( i ) );
 
             return row;
+        }
+
+        /// <summary>
+        /// Returns a list of shown footer row CellValues. 
+        /// <para>Similiar to .GetFooterRow(), but this method only return footer CellValues for the shown columns.</para>
+        /// </summary>
+        /// <returns></returns>
+        public List<CellValues> GetShownFooterRow() {
+            List<CellValues> l = new();
+            foreach (int i in this.GetShownColumnIndexes()) {
+                l.Add( this.GetColumnFooterCell( i ) );
+            }
+            return l;
         }
 
         /// <summary>
