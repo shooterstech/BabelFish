@@ -73,6 +73,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 			return base.ShowRowBasedOnShowRelay();
         }
 
+        /// <inheritdoc/>
         public override ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column ) {
 
             if (IsSpanningRow) {
@@ -80,12 +81,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return ResultListCellValue.EMPTY;
             }
 
+            //Try and return the cell values as defined in the .ChildValue list first, if it exists
             if (column.ChildValues is not null 
                 && column.ChildValues.Count > this._SubRowIndex) {
+                return column.ChildValues[this._SubRowIndex];
+            }
+
+            //If .ChildValues is not defined, return .BodyValues.
+            if (column.BodyValues.Count > this._SubRowIndex) {
                 return column.BodyValues[this._SubRowIndex];
             }
 
-            return this.ParentRow.GetResultListCellValue( column );
+            //If still nothing (this shouldn't happen), return an empty cell value.
+            return ResultListCellValue.EMPTY;
         }
     }
 }

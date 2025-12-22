@@ -458,7 +458,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             MatchID matchId = new MatchID( "1.1.2025092613274424.1" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - All";
+            var resultListName = "Team - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -481,7 +481,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 			//await rlf.LoadSquaddingListAsync();
 
 			rlf.Engagable = false;
-            rlf.ResolutionWidth = 100;
+            rlf.ResolutionWidth = 10000;
             rlf.ShowNumberOfChildRows = 5;
             rlf.ShowRanks = 3;
             rlf.ShowStatuses = null;
