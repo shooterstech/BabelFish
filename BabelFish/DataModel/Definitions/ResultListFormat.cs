@@ -68,6 +68,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 14 )]
         public ResultListFormatDetail Format { get; set; }
 
+        /// <summary>
+        /// Within a RESULT LIST DEFINITION there are often places where we want the end user to be able 
+        /// to dynamically set the format values. An exammple would be on a spanning field that gives the 
+        /// user the choice to include demographic information. 
+        /// <para>Can define up to three optional fields.</para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 20 )]
+        [G_NS.JsonProperty( Order = 20 )]
+        public List<ResultListOptionalField> OptionalFields { get; set; } = new List<ResultListOptionalField>(); 
+
+        public bool ShouldSerializeOptionalFields() {
+            return this.OptionalFields is not null && this.OptionalFields.Count > 0;
+        }
+
         /// <inheritdoc />
         public override async Task<bool> GetMeetsSpecificationAsync() {
             var validation = new IsResultListFormatValid();
@@ -162,15 +176,38 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     }
                 }
 
+                //Convert from the deprecated .Body to .BodyValues
+                if (col.BodyValues.Count == 0) {
+                    ResultListCellValue rlcv = new ResultListCellValue();
+                    rlcv.Text = col.Body;
+                    rlcv.LinkTo = col.BodyLinkTo;
+                    rlcv.Comment = "Converted from deprecated .Body";
+                    col.BodyValues.Add( rlcv );
+                }
+
+                //Convert from the deprecated .Child to .ChildValues.
+                if (col.ChildValues is null || col.ChildValues.Count == 0 ) {
+                    col.ChildValues = new List<ResultListCellValue>();
+
+                    if ( ! string.IsNullOrEmpty( col.Child ) ) {
+                        ResultListCellValue rlcv = new ResultListCellValue();
+                        rlcv.Text = col.Child;
+                        rlcv.LinkTo = col.BodyLinkTo;
+                        rlcv.Comment = "Converted from deprecated .Child";
+                        col.ChildValues.Add( rlcv );
+                    } 
+                }
             }
 
             //On Rows
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Header);
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Body );
+            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Spanning );
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Children );
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Footer );
             updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Header );
             updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Body );
+            updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Spanning );
             updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Children );
             updateHappened |= ConvertResultListDisplayPartition( Format.DisplayForTeam.Footer );
 
@@ -179,10 +216,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Spanning, "rlf-row-spanning" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Children, "rlf-row-child" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Footer, "rlf-row-footer" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Body, "rlf-row-team" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Spanning, "rlf-row-spanning" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Children, "rlf-row-child" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Footer, "rlf-row-footer" );
 
@@ -344,10 +383,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 			updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Spanning, "rlf-row-spanning" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Children, "rlf-row-child" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Footer, "rlf-row-footer" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Body, "rlf-row-team" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Spanning, "rlf-row-spanning" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Children, "rlf-row-child" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.DisplayForTeam.Footer, "rlf-row-footer" );
 

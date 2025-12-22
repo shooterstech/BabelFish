@@ -64,6 +64,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var scoreFormatCollectionDef = new IsResultListFormatScoreFormatCollectionDefValid();
             var scoreConfigDefault = new IsResultListFormatScoreConfigDefaultValid();
 			var fieldNames = new IsResultListFormatBodyValuesValid();
+			var spanningColumns = new IsResultListFormatHaveAtMostOneSpanningColumn();
 
             if (!await scoreFormatCollectionDef.IsSatisfiedByAsync( candidate )) {
                 valid = false;
@@ -81,6 +82,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 				valid = false;
 				Messages.AddRange( fieldNames.Messages );
 			}
+
+			if (!await spanningColumns.IsSatisfiedByAsync( candidate )) {
+				valid = false;
+                Messages.AddRange( fieldNames.Messages );
+            }
 
             return valid;
 		}
@@ -189,4 +195,41 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 			return valid;
         }
     }
+
+    /// <summary>
+    /// Tests if a RESULT LIST FORMAT has 0 or 1 columns with Spanning text.
+    /// </summary>
+    public class IsResultListFormatHaveAtMostOneSpanningColumn : CompositeSpecification<ResultListFormat> {
+
+        public override async Task<bool> IsSatisfiedByAsync( ResultListFormat candidate ) {
+
+            bool valid = true;
+            Messages.Clear();
+
+			List<int> columnsWithSpanning = new List<int>();
+
+			//Count the number of columns with Spanning text. 
+            int columnIndex = 0;
+            foreach (var column in candidate.Format.Columns) {
+
+				if ( column.Spanning is not null && ! column.Spanning.IsEmpty)
+					columnsWithSpanning.Add( columnIndex++ );
+
+                columnIndex++;
+            }
+
+            //There can be 0 or 1.
+            if (columnsWithSpanning.Count > 1 ) {
+				valid = false;
+
+				var list = string.Join( ",", columnsWithSpanning );
+				var msg = $"More than one column was detected with spanning text. You may have 0 or 1, but no more. The columns with spanning text are indexes {list}.";
+				Messages.Add( msg );
+			}
+
+            return valid;
+        }
+    }
+
+    //TODO: Only one column has spanning text
 }

@@ -153,7 +153,12 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             rlf.Format.Columns.Clear();
             rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Rank",
-                Body = "{RankOrSquadding} {RankDelta}",
+                Body = "{Rank} {RankDelta}",
+                BodyValues = new List<ResultListCellValue>() {
+                    new ResultListCellValue() {
+                        Text = "{Rank} {RankDelta}"
+                    }
+                },
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-rank",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -164,6 +169,12 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 Header = "Participant",
                 Body = "{DisplayName}",
                 BodyLinkTo = LinkToOption.PublicProfile,
+                BodyValues = new List<ResultListCellValue>() {
+                    new ResultListCellValue() {
+                        Text = "{DisplayName}",
+                        LinkTo = LinkToOption.PublicProfile
+                    }
+                },
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
                     ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -177,6 +188,11 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                     Header = resultListMember.HeaderName,
                     Body = $"{{{resultListMember.HeaderName}}}",
+                    BodyValues = new List<ResultListCellValue>() {
+                        new ResultListCellValue() {
+                            Text = $"{{{resultListMember.HeaderName}}}"
+                        }
+                    },
                     ClassSet = new List<ClassSet>() { new ClassSet() {
                         Name = "rlf-col-event",
                         ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
@@ -190,6 +206,11 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Aggregate",
                 Body = "{Aggregate}",
+                BodyValues = new List<ResultListCellValue>() {
+                        new ResultListCellValue() {
+                            Text = "{Aggregate}"
+                        }
+                    },
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                         Name = "rlf-col-event",
                         ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()

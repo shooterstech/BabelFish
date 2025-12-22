@@ -34,6 +34,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public ResultListDisplayPartition Body { get; set; } = new ResultListDisplayPartition();
 
         /// <summary>
+        /// Describes the Spanning row.
+        /// </summary>
+        public ResultListDisplayPartition Spanning { get; set; } = new ResultListDisplayPartition();
+
+        /// <summary>
         /// Describes the Child rows. 
         /// </summary>
         /// <remarks>An example of a Child row, are the team member rows under a team.</remarks>

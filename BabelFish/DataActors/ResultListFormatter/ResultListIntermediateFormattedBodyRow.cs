@@ -15,15 +15,38 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             _logger = LogManager.GetCurrentClassLogger();
             IsChildRow = false;
+
+            int columnSubRowCount = 1;
+            foreach (var column in _resultListFormatted.ResultListFormat.Format.Columns) {
+                columnSubRowCount = column.BodyValues.Count;
+
+                if ( column.Spanning is not null 
+                    && ! column.Spanning.IsEmpty) {
+                    _hasSpanningRow = true;
+                }
+
+                if (columnSubRowCount > this.SubRowCount) {
+                    SubRowCount = columnSubRowCount;
+                }
+            }
         }
 
         public override List<string> GetClassList() {
             List<string> classSetList = new List<string>();
-            foreach ( var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet ){
-                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _item))
-                {
-                    classSetList.Add(setObj.Name);
+            if (this.IsSpanningRow) {
+                foreach (var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet) {
+                    if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
+                        classSetList.Add( setObj.Name );
+                    }
                 }
+            }
+            else {
+                foreach (var setObj in _resultListFormatted.DisplayPartitions.Spanning.ClassSet) {
+                    if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
+                        classSetList.Add( setObj.Name );
+                    }
+                }
+
             }
             return classSetList;
 
@@ -76,6 +99,23 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public override bool ShowRowBasedOnShowNumberOfBodies() {
             return this._resultListFormatted.GetTokenToShowBodyRow( this );
+        }
+
+        public override ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column ) {
+            
+            if ( IsSpanningRow ) {
+                if ( column.Spanning is null || column.Spanning.IsEmpty ) {
+                    return ResultListCellValue.EMPTY;
+                } else {
+                    return column.Spanning;
+                }
+            }
+
+            if ( column.BodyValues.Count > this._SubRowIndex ) {
+                return column.BodyValues[this._SubRowIndex];
+            }
+
+            return ResultListCellValue.EMPTY;                
         }
     }
 }
