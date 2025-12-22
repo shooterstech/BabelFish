@@ -95,7 +95,7 @@ namespace Scopos.BabelFish.Requests.ScoposData
 
                 parameterList.Add("athena-eula-accepted", new List<string>() { AthenaEulaAccepted.ToString() });
 
-                parameterList.Add("return-history", new List<string>() { AthenaEulaAccepted.ToString() });
+                parameterList.Add("return-history", new List<string>() { ReturnHistory.ToString() });
 
                 if ( !string.IsNullOrEmpty( this.OwnerID ) )
                 {
