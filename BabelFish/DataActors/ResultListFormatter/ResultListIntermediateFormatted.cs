@@ -78,6 +78,17 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             }
 
+            //Grow the Event Tree, from the CORUSE OF FIRE listed in the Result List.
+            if (this.RLIFList is ResultList rl) {
+                try {
+                    EventTree = EventComposite.GrowEventTree( await rl.GetCourseOfFireDefinitionAsync() );
+                } catch (Exception ex) {
+                    EventTree = null;
+                }
+            } else {
+                EventTree = null;
+            }
+
             lock (_rows) { //rows needs to be thread safe
                 foreach (var item in RLIFList.GetAsIRLItemsList()) {
                     var rei = new ResultListIntermediateFormattedBodyRow( this, item );
@@ -282,6 +293,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return null;
             }
         }
+
+        public EventComposite EventTree { get; private set; }
 
         /// <summary>
         /// Gets the ScoreFormatCollection Definition used in this Result List
@@ -1036,15 +1049,25 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeCompetitorNumberPtr { get; set; } = null;
 
-		/// <summary>
-		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchLocation field
-		/// in each row. 
-		/// </summary>
-		/// <remarks>
-		/// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
-		/// method in the field value.
-		/// </remarks>
-		public ParticipantAttributeOverload GetParticipantAttributeMatchLocationPtr { get; set; } = null;
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Coach field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload GetParticipantCoachPtr { get; set; } = null;
+
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchLocation field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload GetParticipantAttributeMatchLocationPtr { get; set; } = null;
 
 		/// <summary>
 		/// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchID field
@@ -1226,6 +1249,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeRangePtr { get; set; } = null;
 
-		#endregion
-	}
+        public CompletionPercentageOverload GetCompletionPercentageStringPtr { get; set; } = null;
+
+         #endregion
+    }
 }

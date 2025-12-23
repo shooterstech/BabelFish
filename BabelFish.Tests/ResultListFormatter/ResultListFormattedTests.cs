@@ -455,10 +455,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         public async Task EriksPlayground() {
 
             //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
-            MatchID matchId = new MatchID( "1.1.2025092613274424.1" );
+            MatchID matchId = new MatchID( "1.1.2025122311175108.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Team - All";
+            var resultListName = "Individual - All";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
@@ -504,10 +504,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
                     foreach( var cv in subrow.GetShownRow() ) { 
                         Console.Write( $"{cv.Text}, " );
                     }
-                    Console.Write( " : " );
-                    Console.Write( subrow.GetParticipant().RemarkList.ToString() );
-                    Console.Write( " : " );
-                    Console.Write( string.Join( ", ", subrow.GetClassList() ) );
+                    //Console.Write( " : " );
+                    //Console.Write( subrow.GetParticipant().RemarkList.ToString() );
+                    //Console.Write( " : " );
+                    //Console.Write( string.Join( ", ", subrow.GetClassList() ) );
                     Console.WriteLine();
                 }
             }

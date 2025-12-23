@@ -27,6 +27,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// <returns></returns>
     public delegate string ParticipantAttributeOverload( IRLIFItem item, ResultListIntermediateFormatted rlf );
 
+    public delegate string CompletionPercentageOverload( float percentage );
+
     public abstract class ResultListIntermediateFormattedRow: IEnumerator<ResultListIntermediateFormattedRow>, IEnumerable<ResultListIntermediateFormattedRow> {
 
         /// <summary>
@@ -46,9 +48,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "MiddleName",
             "HomeTown", //Deprecated
             "Hometown",
-            "Country",
             "Club",
+            "Coach",
             "CompetitorNumber",
+            "Country",
             "MatchLocation",
             "MatchID",          //If this is a Virtual Match, will differ from the ParentID
 			"LocalDate",
@@ -133,8 +136,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         break;
 
                     case ResultFieldMethod.COMPLETION:
-                        //NOT IMPLEMENTED YET. Exists for future expansion.
-                        _fields[fieldName] = string.Empty;
+                        if (this._resultListFormatted.GetCompletionPercentageStringPtr is not null)
+                            _fields[fieldName] = this._resultListFormatted.GetCompletionPercentageStringPtr( GetCompletion( source ) );
+                        else
+                            _fields[fieldName] = GetCompletionPercentageStringDefault( GetCompletion( source ) );
                         break;
 
                     case ResultFieldMethod.RECORD:
@@ -205,21 +210,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (rank > 0)
                         return rank.ToString();
 
-                    return "";
+                    return string.Empty;
 
                 case "RankOrder":
                     if (_resultListFormatted.GetParticipantAttributeRankOrderPtr != null)
                         return _resultListFormatted.GetParticipantAttributeRankOrderPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     int rankOrder = GetRankOrder();
 
                     if (rankOrder > 0)
                         return rankOrder.ToString();
 
-                    return "";
+                    return string.Empty;
 
 
                 case "RankDelta":
@@ -227,7 +232,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeRankDeltaPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     if (this._resultEvent.CurrentlyCompetingOrRecentlyDone()
                         && this._resultListFormatted.ShowSupplementalInformation) {
@@ -239,7 +244,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             return rankDelta.ToString();
                     }
 
-                    return "";
+                    return string.Empty;
 
                 case "RankOrSquadding":
                     if (_resultListFormatted.GetParticipantAttributeRankOrSquaddingPtr != null)
@@ -260,7 +265,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeEmptyPtr != null)
                         return _resultListFormatted.GetParticipantAttributeEmptyPtr( this._item, this._resultListFormatted );
 
-                    return "";
+                    return string.Empty;
 
                 case "DisplayName":
                 case "DisplayNameAbbreviated": //Deprecated
@@ -310,7 +315,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_item.Participant is Individual)
                         return ((Individual)_item.Participant).FamilyName;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "GivenName":
                     if (_resultListFormatted.GetParticipantAttributeGivenNamePtr != null)
@@ -319,7 +324,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_item.Participant is Individual)
                         return ((Individual)_item.Participant).GivenName;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "MiddleName":
                     if (_resultListFormatted.GetParticipantAttributeMiddleNamePtr != null)
@@ -328,7 +333,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_item.Participant is Individual)
                         return ((Individual)_item.Participant).MiddleName;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "HomeTown":
                 case "Hometown":
@@ -355,14 +360,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_item.Participant is Individual)
                         return ((Individual)_item.Participant).CompetitorNumber;
                     else
-                        return "";
+                        return string.Empty;
+
+                case "Coach":
+                    if (_resultListFormatted.GetParticipantCoachPtr != null)
+                        return _resultListFormatted.GetParticipantCoachPtr( this._item, this._resultListFormatted );
+
+                    //Retursn the DisplayName of the first coach in the Coaches list.
+                    var coachList = _item.Participant.Coaches;
+                    if (coachList is not null && coachList.Count > 0 ) {
+                        return coachList[0].DisplayName;
+                    } else {
+                        return string.Empty;
+                    }
 
                 case "ResultCOFID":
                     if (_resultListFormatted.GetParticipantAttributeResultCOFIDPtr != null)
                         return _resultListFormatted.GetParticipantAttributeResultCOFIDPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     return _resultEvent.ResultCOFID;
 
@@ -373,14 +390,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_item.Participant is Individual)
                         return ((Individual)_item.Participant).UserID;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "LocalDate":
                     if (_resultListFormatted.GetParticipantAttributeLocalDatePtr != null)
                         return _resultListFormatted.GetParticipantAttributeLocalDatePtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     return _resultEvent.LocalDate.ToString( DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
 
@@ -389,7 +406,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeMatchIDPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     //This is the local match id, which likely different from the Parent ID in a virtual match
                     return _resultEvent.MatchID;
@@ -400,7 +417,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeMatchLocationPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata )) {
                         if (this.LessThanLarge) {
@@ -410,19 +427,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         }
                     }
 
-                    return "";
+                    return string.Empty;
 
                 case "Creator":
                     if (_resultListFormatted.GetParticipantAttributeCreatorPtr != null)
                         return _resultListFormatted.GetParticipantAttributeCreatorPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
                         return metadata.Creator;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "Owner":
                 case "OwnerId":
@@ -431,31 +448,31 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeOwnerPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
                         return metadata.OwnerId;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "TargetCollectionName":
                     if (_resultListFormatted.GetParticipantAttributeTargetCollectionNamePtr != null)
                         return _resultListFormatted.GetParticipantAttributeTargetCollectionNamePtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     if (TryGetResultListMetadata( _resultEvent.MatchID, out metadata ))
                         return metadata.TargetCollectionName;
                     else
-                        return "";
+                        return string.Empty;
 
                 case "Status":
                     if (_resultListFormatted.GetParticipantAttributeStatusPtr != null)
                         return _resultListFormatted.GetParticipantAttributeStatusPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     return GetStatus().Description();
 
@@ -464,7 +481,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeLastShotPtr( this._item, this._resultListFormatted );
 
                     if (_resultEvent is null)
-                        return "";
+                        return string.Empty;
 
                     var lastShot = _resultEvent.LastShot;
                     if (lastShot != null && (DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalSeconds < 300) {
@@ -473,7 +490,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                         return StringFormatting.FormatScore( scoreFormat, lastShot.Score );
                     }
-                    return "";
+                    return string.Empty;
 
                 case "Remark":
                     if (_resultListFormatted.GetParticipantAttributeRemarkPtr != null)
@@ -499,7 +516,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa != null && sa is SquaddingAssignmentBank sab)
                         return sab.Relay;
 
-                    return "";
+                    return string.Empty;
 
                 case "FiringPoint":
                     if (_resultListFormatted.GetParticipantAttributeFiringPointPtr != null)
@@ -510,7 +527,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa1 != null && sa1 is SquaddingAssignmentFiringPoint safp1)
                         return safp1.FiringPoint;
 
-                    return "";
+                    return string.Empty;
 
                 case "FiringOrder":
                     if (_resultListFormatted.GetParticipantAttributeFiringOrderPtr != null)
@@ -521,7 +538,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa2 != null)
                         return sa2.FiringOrder.ToString();
 
-                    return "";
+                    return string.Empty;
 
                 case "Squad":
                     if (_resultListFormatted.GetParticipantAttributeSquadPtr != null)
@@ -532,7 +549,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa3 != null && sa3 is SquaddingAssignmentSquad sas3)
                         return sas3.Squad;
 
-                    return "";
+                    return string.Empty;
 
                 case "Bank":
                     if (_resultListFormatted.GetParticipantAttributeBankPtr != null)
@@ -543,7 +560,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa4 != null && sa4 is SquaddingAssignmentBank sab4)
                         return sab4.Bank;
 
-                    return "";
+                    return string.Empty;
 
                 case "Range":
                     if (_resultListFormatted.GetParticipantAttributeRangePtr != null)
@@ -554,7 +571,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa5 != null)
                         return sa5.Range;
 
-                    return "";
+                    return string.Empty;
 
                 case "Reentry":
                     if (_resultListFormatted.GetParticipantAttributeReentryPtr != null)
@@ -565,7 +582,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (sa6 != null)
                         return sa6.ReentryTag;
 
-                    return "";
+                    return string.Empty;
 
                 case "OptionText1":
 
@@ -822,6 +839,43 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return 0;
         }
 
+        public float GetCompletion( FieldSource source ) {
+            if (_resultEvent is null)
+                return 1;
+
+            //If the ResultList status is OFFICIAL, then all stages should be seen as completed.
+            if (_resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL)
+                return 1;
+
+            var eventTree = this._resultListFormatted.EventTree;
+            var eventName = source.Name;
+
+            if (_resultEvent.EventScores is not null
+                && _resultEvent.EventScores.TryGetValue( eventName, out EventScore eventScore )) {
+                switch (eventScore.Status) {
+                    case ResultStatus.FUTURE:
+                        return 0;
+                    case ResultStatus.UNOFFICIAL:
+                    case ResultStatus.OFFICIAL:
+                        return 1;
+                    case ResultStatus.INTERMEDIATE:
+                    default:
+                        if ( eventTree is not null ) {
+                            var eventComposite = eventTree.FindEventComposite( eventName );
+                            if ( eventComposite is not null ) {
+                                float numberOfShotsFired = eventScore.NumShotsFired;
+                                float totalShots = eventComposite.GetAllSingulars().Count();
+                                if ( totalShots > 0 ) {
+                                    return numberOfShotsFired / totalShots;
+                                }
+                            }
+                        }
+                        return .5f;
+                }
+            }
+
+            return 1;
+        }
 
         /// <summary>
         /// Returns the value of the Rank sort order field for this Result Event. If the Result List
@@ -1185,6 +1239,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         public abstract ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column );
+
+        public string GetCompletionPercentageStringDefault( float percentage ) {
+            if (percentage < .001f || percentage > .999f)
+                return "";
+
+            return $" {percentage:P0}";
+        }
 
         #region IEnumerator interface
 

@@ -305,6 +305,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED );
                     break;
 
+                case ShowWhenCondition.PARTICIPANT_IS_INDIVIDUAL:
+                    if (participant == null || participant.Participant == null) {
+                        answer = false;
+                        break;
+                    }
+                    answer = (participant.Participant is Individual);
+                    break;
+
+                case ShowWhenCondition.PARTICIPANT_IS_TEAM:
+                    if (participant == null || participant.Participant == null) {
+                        answer = false;
+                        break;
+                    }
+                    answer = (participant.Participant is Team);
+                    break;
+
 
                 default:
                     //Shouldnt' get here, as it means a value got added to the ShowWhenCondition enum, but not added here.

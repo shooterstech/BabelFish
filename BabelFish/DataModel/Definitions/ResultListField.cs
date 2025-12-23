@@ -12,17 +12,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <list type="bullet">
     /// <item>Rank</item> 
     /// <item>RankOrder</item>
+    /// <item>RankDelta</item>
+    /// <item>RankOrSquadding (only available when a SquaddingList is loaded into the RLIF)</item>
     /// <item>Empty</item>
     /// <item>DisplayName</item> 
     /// <item>DisplayNameShort</item> 
-    /// <item>DisplayNameAbbreviated</item>
     /// <item>FamilyName</item>
     /// <item>GivenName</item>
     /// <item>MiddleName</item>
-    /// <item>HomeTown</item>
+    /// <item>Hometown</item>
     /// <item>Country</item> 
     /// <item>Club</item>
     /// <item>CompetitorNumber</item> 
+    /// <item>Coach</item>
     /// <item>MatchLocation</item> 
     /// <item>MatchID</item> 
     /// <item>LocalDate</item> 
@@ -32,6 +34,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <item>Owner</item>
     /// <item>Status</item>
     /// <item>TargetCollectionName</item>
+    /// <item>Squadding (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>Relay (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>FiringPoint (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>FiringOrder (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>Squad (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>Bank (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>Range (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>Reentry (only available when a SquaddingList is loaded into the RLIF)</item>
+    /// <item>OptionText1</item>
+    /// <item>OptionText2</item>
+    /// <item>OptionText3</item>
     /// </list>"
     /// </remarks>
     public class ResultListField : IReconfigurableRulebookObject    {

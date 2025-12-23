@@ -847,7 +847,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Qualified
         /// </summary>
-        HAS_SHOWN_REMARK_LEADER
+        HAS_SHOWN_REMARK_LEADER,
+
+        /// <summary>
+        /// Evaluates to true when the Participant is an individual (and not a team).
+        /// </summary>
+        PARTICIPANT_IS_INDIVIDUAL,
+
+        /// <summary>
+        /// Evaluates to true when the Participant is a team (and not an individual).
+        /// </summary>
+        PARTICIPANT_IS_TEAM
+
     }
 
     /// <summary>

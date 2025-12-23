@@ -33,14 +33,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         public override List<string> GetClassList() {
             List<string> classSetList = new List<string>();
-            if (this.IsSpanningRow) {
+            if (!this.IsSpanningRow) {
                 foreach (var setObj in _resultListFormatted.DisplayPartitions.Body.ClassSet) {
                     if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
                         classSetList.Add( setObj.Name );
                     }
                 }
-            }
-            else {
+            } else {
                 foreach (var setObj in _resultListFormatted.DisplayPartitions.Spanning.ClassSet) {
                     if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
                         classSetList.Add( setObj.Name );
