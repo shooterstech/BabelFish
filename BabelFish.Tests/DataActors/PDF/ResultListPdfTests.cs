@@ -20,8 +20,8 @@ namespace BabelFish.Tests.DataActors.PDF {
             var client = new OrionMatchAPIClient( );
 
             //This match id has three relays of 20 athletes
-            var matchId = new MatchID( "1.1.2025092613274424.1" );
-            var resultListName = "Individual - All";
+            var matchId = new MatchID( "1.1.2025122311175108.0" );
+            var resultListName = "Team - All";
 
             var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
             var resultList = getResultListResponse.ResultList;

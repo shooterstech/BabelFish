@@ -1249,6 +1249,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		/// </remarks>
 		public ParticipantAttributeOverload GetParticipantAttributeRangePtr { get; set; } = null;
 
+        /// <summary>
+        /// Overrides the method used to return a string to represent the completion percentage of an athletes stage.
+        /// </summary>
         public CompletionPercentageOverload GetCompletionPercentageStringPtr { get; set; } = null;
 
          #endregion

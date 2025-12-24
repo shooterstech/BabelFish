@@ -688,7 +688,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 && scoreToReturn.Projected != null
                 && scoreToReturn.Status == ResultStatus.INTERMEDIATE
                 && _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE) {
-                formattedScore += "(p)";
+                formattedScore += " ◎";
             }
 
             return formattedScore;
@@ -839,6 +839,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return 0;
         }
 
+        /// <summary>
+        /// Returns a float, 0 to 1, indicating the percentage of how much of the stage, identified in source, is complete.
+        /// 0 meaning not started, and 1 meaning completed.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
         public float GetCompletion( FieldSource source ) {
             if (_resultEvent is null)
                 return 1;
@@ -860,6 +866,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return 1;
                     case ResultStatus.INTERMEDIATE:
                     default:
+                        if (_resultEvent.Participant is Team) {
+                            //To calculate the percent complete for a team, we need to know how many people should be making up the team score.
+                            //Just going to punt, and instead return 50%
+                            return .5f;
+                        }
+
                         if ( eventTree is not null ) {
                             var eventComposite = eventTree.FindEventComposite( eventName );
                             if ( eventComposite is not null ) {
@@ -1244,7 +1256,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (percentage < .001f || percentage > .999f)
                 return "";
 
-            return $" {percentage:P0}";
+            if (percentage < .11f)
+                return " ▁";
+            if (percentage < .24f)
+                return " ▂";
+            if (percentage < .37f)
+                return " ▃";
+            if (percentage < .51f)
+                return " ▄";
+            if (percentage < .64f)
+                return " ▅";
+            if (percentage < .77f)
+                return " ▆";
+            if (percentage < .90f)
+                return " ▇";
+            return " █";
         }
 
         #region IEnumerator interface

@@ -71,7 +71,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 //Empty row item, just so the scopos logo will appear in center of page.
                 row.RelativeItem( 1 )
                 .AlignRight()
-                .Text( "" );
+                .Text( "◎ projected score" );
             } );
         }
     }
