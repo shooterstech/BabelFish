@@ -260,10 +260,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             get {
                 try {
                     if (definition.SimpleAttribute ) {
-                        var field = GetDefintionFields()[0];
-                        if (field is AttributeFieldString) {
-                            AttributeFieldString attributeFieldString = (AttributeFieldString)field;
-                            var value = GetFieldValue( field.FieldName );
+                        var @field = GetDefintionFields()[0];
+                        if (@field is AttributeFieldString) {
+                            AttributeFieldString attributeFieldString = (AttributeFieldString)@field;
+                            var value = GetFieldValue( @field.FieldName );
                             foreach (var foo in attributeFieldString.Values) {
                                 if (foo.Value == value) {
                                     return foo.AttributeValueAppellation;

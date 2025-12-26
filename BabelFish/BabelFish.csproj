@@ -1,32 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
-	  <LangVersion>latest</LangVersion>
-	  <ImplicitUsings>enable</ImplicitUsings>
-	  <Nullable>enable</Nullable>
-    <AssemblyVersion>1.11.2.12</AssemblyVersion>
-	<PackageId>Scopos.BabelFish</PackageId>
-	<Version>1.11.2.12</Version>
-	<Authors>Scopos LLC</Authors>
-	<Company>Scopos LLC</Company>
-  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-	<PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
-	<PackageTags>scopos;API</PackageTags>
-	<GenerateDocumentationFile>True</GenerateDocumentationFile>
-	<Title>Scopos' BabelFish API Client</Title>
-	<Description>BabelFish is a .net library that provides a data model and facade for Scopos' Rest API calls.</Description>
-	<PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
-	<RepositoryType>git</RepositoryType>
-	<RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Update for only breaking changes -->
+    <AssemblyVersion>1.11.0.0</AssemblyVersion>
+    <!-- Update with each build -->
+    <FileVersion>1.11.2.15</FileVersion>
+    <!-- Updaet with each release, may use -alpha, -beta -->
+    <Version>1.11.2.11-beta</Version>
+    <PackageId>Scopos.BabelFish</PackageId>
+    <Authors>Scopos LLC</Authors>
+    <Company>Scopos LLC</Company>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
+    <PackageTags>scopos;API</PackageTags>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Scopos' BabelFish API Client</Title>
+    <Description>BabelFish is a .net library that provides a data model and facade for Scopos' Rest API calls.</Description>
+    <PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\Images\scopos_dark_transparent.png" />
     <None Remove="Resources\Images\scopos_logo.png" />
     <None Remove="Resources\Images\scopos_owl_transparent_orange.png" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\scopos_logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -35,7 +36,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Amazon.Extensions.CognitoAuthentication" Version="2.5.5" />
     <PackageReference Include="AwsSignatureVersion4" Version="4.0.6" />
@@ -53,29 +53,24 @@
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
     <PackageReference Include="ZXing.Net" Version="0.16.10" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="BabelFish_User_Settings.config">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
-	<None Update="NLog.config">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</None>
-</ItemGroup>
-
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <Folder Include="DataModel\Athena\ESTUnitCommands\" />
   </ItemGroup>
-	
-	<ItemGroup>
-		<None Include="..\LICENSE" Pack="true" PackagePath="" />
-		<None Include="..\NOTICE" Pack="true" PackagePath="" />
-	</ItemGroup>
-
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\NOTICE" Pack="true" PackagePath="" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\scopos_dark_transparent.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
 </Project>

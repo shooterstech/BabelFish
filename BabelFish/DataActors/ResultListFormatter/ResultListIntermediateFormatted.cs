@@ -373,14 +373,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 List<string> fieldNames = new();
 
                 //Add the standard fields that are always included
-                foreach (var field in ResultListIntermediateFormattedRow.StandardParticipantAttributeFields) {
-                    fieldNames.Add( field );
+                foreach (var @field in ResultListIntermediateFormattedRow.StandardParticipantAttributeFields) {
+                    fieldNames.Add( @field );
                 }
 
                 //Add the fields that are defined in the ResultListFormat definition file
-                foreach (var field in ResultListFormat.Fields) {
-                    if (!fieldNames.Contains( field.FieldName.ToString() )) {
-                        fieldNames.Add( field.FieldName.ToString() );
+                foreach (var @field in ResultListFormat.Fields) {
+                    if (!fieldNames.Contains( @field.FieldName.ToString() )) {
+                        fieldNames.Add( @field.FieldName.ToString() );
                     }
                 }
 
