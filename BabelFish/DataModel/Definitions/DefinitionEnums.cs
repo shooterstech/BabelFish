@@ -389,6 +389,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         PublicProfile,
 
         /// <summary>
+        /// Indicates that the Cell should link to the Club page as identified by the Participant's Organization.
+        /// <para>Reserved for future use.</para>. 
+        /// </summary>
+        [Description( "ClubProfile" )]
+        [EnumMember( Value = "ClubProfile" )]
+        ClubProfile,
+
+        /// <summary>
         /// Indicates that the Cell should not link to any page. Which is the default option. 
         /// </summary>
         [Description( "None" )]
