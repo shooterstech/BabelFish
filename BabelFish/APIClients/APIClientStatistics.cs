@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Scopos.BabelFish.APIClients {
     public class APIClientStatistics {
 
-        private DateTime firstApiCallTime = DateTime.Now;
-        private int numberOfApiCalls = 0;
+        private DateTime _firstApiCallTime = DateTime.Now;
+        private int _numberOfApiCalls = 0;
 
         public static APIClientStatistics SITEWIDE = new APIClientStatistics();
 
@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         public int NumberOfApiCalls {
             get {
-                return numberOfApiCalls;
+                return _numberOfApiCalls;
             }
         }
 
@@ -28,8 +28,8 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         public double RateOfApiCalls {
             get {
-                var totalTime = DateTime.Now - firstApiCallTime;
-                return numberOfApiCalls / totalTime.TotalSeconds;
+                var totalTime = DateTime.Now - _firstApiCallTime;
+                return _numberOfApiCalls / totalTime.TotalSeconds;
             }
         }
 
@@ -37,8 +37,8 @@ namespace Scopos.BabelFish.APIClients {
         /// Increments both the instance and static SITEWIDE instance
         /// </summary>
         public void Increment() {
-            numberOfApiCalls++;
-            SITEWIDE.numberOfApiCalls++;
+            _numberOfApiCalls++;
+            SITEWIDE._numberOfApiCalls++;
         }
     }
 }

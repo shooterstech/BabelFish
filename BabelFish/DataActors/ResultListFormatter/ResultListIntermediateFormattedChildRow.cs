@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             foreach (var column in _resultListFormatted.ResultListFormat.Format.Columns) {
                 if (column.ChildValues is not null && column.ChildValues.Count > 0) {
                     columnSubRowCount = column.ChildValues.Count;
-                } else { 
+                } else {
                     columnSubRowCount = column?.BodyValues?.Count ?? 0;
                 }
 
@@ -25,14 +25,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-        public override List<string> GetClassList()
-        {
+        public override List<string> GetClassList() {
             List<string> classSetList = new List<string>();
-            foreach (var setObj in _resultListFormatted.DisplayPartitions.Children.ClassSet)
-            {
-                if (_resultListFormatted.ShowWhenCalculator.Show(setObj.ShowWhen, _item))
-                {
-                    classSetList.Add(setObj.Name);
+            foreach (var setObj in _resultListFormatted.DisplayPartitions.Children.ClassSet) {
+                if (_resultListFormatted.ShowWhenCalculator.Show( setObj.ShowWhen, _item )) {
+                    classSetList.Add( setObj.Name );
                 }
             }
             return classSetList;
@@ -47,13 +44,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 		public override bool ShowRowBasedOnShowRanks() {
             //Rule doesn't apply to child rows
             return false;
-		}
+        }
 
-		/// <inheritdoc/>
-		public override bool ShowRowBasedOnShowNumberOfChildren() {
+        /// <inheritdoc/>
+        public override bool ShowRowBasedOnShowNumberOfChildren() {
             //Ask the parent row, if this child row is allowed to be shown
             return this.ParentRow.GetTokenToShowChildRow( this );
-		}
+        }
 
         /// <inheritdoc/>
         public override bool ShowRowBasedOnShowNumberOfBodies() {
@@ -62,19 +59,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <inheritdoc/>
         public override bool ShowRowBasedZeroScores() {
-			return this.ParentRow.ShowRowBasedZeroScores() 
+            return this.ParentRow.ShowRowBasedZeroScores()
                 && base.ShowRowBasedZeroScores();
-		}
+        }
 
-		/// <inheritdoc/>
-		public override bool ShowRowBasedOnShownStatus() {
-			return this.ParentRow.RowIsShown
+        /// <inheritdoc/>
+        public override bool ShowRowBasedOnShownStatus() {
+            return this.ParentRow.RowIsShown
                 && base.ShowRowBasedOnShownStatus();
-		}
+        }
 
-		/// <inheritdoc/>
-		public override bool ShowRowBasedOnShowRelay() {
-			return base.ShowRowBasedOnShowRelay();
+        /// <inheritdoc/>
+        public override bool ShowRowBasedOnShowRelay() {
+            return base.ShowRowBasedOnShowRelay();
         }
 
         /// <inheritdoc/>
@@ -86,7 +83,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
             //Try and return the cell values as defined in the .ChildValue list first, if it exists
-            if (column.ChildValues is not null 
+            if (column.ChildValues is not null
                 && column.ChildValues.Count > this._SubRowIndex) {
                 return column.ChildValues[this._SubRowIndex];
             }

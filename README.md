@@ -351,3 +351,86 @@ foreach (var sg in threePositionCourseOfFire.RangeScripts[0].SegmentGroups) {
     You may discharge air or gas downrange.
 */
 ```
+## Recommended NLog Configuration
+
+BabelFish uses NLog for internal diagnostics, request tracing, and error reporting. While BabelFish will run without any logging configuration, we recommend that applications include an NLog.config file so developers can monitor API calls, troubleshoot issues, and capture detailed runtime information.
+
+The example configuration below provides:
+- Console and rolling‑file logging
+- Sensible defaults (Warn and above)
+- Optional Debug‑level logging for troubleshooting
+- Logger rules that match BabelFish’s internal namespaces
+
+### Basic NLog.config Example
+Create a file named NLog.config in your application project:
+
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      autoReload="true"
+      throwConfigExceptions="false">
+
+  <!-- Define where logs are written -->
+  <targets>
+    <!-- Console output -->
+    <target xsi:type="Console"
+            name="console"
+            layout="${longdate} | ${level} | ${logger} | ${message} ${exception}" />
+
+    <!-- Rolling log file -->
+    <target xsi:type="File"
+            name="file"
+            fileName="logs/babelfish.log"
+            archiveEvery="Day"
+            maxArchiveFiles="7"
+            layout="${longdate} | ${level} | ${logger} | ${message} ${exception}" />
+  </targets>
+
+  <!-- Define logging rules -->
+  <rules>
+    <!-- Default: warnings and errors -->
+    <logger name="Scopos.BabelFish.*"
+            minlevel="Warn"
+            writeTo="console,file" />
+
+    <!-- Enable this rule for detailed debugging -->
+    <!--
+    <logger name="Scopos.BabelFish.*"
+            minlevel="Debug"
+            writeTo="console,file" />
+    -->
+  </rules>
+
+</nlog>
+```
+
+### Enabling Debug Logging
+If you need to troubleshoot API calls, data formatting, or definition loading, change:
+minlevel="Warn"
+
+to:
+minlevel="Debug"
+
+
+This enables detailed logs such as:
+- REST API request URLs
+- Response status codes
+- Cache hits/misses
+- Result list formatting steps
+- Definition loading and parsing
+Log Output Location
+The example above writes logs to:
+logs/babelfish.log
+
+
+You may change this path to suit your application’s structure.
+Why Logging Matters
+BabelFish interacts with multiple Scopos services, caches definitions, formats complex result lists, and performs multi‑step calculations. Logging helps you:
+- Diagnose API failures
+- Understand result list formatting behavior
+- Track down missing definitions
+- Debug score history queries
+- Capture unexpected exceptions
+For production applications, we recommend enabling at most Warn‑level logging.
+

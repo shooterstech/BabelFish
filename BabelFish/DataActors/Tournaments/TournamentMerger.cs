@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -51,7 +48,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// </summary>
         public RankingRule RankingRule { get; set; } = null;
 
-        private TournamentMerger(  ) {
+        private TournamentMerger() {
         }
 
         public static async Task<TournamentMerger> FactoryAsync( Tournament tournament, string resultName ) {
@@ -78,9 +75,9 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             GetResultListPublicRequest getResultListRequest;
             GetResultListPublicResponse getResultListResponse;
             ResultList resultList = null;
-            foreach( var rlm in tm._mergeResultList.ResultListMembers ) {
+            foreach (var rlm in tm._mergeResultList.ResultListMembers) {
 
-                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId , rlm.ResultName );
+                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
 
                 do {
                     getResultListResponse = await _apiClient.GetResultListPublicAsync( getResultListRequest );
@@ -96,7 +93,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
                         //Check if we have more items.
                         if (getResultListResponse.HasMoreItems)
-                            getResultListRequest = (GetResultListPublicRequest) getResultListResponse.GetNextRequest();
+                            getResultListRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
                     } else {
                         var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
                         _logger.Error( msg );
@@ -110,9 +107,9 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             tm._mergeMethod = await MergeMethod.FactoryAsync( tm, tm._mergeResultList );
 
             //If the MergeMethod does not set values for ResultListFormat or RankingRule, then try and auto generate them.
-            if (tm.ResultListFormat is null )
+            if (tm.ResultListFormat is null)
                 tm.AutoGenerateResultListFormat();
-            if ( tm.RankingRule is null )
+            if (tm.RankingRule is null)
                 tm.AutoGenerateRankingRule();
 
             return tm;
@@ -239,7 +236,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 Comment = "Auto generated default Tie Breaking Rule"
             } );
 
-            for( int i = this.ResultListsMembers.Count - 1; i>=0; i-- ) {
+            for (int i = this.ResultListsMembers.Count - 1; i >= 0; i--) {
                 var resultList = this.ResultListsMembers[i];
                 var resultListMember = this._mergeResultList.ResultListMembers[i];
 
@@ -279,16 +276,16 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 EventScore eventScore;
 
                 //Foreach participant in the Result List Member list of people or teams who shot.
-                foreach( var mergingResultEvent in resultListMember.Items ) { 
+                foreach (var mergingResultEvent in resultListMember.Items) {
 
-                    if ( _mergedResultEvents.TryGetValue( mergingResultEvent.Participant.UniqueMergeId, out ResultEvent mergedResultEvent )) {
+                    if (_mergedResultEvents.TryGetValue( mergingResultEvent.Participant.UniqueMergeId, out ResultEvent mergedResultEvent )) {
                         //This is from a Participant we previously found. 
                         //Add each of the EventScores to the mergedResultEvent under the ResultCofScores dictionary.
-                        foreach( var es in mergingResultEvent.EventScores ) {
+                        foreach (var es in mergingResultEvent.EventScores) {
                             eventName = es.Key;
                             eventScore = es.Value;
                             key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, eventName );
-                            mergedResultEvent.ResultCofScores[ key ] = eventScore;
+                            mergedResultEvent.ResultCofScores[key] = eventScore;
                             eventScore.Participant = mergingResultEvent.Participant;
                         }
                     } else {
@@ -320,7 +317,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
             rl.Items.AddRange( _mergedResultEvents.Values );
 
-            foreach( var re in rl.Items ) {
+            foreach (var re in rl.Items) {
                 _mergeMethod.Merge( re );
             }
 

@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Helpers;
 using System.Threading.Tasks;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
-using Amazon.CognitoIdentityProvider.Model;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
@@ -24,9 +19,9 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         public override void InitializeTest() {
             base.InitializeTest();
 
-            matchClient = new OrionMatchAPIClient( );
-            definitionClient = new DefinitionAPIClient( );
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo(@"C:\temp");
+            matchClient = new OrionMatchAPIClient();
+            definitionClient = new DefinitionAPIClient();
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
             userProfileLookup = new BaseUserProfileLookup();
         }
@@ -172,7 +167,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             //Convert the result list into the result event intermediate list that we can use
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
-            await rlf.InitializeAsync(  );
+            await rlf.InitializeAsync();
 
             //Test the header row
             for (int i = 0; i < rlf.GetColumnCount(); i++) {
@@ -227,7 +222,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultEventName = resultList.EventName;
 
             //Get the definition file that will tell us how to display the results.
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync(resultList );
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
             var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             var resultListFormat = resultListFormatResponse.Definition;
 
@@ -280,7 +275,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task TestIndividualResultListAsHTML() {
 
-            MatchID matchId = new MatchID("1.15.2025030713204931.0");
+            MatchID matchId = new MatchID( "1.15.2025030713204931.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
             var resultListName = "Individual - All";
@@ -296,7 +291,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultListFormat = resultListFormatResponse.Definition;
 
             //Convert the result list into the result event intermediate list that we can use
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted(resultList, resultListFormat, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync();
 
             //Start the header row
@@ -361,26 +356,26 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task GetParticipantAttributeDelegateTest() {
 
-			MatchID matchId = new MatchID( "1.2413.2025050117240235.0" );
-			var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
-			var match = matchDetailResponse.Match;
-			var resultListName = "Individual - All";
+            MatchID matchId = new MatchID( "1.2413.2025050117240235.0" );
+            var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+            var match = matchDetailResponse.Match;
+            var resultListName = "Individual - All";
 
-			//Get the Result List from the API Server
-			var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
-			var resultList = resultListResponse.ResultList;
-			var resultEventName = resultList.EventName;
+            //Get the Result List from the API Server
+            var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
+            var resultList = resultListResponse.ResultList;
+            var resultEventName = resultList.EventName;
 
-			//Get the definition file that will tell us how to display the results.
-			var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
-			var resultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            //Get the definition file that will tell us how to display the results.
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
+            var resultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
 
-			//Convert the result list into the result event intermediate list that we can use
-			ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
-			await rlf.InitializeAsync();
+            //Convert the result list into the result event intermediate list that we can use
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
+            await rlf.InitializeAsync();
 
             //First loop through, looking at rank which should be 1 .. 8
-            for ( int i = 0; i < 8; i++ ) {
+            for (int i = 0; i < 8; i++) {
                 Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
                 Assert.AreEqual( (i + 1).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
             }
@@ -389,13 +384,13 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             rlf.GetParticipantAttributeRankPtr = GetParticipantAttributeRank;
             rlf.RefreshAllRowsParticipantAttributeFields();
 
-			//First loop through, looking at rank which should be 1 .. 8
-			for (int i = 0; i < 8; i++) {
-				Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
-				Assert.AreEqual( (i + 1001).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
-			}
+            //First loop through, looking at rank which should be 1 .. 8
+            for (int i = 0; i < 8; i++) {
+                Console.WriteLine( rlf.Rows[i].GetFieldValue( "Rank" ) );
+                Assert.AreEqual( (i + 1001).ToString(), rlf.Rows[i].GetFieldValue( "Rank" ) );
+            }
 
-		}
+        }
 
         public string GetParticipantAttributeRank( IRLIFItem item, ResultListIntermediateFormatted rlf ) {
 
@@ -413,24 +408,24 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task TestShowRelay() {
 
-			//MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
-			MatchID matchId = new MatchID( "1.1.2025081213222434.0" );
-			var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
-			var match = matchDetailResponse.Match;
+            //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
+            MatchID matchId = new MatchID( "1.1.2025081213222434.0" );
+            var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
+            var match = matchDetailResponse.Match;
             var squaddingName = match.SquaddingEvents[0].Name;
 
-			//Get the Result List from the API Server
-			var squaddingListResponse = await matchClient.GetSquaddingListPublicAsync( matchId, squaddingName );
+            //Get the Result List from the API Server
+            var squaddingListResponse = await matchClient.GetSquaddingListPublicAsync( matchId, squaddingName );
             var squaddingList = squaddingListResponse.SquaddingList;
 
-			//Get the ResultListFormat to use for formatting
-			var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( squaddingList );
-			var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
-			var resultListFormat = resultListFormatResponse.Definition;
+            //Get the ResultListFormat to use for formatting
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( squaddingList );
+            var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            var resultListFormat = resultListFormatResponse.Definition;
 
             //Instantiate the RLIF
-			ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( squaddingList, resultListFormat, userProfileLookup );
-			await rlf.InitializeAsync();
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( squaddingList, resultListFormat, userProfileLookup );
+            await rlf.InitializeAsync();
 
             //Seet .ShowRanks to 0, so it doesn't show the top three (like it would by default).
             rlf.ShowRanks = 0;
@@ -438,20 +433,20 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             //Before specifying a relay to show, make sure the default case (show everyone) works.
             Assert.AreEqual( 13, rlf.ShownRows.Count );
 
-            rlf.ShowRelay = "1"; 
+            rlf.ShowRelay = "1";
             Assert.AreEqual( 4, rlf.ShownRows.Count );
 
-			rlf.ShowRelay = "2";
-			Assert.AreEqual( 4, rlf.ShownRows.Count );
+            rlf.ShowRelay = "2";
+            Assert.AreEqual( 4, rlf.ShownRows.Count );
 
-			rlf.ShowRelay = "3";
-			Assert.AreEqual( 4, rlf.ShownRows.Count );
+            rlf.ShowRelay = "3";
+            Assert.AreEqual( 4, rlf.ShownRows.Count );
 
-			rlf.ShowRelay = "4";
-			Assert.AreEqual( 1, rlf.ShownRows.Count );
-		}
+            rlf.ShowRelay = "4";
+            Assert.AreEqual( 1, rlf.ShownRows.Count );
+        }
 
-		[TestMethod]
+        [TestMethod]
         public async Task EriksPlayground() {
 
             //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
@@ -474,34 +469,34 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
             //Test that the conversion was successful and has the same number of objects.
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
-			await rlf.InitializeAsync( false );
+            await rlf.InitializeAsync( false );
             Assert.IsNotNull( rlf );
 
 
-			//await rlf.LoadSquaddingListAsync();
+            //await rlf.LoadSquaddingListAsync();
 
-			rlf.Engagable = false;
+            rlf.Engagable = false;
             rlf.ResolutionWidth = 10000;
             rlf.ShowNumberOfChildRows = 5;
             rlf.ShowRanks = 3;
             rlf.ShowStatuses = null;
             rlf.ShowSupplementalInformation = false;
             rlf.ShowNumberOfBodyRows = int.MaxValue;
-            rlf.ShowSpanningRows =true;
+            rlf.ShowSpanningRows = true;
             rlf.RefreshAllRowsParticipantAttributeFields();
 
             //rlf.SetShowValuesToDefault();
 
 
             CellValues tryCellValues, cellValues;
-            foreach (var cv in rlf.GetShownHeaderRow() ) {
+            foreach (var cv in rlf.GetShownHeaderRow()) {
                 Console.Write( $"{cv.Text}, " );
             }
             Console.WriteLine();
 
             foreach (var row in rlf.ShownRows) {
                 foreach (var subrow in row) {
-                    foreach( var cv in subrow.GetShownRow() ) { 
+                    foreach (var cv in subrow.GetShownRow()) {
                         Console.Write( $"{cv.Text}, " );
                     }
                     //Console.Write( " : " );

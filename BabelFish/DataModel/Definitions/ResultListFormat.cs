@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
@@ -76,10 +76,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 20 )]
         [G_NS.JsonProperty( Order = 20 )]
-        public List<ResultListOptionalField> OptionalFields { get; set; } = new List<ResultListOptionalField>(); 
+        public Dictionary<UserDefinedFieldNames, ResultListOptionalField> UserDefinedFields { get; set; } = new Dictionary<UserDefinedFieldNames, ResultListOptionalField>();
 
-        public bool ShouldSerializeOptionalFields() {
-            return this.OptionalFields is not null && this.OptionalFields.Count > 0;
+        /// <summary>
+        /// Newtonsoft helper method, to determine if the property .OptionalFields should get serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeUserDefinedFields() {
+            return true; // this.UserDefinedFields is not null && this.UserDefinedFields.Count > 0;
         }
 
         /// <inheritdoc />
@@ -103,7 +107,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             List<string> fields = new List<string>();
             fields.AddRange( ResultListIntermediateFormattedRow.StandardParticipantAttributeFields );
 
-            foreach( var field in Fields )
+            foreach (var field in Fields)
                 fields.Add( field.FieldName );
 
             return fields;
@@ -115,7 +119,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             //Convert from using ClassList to ClassSet
             //On Columns
-            foreach( var col in Format.Columns ) {
+            foreach (var col in Format.Columns) {
 
                 if (col.ClassSet is null || col.ClassSet.Count == 0) {
                     //First try and convert from the deprecated .ClassList property
@@ -186,21 +190,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
 
                 //Convert from the deprecated .Child to .ChildValues.
-                if (col.ChildValues is null || col.ChildValues.Count == 0 ) {
+                if (col.ChildValues is null || col.ChildValues.Count == 0) {
                     col.ChildValues = new List<ResultListCellValue>();
 
-                    if ( ! string.IsNullOrEmpty( col.Child ) ) {
+                    if (!string.IsNullOrEmpty( col.Child )) {
                         ResultListCellValue rlcv = new ResultListCellValue();
                         rlcv.Text = col.Child;
                         rlcv.LinkTo = col.BodyLinkTo;
                         rlcv.Comment = "Converted from deprecated .Child";
                         col.ChildValues.Add( rlcv );
-                    } 
+                    }
                 }
             }
 
             //On Rows
-            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Header);
+            updateHappened |= ConvertResultListDisplayPartition( Format.Display.Header );
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Body );
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Spanning );
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Children );
@@ -273,7 +277,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }}
             } );
 
-			this.Format.Columns.Add( new ResultListDisplayColumn() {
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
                 Body = "{DisplayName}",
                 BodyLinkTo = LinkToOption.PublicProfile,
@@ -283,30 +287,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }}
             } );
 
-			this.Format.Columns.Add( new ResultListDisplayColumn() {
-				Header = "LS",
-				Body = "{LastShot}",
-				ClassSet = new List<ClassSet>() { new ClassSet() {
-					Name = "rlf-col-shot",
-					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-				}},
-				ShowWhen = new ShowWhenEquation() {
-					Boolean = ShowWhenBoolean.AND,
-					Arguments = new List<ShowWhenBase>() {
-						new ShowWhenVariable() {
-							Condition = ShowWhenCondition.SUPPLEMENTAL
-						},
-						new ShowWhenVariable() {
-							Condition = ShowWhenCondition.SHOT_ON_EST
-						},
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "LS",
+                Body = "{LastShot}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-shot",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
+                ShowWhen = new ShowWhenEquation() {
+                    Boolean = ShowWhenBoolean.AND,
+                    Arguments = new List<ShowWhenBase>() {
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.SUPPLEMENTAL
+                        },
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.SHOT_ON_EST
+                        },
                         new ShowWhenVariable() {
                             Condition = ShowWhenCondition.RESULT_STATUS_INTERMEDIATE
                         }
-					}
-				}
-			} );
+                    }
+                }
+            } );
 
-			this.Format.Columns.Add( new ResultListDisplayColumn() {
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Location",
                 Body = "{MatchLocation}",
                 Child = "{Empty}",
@@ -323,10 +327,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         new ShowWhenVariable() {
                             Condition = ShowWhenCondition.DIMENSION_EXTRA_LARGE
                         },
-						new ShowWhenVariable() {
-							Condition = ShowWhenCondition.SUPPLEMENTAL
-						}
-					}
+                        new ShowWhenVariable() {
+                            Condition = ShowWhenCondition.SUPPLEMENTAL
+                        }
+                    }
                 }
             } );
 
@@ -361,13 +365,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             } );
 
-			this.Format.Columns.Add( new ResultListDisplayColumn() {
-				Header = "Remark",
-				Body = "{Remark}",
-				ClassSet = new List<ClassSet>() { new ClassSet() {
-					Name = "rlf-col-matchinfo",
-					ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
-				}},
+            this.Format.Columns.Add( new ResultListDisplayColumn() {
+                Header = "Remark",
+                Body = "{Remark}",
+                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    Name = "rlf-col-matchinfo",
+                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                }},
                 ShowWhen = new ShowWhenEquation() {
                     Boolean = ShowWhenBoolean.AND,
                     Arguments = new List<ShowWhenBase>() {
@@ -381,7 +385,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             } );
 
-			updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
+            updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Header, "rlf-row-header" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Body, "rlf-row-athlete" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Spanning, "rlf-row-spanning" );
             updateHappened |= SetDefaultResultListDisplayPartition( Format.Display.Children, "rlf-row-child" );
@@ -423,7 +427,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (partition.ClassSet == null)
                 partition.ClassSet = new List<ClassSet>();
 
-            if (partition.ClassSet.Count == 0) { 
+            if (partition.ClassSet.Count == 0) {
 
                 if (partition.ClassSet.Count == 0) {
                     partition.ClassSet.Add( new ClassSet() {

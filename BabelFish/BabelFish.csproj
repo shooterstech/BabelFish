@@ -7,18 +7,19 @@
     <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
     <AssemblyVersion>1.11.0</AssemblyVersion>
     <!-- Update with each build -->
-    <FileVersion>1.11.2.15</FileVersion>
+    <FileVersion>1.11.3.5</FileVersion>
     <!-- Updaet with each release, may use -alpha, -beta -->
-    <Version>1.11.2-beta</Version>
+    <Version>1.11.3.5</Version>
     <PackageId>Scopos.BabelFish</PackageId>
     <Authors>Scopos LLC</Authors>
     <Company>Scopos LLC</Company>
-    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>scopos;shooting;orion;athena;rezults;api;reconfigurable rulebook</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Scopos' BabelFish API Client</Title>
-    <Description>BabelFish is Scopos' .net library that provides a shooting sports data model, facade for Scopos' Rest API, access to Reconfigurable Rulebook definition files, Scopos' Result Engine and Result List Formatter.</Description>
+    <Description>BabelFish is Scopos' .net library that provides a shooting sports data model, facade for Scopos' Rest API, access to Reconfigurable Rulebook definition files, and Scopos' data actor classes for Result Engine and Result List Formatter.</Description>
     <PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
@@ -51,5 +52,6 @@
   <ItemGroup>
     <None Include="..\LICENSE" Pack="true" PackagePath="" />
     <None Include="..\NOTICE" Pack="true" PackagePath="" />
+    <None Include="..\README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

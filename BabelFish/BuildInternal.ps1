@@ -40,13 +40,14 @@ Write-Host "New FileVersion: $newVersion"
 
 # Update the XML
 $csproj.Project.PropertyGroup.FileVersion = $newVersion
+$csproj.Project.PropertyGroup.Version = $newVersion
 $csproj.Save($ProjectFile)
 
 Write-Host "Updated file $ProjectFile"
 
 # Build the package
 Write-Host "Packing project..."
-dotnet pack $ProjectFile -c Debug 2>$null | Out-Null
+dotnet pack $ProjectFile -c Release # 2>$null | Out-Null
 
 # Find the generated nupkg
 $package = Get-ChildItem -Recurse -Filter "*.nupkg" | Sort-Object LastWriteTime -Descending | Select-Object -First 1

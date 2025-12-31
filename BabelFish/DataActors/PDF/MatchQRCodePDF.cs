@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Reflection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using NLog;
-using Scopos.BabelFish.DataModel.Clubs;
-using ZXing.QrCode;
-using ZXing;
-using ZXing.Rendering;
-using System.Reflection;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using ZXing;
+using ZXing.QrCode;
+using ZXing.Rendering;
 using Document = QuestPDF.Fluent.Document;
 
 namespace Scopos.BabelFish.DataActors.PDF {
     public class MatchQRCodePDF : PdfGenerator {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
-        public Match ?  MatchDetail { get; private set; } = null;
+        public Match? MatchDetail { get; private set; } = null;
 
         public MatchQRCodePDF( Match matchDetail ) {
             this.MatchDetail = matchDetail;
@@ -78,7 +73,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     column.Item().Text( Title ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                     column.Item().Text( StringFormatting.Hometown( MatchDetail.Location ) ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( StringFormatting.SpanOfDates( MatchDetail.StartDate, MatchDetail.EndDate) ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( StringFormatting.SpanOfDates( MatchDetail.StartDate, MatchDetail.EndDate ) ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
                 } );
 
 
@@ -95,7 +90,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         }
 
-            protected void MatchQRCode( IContainer container ) {
+        protected void MatchQRCode( IContainer container ) {
 
             var uri = $"https://rezults.scopos.tech/match/{MatchDetail.ParentID}/?src=match-qr-code";
 

@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.Helpers;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
@@ -18,25 +14,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "LAST(1)" )]
         LAST_1,
 
-		[Description( "LAST(2)" )]
-		[EnumMember( Value = "LAST(2)" )]
-		LAST_2,
+        [Description( "LAST(2)" )]
+        [EnumMember( Value = "LAST(2)" )]
+        LAST_2,
 
-		[Description( "LAST(3)" )]
-		[EnumMember( Value = "LAST(3)" )]
-		LAST_3,
+        [Description( "LAST(3)" )]
+        [EnumMember( Value = "LAST(3)" )]
+        LAST_3,
 
-		[Description( "LAST(4)" )]
-		[EnumMember( Value = "LAST(4)" )]
-		LAST_4,
+        [Description( "LAST(4)" )]
+        [EnumMember( Value = "LAST(4)" )]
+        LAST_4,
 
-		[Description( "LAST(5)" )]
-		[EnumMember( Value = "LAST(5)" )]
-		LAST_5,
+        [Description( "LAST(5)" )]
+        [EnumMember( Value = "LAST(5)" )]
+        LAST_5,
 
-		[Description( "LAST(6)" )]
-		[EnumMember( Value = "LAST(6)" )]
-		LAST_6,
+        [Description( "LAST(6)" )]
+        [EnumMember( Value = "LAST(6)" )]
+        LAST_6,
 
         [Description( "LAST(7)" )]
         [EnumMember( Value = "LAST(7)" )]
@@ -77,48 +73,48 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         [Description( "CLUB" )]
-        [EnumMember( Value = "CLUB" )] 
+        [EnumMember( Value = "CLUB" )]
         CLUB,
 
 
         [Description( "MATCH OFFICIAL" )]
-        [EnumMember( Value = "MATCH OFFICIAL" )] 
+        [EnumMember( Value = "MATCH OFFICIAL" )]
         MATCH_OFFICIAL,
 
 
         [Description( "TEAM" )]
-        [EnumMember( Value = "TEAM" )] 
+        [EnumMember( Value = "TEAM" )]
         TEAM,
 
 
         [Description( "TEAM OFFICIAL" )]
-        [EnumMember( Value = "TEAM OFFICIAL" )] 
+        [EnumMember( Value = "TEAM OFFICIAL" )]
         TEAM_OFFICIAL,
 
 
         [Description( "USER" )]
-        [EnumMember( Value = "USER" )] 
+        [EnumMember( Value = "USER" )]
         USER,
 
 
         [Description( "HIDDEN" )]
-        [EnumMember( Value = "HIDDEN" )] 
+        [EnumMember( Value = "HIDDEN" )]
         HIDDEN
     }
 
     /// <summary>
     /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product.
     /// </summary>
-    public enum BarcodeLabelSize { 
+    public enum BarcodeLabelSize {
         /// <summary>
         /// "Small barcode labels"
         /// </summary>
-        OL385, 
-        
+        OL385,
+
         /// <summary>
         /// "Large barcode labels"
         /// </summary>
-        OL161 
+        OL161
     }
 
     public enum CalculationVariableType {
@@ -128,13 +124,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SCORE //Score Component, e.g. I, D, X
     }
 
-    [Obsolete("Use RangeScriptType instead.")]
-    public enum COFTypeOptions { 
-        COMPETITION, 
-        FORMALPRACTICE, 
-        INFORMALPRACTICE, 
-        DRILL, 
-        GAME 
+    [Obsolete( "Use RangeScriptType instead." )]
+    public enum COFTypeOptions {
+        COMPETITION,
+        FORMALPRACTICE,
+        INFORMALPRACTICE,
+        DRILL,
+        GAME
     };
 
     public enum CompetitionType {
@@ -142,21 +138,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// COMPETITION: Shows only record fire shots
         /// </summary>
         [Description( "COMPETITION" )]
-        [EnumMember( Value = "COMPETITION" )] 
+        [EnumMember( Value = "COMPETITION" )]
         COMPETITION,
 
         /// <summary>
         /// SIGHTER
         /// </summary>
         [Description( "SIGHTER" )]
-        [EnumMember( Value = "SIGHTER" )] 
+        [EnumMember( Value = "SIGHTER" )]
         SIGHTER,
 
         /// <summary>
         /// BOTH
         /// </summary>
         [Description( "BOTH" )]
-        [EnumMember( Value = "BOTH" )] 
+        [EnumMember( Value = "BOTH" )]
         BOTH
     }
     public enum DefinitionType {
@@ -261,18 +257,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "SILHOUETTE" )]
         [EnumMember( Value = "SILHOUETTE" )]
-		SILHOUETTE,
+        SILHOUETTE,
 
-		/// <summary>
-		/// Not Applicable
-		/// </summary>
-		[Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
+        /// <summary>
+        /// Not Applicable
+        /// </summary>
+        [Description( "NOT APPLICABLE" )][EnumMember( Value = "NOT APPLICABLE" )] NA,
 
-		/// <summary>
-		/// Benchrest
-		/// </summary>
-		[Description( "BENCHREST" )][EnumMember( Value = "BENCHREST" )] BENCHREST
-	}
+        /// <summary>
+        /// Benchrest
+        /// </summary>
+        [Description( "BENCHREST" )][EnumMember( Value = "BENCHREST" )] BENCHREST
+    }
 
 
     /*
@@ -316,7 +312,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "AVG(10)" )]
         [EnumMember( Value = "AVG(10)" )]
-        [Obsolete("Use AVERAGE with CalculationVariables instead.")]
+        [Obsolete( "Use AVERAGE with CalculationVariables instead." )]
         AVG_TEN,
 
         /// <summary>
@@ -324,16 +320,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [Description( "SUM(i, d)" )]
         [EnumMember( Value = "SUM(i, d)" )]
-		[Obsolete( "Use SUM with CalculationVariables instead." )]
-		ACCUMULATIVE_FINALS,
+        [Obsolete( "Use SUM with CalculationVariables instead." )]
+        ACCUMULATIVE_FINALS,
 
         /// <summary>
         /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
         /// </summary>
         [Description( "SUM(i,d)" )]
         [EnumMember( Value = "SUM(i,d)" )]
-		[Obsolete( "Use SUM with CalculationVariables instead." )]
-		ACCUMULATIVE_FINALS_2,
+        [Obsolete( "Use SUM with CalculationVariables instead." )]
+        ACCUMULATIVE_FINALS_2,
 
         /// <summary>
         /// Reserved for Singularities that don't have children.
@@ -490,7 +486,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [EnumMember( Value = "December" )]
         December
 
-	}
+    }
+
+    public enum UserDefinedFieldNames {
+        /// <summary>
+        /// First optional user defined text field.
+        /// </summary>
+        [Description( "UserDefinedField1" )]
+        [EnumMember( Value = "UserDefinedField1" )]
+        USER_DEFINED_FIELD_1,
+
+        /// <summary>
+        /// Second optional user defined text field.
+        /// </summary>
+        [Description( "UserDefinedField2" )]
+        [EnumMember( Value = "UserDefinedField2" )]
+        USER_DEFINED_FIELD_2,
+
+        /// <summary>
+        /// Third optional user defined text field.
+        /// </summary>
+        [Description( "UserDefinedField3" )]
+        [EnumMember( Value = "UserDefinedField3" )]
+        USER_DEFINED_FIELD_3
+    }
 
     public enum RangeScriptType {
         /// <summary>
@@ -520,17 +539,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// Mode given to the Result Engine telling it how it should calculate the Rank Delta.
     /// </summary>
 	public enum ResultEngineCompareType {
-		NONE,
-		NOW,
-		WINDOW_1_MINUTE,
-		WINDOW_3_MINUTE,
-		WINDOW_5_MINUTE
-	}
+        NONE,
+        NOW,
+        WINDOW_1_MINUTE,
+        WINDOW_3_MINUTE,
+        WINDOW_5_MINUTE
+    }
 
-	/// <summary>
-	/// Specifies where the data is coming from for a Result List Field.
-	/// </summary>
-	public enum ResultFieldMethod {
+    /// <summary>
+    /// Specifies where the data is coming from for a Result List Field.
+    /// </summary>
+    public enum ResultFieldMethod {
         /// <summary>
         /// This is the absolute score the Participant has shot.
         /// </summary>
@@ -585,10 +604,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
     }
 
-	/// <summary>
-	/// The Score Components from a Score object.
-	/// </summary>
-	public enum ScoreComponent {
+    /// <summary>
+    /// The Score Components from a Score object.
+    /// </summary>
+    public enum ScoreComponent {
         X,
         I,
         D,
@@ -791,11 +810,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         NOT_ENGAGEABLE,
 
-		/// <summary>
-		/// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does want to see "supplemental" information. 
-		/// <para>Websites will generally have supplemental information turned on. Spectator displays and print outs generally do not.</para>
-		/// </summary>
-		SUPPLEMENTAL,
+        /// <summary>
+        /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does want to see "supplemental" information. 
+        /// <para>Websites will generally have supplemental information turned on. Spectator displays and print outs generally do not.</para>
+        /// </summary>
+        SUPPLEMENTAL,
 
         /// <summary>
         /// Evaluates to true when the Result List Intermediate Format will be displayed on an interface that the user does not want to see "supplemental" information. 
@@ -806,7 +825,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Evaluates to true on a column when any participant in the Result List has a shown Remark. In a row, evaluates to true with the participant has any Remark.
         /// </summary>
         HAS_ANY_SHOWN_REMARK,
-        
+
         /// <summary>
         /// Evaluates to true when the Participant within the Result List has the Remark of Did Not Shoot
         /// </summary>
@@ -994,41 +1013,41 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
 
-    public enum TimerCommandOptions { 
+    public enum TimerCommandOptions {
         /// <summary>
         /// Does not effect the Range Timer
         /// </summary>
-        NONE, 
+        NONE,
 
         /// <summary>
         /// Starts the Range Timer
         /// </summary>
-        START, 
+        START,
 
         /// <summary>
         /// Pauses the Range Timer
         /// </summary>
-        PAUSE, 
+        PAUSE,
 
         /// <summary>
         /// Resumes the Range Timer after a pause.
         /// </summary>
-        RESUME, 
+        RESUME,
 
         /// <summary>
         /// Stops the Range Timer
         /// </summary>
-        STOP, 
+        STOP,
 
         /// <summary>
         /// Sets the Range Timer to act as a Clock
         /// </summary>
-        CLOCK, 
+        CLOCK,
 
         /// <summary>
         /// To be filled in by Ben. 
         /// </summary>
-        SEGMENT 
+        SEGMENT
     };
 
 

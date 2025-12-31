@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -20,12 +17,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string DefaultFieldText { get; set; } = string.Empty;
 
         /// <summary>
-        /// A human readable description, of what this optional field sets (what field in the Result List Format does it effect). 
+        /// A human readable description, of what this optional field sets (i.e. what field in the Result List Format is it used in). 
         /// </summary>
         [DefaultValue( "" )]
         [G_STJ_SER.JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        public string Description {  get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
         /// <inheritdoc />
 		[G_STJ_SER.JsonPropertyOrder( 100 )]

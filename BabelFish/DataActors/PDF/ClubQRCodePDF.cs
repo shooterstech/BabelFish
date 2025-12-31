@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Reflection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using NLog;
 using Scopos.BabelFish.DataModel.Clubs;
-using ZXing.QrCode;
 using ZXing;
+using ZXing.QrCode;
 using ZXing.Rendering;
-using System.Reflection;
 
 namespace Scopos.BabelFish.DataActors.PDF {
     public class ClubQRCodePDF : PdfGenerator {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
-        public ClubDetail ?  ClubDetail { get; private set; } = null;
+        public ClubDetail? ClubDetail { get; private set; } = null;
 
         public ClubQRCodePDF( ClubDetail clubDetail ) {
             this.ClubDetail = clubDetail;
@@ -93,7 +89,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         }
 
-            protected void ClubQRCode( IContainer container ) {
+        protected void ClubQRCode( IContainer container ) {
 
             var uri = $"https://rezults.scopos.tech/club/{ClubDetail.URLPath}/?src=club-qr-code";
 

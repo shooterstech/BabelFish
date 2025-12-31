@@ -1,20 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Helpers.Extensions;
-using NLog;
-using Score = Scopos.BabelFish.DataModel.Athena.Score;
-using Scopos.BabelFish.Helpers;
-using System.Security.Cryptography;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Globalization;
-using ShimSkiaSharp;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Helpers.Extensions;
+using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -29,7 +19,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
     public delegate string CompletionPercentageOverload( float percentage );
 
-    public abstract class ResultListIntermediateFormattedRow: IEnumerator<ResultListIntermediateFormattedRow>, IEnumerable<ResultListIntermediateFormattedRow> {
+    public abstract class ResultListIntermediateFormattedRow : IEnumerator<ResultListIntermediateFormattedRow>, IEnumerable<ResultListIntermediateFormattedRow> {
 
         /// <summary>
         /// List of feild values that are always included (the user doesn't have to define these in their definition).
@@ -368,7 +358,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     //Retursn the DisplayName of the first coach in the Coaches list.
                     var coachList = _item.Participant.Coaches;
-                    if (coachList is not null && coachList.Count > 0 ) {
+                    if (coachList is not null && coachList.Count > 0) {
                         return coachList[0].DisplayName;
                     } else {
                         return string.Empty;
@@ -586,21 +576,30 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 case "OptionText1":
 
-                    string optionText1 = this._resultListFormatted.OptionText1 ?? string.Empty;
-                    optionText1.Replace( _fields );
-                    return optionText1;
+                    if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string optionText1 )) {
+                        optionText1.Replace( _fields );
+                        return optionText1;
+                    }
+
+                    return string.Empty;
 
                 case "OptionText2":
 
-                    string optionText2 = this._resultListFormatted.OptionText2 ?? string.Empty;
-                    optionText2.Replace( _fields );
-                    return optionText2;
+                    if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string optionText2 )) {
+                        optionText2.Replace( _fields );
+                        return optionText2;
+                    }
+
+                    return string.Empty;
 
                 case "OptionText3":
 
-                    string optionText3 = this._resultListFormatted.OptionText3 ?? string.Empty;
-                    optionText3.Replace( _fields );
-                    return optionText3;
+                    if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string optionText3 )) {
+                        optionText3.Replace( _fields );
+                        return optionText3;
+                    }
+
+                    return string.Empty;
 
                 default:
                     return "UNKNOWN";
@@ -625,7 +624,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         public bool IsChildRow { get; protected set; } = false;
 
-        public bool IsSpanningRow { 
+        public bool IsSpanningRow {
             get {
                 return (HasSpanningRow &&
                     _SubRowIndex == this.SubRowCount);
@@ -670,7 +669,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
             if (tryAndUseProjected &&
                 _resultListFormatted.ResultList is not null
-                && ( _resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL) )
+                && (_resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL))
                 tryAndUseProjected = false;
 
             var eventName = (string)source.Name;
@@ -683,7 +682,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //EKA NOTE: November 2025: I would really like how a projected score is demarcated to be configurable.
             //Just not sure how best to do that right now. One possibility is to use ResultFieldMethod.Completion in 
             //conjunction with the projected score.
-            if ( tryAndUseProjected
+            if (tryAndUseProjected
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
                 && scoreToReturn.Projected != null
                 && scoreToReturn.Status == ResultStatus.INTERMEDIATE
@@ -715,7 +714,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
                         && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
-                        && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE ) ) {
+                        && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
                         return scoreToReturn.Projected;
                     } else {
@@ -872,12 +871,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             return .5f;
                         }
 
-                        if ( eventTree is not null ) {
+                        if (eventTree is not null) {
                             var eventComposite = eventTree.FindEventComposite( eventName );
-                            if ( eventComposite is not null ) {
+                            if (eventComposite is not null) {
                                 float numberOfShotsFired = eventScore.NumShotsFired;
                                 float totalShots = eventComposite.GetAllSingulars().Count();
-                                if ( totalShots > 0 ) {
+                                if (totalShots > 0) {
                                     return numberOfShotsFired / totalShots;
                                 }
                             }
@@ -970,16 +969,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public CellValues GetColumnBodyCell( int index ) {
 
             var column = _resultListFormatted.ResultListFormat.Format.Columns[index];
-            
+
             ResultListCellValue rlcf = this.GetResultListCellValue( column );
             string value = rlcf.Text.Replace( _fields );
 
             var classes = new List<string>();
 
             //Add the classes from the columns .ClassSet
-            foreach (var c in column.ClassSet ) {
+            foreach (var c in column.ClassSet) {
                 if (_resultListFormatted.ShowWhenCalculator.Show( c.ShowWhen )
-                    && ! classes.Contains( c.Name ) ) {
+                    && !classes.Contains( c.Name )) {
                     classes.Add( (string)c.Name );
                 }
             }
@@ -995,7 +994,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             //cellValues.Body = column.Body;
             //cellValues.Child = column.Child;
 
-            if ( this.IsSpanningRow && ! rlcf.IsEmpty ) {
+            if (this.IsSpanningRow && !rlcf.IsEmpty) {
                 cellValues.ColumnSpan = this._resultListFormatted.GetShownColumnIndexes().Count - index;
             }
 
@@ -1041,12 +1040,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public List<CellValues> GetShownRow() {
-            List < CellValues> row = new List<CellValues>();
+            List<CellValues> row = new List<CellValues>();
 
-            foreach ( int i in this._resultListFormatted.GetShownColumnIndexes() ) {
+            foreach (int i in this._resultListFormatted.GetShownColumnIndexes()) {
                 var cv = this.GetColumnBodyCell( i );
                 row.Add( cv );
-                if ( cv.ColumnSpan > 1 ) {
+                if (cv.ColumnSpan > 1) {
                     break;
                 }
             }
@@ -1103,12 +1102,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return this._item.SquaddingAssignment;
         }
 
-		/// <summary>
-		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowRanks property.
-		/// </summary>
+        /// <summary>
+        /// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowRanks property.
+        /// </summary>
         /// <remarks>If true, this property overrides the other "Show" properties for the body rows</remarks>
-		/// <returns></returns>
-		public virtual bool ShowRowBasedOnShowRanks() {
+        /// <returns></returns>
+        public virtual bool ShowRowBasedOnShowRanks() {
 
             //If _resultEvent is null,, then this row is from a SquaddingList, and there are no rankings
             if (_resultEvent is null)
@@ -1118,11 +1117,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         }
 
-		/// <summary>
-		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowNumberOfChildren property.
-		/// </summary>
-		/// <returns></returns>
-		public abstract bool ShowRowBasedOnShowNumberOfChildren();
+        /// <summary>
+        /// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowNumberOfChildren property.
+        /// </summary>
+        /// <returns></returns>
+        public abstract bool ShowRowBasedOnShowNumberOfChildren();
 
         /// <summary>
         /// Returns a boolean indicating if this row should be shown based on teh RLIF's .ShowNumberOfBodyRows property
@@ -1181,11 +1180,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return false;
         }
 
-		/// <summary>
-		/// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresBeforeOFFICIAL and .ShowZeroScoresWithOFFICIAL properties.
-		/// </summary>
-		/// <returns></returns>
-		public virtual bool ShowRowBasedZeroScores() {
+        /// <summary>
+        /// Returns a boolean indicating if this row should be shown based on the RLIF's .ShowZeroScoresBeforeOFFICIAL and .ShowZeroScoresWithOFFICIAL properties.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool ShowRowBasedZeroScores() {
             //if _resutlEvent is null, then it's from a squadding list
             if (this._resultEvent is null)
                 return true;
@@ -1201,7 +1200,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (this._resultListFormatted.ShowZeroScoresBeforeOFFICIAL
                     && (this._resultListFormatted.ResultList.Status == ResultStatus.FUTURE
                         || this._resultListFormatted.ResultList.Status == ResultStatus.INTERMEDIATE
-                        || this._resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL) )
+                        || this._resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL))
                     return true;
 
                 //We do show this row if the score is zero due to DNS, DNF, or DSQ
@@ -1209,7 +1208,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
                     || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
                     return true;
-                } 
+                }
 
                 return false;
 
@@ -1244,7 +1243,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Returns a boolean, indicating if there is a spanning row defined and the RLIF says
         /// to show it. 
         /// </summary>
-        public bool HasSpanningRow {   
+        public bool HasSpanningRow {
             get {
                 return _hasSpanningRow && this._resultListFormatted.ShowSpanningRows;
             }
@@ -1311,7 +1310,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         /// <inheritdoc />
         public void Dispose() {
-            _SubRowIndex = 0; 
+            _SubRowIndex = 0;
             _firstTimeCaller = true;
         }
 
