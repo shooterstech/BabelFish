@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.PDF;
@@ -12,62 +7,62 @@ using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace BabelFish.Tests.DataActors.PDF {
     [TestClass]
-    public class ResultListPdfTests  : BaseTestClass {
+    public class ResultListPdfTests : BaseTestClass {
 
         [TestMethod]
         public async Task GenerateResultListPDFTest() {
 
-            var client = new OrionMatchAPIClient( );
+            var client = new OrionMatchAPIClient();
 
             //This match id has three relays of 20 athletes
-            var matchId = new MatchID( "1.1.2025072316000865.0" );
-            var resultListName = "Individual - All";
+            var matchId = new MatchID( "1.1.2025122311175108.0" );
+            var resultListName = "Team - All";
 
             var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
             var resultList = getResultListResponse.ResultList;
 
             while (getResultListResponse.HasMoreItems) {
-                var nextRequest = (GetResultListPublicRequest) getResultListResponse.GetNextRequest();
+                var nextRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
                 getResultListResponse = await client.GetResultListPublicAsync( nextRequest );
                 resultList.Items.AddRange( getResultListResponse.ResultList.Items );
             }
 
             var match = (await client.GetMatchAsync( matchId )).Match;
 
-            var pdf = new ResultListPdf(  match, resultList );
+            var pdf = new ResultListPdf( match, resultList );
             await pdf.InitializeAsync();
             await pdf.RLIF.LoadSquaddingListAsync();
-            pdf.RLIF.ShowRelay = "2";
-            pdf.RLIF.ShowRanks = 3;
+            //pdf.RLIF.ShowRelay = "2";
+            //pdf.RLIF.ShowRanks = 3;
 
-            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
-		}
+        }
 
-		[TestMethod]
-		public async Task GenerateSquaddingtListPDFTest() {
+        [TestMethod]
+        public async Task GenerateSquaddingtListPDFTest() {
 
-			var client = new OrionMatchAPIClient();
+            var client = new OrionMatchAPIClient();
 
-			//This match id has three relays of 20 athletes
-			var matchId = new MatchID( "1.1.2025081213222434.0" );
-			var squaddingListName = "Qualification";
+            //This match id has three relays of 20 athletes
+            var matchId = new MatchID( "1.1.2025081213222434.0" );
+            var squaddingListName = "Qualification";
 
-			var getResultListResponse = await client.GetSquaddingListPublicAsync( matchId, squaddingListName );
-			var resultList = getResultListResponse.SquaddingList;
+            var getResultListResponse = await client.GetSquaddingListPublicAsync( matchId, squaddingListName );
+            var resultList = getResultListResponse.SquaddingList;
 
-			var match = (await client.GetMatchAsync( matchId )).Match;
+            var match = (await client.GetMatchAsync( matchId )).Match;
 
-			var pdf = new ResultListPdf( match, resultList );
-			await pdf.InitializeAsync();
+            var pdf = new ResultListPdf( match, resultList );
+            await pdf.InitializeAsync();
             pdf.RLIF.ShowRelay = "1";
             pdf.SubTitle = "Relay 1";
 
-			pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
-		}
+        }
 
-		[TestMethod]
+        [TestMethod]
         public async Task GenerateResultCOFPDFTest() {
 
             var client = new OrionMatchAPIClient();
@@ -97,7 +92,7 @@ namespace BabelFish.Tests.DataActors.PDF {
             var resultList = getResultListResponse.ResultList;
 
             List<ResultCOF> documentsToPrint = new List<ResultCOF>();
-            foreach ( var resultEvent in resultList.Items ) {
+            foreach (var resultEvent in resultList.Items) {
                 var resultCofId = resultEvent.ResultCOFID;
                 var getResultCof = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
                 var resultCof = getResultCof.ResultCOF;
@@ -108,8 +103,7 @@ namespace BabelFish.Tests.DataActors.PDF {
         }
 
         [TestMethod]
-        public async Task GenerateAthleteCofPdfTest()
-        {
+        public async Task GenerateAthleteCofPdfTest() {
 
             var client = new OrionMatchAPIClient();
 
@@ -122,8 +116,8 @@ namespace BabelFish.Tests.DataActors.PDF {
             //var resultCofId = "5c36dd5a-1ffe-4b0d-8469-cb5dd75c9dd6"; // 3x40
             //var resultCofId = "ccc4d957-7df6-4666-9e59-25381beb6767"; //3x10 but incomplete
 
-            var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync(resultCofId);
-            
+            var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
+
             var resultCof = getResultCofResponse.ResultCOF;
             /*
             var pdfEvent = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.EVENT);
@@ -134,9 +128,9 @@ namespace BabelFish.Tests.DataActors.PDF {
             await pdfStage.InitializeAsync();
             pdfStage.GeneratePdf(PageSizes.Letter, "c:\\temp\\helloSTAGE.pdf");
             */
-            var pdfSeries = new AthleteCOFPdf(resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES);
+            var pdfSeries = new AthleteCOFPdf( resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES );
             await pdfSeries.InitializeAsync();
-            pdfSeries.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf");
+            pdfSeries.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
 
         }
 

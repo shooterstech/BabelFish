@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
+    <AssemblyVersion>1.11.0</AssemblyVersion>
+    <!-- Update with each build -->
+    <FileVersion>1.11.1.4</FileVersion>
+    <!-- Updaet with each release, may use -alpha, -beta -->
+    <Version>1.11.1.4</Version>
+    <PackageId>Scopos.BabelFish.Reports</PackageId>
+    <Authors>Scopos LLC</Authors>
+    <Company>Scopos LLC</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageDescription>Complementary .net library to Scopos' BabelFish, that provides tools for generating pdfs, excel files and other reports from Scopos's data model.</PackageDescription>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>scopos;shooting;orion;athena;rezults;api;reconfigurable rulebook</PackageTags>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Scopos' BabelFish API Client</Title>
+    <Description>BabelFish is Scopos' .net library that provides a shooting sports data model, facade for Scopos' Rest API, access to Reconfigurable Rulebook definition files, and Scopos' data actor classes for Result Engine and Result List Formatter. An x-api-key from Scopos is needed
+      to access any of the REST API methods.</Description>
+    <PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <PackageReference Include="DocumentFormat.OpenXml.Framework" Version="3.3.0" />
+    <PackageReference Include="EPPlus" Version="8.2.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NLog" Version="5.3.4" />
+    <PackageReference Include="QuestPDF" Version="2025.7.0" />
+    <PackageReference Include="SkiaSharp" Version="3.119.0" />
+    <PackageReference Include="Svg.Skia" Version="3.0.5" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.1" />
+    <PackageReference Include="ZXing.Net" Version="0.16.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+    <None Include="..\..\NOTICE" Pack="true" PackagePath="" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BabelFish\BabelFish.csproj" />
+  </ItemGroup>
+</Project>

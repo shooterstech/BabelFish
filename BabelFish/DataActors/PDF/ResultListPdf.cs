@@ -140,12 +140,9 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         private void ResultListTable( IContainer container ) {
 
-            var columnIndexes = RLIF.GetShownColumnIndexes();
-
             container.Table( table => {
                  table.ColumnsDefinition( columns => {
-                     foreach (var colIndex in columnIndexes) {
-                         var headerCell = RLIF.GetColumnHeaderCell( colIndex );
+                     foreach (var headerCell in RLIF.GetShownHeaderRow()) {
 
                          if (headerCell.ClassList.Contains( "rlf-col-rank" )
                              || headerCell.ClassList.Contains( "rlf-col-gap" ))
@@ -159,18 +156,18 @@ namespace Scopos.BabelFish.DataActors.PDF {
                  } );
 
                  table.Header( header => {
-                     foreach (var colIndex in columnIndexes) {
-                         var headerCell = RLIF.GetColumnHeaderCell( colIndex );
+                     foreach (var headerCell in RLIF.GetShownHeaderRow()) {
                          header.Cell().BorderBottom( 2 ).BorderColor( ScoposColors.BLUE_LIGHTEN_1 ).Padding( 1 ).Text( headerCell.Text ).Bold();
                      }
                  } );
 
-                 foreach (var row in RLIF.ShownRows) {
-                     foreach (var colIndex in columnIndexes) {
-                         var rowCell = row.GetColumnBodyCell( colIndex );
-                         table.Cell().Padding( 1 ).Text( rowCell.Text );
-                     }
-                 }
+                foreach (var row in RLIF.ShownRows) {
+                    foreach (var subRow in row) {
+                        foreach (var rowCell in subRow.GetShownRow()) {
+                            table.Cell().ColumnSpan( (uint) rowCell.ColumnSpan ).Padding( 1 ).Text( rowCell.Text );
+                        }
+                    }
+                }
              } );
         }
 

@@ -1,21 +1,12 @@
-﻿using System.Reflection;
+using System.Reflection;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataActors.ResultListFormatter;
-using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
-using Scopos.BabelFish.DataModel.Athena.ESTUnitCommands;
-using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using ZXing;
-using ZXing.QrCode;
-using ZXing.Rendering;
 
 namespace Scopos.BabelFish.DataActors.PDF {
     public abstract class PdfGenerator {
 
-        public abstract QuestPDF.Fluent.Document GeneratePdf(PageSize pageSize, string filePath);
+        public abstract QuestPDF.Fluent.Document GeneratePdf( PageSize pageSize, string filePath );
 
         protected abstract void ReportTitle( IContainer container );
 
@@ -71,7 +62,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 //Empty row item, just so the scopos logo will appear in center of page.
                 row.RelativeItem( 1 )
                 .AlignRight()
-                .Text( "" );
+                .Text( "◎ projected score" );
             } );
         }
     }
