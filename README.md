@@ -5,22 +5,17 @@ Scopos' dot net library that provides:
  * Scopos' data actors for formatting results, calculating results lists, and tournament calculations.
  * And more!
 
-BabelFish classes are document at [cdn.scopos.tech/Documentation/Babelfish/index.html](https://cdn.scopos.tech/Documentation/Babelfish/index.html).
+BabelFish classes are document at [babelfish.scopos.tech](https://babelfish.scopos.tech/).
+
+Calling REST API methods (classes under the Scopos.BabelFish.APIClients namespace) require a x-api-key, which can be obtain from Scopos.
+Visit our [support web site](https://support.scopos.tech/index.html?x-api-key.html) for more information.
 
 ## License
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
 
 ## NuGet Package Avaliable
 
-BabelFish is avaliable as a NuGet package. To download it, create a Package Source to our NuGet feed.
-1. Open Visual Studio.
-2. Go to Tools → NuGet Package Manager → Package Manager Settings.
-3. In the left panel, select Package Sources.
-4. Click the + button to add a new source.
-5. Set the Name to Scopos NuGet.
-6. Set the Source to:
-https://scopos-nuget.s3.us-east-1.amazonaws.com/index.json
-7. Click Update, then OK.
+BabelFish is avaliable as a NuGet package, downloadable from [nuget.org](https://www.nuget.org/packages/Scopos.BabelFish.Core).
 
 ## BabelFish Quick Use Start Guide
 
