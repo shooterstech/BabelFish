@@ -1206,6 +1206,12 @@ namespace Scopos.BabelFish.APIClients {
 
         #endregion
 
+        /// <summary>
+        /// Checks if the passed in defintion has a new minor versino avaliable from the REST API. If true downloads it into memory
+        /// in the background. 
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns></returns>
         public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Definition def ) {
 
             switch (def.Type) {

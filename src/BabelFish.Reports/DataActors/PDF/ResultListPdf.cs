@@ -103,19 +103,17 @@ namespace Scopos.BabelFish.DataActors.PDF {
             }
 
             container.Border( 2 )
-            //.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
-            //.Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
-            .BorderLinearGradient( 45, [ScoposColors.BLUE_LIGHTEN_2, ScoposColors.DARK_GREY_LIGHTEN_1] )
-            .BackgroundLinearGradient( 45, [ScoposColors.DARK_GREY, ScoposColors.BLUE_LIGHTEN_1] )
+            .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
+            .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
             .Padding( 10 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( titleText ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( line1Text ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( line2Text ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( line3Text ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( line4Text ).FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( titleText ).SemiBold().FontSize( 16 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line1Text ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line2Text ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line3Text ).FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line4Text ).FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
 

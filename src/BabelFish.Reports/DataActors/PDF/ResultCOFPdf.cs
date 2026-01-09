@@ -31,10 +31,8 @@ namespace Scopos.BabelFish.DataActors.PDF {
         protected override void ReportTitle( IContainer container ) {
 
             container.Border( 2 )
-            //.Border( 2, ScoposColors.BLUE_LIGHTEN_1 )
-            //.Background( ScoposColors.DARK_GREY_LIGHTEN_1 )
-            .BorderLinearGradient( 45, [ScoposColors.BLUE_LIGHTEN_2, ScoposColors.DARK_GREY_LIGHTEN_1] )
-            .BackgroundLinearGradient( 45, [ScoposColors.DARK_GREY, ScoposColors.BLUE_LIGHTEN_1] )
+            .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
+            .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
             .Padding( 10 )
             .Row( row => {

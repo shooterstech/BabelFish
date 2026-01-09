@@ -19,6 +19,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
         public MatchQRCodePDF( Match matchDetail ) {
             this.MatchDetail = matchDetail;
             this.IncludePageNumberInFooter = false;
+            this.IncludeProjectedScoreIndicatorInFooter = false;
         }
 
         public async Task InitializeAsync() {
@@ -65,17 +66,17 @@ namespace Scopos.BabelFish.DataActors.PDF {
             var uri = $"https://rezults.scopos.tech/match/{MatchDetail.ParentID}/";
 
             container.Border( 2 )
-            .BorderLinearGradient( 45, [ScoposColors.BLUE_LIGHTEN_2, ScoposColors.DARK_GREY_LIGHTEN_1] )
-            .BackgroundLinearGradient( 45, [ScoposColors.DARK_GREY, ScoposColors.BLUE_LIGHTEN_1] )
+            .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
+            .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
             .Padding( 10 )
             .Row( row => {
 
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( Title ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( StringFormatting.Hometown( MatchDetail.Location ) ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
-                    column.Item().Text( StringFormatting.SpanOfDates( MatchDetail.StartDate, MatchDetail.EndDate ) ).SemiBold().FontSize( 12 ).FontColor( ScoposColors.LIGHT_GREY_LIGHTEN_3 );
+                    column.Item().Text( Title ).SemiBold().FontSize( 16 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( StringFormatting.Hometown( MatchDetail.Location ) ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( StringFormatting.SpanOfDates( MatchDetail.StartDate, MatchDetail.EndDate ) ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
 
