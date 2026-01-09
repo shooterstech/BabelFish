@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -238,7 +238,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             //Set the LocalStoreDirectory and preload. Which should also save to file system
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\temp" );
             Stopwatch loadFromRestApi = Stopwatch.StartNew();
-            await DefinitionCache.PreLoad();
+            await DefinitionCache.PreLoadAsync();
             loadFromRestApi.Stop();
 
             Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );
@@ -253,7 +253,7 @@ namespace Scopos.BabelFish.Tests.Definition {
 
             //Re-run preload, which will read the files from the local file system (since they should exist now)
             Stopwatch loadFromFileSystem = Stopwatch.StartNew();
-            await DefinitionCache.PreLoad();
+            await DefinitionCache.PreLoadAsync();
             loadFromFileSystem.Stop();
 
             Assert.AreEqual( 19, DefinitionCache.GetCacheSize( DefinitionType.ATTRIBUTE ) );

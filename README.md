@@ -7,15 +7,28 @@ Scopos' dot net library that provides:
 
 BabelFish classes are document at [babelfish.scopos.tech](https://babelfish.scopos.tech/).
 
-Calling REST API methods (classes under the Scopos.BabelFish.APIClients namespace) require a x-api-key, which can be obtain from Scopos.
-Visit our [support web site](https://support.scopos.tech/index.html?x-api-key.html) for more information.
-
 ## License
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+This project is licensed under the Apache License 2.0 - see the LICENSE and NOTICE files for details.
 
 ## NuGet Package Avaliable
 
 BabelFish is avaliable as a NuGet package, downloadable from [nuget.org](https://www.nuget.org/packages/Scopos.BabelFish.Core).
+
+### X-API-Key
+
+Calling REST API methods (classes under the Scopos.BabelFish.APIClients namespace) require a x-api-key, which can be licensed from Scopos.
+ * Existing Orion for Club customers may obtain a limited but free X-API-Key for interacting with the Public and Authenticated APIs for their Club.
+ * Students, enrolled in K-12, colleges, or universities, who wish to interact with the REST API for academic use, and not for application development, may request a limited but free X-API-Key valid for four years.
+ * Individuals or companies who wish to interact with the REST API for application development may apply for an annual X-API-Key license. Currently Scopos is providing X-API-Key licenses for free, however we will be charging for these licenses soon. Prices have not been set but will be consistent with industry standards. You may purchase one X-API-Key per application. 
+
+Visit our [support web site](https://support.scopos.tech/index.html?x-api-key.html) for more information or [contact us](https://support.scopos.tech/index.html?contact-us.html) to apply.
+
+To start accessing Scopos's REST API you may use the following API Key. However, it is rate limited, shared, and obviously open to the public.
+Shared X-API-Key: GyaHV300my60rs2ylKug5aUgFnYBj6GrU6V1WE33
+
+### Support
+
+Programmatic assistance with Scopos' BabelFish is not included with either an Orion or Athena license. Instead, for community support, [submit an issue on the BabelFish GitHub repository page](https://github.com/shooterstech/BabelFish/issues).
 
 ## BabelFish Quick Use Start Guide
 
