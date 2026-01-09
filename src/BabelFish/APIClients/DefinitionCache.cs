@@ -1,8 +1,7 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
-using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.APIClients {
     public static class DefinitionCache {
@@ -65,7 +64,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Preloads the Definiiton Cache with commmon definitions. If used, should help with some start up time.
         /// </summary>
         /// <returns></returns>
-        public static async Task PreLoad() {
+        public static async Task PreLoadAsync() {
             List<string> attributeDefinitionsToLoad = new List<string>() {
                 "v1.0:ntparc:Three-Position Air Rifle Type",
                 "v1.0:orion:Profile Name",
@@ -102,7 +101,7 @@ namespace Scopos.BabelFish.APIClients {
             List<SetName> targetSetNamesToTryAgain = new List<SetName>();
 
             //First attempt 
-            foreach ( var definition in attributeDefinitionsToLoad ) {
+            foreach (var definition in attributeDefinitionsToLoad) {
                 var setName = SetName.Parse( definition );
                 try {
                     await GetAttributeDefinitionAsync( setName );
@@ -150,10 +149,10 @@ namespace Scopos.BabelFish.APIClients {
                 || targetSetNamesToTryAgain.Count > 0) {
                 Thread.Sleep( 10000 );
 
-                foreach( var sn in attributeSetNamesToTryAgain ) {
+                foreach (var sn in attributeSetNamesToTryAgain) {
                     try {
                         await GetAttributeDefinitionAsync( sn );
-                    } catch ( Exception ) {
+                    } catch (Exception) {
                         ;
                     }
                 }
@@ -176,30 +175,30 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-		#region Attribute
+        #region Attribute
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<Scopos.BabelFish.DataModel.Definitions.Attribute> GetAttributeDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<Scopos.BabelFish.DataModel.Definitions.Attribute> GetAttributeDefinitionAsync( SetName setName ) {
 
             //Try and pull from cache. If there is a cached value, in a seperate Task (note we are not calling await) check for a newer version
             if (AttributeCache.TryGetValue( setName, out Scopos.BabelFish.DataModel.Definitions.Attribute a )) {
-                
-                if ( AutoDownloadNewDefinitionVersions )
+
+                if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
                     DownloadNewMinorVersionIfAvaliableAsync( a );
 
-                return a; 
+                return a;
             }
 
             DateTime lastChecked;
-            if (AttributeNotFoundCache.TryGetValue(setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
+            if (AttributeNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
                 throw new DefinitionNotFoundException( $"Attribute definition '{setName}' not found. " );
 
             var response = await DefinitionFetcher.FETCHER.GetAttributeDefinitionAsync( setName );
@@ -215,40 +214,40 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Attribute definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the Attribute requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetAttributeDefinition( SetName setName, out Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
+        /// <summary>
+        /// Tries and returns the Attribute requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetAttributeDefinition( SetName setName, out Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (AttributeCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (AttributeCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetAttributeDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetAttributeDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
-            if ( def == null ) 
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Scopos.BabelFish.DataModel.Definitions.Attribute def ) {
+            if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
             try {
@@ -278,19 +277,19 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region CourseOfFire
+        #region CourseOfFire
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<CourseOfFire> GetCourseOfFireDefinitionAsync( SetName setName ) {
 
             if (CourseOfFireCache.TryGetValue( setName, out CourseOfFire c )) {
 
@@ -298,7 +297,7 @@ namespace Scopos.BabelFish.APIClients {
                     //Purposefully not awaiting this call
                     DownloadNewMinorVersionIfAvaliableAsync( c );
 
-                return c; 
+                return c;
             }
 
             DateTime lastChecked;
@@ -331,17 +330,17 @@ namespace Scopos.BabelFish.APIClients {
         public static bool TryGetCourseOfFireDefinition( SetName setName, out CourseOfFire c ) {
 
             //Try and read from the cache. If its previously been loaded, then return it. 
-			if (CourseOfFireCache.TryGetValue( setName, out c )) {
+            if (CourseOfFireCache.TryGetValue( setName, out c )) {
 
-				return true;
-			}
+                return true;
+            }
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
             GetCourseOfFireDefinitionAsync( setName );
 
             return false;
-		}
+        }
 
         /// <summary>
         /// Method checks to see if there is a new minor release avaliable for the past in Definition.
@@ -381,27 +380,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region EVENT AND STAGE STYLE MAPPING
+        #region EVENT AND STAGE STYLE MAPPING
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync( SetName setName ) {
 
             if (EventAndStageStyleMappingCache.TryGetValue( setName, out EventAndStageStyleMapping c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -421,39 +420,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventAndStageStyleMapping definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the EVENT AND STAGE STYLE MAPPING requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetEventAndStageStyleMappingDefinition( SetName setName, out EventAndStageStyleMapping def ) {
+        /// <summary>
+        /// Tries and returns the EVENT AND STAGE STYLE MAPPING requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetEventAndStageStyleMappingDefinition( SetName setName, out EventAndStageStyleMapping def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (EventAndStageStyleMappingCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (EventAndStageStyleMappingCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetEventAndStageStyleMappingDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetEventAndStageStyleMappingDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( EventAndStageStyleMapping def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( EventAndStageStyleMapping def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -484,27 +483,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region EVENT STYLE
+        #region EVENT STYLE
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<EventStyle> GetEventStyleDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<EventStyle> GetEventStyleDefinitionAsync( SetName setName ) {
 
             if (EventStyleCache.TryGetValue( setName, out EventStyle c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -524,39 +523,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive EventStyle definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the EVENT STYLE requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetEventStyleDefinition( SetName setName, out EventStyle def ) {
+        /// <summary>
+        /// Tries and returns the EVENT STYLE requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetEventStyleDefinition( SetName setName, out EventStyle def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (EventStyleCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (EventStyleCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetEventStyleDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetEventStyleDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( EventStyle def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( EventStyle def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -587,27 +586,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region RANKING RULE
+        #region RANKING RULE
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<RankingRule> GetRankingRuleDefinitionAsync( SetName setName ) {
 
             if (RankingRuleCache.TryGetValue( setName, out RankingRule c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -627,39 +626,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive RankingRule definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the RANKING RULE requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetRankingRuleDefinition( SetName setName, out RankingRule def ) {
+        /// <summary>
+        /// Tries and returns the RANKING RULE requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetRankingRuleDefinition( SetName setName, out RankingRule def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (RankingRuleCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (RankingRuleCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetRankingRuleDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetRankingRuleDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( RankingRule def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( RankingRule def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -690,27 +689,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region RESULT LIST FORMAT
+        #region RESULT LIST FORMAT
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<ResultListFormat> GetResultListFormatDefinitionAsync( SetName setName ) {
 
             if (ResultListFormatCache.TryGetValue( setName, out ResultListFormat c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -730,39 +729,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ResultListFormat definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the RESULT LIST FORMAT requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetResultListFormatDefinition( SetName setName, out ResultListFormat def ) {
+        /// <summary>
+        /// Tries and returns the RESULT LIST FORMAT requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetResultListFormatDefinition( SetName setName, out ResultListFormat def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (ResultListFormatCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (ResultListFormatCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetResultListFormatDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetResultListFormatDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( ResultListFormat def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( ResultListFormat def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -793,27 +792,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region SCORE FORMAT COLLECTION
+        #region SCORE FORMAT COLLECTION
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync( SetName setName ) {
 
             if (ScoreFormatCollectionCache.TryGetValue( setName, out ScoreFormatCollection c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -833,39 +832,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive ScoreFormatCollection definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the SCORE FORMAT COLLECTION requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetScoreFormatCollectionDefinition( SetName setName, out ScoreFormatCollection def ) {
+        /// <summary>
+        /// Tries and returns the SCORE FORMAT COLLECTION requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetScoreFormatCollectionDefinition( SetName setName, out ScoreFormatCollection def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (ScoreFormatCollectionCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (ScoreFormatCollectionCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetScoreFormatCollectionDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetScoreFormatCollectionDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( ScoreFormatCollection def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( ScoreFormatCollection def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -896,27 +895,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region STAGE STYLE
+        #region STAGE STYLE
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<StageStyle> GetStageStyleDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<StageStyle> GetStageStyleDefinitionAsync( SetName setName ) {
 
             if (StageStyleCache.TryGetValue( setName, out StageStyle c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -936,39 +935,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive StageStyle definition {setName}. Overall:  {response.OverallStatusCode} , REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the STAGE STYLE requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetStageStyleDefinition( SetName setName, out StageStyle def ) {
+        /// <summary>
+        /// Tries and returns the STAGE STYLE requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetStageStyleDefinition( SetName setName, out StageStyle def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (StageStyleCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (StageStyleCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetStageStyleDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetStageStyleDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( StageStyle def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( StageStyle def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -999,27 +998,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region TARGET COLLECTION
+        #region TARGET COLLECTION
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
 
             if (TargetCollectionCache.TryGetValue( setName, out TargetCollection c )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( c ); 
-                
-                return c; 
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
             }
 
             DateTime lastChecked;
@@ -1039,39 +1038,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive TargetCollection definition {setName}. Overall:  {response.OverallStatusCode} , REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the TARGET COLLECTION requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetTargetCollectionDefinition( SetName setName, out TargetCollection def ) {
+        /// <summary>
+        /// Tries and returns the TARGET COLLECTION requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetTargetCollectionDefinition( SetName setName, out TargetCollection def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (TargetCollectionCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (TargetCollectionCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetTargetCollectionDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetTargetCollectionDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( TargetCollection def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( TargetCollection def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -1102,27 +1101,27 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion
+        #endregion
 
-		#region TARGET
+        #region TARGET
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <returns></returns>
-		/// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public static async Task<Target> GetTargetDefinitionAsync( SetName setName ) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<Target> GetTargetDefinitionAsync( SetName setName ) {
 
             if (TargetCache.TryGetValue( setName, out Target t )) {
 
                 if (AutoDownloadNewDefinitionVersions)
                     //Purposefully not awaiting this call
-                    DownloadNewMinorVersionIfAvaliableAsync( t ); 
-                
-                return t; 
+                    DownloadNewMinorVersionIfAvaliableAsync( t );
+
+                return t;
             }
 
             DateTime lastChecked;
@@ -1142,39 +1141,39 @@ namespace Scopos.BabelFish.APIClients {
             } else {
                 throw new ScoposAPIException( $"Unable to retreive Target definition {setName}. Overall:  {response.OverallStatusCode} , REST API {response.RestApiStatusCode}" );
             }
-		}
+        }
 
-		/// <summary>
-		/// Tries and returns the TARGET requested, if it has already been loaded into the cache.
-		/// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-		/// the definition may be avalaible at a latter time (once the getting is successful).
-		/// </summary>
-		/// <param name="setName"></param>
-		/// <param name="c"></param>
-		/// <returns></returns>
-		public static bool TryGetTargetDefinition( SetName setName, out Target def ) {
+        /// <summary>
+        /// Tries and returns the TARGET requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetTargetDefinition( SetName setName, out Target def ) {
 
-			//Try and read from the cache. If its previously been loaded, then return it. 
-			if (TargetCache.TryGetValue( setName, out def )) {
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (TargetCache.TryGetValue( setName, out def )) {
 
-				return true;
-			}
+                return true;
+            }
 
-			//If it is not loaded, make a call to read / download it.
-			//Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-			GetTargetDefinitionAsync( setName );
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetTargetDefinitionAsync( setName );
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <summary>
-		/// Method checks to see if there is a new minor release avaliable for the past in Definition.
-		/// If so, it tries and download it and update the cache.
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Target def ) {
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Target def ) {
             if (def == null)
                 throw new ArgumentNullException( nameof( def ) );
 
@@ -1205,9 +1204,9 @@ namespace Scopos.BabelFish.APIClients {
             return false;
         }
 
-		#endregion 
+        #endregion
 
-		public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Definition def ) {
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Definition def ) {
 
             switch (def.Type) {
                 case DefinitionType.ATTRIBUTE:
@@ -1246,7 +1245,7 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        public static async Task<Definition?> GetDefinitionAsync(DefinitionType type, SetName setName) {
+        public static async Task<Definition?> GetDefinitionAsync( DefinitionType type, SetName setName ) {
 
             switch (type) {
                 case DefinitionType.ATTRIBUTE:
@@ -1277,7 +1276,7 @@ namespace Scopos.BabelFish.APIClients {
                     return await GetTargetDefinitionAsync( setName );
 
                 case DefinitionType.TARGETCOLLECTION:
-                    return await GetTargetCollectionDefinitionAsync ( setName );
+                    return await GetTargetCollectionDefinitionAsync( setName );
 
                 default:
                     //Shouldn't ever get here
@@ -1285,6 +1284,9 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /// <summary>
+        /// Clears all cached responses from the DefinitionCache.
+        /// </summary>
         public static void ClearCache() {
             AttributeCache.Clear();
             CourseOfFireCache.Clear();
