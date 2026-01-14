@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
-using NLog;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -15,7 +13,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public Match() { }
 
-        
+
         /// <summary>
         /// After an object is deserialized form JSON,
         /// adds defaults to empty properties
@@ -32,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// 
         /// To pull the full squadding, use GetSquaddingListRequest()
         /// </summary>
-        [JsonPropertyOrder ( 1 )]
+        [JsonPropertyOrder( 1 )]
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
         [JsonPropertyOrder( 2 )]
@@ -51,26 +49,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
+        [JsonPropertyOrder( 3 )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
         /// External Result URL
         /// </summary>
-        [JsonPropertyOrder ( 4 )]
+        [JsonPropertyOrder( 4 )]
         public string ResultURL { get; set; } = string.Empty;
 
-        [JsonPropertyOrder ( 5 )]
+        /// <summary>
+        /// The UTC time that the ResultEvent (scores for the match) were last updated.
+        /// </summary>
+        [JsonPropertyOrder( 5 )]
         public DateTime ResultEventsLastUpdate { get; set; } = new DateTime();
 
-        [JsonPropertyOrder ( 6 )]
+        [JsonPropertyOrder( 6 )]
         [Obsolete( "Use AttributeNames instead." )]
         public List<Attribute> Attributes { get; set; } = new List<Attribute>();
 
         /// <summary>
         /// List of Attribute SetNames used in this match.
         /// </summary>
-        [JsonPropertyOrder ( 6 )]
+        [JsonPropertyOrder( 6 )]
         public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string Name {
             get; set;
-        } = string.Empty; 
+        } = string.Empty;
 
         /// <summary>
         /// Sets the public visibility for the match. Valid values are
@@ -87,15 +88,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
-        [JsonPropertyOrder ( 8 )]
-        
+        [JsonPropertyOrder( 8 )]
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
-        [JsonPropertyOrder ( 9 )]
+        [JsonPropertyOrder( 9 )]
         public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
@@ -103,49 +103,73 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// 
         /// This is a required field.
         /// </summary>
-        [JsonPropertyOrder ( 11 )]
+        [JsonPropertyOrder( 11 )]
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
         public MatchID MatchID { get; set; }
-
-        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.LOCAL_MATCH;
 
         /// <summary>
         /// The Version string of the JSON document.
         /// Version 2022-04-09 represents ResultCOF in a dictionary format
         /// Version < 2022 represent ResultCOF in a tree format
         /// </summary>
-        [JsonPropertyOrder ( 12 )]
+        [JsonPropertyOrder( 12 )]
         public string JSONVersion { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The start date of the match.
+        /// </summary>
+        [JsonPropertyOrder( 13 )]
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; }
 
+        /// <summary>
+        /// the end date of the match.
+        /// </summary>
+        [JsonPropertyOrder( 14 )]
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
 
-        [JsonPropertyOrder ( 15 )]
+        /// <summary>
+        /// The type of match, as specified by the Match Director.
+        /// </summary>
+        [JsonPropertyOrder( 15 )]
+        public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.LOCAL_MATCH;
+
+        /// <summary>
+        /// The COURSE OF FIRE definition used in the conduct of this match.
+        /// </summary>
+        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE. This property will be replaced.</remarks>
+        [JsonPropertyOrder( 16 )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         /// <summary>
         /// SetName of the ScoreConfig used in this match.
         /// NOTE: The name of the ScoreFormatCollection is specified in the Course of Fire 
         /// </summary>
-        [JsonPropertyOrder ( 16 )]
+        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own ScoreConfigName. This property will be replaced.</remarks>
+        [JsonPropertyOrder( 17 )]
         public string ScoreConfigName { get; set; }
 
         /// <summary>
         /// Name of the TargetCollection used in this match.
         /// </summary>
-        [JsonPropertyOrder ( 17 )]
+        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own TargetColle3citonName. This property will be replaced.</remarks>
+        [JsonPropertyOrder( 18 )]
         public string TargetCollectionName { get; set; }
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software that created or last updated this match.
+        /// </summary>
+        [JsonPropertyOrder( 19 )]
+        public string Creator { get; set; }
 
         /// <summary>
         /// The location of the match.
         /// </summary>
-        [JsonPropertyOrder ( 18 )]
+        [JsonPropertyOrder( 20 )]
         public Location Location { get; set; } = new Location();
 
         /// <summary>
@@ -154,7 +178,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
         /// </summary>
         /// <remarks>Should really rename this to Capabilities or AuthorizedCapabilities</remarks>
-        [JsonPropertyOrder ( 19 )]
+        [JsonPropertyOrder( 21 )]
         public List<MatchAuthorizationCapability> Authorization { get; set; } = new List<MatchAuthorizationCapability>();
 
         /// <summary>
@@ -212,23 +236,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         */
 
         /// <summary>
-        /// Contact information for the match, i.e. person's name, phone, email.
+        /// Contact information for the match administrators.
         /// </summary>
+        [JsonPropertyOrder( 31 )]
         public List<Contact> MatchContacts { get; set; } = new List<Contact>();
 
         /// <summary>
         /// A list of scoring system names used in this match.
         /// </summary>
+        [JsonPropertyOrder( 32 )]
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
         /// <summary>
-        /// The SharedKey is a defacto password. Allowing systems on the outside to
-        /// make change requests to the match, such as add athletes or teams, insert
-        /// shot data, etc.
+        /// Newtonsoft.json helper method, to determine if ScoreSystems property should be serialized.
         /// </summary>
-        [Obsolete( "Replaced with user based Authorization with RoleAuthorization" )]
-        public string SharedKey { get; set; } = String.Empty;
-
+        /// <returns></returns>
         public bool ShouldSerializeScoringSystems() {
             return ScoringSystems != null && ScoringSystems.Count > 0;
         }
@@ -236,13 +258,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The type of scoring system used in this match.
         /// </summary>
+        [JsonPropertyOrder( 33 )]
         [DefaultValue( ScoringSystem.UNKNOWN )]
         public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
 
-		/// <summary>
-		/// String holding the software (Orion Scoring System) and Version number of the software.
-		/// </summary>
-		public string Creator { get; set; }
+        /// <summary>
+        /// A list of MatchHtmlReports (e.g. pressrelease.html) that exist for this match.
+        /// </summary>
+        public List<MatchHtmlReport> HtmlReports { get; set; } = new List<MatchHtmlReport>();
+
+        /// <summary>
+        /// Newtonsoft.json helper method, to determine if HtmlReports property should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeHtmlReports() {
+            return HtmlReports is not null && HtmlReports.Count > 0;
+        }
+
+        /// <summary>
+        /// The SharedKey is a defacto password. Allowing systems on the outside to
+        /// make change requests to the match, such as add athletes or teams, insert
+        /// shot data, etc.
+        /// </summary>
+        [JsonPropertyOrder( 50 )]
+        [Obsolete( "Replaced with user based Authorization with RoleAuthorization" )]
+        public string SharedKey { get; set; } = String.Empty;
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        [JsonPropertyOrder( 99 )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Helper function that indicates if this Match is currently going on. Which is 
@@ -256,16 +302,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
-		public override string ToString() {
+        /// <inheritdoc />
+        public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "MatchDetail for " );
             foo.Append( Name );
             return foo.ToString();
         }
-
-        /// <summary>
-        /// UTC time the match data was last updated.
-        /// </summary>
-        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

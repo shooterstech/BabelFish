@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
-using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
@@ -20,7 +14,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         public OrionMatchAPIClient() : base() {
             //enable in memory cache
-			IgnoreInMemoryCache = false;
+            IgnoreInMemoryCache = false;
 
             //OrionMatchAPIClient does not support file system cache
             LocalStoreDirectory = null;
@@ -96,7 +90,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        public async Task<GetMatchAbstractResponse> GetMatchAsync( MatchID matchid, UserAuthentication? credentials = null) {
+        public async Task<GetMatchAbstractResponse> GetMatchAsync( MatchID matchid, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetMatchPublicAsync( matchid );
             } else {
@@ -106,9 +100,9 @@ namespace Scopos.BabelFish.APIClients {
 
         public async Task<GetMatchAbstractResponse> GetMatchAsync( GetMatchAbstractRequest requestParameters ) {
             if (requestParameters is GetMatchPublicRequest)
-                return await this.GetMatchPublicAsync(( GetMatchPublicRequest )requestParameters );
+                return await this.GetMatchPublicAsync( (GetMatchPublicRequest)requestParameters );
             else if (requestParameters is GetMatchAuthenticatedRequest)
-                return await this.GetMatchAuthenticatedAsync(( GetMatchAuthenticatedRequest )requestParameters );
+                return await this.GetMatchAuthenticatedAsync( (GetMatchAuthenticatedRequest)requestParameters );
             else
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
@@ -125,9 +119,9 @@ namespace Scopos.BabelFish.APIClients {
             GetResultListPublicResponse response = new GetResultListPublicResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
-			await response.PostResponseProcessingAsync().ConfigureAwait( false );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
-			return response;
+            return response;
         }
 
         /// <summary>
@@ -149,9 +143,9 @@ namespace Scopos.BabelFish.APIClients {
             GetResultListAuthenticatedResponse response = new GetResultListAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
-			await response.PostResponseProcessingAsync().ConfigureAwait( false );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
-			return response;
+            return response;
         }
 
         /// <summary>
@@ -324,9 +318,9 @@ namespace Scopos.BabelFish.APIClients {
             GetResultCOFAuthenticatedResponse response = new GetResultCOFAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
-			await response.PostResponseProcessingAsync().ConfigureAwait( false );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
-			return response;
+            return response;
         }
 
         /// <summary>
@@ -353,9 +347,9 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        public async Task<GetResultCOFAbstractResponse> GetResultCourseOfFireDetailAsync( GetResultCOFAbstractRequest requestParameters) {
-            if (requestParameters is GetResultCOFPublicRequest) 
-                return await this.GetResultCourseOfFireDetailPublicAsync( (GetResultCOFPublicRequest)(requestParameters));
+        public async Task<GetResultCOFAbstractResponse> GetResultCourseOfFireDetailAsync( GetResultCOFAbstractRequest requestParameters ) {
+            if (requestParameters is GetResultCOFPublicRequest)
+                return await this.GetResultCourseOfFireDetailPublicAsync( (GetResultCOFPublicRequest)(requestParameters) );
             else if (requestParameters is GetResultCOFAuthenticatedRequest)
                 return await this.GetResultCourseOfFireDetailAuthenticatedAsync( (GetResultCOFAuthenticatedRequest)requestParameters );
             else
@@ -392,10 +386,10 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         public async Task<MatchSearchAbstractResponse> GetMatchSearchAsync( MatchSearchAbstractRequest requestParameters ) {
-            if (requestParameters is MatchSearchPublicRequest )
-                return await this.GetMatchSearchPublicAsync((MatchSearchPublicRequest)requestParameters);
+            if (requestParameters is MatchSearchPublicRequest)
+                return await this.GetMatchSearchPublicAsync( (MatchSearchPublicRequest)requestParameters );
             else if (requestParameters is MatchSearchAuthenticatedRequest)
-                return await this.GetMatchSearchAuthenticatedAsync((MatchSearchAuthenticatedRequest)requestParameters);
+                return await this.GetMatchSearchAuthenticatedAsync( (MatchSearchAuthenticatedRequest)requestParameters );
             else
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
@@ -494,53 +488,53 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
 
-		#endregion
+        #endregion
 
-		#region League API CAlls
-		/// <summary>
-		/// Get League Detail API
-		/// </summary>
-		/// <param name="requestParameters">GetMatchRequest object</param>
-		public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( GetLeaguePublicRequest requestParameters ) {
+        #region League API CAlls
+        /// <summary>
+        /// Get League Detail API
+        /// </summary>
+        /// <param name="requestParameters">GetMatchRequest object</param>
+        public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( GetLeaguePublicRequest requestParameters ) {
 
-			GetLeaguePublicResponse response = new GetLeaguePublicResponse( requestParameters );
+            GetLeaguePublicResponse response = new GetLeaguePublicResponse( requestParameters );
 
-			await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
 
-			return response;
-		}
+            return response;
+        }
 
-		/// <summary>
-		/// Get League Detail API
-		/// </summary>
-		/// <param name="leagueId"></param>
-		public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( MatchID ? leagueId ) {
-			var request = new GetLeaguePublicRequest( leagueId );
+        /// <summary>
+        /// Get League Detail API
+        /// </summary>
+        /// <param name="leagueId"></param>
+        public async Task<GetLeaguePublicResponse> GetLeagueDetailPublicAsync( MatchID? leagueId ) {
+            var request = new GetLeaguePublicRequest( leagueId );
 
-			return await GetLeagueDetailPublicAsync( request ).ConfigureAwait( false );
-		}
+            return await GetLeagueDetailPublicAsync( request ).ConfigureAwait( false );
+        }
 
-		/// <summary>
-		/// Get League Games API
-		/// </summary>
-		/// <param name="requestParameters">GetMatchRequest object</param>
-		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( GetLeagueGamesPublicRequest requestParameters ) {
+        /// <summary>
+        /// Get League Games API
+        /// </summary>
+        /// <param name="requestParameters">GetMatchRequest object</param>
+        public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( GetLeagueGamesPublicRequest requestParameters ) {
 
-			GetLeagueGamesPublicResponse response = new GetLeagueGamesPublicResponse( requestParameters );
+            GetLeagueGamesPublicResponse response = new GetLeagueGamesPublicResponse( requestParameters );
 
-			await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
 
-			return response;
-		}
+            return response;
+        }
 
-		/// <summary>
-		/// Get League Games API
-		/// </summary>
-		/// <param name="leagueId"></param>
-		public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( MatchID ? leagueId ) {
-			var request = new GetLeagueGamesPublicRequest( leagueId );
+        /// <summary>
+        /// Get League Games API
+        /// </summary>
+        /// <param name="leagueId"></param>
+        public async Task<GetLeagueGamesPublicResponse> GetLeagueGamesPublicAsync( MatchID? leagueId ) {
+            var request = new GetLeagueGamesPublicRequest( leagueId );
 
-			return await GetLeagueGamesPublicAsync( request ).ConfigureAwait( false );
+            return await GetLeagueGamesPublicAsync( request ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -560,7 +554,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Get League Teams API
         /// </summary>
         /// <param name="leagueId"></param>
-        public async Task<GetLeagueTeamsPublicResponse> GetLeagueTeamsPublicAsync( MatchID ? leagueId ) {
+        public async Task<GetLeagueTeamsPublicResponse> GetLeagueTeamsPublicAsync( MatchID? leagueId ) {
             var request = new GetLeagueTeamsPublicRequest( leagueId );
 
             return await GetLeagueTeamsPublicAsync( request ).ConfigureAwait( false );
@@ -590,14 +584,19 @@ namespace Scopos.BabelFish.APIClients {
             return await GetLeagueTeamDetailPublicAsync( request ).ConfigureAwait( false );
         }
 
-		public async Task<GetPressReleaseGenerationAuthenticatedResponse> GetPressReleaseGenerationAuthenticatedAsync(GetPressReleaseGenerationAuthenticatedRequest requestParameters)
-		{
-			GetPressReleaseGenerationAuthenticatedResponse response = new GetPressReleaseGenerationAuthenticatedResponse(requestParameters);
+        public async Task<GetPressReleaseGenerationAuthenticatedResponse> GetPressReleaseGenerationAuthenticatedAsync( GetPressReleaseGenerationAuthenticatedRequest requestParameters ) {
+            /*
+             * EKA Note January 2026
+             * 
+             * This method should likely be worked in with ( not sure how yet ) with the Scopos.BabelFish.DataModel.OrionMatch.MatchHtmlReport calss..
+             * As this method generates a press release, and that class stores where the pressrelease is at.
+             */
+            GetPressReleaseGenerationAuthenticatedResponse response = new GetPressReleaseGenerationAuthenticatedResponse( requestParameters );
 
-			await this.CallAPIAsync(requestParameters, response);
+            await this.CallAPIAsync( requestParameters, response );
 
-			return response;
-		}
+            return response;
+        }
 
         public async Task<PostSendPressReleaseEmailAuthenticatedResponse> PostSendPressReleaseEmailAsync( PostSendPressReleaseEmailAuthenticatedRequest requestParameters ) {
             PostSendPressReleaseEmailAuthenticatedResponse response = new PostSendPressReleaseEmailAuthenticatedResponse( requestParameters );
