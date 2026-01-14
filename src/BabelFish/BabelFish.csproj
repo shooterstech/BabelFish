@@ -7,16 +7,16 @@
     <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
     <AssemblyVersion>1.11.0</AssemblyVersion>
     <!-- Update with each build -->
-    <FileVersion>1.11.3.9</FileVersion>
+    <FileVersion>1.11.3.10</FileVersion>
     <!-- Updaet with each release, may use -alpha, -beta -->
-    <Version>1.11.3.9</Version>
+    <Version>1.11.3.10</Version>
     <PackageId>Scopos.BabelFish.Core</PackageId>
     <Authors>Scopos LLC</Authors>
     <Company>Scopos LLC</Company>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageDescription>Dot Net Library that provides a data model and façade for Scopos' REST API interface.</PackageDescription>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>scopos;shooting;orion;athena;rezults;api;reconfigurable rulebook</PackageTags>
+    <PackageTags>scopos;shooting sports;orion;athena;rezults;api;reconfigurable rulebook</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Scopos' BabelFish API Client</Title>
     <Description>BabelFish is Scopos' .net library that provides a shooting sports data model, facade for Scopos' Rest API, access to Reconfigurable Rulebook definition files, and Scopos' data actor classes for Result Engine and Result List Formatter. An x-api-key from Scopos is needed
@@ -24,6 +24,10 @@
     <PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
+    <PackageReleaseNotes>
+        See full changelog:
+        https://github.com/shooterstech/BabelFish/CHANGELOG.md
+    </PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\*.png">
@@ -35,6 +39,7 @@
     <PackageReference Include="AwsSignatureVersion4" Version="4.0.6" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
     <PackageReference Include="DocumentFormat.OpenXml.Framework" Version="3.3.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.3.4" />
