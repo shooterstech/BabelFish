@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             MatchHtmlReport report = CreateInstance();
             report.ReportType = "pressrelease";
-            report.Uri = $"https://cdn.scopos.tech/matches/{matchId}/{reportType}.html";
+            report.Uri = $"https://cdn.scopos.tech/matches/{matchId.GetParentMatchID()}/{reportType}.html";
 
             if (await report.IsValidUriAsync()) {
                 try {

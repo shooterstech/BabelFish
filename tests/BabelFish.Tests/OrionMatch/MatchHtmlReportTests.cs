@@ -53,12 +53,12 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task HappyPathFactoryAsync() {
 
             //eEal Match ID, should work
-            var mId = new MatchID( "1.1.2025110314542689.1" );
+            var mId = new MatchID( "1.1.2025110314542689.1001" );
 
             var report = await MatchHtmlReport.FactoryAsync( mId );
 
             Assert.IsNotNull( report );
-            Assert.AreEqual( $"https://cdn.scopos.tech/matches/{mId}/pressrelease.html", report.Uri );
+            Assert.AreEqual( $"https://cdn.scopos.tech/matches/1.1.2025110314542689.1/pressrelease.html", report.Uri );
             Assert.AreEqual( "Haughton AFJROTC Tops Southwestern Randolph AJROTC for Fourth Consecutive Win", report.Title );
             Assert.IsTrue( await report.IsValidUriAsync() );
             Assert.AreNotEqual( string.Empty, await report.GetHtmlReportAsync() );
