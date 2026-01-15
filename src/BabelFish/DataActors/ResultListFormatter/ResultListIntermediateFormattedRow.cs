@@ -577,8 +577,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case "OptionText1":
 
                     if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string optionText1 )) {
-                        optionText1.Replace( _fields );
-                        return optionText1;
+                        return optionText1.Replace( _fields );
                     }
 
                     return string.Empty;
@@ -586,8 +585,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case "OptionText2":
 
                     if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string optionText2 )) {
-                        optionText2.Replace( _fields );
-                        return optionText2;
+                        return optionText2.Replace( _fields );
                     }
 
                     return string.Empty;
@@ -595,8 +593,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case "OptionText3":
 
                     if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string optionText3 )) {
-                        optionText3.Replace( _fields );
-                        return optionText3;
+                        return optionText3.Replace( _fields );
                     }
 
                     return string.Empty;
@@ -1292,8 +1289,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (_SubRowIndex < SubRowCount)
                     return true;
 
-                if (_SubRowIndex == SubRowCount && this.HasSpanningRow)
-                    return true;
+                if (_SubRowIndex == SubRowCount && this.HasSpanningRow) {
+                    //The spanning row must have at least one non-empty string cell value in order to show it
+                    foreach (var cv in this.GetShownRow()) {
+                        if (!string.IsNullOrEmpty( cv.Text )) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
 
                 return false;
 

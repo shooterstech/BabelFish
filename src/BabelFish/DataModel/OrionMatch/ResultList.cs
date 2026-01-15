@@ -1,24 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Converters.Microsoft;
-using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
-using NLog;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
-        private ResultStatus LocalStatus = ResultStatus.UNOFFICIAL;
+        private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -27,12 +15,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// The name of the match, that this Result List was generated from.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
+        public string MatchName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The name of this Result List.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
+        public string ResultName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// EventName is the name of the top level Event for this Result List.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        public string EventName { get; set; } = string.Empty;
+
+        /// <summary>
         /// If this is a local match, returns the local match id.
         /// If this is from a virtual match, retur s the virtual match id.
         /// </summary>
+        /// <remarks>This value is not serialized.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-		public string MatchID {
+        public string MatchID {
             get {
                 if (this.Metadata.Count == 0) {
                     //This shouldn't happen
@@ -45,7 +52,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //Likely a Virtual Match
                 foreach (var mId in this.Metadata.Keys) {
                     if (Scopos.BabelFish.DataModel.OrionMatch.MatchID.TryParse( mId, out var matchID )) {
-                        if ( matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup ) {
+                        if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
                             return mId;
                         }
                     }
@@ -58,23 +65,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Set name of the Ranking Rule definition used to rank this result list.
-        /// </summary>
-        [JsonPropertyOrder ( 2 )]
-        public string RankingRuleDef { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Set name of the Result List Format definition to use when displaying this result list.
-        /// </summary>
-        [JsonPropertyOrder ( 2 )]
-        public string ResultListFormatDef { get; set; } = string.Empty;
-
-        /// <summary>
         /// Indicates the completion status of this Result List. 
         /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
-        [JsonProperty( DefaultValueHandling = DefaultValueHandling.Include )]
+        /// <remarks>This value is calculated from .MetaData and is also serialzied.</remarks>
+        [G_NS.JsonProperty( Order = 4, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public ResultStatus Status {
             get {
                 if (Metadata == null || Metadata.Count == 0)
@@ -94,11 +89,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //Find the parent's meta data
                 ResultListMetadata parentMetaData = null;
                 MatchID matchId;
-                foreach( var meta in Metadata) {
+                foreach (var meta in Metadata) {
                     //The Key is the match id in string form
                     try {
                         matchId = new MatchID( meta.Key );
-                        if ( matchId.VirtualMatchParent) {
+                        if (matchId.VirtualMatchParent) {
                             parentMetaData = meta.Value;
                             break;
                         }
@@ -118,7 +113,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //If the parent's end date is in the past, or it's status is official, then the VM status is official
                 if (parentMetaData != null) {
                     if (parentMetaData.EndDate < DateTime.Today)
-                        return ResultStatus.OFFICIAL; 
+                        return ResultStatus.OFFICIAL;
 
                     if (parentMetaData.Status == ResultStatus.OFFICIAL)
                         return ResultStatus.OFFICIAL;
@@ -149,10 +144,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// The MatchID that this Result List was generated from. It is called ParentID in case this is
+        /// from a Virtual Match.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
+        public string ParentID { get; set; } = string.Empty;
+
+        /// <summary>
         /// The start date that the underlying event, in this Result List, started on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        /// <remarks>This value is calculated from .MetaData and is also serialzied.</remarks>
+        [G_NS.JsonProperty( Order = 6, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate {
             get {
@@ -160,7 +164,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     return DateTime.Today;
 
                 DateTime startDate = DateTime.MaxValue;
-                foreach( var rlmd in Metadata.Values ) {
+                foreach (var rlmd in Metadata.Values) {
                     if (rlmd.StartDate < startDate)
                         startDate = rlmd.StartDate;
                 }
@@ -172,7 +176,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The end date that the underlying event, in this Result List, ended on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
+        /// <remarks>This value is calculated from .MetaData and is also serialzied.</remarks>
+        [G_NS.JsonProperty( Order = 7, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate {
             get {
@@ -189,131 +195,44 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// The Version string of the JSON document
-        /// </summary>
-        [JsonPropertyOrder ( 6 )]
-        public string JSONVersion { get; set; } = string.Empty;
-
-        [JsonPropertyOrder ( 7 )]
-        [JsonInclude]
-        [DefaultValue( false )]
-        public bool Team { get; set; } = false;
-
-        [JsonPropertyOrder ( 8 )]
-        public string ParentID { get; set; } = string.Empty;
-
-        [JsonPropertyOrder ( 50 )]
-        public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
-		
-        /// <inheritdoc />
-		public List<IRLIFItem> GetAsIRLItemsList() {
-            return Items.ToList<IRLIFItem>();
-        }
-
-        [JsonPropertyOrder( 10 )]
-        public string MatchName { get; set; } = string.Empty;
-
-        [JsonPropertyOrder ( 11 )]
-        public string ResultName { get; set; } = string.Empty;
-
-        /// <summary>
-        /// UTC time that this Result List was updated.
-        /// </summary>
-        [JsonPropertyOrder( 12 )]
-        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
-        /// The orion account or at home account who owns this match.
-        /// </summary>
-        /// <example>OrionAcct000001 or AtHomeAcct123456</example>
-        [Obsolete( "Use .MetaData.OwnerId")]
-        [JsonPropertyOrder ( 13 )]
-        public string OwnerId { get; set; } = string.Empty;
-
-        /// <summary>
         /// Set to true if this ResultList is considered one of the most important and should be featured
         /// </summary>
-        [JsonPropertyOrder ( 14 )]
-        [JsonInclude]
+        [G_NS.JsonProperty( Order = 8, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( false )]
         public bool Primary { get; set; } = false;
 
-        [JsonPropertyOrder ( 15 )]
-        public string UniqueID { get; set; } = string.Empty;
-
         /// <summary>
-        /// EventName is the name of the top level Event for this Result List.
+        /// Indicates if this Result List is for a team event.
         /// </summary>
-        [JsonPropertyOrder ( 16 )]
-        public string EventName { get; set; } = string.Empty;
-
-        [JsonPropertyOrder ( 17 )]
-        public string ResultListID { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 9 )]
+        [DefaultValue( false )]
+        public bool Team { get; set; } = false;
 
         /// <summary>
         /// If True, Participants are listed in order of their projected score. 
         /// Should only ever be true if Status is FUTURE or INTERMEDIATE
         /// </summary>
-        [DefaultValue(false)]
-        [JsonInclude]
+        [G_NS.JsonProperty( Order = 10 )]
+        [DefaultValue( false )]
         public bool Projected { get; set; } = false;
 
         /// <summary>
         /// Indicates if the Result List has been truncated. and the values in .Items are not all of the results.
         /// 
-        /// Currently known to be set in the Reat API Get Result List lambda, when pulling result lists
+        /// <para>Currently known to be set in the Reat API Get Result List lambda, when pulling result lists
         /// from dynamo that are too large. There is some remaining question if this field is needed. In 
-        /// theory .Partial is the opposite of .HasMoreItems
+        /// theory .Partial is the opposite of .HasMoreItems</para>
         /// </summary>
+        [G_NS.JsonProperty( Order = 11 )]
         public bool Partial { get; set; } = false;
 
         /// <summary>
-        /// The SetName of the Course of Fire
+        /// UTC time that this Result List was updated.
         /// </summary>
-        public string CourseOfFireDef { get; set; } = string.Empty;
-
-		/// <summary>
-		/// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
-		/// <para>NOTE: The SCORE FORMAT COLLECTION is specified within the RESULT LIST FORMAT definition.</para>
-		/// </summary>
-		public string ScoreConfigName { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        [DefaultValue( "" )]
-        [G_STJ_SER.JsonConverter( typeof( NextTokenConverter ) )]
-        public string NextToken { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        [DefaultValue(0)]
-        public int Limit { get; set; } = 0;
-
-        /// <inheritdoc />
-        [DefaultValue( false )]
-        public bool HasMoreItems {
-            get {
-                return !string.IsNullOrEmpty( NextToken );
-            }
-        }
-
-        /// <inheritdoc />
-        [DefaultValue( "" )]
-        public string PublishTransactionId { get; set; } = string.Empty;
-
-        /// <inheritdoc />
-        [DefaultValue( 0 )]
-        public int TransactionSequence { get; set; } = 0;
-
-        /// <inheritdoc />
-        [DefaultValue( 1 )]
-        public int TransactionCount { get; set; } = 1;
-
-        /// <summary>
-        /// String holding the software (Orion Scoring System) and Version number of the software.
-        /// </summary>
-        [Obsolete( "Use .Metadata.Creator" )]
-		public string Creator { get; set; }
+        [G_NS.JsonProperty( Order = 12 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Key is the local match ID.
@@ -322,7 +241,139 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// When a Virtual Match is merged, each parent / child ID will be listed.
         /// Local Matches will have exactly one value.
         /// </summary>
+        [G_NS.JsonProperty( Order = 15 )]
         public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
+
+        /// <summary>
+        /// Set name of the RANKING RULE definition used to rank this result list.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 20 )]
+        public string RankingRuleDef { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The SetName of the Course of Fire
+        /// </summary>
+        [G_NS.JsonProperty( Order = 21 )]
+        public string CourseOfFireDef { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
+        /// <para>NOTE: The SCORE FORMAT COLLECTION is specified within the RESULT LIST FORMAT definition.</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 22 )]
+        public string ScoreConfigName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Set name of the RESULT LIST FORMAT definition to use when displaying this result list.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 23 )]
+        public string ResultListFormatDef { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 24 )]
+        public Dictionary<UserDefinedFieldNames, string> UserDefinedText { get; set; } = new Dictionary<UserDefinedFieldNames, string>() {
+            [UserDefinedFieldNames.USER_DEFINED_FIELD_1] = string.Empty,
+            [UserDefinedFieldNames.USER_DEFINED_FIELD_2] = string.Empty,
+            [UserDefinedFieldNames.USER_DEFINED_FIELD_3] = string.Empty,
+        };
+
+        /// <summary>
+        /// Newtonsoft.json helper method, to determine if UserDefinedText should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeUserDefinedText() {
+            //Serialized when UserDefinedText has at least one value that's not an empty string.
+            return (UserDefinedText is not null) &&
+                ((UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string text1 ) && !string.IsNullOrEmpty( text1 )) ||
+                (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string text2 ) && !string.IsNullOrEmpty( text2 )) ||
+                (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )));
+        }
+
+        /// <summary>
+        /// The ranked (and should be sorted) list of participants.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 30 )]
+        public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
+
+        /// <inheritdoc />
+        public List<IRLIFItem> GetAsIRLItemsList() {
+            return Items.ToList<IRLIFItem>();
+        }
+
+        /// <summary>
+        /// The Version string of the JSON document
+        /// </summary>
+        [G_NS.JsonProperty( Order = 41 )]
+        public string JSONVersion { get; set; } = string.Empty;
+
+        #region ITokenItems implementation
+        /// <inheritdoc />
+        [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 50 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.NextTokenConverter ) )]
+        public string NextToken { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 51 )]
+        [DefaultValue( 0 )]
+        public int Limit { get; set; } = 0;
+
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 52 )]
+        [DefaultValue( false )]
+        public bool HasMoreItems {
+            get {
+                return !string.IsNullOrEmpty( NextToken );
+            }
+        }
+        #endregion
+
+        #region IPublishTransactions Implementation
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 55 )]
+        [DefaultValue( "" )]
+        public string PublishTransactionId { get; set; } = string.Empty;
+
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 56 )]
+        [DefaultValue( 0 )]
+        public int TransactionSequence { get; set; } = 0;
+
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 57 )]
+        [DefaultValue( 1 )]
+        public int TransactionCount { get; set; } = 1;
+        #endregion
+
+
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 90 )]
+        [Obsolete( "Use .Metadata.Creator" )]
+        public string Creator { get; set; }
+
+        /// <summary>
+        /// The orion account or at home account who owns this match.
+        /// </summary>
+        /// <example>OrionAcct000001 or AtHomeAcct123456</example>
+        [Obsolete( "Use .MetaData.OwnerId" )]
+        [G_NS.JsonProperty( Order = 91 )]
+        public string OwnerId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// EKA Note Jan 2026: Not really sure what this property does. Likely a artjifact of saveing Result Lists in dynamo.
+        /// </summary>
+        [Obsolete( "Likely will remove soon." )]
+        [G_NS.JsonProperty( Order = 92 )]
+        public string UniqueID { get; set; } = string.Empty;
+
+        /// <summary>
+        /// EKA Note Jan 2026: Not really sure what this property does. Likely a artjifact of saveing Result Lists in dynamo.
+        /// </summary>
+        [Obsolete( "Likely will remove soon." )]
+        [G_NS.JsonProperty( Order = 93 )]
+        public string ResultListID { get; set; } = string.Empty;
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef is empty, known to happen with older versions of Orion. </exception>
@@ -366,6 +417,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
         }
 
+        /// <summary>
+        /// Facade property that returns the same as .ResultName
+        /// </summary>
+        /// <remarks>Property is not serialized.</remarks>
         [G_NS.JsonIgnore]
         public string Name {
             get {
@@ -375,9 +430,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public override string ToString() {
-            return $"ResultList for {ResultName}" ;
+            return $"ResultList for {ResultName}";
         }
 
+        /// <summary>
+        /// Attempts to fine the ResultEvent in the list of Items, by the Result Cof ID.
+        /// </summary>
+        /// <param name="resultCofId"></param>
+        /// <param name="resultEvent"></param>
+        /// <returns></returns>
         public bool TryGetByResultCOFID( string resultCofId, out ResultEvent resultEvent ) {
 
             foreach (var re in this.Items) {

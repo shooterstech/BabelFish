@@ -187,6 +187,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonProperty( Order = 12 )]
         public ShowWhenBase ShowSpanningWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
 
+        /// <summary>
+        /// Newtonsoft.json helper method to determine when the property ShowSpanningWhen is serialized.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeShowSpanningWhen() {
 
             //Dont serialize ShowWhen if it says to always show

@@ -460,6 +460,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultList = resultListResponse.ResultList;
             var resultEventName = resultList.EventName;
 
+            resultList.UserDefinedText[UserDefinedFieldNames.USER_DEFINED_FIELD_1] = "Bib: {CompetitorNumber}, Coach {Coach}";
+
             //Get the ResultListFormat to use for formatting
             var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
             //var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
@@ -495,14 +497,14 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Console.WriteLine();
 
             foreach (var row in rlf.ShownRows) {
-                foreach (var subrow in row) {
-                    foreach (var cv in subrow.GetShownRow()) {
+                foreach (var multiLineRow in row) {
+                    foreach (var cv in multiLineRow.GetShownRow()) {
                         Console.Write( $"{cv.Text}, " );
                     }
                     //Console.Write( " : " );
-                    //Console.Write( subrow.GetParticipant().RemarkList.ToString() );
+                    //Console.Write( multiLineRow.GetParticipant().RemarkList.ToString() );
                     //Console.Write( " : " );
-                    //Console.Write( string.Join( ", ", subrow.GetClassList() ) );
+                    //Console.Write( string.Join( ", ", multiLineRow.GetClassList() ) );
                     Console.WriteLine();
                 }
             }
