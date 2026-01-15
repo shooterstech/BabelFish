@@ -460,6 +460,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultList = resultListResponse.ResultList;
             var resultEventName = resultList.EventName;
 
+            resultList.UserDefinedText[UserDefinedFieldNames.USER_DEFINED_FIELD_1] = "Bib: {CompetitorNumber}, Coach {Coach}";
+
             //Get the ResultListFormat to use for formatting
             var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
             //var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );

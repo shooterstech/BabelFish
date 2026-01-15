@@ -269,19 +269,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 23 )]
         public string ResultListFormatDef { get; set; } = string.Empty;
 
-        /// <summary>
-        /// On RESULT LIST FORMAT definitions that provided for the option, the user (usually the Match Director) may specify their own
-        /// interpolated values for designated fields. These are known as UserDefinedText. There are at most three user defined fields in a
-        /// RESULT LIST FORMAT (man definitions do not have any).
-        /// <para>The most common example is a demographic spanning text field.</para>
-        /// <para>Text values are interpolated with any common field or user defined field. The list is common fields is at
-        /// <see href="https://support.scopos.tech/index.html?definition-resultlistfield.html">support.scopos.tech</see></para>
-        /// <para>Example text values:</para>
-        /// <list type="bullet">
-        /// <item>"Competitor Number: {CompetitorNumber}, Hometown: {Hometown}</item>
-        /// <item>"Club: {Organization}, Coach: {Coach}</item>
-        /// </list>
-        /// </summary>
+        /// <inheritdoc />
         [G_NS.JsonProperty( Order = 24 )]
         public Dictionary<UserDefinedFieldNames, string> UserDefinedText { get; set; } = new Dictionary<UserDefinedFieldNames, string>() {
             [UserDefinedFieldNames.USER_DEFINED_FIELD_1] = string.Empty,

@@ -48,6 +48,21 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             if (this.UserProfileLookup is null)
                 this.UserProfileLookup = new BaseUserProfileLookup();
+
+            // Read in the user defined text from the Result List.
+            if (this.RLIFList.UserDefinedText != null) {
+                if (this.RLIFList.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string text1 )) {
+                    this.UserDefinedText[UserDefinedFieldNames.USER_DEFINED_FIELD_1] = text1;
+                }
+
+                if (this.RLIFList.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string text2 )) {
+                    this.UserDefinedText[UserDefinedFieldNames.USER_DEFINED_FIELD_2] = text2;
+                }
+
+                if (this.RLIFList.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 )) {
+                    this.UserDefinedText[UserDefinedFieldNames.USER_DEFINED_FIELD_3] = text3;
+                }
+            }
         }
 
         /// <summary>

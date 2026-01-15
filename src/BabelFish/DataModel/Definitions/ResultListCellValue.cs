@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class ResultListCellValue : IReconfigurableRulebookObject {
@@ -40,9 +40,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 5 )]
         public List<ClassSet> ClassSet { get; set; } = new List<ClassSet>();
 
+        /// <summary>
+        /// Helper property to determine if the value of this ResultListCellValue is effective empty.
+        /// </summary>
+        [G_NS.JsonIgnore]
         public bool IsEmpty {
             get {
-                return (string.IsNullOrEmpty( this.Text )) 
+                return (string.IsNullOrEmpty( this.Text ))
                     && (this.LinkTo == LinkToOption.None)
                     && (this.ClassSet is null || this.ClassSet.Count == 0);
             }

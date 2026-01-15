@@ -577,8 +577,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case "OptionText1":
 
                     if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string optionText1 )) {
-                        optionText1.Replace( _fields );
-                        return optionText1;
+                        return optionText1.Replace( _fields );
                     }
 
                     return string.Empty;
@@ -586,8 +585,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case "OptionText2":
 
                     if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string optionText2 )) {
-                        optionText2.Replace( _fields );
-                        return optionText2;
+                        return optionText2.Replace( _fields );
                     }
 
                     return string.Empty;
@@ -595,8 +593,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 case "OptionText3":
 
                     if (this._resultListFormatted.UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string optionText3 )) {
-                        optionText3.Replace( _fields );
-                        return optionText3;
+                        return optionText3.Replace( _fields );
                     }
 
                     return string.Empty;
