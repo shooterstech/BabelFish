@@ -19,30 +19,6 @@ param(
 $winScpDll = "C:\Program Files (x86)\WinSCP\WinSCPnet.dll"
 Add-Type -Path $winScpDll
 
-#here we're getting the MSBuild path, this is so the SHFB csproj is interpreted properly...
-function Get-MSBuildPath {
-    $vsRoot = "C:\Program Files\Microsoft Visual Studio"
-
-    # Search all editions and versions for MSBuild.exe
-    $msbuildCandidates = Get-ChildItem -Path $vsRoot -Directory -Recurse -ErrorAction SilentlyContinue |
-        Where-Object { $_.Name -eq "Bin" -and (Test-Path "$($_.FullName)\MSBuild.exe") } |
-        Select-Object -ExpandProperty FullName
-
-    if ($msbuildCandidates.Count -gt 0) {
-        # Pick the newest version by sorting the path (VS versions sort naturally)
-        $best = $msbuildCandidates | Sort-Object -Descending | Select-Object -First 1
-        return "$best\MSBuild.exe"
-    }
-
-    # Fallback: PATH
-    $fromPath = Get-Command msbuild.exe -ErrorAction SilentlyContinue
-    if ($fromPath) {
-        return $fromPath.Source
-    }
-
-    throw "MSBuild.exe not found. Install Visual Studio or Build Tools."
-}
-
 #This will create the Sandcastle Build from the BabelFish build file.
 
 # Ensure the SHFB project file path is provided and exists
