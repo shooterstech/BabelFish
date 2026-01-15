@@ -77,14 +77,14 @@ For BabelFish Version $Version
     exit 1
 }
 
-#Confirm the website is ready to go, things propagated properly.
-Write-Host "Website has been built, make sure that things are the way you want!" -ForegroundColor Green
-
 Write-Host "Adding Google analytics to helpsite."
 $scriptPath = Join-Path -Path $PSScriptRoot -ChildPath "AddGAToHelpsite.ps1"
 & $scriptPath
 
-$confirmation = Read-Host -Prompt "Do you want to continue to Delte the site and re-build it? Type 'Y' to proceed"
+#Confirm the website is ready to go, things propagated properly.
+Write-Host "Website has been built, make sure that things are the way you want!" -ForegroundColor Green
+
+$confirmation = Read-Host -Prompt "Do you want to continue to Delete the site and re-build it? Type 'Y' to proceed"
 if ($confirmation -eq 'Y' -or $confirmation -eq 'y') {
     Write-Host "Deleting Helpsite" -ForegroundColor Cyan
     # Place the rest of your script's logic here
