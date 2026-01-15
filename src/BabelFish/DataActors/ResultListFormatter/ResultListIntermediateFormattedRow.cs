@@ -1289,8 +1289,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 if (_SubRowIndex < SubRowCount)
                     return true;
 
-                if (_SubRowIndex == SubRowCount && this.HasSpanningRow)
-                    return true;
+                if (_SubRowIndex == SubRowCount && this.HasSpanningRow) {
+                    //The spanning row must have at least one non-empty string cell value in order to show it
+                    foreach (var cv in this.GetShownRow()) {
+                        if (!string.IsNullOrEmpty( cv.Text )) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
 
                 return false;
 
