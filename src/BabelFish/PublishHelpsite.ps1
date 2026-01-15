@@ -56,8 +56,8 @@ if (-not (Test-Path $SandcastleProjDir)) {
     exit 1
 }
 
-$msbuild = Get-MSBuildPath
-
+# $msbuild = Get-MSBuildPath
+$msbuild = "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe"
 Write-Host "Starting SHFB build for $SandcastleProjDir (Configuration: $SandcastleConfiguration)"
 
 # Execute the dotnet build command
