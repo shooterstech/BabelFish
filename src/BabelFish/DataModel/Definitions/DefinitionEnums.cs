@@ -492,22 +492,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// First optional user defined text field.
         /// </summary>
-        [Description( "UserDefinedField1" )]
-        [EnumMember( Value = "UserDefinedField1" )]
+        [Description( "OptionText1" )]
+        [EnumMember( Value = "OptionText1" )]
         USER_DEFINED_FIELD_1,
 
         /// <summary>
         /// Second optional user defined text field.
         /// </summary>
-        [Description( "UserDefinedField2" )]
-        [EnumMember( Value = "UserDefinedField2" )]
+        [Description( "OptionText2" )]
+        [EnumMember( Value = "OptionText2" )]
         USER_DEFINED_FIELD_2,
 
         /// <summary>
         /// Third optional user defined text field.
         /// </summary>
-        [Description( "UserDefinedField3" )]
-        [EnumMember( Value = "UserDefinedField3" )]
+        [Description( "OptionText3" )]
+        [EnumMember( Value = "OptionText3" )]
         USER_DEFINED_FIELD_3
     }
 
