@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataActors.Tournaments {
     public class AverageMethodConfiguration : MergeConfiguration {
 
@@ -24,5 +20,11 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// If true, scores with a DNF are excluded when calculating a participant's average.
         /// </summary>
         public bool ExcludeDNFFromAverage { get; set; } = false;
+
+        /// <summary>
+        /// Parameter that sets how many of the top scores to count towards a participant's average.
+        /// <para>A value of 0 (the default) means to count all scores.</para>
+        /// </summary>
+        public int CountTopScores { get; set; } = 0;
     }
 }

@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
+
+## [1.11.4] - 2026-01-00
+### Enhancements
+#### AverageMethod
+- Added configuration option to count only the top n number of scores when calculating a participant's average.
+
 ## [1.11.3] - 2026-01-15
 ### Enhancements
 #### Multiline Rows in RESULT LIST FORMAT

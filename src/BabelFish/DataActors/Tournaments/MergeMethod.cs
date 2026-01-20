@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using NLog;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
     public abstract class MergeMethod {
@@ -28,9 +24,9 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             MergeMethod mm;
 
-            switch ( mrl.Method ) {
+            switch (mrl.Method) {
                 case SumMethod.IDENTIFIER:
-                    mm = new SumMethod( tournamentMerger, (SumMethodConfiguration) mrl.Configuration );
+                    mm = new SumMethod( tournamentMerger, (SumMethodConfiguration)mrl.Configuration );
                     break;
 
                 case AverageMethod.IDENTIFIER:

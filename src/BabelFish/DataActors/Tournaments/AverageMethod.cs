@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
     public class AverageMethod : MergeMethod {
@@ -37,6 +34,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             EventScore mergedEventScore = new EventScore();
             int count = 0;
 
+            List<EventScore> listOfScores = new List<EventScore>();
             foreach (var resultListMember in TournamentMerger.ResultListsMembers) {
                 var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
 
@@ -49,25 +47,41 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                             continue;
                         }
 
-                        mergedEventScore.Score += eventScore.Score;
-                        count++;
-
-                        if (eventScore.Projected != null) {
-                            if (eventScore.Projected.IsZero) {
-                                mergedEventScore.Projected += eventScore.Score;
-                            } else {
-                                mergedEventScore.Projected += eventScore.Projected;
-                            }
-                        }
-
+                        listOfScores.Add( eventScore );
                     }
                 }
             }
 
+            //Order the listOfScores
+            CompareEventScore comparer = new CompareEventScore( MergeConfiguration.ScoreFormatCollectionDef, MergeConfiguration.ScoreConfigName );
+            listOfScores.Sort( comparer );
+
+            //Take the top n number of scores according to MergeConfiguration (if it even specified a value).
+            int takeTheseNumberOfScores = listOfScores.Count;
+            if (MergeConfiguration.CountTopScores > 0 && takeTheseNumberOfScores > MergeConfiguration.CountTopScores)
+                takeTheseNumberOfScores = MergeConfiguration.CountTopScores;
+
+            //Sum the scores
+            for (int i = 0; i < takeTheseNumberOfScores; i++) {
+                var eventScore = listOfScores[i];
+
+                mergedEventScore.Score += eventScore.Score;
+                count++;
+
+                if (eventScore.Projected != null) {
+                    if (eventScore.Projected.IsZero) {
+                        mergedEventScore.Projected += eventScore.Score;
+                    } else {
+                        mergedEventScore.Projected += eventScore.Projected;
+                    }
+                }
+            }
+
+            //Calculate the average
             mergedEventScore.Score /= count;
             mergedEventScore.Projected /= count;
 
-            re.ResultCofScores[ResultEvent.KeyForResultCofScore( TournamentMerger.Tournament.TournamentId, this.TopLevelEventname) ] = mergedEventScore;
+            re.ResultCofScores[ResultEvent.KeyForResultCofScore( TournamentMerger.Tournament.TournamentId, this.TopLevelEventname )] = mergedEventScore;
         }
     }
 }
