@@ -22,6 +22,10 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
         }
 
+
+        /// <summary>
+        /// Gets the MergeConfiguration instance in use.
+        /// </summary>
         public AverageMethodConfiguration MergeConfiguration {
             get {
                 return (AverageMethodConfiguration)_mergeConfiguration;

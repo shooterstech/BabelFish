@@ -6,6 +6,8 @@ All notable changes to BabelFish will be documented in this file.
 ### Enhancements
 #### AverageMethod
 - Added configuration option to count only the top n number of scores when calculating a participant's average.
+#### SumMethod
+- Added configuration option to count only the top n number of scores when calculating a participant's summation aggregate.
 
 ## [1.11.3] - 2026-01-15
 ### Enhancements

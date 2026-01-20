@@ -6,6 +6,12 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
 
+    /// <summary>
+    /// A TournamentMerger does the heavy lifting of merging Result Lists together.
+    /// <para>The <see cref="MergeAsync"/> in particular (after initialization) identifies participants that are
+    /// in one or more of the Tournament <see cref="ResultListMember">members</see>, and then asks the <see cref="MergeMethod"/> to
+    /// perform its merging calculation.</para>
+    /// </summary>
     public class TournamentMerger {
 
         public Tournament Tournament { get; private set; }
@@ -48,9 +54,20 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// </summary>
         public RankingRule RankingRule { get; set; } = null;
 
+        /// <summary>
+        /// Constructor. Purposefully private, users must call <see cref="FactoryAsync(Tournament, string)"/> instead.
+        /// </summary>
         private TournamentMerger() {
         }
 
+        /// <summary>
+        /// Factory method to construct a new TournamentMerger instance.
+        /// <para>It constructs an instance based on the passed in Tournament and result list name (that better be part of that Tournament).</para>
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="resultName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If resultName is not found within the Tournament's MergedResultLists.</exception>
         public static async Task<TournamentMerger> FactoryAsync( Tournament tournament, string resultName ) {
 
             //Test that resultName is found in the tournament's .MergedResultLists list.
@@ -115,11 +132,16 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             return tm;
         }
 
+        /// <summary>
+        /// Method to dynamically auto-generate a RESULT LIST FORMAT definition based on the <see cref="ResultListMember">members</see> and <see cref="MergeConfiguration">configuration</see>."/>
+        /// <para>Typically not called directly (although you can), instead the <see cref="FactoryAsync(Tournament, string)"/> calls this methos when it initializes.</para>
+        /// <para>Users may also use their own specified RESULT LIST FORMAT by setting the ResultListFormat property.</para>
+        /// </summary>
         public void AutoGenerateResultListFormat() {
             var rlf = new ResultListFormat();
             rlf.SetDefaultValues();
-            rlf.ScoreConfigDefault = _mergeResultList.ScoreConfigName;
-            rlf.ScoreFormatCollectionDef = _mergeResultList.ScoreFormatCollectionDef.ToString();
+            rlf.ScoreConfigDefault = _mergeResultList.Configuration.ScoreConfigName;
+            rlf.ScoreFormatCollectionDef = _mergeResultList.Configuration.ScoreFormatCollectionDef.ToString();
             rlf.Fields.Clear();
 
             rlf.Fields.Add( new ResultListField() {
@@ -218,6 +240,11 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
         }
 
+        /// <summary>
+        /// Method dynamically auto-generate a RANKING RULE definition based on the <see cref="ResultListMember">members</see> and <see cref="MergeConfiguration">configuration</see>."/>
+        /// <para>Typically not called directly (although you can), instead the <see cref="FactoryAsync(Tournament, string)"/> calls this methos when it initializes.</para>
+        /// <para>Users may also use their own specified RANKNG RULE by setting the .RankingRule property.</para>
+        /// </summary>
         public void AutoGenerateRankingRule() {
             var rr = new RankingRule();
             rr.SetDefaultValues();
@@ -226,7 +253,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             //TODO: The next three lines of code assumes the Standard Score Formats. Need to make this more generic.
             var source = TieBreakingRuleScoreSource.D;
-            if (_mergeResultList.ScoreConfigName != "Decimal")
+            if (_mergeResultList.Configuration.ScoreConfigName != "Decimal")
                 source = TieBreakingRuleScoreSource.IX;
 
             rankingRule.Rules.Add( new TieBreakingRuleScore() {
@@ -253,7 +280,12 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             this.RankingRule = rr;
         }
 
-
+        /// <summary>
+        /// This method identifies participants that are
+        /// in one or more of the Tournament <see cref="ResultListMember">members</see>, and then asks the <see cref="MergeMethod"/> to
+        /// perform its merging calculation.
+        /// </summary>
+        /// <returns></returns>
         public async Task<ResultList> MergeAsync() {
 
             /*

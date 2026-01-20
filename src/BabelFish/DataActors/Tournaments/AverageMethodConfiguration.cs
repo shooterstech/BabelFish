@@ -1,6 +1,13 @@
 namespace Scopos.BabelFish.DataActors.Tournaments {
+
+    /// <summary>
+    /// Concrete MergeConfiguration class for the AverageMethod result list merger.
+    /// </summary>
     public class AverageMethodConfiguration : MergeConfiguration {
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public AverageMethodConfiguration() : base() {
 
             /*
