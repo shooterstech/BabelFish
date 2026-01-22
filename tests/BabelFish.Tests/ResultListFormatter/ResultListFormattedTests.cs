@@ -449,18 +449,15 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            //MatchID matchId = new MatchID( "1.1.2025030313571346.1" );
-            MatchID matchId = new MatchID( "1.1.2025122311175108.0" );
+            MatchID matchId = new MatchID( "1.1.2026012113270716.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - All";
+            var resultListName = "Individual - Sporter";
 
             //Get the Result List from the API Server
             var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
             var resultList = resultListResponse.ResultList;
             var resultEventName = resultList.EventName;
-
-            resultList.UserDefinedText[UserDefinedFieldNames.USER_DEFINED_FIELD_1] = "Bib: {CompetitorNumber}, Coach {Coach}";
 
             //Get the ResultListFormat to use for formatting
             var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
@@ -478,11 +475,11 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             //await rlf.LoadSquaddingListAsync();
 
             rlf.Engagable = false;
-            rlf.ResolutionWidth = 10000;
+            rlf.ResolutionWidth = 400;
             rlf.ShowNumberOfChildRows = 5;
             rlf.ShowRanks = 3;
             rlf.ShowStatuses = null;
-            rlf.ShowSupplementalInformation = false;
+            rlf.ShowSupplementalInformation = true;
             rlf.ShowNumberOfBodyRows = int.MaxValue;
             rlf.ShowSpanningRows = true;
             rlf.RefreshAllRowsParticipantAttributeFields();

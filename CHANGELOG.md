@@ -9,6 +9,10 @@ All notable changes to BabelFish will be documented in this file.
 #### SumMethod
 - Added configuration option to count only the top n number of scores when calculating a participant's summation aggregate.
 
+### Bug Fixes
+#### ResultListIntermediateFormatted
+- Fix bug that was allowing the spanninng row to show, even when the ShowSpanningRow property evaluated to false.
+
 ## [1.11.3] - 2026-01-15
 ### Enhancements
 #### Multiline Rows in RESULT LIST FORMAT

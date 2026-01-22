@@ -2,8 +2,18 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
+    /// <summary>
+    /// Concrete class implementation of a <see cref="ResultListIntermediateFormattedRow"/>, representing information
+    /// from an <see cref="IRLIFItem"/> (which is usually a <see cref="ResultEvent"/> or <see cref="Squadding"/> instance). 
+    /// </summary>
     public class ResultListIntermediateFormattedBodyRow : ResultListIntermediateFormattedRow {
 
+        /// <summary>
+        /// Constructor.
+        /// <para>Usually not called by the user directly, instead called by <see cref="ResultListIntermediateFormatted"/> during the InitAsyn method.</para>
+        /// </summary>
+        /// <param name="rlf"></param>
+        /// <param name="re"></param>
         public ResultListIntermediateFormattedBodyRow( ResultListIntermediateFormatted rlf, IRLIFItem re ) : base( rlf, re ) {
 
             _logger = LogManager.GetCurrentClassLogger();
@@ -24,6 +34,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
+        /// <inheritdoc/>
         public override List<string> GetClassList() {
             List<string> classSetList = new List<string>();
             if (!this.IsSpanningRow) {
@@ -97,7 +108,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public override ResultListCellValue GetResultListCellValue( ResultListDisplayColumn column ) {
 
             if (IsSpanningRow) {
-                if (column.Spanning is null || column.Spanning.IsEmpty) {
+                if ((column.Spanning is null || column.Spanning.IsEmpty)
+                    || (!_resultListFormatted.ShowWhenCalculator.Show( column.ShowSpanningWhen ))) {
                     return ResultListCellValue.EMPTY;
                 } else {
                     return column.Spanning;
