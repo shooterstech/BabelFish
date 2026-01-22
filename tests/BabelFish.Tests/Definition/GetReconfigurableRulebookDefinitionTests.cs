@@ -1,12 +1,11 @@
-﻿using System.IO;
+using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.Tests.Definition
-{
+namespace Scopos.BabelFish.Tests.Definition {
     [TestClass]
     public class GetReconfigurableRulebookDefinitionTests : BaseTestClass {
 
@@ -28,9 +27,9 @@ namespace Scopos.BabelFish.Tests.Definition
         public void GetAttributeAirRifleTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v1.0:ntparc:Three-Position Air Rifle Type");
+            var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
-            var taskResponse = client.GetAttributeDefinitionAsync(setName);
+            var taskResponse = client.GetAttributeDefinitionAsync( setName );
             var result = taskResponse.Result;
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
@@ -38,12 +37,12 @@ namespace Scopos.BabelFish.Tests.Definition
             var msgResponse = result.MessageResponse;
 
             Assert.IsNotNull( definition );
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( msgResponse );
 
-            Assert.AreEqual( setName.ToString(), definition.SetName);
+            Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.AreEqual(1, definition.Fields.Count );
-            Assert.AreEqual( "Three-Position Air Rifle Type", definition.Fields[0].FieldName);
+            Assert.AreEqual( 1, definition.Fields.Count );
+            Assert.AreEqual( "Three-Position Air Rifle Type", definition.Fields[0].FieldName );
         }
 
         [TestMethod]
@@ -91,11 +90,10 @@ namespace Scopos.BabelFish.Tests.Definition
         }
 
         [TestMethod]
-        public async Task GetRankingRuleTest()
-        {
+        public async Task GetRankingRuleTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v1.0:nra:BB Gun Qualification");
+            var setName = SetName.Parse( "v1.0:nra:BB Gun Qualification" );
 
             var result = await client.GetRankingRuleDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
@@ -122,11 +120,10 @@ namespace Scopos.BabelFish.Tests.Definition
         }
 
         [TestMethod]
-        public async Task GetStageStyleTest()
-        {
+        public async Task GetStageStyleTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v1.0:ntparc:Sporter Air Rifle Standing");
+            var setName = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" );
 
             var result = await client.GetStageStyleDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
@@ -143,11 +140,10 @@ namespace Scopos.BabelFish.Tests.Definition
         }
 
         [TestMethod]
-        public async Task GetTargetCollectionTest()
-        {
+        public async Task GetTargetCollectionTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v1.0:ntparc:Air Rifle");
+            var setName = SetName.Parse( "v1.0:ntparc:Air Rifle" );
 
             var result = await client.GetTargetCollectionDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
@@ -160,15 +156,14 @@ namespace Scopos.BabelFish.Tests.Definition
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.TargetCollections.Count >= 1);
+            Assert.IsTrue( definition.TargetCollections.Count >= 1 );
         }
 
         [TestMethod]
-        public async Task GetTargetTest()
-        {
+        public async Task GetTargetTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v1.0:issf:10m Air Rifle");
+            var setName = SetName.Parse( "v1.0:issf:10m Air Rifle" );
 
             var result = await client.GetTargetDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
@@ -181,16 +176,15 @@ namespace Scopos.BabelFish.Tests.Definition
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.ScoringRings.Count > 0);
+            Assert.IsTrue( definition.ScoringRings.Count > 0 );
             Assert.IsTrue( definition.AimingMarks.Count > 0 );
         }
 
         [TestMethod]
-        public async Task GetScoreFormatCollectionType()
-        {
+        public async Task GetScoreFormatCollectionType() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v1.0:orion:Standard Score Formats");
+            var setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
             var result = await client.GetScoreFormatCollectionDefinitionAsync( setName );
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
@@ -203,7 +197,7 @@ namespace Scopos.BabelFish.Tests.Definition
 
             Assert.AreEqual( setName.ToString(), definition.SetName );
             Assert.AreEqual( result.DefinitionType, definition.Type );
-            Assert.IsTrue(definition.ScoreFormats.Count > 0 );
+            Assert.IsTrue( definition.ScoreFormats.Count > 0 );
             Assert.IsTrue( definition.ScoreConfigs.Count > 0 );
         }
 
@@ -236,16 +230,16 @@ namespace Scopos.BabelFish.Tests.Definition
         public async Task GetAppellationTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var setName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
+            var setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
 
-            var result = await client.GetCourseOfFireDefinitionAsync(setName);
-            Assert.AreEqual(HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}.");
+            var result = await client.GetCourseOfFireDefinitionAsync( setName );
+            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
 
             var definition = result.Definition;
             var msgResponse = result.MessageResponse;
             EventComposite eventTree = new EventComposite() { };
-            eventTree = EventComposite.GrowEventTree(definition);
-            
+            eventTree = EventComposite.GrowEventTree( definition );
+
             foreach (var e in eventTree.GetEvents()) {
                 if (e.EventType == EventtType.EVENT)
                     Assert.IsNotNull( e.EventStyleMapping );
@@ -253,48 +247,48 @@ namespace Scopos.BabelFish.Tests.Definition
                     Assert.IsNull( e.EventStyleMapping );
 
                 if (e.EventType == EventtType.STAGE)
-					Assert.IsNotNull( e.StageStyleMapping );
-				else
-					Assert.IsNull( e.StageStyleMapping );
-			}
+                    Assert.IsNotNull( e.StageStyleMapping );
+                else
+                    Assert.IsNull( e.StageStyleMapping );
+            }
 
-            Assert.IsNotNull(definition);
-            Assert.IsNotNull(msgResponse);
+            Assert.IsNotNull( definition );
+            Assert.IsNotNull( msgResponse );
         }
 
         [TestMethod]
         public void GetEventAndStageMappingTest() {
 
             var client = new DefinitionAPIClient() { IgnoreInMemoryCache = true };
-            var mappingSetName = SetName.Parse("v1.0:ntparc:Air Rifle");
-            var cofSetName = SetName.Parse("v3.0:ntparc:Three-Position Air Rifle 3x10");
+            var mappingSetName = SetName.Parse( "v1.0:ntparc:Air Rifle" );
+            var cofSetName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
 
-            var mappingResponse = client.GetEventAndStageStyleMappingDefinitionAsync(mappingSetName);
+            var mappingResponse = client.GetEventAndStageStyleMappingDefinitionAsync( mappingSetName );
             var mappingResult = mappingResponse.Result;
             var mapping = mappingResult.Definition;
-            Assert.AreEqual(HttpStatusCode.OK, mappingResult.RestApiStatusCode, $"Expecting and OK status code, instead received {mappingResult.RestApiStatusCode}.");
+            Assert.AreEqual( HttpStatusCode.OK, mappingResult.RestApiStatusCode, $"Expecting and OK status code, instead received {mappingResult.RestApiStatusCode}." );
 
-            var cofResponse = client.GetCourseOfFireDefinitionAsync(cofSetName);
+            var cofResponse = client.GetCourseOfFireDefinitionAsync( cofSetName );
             var cofResult = cofResponse.Result;
             var cofDefinition = cofResult.Definition;
-            Assert.AreEqual(HttpStatusCode.OK, cofResult.RestApiStatusCode, $"Expecting and OK status code, instead received {cofResult.RestApiStatusCode}.");
+            Assert.AreEqual( HttpStatusCode.OK, cofResult.RestApiStatusCode, $"Expecting and OK status code, instead received {cofResult.RestApiStatusCode}." );
 
-            EventAndStageStyleMappingCalculation mappingCalc = new EventAndStageStyleMappingCalculation(mapping);
+            EventAndStageStyleMappingCalculation mappingCalc = new EventAndStageStyleMappingCalculation( mapping );
             foreach (var thing in cofDefinition.Events) {
                 if (thing.EventType == EventtType.EVENT) {
-                    Console.WriteLine("EventAppell: " + thing.EventStyleMapping.EventAppellation.ToString());
-                    Console.WriteLine("DefaultDef: " + thing.EventStyleMapping.DefaultDef.ToString());
-                    Console.WriteLine("CalcReturn: " + mappingCalc.GetEventStyleDef("Precision", "10m Air Rifle", thing.EventStyleMapping));
+                    Console.WriteLine( "EventAppell: " + thing.EventStyleMapping.EventAppellation.ToString() );
+                    Console.WriteLine( "DefaultDef: " + thing.EventStyleMapping.DefaultDef.ToString() );
+                    Console.WriteLine( "CalcReturn: " + mappingCalc.GetEventStyleDef( "Precision", "10m Air Rifle", thing.EventStyleMapping ) );
                     //Assert.AreEqual("v1.0:nra:Conventional Position 50ft Metallic", mappingCalc.GetEventStyleDef("Conventional Metallic", "50ft Conventional Rifle", thing.EventStyleMapping));
                 }
                 // I am having issues with this right here, not sure what the heck is up with stage appellation not being passed forward, but it isn't but The DefaultDef is being passed. so IDFK
                 if (thing.EventType == EventtType.STAGE) {
-                    Console.WriteLine("StageAppell: " + thing.StageStyleMapping.StageAppellation.ToString());
-                    Console.WriteLine("DefaultDef: " + thing.StageStyleMapping.DefaultDef.ToString());
-                    Console.WriteLine("CalcReturn: " + mappingCalc.GetStageStyleDef("Precision", "10m Air Rifle", thing.StageStyleMapping));
+                    Console.WriteLine( "StageAppell: " + thing.StageStyleMapping.StageAppellation.ToString() );
+                    Console.WriteLine( "DefaultDef: " + thing.StageStyleMapping.DefaultDef.ToString() );
+                    Console.WriteLine( "CalcReturn: " + mappingCalc.GetStageStyleDef( "Precision", "10m Air Rifle", thing.StageStyleMapping ) );
                     //Assert.AreEqual("v1.0:nra:Conventional Position 50ft Metallic", mappingCalc.GetStageStyleDef("Conventional Metallic", "50ft Conventional Rifle", thing.StageStyleMapping));
                 }
-                Console.WriteLine("");
+                Console.WriteLine( "" );
             }
 
         }
@@ -345,7 +339,7 @@ namespace Scopos.BabelFish.Tests.Definition
 
             var cof = CourseOfFireHelper.Get_3x20_KPS_Cof();
             var cof2 = CourseOfFireHelper.Get_60_Standing_Cof();
-            EventComposite eventTree = EventComposite.GrowEventTree(cof);
+            EventComposite eventTree = EventComposite.GrowEventTree( cof );
 
             //Should be 1 Event, with name Qualification
             var events = eventTree.GetEvents( EventtType.EVENT );
@@ -372,12 +366,12 @@ namespace Scopos.BabelFish.Tests.Definition
             //Should be 60 Singulars
             var singulars = eventTree.GetEvents( EventtType.SINGULAR );
             Assert.IsTrue( singulars.Count == 60 );
-            for ( int i = 0; i < 20; i++) 
-                Assert.AreEqual( $"K{i+1}", singulars[i].EventName );
             for (int i = 0; i < 20; i++)
-                Assert.AreEqual( $"P{i + 1}", singulars[i+20].EventName );
+                Assert.AreEqual( $"K{i + 1}", singulars[i].EventName );
             for (int i = 0; i < 20; i++)
-                Assert.AreEqual( $"S{i + 1}", singulars[i+40].EventName );
+                Assert.AreEqual( $"P{i + 1}", singulars[i + 20].EventName );
+            for (int i = 0; i < 20; i++)
+                Assert.AreEqual( $"S{i + 1}", singulars[i + 40].EventName );
 
         }
 
@@ -388,60 +382,28 @@ namespace Scopos.BabelFish.Tests.Definition
         private IUserProfileLookup userProfileLookup;
 
         [TestInitialize]
-        public override void InitializeTest()
-        {
+        public override void InitializeTest() {
             base.InitializeTest();
 
             matchClient = new OrionMatchAPIClient();
             definitionClient = new DefinitionAPIClient();
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo(@"C:\temp");
+            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
             userProfileLookup = new BaseUserProfileLookup();
         }
 
-        
+
         [TestMethod]
-        public async Task EriksPlayground()
-        {
+        public async Task EriksPlayground() {
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
             //A SetName uniquely ideentifies a definition
-            var threePositionCourseOfFireSetName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x20" );
+            var setName = SetName.Parse( "v1.0:orion:NMC Pistol" );
 
             //Retreives the COURSE OF FIRE definition.
-            var threePositionCourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( threePositionCourseOfFireSetName );
+            var definition = await DefinitionCache.GetResultListFormatDefinitionAsync( setName );
 
-            //Print basic information about this definition
-            Console.WriteLine( threePositionCourseOfFire.CommonName );
-            Console.WriteLine( threePositionCourseOfFire.Description );
-            Console.WriteLine( threePositionCourseOfFire.Discipline );
-            Console.WriteLine();
-
-            //Build the Event Tree which is the structure of the course of fire.
-            var topLevelEvent = EventComposite.GrowEventTree( threePositionCourseOfFire );
-
-            //Print out the stages to the COF
-            foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
-                Console.WriteLine( $"{stage.EventName} has {stage.GetAllSingulars().Count} number of shots." );
-
-                //Load the recommended RESULT LIST FORMAT definition
-                var resultListFormatSetName = SetName.Parse( stage.ResultListFormatDef );
-                var resultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
-                Console.WriteLine( $"The recommended RESULT LIST FORMAT is '{resultListFormat.CommonName}' which has a total of {resultListFormat.Format.Columns.Count} columns." );
-
-                //Load the default RANKING RULE
-                var rankingRuleSetName = SetName.Parse( stage.RankingRuleMapping["DefaultDef"] );
-                var rankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                Console.WriteLine( $"The recommended RANKING RULE for this event is '{ rankingRule.CommonName}' which defines {rankingRule.RankingRules[0].Rules.Count} rules." );
-            }
-
-            Console.WriteLine();
-            //Print out each range command
-            foreach ( var sg in threePositionCourseOfFire.RangeScripts[0].SegmentGroups ) {
-                foreach( var command in sg.Commands ) {
-                    Console.WriteLine( command.Command );
-                }
-            }
+            Console.Write( definition.SetName );
         }
 
     }

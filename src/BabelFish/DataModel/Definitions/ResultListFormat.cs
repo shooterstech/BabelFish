@@ -15,6 +15,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class ResultListFormat : Definition, IGetScoreFormatCollectionDefinition {
 
+        /// <summary>
+        /// Construcgtor
+        /// </summary>
         public ResultListFormat() : base() {
             Type = DefinitionType.RESULTLISTFORMAT;
 
@@ -203,6 +206,42 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 }
             }
 
+            //Add in a Spanning and ShowApanningWhen property to the column named Participant, if it exists.
+            //EKA Note Jan 2026: At some point in time , we may want to remove this, as some users may purposefully define a format without Spanning text.
+            foreach (var col in Format.Columns) {
+                if (col.Header == "Participant") {
+                    if (col.Spanning is null || col.Spanning.IsEmpty) {
+                        col.Spanning = new ResultListCellValue() {
+                            Text = "{OptionText1}",
+                            ClassSet = new List<ClassSet>() {
+                                new ClassSet() { Name = "rlf-col-spanning" }
+                            }
+                        };
+                        col.ShowSpanningWhen = new ShowWhenEquation() {
+                            Boolean = ShowWhenBoolean.AND,
+                            Arguments = new List<ShowWhenBase>() {
+                                new ShowWhenVariable() {
+                                    Condition = ShowWhenCondition.SUPPLEMENTAL
+                                },
+                                new ShowWhenVariable() {
+                                    Condition = ShowWhenCondition.DIMENSION_LARGE
+                                }
+                            }
+                        };
+                        col.Comment = "Programmatically added from ResultListFormat.ConvertValue() method.";
+
+                        UserDefinedFields = new Dictionary<UserDefinedFieldNames, ResultListOptionalField>();
+                        UserDefinedFields.Add(
+                            UserDefinedFieldNames.USER_DEFINED_FIELD_1,
+                            new ResultListOptionalField() {
+                                DefaultFieldText = string.Empty,
+                                Description = "Value is used as the spanning text, under the Participant column. Often demographic information is displayed."
+                            } );
+
+                    }
+                    break;
+                }
+            }
             //On Rows
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Header );
             updateHappened |= ConvertResultListDisplayPartition( Format.Display.Body );
@@ -232,6 +271,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return updateHappened;
         }
 
+        /// <inheritdoc />
         public override bool SetDefaultValues() {
             bool updateHappened = true;
 

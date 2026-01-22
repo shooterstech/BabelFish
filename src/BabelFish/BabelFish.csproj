@@ -7,9 +7,9 @@
     <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
     <AssemblyVersion>1.11.0</AssemblyVersion>
     <!-- Update with each build -->
-    <FileVersion>1.11.4.2</FileVersion>
+    <FileVersion>1.11.4.3</FileVersion>
     <!-- Updaet with each release, may use -alpha, -beta -->
-    <Version>1.11.4.2</Version>
+    <Version>1.11.4.3</Version>
     <PackageId>Scopos.BabelFish.Core</PackageId>
     <Authors>Scopos LLC</Authors>
     <Company>Scopos LLC</Company>
