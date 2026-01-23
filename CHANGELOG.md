@@ -12,6 +12,7 @@ All notable changes to BabelFish will be documented in this file.
 ### Bug Fixes
 #### ResultListIntermediateFormatted
 - Fix bug that was allowing the spanninng row to show, even when the ShowSpanningRow property evaluated to false.
+- Fix bug that was allowing participants, who have not shot yet, be included in ShowRanks of <= 3. 
 
 ## [1.11.3] - 2026-01-15
 ### Enhancements

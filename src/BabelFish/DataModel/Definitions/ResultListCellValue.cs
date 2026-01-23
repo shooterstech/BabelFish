@@ -1,8 +1,16 @@
 using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// Describes the content of one cell within a Result List Intermedidate Formatted table. A cell can have
+    /// interpolated text, it may contain a link, and it may contain a series of css classes to decorate it. 
+    /// </summary>
     public class ResultListCellValue : IReconfigurableRulebookObject {
 
+        /// <summary>
+        /// Represents an cell that has no text, no link option, and no css classes.
+        /// </summary>
         public static readonly ResultListCellValue EMPTY = new ResultListCellValue();
 
         /// <summary>

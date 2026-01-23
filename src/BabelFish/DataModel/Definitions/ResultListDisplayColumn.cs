@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Specifies the text, specific class set, and link to options in each line in this column.
+        /// Each item in the list, represents a different line.
         /// <para>NOTE: Most Columsn only define a single line to display. </para>
         /// </summary>
         [JsonProperty( Order = 2 )]
@@ -47,6 +48,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Specifies the text, specific class set, and link to options in each line in this column's child cells.
+        /// Each item in the list, represents a different line.
         /// <para>NOTE: Most Columsn only define a single line to display. </para>
         /// <para>If ChildValues are not specified .BodyValues is used instead.</para>
         /// </summary>
@@ -60,33 +62,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool ShouldSerializeChildValues() {
             return ChildValues is not null && ChildValues.Count > 0;
         }
-
-        /// <summary>
-        /// Text, with field interpolation, to display in each cell.
-        /// <para>The value of .Body will always be displayed in a body row. If .Child is null, the value of .Body is always displayed in the child rows.</para>
-        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
-        /// </summary>
-        [JsonProperty( Order = 4 )]
-        [Obsolete( "Use .BodyValues instead." )]
-        public string Body { get; set; } = string.Empty;
-
-        /// <summary>
-        /// What, if anything, the text in this cell should link to.
-        /// </summary>
-        [JsonProperty( Order = 5 )]
-        [DefaultValue( LinkToOption.None )]
-        [Obsolete( "Use .BodyValues instead." )]
-        public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
-
-        /// <summary>
-        /// Text, with field interpolation, to display in each cell in a child row.
-        /// <para>If .Child is null or an empty stirng, the value of .Body is displayed in its place. </para>
-        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
-        /// </summary>
-        [JsonProperty( Order = 6 )]
-        [DefaultValue( "" )]
-        [Obsolete( "Use .ChildValues instead." )]
-        public string Child { get; set; } = string.Empty;
 
         /// <summary>
         /// Text, without interpolation, to display in the footer cell.
@@ -144,35 +119,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// A list of css classes to decorate each cell within this column.
-        /// </summary>
-        /// <remarks> Examples include:
-        /// <list type="bullet">
-        /// <item>rlf-col-rank</item>
-        /// <item>rlf-col-profile</item>
-        /// <item>rlf-col-participant</item>
-        /// <item>rlf-col-matchinfo</item>
-        /// <item>rlf-col-event</item>
-        /// <item>rlf-col-stage</item>
-        /// <item>rlf-col-series</item>
-        /// <item>rlf-col-shot</item>
-        /// <item>rlf-col-gap</item>
-        /// </list>
-        /// </remarks>
-        [JsonProperty( Order = 10 )]
-        [Obsolete( "Use .ClassSet instead." )]
-        public List<string> ClassList { get; set; } = new List<string>();
-
-        /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize ClassList when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeClassList() {
-            return (ClassList != null && ClassList.Count > 0);
-        }
-
-        /// <summary>
         /// Text, with field interpolation, to display accress multiple columns, starting at this column.
         /// <para>Only one ResultListDisplayColumn may have a value for Spanning.</para>
         /// </summary>
@@ -199,6 +145,62 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Text, with field interpolation, to display in each cell.
+        /// <para>The value of .Body will always be displayed in a body row. If .Child is null, the value of .Body is always displayed in the child rows.</para>
+        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
+        /// </summary>
+        [JsonProperty( Order = 90 )]
+        [Obsolete( "Use .BodyValues instead." )]
+        public string Body { get; set; } = string.Empty;
+
+        /// <summary>
+        /// A list of css classes to decorate each cell within this column.
+        /// </summary>
+        /// <remarks> Examples include:
+        /// <list type="bullet">
+        /// <item>rlf-col-rank</item>
+        /// <item>rlf-col-profile</item>
+        /// <item>rlf-col-participant</item>
+        /// <item>rlf-col-matchinfo</item>
+        /// <item>rlf-col-event</item>
+        /// <item>rlf-col-stage</item>
+        /// <item>rlf-col-series</item>
+        /// <item>rlf-col-shot</item>
+        /// <item>rlf-col-gap</item>
+        /// </list>
+        /// </remarks>
+        [JsonProperty( Order = 91 )]
+        [Obsolete( "Use .ClassSet instead." )]
+        public List<string> ClassList { get; set; } = new List<string>();
+
+        /// <summary>
+        /// What, if anything, the text in this cell should link to.
+        /// </summary>
+        [JsonProperty( Order = 95 )]
+        [DefaultValue( LinkToOption.None )]
+        [Obsolete( "Use .BodyValues instead." )]
+        public LinkToOption BodyLinkTo { get; set; } = LinkToOption.None;
+
+        /// <summary>
+        /// Text, with field interpolation, to display in each cell in a child row.
+        /// <para>If .Child is null or an empty stirng, the value of .Body is displayed in its place. </para>
+        /// <para>Interpolation fields are defined in the ResultListFormat's Fields section.</para>
+        /// </summary>
+        [JsonProperty( Order = 96 )]
+        [DefaultValue( "" )]
+        [Obsolete( "Use .ChildValues instead." )]
+        public string Child { get; set; } = string.Empty;
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize ClassList when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeClassList() {
+            return (ClassList != null && ClassList.Count > 0);
         }
 
         /// <inheritdoc/>
