@@ -4,6 +4,24 @@ using Scopos.BabelFish.Requests.DefinitionAPI;
 using Scopos.BabelFish.Responses.DefinitionAPI;
 
 namespace Scopos.BabelFish.APIClients {
+    /// <summary>
+    /// The DefinitionCache is the preferred class to use to retreive definition objects (definition files).
+    /// <para>The DefinitionCache uses a series of caching layers, both local storage and in memory storage, to make
+    /// reading definition objects fast. </para>
+    /// <para>The DefinitionCache also periodically checks for new minor versions of a definition file and loads it
+    /// into memory when avaliable.</para>
+    /// <para>The DefintionCache stores one instance of each definition object, and returns that instance when asked,
+    /// which makes it really fast once stored in cache. The downside of this method is, if you make changes to that
+    /// instance, that change will be seen throughout your applicaiton. Users can avoid this by making a clone
+    /// copy of the instance, if they really need to make a change.</para>
+    /// <example>
+    /// <para>Example usage:</para>
+    /// <code>
+    /// var setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+    /// var airRifleTypeDefinition = await DefinitionCache.GetAttributeDefinitionAsync( setName );
+    /// </code>
+    /// </example>
+    /// </summary>
     public static class DefinitionCache {
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();

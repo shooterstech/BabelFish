@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+
+    /// <summary>
+    /// ResultListMember describes one of the ResultLists to pull data from within a <see cref="MergedResultList"/>.
+    /// </summary>
     public class ResultListMember {
 
         /// <summary>

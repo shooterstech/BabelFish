@@ -1110,7 +1110,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (_resultEvent is null)
                 return false;
 
-            return this._resultListFormatted.ShowRanks >= this.GetRank();
+            return (this._resultListFormatted.ShowRanks >= this.GetRank() && this.GetStatus() != ResultStatus.FUTURE);
 
         }
 

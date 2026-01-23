@@ -1,17 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using NLog;
 
 namespace Scopos.BabelFish.DataActors.Tournaments {
+
+    /// <summary>
+    /// A MergeMethod class contains the processing methods to combine (or merge) result lists together. It is the
+    /// actor (the class that does the work) to merge scores together.
+    /// <para>To create an instance of MergeMethod use the <see cref="FactoryAsync(TournamentMerger, MergedResultList)"/> method.</para>
+    /// </summary>
     public abstract class MergeMethod {
 
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// Gets the <see cref="TournamentMerger"/> instance in use.
+        /// </summary>
         public TournamentMerger TournamentMerger { get; private set; }
 
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
+        /// <summary>
+        /// Gets the <see cref="MergeConfiguration"/> instance in use.
+        /// </summary>
         protected MergeConfiguration _mergeConfiguration { get; private set; }
 
+        /// <summary>
+        /// Constructor. Protected so end users can not call it directly. Instead, use the <see cref="FactoryAsync(TournamentMerger, MergedResultList)"/> method.
+        /// </summary>
+        /// <param name="tournamentMerger"></param>
+        /// <param name="configuration"></param>
         protected MergeMethod( TournamentMerger tournamentMerger, MergeConfiguration configuration ) {
             this.TournamentMerger = tournamentMerger;
             this._mergeConfiguration = configuration;
@@ -24,13 +38,21 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <returns></returns>
         public virtual async Task InitializeAsync() { }
 
+        /// <summary>
+        /// Factory method to construct a concrete instance of a MergeMethod. It constructs the correct
+        /// concrete class based on the passed in <see cref="MergedResultList"/>
+        /// </summary>
+        /// <param name="tournamentMerger"></param>
+        /// <param name="mrl"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static async Task<MergeMethod> FactoryAsync( TournamentMerger tournamentMerger, MergedResultList mrl ) {
 
             MergeMethod mm;
 
-            switch ( mrl.Method ) {
+            switch (mrl.Method) {
                 case SumMethod.IDENTIFIER:
-                    mm = new SumMethod( tournamentMerger, (SumMethodConfiguration) mrl.Configuration );
+                    mm = new SumMethod( tournamentMerger, (SumMethodConfiguration)mrl.Configuration );
                     break;
 
                 case AverageMethod.IDENTIFIER:

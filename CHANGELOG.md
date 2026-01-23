@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
+
+## [1.11.4] - 2026-01-00
+### Enhancements
+#### AverageMethod
+- Added configuration option to count only the top n number of scores when calculating a participant's average.
+#### SumMethod
+- Added configuration option to count only the top n number of scores when calculating a participant's summation aggregate.
+
+### Bug Fixes
+#### ResultListIntermediateFormatted
+- Fix bug that was allowing the spanninng row to show, even when the ShowSpanningRow property evaluated to false.
+- Fix bug that was allowing participants, who have not shot yet, be included in ShowRanks of <= 3. 
+
 ## [1.11.3] - 2026-01-15
 ### Enhancements
 #### Multiline Rows in RESULT LIST FORMAT

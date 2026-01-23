@@ -1,10 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+
+    /// <summary>
+    /// A Tournament is a group of Matches.
+    /// <para>The Matches in the Tournament are called its <see cref="TournamentMembers">members</see>.</para>
+    /// <para>Scores from the member's Result Lists may be merged together in interesting ways (e.g. sum all the scores together).
+    /// These are called <see cref="MergedResultList"/>.</para>
+    /// <para>The <see cref="MatchID"/> for tournaments always end in ".2".</para>
+    /// </summary>
     public class Tournament : MatchBase {
 
+        /// <summary>
+        /// Public constructor.
+        /// <para>Usually not called directly, instead Tournaments are read from REST API using
+        /// <see cref="OrionMatchAPIClient.GetTournamentPublicAsync(MatchID)"/> (or related method).</para>
+        /// </summary>
         public Tournament() : base() { }
 
         /// <summary>
