@@ -459,23 +459,29 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             var resultList = resultListResponse.ResultList;
             var resultEventName = resultList.EventName;
 
+            /*
             //Get the ResultListFormat to use for formatting
             var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
             //var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
             var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
             var resultListFormat = resultListFormatResponse.Definition;
             Assert.IsNotNull( resultListFormat );
+            */
+
+            var essentialDataFile = new EssentialDataFile();
+            var resultListFormat = await essentialDataFile.GenerateAsync( resultList );
 
             //Test that the conversion was successful and has the same number of objects.
             ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
             await rlf.InitializeAsync( false );
+            await rlf.LoadSquaddingListAsync();
             Assert.IsNotNull( rlf );
 
 
             //await rlf.LoadSquaddingListAsync();
 
             rlf.Engagable = false;
-            rlf.ResolutionWidth = 400;
+            rlf.ResolutionWidth = int.MaxValue;
             rlf.ShowNumberOfChildRows = 5;
             rlf.ShowRanks = 3;
             rlf.ShowSupplementalInformation = true;

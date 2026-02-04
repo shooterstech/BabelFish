@@ -1,9 +1,4 @@
-﻿using System.Text.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -44,7 +39,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc/>
         [JsonPropertyOrder( 99 )]
-        [DefaultValue("")]
+        [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
     }
 }
