@@ -2,7 +2,12 @@
 All notable changes to BabelFish will be documented in this file.
 
 
-## [1.11.4] - 2026-01-00
+## [1.11.5] - 2026-02-00
+### Enhancements
+#### StringFormatting
+- Updated FormatScore() method to include DNF use case.
+
+## [1.11.4] - 2026-01-23
 ### Enhancements
 #### AverageMethod
 - Added configuration option to count only the top n number of scores when calculating a participant's average.
