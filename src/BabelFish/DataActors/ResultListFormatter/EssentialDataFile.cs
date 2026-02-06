@@ -14,6 +14,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public override async Task<ResultListFormat> GenerateAsync( ResultList resultList ) {
 
             ResultListFormat rlf = new ResultListFormat();
+            rlf.SetName = "v1.0:dynamic:Essential Data File";
             rlf.ScoreFormatCollectionDef = "v1.0:orion:Minimal Score Formats";
             var scoreFormatCollection = await rlf.GetScoreFormatCollectionDefinitionAsync();
 

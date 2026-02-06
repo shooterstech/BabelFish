@@ -894,12 +894,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             OrionMatchAPIClient orionMatchAPIClient = new OrionMatchAPIClient();
 
             List<Task<GetSquaddingListPublicResponse>> responses = new List<Task<GetSquaddingListPublicResponse>>();
+
             foreach (var metaData in this.ResultList.Metadata.Values) {
                 //Make the request for all the squadding lists in parrallel
                 try {
                     var matchId = new MatchID( metaData.MatchID );
                     var squaddingListName = metaData.SquaddingListName;
-                    responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                    if (!string.IsNullOrEmpty( squaddingListName )) {
+                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                    }
                 } catch (Exception ex) {
                     _logger.Error( ex );
                 }
@@ -908,7 +911,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 try {
                     foreach (var response in responses) {
                         var getSquaddingListResponse = await response;
-                        if (getSquaddingListResponse.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                        if (getSquaddingListResponse.HasOkStatusCode) {
                             LoadSquaddingList( getSquaddingListResponse.SquaddingList );
                         }
                     }
