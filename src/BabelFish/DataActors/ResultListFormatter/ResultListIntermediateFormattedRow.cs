@@ -671,7 +671,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             var eventName = (string)source.Name;
             Score score = GetScore( eventName, tryAndUseProjected );
-            string scoreFormat = _resultListFormatted.GetScoreFormat( source.ScoreFormat );
+            string scoreFormat = string.Empty;
+            if (string.IsNullOrEmpty( source.ScoreConfigName ))
+                scoreFormat = _resultListFormatted.GetScoreFormat( source.ScoreFormat );
+            else
+                scoreFormat = _resultListFormatted.GetScoreFormat( source.ScoreFormat, source.ScoreConfigName );
 
             var formattedScore = StringFormatting.FormatScore( scoreFormat, score );
 

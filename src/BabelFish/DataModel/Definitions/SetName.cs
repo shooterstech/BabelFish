@@ -1,9 +1,4 @@
-﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NLog;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -12,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
-    public class SetName: IEquatable<SetName>, IEquatable<HierarchicalName> {
+    public class SetName : IEquatable<SetName>, IEquatable<HierarchicalName> {
 
 
         private int majorVersion = 0;
@@ -29,16 +24,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public SetName() { }
 
-        public static bool TryParseVersion(string version, out int majorVersion, out int minorVersion) {
+        public static bool TryParseVersion( string version, out int majorVersion, out int minorVersion ) {
 
             try {
-                var bar = version.StartsWith("v") ? version.Substring(1).Split('.') : version.Split('.');
-                majorVersion = int.Parse(bar[0]);
-                minorVersion = int.Parse(bar[1]);
+                var bar = version.StartsWith( "v" ) ? version.Substring( 1 ).Split( '.' ) : version.Split( '.' );
+                majorVersion = int.Parse( bar[0] );
+                minorVersion = int.Parse( bar[1] );
                 return true;
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 var msg = $"Unable to parse the version string '{version}'";
-                _logger.Error(msg, ex);
+                _logger.Error( msg, ex );
                 majorVersion = 1;
                 minorVersion = 1;
                 return false;
@@ -52,11 +47,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return null.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
-        public static SetName Parse(string setName, bool throwExceptionOnError = false) {
+        public static SetName Parse( string setName, bool throwExceptionOnError = false ) {
 
             //Look up in cache first
             SetName sn;
-			if (_cache.TryGetValue( setName, out sn ))
+            if (_cache.TryGetValue( setName, out sn ))
                 return sn;
 
             try {
@@ -77,37 +72,42 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 var msg = $"Unable to parse the set name string '{setName}'";
                 _logger.Error( msg, ex );
 
-                if (  throwExceptionOnError )
+                if (throwExceptionOnError)
                     throw new ArgumentException( msg, ex );
 
                 return null;
             }
         }
 
-        public static bool TryParse(string setName, out SetName sn) {
-            try {
-                sn = Parse(setName);
-                return true;
-            } catch(Exception ex) {
+        /// <summary>
+        /// Attempts to pase the passed in string into a SetName. Returns true or false if it was successful.
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="sn"></param>
+        /// <returns></returns>
+        public static bool TryParse( string setName, out SetName sn ) {
+
+            sn = Parse( setName );
+            if (sn is null) {
                 var msg = $"Unable to parse the set name string '{setName}'";
-                _logger.Error( msg, ex );
-                sn = null;
+                _logger.Error( msg );
                 return false;
             }
+            return true;
         }
 
-        public static bool TryParse(string version, string hierarchicalName, out SetName sn) {
+        public static bool TryParse( string version, string hierarchicalName, out SetName sn ) {
             try {
                 sn = new SetName();
                 HierarchicalName hn;
-                if (!HierarchicalName.TryParse(hierarchicalName, out hn))
+                if (!HierarchicalName.TryParse( hierarchicalName, out hn ))
                     return false;
                 sn.nameSpace = hn.Namespace;
                 sn.properName = hn.ProperName;
 
-                var bar = version.StartsWith("v") ? version.Substring(1).Split('.') : version.Split('.');
-                sn.majorVersion = int.Parse(bar[0]);
-                sn.minorVersion = int.Parse(bar[1]);
+                var bar = version.StartsWith( "v" ) ? version.Substring( 1 ).Split( '.' ) : version.Split( '.' );
+                sn.majorVersion = int.Parse( bar[0] );
+                sn.minorVersion = int.Parse( bar[1] );
                 return true;
             } catch (Exception ex) {
                 var msg = $"Unable to parse the version string '{version}'";
@@ -117,21 +117,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-        public SetName(string nameSpace, string properName) {
+        public SetName( string nameSpace, string properName ) {
             majorVersion = 0;
             minorVersion = 0;
             this.nameSpace = nameSpace;
             this.properName = properName;
         }
 
-        public SetName(string nameSpace, string properName, int majorVersion) {
+        public SetName( string nameSpace, string properName, int majorVersion ) {
             this.majorVersion = majorVersion;
             minorVersion = 0;
             this.nameSpace = nameSpace;
             this.properName = properName;
         }
 
-        public SetName(string nameSpace, string name, int majorVersion, int minorVersion) {
+        public SetName( string nameSpace, string name, int majorVersion, int minorVersion ) {
             this.majorVersion = majorVersion;
             this.minorVersion = minorVersion;
             this.nameSpace = nameSpace;
@@ -145,14 +145,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="name"></param>
         /// <param name="version">Must be in form v[major].[minor]</param>
         /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
-        public SetName(string nameSpace, string name, string version) {
+        public SetName( string nameSpace, string name, string version ) {
             this.nameSpace = nameSpace;
             this.properName = name;
 
             try {
-                var bar = version.Substring(1).Split('.');
-                this.majorVersion = int.Parse(bar[0]);
-                this.minorVersion = int.Parse(bar[1]);
+                var bar = version.Substring( 1 ).Split( '.' );
+                this.majorVersion = int.Parse( bar[0] );
+                this.minorVersion = int.Parse( bar[1] );
             } catch (Exception ex) {
                 var msg = $"Unable to parse the version string '{version}'";
                 _logger.Error( msg, ex );
@@ -168,7 +168,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             this.majorVersion = copy.majorVersion;
             this.minorVersion = copy.minorVersion;
             this.nameSpace = copy.nameSpace;
-            this.properName= copy.properName;
+            this.properName = copy.properName;
         }
 
         public int MajorVersion {
@@ -190,29 +190,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <inheritdoc/>
         public override string ToString() {
             StringBuilder sb = new StringBuilder();
-            sb.Append('v');
-            sb.Append(majorVersion);
-            sb.Append('.');
-            sb.Append(minorVersion);
-            sb.Append(':');
-            sb.Append(nameSpace);
-            sb.Append(':');
-            sb.Append(properName);
+            sb.Append( 'v' );
+            sb.Append( majorVersion );
+            sb.Append( '.' );
+            sb.Append( minorVersion );
+            sb.Append( ':' );
+            sb.Append( nameSpace );
+            sb.Append( ':' );
+            sb.Append( properName );
             return sb.ToString();
         }
 
         public string FileName {
             get {
                 StringBuilder sb = new StringBuilder();
-                sb.Append('v');
-                sb.Append(majorVersion);
-                sb.Append('.');
-                sb.Append(minorVersion);
-                sb.Append(' ');
-                sb.Append(nameSpace);
-                sb.Append(' ');
-                sb.Append(properName);
-                sb.Append(".json");
+                sb.Append( 'v' );
+                sb.Append( majorVersion );
+                sb.Append( '.' );
+                sb.Append( minorVersion );
+                sb.Append( ' ' );
+                sb.Append( nameSpace );
+                sb.Append( ' ' );
+                sb.Append( properName );
+                sb.Append( ".json" );
                 return sb.ToString();
 
             }
@@ -220,35 +220,35 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public string ToMostRecentString() {
             StringBuilder sb = new StringBuilder();
-            sb.Append('v');
-            sb.Append(0);
-            sb.Append('.');
-            sb.Append(0);
-            sb.Append(':');
-            sb.Append(nameSpace);
-            sb.Append(':');
-            sb.Append(properName);
+            sb.Append( 'v' );
+            sb.Append( 0 );
+            sb.Append( '.' );
+            sb.Append( 0 );
+            sb.Append( ':' );
+            sb.Append( nameSpace );
+            sb.Append( ':' );
+            sb.Append( properName );
             return sb.ToString();
         }
 
         public string ToMostRecentMajorVersionString() {
             StringBuilder sb = new StringBuilder();
-            sb.Append('v');
-            sb.Append(majorVersion);
-            sb.Append('.');
-            sb.Append(0);
-            sb.Append(':');
-            sb.Append(nameSpace);
-            sb.Append(':');
-            sb.Append(properName);
+            sb.Append( 'v' );
+            sb.Append( majorVersion );
+            sb.Append( '.' );
+            sb.Append( 0 );
+            sb.Append( ':' );
+            sb.Append( nameSpace );
+            sb.Append( ':' );
+            sb.Append( properName );
             return sb.ToString();
         }
 
         public string ToHierarchicalNameString() {
             StringBuilder sb = new StringBuilder();
-            sb.Append(nameSpace);
-            sb.Append(':');
-            sb.Append(properName);
+            sb.Append( nameSpace );
+            sb.Append( ':' );
+            sb.Append( properName );
             return sb.ToString();
         }
 
@@ -257,9 +257,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public override bool Equals( object obj ) {
-            if ( obj == null || ! (obj is SetName)) 
+            if (obj == null || !(obj is SetName))
                 return false;
-            return base.Equals( (SetName) obj );
+            return base.Equals( (SetName)obj );
         }
 
         public override int GetHashCode() {

@@ -22,6 +22,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string ScoreFormat { get; set; } = string.Empty;
 
         /// <summary>
+        /// When the ResultField.Method == Score and ScoreConfigName is not empty (the default),
+        /// it overrides the ScoreConfigName to use. The default ScoreConfigName is specififed
+        /// by the ScoreConfigDefault property in the RESULT LIST FORMAT definition.
+        /// </summary>
+        public string ScoreConfigName { get; set; } = string.Empty;
+
+        /// <summary>
         /// When the ResultField.Method == Gap, Value is the rank of the participant
         /// to comare agaisnt. -1 means the participant directly ahead, VAlues > 0
         /// mean that specific spot (1 being the leader, or 8 being cut to make Final).
