@@ -42,10 +42,12 @@ namespace Scopos.BabelFish.DataActors.Excel {
             ResultListIntermediateFormatted worksheet2 = new ResultListIntermediateFormatted( resultList, rlfWs2, null );
             await worksheet2.InitializeAsync();
             //If the user passed in a squadding list, we can use it. Otherwise, try and load it from REST API
-            if (squaddingList is not null)
+            if (squaddingList is not null) {
                 worksheet2.LoadSquaddingList( squaddingList );
-            else
+                worksheet2.RefreshAllRowsParticipantAttributeFields();
+            } else {
                 await worksheet2.LoadSquaddingListAsync();
+            }
             rle.WorksheetData.Add( worksheet2 );
 
             return rle;
