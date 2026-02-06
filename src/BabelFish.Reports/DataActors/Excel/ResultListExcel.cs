@@ -1,6 +1,7 @@
 using OfficeOpenXml;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
@@ -219,7 +220,30 @@ namespace Scopos.BabelFish.DataActors.Excel {
             }
             return worksheet;
         }
+
+        public static void PopulateWorksheet( ExcelWorksheet worksheet, ResultListIntermediateFormatted rlif ) {
+            int columnIndex = 1;
+            int rowIndex = 1;
+
+            foreach (var headerCell in rlif.GetShownHeaderRow()) {
+                worksheet.Cells[rowIndex, columnIndex].Value = headerCell.Text;
+                worksheet.Cells[rowIndex, columnIndex].Style.Font.Bold = true;
+                columnIndex++;
+            }
+
+            foreach (var multilineRow in rlif.Rows) {
+                foreach (var row in multilineRow) {
+                    rowIndex++;
+                    columnIndex = 1;
+                    foreach (var cell in row.GetShownRow()) {
+                        worksheet.Cells[rowIndex, columnIndex].Value = cell.Text;
+                        columnIndex++;
+                    }
+                }
+            }
+        }
     }
+
     public class ExcelResultEvent {
         public ResultEvent ResultEvent { get; set; }
 

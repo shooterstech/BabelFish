@@ -346,7 +346,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Helper property, returns the ScoreConfig to use when formatting scores.
+        /// Helper property, returns the default ScoreConfig to use when formatting scores.
         /// </summary>
         private ScoreConfig ScoreConfig { get; set; }
 
@@ -361,6 +361,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public string GetScoreFormat( string scoreFormatName ) {
             string scoreFormat;
             if (ScoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))
+                return scoreFormat;
+            else
+                return "{d}";
+        }
+
+        public string GetScoreFormat( string scoreFormatName, string scoreConfigName ) {
+            //Worst case, use the default ScoreConfig
+            var scoreConfigToUse = this.ScoreConfig;
+
+            foreach (var sConfig in ScoreFormatCollection.ScoreConfigs) {
+                if (sConfig.ScoreConfigName == scoreConfigName) {
+                    scoreConfigToUse = sConfig;
+                    break;
+                }
+            }
+
+            string scoreFormat;
+            if (scoreConfigToUse.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))
                 return scoreFormat;
             else
                 return "{d}";
