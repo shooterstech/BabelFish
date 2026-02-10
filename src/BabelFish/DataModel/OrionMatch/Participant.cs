@@ -1,18 +1,14 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using Scopos.BabelFish.Converters;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-	/// <summary>
-	/// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
-	/// 
-	/// IMPORTANT: When adding Participant to a class (such as Result COF or ResultEvent (under Result List), need to make 
-	/// sure to deserialize the Participant's attribute values. To do so, as an example, see GetResultCOFResponse's 
-	/// PostResponseProcessingAsync()
-	/// </summary>
-	[Serializable]
+    /// <summary>
+    /// A Participant is anyone who has a role in a Match. This includes athletes, teams, match officials, and coaches.
+    /// 
+    /// IMPORTANT: When adding Participant to a class (such as Result COF or ResultEvent (under Result List), need to make 
+    /// sure to deserialize the Participant's attribute values. To do so, as an example, see GetResultCOFResponse's 
+    /// PostResponseProcessingAsync()
+    /// </summary>
+    [Serializable]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
     public abstract class Participant : IDeserializableAbstractClass {
 

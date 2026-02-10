@@ -13,6 +13,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
         public const int CONCRETE_CLASS_ID = 1;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public AttributeValueDataPacket() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
         }
@@ -27,6 +30,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         public AttributeValue AttributeValue { get; set; }
 
+        /// <summary>
+        /// Property that holds the task to finish deserializing an AttributeValue.
+        /// See also <seealso cref="FinishInitializationAsync"/>
+        /// </summary>
         protected internal Task<AttributeValue> AttributeValueTask { get; set; }
 
         /// <summary>

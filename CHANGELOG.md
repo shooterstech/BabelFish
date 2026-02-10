@@ -2,7 +2,7 @@
 All notable changes to BabelFish will be documented in this file.
 
 
-## [1.12.1] - 2026-02-09
+## [1.12.1] - 2026-02-10
 ### Enhancements
 #### StringFormatting
 - Updated FormatScore() method to include DNF use case.
@@ -13,8 +13,13 @@ All notable changes to BabelFish will be documented in this file.
 #### ResultListExcel
 *** Breaking Changes ***
 - Refactored the ResultListExcel class to have a FactoryAsync method to construct new instances.
+- Abstracted the FactoryAsync method to work with either ResultLists or SquaddingList objects.
 - The GenerateExcel method new returns a byte[].
 - When instantiating a new instance, the default behavior is to create an Excel file with two worksheets. The first uses the standard RESULT LIST FORMAT. The second worksheet uses the new dynamically gnerated essential data format RESULT LIST FORMAT.
+
+### Bug Fixes
+#### SquaddingLists
+- Fixed bug that was prevening Attribute Value included in a SquaddingList from being deserialized. 
 
 
 ## [1.11.4] - 2026-01-23
