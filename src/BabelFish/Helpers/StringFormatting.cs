@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.DataModel.Definitions;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using NLog;
-using System.Runtime.CompilerServices;
-using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel.Athena.Shot;
 
 namespace Scopos.BabelFish.Helpers {
     /// <summary>
@@ -59,7 +52,7 @@ namespace Scopos.BabelFish.Helpers {
                 endDate = DateTime.Today;
             }
 
-            return SpanOfDates(startDate, endDate);
+            return SpanOfDates( startDate, endDate );
         }
 
         /// <summary>
@@ -91,10 +84,10 @@ namespace Scopos.BabelFish.Helpers {
             return SingleDate( date );
         }
 
-        public static string Location( string city, string state, string country="" ) {
+        public static string Location( string city, string state, string country = "" ) {
             if (country == "" || country == "USA") {
                 //In the USA
-                if (!string.IsNullOrEmpty( city ) && ! string.IsNullOrEmpty( state ))
+                if (!string.IsNullOrEmpty( city ) && !string.IsNullOrEmpty( state ))
                     return $"{city}, {state}";
                 if (string.IsNullOrEmpty( state ))
                     return city;
@@ -166,15 +159,15 @@ namespace Scopos.BabelFish.Helpers {
 
             return FormatScore( format, score );
         }
-        
+
         /// <summary>
-         /// Formats to a string, the inputed score, based on the ScoreFormatCollection
-         /// </summary>
-         /// <param name="scoreFormatCollection">The ScoreFormatCollection definition to use to learn how to format the passed in Score.</param>
-         /// <param name="scoreConfigName">The name of the ScoreConfig to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Integer' or 'Decimal'</param>
-         /// <param name="scoreFormatName">The name of the Scoreformat to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Events' or 'Shots'</param>
-         /// <param name="score"></param>
-         /// <returns></returns>
+        /// Formats to a string, the inputed score, based on the ScoreFormatCollection
+        /// </summary>
+        /// <param name="scoreFormatCollection">The ScoreFormatCollection definition to use to learn how to format the passed in Score.</param>
+        /// <param name="scoreConfigName">The name of the ScoreConfig to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Integer' or 'Decimal'</param>
+        /// <param name="scoreFormatName">The name of the Scoreformat to use. Valid values will be defined in the ScoreFormatCollection. Typical values include 'Events' or 'Shots'</param>
+        /// <param name="score"></param>
+        /// <returns></returns>
         [Obsolete( "Deprecated because the input class variable Score is also deprecated." )]
         public static string FormatScore( ScoreFormatCollection scoreFormatCollection, string scoreConfigName, string scoreFormatName, Scopos.BabelFish.DataModel.OrionMatch.Score score ) {
 
@@ -205,7 +198,7 @@ namespace Scopos.BabelFish.Helpers {
             //The first value in the Tuple is the replacement string, e.g. "{x}"
             //The second value is the string to replace it with, e.g. "98"
             List<Tuple<string, string>> listOfReplacements = new List<Tuple<string, string>>();
-            listOfReplacements.Add( new Tuple<string, string>( "{i}", score.I.ToString() )); // integer
+            listOfReplacements.Add( new Tuple<string, string>( "{i}", score.I.ToString() ) ); // integer
             listOfReplacements.Add( new Tuple<string, string>( "{d}", score.D.ToString( "F1" ) ) ); // decimal
             listOfReplacements.Add( new Tuple<string, string>( "{x}", score.X.ToString() ) ); // X count
             listOfReplacements.Add( new Tuple<string, string>( "{X}", score.X > 0 ? "*" : "" ) ); //asterisk for inners
@@ -214,9 +207,9 @@ namespace Scopos.BabelFish.Helpers {
             listOfReplacements.Add( new Tuple<string, string>( "{j}", score.J.ToString( "F1" ) ) ); // Special use case score. 
             listOfReplacements.Add( new Tuple<string, string>( "{k}", score.K.ToString( "F1" ) ) ); // Special use case score. 
             listOfReplacements.Add( new Tuple<string, string>( "{l}", score.L.ToString( "F1" ) ) ); // Special use case score. 
-            listOfReplacements.Add( new Tuple<string, string>( "{J}", ((int)score.J ).ToString() ) ); // Special use case score. 
-            listOfReplacements.Add( new Tuple<string, string>( "{K}", ((int)score.K ).ToString() ) ); // Special use case score. 
-            listOfReplacements.Add( new Tuple<string, string>( "{L}", ((int)score.L ).ToString() ) ); // Special use case score. 
+            listOfReplacements.Add( new Tuple<string, string>( "{J}", ((int)score.J).ToString() ) ); // Special use case score. 
+            listOfReplacements.Add( new Tuple<string, string>( "{K}", ((int)score.K).ToString() ) ); // Special use case score. 
+            listOfReplacements.Add( new Tuple<string, string>( "{L}", ((int)score.L).ToString() ) ); // Special use case score. 
 
             string formattedScore = format;
             int numOfErrors = 0;
@@ -228,7 +221,7 @@ namespace Scopos.BabelFish.Helpers {
             //Will build in others, as necessary
             int conditionalIndex = formattedScore.IndexOf( "{?i}" );
             if (conditionalIndex >= 0) {
-                
+
                 if (score.I == 0) {
                     formattedScore = formattedScore.Substring( conditionalIndex + 4 ); //The +4 is to account for the length of "{?i}"
                 } else {
@@ -266,10 +259,10 @@ namespace Scopos.BabelFish.Helpers {
                 }
             }
 
-            foreach ( var replacement in listOfReplacements ) {
+            foreach (var replacement in listOfReplacements) {
                 try {
                     formattedScore = formattedScore.Replace( replacement.Item1, replacement.Item2 );
-                } catch (Exception e ) {
+                } catch (Exception e) {
                     logger.Error( e, $"Unable to replace string '{replacement.Item1}' with '{replacement.Item2}' using format '{format}'." );
                     numOfErrors++;
 
@@ -279,8 +272,8 @@ namespace Scopos.BabelFish.Helpers {
                 }
             }
 
-			return formattedScore;
-		}
+            return formattedScore;
+        }
 
 
         /// <summary>
@@ -297,6 +290,8 @@ namespace Scopos.BabelFish.Helpers {
                 return "DSQ";
             } else if (result.Result == "LATE") {
                 return "LATE";
+            } else if (result.Result == "DNF") {
+                return $"{StringFormatting.FormatScore( scoreFormat, result.Score )} DNF";
             } else {
                 return StringFormatting.FormatScore( scoreFormat, result.Score );
             }
@@ -389,22 +384,22 @@ namespace Scopos.BabelFish.Helpers {
                     break;
             }
             return $"{number}{suffix}";
-		}
+        }
 
-		/// <summary>
-		/// Truncates a string at the given number of characters (default to 24).
-		/// </summary>
-		/// <param name="untruncatedValue"></param>
-		/// <returns></returns>
-		public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
-            if ( numberOfCharacters <= 4 ) {
+        /// <summary>
+        /// Truncates a string at the given number of characters (default to 24).
+        /// </summary>
+        /// <param name="untruncatedValue"></param>
+        /// <returns></returns>
+        public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
+            if (numberOfCharacters <= 4) {
                 //We can't truncate less than 4 characters
                 return untruncatedValue;
             } else if (untruncatedValue.Length >= numberOfCharacters) {
-				return $"{untruncatedValue.Substring( 0, numberOfCharacters-4 )}...";
-			} else {
-				return untruncatedValue;
-			}
-		}
-	}
+                return $"{untruncatedValue.Substring( 0, numberOfCharacters - 4 )}...";
+            } else {
+                return untruncatedValue;
+            }
+        }
+    }
 }

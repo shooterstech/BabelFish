@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
+namespace Scopos.BabelFish.DataActors.Excel {
 
-namespace Scopos.BabelFish.DataActors.Excel
-{
-    public abstract class ExcelGenerator
-    {
-        public abstract string GenerateExcel(string ? filePath = null);
+    /// <summary>
+    /// Base abstract class for generating Excel files (or their byte array).
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class ExcelGenerator<T> {
+
+        public abstract byte[] GenerateExcel( string? filePath = null );
 
     }
 }

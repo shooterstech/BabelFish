@@ -195,6 +195,7 @@ namespace Scopos.BabelFish.APIClients {
             GetSquaddingListPublicResponse response = new GetSquaddingListPublicResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
             return response;
         }
@@ -235,6 +236,7 @@ namespace Scopos.BabelFish.APIClients {
             GetSquaddingListAuthenticatedResponse response = new GetSquaddingListAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response );
+            await response.PostResponseProcessingAsync().ConfigureAwait( false );
 
             return response;
         }

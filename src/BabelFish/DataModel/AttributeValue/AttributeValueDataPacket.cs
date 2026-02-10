@@ -1,17 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.DataModel.AttributeValue
-{
+namespace Scopos.BabelFish.DataModel.AttributeValue {
 
-    [Serializable]
+    /// <summary>
+    /// Abstract base class for serializing an AttributeValue. Contains both a referrence to the Attribute
+    /// <seealso cref="AttributeDef"/> that defines the data, as well as the value <seealso cref="AttributeValue"/>
+    /// </summary>
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
-    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass {
+    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass, IGetAttributeDefinition {
 
         public const int CONCRETE_CLASS_ID = 1;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public AttributeValueDataPacket() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
         }
@@ -21,9 +25,15 @@ namespace Scopos.BabelFish.DataModel.AttributeValue
         /// </summary>
         public string AttributeDef { get; set; }
 
-        
+        /// <summary>
+        /// Property that contains the value.
+        /// </summary>
         public AttributeValue AttributeValue { get; set; }
 
+        /// <summary>
+        /// Property that holds the task to finish deserializing an AttributeValue.
+        /// See also <seealso cref="FinishInitializationAsync"/>
+        /// </summary>
         protected internal Task<AttributeValue> AttributeValueTask { get; set; }
 
         /// <summary>
@@ -40,6 +50,27 @@ namespace Scopos.BabelFish.DataModel.AttributeValue
             AttributeValue = await AttributeValueTask;
         }
 
+
+        /// <inheritdoc />
+        /// <remarks>
+        /// Returns the ATTRIBUTE definition from .DefaultAttributeDef
+        /// <para>It is a best practice to check for null or empty string on .DefaultAttributeDef before calling this method.</para>
+        /// </remarks>
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public async Task<Definitions.Attribute> GetAttributeDefinitionAsync() {
+
+            if (string.IsNullOrEmpty( AttributeDef ))
+                throw new ArgumentNullException( $"The value for .DefaultSttributeDef is empty. Which is allowed." );
+
+            var setName = Definitions.SetName.Parse( AttributeDef );
+            return await DefinitionCache.GetAttributeDefinitionAsync( setName );
+        }
+
+        /// <summary>
+        /// Property storing how broadly this AttributeValue may be shared.
+        /// </summary>
         public VisibilityOption Visibility { get; set; }
 
         /// <summary>

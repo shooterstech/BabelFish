@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -6,12 +6,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// A ClassSet specifies the css class name to include and the (ShowWhen) condition to when to include it. 
     /// <para>Used on a ResultListDisplayColumn and ResultListDisplayPartition.</para>
     /// </summary>
-    [G_NS.JsonConverter(typeof(G_BF_NS_CONV.ShowWhenBaseConverter))]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ShowWhenBaseConverter ) )]
     public class ClassSet : IReconfigurableRulebookObject {
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ClassSet() { }
 
-        public ClassSet(string Name, ShowWhenBase showWhen)
-        {
+        /// <summary>
+        /// Alternate constructor.
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="showWhen"></param>
+        public ClassSet( string Name, ShowWhenBase showWhen ) {
             this.Name = Name;
             this.ShowWhen = showWhen;
         }
@@ -29,10 +37,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 2 )]
         public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
 
+        /// <summary>
+        /// Newtonsoft helper method to determine with ShowWhen should be serialized.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeShowWhen() {
 
             //Dont serialize ShowWhen if it says to always show
-            if ( ShowWhen is ShowWhenVariable showWhen && showWhen.Condition == ShowWhenCondition.TRUE ) {
+            if (ShowWhen is ShowWhenVariable showWhen && showWhen.Condition == ShowWhenCondition.TRUE) {
                 return false;
             }
 
@@ -40,13 +52,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <inheritdoc/>
-        [DefaultValue("")]
-        [G_NS.JsonProperty( Order = 99  )]
+        [DefaultValue( "" )]
+        [G_NS.JsonProperty( Order = 99 )]
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc/>
-        public override string ToString()
-        {
+        public override string ToString() {
             return this.Name;
         }
     }

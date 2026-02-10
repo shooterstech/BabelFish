@@ -35,12 +35,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <remarks> Examples include:
         /// <list type="bullet">
         /// <item>rlf-col-rank</item>
-        /// <item>rlf-col-profile</item>
+        /// <item>rlf-col-profile (deprecated)</item>
         /// <item>rlf-col-participant</item>
         /// <item>rlf-col-matchinfo</item>
+        /// <item>rlf-col-squadding</item>
         /// <item>rlf-col-event</item>
         /// <item>rlf-col-stage</item>
         /// <item>rlf-col-series</item>
+        /// <item>rlf-col-round</item>
         /// <item>rlf-col-shot</item>
         /// <item>rlf-col-spanning</item>
         /// <item>rlf-col-gap</item>

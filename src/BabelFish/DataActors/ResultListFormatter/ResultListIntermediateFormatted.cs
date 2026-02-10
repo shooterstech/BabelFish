@@ -346,7 +346,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Helper property, returns the ScoreConfig to use when formatting scores.
+        /// Helper property, returns the default ScoreConfig to use when formatting scores.
         /// </summary>
         private ScoreConfig ScoreConfig { get; set; }
 
@@ -361,6 +361,24 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public string GetScoreFormat( string scoreFormatName ) {
             string scoreFormat;
             if (ScoreConfig.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))
+                return scoreFormat;
+            else
+                return "{d}";
+        }
+
+        public string GetScoreFormat( string scoreFormatName, string scoreConfigName ) {
+            //Worst case, use the default ScoreConfig
+            var scoreConfigToUse = this.ScoreConfig;
+
+            foreach (var sConfig in ScoreFormatCollection.ScoreConfigs) {
+                if (sConfig.ScoreConfigName == scoreConfigName) {
+                    scoreConfigToUse = sConfig;
+                    break;
+                }
+            }
+
+            string scoreFormat;
+            if (scoreConfigToUse.ScoreFormats.TryGetValue( scoreFormatName, out scoreFormat ))
                 return scoreFormat;
             else
                 return "{d}";
@@ -876,12 +894,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             OrionMatchAPIClient orionMatchAPIClient = new OrionMatchAPIClient();
 
             List<Task<GetSquaddingListPublicResponse>> responses = new List<Task<GetSquaddingListPublicResponse>>();
+
             foreach (var metaData in this.ResultList.Metadata.Values) {
                 //Make the request for all the squadding lists in parrallel
                 try {
                     var matchId = new MatchID( metaData.MatchID );
                     var squaddingListName = metaData.SquaddingListName;
-                    responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                    if (!string.IsNullOrEmpty( squaddingListName )) {
+                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                    }
                 } catch (Exception ex) {
                     _logger.Error( ex );
                 }
@@ -890,7 +911,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 try {
                     foreach (var response in responses) {
                         var getSquaddingListResponse = await response;
-                        if (getSquaddingListResponse.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
+                        if (getSquaddingListResponse.HasOkStatusCode) {
                             LoadSquaddingList( getSquaddingListResponse.SquaddingList );
                         }
                     }

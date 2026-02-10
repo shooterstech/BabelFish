@@ -2,7 +2,27 @@
 All notable changes to BabelFish will be documented in this file.
 
 
-## [1.11.4] - 2026-01-00
+## [1.12.1] - 2026-02-10
+### Enhancements
+#### StringFormatting
+- Updated FormatScore() method to include DNF use case.
+#### DynamicEssentialDataFile
+- Added a DynamicEssentialDataFile class that dynamically generates a RESULT LIST FORMAT definition listing all demographic, squadding, and score data contained in a Result List.
+#### DynamicSquadding
+- Added a DynamicSquadding class that dynamically generates a RESULT LIST FORMAT definition listing most demographic, squadding, and attribute values contained in a Squadding List.
+#### ResultListExcel
+*** Breaking Changes ***
+- Refactored the ResultListExcel class to have a FactoryAsync method to construct new instances.
+- Abstracted the FactoryAsync method to work with either ResultLists or SquaddingList objects.
+- The GenerateExcel method new returns a byte[].
+- When instantiating a new instance, the default behavior is to create an Excel file with two worksheets. The first uses the standard RESULT LIST FORMAT. The second worksheet uses the new dynamically gnerated essential data format RESULT LIST FORMAT.
+
+### Bug Fixes
+#### SquaddingLists
+- Fixed bug that was prevening Attribute Value included in a SquaddingList from being deserialized. 
+
+
+## [1.11.4] - 2026-01-23
 ### Enhancements
 #### AverageMethod
 - Added configuration option to count only the top n number of scores when calculating a participant's average.
