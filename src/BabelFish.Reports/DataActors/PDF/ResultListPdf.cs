@@ -35,8 +35,13 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         public async Task InitializeAsync() {
 
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( ItemList ).ConfigureAwait( false );
-            ResultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            if (ItemList is SquaddingList) {
+                var dynamicSquadding = new DynamicSquadding();
+                ResultListFormat = await dynamicSquadding.GenerateAsync( (SquaddingList)ItemList );
+            } else {
+                var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( ItemList ).ConfigureAwait( false );
+                ResultListFormat = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            }
             CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( Match.CourseOfFireDef ) );
             RLIF = new ResultListIntermediateFormatted( ItemList, ResultListFormat, _userProfileLookup );
 

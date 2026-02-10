@@ -8,22 +8,30 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// Generates a RESULT LIST FORMAT based on the inputted ResultList containing all the demographic fields
     /// (e.g. FamilyName, GivenName, Hometown) and Attribute Values.
     /// </summary>
-    public class EssentialDataFile : DynamicResultListFormat<ResultList> {
+    public class DynamicEssentialDataFile : DynamicResultListFormat<IRLIFList> {
 
         /// <inheritdoc />
-        public override async Task<ResultListFormat> GenerateAsync( ResultList resultList ) {
+        public override async Task<ResultListFormat> GenerateAsync( IRLIFList irlitList ) {
 
             ResultListFormat rlf = new ResultListFormat();
             rlf.SetName = "v1.0:dynamic:Essential Data File";
             rlf.ScoreFormatCollectionDef = "v1.0:orion:Minimal Score Formats";
+            rlf.HierarchicalName = "dynamic:Essential Data File";
+            rlf.Version = "1.0";
             var scoreFormatCollection = await rlf.GetScoreFormatCollectionDefinitionAsync();
+
+            var resultList = (irlitList is ResultList) ? (ResultList)irlitList : null;
+            var includeIndividual = (irlitList is SquaddingList) || (resultList is not null && !resultList.Team);
+            var includeTeam = (resultList is not null && resultList.Team);
+            var includeScores = (resultList is not null);
+            var includeIfNotOfficial = (resultList is not null && resultList.Status != ResultStatus.OFFICIAL);
 
             #region Demographic Columns
             /*
              * Add columns for each of the standard demographic fields
              */
 
-            if (!resultList.Team) {
+            if (includeIndividual) {
                 rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                     Header = "Family Name",
                     BodyValues = new List<ResultListCellValue>() {
@@ -151,7 +159,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             } );
 
-            if (!resultList.Team) {
+            if (includeIndividual && includeIfNotOfficial) {
                 rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                     Header = "Squadding",
                     BodyValues = new List<ResultListCellValue>() {
@@ -220,7 +228,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             }
 
-            if (SetName.TryParse( resultList.CourseOfFireDef, out SetName courseOfFireSetName )) {
+            if (includeScores && irlitList is ResultList rl && SetName.TryParse( resultList.CourseOfFireDef, out SetName courseOfFireSetName )) {
                 var courseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( courseOfFireSetName );
                 var scoreformat = await courseOfFire.GetScoreFormatCollectionDefinitionAsync();
                 var topLevelEvent = EventComposite.GrowEventTree( courseOfFire );

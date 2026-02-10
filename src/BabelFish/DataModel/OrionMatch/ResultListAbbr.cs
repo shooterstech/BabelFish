@@ -57,12 +57,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The RESULT LIST FORMAT definition used for this Result List.
         /// </summary>
         [G_NS.JsonProperty( Order = 10 )]
+        [G_NS.JsonIgnore] //EKA Note Feb 2026: JsonIgnore is temporary, until we start using this class
         public SetName ResultListFormatDef { get; set; } = SetName.Parse( "v1.0:orion:Default Qualification", true );
 
         /// <summary>
         /// The RANKING RULE definition used for this Result List.
         /// </summary>
         [G_NS.JsonProperty( Order = 11 )]
+        [G_NS.JsonIgnore] //EKA Note Feb 2026: JsonIgnore is temporary, until we start using this class
         public SetName RankingRuleDef { get; set; } = SetName.Parse( "v1.0:orion:Generic Qualification", true );
 
         /// <summary>

@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 namespace Scopos.BabelFish.DataActors.Excel {
     public class ResultListExcel : ExcelGenerator<ResultList> {
 
-        public ResultList? ResultList { get; private set; }
+        public IRLIFList? TheList { get; private set; }
 
         public List<ResultListIntermediateFormatted>? WorksheetData { get; private set; }
 
@@ -17,14 +17,19 @@ namespace Scopos.BabelFish.DataActors.Excel {
         }
 
         /// <summary>
-        /// Factory method to construct a new instance of ResultListExcel based on the passed in Result List
+        /// Factory method to construct a new instance of ResultListExcel based on the passed in ResultList, and
+        /// optionall SquaddingList.
         /// </summary>
         /// <param name="resultList"></param>
         /// <param name="squaddingList"></param>
+        /// <exception cref="ArgumentNullException" >Thrown when the passed in resultList parameter is null.</exception>
         /// <returns></returns>
         public static async Task<ResultListExcel> FactoryAsync( ResultList resultList, SquaddingList? squaddingList = null ) {
+            if (resultList is null)
+                throw new ArgumentNullException( "The argument resultList may not be null. " );
+
             var rle = new ResultListExcel();
-            rle.ResultList = resultList;
+            rle.TheList = resultList;
 
             rle.WorksheetData = new List<ResultListIntermediateFormatted>();
 
@@ -37,18 +42,39 @@ namespace Scopos.BabelFish.DataActors.Excel {
             rle.WorksheetData.Add( worksheet1 );
 
             //For workseet 2, use a dynamically created Essential Data File RESULT LIST FORMAT
-            var essentialDataFile = new EssentialDataFile();
+            var essentialDataFile = new DynamicEssentialDataFile();
             var rlfWs2 = await essentialDataFile.GenerateAsync( resultList );
             ResultListIntermediateFormatted worksheet2 = new ResultListIntermediateFormatted( resultList, rlfWs2, null );
             await worksheet2.InitializeAsync();
-            //If the user passed in a squadding list, we can use it. Otherwise, try and load it from REST API
-            if (squaddingList is not null) {
-                worksheet2.LoadSquaddingList( squaddingList );
-                worksheet2.RefreshAllRowsParticipantAttributeFields();
-            } else {
-                await worksheet2.LoadSquaddingListAsync();
+            //Add in squadding if the result list is future, intermediate, or unofficial
+            if (resultList.Status != ResultStatus.OFFICIAL) {
+                //If the user passed in a squadding list, we can use it. Otherwise, try and load it from REST API
+                if (squaddingList is not null) {
+                    worksheet2.LoadSquaddingList( squaddingList );
+                    worksheet2.RefreshAllRowsParticipantAttributeFields();
+                } else {
+                    await worksheet2.LoadSquaddingListAsync();
+                }
             }
             rle.WorksheetData.Add( worksheet2 );
+
+            return rle;
+        }
+
+        public static async Task<ResultListExcel> FactoryAsync( SquaddingList squaddingList ) {
+            if (squaddingList is null)
+                throw new ArgumentNullException( "The argument squaddingList may not be null." );
+
+            var rle = new ResultListExcel();
+            rle.TheList = squaddingList;
+
+            rle.WorksheetData = new List<ResultListIntermediateFormatted>();
+
+            var dynamicSquadding = new DynamicSquadding();
+            var squaddingResultListFormatDefinition = await dynamicSquadding.GenerateAsync( squaddingList );
+            var worksheet1 = new ResultListIntermediateFormatted( squaddingList, squaddingResultListFormatDefinition, null );
+            await worksheet1.InitializeAsync();
+            rle.WorksheetData.Add( worksheet1 );
 
             return rle;
         }
@@ -57,7 +83,7 @@ namespace Scopos.BabelFish.DataActors.Excel {
         public override byte[] GenerateExcel( string? filePath = null ) {
             using (var package = new ExcelPackage()) {
                 foreach (var rlif in this.WorksheetData) {
-                    var worksheet = package.Workbook.Worksheets.Add( $"{this.ResultList.Name}: {rlif.ResultListFormat.CommonName}" );
+                    var worksheet = package.Workbook.Worksheets.Add( $"{this.TheList.Name}: {rlif.ResultListFormat.CommonName}" );
                     PopulateWorksheet( worksheet, rlif );
                 }
 

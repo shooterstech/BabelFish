@@ -2,12 +2,14 @@
 All notable changes to BabelFish will be documented in this file.
 
 
-## [1.12.1] - 2026-02-00
+## [1.12.1] - 2026-02-09
 ### Enhancements
 #### StringFormatting
 - Updated FormatScore() method to include DNF use case.
-#### EssentialDataFile
-- Added a EssentialDataFile class that dynamically generates a RESULT LIST FORMAT definition listing all demographic and score data contained in a Result List.
+#### DynamicEssentialDataFile
+- Added a DynamicEssentialDataFile class that dynamically generates a RESULT LIST FORMAT definition listing all demographic, squadding, and score data contained in a Result List.
+#### DynamicSquadding
+- Added a DynamicSquadding class that dynamically generates a RESULT LIST FORMAT definition listing most demographic, squadding, and attribute values contained in a Squadding List.
 #### ResultListExcel
 *** Breaking Changes ***
 - Refactored the ResultListExcel class to have a FactoryAsync method to construct new instances.

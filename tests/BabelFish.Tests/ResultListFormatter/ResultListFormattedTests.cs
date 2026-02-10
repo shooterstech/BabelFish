@@ -452,36 +452,20 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             MatchID matchId = new MatchID( "1.2038.2026012314125806.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
-            var resultListName = "Individual - Sporter";
 
-            //Get the Result List from the API Server
-            var resultListResponse = await matchClient.GetResultListPublicAsync( matchId, resultListName );
-            var resultList = resultListResponse.ResultList;
-            var resultEventName = resultList.EventName;
-
-            /*
-            //Get the ResultListFormat to use for formatting
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
-            //var resultListFormatSetName = SetName.Parse( "v1.0:test:3P Qualification" );
-            var resultListFormatResponse = await definitionClient.GetResultListFormatDefinitionAsync( resultListFormatSetName );
-            var resultListFormat = resultListFormatResponse.Definition;
-            Assert.IsNotNull( resultListFormat );
-            */
-
-            var essentialDataFile = new EssentialDataFile();
-            var resultListFormat = await essentialDataFile.GenerateAsync( resultList );
+            var squaddingListResponse = await matchClient.GetSquaddingListPublicAsync( matchId, "Qualification" );
+            var squaddingList = squaddingListResponse.SquaddingList;
+            var dynamicSquadding = new DynamicSquadding();
+            var resultListFormat = await dynamicSquadding.GenerateAsync( squaddingList );
 
             //Test that the conversion was successful and has the same number of objects.
-            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( resultList, resultListFormat, userProfileLookup );
+            ResultListIntermediateFormatted rlf = new ResultListIntermediateFormatted( squaddingList, resultListFormat, null );
             await rlf.InitializeAsync( false );
-            await rlf.LoadSquaddingListAsync();
             Assert.IsNotNull( rlf );
-
-
-            //await rlf.LoadSquaddingListAsync();
 
             rlf.Engagable = false;
             rlf.ResolutionWidth = int.MaxValue;
+            /*
             rlf.ShowNumberOfChildRows = 5;
             rlf.ShowRanks = 3;
             rlf.ShowSupplementalInformation = true;
@@ -490,6 +474,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             //rlf.ShowStatuses = null;
             rlf.ShowStatuses = new HashSet<ResultStatus>() { ResultStatus.INTERMEDIATE };
             rlf.RefreshAllRowsParticipantAttributeFields();
+            */
 
             //rlf.SetShowValuesToDefault();
 
