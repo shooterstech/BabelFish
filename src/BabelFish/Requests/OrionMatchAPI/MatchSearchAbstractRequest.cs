@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
@@ -16,7 +12,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         }
         public static MatchSearchAbstractRequest Factory( UserAuthentication credentials = null ) {
             if (credentials == null) {
-                return new MatchSearchPublicRequest( );
+                return new MatchSearchPublicRequest();
             } else {
                 return new MatchSearchAuthenticatedRequest( credentials );
             }
@@ -44,6 +40,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// The shooting style to search or unassigned for all.
         /// The default value is Air Rifle.
         /// </summary>
+        [Obsolete( "To be replaced with Event Style" )]
         public List<string> ShootingStyle { get; set; } = new List<string>();
 
         /// <summary>

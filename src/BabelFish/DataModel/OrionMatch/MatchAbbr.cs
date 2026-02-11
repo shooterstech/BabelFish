@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
-using System.Text.Json;
-
-using Scopos.BabelFish.DataModel.Athena.Shot;
-using Scopos.BabelFish.Helpers;
 using System.Globalization;
-using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Scopos.BabelFish.DataModel.Common;
 using Location = Scopos.BabelFish.DataModel.Common.Location;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-	[Serializable]
-	public class MatchAbbr {
+    [Serializable]
+    public class MatchAbbr {
 
         public MatchAbbr() {
 
@@ -34,9 +24,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Unique MatchID for the competition to get squadding for. Will match exactly (assuming no errors) of the MatchID in the GetMatchDetailRequest.
         /// </summary>
-        public MatchID ? MatchID { get; set; }
+        public MatchID? MatchID { get; set; }
 
-        public MatchID ? ParentID { get; set; }
+        public MatchID? ParentID { get; set; }
 
         /// <summary>
         /// External Result URL
@@ -57,9 +47,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Human readable name of the Owner, usually a school or club name.
         /// </summary>
-        public string OwnerName { get; set;} = string.Empty;
+        public string OwnerName { get; set; } = string.Empty;
 
-        public string ClubURL {  get; set; } = string.Empty;
+        public string ClubURL { get; set; } = string.Empty;
 
         /// <summary>
         /// The full URL for the owner's club URL.
