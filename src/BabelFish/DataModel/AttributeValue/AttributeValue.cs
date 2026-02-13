@@ -248,6 +248,30 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         }
 
         /// <summary>
+        /// Special case for returning a field's .Name property when the Attribute is a Simple Attribute.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown when the Attribute is not a simple attribute.</exception>
+        public dynamic GetFieldName() {
+
+            if (this.definition.SimpleAttribute) {
+                var firstField = this.definition.Fields[0];
+                var fieldValue = this.GetFieldValue( firstField.FieldName );
+                if (firstField is AttributeFieldString afs) {
+                    foreach (var opt in afs.Values) {
+                        if (opt.Value == fieldValue) {
+                            return opt.Name;
+                        }
+                    }
+                }
+
+                return fieldValue;
+            }
+
+            throw new ArgumentException( "Can not call .GetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );
+        }
+
+        /// <summary>
         /// If applicable, returns the AttributeValueAppellation for this AttributeValue.
         /// Only applicable if the underlying definition is a simple attribute, and the field
         /// type is CLOSED, and the AttributeField is a string

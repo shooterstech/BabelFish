@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
+## [1.12.2] - 2026-02-00
+### Enhancements
+
+### Bug Fixes
+#### MatchAbbr
+- Corrected variable type for StartDate and EndDate to be a DateTime (sorry, this is technically a breaking change albeit a bug fix).
+#### Attribute Specification
+- Fixed bug that was allowing INTERNAL visibility to be higher than PROTECTED visibility.
+
 
 ## [1.12.1] - 2026-02-10
 ### Enhancements
@@ -11,7 +20,7 @@ All notable changes to BabelFish will be documented in this file.
 #### DynamicSquadding
 - Added a DynamicSquadding class that dynamically generates a RESULT LIST FORMAT definition listing most demographic, squadding, and attribute values contained in a Squadding List.
 #### ResultListExcel
-*** Breaking Changes ***
+** Breaking Changes **
 - Refactored the ResultListExcel class to have a FactoryAsync method to construct new instances.
 - Abstracted the FactoryAsync method to work with either ResultLists or SquaddingList objects.
 - The GenerateExcel method new returns a byte[].
@@ -33,6 +42,7 @@ All notable changes to BabelFish will be documented in this file.
 #### ResultListIntermediateFormatted
 - Fix bug that was allowing the spanninng row to show, even when the ShowSpanningRow property evaluated to false.
 - Fix bug that was allowing participants, who have not shot yet, be included in ShowRanks of <= 3. 
+
 
 ## [1.11.3] - 2026-01-15
 ### Enhancements
