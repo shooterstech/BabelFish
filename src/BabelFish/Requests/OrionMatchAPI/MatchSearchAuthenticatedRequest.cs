@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.Runtime.Authentication;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +24,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
             newRequest.ShootingStyle = ShootingStyle;
             newRequest.Longitude = Longitude;
             newRequest.Latitude = Latitude;
+            newRequest.OwnerId = OwnerId;
             newRequest.Token = Token;
             newRequest.Distance = Distance;
             newRequest.Limit = Limit;

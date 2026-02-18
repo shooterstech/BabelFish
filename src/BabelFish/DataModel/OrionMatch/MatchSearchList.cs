@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -25,9 +25,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Distance in miles to search.
-        /// The default is 100 miles.
+        /// The default is 500 miles.
         /// </summary>
-        public int Distance { get; set; } = 500;
+        public int? Distance { get; set; } = 500;
 
         /// <summary>
         /// The start date of the match dates to search.
@@ -55,12 +55,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The Logitude of an area to search.
         /// </summary>
-        public double Longitude { get; set; } = -84.5063057;
+        public double? Longitude { get; set; } = -84.5063057;
 
         /// <summary>
         /// The Latitude of an area to search.
         /// </summary>
-        public double Latitude { get; set; } = 38.0394328;
+        public double? Latitude { get; set; } = 38.0394328;
+
+        /// <summary>
+        /// Wether or not the location data was sent in with the request.
+        /// </summary>
+        public bool LocationSearch { get; set; } = false;
 
         /// <summary>
         /// The maximum number of search results to return. 
