@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -203,6 +204,51 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             Assert.IsTrue(comparer.Compare(resultEvent2, resultEvent1) > 0);  // 1 = 2 compareTo 1
             Assert.IsTrue(comparer.Compare(resultEvent1, resultEvent1) == 0); // 0 = 1 compareTo 1
+        }
+
+        [TestMethod]
+        public async Task CompareMatchAbbrTests() {
+            var comparer_1 = new CompareMatchAbbr(CompareMatchAbbr.CompareMethod.DISTANCE, SortBy.DESCENDING);
+
+            Scopos.BabelFish.DataModel.Common.Location matchLocation_1 = new Location();
+            MatchID matchID_1 = new MatchID("1.15.2026021816010937.0");
+            matchLocation_1.Distance = 1;
+            var matchAbbr_1 = new MatchAbbr {
+                StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).AddDays(-14),
+                EndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day),
+                OwnerId = "OrionAccount000015",
+                MatchID = matchID_1,
+                MatchName = "Match1 with I Dunno.",
+                Location = matchLocation_1
+            };
+            Scopos.BabelFish.DataModel.Common.Location matchLocation_2 = new Location();
+            MatchID matchID_2 = new MatchID("1.16.2026021816010937.0");
+            matchLocation_2.Distance = 2;
+            var matchAbbr_2 = new MatchAbbr {
+                StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).AddDays(-15),
+                EndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day).AddDays(-1),
+                OwnerId = "OrionAccount000016",
+                MatchID = matchID_2,
+                MatchName = "Match2 with extra stuff??",
+                Location = matchLocation_2
+            };
+
+            Assert.IsTrue(comparer_1.Compare(matchAbbr_1, matchAbbr_2) > 0); //Compare distances, 1 < 2
+
+            var comparer_2 = new CompareMatchAbbr(CompareMatchAbbr.CompareMethod.START_DATE, SortBy.DESCENDING);
+            Assert.IsTrue(comparer_2.Compare(matchAbbr_1, matchAbbr_2) < 0); //Compare StartDates, 1 > 2
+
+            var comparer_3 = new CompareMatchAbbr(CompareMatchAbbr.CompareMethod.END_DATE, SortBy.DESCENDING);
+            Assert.IsTrue(comparer_3.Compare(matchAbbr_1, matchAbbr_2) < 0); //Compare EndDates, 1 > 2
+
+            var comparer_4 = new CompareMatchAbbr(CompareMatchAbbr.CompareMethod.OWNER_ID, SortBy.DESCENDING);
+            Assert.IsTrue(comparer_4.Compare(matchAbbr_1, matchAbbr_2) > 0); //Compare ownerID, 1 < 2
+
+            var comparer_5 = new CompareMatchAbbr(CompareMatchAbbr.CompareMethod.MATCH_ID, SortBy.DESCENDING);
+            Assert.IsTrue(comparer_5.Compare(matchAbbr_1, matchAbbr_2) > 0); //Compare EndDates, 1 < 2
+
+            var comparer_6 = new CompareMatchAbbr(CompareMatchAbbr.CompareMethod.MATCH_NAME, SortBy.DESCENDING);
+            Assert.IsTrue(comparer_6.Compare(matchAbbr_1, matchAbbr_2) > 0); //Compare EndDates, 1 < 2
         }
     }
     
