@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text;
-using NLog;
-using Scopos.BabelFish.Converters.Microsoft;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-	[Serializable]
-	public class MatchSearchList : ITokenItems<MatchAbbr> {
+    [Serializable]
+    public class MatchSearchList : ITokenItems<MatchAbbr> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -48,7 +42,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The shooting style to search or unassigned for all.
         /// </summary>
-        public List<string> ShootingStyles { get; set; 
+        public List<string> ShootingStyles {
+            get; set;
             //Currently choosing not to make this a list of ENUMs, as the possible list of Shooting Styles could grow or might become dynamic.
         } = new List<string>();
 

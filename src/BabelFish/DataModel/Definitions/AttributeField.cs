@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -6,7 +6,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// An AttributeField describes one field of an Attribute
     /// </summary>
     [Serializable]
-    public abstract class AttributeField<T>: AttributeFieldBase {
+    public abstract class AttributeField<T> : AttributeFieldBase {
 
         /// <summary>
         /// Public constructor.
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// Common abstract class for all AttributeField generic classes. Primarly only exists to allow for Deserialization
     /// </summary>
-    public abstract class AttributeFieldBase: IReconfigurableRulebookObject {
+    public abstract class AttributeFieldBase : IReconfigurableRulebookObject {
 
         protected Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 1 )]
         public string FieldName { get; set; } = string.Empty;
 
-        private string displayName = string.Empty;
+        private string _displayName = string.Empty;
 
         /// <summary>
         /// Human readable name for the field. This is the value that is displayed to users in a form 
@@ -71,15 +71,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 2 )]
         public string DisplayName {
             get {
-                if (string.IsNullOrEmpty( displayName )) {
+                if (string.IsNullOrEmpty( _displayName )) {
                     return this.FieldName;
                 } else {
-                    return displayName;
+                    return _displayName;
                 }
             }
 
             set {
-                displayName = value;
+                _displayName = value;
             }
         }
 
@@ -110,14 +110,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 21 )]
         public bool Key { get; set; } = false;
 
-		/// <summary>
-		/// True if the user is required to enter a value. False if the user desn't have to. If the user doesn't have to, then the DefaultValue is applied.
-		/// </summary>
-		[G_NS.JsonProperty( Order = 22 )]
-		public bool Required { get; set; } = false;
+        /// <summary>
+        /// True if the user is required to enter a value. False if the user desn't have to. If the user doesn't have to, then the DefaultValue is applied.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 22 )]
+        public bool Required { get; set; } = false;
 
-		/// <inheritdoc/>
-		[G_NS.JsonProperty( Order = 99, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
+        /// <inheritdoc/>
+        [G_NS.JsonProperty( Order = 99, DefaultValueHandling = G_NS.DefaultValueHandling.Ignore )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
