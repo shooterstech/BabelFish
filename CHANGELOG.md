@@ -3,6 +3,8 @@ All notable changes to BabelFish will be documented in this file.
 
 ## [1.12.2] - 2026-02-00
 ### Enhancements
+#### ResultListIntermediateFormattedRow
+- Updated the return value for an Attribute to be the Field's Name (previously was the Field's Value).
 
 ### Bug Fixes
 #### MatchAbbr
