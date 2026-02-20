@@ -26,6 +26,9 @@ Visit our [support web site](https://support.scopos.tech/index.html?x-api-key.ht
 To start accessing Scopos's REST API you may use the following API Key. However, it is rate limited, shared, and obviously open to the public.
 Shared X-API-Key: GyaHV300my60rs2ylKug5aUgFnYBj6GrU6V1WE33
 
+### Stay Updated with Scopos Improvements
+Scopos sends out email newsletters with updates to their programmatic access, the notices are also available online. These email are sent about once a month. To join the distribution list, or view past newsletters, visit [groups.google.com](https://groups.google.com/a/scopos.tech/g/developer-news/about).
+
 ### Support
 
 Programmatic assistance with Scopos' BabelFish is not included with either an Orion or Athena license. Instead, for community support, [submit an issue on the BabelFish GitHub repository page](https://github.com/shooterstech/BabelFish/issues).

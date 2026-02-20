@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -13,29 +12,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             ValueType = ValueType.STRING;
         }
 
-		/// <summary>
-		/// The default value for this field. It is the value assigned to the field if the user does not enter one.
-		/// </summary>
-		[G_NS.JsonProperty( Order = 12 )]
-		public string ? DefaultValue { get; set; } = null;
+        /// <summary>
+        /// The default value for this field. It is the value assigned to the field if the user does not enter one.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 12 )]
+        public string? DefaultValue { get; set; } = null;
 
 
-		/// <summary>
-		/// Indicates if the value of the attribute must be chosen from a list, 
-		/// may be any value, of the there is a suggested list of values.
-		/// </summary>
-		[G_NS.JsonProperty( Order =11, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-		[DefaultValue( FieldType.OPEN )]
+        /// <summary>
+        /// Indicates if the value of the attribute must be chosen from a list, 
+        /// may be any value, of the there is a suggested list of values.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 11, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( FieldType.OPEN )]
         public FieldType FieldType { get; set; } = FieldType.OPEN;
 
-		/// <summary>
-		/// List of possible values, when FieldType is CLOSED or SUGGEST
-		/// </summary>
-		[G_NS.JsonProperty( Order = 13 )]
-		public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
+        /// <summary>
+        /// List of possible values, when FieldType is CLOSED or SUGGEST
+        /// </summary>
+        [G_NS.JsonProperty( Order = 13 )]
+        public List<AttributeValueOption<string>> Values { get; set; } = new List<AttributeValueOption<string>>();
 
-		[G_NS.JsonProperty( Order = 14 )]
-		public AttributeValidationString ? Validation = null;
+        [G_NS.JsonProperty( Order = 14 )]
+        public AttributeValidationString? Validation = null;
 
         internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
             if (value.ValueKind == G_STJ.JsonValueKind.String) {
@@ -48,7 +47,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc />
         public override string GetDefaultValue() {
-            if ( DefaultValue == null )
+            if (DefaultValue == null)
                 return string.Empty;
 
             return DefaultValue;

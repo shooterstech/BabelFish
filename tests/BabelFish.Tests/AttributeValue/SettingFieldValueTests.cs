@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.AttributeValue;
+using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.AttributeValue {
@@ -13,16 +14,16 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public void HappyPathSingleAttributeFieldDataTypes() {
 
             var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
-            var testAttrValue =  Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
+            var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             //Create some random data to store
             var random = new Random();
             var myInt = random.Next();
-            var myFloat = (float) random.NextDouble();
+            var myFloat = (float)random.NextDouble();
             var myBool = random.NextInt64() % 2 == 0;
             var myDate = (new DateTime( random.NextInt64( 0, DateTime.MaxValue.Ticks ) )).Date;
             var myDateTime = new DateTime( random.NextInt64( 0, DateTime.MaxValue.Ticks ) );
-            var myTime = (float) random.NextDouble();
+            var myTime = (float)random.NextDouble();
             var myString = Scopos.BabelFish.Helpers.RandomStringGenerator.RandomAlphaString( 8 );
 
             //Set values to the attribute value.
@@ -53,7 +54,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
 
             //Create some random data to store
             List<string> myListOfStrings = new List<string>();
-            for( int i = 0; i < 10; i++ ) {
+            for (int i = 0; i < 10; i++) {
                 myListOfStrings.Add( Scopos.BabelFish.Helpers.RandomStringGenerator.RandomAlphaString( 8 ) );
             }
 
@@ -61,9 +62,9 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             testAttrValue.SetFieldValue( "AListOfStrings", myListOfStrings );
 
             //Now test that the GetFieldValue return the same data that we stored
-            var myReturnedListOfStrings = (List<string>) testAttrValue.GetFieldValue( "AListOfStrings" );
+            var myReturnedListOfStrings = (List<string>)testAttrValue.GetFieldValue( "AListOfStrings" );
 
-            for( int i = 0; i < 10;i++ ) {
+            for (int i = 0; i < 10; i++) {
                 Assert.AreEqual( myListOfStrings[i], myReturnedListOfStrings[i] );
             }
         }
@@ -105,6 +106,13 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             testAttrValue.SetFieldValue( "AString", 1234, "MyFieldKey" );
+        }
+
+        [TestMethod]
+        public async Task EriksPlayground() {
+            var setName = SetName.Parse( "v1.0:nra:Age Categories" );
+            var attrValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            attrValue.SetFieldValue( "Age Category", "Sub Junior" );
         }
     }
 }

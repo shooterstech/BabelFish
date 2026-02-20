@@ -1,42 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
-using System.Text.Json;
-
-using Scopos.BabelFish.DataModel.Athena.Shot;
-using Scopos.BabelFish.Helpers;
-using System.Globalization;
-using System.Linq.Expressions;
 using Location = Scopos.BabelFish.DataModel.Common.Location;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-	[Serializable]
-	public class MatchAbbr {
 
+    /// <summary>
+    /// A MatchAbbr object contains pertainent but not complete information about an Orion match. Intended
+    /// to be returned as a list from a search. The information in a MatchAbbr instance can then be used
+    /// to look up details of a match using the <seealso cref="OrionMatchAPIClient.GetMatchPublicAsync(Requests.OrionMatchAPI.GetMatchPublicRequest)"/>
+    /// (or similiar ) API call.
+    /// </summary>
+    [Serializable]
+    public class MatchAbbr {
+
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
         public MatchAbbr() {
 
         }
 
-        [OnDeserialized()]
-        public void OnDeserialized( StreamingContext context ) {
-            if (ScoringSystems == null)
-                ScoringSystems = new List<string>();
-            if (Location == null)
-                Location = new Location();
-            if (MatchContacts == null)
-                MatchContacts = new List<Contact>();
-        }
+        /// <summary>
+        /// Unique <seealso cref="Scopos.BabelFish.DataModel.OrionMatch.MatchID"/> for the competition.
+        /// May use this value with other OrionMatchAPI calls including 
+        /// <seealso cref="OrionMatchAPIClient.GetMatchPublicAsync(Requests.OrionMatchAPI.GetMatchPublicRequest)"/>.
+        /// </summary>
+        public MatchID MatchID { get; set; }
 
         /// <summary>
-        /// Unique MatchID for the competition to get squadding for. Will match exactly (assuming no errors) of the MatchID in the GetMatchDetailRequest.
+        /// If this is a Virtual Match, this is the <seealso cref="Scopos.BabelFish.DataModel.OrionMatch.MatchID"/> of the parent match.
         /// </summary>
-        public MatchID ? MatchID { get; set; }
-
-        public MatchID ? ParentID { get; set; }
+        [G_NS.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
+            }
+        }
 
         /// <summary>
         /// External Result URL
@@ -57,9 +56,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Human readable name of the Owner, usually a school or club name.
         /// </summary>
-        public string OwnerName { get; set;} = string.Empty;
+        public string OwnerName { get; set; } = string.Empty;
 
-        public string ClubURL {  get; set; } = string.Empty;
+        /// <summary>
+        /// The url folder path for the owner of this match. For the complete url see <seealso cref="ClubURLRezults"/>
+        /// </summary>
+        public string ClubURL { get; set; } = string.Empty;
 
         /// <summary>
         /// The full URL for the owner's club URL.
@@ -76,53 +78,38 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Start Date of the Match. Formatted as YYYY-MM-dd.
         /// To retreive the Start Date as a DateTime use SetEndDate().
         /// </summary>
-        public string StartDate { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Returns the value of .StartDate as a DateTime instnace.
-        /// </summary>
-        /// <returns></returns>
-        public DateTime GetStartDate() {
-
-            try {
-                DateTime startDate = DateTime.ParseExact( StartDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-                return startDate;
-            } catch {
-                //Shouldn't ever reach here. Choosing not to throw an exception as it's really unlikely.
-                return DateTime.Today;
-            }
-        }
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime StartDate { get; set; }
 
         /// <summary>
         /// End Date of the Match. Formatted as YYYY-MM-dd.
         /// To retreive the End Date as a DateTime use GetEndDate().
         /// </summary>
-        public string EndDate { get; set; } = string.Empty;
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime EndDate { get; set; }
 
         /// <summary>
-        /// Returns the value of .EndDate as a DateTime instance.
+        /// The SetName of the course of fire shot in this match.
         /// </summary>
-        /// <returns></returns>
-        public DateTime GetEndDate() {
-
-            try {
-                DateTime endDate = DateTime.ParseExact( EndDate, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-                return endDate;
-            } catch {
-                //Shouldn't ever reach here. Choosing not to throw an exception as it's really unlikely.
-                return DateTime.Today;
-            }
-        }
-
+        [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire. This property will be replaced with a list of COURSE OF FIRE set names." )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Where this match took place.
+        /// </summary>
         public Location Location { get; set; }
 
+        /// <summary>
+        /// A list of contacts for this match, such as the match director.
+        /// </summary>
         public List<Contact> MatchContacts { get; set; }
 
         /// <summary>
         /// A list of scoring systems used in this match.
         /// </summary>
+        [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple EVENT STYLES. This property will be replaced with ... something, not sure what yet." )]
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
         /// <summary>
@@ -135,7 +122,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool IsInFuture {
             get {
-                return GetStartDate() > DateTime.Today;
+                return this.StartDate > DateTime.Today;
             }
         }
 
@@ -144,7 +131,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool IsInThePast {
             get {
-                return GetEndDate() < DateTime.Today;
+                return this.EndDate < DateTime.Today;
             }
         }
 
@@ -157,21 +144,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Helper method that returns a boolean indicating if this match is a virtual match.
+        /// </summary>
+        [Obsolete( "Starting with Orion 3.0 all matches will be Virtual Matches. So this property will no longer be needed." )]
         public bool IsVirtualMatch {
             get {
-                try {
-                    return this.MatchID.VirtualMatch;
-                } catch (Exception ex) {
-                    return false;
-                }
+                return this.MatchID.VirtualMatch;
             }
         }
 
+        /// <inheritdoc/>
         public override string ToString() {
-            StringBuilder foo = new StringBuilder();
-            foo.Append( "MatchAbbr for " );
-            foo.Append( MatchName );
-            return foo.ToString();
+            return $"MatchAbbr for {MatchName}";
         }
     }
 }

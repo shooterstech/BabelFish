@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -47,5 +43,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [JsonIgnore( Condition = JsonIgnoreCondition.WhenWritingDefault )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return Name;
+        }
     }
 }

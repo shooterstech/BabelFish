@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text;
-using NLog;
-using Scopos.BabelFish.Converters.Microsoft;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-	[Serializable]
-	public class MatchSearchList : ITokenItems<MatchAbbr> {
+    [Serializable]
+    public class MatchSearchList : ITokenItems<MatchAbbr> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -25,9 +19,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Distance in miles to search.
-        /// The default is 100 miles.
+        /// The default is 500 miles.
         /// </summary>
-        public int Distance { get; set; } = 500;
+        public int? Distance { get; set; } = 500;
 
         /// <summary>
         /// The start date of the match dates to search.
@@ -48,19 +42,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The shooting style to search or unassigned for all.
         /// </summary>
-        public List<string> ShootingStyles { get; set; 
+        public List<string> ShootingStyles {
+            get; set;
             //Currently choosing not to make this a list of ENUMs, as the possible list of Shooting Styles could grow or might become dynamic.
         } = new List<string>();
 
         /// <summary>
         /// The Logitude of an area to search.
         /// </summary>
-        public double Longitude { get; set; } = -84.5063057;
+        public double? Longitude { get; set; } = -84.5063057;
 
         /// <summary>
         /// The Latitude of an area to search.
         /// </summary>
-        public double Latitude { get; set; } = 38.0394328;
+        public double? Latitude { get; set; } = 38.0394328;
+
+        /// <summary>
+        /// Wether or not the location data was sent in with the request.
+        /// </summary>
+        public bool LocationSearch { get; set; } = false;
 
         /// <summary>
         /// The maximum number of search results to return. 
