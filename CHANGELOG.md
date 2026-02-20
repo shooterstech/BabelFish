@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [1.12.2] - 2026-02-00
+## [1.12.2] - 2026-02-20
 ### Enhancements
 #### MatchSearchPublicRequest
 - Added ability to search for matches based on the owner of the match (aka Orion Club).
