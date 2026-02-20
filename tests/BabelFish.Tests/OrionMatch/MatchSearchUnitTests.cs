@@ -148,5 +148,81 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreNotEqual( request1.Token, request2.Token );
             Assert.AreNotEqual( request2.Token, request3.Token );
         }
+
+        /// <summary>
+        /// Specifies an Owner ID and ouputs a list of shot matches by ONLY them
+        /// </summary>
+        [TestMethod]
+        public async Task MatchSearchByOwnerID() {
+
+            //Conducting test in production since the development database doesn't always have entries in it.
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+
+            int? distance = null;
+            DateTime? startDate = new DateTime( DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day ).AddDays( -365 );
+            DateTime? endDate = new DateTime( DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day ).AddDays( 0 );
+            int limit = 7;
+            double? longitude = null;
+            double? latitude = null;
+            var shootingStyle = "";
+            string ownerId = "OrionAccount000015";
+            var request = new MatchSearchPublicRequest() {
+                Distance = distance,
+                //StartDate = startDate, // Leaving these as default, it should just tbe the last year. will check in the asserts
+                //EndDate = endDate,
+                Limit = limit,
+                Longitude = longitude,
+                Latitude = latitude,
+                OwnerId = ownerId,
+                ShootingStyle = new List<string>() { shootingStyle }
+            };
+
+            var matchSearchResponse = await client.GetMatchSearchPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.RestApiStatusCode );
+
+            var matchSearchList = matchSearchResponse.MatchSearchList;
+            Assert.AreEqual( limit, matchSearchList.Items.Count );
+            Assert.AreEqual( limit, matchSearchList.Limit );
+            Assert.AreEqual( startDate, matchSearchList.StartDate );
+            Assert.AreEqual( endDate, matchSearchList.EndDate );
+
+            foreach (var matchSearchAbbr in matchSearchList.Items) {
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchID.ToString() ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.MatchName ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerId ) );
+                Assert.IsFalse( string.IsNullOrEmpty( matchSearchAbbr.OwnerName ) );
+
+                Assert.IsTrue( matchSearchAbbr.StartDate <= endDate, $"{matchSearchAbbr.MatchName} start date {matchSearchAbbr.StartDate} is after the search's end date {endDate}." );
+                Assert.IsTrue( matchSearchAbbr.EndDate >= startDate, $"{matchSearchAbbr.MatchName} end date {matchSearchAbbr.EndDate} is before the search's start date {startDate}." );
+            }
+        }
+
+        [TestMethod]
+        public async Task ThrowsExceptionWithIncompleteLocationSearch() {
+            var client = new OrionMatchAPIClient();
+            var request = new MatchSearchPublicRequest();
+
+
+            //Should throw an exception if only Longitude is specified (and not Latitude or Distance).
+            request.Longitude = 11.234;
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>( async () => {
+                var _1 = await client.GetMatchSearchPublicAsync( request );
+            } );
+
+
+            //Should throw an exception if only Longitude and Latitude is specified (and not Distance).
+            request.Longitude = 11.234;
+            request.Latitude = 12.345;
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>( async () => {
+                var _2 = await client.GetMatchSearchPublicAsync( request );
+            } );
+
+            //Should  be happy now
+            request.Longitude = 11.234;
+            request.Latitude = 12.345;
+            request.Distance = 500;
+            var _3 = await client.GetMatchSearchPublicAsync( request );
+        }
     }
 }
