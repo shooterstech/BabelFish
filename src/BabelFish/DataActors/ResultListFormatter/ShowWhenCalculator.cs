@@ -1,9 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     public class ShowWhenCalculator {
@@ -35,33 +31,20 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return Show( (ShowWhenEquation)showWhen, null );
         }
 
-        public bool Show( ShowWhenBase showWhen, IParticipant ? participant ) {
-            /*
-             * TODO: Liam
-             * 1. Implement this and the other overridden version of Show() that includes the IParticipant. 
-             * 2. Make sure to deal with the case that participant is null.
-             * 3. Implement new ShowWhenConditions
-             *      HAS_REMARK_DNS
-             *      HAS_REMARK_DNF
-             *      HAS_REMARK_DSQ
-             *      HAS_REMARK_BUBBLE
-             *      HAS_REMARK_ELIMINATED
-             *      What others to include?
-             * 4. Document in H&M as part of ShowWhenCondition
-             * 5. Write Unit Tests
-             */
+        public bool Show( ShowWhenBase showWhen, IParticipant? participant ) {
+
             if (showWhen is ShowWhenVariable)
-                return Show((ShowWhenVariable)showWhen, participant);
+                return Show( (ShowWhenVariable)showWhen, participant );
 
             if (showWhen is ShowWhenSegmentGroup)
-                return Show((ShowWhenSegmentGroup)showWhen, participant);
+                return Show( (ShowWhenSegmentGroup)showWhen, participant );
 
             //else showWhen is a ShowWhenEquation
 
-            return Show((ShowWhenEquation)showWhen, participant);
+            return Show( (ShowWhenEquation)showWhen, participant );
         }
 
-        public bool Show( ShowWhenVariable showWhen, IParticipant ? participant ) {
+        public bool Show( ShowWhenVariable showWhen, IParticipant? participant ) {
             bool answer = true;
 
             switch (showWhen.Condition) {
@@ -78,7 +61,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
 
                 case ShowWhenCondition.NOT_ENGAGEABLE:
-                    answer = ! RLF.Engagable;
+                    answer = !RLF.Engagable;
                     break;
 
                 case ShowWhenCondition.SUPPLEMENTAL:
@@ -86,7 +69,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
 
                 case ShowWhenCondition.NOT_SUPPLEMENTAL:
-                    answer = ! RLF.ShowSupplementalInformation;
+                    answer = !RLF.ShowSupplementalInformation;
                     break;
 
                 case ShowWhenCondition.DIMENSION_EXTRA_SMALL:
@@ -151,19 +134,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return false;
 
                     //If one or more of the VM locations have ESTs, then this will evaluate to true.
-                    foreach( var md in RLF.ResultList.Metadata.Values ) {
-                        if ( md.ScoringSystemType == ScoringSystem.EST ) {
+                    foreach (var md in RLF.ResultList.Metadata.Values) {
+                        if (md.ScoringSystemType == ScoringSystem.EST) {
                             return true;
                         }
                     }
                     return false;
 
                 case ShowWhenCondition.SHOT_ON_PAPER:
-					if (RLF.ResultList is null)
-						return false;
-					
+                    if (RLF.ResultList is null)
+                        return false;
+
                     //If one or more of the VM locations have PAPER, then this will evaluate to true.
-					foreach (var md in RLF.ResultList.Metadata.Values) {
+                    foreach (var md in RLF.ResultList.Metadata.Values) {
                         if (md.ScoringSystemType == ScoringSystem.PAPER) {
                             return true;
                         }
@@ -171,38 +154,38 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return false;
 
                 case ShowWhenCondition.RESULT_STATUS_FUTURE:
-					if (RLF.ResultList is null)
-						return false;
-					
+                    if (RLF.ResultList is null)
+                        return false;
+
                     answer = RLF.ResultList.Status == ResultStatus.FUTURE;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_INTERMEDIATE:
-					if (RLF.ResultList is null)
-						return false;
-					
+                    if (RLF.ResultList is null)
+                        return false;
+
                     answer = RLF.ResultList.Status == ResultStatus.INTERMEDIATE;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_UNOFFICIAL:
-					if (RLF.ResultList is null)
-						return false;
-					
+                    if (RLF.ResultList is null)
+                        return false;
+
                     answer = RLF.ResultList.Status == ResultStatus.UNOFFICIAL;
                     break;
 
                 case ShowWhenCondition.RESULT_STATUS_OFFICIAL:
-					if (RLF.ResultList is null)
-						return false;
-					
+                    if (RLF.ResultList is null)
+                        return false;
+
                     answer = RLF.ResultList.Status == ResultStatus.OFFICIAL;
                     break;
 
                 case ShowWhenCondition.HAS_ANY_SHOWN_REMARK:
-					
-                    if ( participant == null || participant.Participant == null ) {
-                        foreach ( var p in this.RLF.RLIFList.GetAsIRLItemsList() ) {
-                            if ( p.Participant.RemarkList.HasAnyShownParticipantRemark) {
+
+                    if (participant == null || participant.Participant == null) {
+                        foreach (var p in this.RLF.RLIFList.GetAsIRLItemsList()) {
+                            if (p.Participant.RemarkList.HasAnyShownParticipantRemark) {
                                 return true;
                             }
                         }
@@ -212,89 +195,80 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     }
 
 
-				case ShowWhenCondition.HAS_SHOWN_REMARK_LEADER:
-                    if (participant == null || participant.Participant == null)
-                    {
+                case ShowWhenCondition.HAS_SHOWN_REMARK_LEADER:
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.LEADER);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.LEADER );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_FIRST:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.FIRST);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.FIRST );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_SECOND:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.SECOND);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.SECOND );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_THIRD:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.THIRD);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.THIRD );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_DNS:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DNS);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_DNF:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DNF);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_DSQ:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.DSQ);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_BUBBLE:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.BUBBLE);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.BUBBLE );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_ELIMINATED:
-                    if (participant == null || participant.Participant == null)
-                    {
+                    if (participant == null || participant.Participant == null) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark(ParticipantRemark.ELIMINATED);
+                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_QUALIFIED:
@@ -331,7 +305,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer;
         }
 
-        public bool Show( ShowWhenEquation showWhen, IParticipant ? participant ) {
+        public bool Show( ShowWhenEquation showWhen, IParticipant? participant ) {
 
             bool answer = true;
             bool first = true;
@@ -381,10 +355,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             return answer ^ apployNot;
         }
 
-        public bool Show( ShowWhenSegmentGroup showWhen, IParticipant ? participant ) {
+        public bool Show( ShowWhenSegmentGroup showWhen, IParticipant? participant ) {
 
             ResultListMetadata metadata;
-            if ( this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata ) ) {
+            if (this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata )) {
                 return showWhen.SegmentGroupName.Equals( metadata.SegmentGroupName );
             }
 
@@ -398,10 +372,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             { ShowWhenCondition.DIMENSION_LT_SMALL, 0 },
             { ShowWhenCondition.DIMENSION_EXTRA_SMALL, 325 }, //This is a made-for-scopos ;) dimension
 			{ ShowWhenCondition.DIMENSION_SMALL, 576 },
-			{ ShowWhenCondition.DIMENSION_MEDIUM, 768 },
-			{ ShowWhenCondition.DIMENSION_LARGE, 992 },
-			{ ShowWhenCondition.DIMENSION_EXTRA_LARGE, 1200 },
-			{ ShowWhenCondition.DIMENSION_EXTRA_EXTRA_LARGE, 1400 }};
+            { ShowWhenCondition.DIMENSION_MEDIUM, 768 },
+            { ShowWhenCondition.DIMENSION_LARGE, 992 },
+            { ShowWhenCondition.DIMENSION_EXTRA_LARGE, 1200 },
+            { ShowWhenCondition.DIMENSION_EXTRA_EXTRA_LARGE, 1400 }};
 
         /// <summary>
         /// Helper method to return the screen resolution necessary to evaluate all
@@ -415,13 +389,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             if (showWhen is ShowWhenVariable showWhenVariable) {
                 //This is the stop condition
-                if (BreakPoints.TryGetValue( showWhenVariable.Condition, out int result ) && 
+                if (BreakPoints.TryGetValue( showWhenVariable.Condition, out int result ) &&
                     result > largestResolutionSoFar) {
                     return result;
-				}
-            } else if ( showWhen is ShowWhenEquation showWhenEquation) {
+                }
+            } else if (showWhen is ShowWhenEquation showWhenEquation) {
                 //Use recusion to learn the largest resultion of each of the arguments
-                foreach( var sw in showWhenEquation.Arguments) {
+                foreach (var sw in showWhenEquation.Arguments) {
                     var result = GetLargestShowWhenResolution( sw );
                     if (result > largestResolutionSoFar) {
                         largestResolutionSoFar = result;

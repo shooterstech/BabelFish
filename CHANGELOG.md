@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
+## [1.12.3] - 2026-03-00
+### Enhancements
+#### AttributeFilter
+- Added a series of classes, derived from the abstract class AttributeFilter, that specify conditions in which a Participant passes or doesn't pass. Intended to be used to filter a list of Participants for inclusion on a Result List. For example, list all the Participants in a match that are shooting Sporter air rifle.
+- Added the AttributeFilterCalculator that tests if a Participant meets the filter's specifications.
+
 ## [1.12.2] - 2026-02-20
 ### Enhancements
 #### MatchSearchPublicRequest

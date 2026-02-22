@@ -889,7 +889,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     }
 
     /// <summary>
-    /// Concrete class id for a ShowWhenBase. Indicates if the ShowWhenBase abstract class is of concrete class ShowWhenVariable or ShowWhenEquation.
+    /// Concrete class id for a <seealso cref="ShowWhenBase"/>. Indicates if the ShowWhenBase abstract class is of concrete class
+    /// <seealso cref="ShowWhenVariable"/>, <seealso cref="ShowWhenEquation"/>, or <seealso cref="ShowWhenSegmentGroup"/>.
     /// </summary>
     public enum ShowWhenOperation {
         /// <summary>

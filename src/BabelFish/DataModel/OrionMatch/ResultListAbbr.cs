@@ -9,6 +9,40 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     public class ResultListAbbr {
 
+        /*
+        {
+            "Status": "OFFICIAL",
+            "ResultName": "Individual - Sporter",
+            "ResultListID": "-4606155898983857195",
+            "Primary": true,
+            "Team" : false,
+            "ResultListFormatDef" : "",
+            "RankingRuleDef" : "",
+            "ScoreConfigName" : "",
+            "UserDefinedText" : {},
+            "AttributeFilters" : [
+                {
+                    "Operation" : "EQUATION", //Consistent with ShowWhen
+                    "Boolean" : "AND", //Consistent with ShowWhen
+                    "Arguments" : [ //Consistent with ShowWhen
+                        {
+                            "Operation" : "ATTRIBUTE_VALUE",
+                            "AttributeValue" : {
+                                "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
+                                "Visibility": "PUBLIC",
+                                "AttributeValue": {
+                                    "Three-Position Air Rifle Type": "Sporter"
+                                },
+                                "ConcreteClassId": 2
+                            }
+                        }
+                    ]
+                }
+                                    
+            ]
+        }
+        */
+
         /// <summary>
         /// Default public constructor
         /// </summary>
@@ -28,7 +62,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        [Obsolete( "ResultName should be unique within a match." )]
+        [Obsolete( "ResultName should be unique within a course of fire with in match." )]
         public string ResultListID { get; set; }
 
         /// <summary>
@@ -73,6 +107,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 12 )]
         public string ScoreConfigName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// An AttributeFilter describes how a This ResultList will be filtered. That is to say, of the
+        /// participants who shot the Evente, which of those should be included in this ResultList.
+        /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
+        /// the Precision Air Rifle marksmen).</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 14 )]
+        public List<AttributeFilter> AttributeFilters { get; set; } = new List<AttributeFilter>();
 
         /// <summary>
         /// On RESULT LIST FORMAT definitions that provided for the option, the user (usually the Match Director) may specify their own
