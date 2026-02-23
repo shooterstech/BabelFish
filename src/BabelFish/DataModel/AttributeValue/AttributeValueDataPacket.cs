@@ -1,6 +1,7 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Responses.AttributeValueAPI;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
@@ -11,13 +12,11 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
     public abstract class AttributeValueDataPacket : IDeserializableAbstractClass, IGetAttributeDefinition {
 
-        public const int CONCRETE_CLASS_ID = 1;
-
         /// <summary>
         /// Default constructor.
         /// </summary>
         public AttributeValueDataPacket() {
-            this.ConcreteClassId = CONCRETE_CLASS_ID;
+            this.ConcreteClassId = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
         }
 
         /// <summary>
@@ -79,6 +78,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// Concrete classes, the JSON should include a ConcreteClassId that specifies
         /// the Concrete class.
         /// </summary>
-        public int ConcreteClassId { get; set; }
+        public int ConcreteClassId { get; protected set; }
     }
 }

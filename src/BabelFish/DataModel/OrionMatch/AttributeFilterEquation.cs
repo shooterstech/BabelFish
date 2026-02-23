@@ -39,6 +39,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The boolean operation to apply.
         /// </summary>
+        /// <remarks>Using the existing enum ShowWhenBoolean, which has all of the boolean operations defined.
+        /// Choosing not to rename it (for now) to be more generic, as that would be a breaking change.</remarks>
         public ShowWhenBoolean Boolean { get; set; } = ShowWhenBoolean.AND;
 
         /// <summary>
