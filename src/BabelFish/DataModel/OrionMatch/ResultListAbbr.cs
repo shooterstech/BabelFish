@@ -7,6 +7,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Describes the configuration of a ResultList.
     /// </summary>
+    /// <remarks>
+    /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
+    /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
+    /// </remarks>
     public class ResultListAbbr {
 
         /*
@@ -55,7 +59,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
-        public string ResultName { get; set; }
+        public string ResultName { get; set; } = string.Empty;
 
         /// <summary>
         /// Unique identifier, within this match, for this Result List.

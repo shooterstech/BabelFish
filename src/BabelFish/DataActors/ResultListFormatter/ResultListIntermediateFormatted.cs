@@ -17,6 +17,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// to retreive either the textual value of each cell or a CallValue object that is the text value plus
     /// css class list.
     /// </summary>
+    /// <remarks>
+    /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+    /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+    /// the result list intermediate formatter to format the result list to the console.
+    /// </remarks>
     public class ResultListIntermediateFormatted {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
