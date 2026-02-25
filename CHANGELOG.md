@@ -6,6 +6,9 @@ All notable changes to BabelFish will be documented in this file.
 #### AttributeFilter
 - Added a series of classes, derived from the abstract class AttributeFilter, that specify conditions in which a Participant passes or doesn't pass. Intended to be used to filter a list of Participants for inclusion on a Result List. For example, list all the Participants in a match that are shooting Sporter air rifle.
 - Added the AttributeFilterCalculator that tests if a Participant meets the filter's specifications.
+#### CourseOfFire
+- Added property for RequiredAttributeDef and deprecated DefaultAttributeDef, which will specify which, if any, ATTRIBUTE is required when the COURSE OF FIRE is added to an Orion Match. 
+- Added specification to check that RequiredAttributeDef is a simple attribute, of type string, and each field value specifies an Attribute Value Appelation.
 
 ## [1.12.2] - 2026-02-20
 ### Enhancements

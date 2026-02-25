@@ -1,9 +1,5 @@
-﻿using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     public class IsCourseOfFireValid : CompositeSpecification<CourseOfFire> {
@@ -81,6 +77,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var commandAutomationIds = new IsCourseOfFireRangeScriptAutomationIdsValid();
             var calculationVariables = new IsCourseOfFireEventCalculationVariablesValid();
             var targetCollectionIndexes = new IsTargetCollectionIndexValid();
+            var requiredAttrValue = new IsCourseOfFireRequiredAttributeValueValid();
 
 
 
@@ -157,6 +154,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await targetCollectionIndexes.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( targetCollectionIndexes.Messages );
+            }
+
+            if (!await requiredAttrValue.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( requiredAttrValue.Messages );
             }
 
             return valid;
@@ -267,6 +269,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// <summary>
     /// Tests if the DefaultAttributreDef value is valid.
     /// </summary>
+    /// <remarks>DefaultAttributeDef is deprecated, replaced with RequiredAttributeDef</remarks>
     public class IsCourseOfFireDefaultAttributeDefValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
@@ -415,27 +418,27 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             Messages.Clear();
             bool valid = true;
 
-            List<int> seenIds =     new List<int>();
+            List<int> seenIds = new List<int>();
 
             int indexRangeScript = 0;
             int indexSegmentGroup = 0;
             int indexCommand = 0;
             int indexAutomation = 0;
-            foreach( var rs in candidate.RangeScripts ) {
+            foreach (var rs in candidate.RangeScripts) {
 
                 indexSegmentGroup = 0;
-                foreach( var sg in rs.SegmentGroups ) {
+                foreach (var sg in rs.SegmentGroups) {
 
                     indexCommand = 0;
-                    foreach ( var command in sg.Commands ) {
+                    foreach (var command in sg.Commands) {
 
                         indexAutomation = 0;
-                        foreach( var automation in command.Automation ) {
+                        foreach (var automation in command.Automation) {
 
                             if (automation.Id <= 0) {
                                 valid = false;
                                 Messages.Add( $"Command Automation RangeScripts[{indexRangeScript}].SegmentGroup[{indexSegmentGroup}].Command[{indexCommand}].Automation[{indexAutomation}] must have an unique id that is greater than 0." );
-                            } else if ( seenIds.Contains( automation.Id )) {
+                            } else if (seenIds.Contains( automation.Id )) {
                                 valid = false;
                                 Messages.Add( $"Command Automation RangeScripts[{indexRangeScript}].SegmentGroup[{indexSegmentGroup}].Command[{indexCommand}].Automation[{indexAutomation}] has an Id '{automation.Id}' that has been used already." );
                             } else {
@@ -487,12 +490,12 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             return valid;
         }
-	}
+    }
 
-	/// <summary>
-	/// Tests if the CalculatoinVariables are valid, given an Event's Calculation method
-	/// </summary>
-	public class IsCourseOfFireEventCalculationVariablesValid : CompositeSpecification<CourseOfFire> {
+    /// <summary>
+    /// Tests if the CalculatoinVariables are valid, given an Event's Calculation method
+    /// </summary>
+    public class IsCourseOfFireEventCalculationVariablesValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
 
@@ -518,44 +521,44 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         //May have zero to many. So not doing a check on the number of variables.
                         break;
 
-					case EventCalculation.AVERAGE:
-						//CalculationVariables must be type Integer
-						variableIndex = 0;
-						foreach (var variable in @event.CalculationVariables) {
-							if (variable.VariableType != CalculationVariableType.INTEGER) {
-								valid = false;
-								Messages.Add( $"Event[{index}] has Calculation method AVERAGE. However, CalculationVariable[{variableIndex}] is of tpe {variable.VariableType} and instead must be of type INTEGER." );
-							}
-							variableIndex++;
-						}
+                    case EventCalculation.AVERAGE:
+                        //CalculationVariables must be type Integer
+                        variableIndex = 0;
+                        foreach (var variable in @event.CalculationVariables) {
+                            if (variable.VariableType != CalculationVariableType.INTEGER) {
+                                valid = false;
+                                Messages.Add( $"Event[{index}] has Calculation method AVERAGE. However, CalculationVariable[{variableIndex}] is of tpe {variable.VariableType} and instead must be of type INTEGER." );
+                            }
+                            variableIndex++;
+                        }
 
                         //Must have exactly one variable.
-                        if ( @event.CalculationVariables.Count != 1 ) {
-							valid = false;
-							Messages.Add( $"Event[{index}] has Calculation method AVERAGE, and must have exactly 1 CalculationVariable of type INTEGER. Instead have {@event.CalculationVariables.Count}." );
-						}
-						break;
+                        if (@event.CalculationVariables.Count != 1) {
+                            valid = false;
+                            Messages.Add( $"Event[{index}] has Calculation method AVERAGE, and must have exactly 1 CalculationVariable of type INTEGER. Instead have {@event.CalculationVariables.Count}." );
+                        }
+                        break;
 
                     default:
                         //The other EventCalculation values are deprecated and one day should cause an Specification error. EKA May 2025.
                         break;
-				}
+                }
 
 
                 index++;
             }
 
-			return valid;
-		}
-	}
+            return valid;
+        }
+    }
 
-	/// <summary>
-	/// Tests that there is only one EventType EVENT.
-	/// Tests that the one EventType EVENT has a EventStyleMapping object.
-	/// Tests that the EventStyleMapping object has a valid reference to an EVENT STYLE.
-	/// Tests that the remaining (non EventType EVENT) events do not have a EventStyleMapping object.
-	/// </summary>
-	public class IsCourseOfFireEventEventStyleMappingValid : CompositeSpecification<CourseOfFire> {
+    /// <summary>
+    /// Tests that there is only one EventType EVENT.
+    /// Tests that the one EventType EVENT has a EventStyleMapping object.
+    /// Tests that the EventStyleMapping object has a valid reference to an EVENT STYLE.
+    /// Tests that the remaining (non EventType EVENT) events do not have a EventStyleMapping object.
+    /// </summary>
+    public class IsCourseOfFireEventEventStyleMappingValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
 
@@ -632,7 +635,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             //NOTE it is not enough just to have a STAGE. It must be within the Event Tree. Else things like score projection won't work.
             var topLevelEvent = EventComposite.GrowEventTree( candidate );
             var eventTypeStages = topLevelEvent.GetEvents( EventtType.STAGE );
-            if ( eventTypeStages.Count == 0 ) {
+            if (eventTypeStages.Count == 0) {
                 valid = false;
                 Messages.Add( $"An Event with EventType STAGE was not found within the Event Tree. A COURSE OF FIRE's Event Tree must have at least one EventType STAGE." );
             }
@@ -650,7 +653,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         Messages.Add( $"Event[{index}] is as an EventType STAGE, but is listed as outside the Event Tree. All STAGEs must be within the Event Tree." );
                     }
 
-                    if (@event.IsATopLevelStageStyle) { 
+                    if (@event.IsATopLevelStageStyle) {
 
                         //Test that the STAGE STYLE definition reference is valid
                         var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
@@ -664,7 +667,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         }
                     }
 
-                } 
+                }
 
                 index++;
             }
@@ -673,18 +676,18 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var topLevelStageStyleEvents = topLevelEvent.GetTopLevelStageStyleEvents();
 
             //Test that there is at least one of these.
-            if ( topLevelStageStyleEvents.Count == 0 ) {
+            if (topLevelStageStyleEvents.Count == 0) {
                 valid = false;
                 Messages.Add( $"There must be at least one Event that defines a StageStyleMapping." );
             }
 
             //Test that each of these top level stage style events, do not have descendants that also define a StageStyleMapping.
-            foreach( var tlsse in topLevelStageStyleEvents ) {
+            foreach (var tlsse in topLevelStageStyleEvents) {
                 //Find the descendants if there are any
                 var listOfEvents = tlsse.GetTopLevelStageStyleEvents();
                 listOfEvents.RemoveAt( 0 ); //Remove the first top level stage style event.
 
-                if (listOfEvents.Count != 0 ) {
+                if (listOfEvents.Count != 0) {
                     valid = false;
                     string offendingEvents = string.Join( ", ", listOfEvents.Select( p => p.EventName ) );
                     Messages.Add( $"The Event '{tlsse.EventName}' defines a StageStyleMapping. However it has one or more children that also define a StageStyleMapping. These are {offendingEvents}." );
@@ -699,7 +702,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 sum += tlsse.GetAllSingulars().Count();
             }
 
-            if ( count != sum ) {
+            if (count != sum) {
                 valid = false;
                 Messages.Add( "All paths in the Course of Fire Tree must have one Event that defines a StageStyleMapping." );
             }
@@ -742,14 +745,13 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
                 //Check that there are no duplicates
                 var duplicates = listOfEvents
-                        .GroupBy(x => x.EventName)
-                        .Where(g => g.Count() > 1)
-                        .Select(g => g.Key)
+                        .GroupBy( x => x.EventName )
+                        .Where( g => g.Count() > 1 )
+                        .Select( g => g.Key )
                         .ToList();
-                if (duplicates.Any())
-                {
+                if (duplicates.Any()) {
                     valid = false;
-                    Messages.Add($"The following events occur multiple times in the Event Tree: " + string.Join(", ", duplicates));
+                    Messages.Add( $"The following events occur multiple times in the Event Tree: " + string.Join( ", ", duplicates ) );
                 }
 
                 //Check that each of them are in the EventTree
@@ -769,7 +771,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             return valid;
         }
     }
-    
+
     /// <summary>
     /// Tests if the TargetCollectionIndex values, found in either the Singular or SegmentGroupSegment are valid values.
     /// Values must be less than the size of the TARGET COLLECTION's .TargetCollections[].TargetDefs[] length.
@@ -822,7 +824,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         }
     }
 
-public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<CourseOfFire> {
+    public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<CourseOfFire> {
 
         public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
 
@@ -847,7 +849,7 @@ public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<Cour
                         }
 
                         var foo = eventTree.FindEventComposite( af.EventName );
-                        if (foo == null && ! externalEvents.ContainsKey( af.EventName ) ) {
+                        if (foo == null && !externalEvents.ContainsKey( af.EventName )) {
                             valid = false;
                             Messages.Add( $"AbbreviatedFormats[{index}] names an Event '{af.EventName}' that does not exist." );
                         }
@@ -859,7 +861,7 @@ public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<Cour
                                     //Check if the Event name is in the Event Tree
                                     //If not, check if it is an external event.
                                     foo = eventTree.FindEventComposite( child.EventName );
-                                    if (foo == null && ! externalEvents.ContainsKey( child.EventName ) ) {
+                                    if (foo == null && !externalEvents.ContainsKey( child.EventName )) {
                                         valid = false;
                                         Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] names an Event '{child.EventName}' that does not exist." );
                                     }
@@ -869,31 +871,31 @@ public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<Cour
                                     var vs1 = ((AbbreviatedFormatChildExpand)child).Values;
                                     foreach (var eventName in vs1.GetAsList( child.EventName )) {
 
-										//Check if the Event name is in the Event Tree
-										//If not, check if it is an external event.
-										foo = eventTree.FindEventComposite( eventName );
-										if (foo == null && !externalEvents.ContainsKey( child.EventName ) ) {
-											valid = false;
-											Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] compiles to an Event '{child.EventName}' that does not exist." );
-										}
-									}
+                                        //Check if the Event name is in the Event Tree
+                                        //If not, check if it is an external event.
+                                        foo = eventTree.FindEventComposite( eventName );
+                                        if (foo == null && !externalEvents.ContainsKey( child.EventName )) {
+                                            valid = false;
+                                            Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] compiles to an Event '{child.EventName}' that does not exist." );
+                                        }
+                                    }
                                     break;
 
                                 case EventDerivationType.DERIVED:
-									//Currently don't have a good way of checking these, as the expansion depends on the Result Event. So only going to check against a ValueSeries of "1".
-									var vs2 = new ValueSeries( "1" );
-									foreach (var eventName in vs2.GetAsList( child.EventName )) {
+                                    //Currently don't have a good way of checking these, as the expansion depends on the Result Event. So only going to check against a ValueSeries of "1".
+                                    var vs2 = new ValueSeries( "1" );
+                                    foreach (var eventName in vs2.GetAsList( child.EventName )) {
 
-										//Check if the Event name is in the Event Tree
-										//If not, check if it is an external event.
-										foo = eventTree.FindEventComposite( eventName );
-										if (foo == null && !externalEvents.ContainsKey( child.EventName ) ) {
-											valid = false;
-											Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] compiles to an Event '{child.EventName}' that does not exist." );
-										}
-									}
-									break;
-							}
+                                        //Check if the Event name is in the Event Tree
+                                        //If not, check if it is an external event.
+                                        foo = eventTree.FindEventComposite( eventName );
+                                        if (foo == null && !externalEvents.ContainsKey( child.EventName )) {
+                                            valid = false;
+                                            Messages.Add( $"AbbreviatedFormats[{index}][{childIndex}] compiles to an Event '{child.EventName}' that does not exist." );
+                                        }
+                                    }
+                                    break;
+                            }
 
                             childIndex++;
                         }
@@ -904,6 +906,60 @@ public class IsCourseOfFireAbbreviatedFormatsValid : CompositeSpecification<Cour
             } catch (Exception ex) {
                 valid = false;
                 Messages.Add( ex.ToString() );
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Checks that the property .RequiredAttributeDef, if it is not the default value, points to an ATTRIBUTE definition that has valid values for use as a RequiredAttributeDef. The
+    /// RequiredAttributeDef must be simple, string value, and each field value must have an AttributeValueAppellation.
+    /// </summary>
+    public class IsCourseOfFireRequiredAttributeValueValid : CompositeSpecification<CourseOfFire> {
+
+        /// <inheritdoc/>
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            //If the RequiredAttributeDef is the default value, then we don't need to do any validation.
+            if (candidate.RequiredAttributeDef.ToString() == "v1.0:orion:Default") {
+                return true;
+            }
+
+            var attr = await candidate.GetAttributeDefinitionAsync();
+
+            //Check that the RequiredAttributeDef is a simple attribute.
+            if (!attr.SimpleAttribute) {
+                valid = false;
+                Messages.Add( $"The RequiredAttributeDef must be a simple ATTRIBUTE, meaning there only one field and does not have multiple value." );
+                return valid;
+            }
+
+            //Check that the field value is an AttributeFieldString.
+            var firstField = attr.Fields[0];
+            if (firstField is not AttributeFieldString) {
+                valid = false;
+                Messages.Add( $"The RequiredAttributeDef singular field must be a AttributeFieldString. However the field is of type {firstField.GetType().Name}." );
+                return valid;
+            }
+
+            //Check that is is a closed field.
+            var firstFieldAsString = (AttributeFieldString)firstField;
+            if (firstFieldAsString.FieldType != FieldType.CLOSED) {
+                valid = false;
+                Messages.Add( $"The RequiredAttributeDef singular field must be a closed AttributeFieldString. However the field is of type {firstFieldAsString.FieldType}." );
+                return valid;
+            }
+
+            //Check that each value specifies a Attribute Value Appelation.
+            foreach (var value in firstFieldAsString.Values) {
+                if (string.IsNullOrEmpty( value.AttributeValueAppellation )) {
+                    valid = false;
+                    Messages.Add( $"Each value for the RequiredAttributeDef singular field must specify an AttributeValueAppellation. However '{value.Name}' does not." );
+                }
             }
 
             return valid;

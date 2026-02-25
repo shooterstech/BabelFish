@@ -7,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// specifies the boolean logic of how multiple AttributeFilter instances are combined.
     ///
     /// </summary>
-    public class AttributeFilterEquation : AttributeFilter {
+    public class AttributeFilterEquation : AttributeFilter, IEquatable<AttributeFilterEquation>, IEqualityComparer<AttributeFilterEquation> {
 
         /// <summary>
         /// Constructor
@@ -47,5 +47,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The list of AttributeFilter to apply the boolean logic too.
         /// </summary>
         public List<AttributeFilter> Arguments { get; set; } = new List<AttributeFilter>();
+
+        /// <summary>
+        /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
+        /// <inheritdoc />
+        public override int GetHashCode() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append( this.Operation.ToString() );
+            sb.Append( this.Boolean.ToString() );
+            foreach (var arg in this.Arguments) {
+                sb.Append( arg.GetHashCode() );
+            }
+            return sb.ToString().GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public override bool Equals( object obj ) {
+            if (obj is AttributeFilterEquation afe) {
+                return Equals( afe );
+            }
+            return false;
+        }
+
+        /// <inheritdoc />
+        public bool Equals( AttributeFilterEquation other ) {
+            return this.GetHashCode() == other.GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public bool Equals( AttributeFilterEquation x, AttributeFilterEquation y ) => x.Equals( y );
+
+        /// <inheritdoc />
+        public int GetHashCode( AttributeFilterEquation obj ) => obj.GetHashCode();
     }
 }

@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
     /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
     /// </remarks>
-    public class ResultListAbbr {
+    public class ResultListAbbr : IEquatable<ResultListAbbr>, IEqualityComparer<ResultListAbbr> {
 
         /*
         {
@@ -152,9 +152,43 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )));
         }
 
-        /*
-         * EKA Note Jan 2026: Will need a list of filtering attribute values.
-         */
+        /// <summary>
+        /// Returns a hash code that unique defines the structure of the Result List.</summary>
+        /// <inheritdoc />
+        public override int GetHashCode() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append( this.ResultName );
+            sb.Append( this.Primary );
+            sb.Append( this.Team );
+            //Choosing not to include Status, as Status does not effect the structure of the ResultList
+            sb.Append( this.ResultListFormatDef.ToString() );
+            sb.Append( this.RankingRuleDef.ToString() );
+            sb.Append( this.ScoreConfigName );
+            foreach (var filter in this.AttributeFilters) {
+                sb.Append( filter.GetHashCode() );
+            }
+            //Also choosing not to include UserDefinedText, as this too does nto effect the structure of the ResultList
+            return sb.ToString().GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public override bool Equals( object obj ) {
+            if (obj is ResultListAbbr afe) {
+                return Equals( afe );
+            }
+            return false;
+        }
+
+        /// <inheritdoc />
+        public bool Equals( ResultListAbbr other ) {
+            return this.GetHashCode() == other.GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public bool Equals( ResultListAbbr x, ResultListAbbr y ) => x.Equals( y );
+
+        /// <inheritdoc />
+        public int GetHashCode( ResultListAbbr obj ) => obj.GetHashCode();
 
     }
 }

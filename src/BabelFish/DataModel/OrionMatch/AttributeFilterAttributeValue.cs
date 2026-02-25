@@ -9,7 +9,7 @@ namespace BabelFish.DataModel.OrionMatch {
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
     /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue"/> field values.
     /// </summary>
-    public class AttributeFilterAttributeValue : AttributeFilter, IGetAttributeDefinition {
+    public class AttributeFilterAttributeValue : AttributeFilter, IGetAttributeDefinition, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue> {
 
         /*
         {
@@ -63,5 +63,39 @@ namespace BabelFish.DataModel.OrionMatch {
 
             return await DefinitionCache.GetAttributeDefinitionAsync( this.AttributeDef );
         }
+
+        /// <summary>
+        /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
+        /// <inheritdoc />
+        public override int GetHashCode() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append( this.Operation.ToString() );
+            sb.Append( this.AttributeDef.ToString() );
+            sb.Append( this.FilterRule.ToString() );
+            foreach (var val in this.Values) {
+                sb.Append( val.Item1 );
+                sb.Append( val.Item2 );
+            }
+            return sb.ToString().GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public override bool Equals( object obj ) {
+            if (obj is AttributeFilterAttributeValue afe) {
+                return Equals( afe );
+            }
+            return false;
+        }
+
+        /// <inheritdoc />
+        public bool Equals( AttributeFilterAttributeValue other ) {
+            return this.GetHashCode() == other.GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public bool Equals( AttributeFilterAttributeValue x, AttributeFilterAttributeValue y ) => x.Equals( y );
+
+        /// <inheritdoc />
+        public int GetHashCode( AttributeFilterAttributeValue obj ) => obj.GetHashCode();
     }
 }
