@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -20,41 +21,40 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
             AttributeFilterAttributeValue sporterFilterHasOne = new AttributeFilterAttributeValue();
             sporterFilterHasOne.AttributeDef = setName;
             sporterFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            sporterFilterHasOne.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
 
             AttributeFilterAttributeValue precisionFilterHasOne = new AttributeFilterAttributeValue();
             precisionFilterHasOne.AttributeDef = setName;
             precisionFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            precisionFilterHasOne.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
 
             AttributeFilterAttributeValue sporterFilterHasAll = new AttributeFilterAttributeValue();
             sporterFilterHasAll.AttributeDef = setName;
             sporterFilterHasAll.FilterRule = AttributeFilterRule.HAVE_ALL;
-            sporterFilterHasAll.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasAll.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
 
             AttributeFilterAttributeValue precisionFilterHasAll = new AttributeFilterAttributeValue();
             precisionFilterHasAll.AttributeDef = setName;
             precisionFilterHasAll.FilterRule = AttributeFilterRule.HAVE_ALL;
-            precisionFilterHasAll.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasAll.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
 
             AttributeFilterAttributeValue sporterFilterHasNone = new AttributeFilterAttributeValue();
             sporterFilterHasNone.AttributeDef = setName;
             sporterFilterHasNone.FilterRule = AttributeFilterRule.NOT_HAVE_ANY;
-            sporterFilterHasNone.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasNone.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
 
             AttributeFilterAttributeValue precisionFilterHasNone = new AttributeFilterAttributeValue();
             precisionFilterHasNone.AttributeDef = setName;
             precisionFilterHasNone.FilterRule = AttributeFilterRule.NOT_HAVE_ANY;
-            precisionFilterHasNone.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasNone.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
 
-            AttributeFilterCalculator calculator = new AttributeFilterCalculator();
 
-            Assert.IsTrue( calculator.Passes( sporterFilterHasOne, participant ) );
-            Assert.IsFalse( calculator.Passes( precisionFilterHasOne, participant ) );
-            Assert.IsTrue( calculator.Passes( sporterFilterHasAll, participant ) );
-            Assert.IsFalse( calculator.Passes( precisionFilterHasAll, participant ) );
-            Assert.IsFalse( calculator.Passes( sporterFilterHasNone, participant ) );
-            Assert.IsTrue( calculator.Passes( precisionFilterHasNone, participant ) );
+            Assert.IsTrue( AttributeFilterCalculator.Passes( sporterFilterHasOne, participant ) );
+            Assert.IsFalse( AttributeFilterCalculator.Passes( precisionFilterHasOne, participant ) );
+            Assert.IsTrue( AttributeFilterCalculator.Passes( sporterFilterHasAll, participant ) );
+            Assert.IsFalse( AttributeFilterCalculator.Passes( precisionFilterHasAll, participant ) );
+            Assert.IsFalse( AttributeFilterCalculator.Passes( sporterFilterHasNone, participant ) );
+            Assert.IsTrue( AttributeFilterCalculator.Passes( precisionFilterHasNone, participant ) );
         }
 
         [TestMethod]
@@ -72,22 +72,22 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
             AttributeFilterAttributeValue sporterFilterHasOne = new AttributeFilterAttributeValue();
             sporterFilterHasOne.AttributeDef = setNameAirRifleType;
             sporterFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            sporterFilterHasOne.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
 
             AttributeFilterAttributeValue precisionFilterHasOne = new AttributeFilterAttributeValue();
             precisionFilterHasOne.AttributeDef = setNameAirRifleType;
             precisionFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            precisionFilterHasOne.Values.Add( new Tuple<string, dynamic>( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
 
             AttributeFilterAttributeValue newShooterHasOne = new AttributeFilterAttributeValue();
             newShooterHasOne.AttributeDef = setNameNewShooter;
             newShooterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            newShooterHasOne.Values.Add( new Tuple<string, dynamic>( "Three-Position New Shooter", "New Shooter" ) );
+            newShooterHasOne.Values.Add( new ConstantFieldValue( "Three-Position New Shooter", "New Shooter" ) );
 
             AttributeFilterAttributeValue oldShooterHasOne = new AttributeFilterAttributeValue();
             oldShooterHasOne.AttributeDef = setNameNewShooter;
             oldShooterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            oldShooterHasOne.Values.Add( new Tuple<string, dynamic>( "Three-Position New Shooter", "Old Shooter" ) );
+            oldShooterHasOne.Values.Add( new ConstantFieldValue( "Three-Position New Shooter", "Old Shooter" ) );
 
             AttributeFilterEquation sporterAndNewShooter = new AttributeFilterEquation();
             sporterAndNewShooter.Boolean = ShowWhenBoolean.AND;
@@ -119,14 +119,12 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
             sporterOrPrecision.Arguments.Add( precisionFilterHasOne );
             sporterOrPrecision.Arguments.Add( sporterFilterHasOne );
 
-            AttributeFilterCalculator calculator = new AttributeFilterCalculator();
-
-            Assert.IsTrue( calculator.Passes( sporterAndNewShooter, participant ) );
-            Assert.IsTrue( calculator.Passes( sporterOrNewShooter, participant ) );
-            Assert.IsFalse( calculator.Passes( sporterXorNewShooter, participant ) );
-            Assert.IsFalse( calculator.Passes( precisionAndOldShooter, participant ) );
-            Assert.IsFalse( calculator.Passes( precisionOrOldShooter, participant ) );
-            Assert.IsTrue( calculator.Passes( sporterOrPrecision, participant ) );
+            Assert.IsTrue( AttributeFilterCalculator.Passes( sporterAndNewShooter, participant ) );
+            Assert.IsTrue( AttributeFilterCalculator.Passes( sporterOrNewShooter, participant ) );
+            Assert.IsFalse( AttributeFilterCalculator.Passes( sporterXorNewShooter, participant ) );
+            Assert.IsFalse( AttributeFilterCalculator.Passes( precisionAndOldShooter, participant ) );
+            Assert.IsFalse( AttributeFilterCalculator.Passes( precisionOrOldShooter, participant ) );
+            Assert.IsTrue( AttributeFilterCalculator.Passes( sporterOrPrecision, participant ) );
         }
     }
 }

@@ -65,9 +65,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Required.
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 24 )]
-        [G_NS.JsonProperty( Order = 24, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "v1.0:orion:Air Rifle" )]
-        public string TargetCollectionDef { get; set; } = "v1.0:orion:Air Rifle";
+        [G_NS.JsonProperty( Order = 24 )]
+        public SetName TargetCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Air Rifle" );
 
         /// <summary>
         /// The name of the Target Collection to use as the default when creating a new Course of Fire. 
@@ -82,9 +81,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 26 )]
-        [G_NS.JsonProperty( Order = 26, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
-        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
+        [G_NS.JsonProperty( Order = 26 )]
+        public SetName ScoreFormatCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
@@ -98,18 +96,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The default Event and Stage Style Mapping file to use. 
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 28 )]
-        [G_NS.JsonProperty( Order = 28, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "v1.0:orion:Default" )]
-        public string DefaultEventAndStageStyleMappingDef { get; set; } = "v1.0:orion:Default";
-
-        /// <summary>
-        /// The default Attribute Value to use to determine a user's Attribute Value Appellation when shooting this course of fire.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 29 )]
-        [G_NS.JsonProperty( Order = 29, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "" )]
-        [Obsolete( "Use RequiredAttributeDef instead, which specifies a required Attribute that must be be used to determine a participant's Attribute Value Appellation when shooting this course of fire." )]
-        public string DefaultAttributeDef { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 28 )]
+        public SetName DefaultEventAndStageStyleMappingDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
         /// Formatted as a SetName, the default Attribute definition that specifies a required Attribute that must be used to determine a participant's Attribute Value Appellation,
@@ -164,8 +152,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public async Task<TargetCollection> GetTargetCollectionDefinitionAsync() {
-            SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( TargetCollectionDef );
-            return await DefinitionCache.GetTargetCollectionDefinitionAsync( targetCollectionDef );
+            return await DefinitionCache.GetTargetCollectionDefinitionAsync( TargetCollectionDef );
         }
 
         /// <inheritdoc />
@@ -174,8 +161,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
 
-            SetName scoreFormatCollectionSetName = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( ScoreFormatCollectionDef );
-            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionDef );
         }
 
         /// <inheritdoc />
@@ -185,8 +171,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" />
         public async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync() {
 
-            SetName eventAndStageStyleMappingSetName = Definitions.SetName.Parse( DefaultEventAndStageStyleMappingDef );
-            return await DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync( eventAndStageStyleMappingSetName );
+            return await DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync( DefaultEventAndStageStyleMappingDef );
         }
 
 

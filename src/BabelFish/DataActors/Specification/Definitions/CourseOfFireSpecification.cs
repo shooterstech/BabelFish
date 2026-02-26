@@ -65,7 +65,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var tc = new IsCourseOfFireTargetCollectionDefValid();
             var scoreFormatCollection = new IsCourseOfFireScoreFormatCollectionDefValid();
             var essm = new IsCourseOfFireDefaultEventAndStageStyleMappingDefValid();
-            var a = new IsCourseOfFireDefaultAttributeDefValid();
             var scoreFormats = new IsCourseOfFireScoreFormatsValid();
             var singularStageLabesl = new IsCourseOfFireSingularStageLabelsValid();
             var rankingRuleMapping = new IsCourseOfFireResultEventRankingRuleMappingValid();
@@ -99,11 +98,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await essm.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( essm.Messages );
-            }
-
-            if (!await a.IsSatisfiedByAsync( candidate )) {
-                valid = false;
-                Messages.AddRange( a.Messages );
             }
 
             if (!await singularStageLabesl.IsSatisfiedByAsync( candidate )) {
@@ -184,8 +178,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             }
 
             //Test that the DefaultTargetCollectionName value is a name listed in the TARGET COLLECTION 
-            var setName = SetName.Parse( candidate.TargetCollectionDef );
-            var targetCollection = await DefinitionCache.GetTargetCollectionDefinitionAsync( setName );
+            var targetCollection = await DefinitionCache.GetTargetCollectionDefinitionAsync( candidate.TargetCollectionDef );
 
             bool foundTargetCollectionName = false;
             foreach (var tc in targetCollection.TargetCollections) {
@@ -223,8 +216,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             }
 
             //Test that the ScoreConfigDefault value is a name listed in the SCORE FORMAT COLLECTION 
-            var setName = SetName.Parse( candidate.ScoreFormatCollectionDef );
-            var scoreConfigDefinition = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( setName );
+            var scoreConfigDefinition = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( candidate.ScoreFormatCollectionDef );
 
             bool foundScoreConfigName = false;
             foreach (var tc in scoreConfigDefinition.ScoreConfigs) {
@@ -260,34 +252,6 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!vm.Valid) {
                 Messages.Add( vm.Message );
                 valid = false;
-            }
-
-            return valid;
-        }
-    }
-
-    /// <summary>
-    /// Tests if the DefaultAttributreDef value is valid.
-    /// </summary>
-    /// <remarks>DefaultAttributeDef is deprecated, replaced with RequiredAttributeDef</remarks>
-    public class IsCourseOfFireDefaultAttributeDefValid : CompositeSpecification<CourseOfFire> {
-
-        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
-            Messages.Clear();
-            bool valid = true;
-
-            //DefaultAttributeDef is allowed to be empty or null
-            if (!string.IsNullOrEmpty( candidate.DefaultAttributeDef )) {
-
-                var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
-                    "DefaultAttributeDef",
-                    candidate.DefaultAttributeDef,
-                    DefinitionType.ATTRIBUTE );
-
-                if (!vm.Valid) {
-                    Messages.Add( vm.Message );
-                    valid = false;
-                }
             }
 
             return valid;

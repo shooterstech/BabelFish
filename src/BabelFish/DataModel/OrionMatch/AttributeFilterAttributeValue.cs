@@ -49,7 +49,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// A list of field name and filed value pairs that we will test against.
         /// <para>Item1 is the Attribute's FieldName, Item2 is the Attribute's FieldValue</para>
         /// </summary>
-        public List<Tuple<string, dynamic>> Values { get; set; } = new List<Tuple<string, dynamic>>();
+        public ConstantFieldValueList Values { get; set; } = new ConstantFieldValueList();
 
         /// <inheritdoc />
         /// <remarks>
@@ -72,10 +72,13 @@ namespace BabelFish.DataModel.OrionMatch {
             sb.Append( this.Operation.ToString() );
             sb.Append( this.AttributeDef.ToString() );
             sb.Append( this.FilterRule.ToString() );
+            //Since the order of the valued does not matter, we will use a bitwas xor operator.
+            int temp = 0;
             foreach (var val in this.Values) {
-                sb.Append( val.Item1 );
-                sb.Append( val.Item2 );
+                temp ^= val.FieldName.GetHashCode();
+                temp ^= val.Value.GetHashCode();
             }
+            sb.Append( temp );
             return sb.ToString().GetHashCode();
         }
 

@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
     /// An AttributeFilterCalculator has a series of Passes() methods that test if the
     /// passed in Participant satisfies the conditions specified in the passed in AttributeFilter.
     /// </summary>
-    public class AttributeFilterCalculator {
+    public static class AttributeFilterCalculator {
 
         /// <summary>
         /// Tests if the passed in Participant satisfies the conditions specified in the passed in AttributeFilter.
@@ -17,13 +17,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public bool Passes( AttributeFilter filter, Participant participant ) {
+        public static bool Passes( AttributeFilter filter, Participant participant ) {
 
             if (filter is AttributeFilterAttributeValue)
-                return this.Passes( (AttributeFilterAttributeValue)filter, participant );
+                return AttributeFilterCalculator.Passes( (AttributeFilterAttributeValue)filter, participant );
 
             //else filter is AttributeFilterEquation
-            return this.Passes( (AttributeFilterEquation)filter, participant );
+            return AttributeFilterCalculator.Passes( (AttributeFilterEquation)filter, participant );
         }
 
         /// <summary>
@@ -32,8 +32,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public bool Passes( AttributeFilter filter, IParticipant participant ) {
-            return this.Passes( filter, participant.Participant );
+        public static bool Passes( AttributeFilter filter, IParticipant participant ) {
+            return AttributeFilterCalculator.Passes( filter, participant.Participant );
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public bool Passes( AttributeFilterEquation filter, Participant participant ) {
+        public static bool Passes( AttributeFilterEquation filter, Participant participant ) {
 
             bool answer = true;
             bool first = true;
@@ -51,35 +51,35 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             foreach (var argument in filter.Arguments) {
                 if (first) {
-                    answer = this.Passes( argument, participant );
+                    answer = AttributeFilterCalculator.Passes( argument, participant );
                     first = false;
                 } else {
                     switch (filter.Boolean) {
                         case ShowWhenBoolean.AND:
-                            answer &= this.Passes( argument, participant );
+                            answer &= AttributeFilterCalculator.Passes( argument, participant );
                             //If the answer is already false, we can stop evaluating
                             if (!answer)
                                 breakForeach = true;
                             break;
                         case ShowWhenBoolean.OR:
-                            answer |= this.Passes( argument, participant );
+                            answer |= AttributeFilterCalculator.Passes( argument, participant );
                             //If the answer is already true, we can stop evaluating
                             if (answer)
                                 breakForeach = true;
                             break;
                         case ShowWhenBoolean.XOR:
-                            answer ^= this.Passes( argument, participant );
+                            answer ^= AttributeFilterCalculator.Passes( argument, participant );
                             break;
                         case ShowWhenBoolean.NAND:
-                            answer &= this.Passes( argument, participant );
+                            answer &= AttributeFilterCalculator.Passes( argument, participant );
                             apployNot = true;
                             break;
                         case ShowWhenBoolean.NOR:
-                            answer |= this.Passes( argument, participant );
+                            answer |= AttributeFilterCalculator.Passes( argument, participant );
                             apployNot = true;
                             break;
                         case ShowWhenBoolean.NXOR:
-                            answer ^= this.Passes( argument, participant );
+                            answer ^= AttributeFilterCalculator.Passes( argument, participant );
                             apployNot = true;
                             break;
                     }
@@ -99,8 +99,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public bool Passes( AttributeFilterEquation filter, IParticipant participant ) {
-            return this.Passes( filter, participant.Participant );
+        public static bool Passes( AttributeFilterEquation filter, IParticipant participant ) {
+            return AttributeFilterCalculator.Passes( filter, participant.Participant );
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public bool Passes( AttributeFilterAttributeValue filter, Participant participant ) {
+        public static bool Passes( AttributeFilterAttributeValue filter, Participant participant ) {
 
             AttributeValue? attrValue = null;
             foreach (var attrValueToInspect in participant.AttributeValues) {
@@ -169,8 +169,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public bool Passes( AttributeFilterAttributeValue filter, IParticipant participant ) {
-            return this.Passes( filter, participant.Participant );
+        public static bool Passes( AttributeFilterAttributeValue filter, IParticipant participant ) {
+            return AttributeFilterCalculator.Passes( filter, participant.Participant );
         }
 
         /// <summary>
@@ -179,12 +179,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="attrValue"></param>
         /// <param name="expectedAttrValue">Item1 is the FieldName, Item2 is the expected fieldValue</param>
         /// <returns></returns>
-        protected bool HasValue( AttributeValue attrValue, Tuple<string, dynamic> expectedAttrValue ) {
-            var fieldName = expectedAttrValue.Item1;
-            var expectedFieldValue = expectedAttrValue.Item2;
-
-            var foundFieldValue = attrValue.GetFieldValue( fieldName );
-            return foundFieldValue == expectedFieldValue;
+        private static bool HasValue( AttributeValue attrValue, ConstantFieldValue expectedAttrValue ) {
+            var foundFieldValue = attrValue.GetFieldValue( expectedAttrValue.FieldName );
+            return foundFieldValue == expectedAttrValue.Value;
         }
     }
 }

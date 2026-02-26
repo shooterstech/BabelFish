@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
-using Scopos.BabelFish.DataModel.Definitions;
-using NLog;
-using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.Converters.Newtonsoft {
 
@@ -31,7 +24,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
         public override bool CanWrite { get { return true; } }
 
         //Reading should be handled by System.Text.Json, not by Newtonsoft
-        public override bool CanRead {  get { return false; } }
+        public override bool CanRead { get { return false; } }
 
         /// <inheritdoc/>
         public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
@@ -55,12 +48,12 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                         var nextObject = new JObject();
                         foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
                             if (!field.MultipleValues) {
-                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key);
+                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key );
                             } else {
                                 nextObject[field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key ) );
                             }
                         }
-                        ((JArray) o["AttributeValue"]).Add( nextObject );
+                        ((JArray)o["AttributeValue"]).Add( nextObject );
                     }
                 } else {
                     o["AttributeValue"] = new JObject();
@@ -73,7 +66,12 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                     }
                 }
             }
-            
+
+            if (attrValueDataPacket is AttributeValueDataPacketMatch avdpm) {
+                o["CourseOfFireId"] = avdpm.CourseOfFireId;
+            }
+            // There are no unique fields for AttributeValueDataPacketAttribute, so we don't need to add anything to the JSON for that class
+
             o.WriteTo( writer );
         }
 

@@ -3,6 +3,11 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+    /// <summary>
+    /// Formally, a Result List (capitol R and L) is raw data of competitor performance from an event.
+    /// Includes all competitors and all (reasonable) data from the competition. During the Future and
+    /// Intermediate status of the competition Includes an absolute and predictive ranking of competitors based on their performance.
+    /// </summary>
     [Serializable]
     public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
@@ -10,8 +15,41 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Default constructor, initializes the list of ResultEvents to an empty list.
+        /// </summary>
         public ResultList() {
             Items = new List<ResultEvent>();
+        }
+
+        public ResultList( Match match, ResultListAbbr resultListAbbr ) {
+            if (match == null) {
+                throw new ArgumentNullException( nameof( match ) );
+            }
+            if (resultListAbbr == null) {
+                throw new ArgumentNullException( nameof( resultListAbbr ) );
+            }
+            this.MatchName = match.Name;
+            this.EventName = resultListAbbr.EventName;
+            this.CourseOfFireId = resultListAbbr.CourseOfFireId;
+            this.ResultName = resultListAbbr.ResultName;
+            this.Primary = resultListAbbr.Primary;
+            this.Team = resultListAbbr.Team;
+            this.RankingRuleDef = resultListAbbr.RankingRuleDef.ToString();
+            //The next line is to be completed, after the Match data model is updated to allow multiple courses of fire. 
+            //this.CourseOfFireDef = resultListAbbr.CourseOfFireDef.ToString();
+            this.ScoreConfigName = resultListAbbr.ScoreConfigName;
+            this.ResultListFormatDef = resultListAbbr.ResultListFormatDef.ToString();
+            this.AttributeFilters = resultListAbbr.AttributeFilters.Clone();
+            this.UserDefinedText = resultListAbbr.UserDefinedText.Clone();
+
+            this.Metadata.Add( match.MatchID.ToString(), new ResultListMetadata() {
+                Creator = match.Creator,
+                OwnerId = match.OwnerId,
+                MatchID = match.MatchID,
+                StartDate = match.StartDate,
+                EndDate = match.EndDate
+            } );
         }
 
         /// <summary>
@@ -31,6 +69,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
         public string EventName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// A value of 1 or greater indicates the Course of Fire that this Result List is associated with within the match.
+        /// A value of 0 would indicate that this is a Merged Result List, and not associated with a single Course of Fire within a Match.
+        /// <para>Most Matches only contain one Course of Fire (prior to Orion 3.0 (and BabelFish 2.0) Orion only supported 1 coruse of fire in a match). 1 is the starting index. </para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
+        public int CourseOfFireId { get; set; } = 1;
 
         /// <summary>
         /// If this is a local match, returns the local match id.
@@ -269,8 +316,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 23 )]
         public string ResultListFormatDef { get; set; } = string.Empty;
 
-        /// <inheritdoc />
+        /// <summary>
+        /// An AttributeFilter describes how a This ResultList will be filtered. That is to say, of the
+        /// participants who shot the Evente, which of those should be included in this ResultList.
+        /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
+        /// the Precision Air Rifle marksmen).</para>
+        /// </summary>
         [G_NS.JsonProperty( Order = 24 )]
+        public List<AttributeFilter> AttributeFilters { get; set; } = new List<AttributeFilter>();
+
+        /// <inheritdoc />
+        [G_NS.JsonProperty( Order = 25 )]
         public Dictionary<UserDefinedFieldNames, string> UserDefinedText { get; set; } = new Dictionary<UserDefinedFieldNames, string>() {
             [UserDefinedFieldNames.USER_DEFINED_FIELD_1] = string.Empty,
             [UserDefinedFieldNames.USER_DEFINED_FIELD_2] = string.Empty,
@@ -351,7 +407,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 90 )]
         [Obsolete( "Use .Metadata.Creator" )]
-        public string Creator { get; set; }
+        public string Creator { get; set; } = string.Empty;
 
         /// <summary>
         /// The orion account or at home account who owns this match.

@@ -309,5 +309,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( Name );
             return foo.ToString();
         }
+
+        #region BabelFish 2.0 / Orion 3.0 DataModel
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
+        public List<MatchStructure> MatchStructures { get; set; } = new List<MatchStructure>();
+        #endregion
     }
 }

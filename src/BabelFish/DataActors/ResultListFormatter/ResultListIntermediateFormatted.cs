@@ -903,10 +903,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             foreach (var metaData in this.ResultList.Metadata.Values) {
                 //Make the request for all the squadding lists in parrallel
                 try {
-                    var matchId = new MatchID( metaData.MatchID );
                     var squaddingListName = metaData.SquaddingListName;
                     if (!string.IsNullOrEmpty( squaddingListName )) {
-                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( metaData.MatchID, squaddingListName ) );
                     }
                 } catch (Exception ex) {
                     _logger.Error( ex );

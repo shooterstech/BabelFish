@@ -1,7 +1,8 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [1.12.3] - 2026-03-00
+## [2.1.0-alpha] - 2026-03-00
+** Alpha build, not intended for outside of Scopos use **
 ### Enhancements
 #### AttributeFilter
 - Added a series of classes, derived from the abstract class AttributeFilter, that specify conditions in which a Participant passes or doesn't pass. Intended to be used to filter a list of Participants for inclusion on a Result List. For example, list all the Participants in a match that are shooting Sporter air rifle.

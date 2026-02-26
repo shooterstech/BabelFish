@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
-using Scopos.BabelFish.DataModel.Definitions;
-using NLog;
-using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
 
@@ -22,8 +19,8 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
         public override AttributeValueDataPacket? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
             if (reader.TokenType != JsonTokenType.StartObject)
-                throw new JsonException(); 
-            
+                throw new JsonException();
+
             JsonElement temp;
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
@@ -34,7 +31,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     id = root.GetProperty( "ConcreteClassId" ).GetInt32();
                 } catch (KeyNotFoundException) {
                     //On some older serializations, the ConcreteClassId was not included. Infer the value based on what else is in the json
-                    if (root.TryGetProperty( "StatusCode", out temp) )
+                    if (root.TryGetProperty( "StatusCode", out temp ))
                         id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
                     else if (root.TryGetProperty( "StatusCode", out temp ))
                         id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
@@ -49,8 +46,8 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     case AttributeValueDataPacketMatch.CONCRETE_CLASS_ID:
                         attributeValueDataPacket = new AttributeValueDataPacketMatch();
 
-                        if (root.TryGetProperty( "ReentryTag", out temp ))
-                            ((AttributeValueDataPacketMatch)attributeValueDataPacket).ReentryTag = temp.GetString();
+                        if (root.TryGetProperty( "CourseOfFireId", out temp ))
+                            ((AttributeValueDataPacketMatch)attributeValueDataPacket).CourseOfFireId = temp.GetInt32();
                         break;
 
                     case AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID:
@@ -61,7 +58,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), temp.GetInt32().ToString() );
 
                         //EKA Note Jan 2025 the Message property is deprecated, and will soon be removed.
-                        if (root.TryGetProperty( "Message", out temp ) && temp.ValueKind == JsonValueKind.Array && temp.GetArrayLength() > 0 ) {
+                        if (root.TryGetProperty( "Message", out temp ) && temp.ValueKind == JsonValueKind.Array && temp.GetArrayLength() > 0) {
                             try {
                                 ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message = temp[0].GetString();
                             } catch (Exception ex) {
@@ -246,8 +243,8 @@ namespace Scopos.BabelFish.Converters.Microsoft {
         private AttributeValueDataPacketConverter BaseConverter = new AttributeValueDataPacketConverter();
 
         public override AttributeValueDataPacketAPIResponse? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
-            
-            return (AttributeValueDataPacketAPIResponse) BaseConverter.Read( ref reader, typeToConvert, options );
+
+            return (AttributeValueDataPacketAPIResponse)BaseConverter.Read( ref reader, typeToConvert, options );
         }
 
         public override void Write( Utf8JsonWriter writer, AttributeValueDataPacketAPIResponse value, JsonSerializerOptions options ) {

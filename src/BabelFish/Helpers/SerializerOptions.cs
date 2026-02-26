@@ -52,6 +52,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketMatchConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CalculationVariableConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CommandAutomationConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ConstantFieldValueListConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DisplayEntityConfigurationConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
