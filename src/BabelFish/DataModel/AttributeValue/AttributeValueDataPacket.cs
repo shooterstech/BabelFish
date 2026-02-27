@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// the SetName, formatted as a string, of the Attribute definition.
         /// </summary>
-        public string AttributeDef { get; set; }
+        public SetName AttributeDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// Property that contains the value.
@@ -59,12 +59,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public async Task<Definitions.Attribute> GetAttributeDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( AttributeDef ))
-                throw new ArgumentNullException( $"The value for .DefaultSttributeDef is empty. Which is allowed." );
-
-            var setName = Definitions.SetName.Parse( AttributeDef );
-            return await DefinitionCache.GetAttributeDefinitionAsync( setName );
+            return await DefinitionCache.GetAttributeDefinitionAsync( AttributeDef );
         }
 
         /// <summary>

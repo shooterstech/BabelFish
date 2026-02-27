@@ -436,8 +436,8 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var index = 0;
             foreach (var @event in candidate.Events) {
 
-                //ResultListFormatDef is allowed to be an empty string
-                if (!string.IsNullOrEmpty( @event.ResultListFormatDef )) {
+                //ResultListFormatDef is allowed to be Default value.
+                if (!@event.ResultListFormatDef.IsDefault) {
                     var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync(
                         $"Event[{index}].ResultListFormatDef",
                         @event.ResultListFormatDef,

@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The default set name of the RESULT LIST FORMAT definition to use to format this IRLIFList object. 
         /// </summary>
-        string ResultListFormatDef { get; }
+        SetName ResultListFormatDef { get; }
 
         /// <summary>
         /// The (mostly human readable) name given to this IRLIFLIst object.

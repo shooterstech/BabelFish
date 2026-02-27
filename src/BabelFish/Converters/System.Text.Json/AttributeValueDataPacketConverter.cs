@@ -74,10 +74,10 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 }
 
                 if (okToDeserialize) {
-                    attributeValueDataPacket.AttributeDef = root.GetProperty( "AttributeDef" ).GetString();
+                    attributeValueDataPacket.AttributeDef = SetName.Parse( root.GetProperty( "AttributeDef" ).GetString(), false );
                     //Have to creaet a copy of the AttributeValue JsonElement. If we dont', we run the risk that it gets disposed of before we have chance of interpreting it.
                     var attrValueAsJsonElement = CopyJsonElement( root.GetProperty( "AttributeValue" ) );
-                    attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), attrValueAsJsonElement );
+                    attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( attributeValueDataPacket.AttributeDef, attrValueAsJsonElement );
                     if (root.TryGetProperty( "Visibility", out temp ))
                         attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), temp.GetString() );
                 }
@@ -287,7 +287,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
             writer.WritePropertyName( "attribute-values" );
             writer.WriteStartObject();
             foreach (var av in value) {
-                writer.WritePropertyName( av.AttributeDef );
+                writer.WritePropertyName( av.AttributeDef.ToString() );
                 BaseConverter.Write( writer, av, options );
             }
             writer.WriteEndObject();

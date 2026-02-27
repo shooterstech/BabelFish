@@ -35,11 +35,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this.ResultName = resultListAbbr.ResultName;
             this.Primary = resultListAbbr.Primary;
             this.Team = resultListAbbr.Team;
-            this.RankingRuleDef = resultListAbbr.RankingRuleDef.ToString();
+            this.RankingRuleDef = resultListAbbr.RankingRuleDef;
             //The next line is to be completed, after the Match data model is updated to allow multiple courses of fire. 
             //this.CourseOfFireDef = resultListAbbr.CourseOfFireDef.ToString();
             this.ScoreConfigName = resultListAbbr.ScoreConfigName;
-            this.ResultListFormatDef = resultListAbbr.ResultListFormatDef.ToString();
+            this.ResultListFormatDef = resultListAbbr.ResultListFormatDef;
             this.AttributeFilters = resultListAbbr.AttributeFilters.Clone();
             this.UserDefinedText = resultListAbbr.UserDefinedText.Clone();
 
@@ -295,13 +295,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the RANKING RULE definition used to rank this result list.
         /// </summary>
         [G_NS.JsonProperty( Order = 20 )]
-        public string RankingRuleDef { get; set; } = string.Empty;
+        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The SetName of the Course of Fire
         /// </summary>
         [G_NS.JsonProperty( Order = 21 )]
-        public string CourseOfFireDef { get; set; } = string.Empty;
+        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
@@ -314,7 +314,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the RESULT LIST FORMAT definition to use when displaying this result list.
         /// </summary>
         [G_NS.JsonProperty( Order = 23 )]
-        public string ResultListFormatDef { get; set; } = string.Empty;
+        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// An AttributeFilter describes how a This ResultList will be filtered. That is to say, of the
@@ -432,45 +432,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultListID { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef is empty, known to happen with older versions of Orion. </exception>
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
-            if (string.IsNullOrEmpty( CourseOfFireDef ))
-                throw new ArgumentNullException( $"The value for CourseOfFireDef is empty or null." );
-
-            SetName cofSetName = SetName.Parse( CourseOfFireDef );
-            return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
+            return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( RankingRuleDef ))
-                throw new ArgumentNullException( $"The value for RankingRuleDef is empty or null." );
-
-            SetName rrSetName = SetName.Parse( RankingRuleDef );
-            return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
+            return await DefinitionCache.GetRankingRuleDefinitionAsync( RankingRuleDef );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( ResultListFormatDef ))
-                throw new ArgumentNullException( $"The value for ResultListFormatDef is empty or null." );
-
-            SetName rlfSetName = SetName.Parse( ResultListFormatDef );
-            return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
+            return await DefinitionCache.GetResultListFormatDefinitionAsync( ResultListFormatDef );
         }
 
         /// <summary>

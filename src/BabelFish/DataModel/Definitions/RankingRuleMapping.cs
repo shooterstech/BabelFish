@@ -1,19 +1,26 @@
-﻿using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
 
 
     /// <summary>
-    /// Key is the ScoreConfigName, Value is a strintg, in the form of a SetName that is the Ranking Rule Definition to use with that Score Config
+    /// Key is the ScoreConfigName, Value is the SetName that is the Ranking Rule Definition to use with that Score Config
     /// </summary>
-    public class RankingRuleMapping : Dictionary<string, string>, IGetRankingRuleDefinitionList {
+    public class RankingRuleMapping : Dictionary<string, SetName>, IGetRankingRuleDefinitionList {
 
+        /// <summary>
+        /// Default constructor, that sets the DefaultDef to "v1.0:orion:Alphabetical Participant Sort"
+        /// </summary>
         public RankingRuleMapping() {
             this[DEFAULTDEF] = DEFAULT_RANKING_RULE_DEF;
         }
 
-        public RankingRuleMapping( string rankingRuleDef ) {
+        /// <summary>
+        /// Constructor that sets the DefaultDef to the provided SetName. 
+        /// </summary>
+        /// <param name="rankingRuleDef"></param>
+        public RankingRuleMapping( SetName rankingRuleDef ) {
             this[DEFAULTDEF] = rankingRuleDef;
         }
 
@@ -22,19 +29,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public const string DEFAULTDEF = "DefaultDef";
 
-        public const string DEFAULT_RANKING_RULE_DEF = "v1.0:orion:Alphabetical Participant Sort";
+        public readonly SetName DEFAULT_RANKING_RULE_DEF = SetName.Parse( "v1.0:orion:Alphabetical Participant Sort", false );
 
         /// <inheritdoc />
         /// <exception cref="XApiKeyNotSetException" />
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
-        public async Task<Dictionary<string, RankingRule>> GetRankingRuleDefinitionListAsync() {
+        public async Task<Dictionary<SetName, RankingRule>> GetRankingRuleDefinitionListAsync() {
 
-            Dictionary<string, RankingRule> rankingRules = new Dictionary<string, RankingRule>();
+            Dictionary<SetName, RankingRule> rankingRules = new Dictionary<SetName, RankingRule>();
 
             foreach (var rankingRuleDef in this.Values) {
-                var sn = SetName.Parse( rankingRuleDef );
-                var rankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( sn );
+                var rankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleDef );
                 rankingRules.Add( rankingRuleDef, rankingRule );
             }
 

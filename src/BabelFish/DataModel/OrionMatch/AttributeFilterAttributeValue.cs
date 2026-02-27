@@ -36,7 +36,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The SetName of the <seealso cref="Attribute">ATTRIBUTE</seealso> to test values against.
         /// </summary>
-        public SetName AttributeDef { get; set; } = SetName.Parse( "v1.0:orion:Default" );
+        public SetName AttributeDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The filter rule to apply.

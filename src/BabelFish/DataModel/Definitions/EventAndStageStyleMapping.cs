@@ -1,10 +1,6 @@
-﻿using Scopos.BabelFish.DataActors.Specification.Definitions;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -28,7 +24,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// The default Event Style and Stage Styles to use, when no matches can be found with in the .Mappings array. 
         /// </summary>
-        [G_NS.JsonProperty( Order = 20  )]
+        [G_NS.JsonProperty( Order = 20 )]
         public EventAndStageStyleMappingObj DefaultMapping { get; set; } = new EventAndStageStyleMappingObj();
 
         /// <summary>
@@ -56,23 +52,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
-        public async Task<Dictionary<string, EventStyle>> GetEventStyleDefinitionListAsync() {
-            var list = new Dictionary<string, EventStyle>();
+        public async Task<Dictionary<SetName, EventStyle>> GetEventStyleDefinitionListAsync() {
+            var list = new Dictionary<SetName, EventStyle>();
 
             //DefaultMapping
             list[DefaultMapping.DefaultEventStyleDef] = await DefaultMapping.GetEventStyleDefinitionAsync();
 
-            foreach( var esm in DefaultMapping.EventStyleMappings) {
+            foreach (var esm in DefaultMapping.EventStyleMappings) {
 
-                if ( ! list.ContainsKey( esm.EventStyleDef ) ) {
-                    list[ esm.EventStyleDef ] = await esm.GetEventStyleDefinitionAsync( );
+                if (!list.ContainsKey( esm.EventStyleDef )) {
+                    list[esm.EventStyleDef] = await esm.GetEventStyleDefinitionAsync();
                 }
             }
 
             //List of Mappings
             foreach (var mapping in Mappings) {
                 if (!list.ContainsKey( mapping.DefaultEventStyleDef )) {
-                    list[ mapping.DefaultEventStyleDef ] = await mapping.GetEventStyleDefinitionAsync( );
+                    list[mapping.DefaultEventStyleDef] = await mapping.GetEventStyleDefinitionAsync();
                 }
 
                 foreach (var esm in mapping.EventStyleMappings) {
@@ -93,8 +89,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
-        public async Task<Dictionary<string, StageStyle>> GetStageStyleDefinitionListAsync() {
-            var list = new Dictionary<string, StageStyle>();
+        public async Task<Dictionary<SetName, StageStyle>> GetStageStyleDefinitionListAsync() {
+            var list = new Dictionary<SetName, StageStyle>();
 
             //DefaultMapping
             list[DefaultMapping.DefaultStageStyleDef] = await DefaultMapping.GetStageStyleDefinitionAsync();
@@ -128,8 +124,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.SetDefaultValues();
 
             this.DefaultMapping = new EventAndStageStyleMappingObj();
-            this.DefaultMapping.DefaultStageStyleDef = "v1.0:orion:Default";
-            this.DefaultMapping.DefaultEventStyleDef = "v1.0:orion:Default";
+            this.DefaultMapping.DefaultStageStyleDef = Definitions.SetName.DEFAULT;
+            this.DefaultMapping.DefaultEventStyleDef = Definitions.SetName.DEFAULT;
             this.Mappings = new List<EventAndStageStyleMappingObj>();
 
             return true;

@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             var rlf = new ResultListFormat();
             rlf.SetDefaultValues();
             rlf.ScoreConfigDefault = _mergeResultList.Configuration.ScoreConfigName;
-            rlf.ScoreFormatCollectionDef = _mergeResultList.Configuration.ScoreFormatCollectionDef.ToString();
+            rlf.ScoreFormatCollectionDef = _mergeResultList.Configuration.ScoreFormatCollectionDef;
             rlf.Fields.Clear();
 
             rlf.Fields.Add( new ResultListField() {
@@ -344,7 +344,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             ResultList rl = new ResultList();
             //Each ResultList instance needs a COURSE OF FIRE definition. However, these merged result lists are dynamic ... so not sure yet what to put as the .CourseOfFireDef
-            rl.CourseOfFireDef = "v1.0:ntparc:40 Shot Standing";
+            rl.CourseOfFireDef = SetName.Parse( "v1.0:ntparc:40 Shot Standing" );
             rl.EventName = _mergeResultList.ResultName;
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
             rl.Items.AddRange( _mergedResultEvents.Values );

@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Standard Score Formats" )]
-        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
+        public SetName ScoreFormatCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The name of the ScoreConfig to use if none other is specified.
@@ -487,8 +487,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
 
-            SetName scoreFormatCollectionSetName = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( ScoreFormatCollectionDef );
-            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionDef );
 
         }
     }

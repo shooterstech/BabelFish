@@ -1,15 +1,7 @@
-﻿using System.Text.Json;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataActors.Specification;
-using Scopos.BabelFish.DataActors.Specification.Definitions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json.Serialization;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -24,8 +16,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </list>
     /// </remarks>
     [Serializable]
-    public class StageStyle : Definition, IGetScoreFormatCollectionDefinition
-    {
+    public class StageStyle : Definition, IGetScoreFormatCollectionDefinition {
         /// <summary>
         /// Public constructor
         /// </summary>
@@ -34,8 +25,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
         }
 
         /// <summary>
@@ -52,7 +43,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Standard Score Formats" )]
-        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
+        public SetName ScoreFormatCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The default ScoreConfigName to use, that is defined by the .ScoreFormatCollectionDef, to use when displaying scores with this STAGE STYLE
@@ -75,13 +66,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
 
-            SetName scoreFormatCollectionSetName = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( ScoreFormatCollectionDef );
-            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionDef );
         }
 
         [G_STJ_SER.JsonPropertyOrder( 90 )]
         [G_NS.JsonProperty( Order = 90 )]
-        [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault")]
+        [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault" )]
         public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
 
@@ -96,12 +86,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc />
 		public override async Task<bool> GetMeetsSpecificationAsync() {
-                var validation = new IsStageStyleValid();
+            var validation = new IsStageStyleValid();
 
-                var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-                SpecificationMessages = validation.Messages;
-            
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
+
             return meetsSpecification;
         }
-	}
+    }
 }

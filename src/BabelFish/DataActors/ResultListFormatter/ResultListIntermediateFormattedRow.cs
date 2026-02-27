@@ -639,7 +639,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
              */
 
             foreach (var av in _item.Participant.AttributeValues) {
-                if (av.AttributeDef == source.Name) {
+                if (av.AttributeDef.Equals( source.Name )) {
                     try {
                         return av.AttributeValue.GetFieldName();
                     } catch (Exception ex) {

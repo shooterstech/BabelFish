@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
 
             this.AttributeValue = attrValue;
-            this.AttributeDef = attrValue.SetName.ToString();
+            this.AttributeDef = attrValue.SetName;
         }
 
         /// <summary>

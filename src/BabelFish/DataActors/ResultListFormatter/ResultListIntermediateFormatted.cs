@@ -325,13 +325,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             get {
                 //The ScoreFormatCollection should be included in the ResultListFormat,
                 //but in case it isn't, ,pass back the default value of Standard Score Formats.
-                SetName setName;
-                try {
-                    setName = SetName.Parse( ResultListFormat.ScoreFormatCollectionDef );
-                } catch {
-                    setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
-                }
-                return setName;
+                if (!ResultListFormat.ScoreFormatCollectionDef.IsDefault)
+                    return ResultListFormat.ScoreFormatCollectionDef;
+                else
+                    return SetName.Parse( "v1.0:orion:Standard Score Formats" );
             }
         }
 

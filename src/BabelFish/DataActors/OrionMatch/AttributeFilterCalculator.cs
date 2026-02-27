@@ -112,7 +112,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             AttributeValue? attrValue = null;
             foreach (var attrValueToInspect in participant.AttributeValues) {
-                if (attrValueToInspect.AttributeDef == filter.AttributeDef.ToString()) {
+                if (attrValueToInspect.AttributeDef.Equals( filter.AttributeDef )) {
                     attrValue = attrValueToInspect.AttributeValue;
                     break;
                 }
