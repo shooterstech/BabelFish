@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;

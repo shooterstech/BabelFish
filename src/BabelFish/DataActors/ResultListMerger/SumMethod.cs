@@ -1,7 +1,7 @@
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     /// <summary>
     /// Concrete class implementation of a MergeMethod that sums the total of a series of scores from each participant.
@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// </summary>
         /// <param name="tournamentMerger"></param>
         /// <param name="configuration"></param>
-        public SumMethod( TournamentMerger tournamentMerger, SumMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
+        public SumMethod( ResultListMergerEngine tournamentMerger, SumMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
 
             this.TopLevelEventname = "Aggregate";
         }

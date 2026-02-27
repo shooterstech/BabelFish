@@ -28,6 +28,7 @@
         See full changelog:
         https://github.com/shooterstech/BabelFish/blob/master/CHANGELOG.md
     </PackageReleaseNotes>
+      <RootNamespace>Scopos.BabelFish</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\*.png">

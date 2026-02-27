@@ -1,11 +1,11 @@
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     /// <summary>
     /// A MergeMethod class contains the processing methods to combine (or merge) result lists together. It is the
     /// actor (the class that does the work) to merge scores together.
-    /// <para>To create an instance of MergeMethod use the <see cref="FactoryAsync(TournamentMerger, MergedResultList)"/> method.</para>
+    /// <para>To create an instance of MergeMethod use the <see cref="FactoryAsync(ResultListMergerEngine, MergedResultList)"/> method.</para>
     /// </summary>
     public abstract class MergeMethod {
 
@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <summary>
         /// Gets the <see cref="TournamentMerger"/> instance in use.
         /// </summary>
-        public TournamentMerger TournamentMerger { get; private set; }
+        public ResultListMergerEngine TournamentMerger { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="MergeConfiguration"/> instance in use.
@@ -22,11 +22,11 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         protected MergeConfiguration _mergeConfiguration { get; private set; }
 
         /// <summary>
-        /// Constructor. Protected so end users can not call it directly. Instead, use the <see cref="FactoryAsync(TournamentMerger, MergedResultList)"/> method.
+        /// Constructor. Protected so end users can not call it directly. Instead, use the <see cref="FactoryAsync(ResultListMergerEngine, MergedResultList)"/> method.
         /// </summary>
         /// <param name="tournamentMerger"></param>
         /// <param name="configuration"></param>
-        protected MergeMethod( TournamentMerger tournamentMerger, MergeConfiguration configuration ) {
+        protected MergeMethod( ResultListMergerEngine tournamentMerger, MergeConfiguration configuration ) {
             this.TournamentMerger = tournamentMerger;
             this._mergeConfiguration = configuration;
         }
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <param name="mrl"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<MergeMethod> FactoryAsync( TournamentMerger tournamentMerger, MergedResultList mrl ) {
+        public static async Task<MergeMethod> FactoryAsync( ResultListMergerEngine tournamentMerger, MergedResultList mrl ) {
 
             MergeMethod mm;
 

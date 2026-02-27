@@ -1,10 +1,8 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Attribute = Scopos.BabelFish.DataModel.Definitions.Attribute;
 
-namespace BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
     /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue"/> field values.
@@ -59,7 +57,7 @@ namespace BabelFish.DataModel.OrionMatch {
         /// <exception cref="XApiKeyNotSetException" />
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
-        public async Task<Attribute> GetAttributeDefinitionAsync() {
+        public async Task<Definitions.Attribute> GetAttributeDefinitionAsync() {
 
             return await DefinitionCache.GetAttributeDefinitionAsync( this.AttributeDef );
         }
