@@ -18,6 +18,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
         public CourseOfFire? CourseOfFire { get; private set; } = null;
         public EventComposite TopLevelEvent { get; private set; } = null;
         private List<EventInfoObject> EventFields { get; set; } = [];
+        private Dictionary<EventComposite, TargetAnalysisAndGraphic> _targetAnalysis = new Dictionary<EventComposite, TargetAnalysisAndGraphic>();
 
         public AthleteCOFPdf( ResultCOF resultCOF, EventtType et ) {
             this.ResultCOF = resultCOF;
@@ -27,6 +28,17 @@ namespace Scopos.BabelFish.DataActors.PDF {
         public async Task InitializeAsync() {
             CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( this.ResultCOF.CourseOfFireDef ) );
             TopLevelEvent = EventComposite.GrowEventTree( this.CourseOfFire );
+
+            //Target Analysis is an asynchronous operation, and we want to do them all at once, so we will kick them all off and then await them all at the end.
+            var tasks = new Dictionary<EventComposite, Task<TargetAnalysisAndGraphic>>();
+
+            foreach (var eventComp in TopLevelEvent.GetEvents( false, true, true, true, true, false, true )) {
+                tasks[eventComp] = TargetAnalysisAndGraphic.FactoryAsync( 480f, null, eventComp, null, this.ResultCOF, true );
+            }
+
+            foreach (var kvp in tasks) {
+                _targetAnalysis[kvp.Key] = await kvp.Value;
+            }
         }
 
         protected override string Title {
@@ -180,9 +192,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         protected EventInfoObject AnalyzeTarget( EventComposite eventComp, int width, int height ) {
             // this will be where target images are made, then adding in the NPA maths.
-            TargetAnalysisAndGraphic targetAnalysis = new TargetAnalysisAndGraphic();
+            //TargetAnalysisAndGraphic targetAnalysis = new TargetAnalysisAndGraphic_();
             //need to have a call for each stage.
-            targetAnalysis.TargetSVGCreatorAsync( 480f, null, eventComp, null, this.ResultCOF, true );
+            //targetAnalysis.TargetSVGCreatorAsync( 480f, null, eventComp, null, this.ResultCOF, true );
+
+            var targetAnalysis = _targetAnalysis[eventComp];
+
             string svg = null;
             while (svg == null) {
                 svg = targetAnalysis.GetSVGMarkup();
