@@ -24,5 +24,23 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
             writer.WriteStringValue( value.ToString() );
         }
+
+        public override SetName ReadAsPropertyName( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+
+            string setNameString = (string)reader.GetString();
+
+            if (SetName.TryParse( setNameString, out SetName sn )) {
+                return sn;
+            }
+
+            _logger.Error( $"Couldn't parse the incoming SetName value '{setNameString}'." );
+
+            return SetName.DEFAULT;
+
+        }
+
+        public override void WriteAsPropertyName( Utf8JsonWriter writer, SetName value, JsonSerializerOptions options ) {
+            writer.WritePropertyName( value.ToString() );
+        }
     }
 }

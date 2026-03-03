@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -8,7 +8,7 @@ using Scopos.BabelFish.Runtime.Authentication;
 namespace Scopos.BabelFish.Tests.AttributeValue {
 
     [TestClass]
-    public class SetAttributeValueTests : BaseTestClass{
+    public class SetAttributeValueTests : BaseTestClass {
 
         [TestMethod]
         public async Task SetAttributeValue_SingleAttribute() {
@@ -21,11 +21,11 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             await userAuthentication.InitializeAsync();
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
-            var setNameTestAttriubte = "v1.0:orion:Test Attribute";
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Test Attribute" );
 
             List<SetName> myAttributes = new List<SetName>()
             {
-               SetName.Parse( setNameTestAttriubte )
+               setNameTestAttriubte
             };
 
             //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
@@ -91,7 +91,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //Test the values that we just pulled, match the values we sent on the Set request
             Assert.AreEqual( newIntValue, (int)testAttributeValue2.GetFieldValue( "AnInteger" ) );
             Assert.AreEqual( newFloatValue, (float)testAttributeValue2.GetFieldValue( "AFloat" ) );
-            Assert.AreEqual( newStringValue, (string) testAttributeValue2.GetFieldValue( "AString" ) );
+            Assert.AreEqual( newStringValue, (string)testAttributeValue2.GetFieldValue( "AString" ) );
             Assert.AreEqual( newBoolean, (bool)testAttributeValue2.GetFieldValue( "ABoolean" ) );
             Assert.AreEqual( newDate, (DateTime)testAttributeValue2.GetFieldValue( "ADate" ) );
             Assert.AreEqual( newTimeSpan, (float)testAttributeValue2.GetFieldValue( "ATime" ) );
@@ -102,29 +102,29 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         public async Task EriksPlayground() {
 
 
-			var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
+            var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
 
-			var userAuthentication = new UserAuthentication(
-				Constants.TestDev7Credentials.Username,
-				Constants.TestDev7Credentials.Password );
-			await userAuthentication.InitializeAsync();
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
 
-			//The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
-			var setNameTestAttriubte = "v1.0:orion:Address";
+            //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Address" );
 
-			List<SetName> myAttributes = new List<SetName>()
-			{
-			   SetName.Parse( setNameTestAttriubte )
-			};
+            List<SetName> myAttributes = new List<SetName>()
+            {
+               setNameTestAttriubte
+            };
 
-			var getRequest1 = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
-				AttributeNames = myAttributes
-			};
+            var getRequest1 = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
+                AttributeNames = myAttributes
+            };
 
             var response = await client.GetAttributeValueAuthenticatedAsync( getRequest1 );
             var av = response.AttributeValues[setNameTestAttriubte];
 
             var list = av.AttributeValue.GetAttributeFieldKeys();
-		}
+        }
     }
 }
