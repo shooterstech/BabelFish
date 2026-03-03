@@ -1,7 +1,14 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [1.12.2] - 2026-02-00
+## [1.12.3] - 2026-03-03
+### Enhancements
+#### ProjectScoresByAverageShotFired
+- Updated projection algorithm to factor in relative difficulty of each stage, in a multi-stage event.
+### Bug Fixes
+- Fixed issue with TargetAnalysis that was calling an async method in a non-async function.
+
+## [1.12.2] - 2026-02-20
 ### Enhancements
 #### MatchSearchPublicRequest
 - Added ability to search for matches based on the owner of the match (aka Orion Club).
@@ -27,7 +34,7 @@ All notable changes to BabelFish will be documented in this file.
 ** Breaking Changes **
 - Refactored the ResultListExcel class to have a FactoryAsync method to construct new instances.
 - Abstracted the FactoryAsync method to work with either ResultLists or SquaddingList objects.
-- The GenerateExcel method new returns a byte[].
+- The GenerateExcel method now returns a byte[].
 - When instantiating a new instance, the default behavior is to create an Excel file with two worksheets. The first uses the standard RESULT LIST FORMAT. The second worksheet uses the new dynamically gnerated essential data format RESULT LIST FORMAT.
 
 ### Bug Fixes
