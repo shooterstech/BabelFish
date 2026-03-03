@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 if (throwExceptionOnError)
                     throw new ArgumentException( msg, ex );
 
-                return null;
+                return DEFAULT;
             }
         }
 
@@ -185,6 +185,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public string ProperName {
             get { return properName; }
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if this SetName is the default value. which is "v1.0:orion:Default"
+        /// </summary>
+        public bool IsDefault {
+            get {
+                return this.nameSpace == "orion" && this.properName == "Default";
+            }
         }
 
         /// <inheritdoc/>

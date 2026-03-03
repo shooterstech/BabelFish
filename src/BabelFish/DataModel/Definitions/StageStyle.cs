@@ -1,15 +1,7 @@
-﻿using System.Text.Json;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataActors.Specification;
-using Scopos.BabelFish.DataActors.Specification.Definitions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json.Serialization;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -24,8 +16,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </list>
     /// </remarks>
     [Serializable]
-    public class StageStyle : Definition, IGetScoreFormatCollectionDefinition
-    {
+    public class StageStyle : Definition, IGetScoreFormatCollectionDefinition {
         /// <summary>
         /// Public constructor
         /// </summary>
@@ -34,8 +25,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
         }
 
         /// <summary>
@@ -79,9 +70,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
         }
 
+        /// <summary>
+        /// A relative value to 1.00, measuring the degree of difficulty of this stage style. The higher the value the more difficult the stage style.
+        /// <para>Value is used to help project an athlete's score in multi-stage events. </para>
+        /// <para>Value muse be between 1.10 and 0.500. 0.900 is the default.</para>
+        /// <para>The exact value should be experimentally determined. Taking the 90th percentile of scores as the basis. </para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        public float RelativeDifficulty { get; set; } = .9f;
+
+        /// <summary>
+        /// A list of common ways to display scores for this Stage Style. The first item in the list is considered the default.
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 90 )]
         [G_NS.JsonProperty( Order = 90 )]
-        [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault")]
+        [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault" )]
         public List<DisplayScoreFormat> DisplayScoreFormats { get; set; } = new List<DisplayScoreFormat>();
 
 
@@ -96,12 +100,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc />
 		public override async Task<bool> GetMeetsSpecificationAsync() {
-                var validation = new IsStageStyleValid();
+            var validation = new IsStageStyleValid();
 
-                var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-                SpecificationMessages = validation.Messages;
-            
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
+
             return meetsSpecification;
         }
-	}
+    }
 }

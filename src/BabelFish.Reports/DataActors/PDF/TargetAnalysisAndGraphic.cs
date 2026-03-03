@@ -11,8 +11,11 @@ using SkiaSharp;
 using Svg.Skia;
 
 namespace Scopos.BabelFish.DataActors.PDF {
-    class TargetAnalysisAndGraphic {
+    public class TargetAnalysisAndGraphic {
 
+        private TargetAnalysisAndGraphic() {
+
+        }
 
         //for this example of the child component, I'm not putting in a code behind file, just to show you how can do it not in code behind; I am moving every page to it's own partial class file now, best practice
 
@@ -40,67 +43,70 @@ namespace Scopos.BabelFish.DataActors.PDF {
         /// <summary>
         /// this stores whatever html we want into a string
         /// </summary>
-        private string SvgMarkup { get; set; }
+        private string _svgMarkup;
 
-        private bool SVGDone { get; set; } = false;
+        private bool _sVGDone = false;
 
-        private const string SvgNamespace = "http://www.w3.org/2000/svg";
+        private const string _svgNamespace = "http://www.w3.org/2000/svg";
 
         public ResultCOF? ResultCOF { get; set; }
-        private EventComposite EventTree { get; set; }
+        private EventComposite _eventTree;
 
-        private EventComposite EventWeAreLookingFor { get; set; }
+        private EventComposite _eventWeAreLookingFor;
 
-        private Dictionary<string, DataModel.Athena.Shot.Shot> ShotsByEventName { get; set; }
-        private List<Shot> ShotListToShow { get; set; }
+        private Dictionary<string, DataModel.Athena.Shot.Shot> _shotsByEventName = new Dictionary<string, DataModel.Athena.Shot.Shot>();
+        private List<Shot> _shotListToShow = new List<Shot>();
         private List<EventComposite> DescendantEventComposites;
-        private Logger logger = LogManager.GetCurrentClassLogger();
-        private string ErrorMessage = "";
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private string _errorMessage = "";
 
-        private List<string> ParentScores { get; set; } = new List<string>();
+        private List<string> _parentScores = new List<string>();
 
-        private List<string> ChildScores { get; set; } = new List<string>();
+        private List<string> _childScores = new List<string>();
 
-        private string ScoreFormatted { get; set; } = string.Empty;
+        private string _scoreFormatted = string.Empty;
 
         public EventInfoObject EventInfo { get; set; }
 
-        public async void TargetSVGCreatorAsync( float dimension, string? eventName, EventComposite? eventComp, Match? match, ResultCOF? resultCoF, bool includeGroupAnalysis ) {
-            this.includeGroupAnalysis = includeGroupAnalysis;
-            Dimension = dimension;
-            EventName = eventName != null ? eventName : eventComp.EventName;
-            eventComposite = eventComp;
-            Match = match;
-            ResultCOF = resultCoF;
-            SVGDone = false;
-            await StartRender().ConfigureAwait( false );
-            SVGDone = true;
+        public static async Task<TargetAnalysisAndGraphic> FactoryAsync( float dimension, string? eventName, EventComposite? eventComp, Match? match, ResultCOF? resultCoF, bool includeGroupAnalysis ) {
+            var targetAnalysisAndGraphic = new TargetAnalysisAndGraphic();
+            targetAnalysisAndGraphic.includeGroupAnalysis = includeGroupAnalysis;
+            targetAnalysisAndGraphic.Dimension = dimension;
+            targetAnalysisAndGraphic.EventName = eventName != null ? eventName : eventComp.EventName;
+            targetAnalysisAndGraphic.eventComposite = eventComp;
+            targetAnalysisAndGraphic.Match = match;
+            targetAnalysisAndGraphic.ResultCOF = resultCoF;
+            targetAnalysisAndGraphic._sVGDone = false;
+            await targetAnalysisAndGraphic.StartRenderAsync().ConfigureAwait( false );
+            targetAnalysisAndGraphic._sVGDone = true;
 
-            EventInfo = new EventInfoObject() {
+            targetAnalysisAndGraphic.EventInfo = new EventInfoObject() {
                 eventComposite = eventComp,
                 ObjectImage = null,
-                GroupMaths = this.groupMaths,
-                ShotList = ShotListToShow,
-                ScoreFormatted = ScoreFormatted,
-                EventLabel = EventName,
-                TargetDef = TargetDef
+                GroupMaths = targetAnalysisAndGraphic.groupMaths,
+                ShotList = targetAnalysisAndGraphic._shotListToShow,
+                ScoreFormatted = targetAnalysisAndGraphic._scoreFormatted,
+                EventLabel = targetAnalysisAndGraphic.EventName,
+                TargetDef = targetAnalysisAndGraphic.TargetDef
             };
+
+            return targetAnalysisAndGraphic;
         }
 
         public string? GetSVGMarkup() {
-            if (SVGDone)
-                return SvgMarkup;
+            if (_sVGDone)
+                return _svgMarkup;
             else
                 return null;
         }
         public string? GetScoreFormatted() {
-            return ScoreFormatted;
+            return _scoreFormatted;
         }
         public List<Shot>? GetShotListToShow() {
-            return ShotListToShow;
+            return _shotListToShow;
         }
 
-        private async Task StartRender() {
+        private async Task StartRenderAsync() {
 
             try {
                 //From the Result COF, learn the Course of Fire Def it was based on, and read that from the Rest API.
@@ -108,13 +114,13 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 var cof = await APIClients.DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
 
                 //Using BabelFish, generate the EventTree from the Course of fire.
-                EventTree = EventComposite.GrowEventTree( cof );
+                _eventTree = EventComposite.GrowEventTree( cof );
                 //Retrieve the EventComposite from the event tree, for the event the caller is asking for.
-                EventWeAreLookingFor = EventTree.FindEventComposite( EventName );
+                _eventWeAreLookingFor = _eventTree.FindEventComposite( EventName );
                 //Generate a dictionary of shots for the event in question. Key is the singular shot name, value is the Shot object
-                ShotsByEventName = ResultCOF.GetShotsByEventName();
+                _shotsByEventName = ResultCOF.GetShotsByEventName();
                 try {
-                    DescendantEventComposites = EventWeAreLookingFor.GetAllSingulars();
+                    DescendantEventComposites = _eventWeAreLookingFor.GetAllSingulars();
 
 
                     //Start the drawing
@@ -148,7 +154,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                         var Target = await APIClients.DefinitionCache.GetTargetDefinitionAsync( targetSetName );
                         this.TargetDef = Target;
                         //Using divs, populate the even name and scores of each ancestor
-                        PopulateParentScores( EventWeAreLookingFor );
+                        PopulateParentScores( _eventWeAreLookingFor );
                         //Using divs, populate the event name and score of each direct child.
                         PopulateChildScores();
 
@@ -160,8 +166,8 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
 
                         //Draw the shots
-                        ShotListToShow = GetShotsToDisplay();
-                        foreach (var shot in ShotListToShow) {
+                        _shotListToShow = GetShotsToDisplay();
+                        foreach (var shot in _shotListToShow) {
                             //Checking the shot attributes is the most predictable way to know if it's a missed shot withunkown coordinates.
                             if (shot.Attributes.Contains( Shot.SHOT_ATTRIBUTE_UNKNOWN_COORDINATES )
                                 || shot.Attributes.Contains( Shot.SHOT_ATTRIBUTE_MISSED_SHOT )
@@ -188,7 +194,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                         }
 
                         //Draw the Shot Group Analysis Stuff here.
-                        groupMaths = new GroupAnalysisMaths( ShotListToShow );
+                        groupMaths = new GroupAnalysisMaths( _shotListToShow );
                         //if you want the stuff added on there, this is where to to it.
                         if (includeGroupAnalysis) {
                             //The negative 1 is needed, on the next line, because the SVG coordinate system has the y axis pointed down.
@@ -208,22 +214,22 @@ namespace Scopos.BabelFish.DataActors.PDF {
                         }
 
                         EventScore eventScore;
-                        ResultCOF.EventScores.TryGetValue( EventWeAreLookingFor.EventName, out eventScore );
+                        ResultCOF.EventScores.TryGetValue( _eventWeAreLookingFor.EventName, out eventScore );
                         if (eventScore != null) {
-                            ScoreFormatted = eventScore.ScoreFormatted;
+                            _scoreFormatted = eventScore.ScoreFormatted;
                         }
                     } else {
                         EventScore eventScore;
-                        if (ResultCOF.EventScores.TryGetValue( EventWeAreLookingFor.EventName, out eventScore )) {
+                        if (ResultCOF.EventScores.TryGetValue( _eventWeAreLookingFor.EventName, out eventScore )) {
                             if (eventScore.NumShotsFired == 0) {
                                 stringBuilder.AppendLine( $"<text x=\"10\" y=\"{center}\" class=\"heavy\">No shots fired</text>" );
                             } else {
-                                ShotListToShow = GetShotsToDisplay();
+                                _shotListToShow = GetShotsToDisplay();
                                 //If we get here, could be a BB Gun test, or a hit/miss target.
                                 stringBuilder.AppendLine( $"<text x=\"10\" y=\"{center}\" class=\"heavy\">{eventScore.ScoreFormatted}</text>" );
                             }
 
-                            ScoreFormatted = eventScore.ScoreFormatted;
+                            _scoreFormatted = eventScore.ScoreFormatted;
                         } else {
                             //If we get here, likely drawing a shot withunknown coordinates. Not quite sure how to handle this yet.
                             ;
@@ -232,12 +238,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
                     stringBuilder.AppendLine( "</svg>" );
 
-                    SvgMarkup = stringBuilder.ToString();
+                    _svgMarkup = stringBuilder.ToString();
 
                     var fileName = $"{ResultCOF.MatchID}_{ResultCOF.ResultCOFID}_{EventName}";
                     dynamic seriesName;
-                    if (!string.IsNullOrEmpty( ScoreFormatted )) {
-                        seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName};;Aggregate: {ScoreFormatted}";
+                    if (!string.IsNullOrEmpty( _scoreFormatted )) {
+                        seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName};;Aggregate: {_scoreFormatted}";
                     } else {
                         seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName}";
                     }
@@ -282,12 +288,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     // }
                 } catch
                       (Exception e) {
-                    logger.Error( e );
+                    _logger.Error( e );
                     throw;
                 }
             } catch (Exception ex) {
-                logger.Error( ex );
-                ErrorMessage = ex.Message;
+                _logger.Error( ex );
+                _errorMessage = ex.Message;
             }
         }
 
@@ -328,7 +334,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             // Load SVG content into an XDocument
             var svgDocument = XDocument.Parse( svgContent );
             var namespaceManager = new XmlNamespaceManager( new NameTable() );
-            namespaceManager.AddNamespace( "svg", SvgNamespace );
+            namespaceManager.AddNamespace( "svg", _svgNamespace );
 
             // Select all elements with a fill attribute
             var filledElements = svgDocument.XPathSelectElements( "//*[(@fill)]", namespaceManager );
@@ -369,7 +375,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             // Load SVG content into an XDocument
             var svgDocument = XDocument.Parse( svgContent );
             var namespaceManager = new XmlNamespaceManager( new NameTable() );
-            namespaceManager.AddNamespace( "svg", SvgNamespace );
+            namespaceManager.AddNamespace( "svg", _svgNamespace );
             var svgElement = svgDocument.Root;
 
             svgElement.SetAttributeValue( "style", "overflow:hidden" );
@@ -422,7 +428,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             // Load SVG content into an XDocument
             var svgDocument = XDocument.Parse( svgContent );
             var namespaceManager = new XmlNamespaceManager( new NameTable() );
-            namespaceManager.AddNamespace( "svg", SvgNamespace );
+            namespaceManager.AddNamespace( "svg", _svgNamespace );
             var svgElement = svgDocument.Root;
 
             svgElement.SetAttributeValue( "style", "overflow:hidden" );
@@ -502,11 +508,11 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
             List<Scopos.BabelFish.DataModel.Athena.Shot.Shot> shots = new List<Scopos.BabelFish.DataModel.Athena.Shot.Shot>();
 
-            if (EventWeAreLookingFor != null) {
+            if (_eventWeAreLookingFor != null) {
 
                 Scopos.BabelFish.DataModel.Athena.Shot.Shot shot;
                 foreach (var ec in DescendantEventComposites) {
-                    if (ShotsByEventName.TryGetValue( ec.EventName, out shot )) {
+                    if (_shotsByEventName.TryGetValue( ec.EventName, out shot )) {
                         shots.Add( shot );
                     }
                 }
@@ -522,7 +528,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             double maxDistance = 0;
             foreach (var ec in DescendantEventComposites) {
 
-                if (ShotsByEventName.TryGetValue( ec.EventName, out shot )
+                if (_shotsByEventName.TryGetValue( ec.EventName, out shot )
                 && shot.Location != null
                 && shot.Location.GetRadiusSquared() > maxDistance) {
                     maxDistance = shot.Location.GetRadiusSquared();
@@ -538,7 +544,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             Scopos.BabelFish.DataModel.Athena.Shot.Shot shot = null;
             List<string> TargetSetNames = new List<string>();
             foreach (var ec in DescendantEventComposites) {
-                if (ShotsByEventName.TryGetValue( ec.EventName, out shot )
+                if (_shotsByEventName.TryGetValue( ec.EventName, out shot )
                 && !TargetSetNames.Contains( shot.TargetSetName )) {
                     TargetSetNames.Add( shot.TargetSetName );
                 }
@@ -551,7 +557,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             //Use recursion to populate a list of ancestor's event name and scores.
             EventScore eventScore;
             if (ResultCOF.EventScores.TryGetValue( ec.EventName, out eventScore )) {
-                ParentScores.Insert( 0, $"{ec.EventName}: {eventScore.ScoreFormatted}" );
+                _parentScores.Insert( 0, $"{ec.EventName}: {eventScore.ScoreFormatted}" );
             }
             if (ec.HasParent) {
                 PopulateParentScores( ec.Parent );
@@ -560,10 +566,10 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         private void PopulateChildScores() {
 
-            foreach (var child in EventWeAreLookingFor.Children) {
+            foreach (var child in _eventWeAreLookingFor.Children) {
                 EventScore eventScore;
                 if (ResultCOF.EventScores.TryGetValue( child.EventName, out eventScore )) {
-                    ChildScores.Add( $"{child.EventName}: {eventScore.ScoreFormatted}" );
+                    _childScores.Add( $"{child.EventName}: {eventScore.ScoreFormatted}" );
                 }
             }
         }

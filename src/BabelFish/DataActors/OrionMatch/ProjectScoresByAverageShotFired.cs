@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Amazon.CognitoIdentityProvider.Model;
-using Amazon.Runtime.Internal.Transform;
-using Scopos.BabelFish.DataModel.AthenaLogin;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
@@ -14,7 +9,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire ) : base( courseOfFire ) {
         }
 
-        public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire, CompareByRankingDirective teamMemberComparer ) : base (courseOfFire, teamMemberComparer) {
+        public ProjectScoresByAverageShotFired( CourseOfFire courseOfFire, CompareByRankingDirective teamMemberComparer ) : base( courseOfFire, teamMemberComparer ) {
         }
 
         public override string ProjectionMadeBy {
@@ -23,10 +18,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
-        //Projection and AvgShots exists as class variable to make recussion easier. They need to be cleared with each call to ProjectAthleteScores()
+        /// <summary>
+        /// Projection and AvgShots exists as class variable to make recussion easier. They need to be cleared with each call to ProjectAthleteScores()
+        /// </summary>
         private IEventScoreProjection Projection { get; set; }
 
-        //first key is stage style setname, second key is avgType [(I)INT, (D)DEC, (X)INNER] value is avg.
+        /// <summary>
+        /// first key is stage style setname, second key is avgType [(I)INT, (D)DEC, (X)INNER] value is avg.
+        /// </summary>
         private Dictionary<string, Dictionary<string, float>> AvgShots = new Dictionary<string, Dictionary<string, float>>();
 
         /// <inheritdoc/>
@@ -48,6 +47,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (projection.EventScores.TryGetValue( this.TopLevelEvent.EventName, out topLevelEventScore )) {
 
                 EventScore es;
+                Target target;
+                int maxIntValue = 10;
 
                 //I could probably just use singulars and get the complete avg shot fired and use that instead, might be easier...
                 foreach (var stageEvent in stageEvents) {
@@ -64,6 +65,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     var avgIntThisStage = 0.0f;
                     var avgDecThisStage = 0.0f;
                     var avgXPerShot = 0.0f;
+                    if (stageEvent.TryGetTarget( this.CourseOfFire, "", out target ) && target.ScoringRings.Count > 0) {
+                        maxIntValue = target.ScoringRings[0].Value;
+                    }
                     if (shotsFired > 0 && singulars.Count > 0) { //if there are shots fired in this stage, and there should be, we should use those 
                         avgIntThisStage = (float)es.Score.I / (float)shotsFired;
                         avgDecThisStage = es.Score.D / shotsFired;
@@ -85,7 +89,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     //project the scores
                     es.Projected = new DataModel.Athena.Score();
-                    es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining + .49f); //The +.49 is for rounding, instead of truncating.
+                    if (maxIntValue < 5 || avgDecThisStage < 5.0f) {
+                        //On hit / miss targets or small valued scoring rings use integer scores to predict integer scores.
+                        //The +.49 is for rounding, instead of truncating.
+                        es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining + .49f);
+                    } else {
+                        //On targets with decimal scoirng rings (e.g. any 10 ring target) use decimal scores to predict integer scores.
+                        //The +.49 is for rounding, instead of truncating.
+                        //The .42f is a qualitative adjustment factor between decimal and integer scores.
+                        es.Projected.I = es.Score.I + Math.Max( 0, Math.Min( maxIntValue * shotsRemaining, (int)((avgDecThisStage - .42f) * shotsRemaining + .49f) ) );
+                    }
                     es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
                     es.Projected.D = (float)Math.Round( es.Projected.D, 1 );
                     es.Projected.S = es.Projected.D;
@@ -107,6 +120,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     var avgIntThisStage = 0.0f;
                     var avgDecThisStage = 0.0f;
                     var avgXPerShot = 0.0f;
+                    if (stageEvent.TryGetTarget( this.CourseOfFire, "", out target ) && target.ScoringRings.Count > 0) {
+                        maxIntValue = target.ScoringRings[0].Value;
+                    }
 
                     if (AvgShots.Count > 0) {
                         Dictionary<string, float> defaulting;
@@ -116,6 +132,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         } else {
                             //If we donn't, use the overall average shot fired
                             defaulting = GetAverageShot();
+                            var setName = SetName.Parse( es.StageStyleDef );
+                            if (!setName.IsDefault && DefinitionCache.TryGetStageStyleDefinition( setName, out StageStyle stageStyleDefinition )) {
+                                defaulting["I"] *= stageStyleDefinition.RelativeDifficulty;
+                                defaulting["D"] *= stageStyleDefinition.RelativeDifficulty;
+                                defaulting["X"] *= stageStyleDefinition.RelativeDifficulty;
+                            }
                         }
 
                         avgIntThisStage = defaulting["I"];
@@ -125,7 +147,17 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     //project the scores
                     es.Projected = new DataModel.Athena.Score();
-                    es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining + .49f); //The +.49 is for rounding, instead of truncating.
+
+                    if (maxIntValue < 5 || avgDecThisStage < 5.0f) {
+                        //On hit / miss targets or small valued scoring rings use integer scores to predict integer scores.
+                        //The +.49 is for rounding, instead of truncating.
+                        es.Projected.I = es.Score.I + (int)(avgIntThisStage * shotsRemaining + .49f);
+                    } else {
+                        //On targets with decimal scoirng rings (e.g. any 10 ring target) use decimal scores to predict integer scores.
+                        //The +.49 is for rounding, instead of truncating.
+                        //The .42f is a qualitative adjustment factor between decimal and integer scores.
+                        es.Projected.I = es.Score.I + Math.Max( 0, Math.Min( maxIntValue * shotsRemaining, (int)((avgDecThisStage - .42f) * shotsRemaining + .49f) ) );
+                    }
                     es.Projected.D = es.Score.D + (avgDecThisStage * shotsRemaining);
                     es.Projected.D = (float)Math.Round( es.Projected.D, 1 );
                     es.Projected.S = es.Projected.D;
@@ -165,7 +197,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                             projectedScore.S += childProjectedScore.D;
                         } else {
                             //SUM(i,d) ... of which yes, we really ought to be parsing it, but i ain't got tiem for that
-                            if (childEvent.Equals( eventComposite.Children[0] ) )
+                            if (childEvent.Equals( eventComposite.Children[0] ))
                                 projectedScore.S += childProjectedScore.I;
                             else
                                 projectedScore.S += childProjectedScore.D;
@@ -184,6 +216,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var defaulting = GetAverageShot();
             var numOfShots = eventComposite.GetAllSingulars().Count;
+            var setName = SetName.Parse( eventScore.StageStyleDef );
+            if (!setName.IsDefault && DefinitionCache.TryGetStageStyleDefinition( setName, out StageStyle stageStyleDefinition )) {
+                defaulting["I"] *= stageStyleDefinition.RelativeDifficulty;
+                defaulting["D"] *= stageStyleDefinition.RelativeDifficulty;
+                defaulting["X"] *= stageStyleDefinition.RelativeDifficulty;
+            }
 
             Score score = new Score();
             projectedScore.I = (int)(defaulting["I"] * numOfShots);
@@ -200,9 +238,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var avgDec = 0.0f;
             var avgX = 0.0f;
             foreach (var stageStyle in AvgShots) {
-                avgInt += stageStyle.Value["I"];
-                avgDec += stageStyle.Value["D"];
-                avgX += stageStyle.Value["X"];
+                float stageAvgInt = stageStyle.Value["I"];
+                float stageAvgDec = stageStyle.Value["D"];
+                float stageAvgX = stageStyle.Value["X"];
+
+                var setName = SetName.Parse( stageStyle.Key );
+                if (!setName.IsDefault && DefinitionCache.TryGetStageStyleDefinition( setName, out StageStyle stageStyleDefinition )) {
+                    stageAvgInt /= stageStyleDefinition.RelativeDifficulty;
+                    stageAvgDec /= stageStyleDefinition.RelativeDifficulty;
+                    stageAvgX /= stageStyleDefinition.RelativeDifficulty;
+                }
+
+                avgInt += stageAvgInt;
+                avgDec += stageAvgDec;
+                avgX += stageAvgX;
             }
             Dictionary<string, float> bigAvgs;
             if (AvgShots.Count > 0) {
