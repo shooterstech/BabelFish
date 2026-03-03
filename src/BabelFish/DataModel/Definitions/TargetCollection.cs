@@ -1,4 +1,4 @@
-﻿using System.Runtime.Serialization;
+using System.Runtime.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// And yet another the 50m Rifle reduced for 50ft. </para>
     /// </summary>
     public class TargetCollection : Definition {
-        
+
         /// <summary>
         /// Public constructor
         /// </summary>
@@ -23,8 +23,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
 
             if (TargetCollections == null)
                 TargetCollections = new List<TargetCollectionModal>();
@@ -52,10 +52,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Helper method to return the TargetCollectionModal with th e passed in target collection name.
         /// </summary>
-        /// <param name="targetCollectionName"></param>
+        /// <param name="targetCollectionName">If an empty string, returns the first value.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">Thrown if the passed in targetCollectionName is not found.</exception>
         public TargetCollectionModal GetTargetCollection( string targetCollectionName ) {
+            if (string.IsNullOrEmpty( targetCollectionName ))
+                return TargetCollections[0];
+
             foreach (var item in TargetCollections) {
                 if (item.TargetCollectionName == targetCollectionName) {
                     return item;
@@ -89,17 +92,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return false;
-		}
+        }
 
-		/// <inheritdoc />
-		public override async Task<bool> GetMeetsSpecificationAsync() {
+        /// <inheritdoc />
+        public override async Task<bool> GetMeetsSpecificationAsync() {
             var validation = new IsTargetCollectionValid();
 
-			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-			SpecificationMessages = validation.Messages;
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
 
-			return meetsSpecification;
-		}
+            return meetsSpecification;
+        }
 
         /// <inheritdoc />
         public override bool SetDefaultValues() {

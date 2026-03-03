@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -8,88 +8,82 @@ using Scopos.BabelFish.Tests.Definition;
 namespace Scopos.BabelFish.Tests.OrionMatch {
 
     [TestClass]
-    public class AvgPredictionsTests : BaseTestClass
-    {
+    public class AvgPredictionsTests : BaseTestClass {
         public CourseOfFire courseOfFire = new CourseOfFire();
         public ResultEvent resultEvent = new ResultEvent();
 
 
         [TestMethod]
-        public async Task ProjectedAvgScoresMaker3x20Test()
-        {
+        public async Task ProjectedAvgScoresMaker3x20Test() {
             courseOfFire = CourseOfFireHelper.Get_3x20_KPS_Cof();
             resultEvent.EventScores = new Dictionary<string, EventScore>();
-            EventScore qually = new EventScore
-            {
+            EventScore qually = new EventScore {
                 EventName = "Qualification",
                 Score = new DataModel.Athena.Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
-                NumShotsFired = 10,
+                NumShotsFired = 30,
                 EventType = "EVENT",
                 Status = ResultStatus.INTERMEDIATE,
                 EventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle"
             };
-            resultEvent.EventScores.Add("Qualification", qually);
+            resultEvent.EventScores.Add( "Qualification", qually );
 
 
-            EventScore standing = new EventScore
-            {
+            EventScore standing = new EventScore {
                 EventName = "Standing",
-                Score = new DataModel.Athena.Score { I = 99, D = 101.4f, X = 4 },
+                Score = new DataModel.Athena.Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 10,
                 EventType = "STAGE",
-                Status = ResultStatus.INTERMEDIATE,
+                Status = ResultStatus.FUTURE,
                 StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Standing"
             };
-            resultEvent.EventScores.Add("Standing", standing);
+            resultEvent.EventScores.Add( "Standing", standing );
 
 
-            EventScore prone = new EventScore
-            {
+            EventScore prone = new EventScore {
                 EventName = "Prone",
-                Score = new DataModel.Athena.Score { I = 0, D = 0, X = 0 },
+                Score = new DataModel.Athena.Score { I = 95, D = 99.4f, X = 4 },
                 ScoreFormatted = "",
                 NumShotsFired = 0,
                 EventType = "STAGE",
-                Status = ResultStatus.FUTURE,
+                Status = ResultStatus.INTERMEDIATE,
                 StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Prone"
             };
-            resultEvent.EventScores.Add("Prone", prone);
+            resultEvent.EventScores.Add( "Prone", prone );
 
 
-            EventScore knee = new EventScore
-            {
+            EventScore knee = new EventScore {
                 EventName = "Kneeling",
-                Score = new DataModel.Athena.Score { I = 198, D = 201.3f, X = 12 },
+                Score = new DataModel.Athena.Score { I = 180, D = 188.8f, X = 12 },
                 ScoreFormatted = "",
                 NumShotsFired = 20,
                 EventType = "STAGE",
                 Status = ResultStatus.UNOFFICIAL,
                 StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Kneeling"
             };
-            resultEvent.EventScores.Add("Kneeling", knee);
+            resultEvent.EventScores.Add( "Kneeling", knee );
 
 
-            resultEvent.ProjectScores(new ProjectScoresByAverageShotFired(courseOfFire));
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(resultEvent));
+            resultEvent.ProjectScores( new ProjectScoresByAverageShotFired( courseOfFire ) );
+            Console.WriteLine( System.Text.Json.JsonSerializer.Serialize( resultEvent ) );
 
             //flip these around plz, better output on fail.
-            Assert.AreEqual(198,    resultEvent.EventScores["Standing"].Projected.I);
-            Assert.AreEqual(202.8f, resultEvent.EventScores["Standing"].Projected.D);
-            Assert.AreEqual(8,      resultEvent.EventScores["Standing"].Projected.X);
+            Assert.AreEqual( 198, resultEvent.EventScores["Standing"].Projected.I );
+            Assert.AreEqual( 202.8f, resultEvent.EventScores["Standing"].Projected.D );
+            Assert.AreEqual( 8, resultEvent.EventScores["Standing"].Projected.X );
 
-            Assert.AreEqual(198,    resultEvent.EventScores["Prone"].Projected.I);
-            Assert.AreEqual(202.1f, resultEvent.EventScores["Prone"].Projected.D);
-            Assert.AreEqual(10,      resultEvent.EventScores["Prone"].Projected.X);
+            Assert.AreEqual( 198, resultEvent.EventScores["Prone"].Projected.I );
+            Assert.AreEqual( 202.1f, resultEvent.EventScores["Prone"].Projected.D );
+            Assert.AreEqual( 10, resultEvent.EventScores["Prone"].Projected.X );
 
-            Assert.AreEqual(198,    resultEvent.EventScores["Kneeling"].Projected.I);
-            Assert.AreEqual(201.3f, resultEvent.EventScores["Kneeling"].Projected.D);
-            Assert.AreEqual(12,     resultEvent.EventScores["Kneeling"].Projected.X);
+            Assert.AreEqual( 198, resultEvent.EventScores["Kneeling"].Projected.I );
+            Assert.AreEqual( 201.3f, resultEvent.EventScores["Kneeling"].Projected.D );
+            Assert.AreEqual( 12, resultEvent.EventScores["Kneeling"].Projected.X );
 
-            Assert.AreEqual(594,    resultEvent.EventScores["Qualification"].Projected.I);
-            Assert.AreEqual(606.2f, resultEvent.EventScores["Qualification"].Projected.D);
-            Assert.AreEqual(30,     resultEvent.EventScores["Qualification"].Projected.X);
+            Assert.AreEqual( 594, resultEvent.EventScores["Qualification"].Projected.I );
+            Assert.AreEqual( 606.2f, resultEvent.EventScores["Qualification"].Projected.D );
+            Assert.AreEqual( 30, resultEvent.EventScores["Qualification"].Projected.X );
         }
 
         [TestMethod]
