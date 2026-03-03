@@ -69,6 +69,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionDef );
         }
 
+        /// <summary>
+        /// A relative value to 1.00, measuring the degree of difficulty of this stage style. The higher the value the more difficult the stage style.
+        /// <para>Value is used to help project an athlete's score in multi-stage events. </para>
+        /// <para>Value muse be between 1.10 and 0.500. 0.900 is the default.</para>
+        /// <para>The exact value should be experimentally determined. Taking the 90th percentile of scores as the basis. </para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        public float RelativeDifficulty { get; set; } = .9f;
+
+        /// <summary>
+        /// A list of common ways to display scores for this Stage Style. The first item in the list is considered the default.
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 90 )]
         [G_NS.JsonProperty( Order = 90 )]
         [Obsolete( "Use ScoreFormatCollectionDef and ScoreConfigDefault" )]

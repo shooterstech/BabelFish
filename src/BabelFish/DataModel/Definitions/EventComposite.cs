@@ -431,6 +431,28 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return await DefinitionCache.GetTargetDefinitionAsync( targetSetName );
         }
 
+        public bool TryGetTarget( CourseOfFire cofDefinition, string targetCollectionName, out Target target ) {
+            target = null;
+            if (!HasUniformTargetDefinitions) {
+                return false;
+            }
+
+            var targetCollectionSetName = SetName.Parse( cofDefinition.TargetCollectionDef );
+            if (DefinitionCache.TryGetTargetCollectionDefinition( targetCollectionSetName, out var targetCollectionDefinition )) {
+                var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
+                if (TargetCollectionIndex >= 0 && TargetCollectionIndex < targetCollection.TargetDefs.Count) {
+                    var targetSetName = targetCollection.TargetDefs[TargetCollectionIndex];
+
+                    if (DefinitionCache.TryGetTargetDefinition( targetSetName, out var targetDefinition )) {
+                        target = targetDefinition;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Returns a boolean, indicating if this EventComposite is shot all on the same TARGET. If it is true
         /// then it is safe to call GetTargetCollectionAsync() to learn the SetName of the TARGET it is shot on.

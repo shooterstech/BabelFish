@@ -1,6 +1,7 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
+
 ## [2.1.0-alpha] - 2026-03-00
 ** Alpha build, not intended for outside of Scopos use **
 ** Contains breaking changes **
@@ -15,12 +16,22 @@ All notable changes to BabelFish will be documented in this file.
 - Added property for RequiredAttributeDef and deprecated DefaultAttributeDef, which will specify which, if any, ATTRIBUTE is required when the COURSE OF FIRE is added to an Orion Match. 
 - Added specification to check that RequiredAttributeDef is a simple attribute, of type string, and each field value specifies an Attribute Value Appelation.
 
+
+## [1.12.3] - 2026-03-03
+### Enhancements
+#### ProjectScoresByAverageShotFired
+- Updated projection algorithm to factor in relative difficulty of each stage, in a multi-stage event.
+### Bug Fixes
+- Fixed issue with TargetAnalysis that was calling an async method in a non-async function.
+
+
 ## [1.12.2] - 2026-02-20
 ### Enhancements
 #### MatchSearchPublicRequest
 - Added ability to search for matches based on the owner of the match (aka Orion Club).
 #### ResultListIntermediateFormattedRow
 - Updated the return value for an Attribute to be the Field's Name (previously was the Field's Value).
+
 
 ### Bug Fixes
 #### MatchAbbr
@@ -41,8 +52,9 @@ All notable changes to BabelFish will be documented in this file.
 ** Breaking Changes **
 - Refactored the ResultListExcel class to have a FactoryAsync method to construct new instances.
 - Abstracted the FactoryAsync method to work with either ResultLists or SquaddingList objects.
-- The GenerateExcel method new returns a byte[].
+- The GenerateExcel method now returns a byte[].
 - When instantiating a new instance, the default behavior is to create an Excel file with two worksheets. The first uses the standard RESULT LIST FORMAT. The second worksheet uses the new dynamically gnerated essential data format RESULT LIST FORMAT.
+
 
 ### Bug Fixes
 #### SquaddingLists
