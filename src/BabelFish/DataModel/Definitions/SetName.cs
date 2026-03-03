@@ -266,15 +266,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-        /// <summary>
-        /// Returns a boolean indicating if this SetName is the default value. which is "v1.0:orion:Default"
-        /// </summary>
-        public bool IsDefault {
-            get {
-                return this.nameSpace == "orion" && this.properName == "Default";
-            }
-        }
-
         /// <inheritdoc/>
         public override string ToString() {
             StringBuilder sb = new StringBuilder();

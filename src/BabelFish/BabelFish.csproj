@@ -7,9 +7,9 @@
     <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <!-- Update with each build -->
-    <FileVersion>2.1.0-alpha.2</FileVersion>
+    <FileVersion>2.1.0-alpha.3</FileVersion>
     <!-- Updaet with each release, may use -alpha, -beta -->
-    <Version>2.1.0-alpha.2</Version>
+    <Version>2.1.0-alpha.3</Version>
     <PackageId>Scopos.BabelFish.Core</PackageId>
     <Authors>Scopos LLC</Authors>
     <Company>Scopos LLC</Company>

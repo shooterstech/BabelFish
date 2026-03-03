@@ -437,7 +437,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return false;
             }
 
-            var targetCollectionSetName = SetName.Parse( cofDefinition.TargetCollectionDef );
+            var targetCollectionSetName = cofDefinition.TargetCollectionDef;
             if (DefinitionCache.TryGetTargetCollectionDefinition( targetCollectionSetName, out var targetCollectionDefinition )) {
                 var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
                 if (TargetCollectionIndex >= 0 && TargetCollectionIndex < targetCollection.TargetDefs.Count) {

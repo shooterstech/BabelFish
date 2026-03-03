@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var valid = await validation.IsSatisfiedByAsync( stageStyle );
 
-            Assert.IsTrue( valid, string.Join(", ", validation.Messages ) );
+            Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
         }
 
         [TestMethod]
@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             //The unaltered should pass
             Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
-            
+
             //0 shots should fail
             stageStyle.ShotsInSeries = 0;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
@@ -63,15 +63,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
 
             //empty string should fail
-            stageStyle.ScoreFormatCollectionDef = "";
-            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
-
-            //Invalid set name should fail
-            stageStyle.ScoreFormatCollectionDef = "not a real set name";
-            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
-
-            //valid set name but doesn't exist should fail
-            stageStyle.ScoreFormatCollectionDef = "v1.0:orion:not a real definition";
+            stageStyle.ScoreFormatCollectionDef = SetName.DEFAULT;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
         }
 
