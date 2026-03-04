@@ -127,9 +127,9 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
                 Assert.AreNotEqual( lastToken, scoreAverageResponse.ScoreAverageList.NextToken );
                 lastToken = scoreAverageResponse.ScoreAverageList.NextToken;
 
-                moreData = !string.IsNullOrEmpty( scoreAverageResponse.ScoreAverageList.NextToken );
-                scoreAverageRequest = scoreAverageResponse.GetNextRequest();
-            } while (moreData);
+                if (scoreAverageResponse.HasMoreItems)
+                    scoreAverageRequest = scoreAverageResponse.GetNextRequest();
+            } while (scoreAverageResponse.HasMoreItems);
         }
 
         [TestMethod]

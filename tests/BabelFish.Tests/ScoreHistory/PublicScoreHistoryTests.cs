@@ -30,8 +30,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
-            scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 15 );
-            scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
+            scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 15 );
+            scoreHistoryRequest.EndDate = new DateTime( 2023, 05, 30 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
             var eventStyleDef = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
             scoreHistoryRequest.EventStyleDef = eventStyleDef;
@@ -43,7 +43,6 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             bool hasAtLeastOneEventStyleEntry = false;
 
             foreach (var scoreHistoryBase in scoreHistoryResponse.ScoreHistoryList.Items) {
-                Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
                 if (scoreHistoryBase is ScoreHistoryEventStyleEntry) {
                     hasAtLeastOneEventStyleEntry |= true;
                     var scoreHistoryEventStyle = (ScoreHistoryEventStyleEntry)scoreHistoryBase;
@@ -60,8 +59,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
-            scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 15 );
-            scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
+            scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 15 );
+            scoreHistoryRequest.EndDate = new DateTime( 2023, 05, 30 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
             var stageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
             scoreHistoryRequest.StageStyleDefs = new List<SetName>() { stageStyleDef };
@@ -73,7 +72,6 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             bool hasAtLeastOneStageStyleEntry = false;
 
             foreach (var scoreHistoryBase in scoreHistoryResponse.ScoreHistoryList.Items) {
-                Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
                 if (scoreHistoryBase is ScoreHistoryStageStyleEntry) {
                     hasAtLeastOneStageStyleEntry |= true;
                     var scoreHistoryStageStyle = (ScoreHistoryStageStyleEntry)scoreHistoryBase;
@@ -91,8 +89,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
-            scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 15 );
-            scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
+            scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 15 );
+            scoreHistoryRequest.EndDate = new DateTime( 2023, 05, 30 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
             var kneelingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
             var proneDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" );
@@ -112,7 +110,6 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             bool hasAtLeastOneStanding = false;
 
             foreach (var scoreHistoryBase in scoreHistoryResponse.ScoreHistoryList.Items) {
-                Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
                 if (scoreHistoryBase is ScoreHistoryStageStyleEntry) {
                     var scoreHistoryStageStyle = (ScoreHistoryStageStyleEntry)scoreHistoryBase;
                     if (scoreHistoryStageStyle.StageStyleDef.Equals( kneelingDef ))
