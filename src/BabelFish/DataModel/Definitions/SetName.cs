@@ -66,7 +66,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="setName"></param>
         /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return the default SetName (v1.0:orion:default).</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed.</exception>
+        /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed and throwExceptionOnError is true.</exception>
         public static SetName Parse( string setName, bool throwExceptionOnError = false ) {
 
             //Look up in cache first
@@ -101,18 +101,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// Attempts to pase the passed in string into a SetName. Returns true or false if it was successful.
+        /// <para>If unsuccessful, the value of (out) sn is <see cref="DEFAULT"/></para>
         /// </summary>
         /// <param name="setName"></param>
         /// <param name="sn"></param>
         /// <returns></returns>
-        public static bool TryParse( string setName, out SetName sn ) {
+        public static bool TryParse( string? setName, out SetName sn ) {
 
-            sn = Parse( setName );
-            if (sn is null) {
-                var msg = $"Unable to parse the set name string '{setName}'";
+            try {
+                sn = Parse( setName, true );
+            } catch (Exception ex) {
+                var msg = $"Unable to parse the SetName string '{setName}'";
                 _logger.Error( msg );
+                sn = SetName.DEFAULT;
                 return false;
             }
+
             return true;
         }
 

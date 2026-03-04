@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 30,
                 EventType = "EVENT",
                 Status = ResultStatus.INTERMEDIATE,
-                EventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle"
+                EventStyleDef = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" )
             };
             resultEvent.EventScores.Add( "Qualification", qually );
 
@@ -36,7 +36,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 10,
                 EventType = "STAGE",
                 Status = ResultStatus.FUTURE,
-                StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Standing"
+                StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" )
             };
             resultEvent.EventScores.Add( "Standing", standing );
 
@@ -48,7 +48,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 0,
                 EventType = "STAGE",
                 Status = ResultStatus.INTERMEDIATE,
-                StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Prone"
+                StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" )
             };
             resultEvent.EventScores.Add( "Prone", prone );
 
@@ -60,7 +60,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 20,
                 EventType = "STAGE",
                 Status = ResultStatus.UNOFFICIAL,
-                StageStyleDef = "v1.0:ntparc:Sporter Air Rifle Kneeling"
+                StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" )
             };
             resultEvent.EventScores.Add( "Kneeling", knee );
 
@@ -99,7 +99,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 10,
                 EventType = "EVENT",
                 Status = ResultStatus.INTERMEDIATE,
-                EventStyleDef = "v1.0:nra:BB Gun 4P with Test Qualification"
+                EventStyleDef = SetName.Parse( "v1.0:nra:BB Gun 4P with Test Qualification" )
             };
             resultEvent.EventScores.Add( "Qualification", qually );
 
@@ -121,7 +121,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 10,
                 EventType = "STAGE",
                 Status = ResultStatus.INTERMEDIATE,
-                StageStyleDef = "v1.0:nra:BB Gun Prone"
+                StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Prone" )
             };
             resultEvent.EventScores.Add( "Prone", prone );
 
@@ -133,7 +133,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 5,
                 EventType = "STAGE",
                 Status = ResultStatus.FUTURE,
-                StageStyleDef = "v1.0:nra:BB Gun Standing"
+                StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Standing" )
             };
             resultEvent.EventScores.Add( "Standing", standing );
 
@@ -145,7 +145,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 0,
                 EventType = "STAGE",
                 Status = ResultStatus.UNOFFICIAL,
-                StageStyleDef = "v1.0:nra:BB Gun Sitting"
+                StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Sitting" )
             };
             resultEvent.EventScores.Add( "Sitting", sitting );
 
@@ -157,7 +157,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 0,
                 EventType = "STAGE",
                 Status = ResultStatus.UNOFFICIAL,
-                StageStyleDef = "v1.0:nra:BB Gun Kneeling"
+                StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Kneeling" )
             };
             resultEvent.EventScores.Add( "Kneeling", knee );
 
@@ -174,7 +174,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 NumShotsFired = 10,
                 EventType = "STAGE",
                 Status = ResultStatus.UNOFFICIAL,
-                StageStyleDef = "v1.0:nra:BB Gun Test"
+                StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Test" )
             };
             resultEvent.EventScores.Add( "Test", test );
 

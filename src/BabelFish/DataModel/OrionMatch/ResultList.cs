@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this.AttributeFilters = resultListAbbr.AttributeFilters.Clone();
             this.UserDefinedText = resultListAbbr.UserDefinedText.Clone();
 
-            this.Metadata.Add( match.MatchID.ToString(), new ResultListMetadata() {
+            this.Metadata.Add( match.MatchID, new ResultListMetadata() {
                 Creator = match.Creator,
                 OwnerId = match.OwnerId,
                 MatchID = match.MatchID,
@@ -86,22 +86,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>This value is not serialized.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string MatchID {
+        public MatchID MatchID {
             get {
                 if (this.Metadata.Count == 0) {
                     //This shouldn't happen
-                    return "1.1.1.1";
+                    return MatchID.DEFAULT;
                 }
 
                 if (this.Metadata.Count == 1)
                     return this.Metadata.First().Key;
 
                 //Likely a Virtual Match
-                foreach (var mId in this.Metadata.Keys) {
-                    if (Scopos.BabelFish.DataModel.OrionMatch.MatchID.TryParse( mId, out var matchID )) {
-                        if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
-                            return mId;
-                        }
+                foreach (var matchID in this.Metadata.Keys) {
+                    if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
+                        return matchID;
                     }
                 }
 
@@ -137,10 +135,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 ResultListMetadata parentMetaData = null;
                 MatchID matchId;
                 foreach (var meta in Metadata) {
-                    //The Key is the match id in string form
+                    //The Key is the match id
                     try {
-                        matchId = new MatchID( meta.Key );
-                        if (matchId.VirtualMatchParent) {
+                        if (meta.Key.VirtualMatchParent) {
                             parentMetaData = meta.Value;
                             break;
                         }
@@ -289,7 +286,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Local Matches will have exactly one value.
         /// </summary>
         [G_NS.JsonProperty( Order = 15 )]
-        public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
+        public Dictionary<MatchID, ResultListMetadata> Metadata { get; set; } = new Dictionary<MatchID, ResultListMetadata>();
 
         /// <summary>
         /// Set name of the RANKING RULE definition used to rank this result list.

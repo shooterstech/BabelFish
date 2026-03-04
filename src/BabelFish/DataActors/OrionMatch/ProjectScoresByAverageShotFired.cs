@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <summary>
         /// first key is stage style setname, second key is avgType [(I)INT, (D)DEC, (X)INNER] value is avg.
         /// </summary>
-        private Dictionary<string, Dictionary<string, float>> AvgShots = new Dictionary<string, Dictionary<string, float>>();
+        private Dictionary<SetName, Dictionary<string, float>> AvgShots = new Dictionary<SetName, Dictionary<string, float>>();
 
         /// <inheritdoc/>
         /// <param name="projection"></param>
@@ -73,15 +73,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         avgDecThisStage = es.Score.D / shotsFired;
                         avgXPerShot = (float)es.Score.X / (float)shotsFired;
 
-                        if (!string.IsNullOrEmpty( es.StageStyleDef )) {
-                            //add this tot he avgShots dict, which gets avgd at the end for stages we know nothing about.
-                            //NOTE that if there are two stages with the same stage style, only the first gets added. Which has room for improvement.
-                            if (!AvgShots.ContainsKey( es.StageStyleDef )) {
-                                AvgShots.Add( es.StageStyleDef, new Dictionary<string, float>() );
-                                AvgShots[es.StageStyleDef].Add( "I", avgIntThisStage );
-                                AvgShots[es.StageStyleDef].Add( "D", avgDecThisStage );
-                                AvgShots[es.StageStyleDef].Add( "X", avgXPerShot );
-                            }
+                        //add this tot he avgShots dict, which gets avgd at the end for stages we know nothing about.
+                        //NOTE that if there are two stages with the same stage style, only the first gets added. Which has room for improvement.
+                        if (!AvgShots.ContainsKey( es.StageStyleDef )) {
+                            AvgShots.Add( es.StageStyleDef, new Dictionary<string, float>() );
+                            AvgShots[es.StageStyleDef].Add( "I", avgIntThisStage );
+                            AvgShots[es.StageStyleDef].Add( "D", avgDecThisStage );
+                            AvgShots[es.StageStyleDef].Add( "X", avgXPerShot );
                         }
                     } else {
                         continue;
@@ -126,14 +124,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     if (AvgShots.Count > 0) {
                         Dictionary<string, float> defaulting;
-                        if (!string.IsNullOrEmpty( es.StageStyleDef ) && AvgShots.TryGetValue( es.StageStyleDef, out defaulting )) {
+                        if (AvgShots.TryGetValue( es.StageStyleDef, out defaulting )) {
                             //If we have scores for the stage style, use that as our default 
                             ;
                         } else {
                             //If we donn't, use the overall average shot fired
                             defaulting = GetAverageShot();
-                            var setName = SetName.Parse( es.StageStyleDef );
-                            if (!setName.IsDefault && DefinitionCache.TryGetStageStyleDefinition( setName, out StageStyle stageStyleDefinition )) {
+                            if (!es.StageStyleDef.IsDefault && DefinitionCache.TryGetStageStyleDefinition( es.StageStyleDef, out StageStyle stageStyleDefinition )) {
+                                //Factor in the relative difficulty of the stage.
                                 defaulting["I"] *= stageStyleDefinition.RelativeDifficulty;
                                 defaulting["D"] *= stageStyleDefinition.RelativeDifficulty;
                                 defaulting["X"] *= stageStyleDefinition.RelativeDifficulty;
@@ -216,8 +214,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var defaulting = GetAverageShot();
             var numOfShots = eventComposite.GetAllSingulars().Count;
-            var setName = SetName.Parse( eventScore.StageStyleDef );
-            if (!setName.IsDefault && DefinitionCache.TryGetStageStyleDefinition( setName, out StageStyle stageStyleDefinition )) {
+            if (!eventScore.StageStyleDef.IsDefault && DefinitionCache.TryGetStageStyleDefinition( eventScore.StageStyleDef, out StageStyle stageStyleDefinition )) {
+                //Factor in the relative difficulty of the stage.
                 defaulting["I"] *= stageStyleDefinition.RelativeDifficulty;
                 defaulting["D"] *= stageStyleDefinition.RelativeDifficulty;
                 defaulting["X"] *= stageStyleDefinition.RelativeDifficulty;
@@ -242,8 +240,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 float stageAvgDec = stageStyle.Value["D"];
                 float stageAvgX = stageStyle.Value["X"];
 
-                var setName = SetName.Parse( stageStyle.Key );
-                if (!setName.IsDefault && DefinitionCache.TryGetStageStyleDefinition( setName, out StageStyle stageStyleDefinition )) {
+                if (!stageStyle.Key.IsDefault && DefinitionCache.TryGetStageStyleDefinition( stageStyle.Key, out StageStyle stageStyleDefinition )) {
+                    //Factor in the relative difficulty of the stage.
                     stageAvgInt /= stageStyleDefinition.RelativeDifficulty;
                     stageAvgDec /= stageStyleDefinition.RelativeDifficulty;
                     stageAvgX /= stageStyleDefinition.RelativeDifficulty;

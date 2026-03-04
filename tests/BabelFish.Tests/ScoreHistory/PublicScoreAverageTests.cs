@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.ScoreHistory;
@@ -19,11 +19,11 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreAverageRequest.StartDate = new DateTime( 2023, 04, 1 );
             scoreAverageRequest.EndDate = new DateTime( 2023, 04, 30 );
             scoreAverageRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
-            const string kneelingDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
-            const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
-            const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
-            scoreAverageRequest.EventStyleDef = SetName.Parse( eventStyleDef );
+            var eventStyleDef = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
+            var kneelingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            var proneDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" );
+            var standingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" );
+            scoreAverageRequest.EventStyleDef = eventStyleDef;
             scoreAverageRequest.Format = ScoreHistoryFormatOptions.WEEK;
 
             var scoreAverageResponse = await scoreHistoryClient.GetScoreAveragePublicAsync( scoreAverageRequest );
@@ -37,19 +37,12 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             foreach (var scoreAverageBase in scoreAverageResponse.ScoreAverageList.Items) {
                 if (scoreAverageBase is ScoreAverageStageStyleEntry) {
                     var scoreAverageStageStyle = (ScoreAverageStageStyleEntry)scoreAverageBase;
-                    switch (scoreAverageStageStyle.StageStyleDef) {
-                        case kneelingDef:
-                            hasAtLeastOneKneeling = true;
-                            break;
-                        case proneDef:
-                            hasAtLeastOneProne = true;
-                            break;
-                        case standingDef:
-                            hasAtLeastOneStanding = true;
-                            break;
-                        default:
-                            break;
-                    }
+                    if (scoreAverageStageStyle.StageStyleDef.Equals( kneelingDef ))
+                        hasAtLeastOneKneeling = true;
+                    if (scoreAverageStageStyle.StageStyleDef.Equals( proneDef ))
+                        hasAtLeastOneProne = true;
+                    if (scoreAverageStageStyle.StageStyleDef.Equals( standingDef ))
+                        hasAtLeastOneStanding = true;
                 }
             }
 
@@ -69,13 +62,13 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreAverageRequest.StartDate = new DateTime( 2023, 04, 1 );
             scoreAverageRequest.EndDate = new DateTime( 2023, 04, 30 );
             scoreAverageRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            const string kneelingDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
-            const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
-            const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
+            var kneelingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            var proneDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" );
+            var standingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" );
             scoreAverageRequest.StageStyleDefs = new List<SetName>() {
-                SetName.Parse( kneelingDef ),
-                SetName.Parse( proneDef ),
-                SetName.Parse( standingDef )
+                kneelingDef,
+                proneDef,
+                standingDef
             };
             scoreAverageRequest.Format = ScoreHistoryFormatOptions.WEEK;
 
@@ -90,19 +83,14 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             foreach (var scoreAverageBase in scoreAverageResponse.ScoreAverageList.Items) {
                 if (scoreAverageBase is ScoreAverageStageStyleEntry) {
                     var scoreAverageStageStyle = (ScoreAverageStageStyleEntry)scoreAverageBase;
-                    switch (scoreAverageStageStyle.StageStyleDef) {
-                        case kneelingDef:
-                            hasAtLeastOneKneeling = true;
-                            break;
-                        case proneDef:
-                            hasAtLeastOneProne = true;
-                            break;
-                        case standingDef:
-                            hasAtLeastOneStanding = true;
-                            break;
-                        default:
-                            break;
-                    }
+                    if (scoreAverageStageStyle.StageStyleDef.Equals( kneelingDef ))
+                        hasAtLeastOneKneeling = true;
+
+                    if (scoreAverageStageStyle.StageStyleDef.Equals( proneDef ))
+                        hasAtLeastOneProne = true;
+
+                    if (scoreAverageStageStyle.StageStyleDef.Equals( standingDef ))
+                        hasAtLeastOneStanding = true;
                 }
             }
 
@@ -135,10 +123,10 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             do {
                 scoreAverageResponse = await scoreHistoryClient.GetScoreAverageAsync( scoreAverageRequest );
                 myScoreAverages.AddRange( scoreAverageResponse.ScoreAverageList.Items );
-                
+
                 Assert.AreNotEqual( lastToken, scoreAverageResponse.ScoreAverageList.NextToken );
                 lastToken = scoreAverageResponse.ScoreAverageList.NextToken;
-                
+
                 moreData = !string.IsNullOrEmpty( scoreAverageResponse.ScoreAverageList.NextToken );
                 scoreAverageRequest = scoreAverageResponse.GetNextRequest();
             } while (moreData);

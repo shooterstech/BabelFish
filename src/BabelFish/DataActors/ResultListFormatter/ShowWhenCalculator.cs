@@ -358,7 +358,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public bool Show( ShowWhenSegmentGroup showWhen, IParticipant? participant ) {
 
             ResultListMetadata metadata;
-            if (this.RLF.ResultList.Metadata.TryGetValue( this.MatchID.ToString(), out metadata )) {
+            if (this.RLF.ResultList.Metadata.TryGetValue( this.MatchID, out metadata )) {
                 return showWhen.SegmentGroupName.Equals( metadata.SegmentGroupName );
             }
 

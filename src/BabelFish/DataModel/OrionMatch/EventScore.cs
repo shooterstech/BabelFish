@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Scopos.BabelFish.DataModel.Definitions;
 
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -40,8 +34,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this Event matches with a defined EventStyle
         /// this is the SetName of that EventStyle
         /// </summary>
-        [DefaultValue("")]
-        public string EventStyleDef { get; set; } = string.Empty;
+        [DefaultValue( "" )]
+        public SetName EventStyleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The actual score the Participant has shot.
@@ -77,7 +71,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// this is the SetName of that StageStyle
         /// </summary>
         [DefaultValue( "" )]
-        public string StageStyleDef { get; set; } = string.Empty;
+        public SetName StageStyleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// ScoreFormatted may only be set when the Shot is part of a Result COF .Events dictrionary
@@ -88,12 +82,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A Temporary field that's needed by the TournamentMerger
         /// </summary>
         [G_NS.JsonIgnore]
-        public string MatchId {  get; set; } = string.Empty;
+        public MatchID MatchId { get; set; } = MatchID.DEFAULT;
 
         /// <summary>
         /// A Temporary field that's needed by the TournamentMerger
         /// </summary>
         [G_NS.JsonIgnore]
-        public Participant ? Participant { get; set; } = null;
+        public Participant? Participant { get; set; } = null;
     }
 }

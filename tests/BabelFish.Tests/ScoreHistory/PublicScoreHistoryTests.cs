@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -16,8 +16,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new ScoreHistoryAPIClient( );
-            var apiStageConstructorClient = new ScoreHistoryAPIClient(  APIStage.BETA );
+            var defaultConstructorClient = new ScoreHistoryAPIClient();
+            var apiStageConstructorClient = new ScoreHistoryAPIClient( APIStage.BETA );
 
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
 
@@ -33,8 +33,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 15 );
             scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
-            scoreHistoryRequest.EventStyleDef = SetName.Parse( eventStyleDef );
+            var eventStyleDef = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
+            scoreHistoryRequest.EventStyleDef = eventStyleDef;
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
@@ -42,11 +42,11 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             bool hasAtLeastOneEventStyleEntry = false;
 
-            foreach( var scoreHistoryBase in scoreHistoryResponse.ScoreHistoryList.Items ) {
+            foreach (var scoreHistoryBase in scoreHistoryResponse.ScoreHistoryList.Items) {
                 Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
-                if ( scoreHistoryBase is ScoreHistoryEventStyleEntry ) {
+                if (scoreHistoryBase is ScoreHistoryEventStyleEntry) {
                     hasAtLeastOneEventStyleEntry |= true;
-                    var scoreHistoryEventStyle = (ScoreHistoryEventStyleEntry) scoreHistoryBase;
+                    var scoreHistoryEventStyle = (ScoreHistoryEventStyleEntry)scoreHistoryBase;
                     Assert.AreEqual( eventStyleDef, scoreHistoryEventStyle.EventStyleDef );
                 }
             }
@@ -63,8 +63,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 15 );
             scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            var stageStyleDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
-            scoreHistoryRequest.StageStyleDefs = new List<SetName>() { SetName.Parse( stageStyleDef ) };
+            var stageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            scoreHistoryRequest.StageStyleDefs = new List<SetName>() { stageStyleDef };
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
 
@@ -94,13 +94,13 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 15 );
             scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 22 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            const string kneelingDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
-            const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
-            const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
-            scoreHistoryRequest.StageStyleDefs = new List<SetName>() { 
-                SetName.Parse( kneelingDef ),
-                SetName.Parse( proneDef ),
-                SetName.Parse( standingDef )
+            var kneelingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            var proneDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" );
+            var standingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" );
+            scoreHistoryRequest.StageStyleDefs = new List<SetName>() {
+                kneelingDef ,
+                proneDef ,
+                standingDef
             };
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
@@ -115,19 +115,12 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
                 Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
                 if (scoreHistoryBase is ScoreHistoryStageStyleEntry) {
                     var scoreHistoryStageStyle = (ScoreHistoryStageStyleEntry)scoreHistoryBase;
-                    switch (scoreHistoryStageStyle.StageStyleDef) {
-                        case kneelingDef:
-                            hasAtLeastOneKneeling = true;
-                            break;
-                        case proneDef:
-                            hasAtLeastOneProne = true;
-                            break;
-                        case standingDef:
-                            hasAtLeastOneStanding = true;
-                            break;
-                        default:
-                            break;
-                    }
+                    if (scoreHistoryStageStyle.StageStyleDef.Equals( kneelingDef ))
+                        hasAtLeastOneKneeling = true;
+                    if (scoreHistoryStageStyle.StageStyleDef.Equals( proneDef ))
+                        hasAtLeastOneProne = true;
+                    if (scoreHistoryStageStyle.StageStyleDef.Equals( standingDef ))
+                        hasAtLeastOneStanding = true;
                 }
             }
 
@@ -147,8 +140,8 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 1 );
             scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 30 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            var eventStyleDef = "v1.0:ntparc:Three-Position Sporter Air Rifle";
-            scoreHistoryRequest.EventStyleDef = SetName.Parse( eventStyleDef );
+            var eventStyleDef = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
+            scoreHistoryRequest.EventStyleDef = eventStyleDef;
             scoreHistoryRequest.Format = ScoreHistoryFormatOptions.WEEK;
 
             var scoreHistoryResponse = await scoreHistoryClient.GetScoreHistoryPublicAsync( scoreHistoryRequest );
@@ -178,13 +171,13 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 1 );
             scoreHistoryRequest.EndDate = new DateTime( 2023, 04, 30 );
             scoreHistoryRequest.UserIds = new List<string>() { Constants.TestDev7UserId };
-            const string kneelingDef = "v1.0:ntparc:Sporter Air Rifle Kneeling";
-            const string proneDef = "v1.0:ntparc:Sporter Air Rifle Prone";
-            const string standingDef = "v1.0:ntparc:Sporter Air Rifle Standing";
+            var kneelingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" );
+            var proneDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" );
+            var standingDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" );
             scoreHistoryRequest.StageStyleDefs = new List<SetName>() {
-                SetName.Parse( kneelingDef ),
-                SetName.Parse( proneDef ),
-                SetName.Parse( standingDef )
+                kneelingDef ,
+                proneDef ,
+                standingDef
             };
             scoreHistoryRequest.Format = ScoreHistoryFormatOptions.WEEK;
 
@@ -200,19 +193,12 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
                 Assert.IsTrue( scoreHistoryBase.NumberOfShots > 0 );
                 if (scoreHistoryBase is ScoreHistoryStageStyleTimespan) {
                     var scoreHistoryStageStyle = (ScoreHistoryStageStyleTimespan)scoreHistoryBase;
-                    switch (scoreHistoryStageStyle.StageStyleDef) {
-                        case kneelingDef:
-                            hasAtLeastOneKneeling = true;
-                            break;
-                        case proneDef:
-                            hasAtLeastOneProne = true;
-                            break;
-                        case standingDef:
-                            hasAtLeastOneStanding = true;
-                            break;
-                        default:
-                            break;
-                    }
+                    if (scoreHistoryStageStyle.StageStyleDef.Equals( kneelingDef ))
+                        hasAtLeastOneKneeling = true;
+                    if (scoreHistoryStageStyle.StageStyleDef.Equals( proneDef ))
+                        hasAtLeastOneProne = true;
+                    if (scoreHistoryStageStyle.StageStyleDef.Equals( standingDef ))
+                        hasAtLeastOneStanding = true;
                 }
             }
 

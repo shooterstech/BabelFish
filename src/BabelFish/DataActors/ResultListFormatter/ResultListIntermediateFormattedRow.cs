@@ -399,7 +399,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return string.Empty;
 
                     //This is the local match id, which likely different from the Parent ID in a virtual match
-                    return _resultEvent.MatchID;
+                    return _resultEvent.MatchID.ToString();
 
                 case "MatchLocation":
                 case "MatchLocationAbbreviation": //Deprecated
@@ -603,12 +603,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-        private bool TryGetResultListMetadata( string matchID, out ResultListMetadata metadata ) {
+        private bool TryGetResultListMetadata( MatchID matchID, out ResultListMetadata metadata ) {
             metadata = null;
 
             if (_resultListFormatted.ResultList == null
-                || _resultListFormatted.ResultList.Metadata == null
-                || string.IsNullOrEmpty( matchID ))
+                || _resultListFormatted.ResultList.Metadata == null)
                 return false;
 
             return _resultListFormatted.ResultList.Metadata.TryGetValue( matchID, out metadata );

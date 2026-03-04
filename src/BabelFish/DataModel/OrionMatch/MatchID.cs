@@ -1,14 +1,12 @@
-﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using NLog;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
     public class MatchID : IEquatable<MatchID>, IEqualityComparer<MatchID>, IEqualityComparer {
+
+        public static readonly MatchID DEFAULT = new MatchID( 1, 1, 1, 1 );
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -19,10 +17,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public const int SUBMATCHID_PRACTICE = 4;
         public const int SUBMATCHID_MANUAL = 9;
 
-        private long domainID = 1;
-        private long componentID = 0;
-        private long primaryMatchID = 0;
-        private long subMatchID = 0;
+        private long _domainID = 1;
+        private long _componentID = 0;
+        private long _primaryMatchID = 0;
+        private long _subMatchID = 0;
 
         /// <summary>
         /// Creates a new instance of a MatchID object based on the passed in string, that it expects to be in the MatchID format. 
@@ -33,10 +31,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             string[] parts = fullMatchID.Split( new char[] { '.' } );
 
             if (parts.Length == 4
-             && long.TryParse( parts[0], out domainID ) && domainID > 0
-             && long.TryParse( parts[1], out componentID ) && componentID > 0
-             && long.TryParse( parts[2], out primaryMatchID ) && primaryMatchID > 0
-             && long.TryParse( parts[3], out subMatchID ) && subMatchID >= 0) {
+             && long.TryParse( parts[0], out _domainID ) && _domainID > 0
+             && long.TryParse( parts[1], out _componentID ) && _componentID > 0
+             && long.TryParse( parts[2], out _primaryMatchID ) && _primaryMatchID > 0
+             && long.TryParse( parts[3], out _subMatchID ) && _subMatchID >= 0) {
                 //Expected Match ID format
                 return;
             }
@@ -45,10 +43,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         private MatchID( long domainID, long componentID, long primaryMatchID, long subMatchID ) {
-            this.domainID = domainID;
-            this.componentID = componentID;
-            this.primaryMatchID = primaryMatchID;
-            this.subMatchID = subMatchID;
+            this._domainID = domainID;
+            this._componentID = componentID;
+            this._primaryMatchID = primaryMatchID;
+            this._subMatchID = subMatchID;
         }
 
         /// <summary>
@@ -76,10 +74,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     }
             }
 
-            this.domainID = domainID;
-            this.componentID = componentID;
-            this.primaryMatchID = newPrimatchMatchID();
-            this.subMatchID = subMatchID;
+            this._domainID = domainID;
+            this._componentID = componentID;
+            this._primaryMatchID = newPrimatchMatchID();
+            this._subMatchID = subMatchID;
         }
 
         /// <summary>
@@ -93,7 +91,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             try {
                 result = new MatchID( matchId );
                 return true;
-            } catch ( FormatException fe ) {
+            } catch (FormatException fe) {
                 Logger.Error( fe );
                 result = null;
                 return false; ;
@@ -107,7 +105,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return null.</param>
         /// <returns></returns>
         public static MatchID? Parse( string matchId, bool throwExceptionOnError = false ) {
-            if ( TryParse( matchId, out MatchID result ) )
+            if (TryParse( matchId, out MatchID result ))
                 return result;
 
             if (throwExceptionOnError)
@@ -123,13 +121,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public override string ToString() {
             StringBuilder id = new StringBuilder();
-            id.Append( domainID );
+            id.Append( _domainID );
             id.Append( '.' );
-            id.Append( componentID );
+            id.Append( _componentID );
             id.Append( '.' );
-            id.Append( primaryMatchID );
+            id.Append( _primaryMatchID );
             id.Append( '.' );
-            id.Append( subMatchID );
+            id.Append( _subMatchID );
             return id.ToString();
         }
 
@@ -140,7 +138,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         public MatchID GetParentMatchID() {
             if (VirtualMatchChild)
-                return new MatchID( domainID, componentID, primaryMatchID, 1 );
+                return new MatchID( _domainID, _componentID, _primaryMatchID, 1 );
             else
                 return this;
         }
@@ -149,28 +147,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Returns the Domain value from this Match ID
         /// </summary>
         public long DomainID {
-            get { return domainID; }
+            get { return _domainID; }
         }
 
         /// <summary>
         /// Returns the Component value from this Match ID. This is usually a reference to the account number of the owner of the match.
         /// </summary>
         public long ComponentID {
-            get { return componentID; }
+            get { return _componentID; }
         }
 
         /// <summary>
         /// Returns the Primary Match ID value from this Match ID. Usually this is formatted as a time stamp.
         /// </summary>
         public long PrimaryMatchID {
-            get { return primaryMatchID; }
+            get { return _primaryMatchID; }
         }
 
         /// <summary>
         /// Returns the Sub Match ID value form this Match ID. This signifies if it is a local, virtual parent, virtual child, tournament, or a league.
         /// </summary>
         public long SubMatchID {
-            get { return subMatchID; }
+            get { return _subMatchID; }
         }
 
         /// <summary>
@@ -178,7 +176,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool LocalMatch {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_LOCAL:
                         return true;
                     default:
@@ -192,14 +190,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool VirtualMatch {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_LOCAL:
                     case SUBMATCHID_MATCH_GROUP:
                     case SUBMATCHID_LEAGUE:
                     case SUBMATCHID_PRACTICE:
                     case SUBMATCHID_MANUAL:
 
-						return false;
+                        return false;
                     default:
                         return true;
                 }
@@ -211,7 +209,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool VirtualMatchParent {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_VIRTUAL_PARENT:
                         return true;
                     default:
@@ -225,7 +223,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool VirtualMatchChild {
             get {
-                return (subMatchID >= 1000);
+                return (_subMatchID >= 1000);
             }
         }
 
@@ -234,7 +232,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool MatchGroup {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_MATCH_GROUP:
                         return true;
                     default:
@@ -248,7 +246,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool League {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_LEAGUE:
                         return true;
                     default:
@@ -262,7 +260,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool Practice {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_PRACTICE:
                         return true;
                     default:
@@ -276,13 +274,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public bool ManuallyEntered {
             get {
-                switch (subMatchID) {
+                switch (_subMatchID) {
                     case SUBMATCHID_MANUAL:
                         return true;
                     default:
                         return false;
 
-				}
+                }
             }
         }
 
@@ -321,19 +319,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         public new bool Equals( object x, object y ) {
-            if ( x is MatchID xx && y is MatchID yy )
+            if (x is MatchID xx && y is MatchID yy)
                 return xx.Equals( yy );
 
             return false;
         }
 
         public int GetHashCode( object obj ) {
-            if ( obj is MatchID xx )
+            if (obj is MatchID xx)
                 return xx.GetHashCode();
 
             return 0;
         }
 
         #endregion
+
+        public bool IsDefault {
+            get {
+                return _componentID == 1 && _domainID == 1 && _primaryMatchID == 1 && _subMatchID == 1;
+            }
+        }
     }
 }
