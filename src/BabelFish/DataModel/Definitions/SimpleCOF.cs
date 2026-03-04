@@ -22,6 +22,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 1 )]
         public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
+
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public string CourseOfFireDefAsString {
+            get {
+                return (string)CourseOfFireDef;
+            }
+        }
+
         /// <summary>
         /// Components, roughly, describe the stages of this SimpleCOF.
         /// </summary>
