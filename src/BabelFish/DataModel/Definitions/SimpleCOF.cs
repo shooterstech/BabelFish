@@ -22,7 +22,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 1 )]
         public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
-
+        /// <summary>
+        /// This property is needed for  a Telerick binding to work, but it is not intended to be used directly. It is just a string representation of the CourseOfFireDef property.
+        /// Maybe I can make this an exstension property in the future to avoid confusion ? 
+        /// </summary>
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public string CourseOfFireDefAsString {
