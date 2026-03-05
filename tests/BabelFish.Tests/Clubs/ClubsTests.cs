@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Clubs;
 using Scopos.BabelFish.DataModel.Clubs;
@@ -86,7 +86,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
 
             var client = new ClubsAPIClient( APIStage.BETA );
 
-            var ownerId = "OrionAcct002001";
+            var ownerId = "OrionAcct000002";
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password );
