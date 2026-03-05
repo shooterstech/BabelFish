@@ -90,6 +90,61 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task BasicHappyPathDeleteTournamentWithRequestTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Delete Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+            createRequest.TournamentName = tournamentName;
+            createRequest.OwnerId = 2;
+            createRequest.Visibility = VisibilityOption.PUBLIC;
+            createRequest.ShowOnSearch = true;
+
+            var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+            Assert.IsTrue( createResponse.HasOkStatusCode );
+            Assert.IsNotNull( createResponse.Tournament );
+
+            var deleteRequest = new DeleteTournamentAuthenticatedRequest( userAuthentication, createResponse.Tournament.TournamentId );
+            var deleteResponse = await client.DeleteTournamentAuthenticatedAsync( deleteRequest );
+
+            Assert.IsTrue( deleteResponse.HasOkStatusCode );
+            Assert.IsNotNull( deleteResponse.DeleteTournamentResponse );
+            Assert.AreEqual( createResponse.Tournament.TournamentId, deleteResponse.DeleteTournamentResponse.TournamentId );
+            Assert.AreEqual( 2, deleteResponse.DeleteTournamentResponse.LicenseNumber );
+        }
+
+        [TestMethod]
+        public async Task BasicHappyPathDeleteTournamentWithTournamentIdTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Delete TournamentId Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+            createRequest.TournamentName = tournamentName;
+            createRequest.OwnerId = 2;
+            createRequest.Visibility = VisibilityOption.PUBLIC;
+            createRequest.ShowOnSearch = true;
+
+            var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+            Assert.IsTrue( createResponse.HasOkStatusCode );
+            Assert.IsNotNull( createResponse.Tournament );
+
+            var deleteResponse = await client.DeleteTournamentAuthenticatedAsync( createResponse.Tournament.TournamentId, userAuthentication );
+
+            Assert.IsTrue( deleteResponse.HasOkStatusCode );
+            Assert.IsNotNull( deleteResponse.DeleteTournamentResponse );
+            Assert.AreEqual( createResponse.Tournament.TournamentId, deleteResponse.DeleteTournamentResponse.TournamentId );
+            Assert.AreEqual( 2, deleteResponse.DeleteTournamentResponse.LicenseNumber );
+        }
+
+        [TestMethod]
         public async Task EriksPlayground() {
 
             var client = new OrionMatchAPIClient();
