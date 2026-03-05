@@ -13,8 +13,15 @@ namespace Scopos.BabelFish.Tests {
 
             //Initialize the system, without pre-poulating the Definitino Cache (which avoids unnecessary API calls).
             Initializer.Initialize( xApiKey, false );
-            //add EPPlus license, was unable to add it to app.config
-            ExcelPackage.License.SetCommercial( excelPackageLicense );
+
+            if(excelPackageLicense != null) {
+                //add EPPlus license, was unable to add it to app.config
+                ExcelPackage.License.SetCommercial(excelPackageLicense);
+            }
+            else {
+                Console.WriteLine("ExcelPackageLicense environment variable not set, EPPlus will run in non-commercial mode which may cause some features to not work.");
+            }
+            
 
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 

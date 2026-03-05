@@ -1,10 +1,13 @@
+using System;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListMerger;
-using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
     [TestClass]
@@ -30,6 +33,60 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             Assert.IsTrue( tournament.TournamentMembers.Count > 0 );
             Assert.IsTrue( tournament.MergedResultLists.Count > 0 );
             Assert.IsTrue( tournament.MergedResultLists[0].Configuration is AverageMethodConfiguration );
+        }
+
+        [TestMethod]
+        public async Task BasicHappyPathCreateTournamentWithRequestTest() {
+            var client = new OrionMatchAPIClient(APIStage.BETA);
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Create Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var request = new CreateTournamentAuthenticatedRequest( userAuthentication);
+            request.TournamentName = tournamentName;
+            request.OwnerId = 2;
+            request.Visibility = VisibilityOption.PUBLIC;
+            request.ShowOnSearch = true;
+
+
+            var response = await client.CreateTournamentAuthenticatedAsync( request );
+
+            Assert.IsTrue( response.HasOkStatusCode );
+            Assert.IsNotNull( response.Tournament );
+            Assert.AreEqual( tournamentName, response.Tournament.TournamentName );
+            Assert.AreEqual( "OrionAcct000002", response.Tournament.OwnerId );
+            Assert.IsTrue( response.Tournament.IncludeInSearchResults );
+            Assert.IsTrue( response.Tournament.TournamentId.ToString().EndsWith( ".2" ) );
+        }
+
+
+        [TestMethod]
+        public async Task BasicHappyPathCreateTournamentWithTournamentObjectTest() {
+            var client = new OrionMatchAPIClient(APIStage.BETA);
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Create Tournament Object Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var tournament = new Scopos.BabelFish.DataModel.OrionMatch.Tournament() {
+                MatchName = tournamentName,
+                OwnerId = "OrionAcct0002255",
+                Visibility = VisibilityOption.PROTECTED,
+                IncludeInSearchResults = true,
+                MemberPolicy = "OPEN"
+            };
+
+            var response = await client.CreateTournamentAuthenticatedAsync( tournament, userAuthentication );
+
+            Assert.IsTrue( response.HasOkStatusCode );
+            Assert.IsNotNull( response.Tournament );
+            Assert.AreEqual( tournamentName, response.Tournament.TournamentName );
+            Assert.AreEqual( "2255", response.Tournament.OwnerId );
+            Assert.IsTrue( response.Tournament.IncludeInSearchResults );
+            Assert.IsTrue( response.Tournament.TournamentId.ToString().EndsWith( ".2" ) );
         }
 
         [TestMethod]

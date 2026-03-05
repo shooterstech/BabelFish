@@ -1,0 +1,22 @@
+The goal is to implement the API call in APIClients/OrionMatchAPIClient for the lambda function in CodexInstructions/lambda_function.py
+
+Perform the following steps:
+1. Create the data struction of the API response in DataModel under the correct subdir. 
+(In this case this step is skipped because DataModel/OrionMatch/Tournament.cs already exists). 
+
+2. Create the response wrapper for the response data structure in Responses/OrionMatchAPI 
+(In this case this step is skipped because TournamentWrapper.cs already exists)
+
+3. Create Requests/OrionMatchAPI/CreateTournamentAuthenticatedRequest.cs following the convention of other Authenticated requests in that folder
+
+4. Create Responses/OrionMatchAPI/CreateTournamentAuthenticatedResponse.cs following the convention of other Authenticated responses in that folder
+
+Note for the Requests/Responses, do NOT create abstract Response/Request classes
+
+5. Add CreateTournamentAuthenticatedAsync function(s) to APIClients/OrionMatchAPIClient.cs following the convention of other API call functions in that file
+
+6. Create/write test functions to test the function created in OrionMatchAPIClient.cs in tests/BabelFish.Tests/OrionMatch/Tournament/GetTournamentTests.cs 
+
+DO NOT TRY TO RUN ANY .NET COMMANDS such as building. 
+
+If an enum for a request parameter already exists, use it and use GetEnumMemberValue to convert to query string

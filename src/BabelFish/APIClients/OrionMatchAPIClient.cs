@@ -682,6 +682,33 @@ namespace Scopos.BabelFish.APIClients {
         #region Tournament API Calls
 
         /// <summary>
+        /// Create Tournament API
+        /// </summary>
+        /// <param name="requestParameters">CreateTournamentAuthenticatedRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<CreateTournamentAuthenticatedResponse> CreateTournamentAuthenticatedAsync( CreateTournamentAuthenticatedRequest requestParameters ) {
+            CreateTournamentAuthenticatedResponse response = new CreateTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// Create Tournament API
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Object</returns>
+        public async Task<CreateTournamentAuthenticatedResponse> CreateTournamentAuthenticatedAsync( Tournament tournament, UserAuthentication credentials ) {
+            var request = new CreateTournamentAuthenticatedRequest( credentials, tournament );
+
+            return await CreateTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
         /// Get Tournament Detail API
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>

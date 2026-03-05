@@ -51,5 +51,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 35 )]
         public List<MergedResultList> MergedResultLists { get; set; } = new List<MergedResultList>();
+
+
+        /// <summary>
+        /// Tournament member enrollment policy.
+        /// Typical values are OPEN, REQUEST, or INVITE.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 40 )]
+        public string MemberPolicy { get; set; } = "INVITE";
     }
 }
