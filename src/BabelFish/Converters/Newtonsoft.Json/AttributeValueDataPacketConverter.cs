@@ -68,8 +68,14 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             }
 
             if (attrValueDataPacket is AttributeValueDataPacketMatch avdpm) {
+                //Note a AttributeConfiguration inherits from AttributeValueDataPacket.
                 o["CourseOfFireId"] = avdpm.CourseOfFireId;
             }
+
+            if (attrValueDataPacket is AttributeConfiguration) {
+                o["Constant"] = ((AttributeConfiguration)attrValueDataPacket).Constant;
+            }
+
             // There are no unique fields for AttributeValueDataPacketAttribute, so we don't need to add anything to the JSON for that class
 
             o.WriteTo( writer );

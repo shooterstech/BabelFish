@@ -1,13 +1,9 @@
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Definitions;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
     /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue"/> field values.
     /// </summary>
-    public class AttributeFilterAttributeValue : AttributeFilter, IGetAttributeDefinition, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue> {
+    public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue> {
 
         /*
         {
@@ -27,40 +23,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         */
 
         /// <summary>
-        /// Constructor
-        /// </summary>
-        public AttributeFilterAttributeValue() {
-            this.Operation = AttributeFilterOperation.ATTRIBUTE_VALUE;
-        }
-
-        /// <summary>
-        /// The SetName of the <seealso cref="Attribute">ATTRIBUTE</seealso> to test values against.
-        /// </summary>
-        public SetName AttributeDef { get; set; } = SetName.DEFAULT;
-
-        /// <summary>
         /// The filter rule to apply.
         /// </summary>
         public AttributeFilterRule FilterRule { get; set; } = AttributeFilterRule.HAVE_ALL;
 
         /// <summary>
-        /// A list of field name and filed value pairs that we will test against.
-        /// <para>Item1 is the Attribute's FieldName, Item2 is the Attribute's FieldValue</para>
+        /// A list of Attribute Values to test against the participant's Attributes. The interpretation of this list depends on the FilterRule.
         /// </summary>
-        public ConstantFieldValueList Values { get; set; } = new ConstantFieldValueList();
-
-        /// <inheritdoc />
-        /// <remarks>
-        /// Returns the ATTRIBUTE definition from .DefaultAttributeDef
-        /// <para>It is a best practice to check for null or empty string on .DefaultAttributeDef before calling this method.</para>
-        /// </remarks>
-        /// <exception cref="XApiKeyNotSetException" />
-        /// <exception cref="DefinitionNotFoundException" />
-        /// <exception cref="ScoposAPIException" />
-        public async Task<Definitions.Attribute> GetAttributeDefinitionAsync() {
-
-            return await DefinitionCache.GetAttributeDefinitionAsync( this.AttributeDef );
-        }
+        public List<AttributeValueDataPacketMatch> Values { get; set; } = new List<AttributeValueDataPacketMatch>();
 
         /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
@@ -68,13 +38,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override int GetHashCode() {
             StringBuilder sb = new StringBuilder();
             sb.Append( this.Operation.ToString() );
-            sb.Append( this.AttributeDef.ToString() );
             sb.Append( this.FilterRule.ToString() );
             //Since the order of the valued does not matter, we will use a bitwas xor operator.
             int temp = 0;
             foreach (var val in this.Values) {
-                temp ^= val.FieldName.GetHashCode();
-                temp ^= val.Value.GetHashCode();
+                temp ^= val.GetHashCode();
             }
             sb.Append( temp );
             return sb.ToString().GetHashCode();

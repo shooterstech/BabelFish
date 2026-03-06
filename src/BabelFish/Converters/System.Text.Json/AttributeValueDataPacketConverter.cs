@@ -50,6 +50,15 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             ((AttributeValueDataPacketMatch)attributeValueDataPacket).CourseOfFireId = temp.GetInt32();
                         break;
 
+                    case AttributeConfiguration.CONCRETE_CLASS_ID:
+                        attributeValueDataPacket = new AttributeConfiguration();
+
+                        if (root.TryGetProperty( "CourseOfFireId", out temp ))
+                            ((AttributeConfiguration)attributeValueDataPacket).CourseOfFireId = temp.GetInt32();
+                        if (root.TryGetProperty( "Constant", out temp ))
+                            ((AttributeConfiguration)attributeValueDataPacket).Constant = temp.GetBoolean();
+                        break;
+
                     case AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID:
                     default:
                         attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();

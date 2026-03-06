@@ -131,5 +131,44 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             stageStyle.RelatedStageStyles.Add( "v1.0:orion:not a real definition" );
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
         }
+
+        [TestMethod]
+        public async Task IsRelativeDifficultyValidTests() {
+            var stageStyle = new StageStyle();
+            var validation = new IsStageStyleRelativeDifficultyValid();
+
+            //Should pass with the default value.
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            //Should pass with these values, including edge cases of .5f and 1.1f.
+            stageStyle.RelativeDifficulty = 0.5f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 0.8f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 1f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 1.1f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            //Should fail with these values, including edge cases of -.49f and 1.101f.
+            stageStyle.RelativeDifficulty = 0.49f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 1.11f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 0f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = -1f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 100f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+        }
     }
 }
