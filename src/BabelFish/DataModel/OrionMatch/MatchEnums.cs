@@ -160,6 +160,36 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         REMARK
     };
 
+    /// <summary>
+    /// The types of registration entires that a <see cref="CourseOfFireStructure"/> can accept.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum EntryTypes {
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for both Individuals and Teams. This is the default.
+        /// </summary>
+        [Description( "IndividualAndTeam" )]
+        [EnumMember( Value = "IndividualAndTeam" )]
+        INDIVIDUAL_AND_TEAM,
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for Individuals only.
+        /// </summary>
+        [Description( "IndividualOnly" )]
+        [EnumMember( Value = "IndividualOnly" )]
+        INDIVIDUAL_ONLY,
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for Teams only.
+        /// </summary>
+        [Description( "TeamOnly" )]
+        [EnumMember( Value = "TeamOnly" )]
+        TEAM_ONLY
+
+
+    }
+
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueRankingRuleType {
 

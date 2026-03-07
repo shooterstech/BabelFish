@@ -31,6 +31,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// To pull the full squadding, use GetSquaddingListRequest()
         /// </summary>
         [JsonPropertyOrder( 1 )]
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
+            "and each CourseOfFireDef will have its own Squadding. The multiple Courses of Fire are defined within the MatchStructure property" )]
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
         [JsonPropertyOrder( 2 )]
@@ -50,6 +52,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The list of Events in the Match that have Result Lists associated with them.
         /// </summary>
         [JsonPropertyOrder( 3 )]
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
+            "and each CourseOfFireDef will have its own list of Results. The multiple Courses of Fire are defined within the MatchStructure property" )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
@@ -72,6 +76,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// List of Attribute SetNames used in this match.
         /// </summary>
         [JsonPropertyOrder( 6 )]
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
+            "and each CourseOfFireDef will have its set of Attributes. The multiple Courses of Fire are defined within the MatchStructure property" )]
         public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
@@ -143,21 +149,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE. This property will be replaced.</remarks>
         [JsonPropertyOrder( 16 )]
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
+            "and each CourseOfFireDef will have its own CourseOfFireDef. The multiple Courses of Fire are defined within the MatchStructure property" )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         /// <summary>
         /// SetName of the ScoreConfig used in this match.
         /// NOTE: The name of the ScoreFormatCollection is specified in the Course of Fire 
         /// </summary>
-        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own ScoreConfigName. This property will be replaced.</remarks>
         [JsonPropertyOrder( 17 )]
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
+            "and each CourseOfFireDef will have its own ScoreConfigName. The multiple Courses of Fire are defined within the MatchStructure property" )]
         public string ScoreConfigName { get; set; }
 
         /// <summary>
         /// Name of the TargetCollection used in this match.
         /// </summary>
-        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own TargetColle3citonName. This property will be replaced.</remarks>
         [JsonPropertyOrder( 18 )]
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
+            "and each CourseOfFireDef will have its own TargetCollectionName. The multiple Courses of Fire are defined within the MatchStructure property" )]
         public string TargetCollectionName { get; set; }
 
         /// <summary>
@@ -315,7 +325,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// 
         /// </summary>
         /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
-        public List<MatchStructure> MatchStructures { get; set; } = new List<MatchStructure>();
+        public MatchStructure MatchStructure { get; set; } = new MatchStructure();
         #endregion
     }
 }
