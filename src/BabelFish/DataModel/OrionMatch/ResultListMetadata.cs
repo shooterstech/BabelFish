@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
-	/// <summary>
-	/// Used to describe the match that a ResultEvent was shot at. Instead of each ResultEvent including 
-	/// each of these fields, the ResultEvent references a MatchID, that these fields may be looked up.
-	/// Thus, hopefully, saving space in the already very long Result List.
-	/// </summary>
-	public class ResultListMetadata {
+    /// <summary>
+    /// Used to describe the match that a ResultEvent was shot at. Instead of each ResultEvent including 
+    /// each of these fields, the ResultEvent references a MatchID, that these fields may be looked up.
+    /// Thus, hopefully, saving space in the already very long Result List.
+    /// </summary>
+    public class ResultListMetadata {
 
         /// <summary>
         /// Unique ID for the match.
-        /// Field may possible be redundant
+        /// <para>The default value is 1.1.1.1, which is an non-existant match.</para>
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
-        public string MatchID { get; set; } = string.Empty;
+        public MatchID MatchID { get; set; } = MatchID.Parse( "1.1.1.1" );
 
         /// <summary>
         /// The Owner of this data. e.g. OrionAcct001234
@@ -33,7 +31,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 3 )]
         public string Creator { get; set; } = string.Empty;
 
-		private ResultStatus localStatus = ResultStatus.FUTURE;
+        private ResultStatus localStatus = ResultStatus.FUTURE;
 
         /// <summary>
         /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
@@ -41,18 +39,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4, DefaultValueHandling = G_NS.DefaultValueHandling.Populate )]
         [DefaultValue( ResultStatus.FUTURE )]
-		public ResultStatus Status {
-			get {
-				if (EndDate < DateTime.Today) {
-					localStatus = ResultStatus.OFFICIAL;
-					return localStatus;
-				} else {
-					return localStatus;
-				}
-			}
-			set {
-				localStatus = value;
-			}
+        public ResultStatus Status {
+            get {
+                if (EndDate < DateTime.Today) {
+                    localStatus = ResultStatus.OFFICIAL;
+                    return localStatus;
+                } else {
+                    return localStatus;
+                }
+            }
+            set {
+                localStatus = value;
+            }
         }
 
         /// <summary>
@@ -106,9 +104,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string ProjectionMadeBy { get; set; } = string.Empty;
 
-		/// <summary>
-		/// The name of the SegmentGroup that the competition is currently in (based on the Course of Fire's Range Script).
-		/// </summary>
+        /// <summary>
+        /// The name of the SegmentGroup that the competition is currently in (based on the Course of Fire's Range Script).
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         [DefaultValue( "" )]
@@ -133,21 +131,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return ScoringSystems != null && ScoringSystems.Count > 0;
         }
 
-		/// <summary>
-		/// THe name of the Squadding List (that hopefully can be ready through the 
-		/// REST API) that holds the squadding for competitors in this Result List.
-		/// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 14 )]
-		[G_NS.JsonProperty( Order = 14 )]
+        /// <summary>
+        /// THe name of the Squadding List (that hopefully can be ready through the 
+        /// REST API) that holds the squadding for competitors in this Result List.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
         [DefaultValue( null )]
-		public string SquaddingListName { get; set; } = null;
+        public string SquaddingListName { get; set; } = null;
 
-		/// <summary>
-		/// The time the reference result list was generated to calculate the RankDelta and ProjectedRankDelta
-		/// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 15 )]
-		[G_NS.JsonProperty( Order = 15 )]
-		[DefaultValue( null )]
-		public DateTime? CompareResultListLastUpdated { get; set; } = null;
+        /// <summary>
+        /// The time the reference result list was generated to calculate the RankDelta and ProjectedRankDelta
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        [DefaultValue( null )]
+        public DateTime? CompareResultListLastUpdated { get; set; } = null;
     }
 }

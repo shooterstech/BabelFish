@@ -1021,12 +1021,12 @@ namespace Scopos.BabelFish.APIClients {
         #region TARGET COLLECTION
 
         /// <summary>
-        /// 
+        /// Returns the TARGET COLLECTION requested, either from the cache, or by reading/downloading it if it has not been loaded yet.
         /// </summary>
         /// <param name="setName"></param>
         /// <returns></returns>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="DefinitionNotFoundException" >Thrown if the requested definition is not found. </exception>
         /// <exception cref="ScoposAPIException" />
         public static async Task<TargetCollection> GetTargetCollectionDefinitionAsync( SetName setName ) {
 

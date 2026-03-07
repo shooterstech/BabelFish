@@ -66,6 +66,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var fieldNameUnique = new IsAttributeFieldNameUnique();
             var fieldNotEmpty = new IsAttributeFieldNotEmpty();
             var fieldDefaultValue = new IsAttributeFieldDefaultValueValid();
+            var groupByProperty = new IsAttributeGroupByPriorityValid();
 
             if (!await displayName.IsSatisfiedByAsync( candidate )) {
                 valid = false;
@@ -95,6 +96,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await fieldDefaultValue.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( fieldDefaultValue.Messages );
+            }
+
+            if (!await groupByProperty.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( groupByProperty.Messages );
             }
 
             return valid;
@@ -252,6 +258,26 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 }
             }
             //Not catching if Fields is null, as IsAttributeFieldNotEmpty does this.
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Tests if the Attribute's GroupByProperty is valid. The value of GroupByProperty must be between 1 and 3 (inclusive).
+    /// </summary>
+    public class IsAttributeGroupByPriorityValid : CompositeSpecification<Attribute> {
+
+        /// <inheritdoc/>
+        public override async Task<bool> IsSatisfiedByAsync( Attribute candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            if (candidate.GroupByPriority <= 0 || candidate.GroupByPriority > 3) {
+                valid = false;
+                Messages.Add( $"The value of GroupByProperty must be between 1 and 3 (inclusive)." );
+            }
 
             return valid;
         }

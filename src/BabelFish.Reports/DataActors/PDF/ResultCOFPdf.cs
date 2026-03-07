@@ -83,13 +83,11 @@ namespace Scopos.BabelFish.DataActors.PDF {
                                 .AlignLeft()
                                 .Text( $"{es.NumShotsFired} shots" );
 
-                                if (!string.IsNullOrEmpty( es.EventStyleDef )
-                                    && DefinitionCache.TryGetEventStyleDefinition( SetName.Parse( es.EventStyleDef ), out EventStyle eventStyle )) {
+                                if (DefinitionCache.TryGetEventStyleDefinition( es.EventStyleDef, out EventStyle eventStyle )) {
                                     row.RelativeItem( 2 )
                                     .AlignLeft()
                                     .Text( eventStyle.CommonName );
-                                } else if (!string.IsNullOrEmpty( es.StageStyleDef )
-                                    && DefinitionCache.TryGetStageStyleDefinition( SetName.Parse( es.StageStyleDef ), out StageStyle stageStyle )) {
+                                } else if (DefinitionCache.TryGetStageStyleDefinition( es.StageStyleDef, out StageStyle stageStyle )) {
                                     row.RelativeItem( 2 )
                                     .AlignLeft()
                                     .Text( stageStyle.CommonName );

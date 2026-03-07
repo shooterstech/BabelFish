@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             ResultStatus status = ResultStatus.FUTURE;
             //resultList.CalculateResultListStatus(status);
 
-            Assert.AreEqual( matchId.ToString(), resultList.MatchID );
+            Assert.AreEqual( matchId, resultList.MatchID );
             Assert.AreEqual( resultListName, resultList.ResultName );
 
             Assert.IsTrue( resultList.Items.Count > 0 );
@@ -41,8 +41,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task ListOfRelaysTests() {
 
             //
-			var client = new OrionMatchAPIClient( );
-			var matchId = new MatchID( "1.1.2025081213222434.0" );
+            var client = new OrionMatchAPIClient();
+            var matchId = new MatchID( "1.1.2025081213222434.0" );
             var getSquaddingListResponse = await client.GetSquaddingListPublicAsync( matchId, "Qualification" );
 
             var squaddingList = getSquaddingListResponse.SquaddingList;
@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
             var list2 = squaddingList.ListOfRelays();
 
-			Assert.IsTrue( referenceList.SequenceEqual( list1 ) );
-		}
+            Assert.IsTrue( referenceList.SequenceEqual( list1 ) );
+        }
     }
 }

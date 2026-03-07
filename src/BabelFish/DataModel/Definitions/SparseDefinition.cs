@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using NLog;
+using System.ComponentModel;
 using Scopos.BabelFish.Converters.Microsoft;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -21,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
         /// </summary>
         [G_NS.JsonProperty( Order = 4 )]
-        public string SetName { get; set; } = string.Empty;
+        public SetName SetName { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The precise version number of this Definition. Note, the version number listed in the SetName is often 
@@ -39,19 +38,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 118 )]
         public DateTime ModifiedAt { get; set; } = DateTime.MinValue;
 
-		/// <summary>
-		/// If true, the major version of this Definition will be marked Discontinued in the future. 
+        /// <summary>
+        /// If true, the major version of this Definition will be marked Discontinued in the future. 
         /// <para>The author should put in .Comments additional information on when it will be deprecated. </para>
-		/// </summary>
-		[G_NS.JsonProperty( Order = 119 )]
-		[DefaultValue( false )]
-		public bool Deprecated { get; set; } = false;
+        /// </summary>
+        [G_NS.JsonProperty( Order = 119 )]
+        [DefaultValue( false )]
+        public bool Deprecated { get; set; } = false;
 
-		/// <summary>
-		/// If true, the major version of this Definition is no longer in use and should not be referenced. Other major versions 
+        /// <summary>
+        /// If true, the major version of this Definition is no longer in use and should not be referenced. Other major versions 
         /// of this same Definition may still  be in use (e.g. v1.0 vs v2.0).
-		/// </summary>
-		[G_NS.JsonProperty( Order = 120 )]
+        /// </summary>
+        [G_NS.JsonProperty( Order = 120 )]
         [DefaultValue( false )]
         public bool Discontinued { get; set; } = false;
 

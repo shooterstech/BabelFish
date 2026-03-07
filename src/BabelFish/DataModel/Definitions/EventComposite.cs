@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public StageStyleMapping StageStyleMapping { get; private set; }
 
-        public string ResultListFormatDef { get; private set; }
+        public SetName ResultListFormatDef { get; private set; }
 
         public RankingRuleMapping RankingRuleMapping { get; set; } = new RankingRuleMapping();
 
@@ -437,7 +437,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return false;
             }
 
-            var targetCollectionSetName = SetName.Parse( cofDefinition.TargetCollectionDef );
+            var targetCollectionSetName = cofDefinition.TargetCollectionDef;
             if (DefinitionCache.TryGetTargetCollectionDefinition( targetCollectionSetName, out var targetCollectionDefinition )) {
                 var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
                 if (TargetCollectionIndex >= 0 && TargetCollectionIndex < targetCollection.TargetDefs.Count) {

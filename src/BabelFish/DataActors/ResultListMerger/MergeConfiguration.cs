@@ -1,7 +1,7 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     /// <summary>
     /// Abstract class describing the configuration (or properties) that a Merge Method to use while merging result lists.

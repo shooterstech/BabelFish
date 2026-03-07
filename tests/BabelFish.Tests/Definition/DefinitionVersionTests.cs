@@ -113,7 +113,7 @@ namespace Scopos.BabelFish.Tests.Definition {
             var notYetInRestAPIDefinition = new StageStyle();
             notYetInRestAPIDefinition.Version = "1.1";
             notYetInRestAPIDefinition.HierarchicalName = "orion:Not Yet in API";
-            notYetInRestAPIDefinition.SetName = $"v{notYetInRestAPIDefinition.Version}:{notYetInRestAPIDefinition.HierarchicalName}";
+            notYetInRestAPIDefinition.SetName = SetName.Parse( $"v{notYetInRestAPIDefinition.Version}:{notYetInRestAPIDefinition.HierarchicalName}" );
 
             Assert.IsFalse( await notYetInRestAPIDefinition.IsVersionUpdateAvaliableAsync() );
         }

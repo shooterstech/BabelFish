@@ -37,6 +37,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchPublicResponse> GetMatchPublicAsync( GetMatchPublicRequest requestParameters ) {
 
             GetMatchPublicResponse response = new GetMatchPublicResponse( requestParameters );
@@ -51,6 +56,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="matchid"></param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchPublicResponse> GetMatchPublicAsync( MatchID matchid ) {
             var request = new GetMatchPublicRequest( matchid );
 
@@ -62,6 +72,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAuthenticatedResponse> GetMatchAuthenticatedAsync( GetMatchAuthenticatedRequest requestParameters ) {
 
             GetMatchAuthenticatedResponse response = new GetMatchAuthenticatedResponse( requestParameters );
@@ -77,6 +92,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAuthenticatedResponse> GetMatchAuthenticatedAsync( MatchID matchid, UserAuthentication credentials ) {
             var request = new GetMatchAuthenticatedRequest( matchid, credentials );
 
@@ -90,6 +110,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAbstractResponse> GetMatchAsync( MatchID matchid, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetMatchPublicAsync( matchid );
@@ -98,6 +123,11 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAbstractResponse> GetMatchAsync( GetMatchAbstractRequest requestParameters ) {
             if (requestParameters is GetMatchPublicRequest)
                 return await this.GetMatchPublicAsync( (GetMatchPublicRequest)requestParameters );
@@ -115,6 +145,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultListRequest object</param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListPublicResponse> GetResultListPublicAsync( GetResultListPublicRequest requestParameters ) {
             GetResultListPublicResponse response = new GetResultListPublicResponse( requestParameters );
 
@@ -130,6 +165,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListPublicResponse> GetResultListPublicAsync( MatchID matchid, string listname ) {
             return await GetResultListPublicAsync( new GetResultListPublicRequest( matchid, listname ) ).ConfigureAwait( false );
         }
@@ -139,6 +179,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultListRequest object</param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( GetResultListAuthenticatedRequest requestParameters ) {
             GetResultListAuthenticatedResponse response = new GetResultListAuthenticatedResponse( requestParameters );
 
@@ -154,6 +199,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( MatchID matchid, string listname, UserAuthentication credentials ) {
             return await GetResultListAuthenticatedAsync( new GetResultListAuthenticatedRequest( matchid, listname, credentials ) ).ConfigureAwait( false );
         }
@@ -165,6 +215,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAbstractResponse> GetResultListAsync( MatchID matchid, string listname, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetResultListPublicAsync( matchid, listname );
@@ -173,6 +228,11 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAbstractResponse> GetResultListAsync( GetResultListAbstractRequest requestParameters ) {
             if (requestParameters is GetResultListPublicRequest)
                 return await this.GetResultListPublicAsync( (GetResultListPublicRequest)requestParameters );
@@ -364,8 +424,12 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// Get Match Search API
         /// </summary>
-        /// <param name="requestParameters">GetMatchSearchRequest object</param>
-        /// <returns>List<Match> Object</returns>
+        /// <param name="requestParameters"><seealso cref="MatchSearchPublicRequest"/></param>
+        /// <returns><seealso cref="MatchSearchPublicResponse"/></returns>
+        /// <remarks>
+        /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
+        /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
+        /// </remarks>
         public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
             MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
@@ -387,6 +451,10 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
+        /// <remarks>
+        /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
+        /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
+        /// </remarks>
         public async Task<MatchSearchAbstractResponse> GetMatchSearchAsync( MatchSearchAbstractRequest requestParameters ) {
             if (requestParameters is MatchSearchPublicRequest)
                 return await this.GetMatchSearchPublicAsync( (MatchSearchPublicRequest)requestParameters );

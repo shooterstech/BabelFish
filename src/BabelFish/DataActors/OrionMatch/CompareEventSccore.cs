@@ -2,9 +2,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Scopos.BabelFish.DataActors.OrionMatch {
-#pragma warning restore IDE0130 // Namespace does not match folder structure
 
     /// <summary>
     /// An IComparer implementation for EventScore objects. In other words, this class may be used to sort EventScore object. 

@@ -111,7 +111,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the Result List Format definition to use when displaying this squadding list.
         /// </summary>
         [JsonPropertyOrder( 10 )]
-        public string ResultListFormatDef { get; set; } = string.Empty;
+        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// List of SquaddingAssignments (e.g. Individuals and where and when they will shoot). 

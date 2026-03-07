@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.APIClients;
 
@@ -58,7 +55,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Default" )]
-        public string DefaultEventStyleDef { get; set; } = "v1.0:orion:Default";
+        public SetName DefaultEventStyleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The EventAppellation specific mappings to use for EVENT STYLES.
@@ -71,7 +68,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Default" )]
-        public string DefaultStageStyleDef { get; set; } = "v1.0:orion:Default";
+        public SetName DefaultStageStyleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The EventAppellation specific mappings to use for STAGE STYLES.
@@ -81,7 +78,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 100 )]
-        [DefaultValue( "" )]        
+        [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
         public bool ShouldSerializeEventStyleMappings() {
@@ -106,9 +103,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         public async Task<EventStyle> GetEventStyleDefinitionAsync() {
-
-            var sb = SetName.Parse( DefaultEventStyleDef );
-            return await DefinitionCache.GetEventStyleDefinitionAsync( sb );
+            return await DefinitionCache.GetEventStyleDefinitionAsync( DefaultEventStyleDef );
         }
 
         /// <inheritdoc/>
@@ -117,9 +112,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         public async Task<StageStyle> GetStageStyleDefinitionAsync() {
-
-            var sb = SetName.Parse( DefaultStageStyleDef );
-            return await DefinitionCache.GetStageStyleDefinitionAsync( sb );
+            return await DefinitionCache.GetStageStyleDefinitionAsync( DefaultStageStyleDef );
         }
     }
 }

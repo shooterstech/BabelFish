@@ -1,14 +1,13 @@
-﻿using System.Net;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Requests.ScoposData;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.Tests.ScoposData {
     [TestClass]
-    public class ScoposDataTests  : BaseTestClass {
+    public class ScoposDataTests : BaseTestClass {
 
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
@@ -16,7 +15,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new ScoposDataClient( );
+            var defaultConstructorClient = new ScoposDataClient();
             var apiStageConstructorClient = new ScoposDataClient( APIStage.BETA );
 
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
@@ -25,26 +24,25 @@ namespace Scopos.BabelFish.Tests.ScoposData {
         }
 
         [TestMethod]
-        public async Task GetReleaseTests()
-        {
-            var client = new ScoposDataClient(APIStage.BETA);
+        public async Task GetReleaseTests() {
+            var client = new ScoposDataClient( APIStage.BETA );
 
             ReleasePhase level = ReleasePhase.PRODUCTION;
             var appList = new List<string>() { "orion", "athena", "greengrassv2Deployment" };
-            var appVersion = new Scopos.BabelFish.DataModel.Common.Version("2.21.1");
-            var response = await client.GetReleasePublicAsync(level,appList, "000015-orion-001", appVersion, false, false, "00015");
+            var appVersion = DataModel.Common.Version.Parse( "2.21.1" );
+            var response = await client.GetReleasePublicAsync( level, appList, "000015-orion-001", appVersion, false, false, "00015" );
 
-            Assert.AreEqual( Responses.RequestStatusCode.OK , response.OverallStatusCode, $"Expecting and OK status code, instead received Overall {response.OverallStatusCode} with REST API Status {response.RestApiStatusCode}, and message {response.ExceptionMessage}." );
+            Assert.AreEqual( Responses.RequestStatusCode.OK, response.OverallStatusCode, $"Expecting and OK status code, instead received Overall {response.OverallStatusCode} with REST API Status {response.RestApiStatusCode}, and message {response.ExceptionMessage}." );
 
-            Assert.IsNotNull(response.ApplicationRelease);
+            Assert.IsNotNull( response.ApplicationRelease );
 
             var releaseNotes = response.ApplicationRelease;
             foreach (var item in releaseNotes.Items) {
-                Console.Write(item.Application+": ");
-                Console.Write(item.Version.ToString()+"\n");
+                Console.Write( item.Application + ": " );
+                Console.Write( item.Version.ToString() + "\n" );
             }
-            
-            Assert.AreEqual(appList.Count, releaseNotes.Items.Count);
+
+            Assert.AreEqual( appList.Count, releaseNotes.Items.Count );
 
             //We should have one ReleaseNote for Orion, and one for Athena
             var orionExists = releaseNotes.Items.Any( releaseInfo => releaseInfo.Application == ApplicationName.ORION );
@@ -55,7 +53,7 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             //Both should haver versions that are greater than 1.4
             var orionVersion = releaseNotes.Items.First( releaseInfo => releaseInfo.Application == ApplicationName.ORION ).Version;
             var athenaVersion = releaseNotes.Items.First( releaseInfo => releaseInfo.Application == ApplicationName.ATHENA ).Version;
-            var referenceVersion = new Scopos.BabelFish.DataModel.Common.Version( "1.4.0.0" );
+            var referenceVersion = DataModel.Common.Version.Parse( "1.4.0.0" );
             Assert.IsTrue( orionVersion > referenceVersion );
             Assert.IsTrue( athenaVersion > referenceVersion );
 
@@ -87,8 +85,8 @@ namespace Scopos.BabelFish.Tests.ScoposData {
             var result = response.Result;
             Assert.IsNotNull( result );
             Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
-            Assert.AreEqual(1, result.VersionList.Count );
-            Assert.AreEqual(service, result.VersionList[0].Service );
+            Assert.AreEqual( 1, result.VersionList.Count );
+            Assert.AreEqual( service, result.VersionList[0].Service );
         }
 
         [TestMethod]

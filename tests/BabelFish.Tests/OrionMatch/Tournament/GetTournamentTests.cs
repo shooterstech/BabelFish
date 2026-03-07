@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
-using Scopos.BabelFish.DataActors.Tournaments;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
-using Scopos.BabelFish.Tests;
 
 namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
     [TestClass]
@@ -26,7 +21,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
 
             Assert.IsTrue( response.HasOkStatusCode );
 
-            var tournament= response.Tournament;
+            var tournament = response.Tournament;
             Assert.AreEqual( mId, tournament.MatchId );
             Assert.AreEqual( mId, tournament.TournamentId );
 
@@ -51,8 +46,8 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
 
             var tournament = response.Tournament;
             var mergedResultList = tournament.MergedResultLists[0];
-            var configuration = (ReentryMethodConfiguration) mergedResultList.Configuration;
-            var tournamentMerger = await TournamentMerger.FactoryAsync( tournament, mergedResultList.ResultName );
+            var configuration = (ReentryMethodConfiguration)mergedResultList.Configuration;
+            var tournamentMerger = await ResultListMergerEngine.FactoryAsync( tournament, mergedResultList.ResultName );
 
             var resultList = await tournamentMerger.MergeAsync();
 

@@ -1,4 +1,4 @@
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     /// <summary>
     /// Concrete MergeConfiguration class for the AverageMethod result list merger.

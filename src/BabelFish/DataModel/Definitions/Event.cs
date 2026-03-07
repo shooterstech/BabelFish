@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -13,8 +13,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public Event()
-        {
+        public Event() {
             ScoreFormat = "Events";
             Calculation = EventCalculation.SUM;
             EventType = EventtType.NONE;
@@ -54,36 +53,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        public virtual List<string> Children { 
+        public virtual List<string> Children {
             get { return _children; }
-            
-		    set {
+
+            set {
                 // Child classes must decide to implemtn Set Children or not.
                 // Making the set operation a no-op to avoid unexpected exceptions.
                 Logger.Warn( $"Set Children unexpectedly called for '{EventName},' an Event of Derivation {Derivation}." );
-			}
+            }
         }
 
-		/// <summary>
-		/// The method to use to calculate the score of this event from the children. Must be one of the following:
-		/// * SUM  (may have CalculationVariables of type CalculationVariablesString)
-		/// * AVERAGE (may have CalculationVariables of type CalculationVariableInteger)
-		/// </summary>
-		/// <remarks>
-		/// <list type="bullet">
-		/// <item>SUM: CalculationVariables are used to determine how the “S” the special sum score component is derived. 
-		/// If there are 0 CalculationVariables S is calculated by the sum of each child event’s S. If there are more then 1, 
-		/// then there should be one CalculationVariable for each child, and must be of VariableType SCORE. For example, 
-		/// if the values are “I”, and then “D”, it means S is calculated by taking the I (integer) component of the first 
-		/// child’s score, plus the D (decimal) component of the second child’s score.
-		/// </item>
-		/// <item>
-		/// AVERAGE: Must be one CalculationVariable, of VariableType INTEGER. Used to specify the number of shots in a 
+        /// <summary>
+        /// The method to use to calculate the score of this event from the children. Must be one of the following:
+        /// * SUM  (may have CalculationVariables of type CalculationVariablesString)
+        /// * AVERAGE (may have CalculationVariables of type CalculationVariableInteger)
+        /// </summary>
+        /// <remarks>
+        /// <list type="bullet">
+        /// <item>SUM: CalculationVariables are used to determine how the “S” the special sum score component is derived. 
+        /// If there are 0 CalculationVariables S is calculated by the sum of each child event’s S. If there are more then 1, 
+        /// then there should be one CalculationVariable for each child, and must be of VariableType SCORE. For example, 
+        /// if the values are “I”, and then “D”, it means S is calculated by taking the I (integer) component of the first 
+        /// child’s score, plus the D (decimal) component of the second child’s score.
+        /// </item>
+        /// <item>
+        /// AVERAGE: Must be one CalculationVariable, of VariableType INTEGER. Used to specify the number of shots in a 
         /// series to calculate the average to. For example, if the value is 10, then the Event Score is [average shot score] * 10. 
-		/// </item>
-		/// </list>
-		/// </remarks>
-		[G_STJ_SER.JsonPropertyOrder( 8 )]
+        /// </item>
+        /// </list>
+        /// </remarks>
+        [G_STJ_SER.JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EventCalculation Calculation { get; set; } = EventCalculation.SUM;
 
@@ -96,7 +95,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<CalculationVariable> CalculationVariables { get; set; } = new List<CalculationVariable>();
 
         public bool ShouldSerializeCalculationVariables() {
-            return CalculationVariables != null && CalculationVariables.Count > 0;  
+            return CalculationVariables != null && CalculationVariables.Count > 0;
         }
 
         /// <summary>
@@ -149,7 +148,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 13 )]
         [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( "" )]
-        public string ResultListFormatDef { get; set; } = string.Empty;
+        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The recommended Ranking Rules defintion to use when displaying a ranking list for this Event.
@@ -159,9 +158,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14 )]
-        [DefaultValue("")]
+        [DefaultValue( "" )]
         [Obsolete( "Use RankingRuleMapping instead." )]
-        public string RankingRuleDef { get; set; } = string.Empty;
+        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// A mapping of RankingRuleDef to use to sort scores from this Event, based on the ScoreConfigName.
@@ -176,8 +175,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return false;
 
             if (RankingRuleMapping.Count == 1 &&
-                RankingRuleMapping.TryGetValue( RankingRuleMapping.DEFAULTDEF, out string rankingRuleDef ) &&
-                rankingRuleDef == RankingRuleMapping.DEFAULT_RANKING_RULE_DEF)
+                RankingRuleMapping.TryGetValue( RankingRuleMapping.DEFAULTDEF, out SetName rankingRuleDef ) &&
+                rankingRuleDef.Equals( RankingRuleMapping.DEFAULT_RANKING_RULE_DEF ))
                 return false;
 
             return true;
@@ -228,15 +227,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             copy.ScoreFormat = this.ScoreFormat;
             copy.ResultListFormatDef = this.ResultListFormatDef;
             copy.StageStyleMapping = this.StageStyleMapping;
-            copy.EventStyleMapping = this.EventStyleMapping;  
+            copy.EventStyleMapping = this.EventStyleMapping;
             copy.RankingRuleMapping = this.RankingRuleMapping;
             copy.ExternalToEventTree = this.ExternalToEventTree;
             copy.TargetCollectionIndex = this.TargetCollectionIndex;
-            if ( this.Derivation == EventDerivationType.EXPLICIT )
+            if (this.Derivation == EventDerivationType.EXPLICIT)
                 copy.Comment = this.Comment;
             else
                 copy.Comment = $"Compiled EventExplicit based on the Event named '{this.EventName}'.";
-            
+
             events.Add( copy );
             return events;
         }
@@ -259,17 +258,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// a required property and is allowed to be empty. If it is empty, calling this function GetRankingRuleDefinitionAsync() will throw
         /// an exception.
         /// </remarks>
-        /// <exception cref="ArgumentNullException">Thrown if the value for RankingRuleDef is empty</exception>
         /// <exception cref="DefinitionNotFoundException"></exception>
         /// <exception cref="ScoposAPIException"></exception>
-        [Obsolete( "Use GetRankingRuleDefinitionListAsync() instead.")]
+        [Obsolete( "Use GetRankingRuleDefinitionListAsync() instead." )]
         public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( RankingRuleDef ))
-                throw new ArgumentNullException( $"The value for RankingRuleDef is empty or null." );
-
-            SetName rrSetName = SetName.Parse( RankingRuleDef );
-            return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
+            return await DefinitionCache.GetRankingRuleDefinitionAsync( RankingRuleDef );
         }
 
         /// <inheritdoc />
@@ -279,13 +272,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty.</exception>
         /// <exception cref="DefinitionNotFoundException"></exception>
         /// <exception cref="ScoposAPIException"></exception>
-        public async Task<Dictionary<string, RankingRule>> GetRankingRuleDefinitionListAsync() {
-            var list = new Dictionary<string, RankingRule>();
+        public async Task<Dictionary<SetName, RankingRule>> GetRankingRuleDefinitionListAsync() {
+            var list = new Dictionary<SetName, RankingRule>();
             if (this.RankingRuleMapping != null) {
                 foreach (var rrmSetName in this.RankingRuleMapping.Values) {
-                    if ( ! list.ContainsKey( rrmSetName ) ) {
-                        var sn = SetName.Parse( rrmSetName );
-                        list[rrmSetName] = await DefinitionCache.GetRankingRuleDefinitionAsync( sn );
+                    if (!list.ContainsKey( rrmSetName )) {
+                        list[rrmSetName] = await DefinitionCache.GetRankingRuleDefinitionAsync( rrmSetName );
                     }
                 }
             }
@@ -299,16 +291,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// a required property and is allowed to be empty. If it is empty, calling this function GetResultListFormatDefinitionAsync() will throw
         /// an exception.
         /// </remarks>
-        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty.</exception>
         /// <exception cref="DefinitionNotFoundException"></exception>
         /// <exception cref="ScoposAPIException"></exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
 
-            if (string.IsNullOrEmpty( ResultListFormatDef ))
-                throw new ArgumentNullException( $"The value for ResultListFormatDef is empty or null." );
-
-            SetName rlfSetName = SetName.Parse( ResultListFormatDef );
-            return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
+            return await DefinitionCache.GetResultListFormatDefinitionAsync( ResultListFormatDef );
         }
     }
 }

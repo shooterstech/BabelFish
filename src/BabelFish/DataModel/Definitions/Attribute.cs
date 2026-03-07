@@ -1,7 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using Scopos.BabelFish.DataModel.Athena.AbstractEST;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -22,8 +21,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
 
             //Designation is not required, but if the user doesn't include it, set it to all values except HIDDEN
             if (designation == null || designation.Count() == 0)
@@ -55,7 +54,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-		private List<AttributeDesignation> designation = new List<AttributeDesignation>();
+        private List<AttributeDesignation> designation = new List<AttributeDesignation>();
 
         /// <summary>
         /// The type of participant, teams, or clubs that this Attribute may be applied to.
@@ -76,9 +75,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 } else {
                     //Avoid adding duplicates
                     designation.Clear();
-                    foreach( var d in value ) {
+                    foreach (var d in value) {
                         if (!designation.Contains( d ))
-                            designation.Add( d ); 
+                            designation.Add( d );
                     }
                 }
             }
@@ -99,14 +98,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14 )]
         [DefaultValue( VisibilityOption.PUBLIC )]
-		public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
+        public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
 
         /// <summary>
         /// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
-        [DefaultValue(false)]
+        [DefaultValue( false )]
         public bool MultipleValues { get; set; } = false;
 
         /// <summary>
@@ -114,8 +113,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 16 )]
         [G_NS.JsonProperty( Order = 16 )]
-        [DefaultValue(null)]
+        [DefaultValue( null )]
         public List<AttributeFieldBase> Fields { get; set; } = new List<AttributeFieldBase>();
+
+        /// <summary>
+        /// GroupByPriority is a hint to the <see cref="ResultListWizard"/> telling it which Attributes to group by first.
+        /// <list type="bullet">
+        /// <item>A GroupByPriority value of 0 is the highest, and reserved for Individual and Team Result Lists. A value of 0
+        /// may not be set on an Attribute.</item>
+        /// <item>A GroupByPriority value of 1 is the next highest, is generally used for Attributres that describe equipment classes
+        /// (Sporter versus Precision) or disabled categories (e.g. Non-Disabled, SH1, SH2). </item>
+        /// <item>A GroupByPriority value of 2 is the default value.</item>
+        /// <item>A GroupByPriority value of 3 is the lowest priority.</item>
+        /// </list>
+        /// </summary>
+        public int GroupByPriority { get; set; } = 2;
 
         /// <summary>
         /// Returns True if this Attribute is considered a 'Simple Attribute.'
@@ -129,17 +141,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     && Fields.Count == 1
                     && !Fields[0].MultipleValues;
             }
-		}
+        }
 
-		/// <inheritdoc />
-		public override async Task<bool> GetMeetsSpecificationAsync() {
-			var validation = new IsAttributeValid();
+        /// <inheritdoc />
+        public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsAttributeValid();
 
-			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-			SpecificationMessages = validation.Messages;
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
 
-			return meetsSpecification;
-		}
+            return meetsSpecification;
+        }
 
         /// <inheritdoc />
         public override bool SetDefaultValues() {

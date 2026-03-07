@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataActors.Specification;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
-
+    /// <summary>
+    /// Overall specification for validating a StageStyle definition. Contains rules that are common across all definitions, as well as rules specific to StageStyle.
+    /// </summary>
     public class IsStageStyleValid : CompositeSpecification<StageStyle> {
 
         /// <inheritdoc />
@@ -36,8 +33,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 }
             }
 
-            if (!await version.IsSatisfiedByAsync( candidate ) )
-            {
+            if (!await version.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( version.Messages );
             }
@@ -73,8 +69,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var scoreFormatCollectionDef = new IsStageStyleScoreFormatCollectionDefValid();
             var scoreConfigDefault = new IsStageStyleScoreConfigDefaultValid();
             var relatedStageStyles = new IsStageStyleRelatedStageStylesValid();
+            var relativeDifficulty = new IsStageStyleRelativeDifficultyValid();
 
-            if ( ! await shotsInSeries.IsSatisfiedByAsync( candidate ) ) {
+            if (!await shotsInSeries.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( shotsInSeries.Messages );
             }
@@ -96,6 +93,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 Messages.AddRange( relatedStageStyles.Messages );
             }
 
+            if (!await relativeDifficulty.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( relativeDifficulty.Messages );
+            }
+
             return valid;
         }
     }
@@ -104,18 +106,18 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// Tests whether the ShotsInSeries property is valid in the passed in StageStyle instance.
     /// </summary>
     public class IsStageStyleShotsInSeriesValid : CompositeSpecification<StageStyle> {
-            
+
         /// <inheritdoc />
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
             Messages.Clear();
 
             bool valid = true;
-            if (candidate.ShotsInSeries <= 0 ) {
+            if (candidate.ShotsInSeries <= 0) {
                 valid = false;
                 Messages.Add( "ShotsInSeries must be greater than 0." );
             }
 
-            if (candidate.ShotsInSeries > 100 ) {
+            if (candidate.ShotsInSeries > 100) {
                 valid = false;
                 Messages.Add( "ShotsInSeries must be less than or equal to 100." );
             }
@@ -131,8 +133,8 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
             Messages.Clear();
 
-            var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync( "ScoreFormatCollectionDef", 
-                candidate.ScoreFormatCollectionDef, 
+            var vm = await DefinitionValidationHelper.IsValidSetNameAndExistsAsync( "ScoreFormatCollectionDef",
+                candidate.ScoreFormatCollectionDef,
                 DefinitionType.SCOREFORMATCOLLECTION );
 
             if (!vm.Valid) {
@@ -153,7 +155,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             //Generally assumes ScoreFormatCollection is valid
 
             var vm = DefinitionValidationHelper.IsValidNonEmptyString( "ScoreConfigDefault", candidate.ScoreConfigDefault );
-            if ( ! vm.Valid ) {
+            if (!vm.Valid) {
                 Messages.Add( vm.Message );
                 return false;
             }
@@ -189,13 +191,36 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     rss,
                     DefinitionType.STAGESTYLE );
 
-                if ( ! vm.Valid ) {
+                if (!vm.Valid) {
                     valid = false;
                     Messages.Add( vm.Message );
                 }
 
                 //Should we add a rule that says a RelatedStageStyle can't point to itself? 
                 //If we did, likely have to compare Hierarchical names (and not SetNames).
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Tests whether the RelativeDifficulty property is valid in the passed in StageStyle instance.
+    /// </summary>
+    public class IsStageStyleRelativeDifficultyValid : CompositeSpecification<StageStyle> {
+
+        /// <summary>
+        /// Method to invoke to test a StageStyle instance's RelativeDifficulty property. RelativeDifficulty must be between 0.5 and 1.1, inclusive.
+        /// </summary>
+        /// <param name="candidate"></param>
+        /// <returns>true if valid, false if not.</returns>
+        public override async Task<bool> IsSatisfiedByAsync( StageStyle candidate ) {
+            Messages.Clear();
+
+            var valid = candidate.RelativeDifficulty >= .5f && candidate.RelativeDifficulty <= 1.1f;
+
+            if (!valid) {
+                Messages.Add( "RelativeDifficulty must be between 0.5 and 1.1." );
             }
 
             return valid;
