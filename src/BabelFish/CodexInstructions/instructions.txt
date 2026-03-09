@@ -5,16 +5,16 @@ Perform the following steps:
 - TournamentMember already exists, so this is skipped in this case 
 
 2. Create the response wrapper for the response data structure in Responses/OrionMatchAPI 
-- In this case would wrap TournamentMember
+- In this case would wrap TournamentMember, which already exists so this is skipped in this case 
 
-3. Create Requests/OrionMatchAPI/AddTournamentMemberAuthenticatedRequest.cs following the convention of other Authenticated requests in that folder
+3. Create Requests/OrionMatchAPI/DeleteTournamentMemberAuthenticatedRequest.cs following the convention of other Authenticated requests in that folder
 When writing the Request, make sure to set the correct SubDomain (AUTHAPI versus API)
 
-4. Create Responses/OrionMatchAPI/AddTournamentMemberAuthenticatedResponse.cs following the convention of other Authenticated responses in that folder
+4. Create Responses/OrionMatchAPI/DeleteTournamentMemberAuthenticatedResponse.cs following the convention of other Authenticated responses in that folder
 
 Note for the Requests/Responses, do NOT create abstract Response/Request classes
 
-5. Add AddTournamentMemberAuthenticatedAsync function(s) to APIClients/OrionMatchAPIClient.cs following the convention of other API call functions in that file
+5. Add DeleteTournamentMemberAuthenticatedAsync function(s) to APIClients/OrionMatchAPIClient.cs following the convention of other API call functions in that file
 
 6. Create/write new test functions to test the function created in OrionMatchAPIClient.cs in tests/BabelFish.Tests/OrionMatch/Tournament/GetTournamentTests.cs 
 

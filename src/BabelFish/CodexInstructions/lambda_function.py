@@ -11,8 +11,10 @@ ALLOWED_MATCH_ROLES = ["Match Director", "Technical Officer", "Registration", "R
 ALLOWED_ORION_ROLES = ["Admin", "Member"]
 
 """
-AddTournamentMember
-/tournament/{tournament-id}/member [POST]
+DeleteTournamentMember
+/tournament/{tournament-id}/member [DELETE]
+
+match-id will be passed in as a query parameter
 
 Retrieve the tournament with 
 SELECT tournament_id, name, owner_id, start_date, end_date, visibility, show_on_search, member_policy
@@ -20,24 +22,12 @@ SELECT tournament_id, name, owner_id, start_date, end_date, visibility, show_on_
         WHERE tournament_id = %s
 If the tournament doesn't exist, throw a MatchNotFound exception
 
-Retrieve the match with
-SELECT match_id, name, owner_id, show_on_search
-FROM match_base
-WHERE match_id = %s AND visibility = "Public"
-If the match doesn't exist, throw a MatchNotFound exception
 
-Authenticate that the user is authorized to add this match to the tournament based on the member_policy:
-- INVTE: only Admins or Members of the Orion Account or match authorization roles of Match Director, Technical Officer, Registration, Range Officer, or Stat Officer for the tournament (NOT the match being added)
-- REQUEST: only Admins or Members of the Orion Account associated with the added match or match authorization roles of Match Director, Technical Officer, Registration, Range Officer, or Stat Officer for match being added
+Authenticate that the user is authorized to delete this match from the tournament. They are authorized if they have permissions for the tournament OR the match, regardless of member policy. 
+Throw a NotAuthorized exception if the user doesn't have permissions for either. (use existing IsAuthorizedForTournament and IsAuthorizedForMatch functions)
 
-If the user has authorization for both the tournament and the match, add the match to the tournament with "APPROVED" status. If the user only has authorization for one of them, add the match to the tournament with "PENDING" status. If the user doesn't have authorization for either, throw a NotAuthorized exception.
-
-Add an entry to the tournament_member table as
-- tournament_id: from the calling parameters
-- match_id: from calling params ( the match_id to add to the tournament)
-- approval_status: described above, either "APPROVED" or "PENDING"
-
-return the tournament object with the new match included in the list of matches. The tournament object should be in the same format as the GetTournament endpoint, with an additional field for each match in the tournament indicating whether that match is "APPROVED" or "PENDING" in the tournament.
+Delete enrty from tournament_member table as
+DELETE from tournament_member where tournament_id = %s and match_id = %s
 """
 
 
@@ -57,22 +47,17 @@ def IsAuthorizedForMatch(match_id, owner_id):
     return False
 
 
-
-
-# auth-api /tournament/{tournament-id}/member POST
+# auth-api /tournament/{tournament-id}/member DELETE
 def lambda_handler(event, context):
     try:
         common.Init(event)
         dbManager.UpdateConnection()
 
         if not common.IsAuthenticatedUser():
-            raise NotAuthorized("Caller must be an authenticated user to add a tournament member.")
+            raise NotAuthorized("Caller must be an authenticated user to delete a tournament member.")
 
         tournamentId = common.GetArgumentStringV2("tournament-id", required=True)
         matchId = common.GetArgumentStringV2("match-id", required=True)
-
-        if tournamentId == matchId:
-            raise InvalidOrMissingParameter("A tournament may not be added as its own member.")
 
         sqlTournamentLookup = """
         SELECT tournament_id, name, owner_id, start_date, end_date, visibility, show_on_search, member_policy
@@ -85,9 +70,9 @@ def lambda_handler(event, context):
         tournament = tournamentRows[0]
 
         sqlMatchLookup = """
-        SELECT match_id, name, owner_id, show_on_search
+        SELECT match_id, owner_id
         FROM match_base
-        WHERE match_id = %s AND visibility = "Public"
+        WHERE match_id = %s
         """
         matchRows = dbManager.SelectQuery(sqlMatchLookup, (matchId,))
         if len(matchRows) == 0:
@@ -96,54 +81,33 @@ def lambda_handler(event, context):
 
         tournamentAuthorized = IsAuthorizedForTournament(tournamentId, int(tournament["owner_id"]))
         matchAuthorized = IsAuthorizedForMatch(matchId, int(match["owner_id"]))
-        memberPolicy = str(tournament.get("member_policy", "INVITE")).upper()
+        if not tournamentAuthorized and not matchAuthorized:
+            raise NotAuthorized("Caller does not have permission to delete this match from the selected tournament.")
 
-        if memberPolicy == "INVITE":
-            if not tournamentAuthorized:
-                raise NotAuthorized("Caller does not have permission to invite this match to the selected tournament.")
-        elif memberPolicy == "REQUEST":
-            if not matchAuthorized:
-                raise NotAuthorized("Caller does not have permission to request entry into the selected tournament.")
-        elif memberPolicy == "OPEN": #Not used currently 
-            if not tournamentAuthorized and not matchAuthorized:
-                raise NotAuthorized("Caller does not have permission to add this match to the selected tournament.")
-        else:
-            raise InvalidOrMissingParameter(
-                "Invalid member_policy '{}'. Expected one of ['OPEN', 'REQUEST', 'INVITE'].".format(memberPolicy)
-            )
-
-        if tournamentAuthorized and matchAuthorized:
-            approvalStatus = "APPROVED"
-        elif tournamentAuthorized or matchAuthorized:
-            approvalStatus = "PENDING"
-        else:
-            raise NotAuthorized("Caller does not have permission to add this match to the selected tournament.")
-
-        checkExistingSql = """
+        sqlExistingRelationship = """
         SELECT tournament_id
         FROM tournament_member
         WHERE tournament_id = %s AND match_id = %s
         """
-        existing = dbManager.SelectQuery(checkExistingSql, (tournamentId, matchId))
-        if len(existing) > 0:
-            raise InvalidRelationship(f"The match {matchId} is already a member of tournament {tournamentId}.")
+        existingRelationship = dbManager.SelectQuery(sqlExistingRelationship, (tournamentId, matchId))
+        if len(existingRelationship) == 0:
+            raise NotFound(f"The match {matchId} is not a member of tournament {tournamentId}.")
 
-        insertSql = """
-        INSERT INTO tournament_member (tournament_id, match_id, approval_status)
-        VALUES (%s, %s, %s)
+        deleteSql = """
+        DELETE FROM tournament_member
+        WHERE tournament_id = %s AND match_id = %s
         """
-        dbManager.ModifyQuery(insertSql, (tournamentId, matchId, approvalStatus))
-        common.LogAlways(
-            f"Added match {matchId} to tournament {tournamentId} with approval status {approvalStatus}."
-        )
+        dbManager.ModifyQuery(deleteSql, (tournamentId, matchId))
+        common.LogAlways(f"Removed match {matchId} from tournament {tournamentId}.")
 
         response = {
             "TournamentMember": {
                 "TournamentId": tournamentId,
                 "MatchId": matchId,
-                "ApprovalStatus": approvalStatus
+                "ApprovalStatus": "DELETED"
             }
         }
+        common.AddMessage("The match has been removed from the tournament.")
         common.AddBodyToResponse(response)
         return common.GetResponseBody()
 

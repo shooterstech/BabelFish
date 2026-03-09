@@ -637,5 +637,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Description( "REJECTED" )]
         [EnumMember( Value = "REJECTED" )]
         REJECTED
+
+        [Description( "DELETED" )]
+        [EnumMember( Value = "DELETED" )]
+        DELETED
     }
 }
