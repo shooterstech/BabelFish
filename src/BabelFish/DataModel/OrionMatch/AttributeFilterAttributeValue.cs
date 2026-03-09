@@ -1,26 +1,24 @@
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
-    /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue"/> field values.
+    /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue.AttributeValue"/> field values.
     /// </summary>
     public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue> {
 
-        /*
-        {
-            "Operation" : "EQUATION", //Consistent with ShowWhen
-            "Boolean" : "AND", //Consistent with ShowWhen
-            "Arguments" : [ //Consistent with ShowWhen
-                {
-                    "Operation" : "ATTRIBUTE_VALUE",
-                    "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                    "Values": {
-                        "Three-Position Air Rifle Type": "Sporter"
-                    },
-                    "FilterRule" : "EQUAL" //HAVE_ONE, HAVE_ALL, NOT_EQUAL, NOT_HAVE_ANY
-                }
-            ]
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public AttributeFilterAttributeValue() { }
+
+        /// <summary>
+        /// Public constructyor that initializes with the passed in AttributeValue.
+        /// </summary>
+        /// <param name="attributeValue"></param>
+        public static async Task<AttributeFilterAttributeValue> FactoryAsync( AttributeValue.AttributeValue attributeValue ) {
+            AttributeFilterAttributeValue afav = new AttributeFilterAttributeValue();
+            afav.Values.Add( await AttributeValueDataPacketMatch.FactoryAsync( attributeValue ) );
+            return afav;
         }
-        */
 
         /// <summary>
         /// The filter rule to apply.
@@ -46,6 +44,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
             sb.Append( temp );
             return sb.ToString().GetHashCode();
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder( "Must " );
+            sb.Append( this.FilterRule.ToString() );
+            sb.Append( " " );
+            foreach (var val in this.Values) {
+                sb.Append( val.AttributeValue.GetFieldValue() );
+            }
+            return sb.ToString();
         }
 
         /// <inheritdoc />

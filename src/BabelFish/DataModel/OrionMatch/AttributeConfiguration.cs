@@ -1,9 +1,14 @@
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
     /// An AttributeConfiguration is not conceptually an AttributeValue, despite the face from a programming point of view it inhertis from AttributeValueDataPacket.
     /// Instead it is a class that describes a Attribute that is used in a match. It is used to specify the AttributeDef and possible values for an Attribute that is used in a match.
     /// It is used in the MatchConfiguration to specify the Attributes that are used in a match, and the possible values for those Attributes.
+    /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeConfiguration using
+    /// one of the FactoryAsync() methods.</para>
     /// </summary>
     /// <remarks>AttributeConfiguration may not be constructed out of Attributes that allow MultipleValues or have fields that allow MultipleValues.</remarks>
     [Serializable]
@@ -16,41 +21,55 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Public constructor.
-        /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeValueDataPacketMatch using the althernative
-        /// constructor where you pass in an AttributeValue.</para>
+        /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeConfiguration using
+        /// one of the FactoryAsync() methods.</para>
         /// </summary>
         public AttributeConfiguration() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
         }
 
         /// <summary>
-        /// Public constructor initializaing the instance with the passed in AttributeValue.
+        /// Public constructor initializaing the instance with the passed in AttributeValue, which must be a <see cref="Definitions.Attribute.SimpleStringAttribute"/>.
         /// </summary>
         /// <param name="attrValue">The AttributeValue to construct this AttributeConfiguration out of.
         /// The AttributeValue's AttributeDef specifies the ATTRIBUTE for this AttributeConfiguration.</param>
         /// <param name="constant">if true, then the values listed in the parameter attrValue initialize the values of this AttributeConfiguration. If false, then no Attribute Values are included.</param>
-        /// <exception cref="ArgumentException">Thrown if the AttributeValue passed in has an Attribute that allows MultipleValues or has fields that allow MultipleValues, as AttributeConfigurations cannot be constructed out of these types of Attributes.</exception>"
-        public AttributeConfiguration( AttributeValue.AttributeValue attrValue, bool constant = false ) {
-            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        /// <exception cref="ArgumentException">Thrown if the AttributeValue passed is not a <see cref="Definitions.Attribute.SimpleStringAttribute"/>.</exception>"
+        public static async Task<AttributeConfiguration> FactoryAsync( AttributeValue.AttributeValue attrValue, bool constant = false ) {
+
+            AttributeConfiguration configuration = new AttributeConfiguration();
 
             var attribute = attrValue.Attribute;
-            /*
-            if (attribute.MultipleValues || attribute.Fields.Any( f => f.MultipleValues )) {
-                throw new ArgumentException( "AttributeValue passed in to AttributeConfiguration constructor cannot have an Attribute that allows MultipleValues or has fields that allow MultipleValues." );
+
+            if (!attribute.SimpleStringAttribute) {
+                throw new ArgumentException( "To construct a new AttributeConfiguration, the ATTRIBUTE must be a SimpleStringAttributes." );
             }
-            */
+
+            configuration.AttributeDef = attrValue.SetName;
+            configuration.Constant = constant;
+
+            if (constant) {
+                //Should I clone or copy the AttributeValue here to avoid potential issues with mutability?
+                configuration.AttributeValue = attrValue;
+            }
+
+            return configuration;
+        }
+
+        public static async Task<AttributeConfiguration> FactoryAsync( SetName setName ) {
+            if (setName.IsDefault)
+                throw new DefinitionNotFoundException( "Can not create a instance of AttributeConfiguration using the default Attribute." );
+            var attribute = await DefinitionCache.GetAttributeDefinitionAsync( setName );
 
             if (!attribute.SimpleAttribute) {
                 throw new ArgumentException( "To construct a new AttributeConfiguration, the ATTRIBUTE must be a SimpleAttributes." );
             }
 
-            this.AttributeDef = attrValue.SetName;
-            this.Constant = constant;
+            AttributeConfiguration configuration = new AttributeConfiguration();
+            configuration.AttributeDef = setName;
+            configuration.Constant = false;
 
-            if (constant) {
-                //Should I clone or copy the AttributeValue here to avoid potential issues with mutability?
-                this.AttributeValue = attrValue;
-            }
+            return configuration;
         }
 
         /// <summary>

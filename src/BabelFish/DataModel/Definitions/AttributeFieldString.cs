@@ -2,6 +2,7 @@ using System.ComponentModel;
 
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
     public class AttributeFieldString : AttributeField<string> {
 
         /// <summary>

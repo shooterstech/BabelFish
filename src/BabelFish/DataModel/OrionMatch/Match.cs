@@ -6,11 +6,17 @@ using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
+    /// <summary>
+    /// A Match is the data model that describes a competition or a practice session within the sport of shooting. 
+    /// </summary>
     [Serializable]
     public class Match {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
         public Match() { }
 
 
@@ -123,20 +129,53 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string JSONVersion { get; set; } = string.Empty;
 
         /// <summary>
-        /// The start date of the match.
+        /// Returns the start date of the match. Which is defined as the earliest <see cref="CourseOfFireStructure.StartDate">Start Date</see>
+        /// amongst the defined <see cref="CourseOfFireStructure" /> within <see cref="CourseOfFireStructure"/>. If no CourseOfFireStructure
+        /// is yet defined, then Today is returned.
         /// </summary>
         [JsonPropertyOrder( 13 )]
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
-        public DateTime StartDate { get; set; }
+        public DateTime StartDate {
+            get {
+                if (this.MatchStructure.CoursesOfFire.Count == 0)
+                    return DateTime.Today;
+
+                var startDate = DateTime.MaxValue;
+                foreach (var cof in this.MatchStructure.CoursesOfFire) {
+                    if (cof.StartDate < startDate) {
+                        startDate = cof.StartDate;
+                    }
+                }
+
+                return startDate;
+            }
+        }
+
 
         /// <summary>
-        /// the end date of the match.
+        /// Returns the end date of the match. Which is defined as the latest <see cref="CourseOfFireStructure.EndDate">End Date</see>
+        /// amongst the defined <see cref="CourseOfFireStructure" /> within <see cref="CourseOfFireStructure"/>. If no CourseOfFireStructure
+        /// is yet defined, then Today is returned.
         /// </summary>
         [JsonPropertyOrder( 14 )]
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
-        public DateTime EndDate { get; set; }
+        public DateTime EndDate {
+            get {
+                if (this.MatchStructure.CoursesOfFire.Count == 0)
+                    return DateTime.Today;
+
+                var endDate = DateTime.MinValue;
+                foreach (var cof in this.MatchStructure.CoursesOfFire) {
+                    if (cof.EndDate > endDate) {
+                        endDate = cof.EndDate;
+                    }
+                }
+
+                return endDate;
+            }
+        }
 
         /// <summary>
         /// The type of match, as specified by the Match Director.

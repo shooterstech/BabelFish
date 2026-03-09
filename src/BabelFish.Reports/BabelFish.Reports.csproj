@@ -24,6 +24,7 @@
     <PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
+    <RootNamespace>Scopos.BabelFish</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Images\*.png">

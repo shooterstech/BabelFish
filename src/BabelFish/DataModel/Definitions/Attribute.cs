@@ -109,14 +109,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public bool MultipleValues { get; set; } = false;
 
         /// <summary>
-        /// A list of AttributeFields that describe the make-up of this ATTRIBUTE.
-        /// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 16 )]
-        [G_NS.JsonProperty( Order = 16 )]
-        [DefaultValue( null )]
-        public List<AttributeFieldBase> Fields { get; set; } = new List<AttributeFieldBase>();
-
-        /// <summary>
         /// GroupByPriority is a hint to the <see cref="ResultListWizard"/> telling it which Attributes to group by first.
         /// <list type="bullet">
         /// <item>A GroupByPriority value of 0 is the highest, and reserved for Individual and Team Result Lists. A value of 0
@@ -127,11 +119,34 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>A GroupByPriority value of 3 is the lowest priority.</item>
         /// </list>
         /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 16 )]
+        [G_NS.JsonProperty( Order = 16 )]
         public int GroupByPriority { get; set; } = 2;
 
         /// <summary>
+        /// Each ATTRIBUTE defines a set of fields (formally called an AttributeField). A field can be defined to be one of
+        /// many times, for example <see cref="AttributeFieldString">strings</see>, <see cref="AttributeFieldInteger">integers</see>, or
+        /// <see cref="AttributeFieldDateTime">dates</see>. It may also be defined to be (for example) a
+        /// <see cref="AttributeFieldStringList">list of strings</see>, a <see cref="AttributeFieldIntegerList">list of
+        /// integers</see>, or a <see cref="AttributeFieldDateTimeList">list of dates</see>.
+        /// <para>Each field must have a unique <see cref="AttributeFieldBase.FieldName"/> within this ATTRIBUTE. Usually, but not always
+        /// the FieldName is the same as the <see cref="AttributeFieldBase.DisplayName"/>.</para>
+        /// <para>Fields may be defined with a default value, may have validation logic, and may be constrained to a set of values.
+        /// For example, you  could define a field to describe the type of rifle a marksment competes with, and specify the only two
+        /// values may be Sporter or Precision.</para>
+        /// <para>A <see cref="SimpleAttribute">"Simple Attribute"</see> is a special tyep of ATTRIBUTE 
+        /// This is when <see cref="MultipleValues" /> is False, has only one <see cref="Fields">field defined</see>,
+        /// and that field also has its <see cref="AttributeFieldBase.MultipleValues"/> set to False.</para>
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 17 )]
+        [G_NS.JsonProperty( Order = 17 )]
+        [DefaultValue( null )]
+        public List<AttributeFieldBase> Fields { get; set; } = new List<AttributeFieldBase>();
+
+        /// <summary>
         /// Returns True if this Attribute is considered a 'Simple Attribute.'
-        /// This is when MultipleValues is False, has only one AttributeField, and that field also has MultipleValues set to False
+        /// This is when <see cref="MultipleValues" /> is False, has only one <see cref="Fields">field defined</see>,
+        /// and that field also has its <see cref="AttributeFieldBase.MultipleValues"/> set to False.
         /// </summary>
 		[G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
@@ -140,6 +155,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return !MultipleValues
                     && Fields.Count == 1
                     && !Fields[0].MultipleValues;
+            }
+        }
+
+        /// <summary>
+        /// Returns True if this Attribute is considered a 'Simple String Attribute,' which is a further specification of <see cref="SimpleAttribute"/>.
+        /// This is when <see cref="MultipleValues" /> is False, has only one <see cref="Fields">field defined</see>,
+        /// the field also has its <see cref="AttributeFieldBase.MultipleValues"/> set to False, AND (this is the distinction between a SimpleAttribute)
+        /// the one field is of type AttributeFieldString.
+        /// </summary>
+        public bool SimpleStringAttribute {
+
+            get {
+                return !MultipleValues
+                    && Fields.Count == 1
+                    && !Fields[0].MultipleValues
+                    && Fields[0] is AttributeFieldString;
             }
         }
 

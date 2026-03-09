@@ -14,8 +14,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Public constructor.
-        /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeValueDataPacketMatch using the althernative
-        /// constructor where you pass in an AttributeValue.</para>
+        /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeValueDataPacketMatch using the FactoryAsync() method..</para>
         /// </summary>
         public AttributeValueDataPacketMatch() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
@@ -24,11 +23,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Public constructor initializaing the instance with the passed in AttributeValue.
         /// </summary>
-        public AttributeValueDataPacketMatch( AttributeValue.AttributeValue attrValue ) {
-            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        public static async Task<AttributeValueDataPacketMatch> FactoryAsync( AttributeValue.AttributeValue attrValue ) {
+            AttributeValueDataPacketMatch avdp = new AttributeValueDataPacketMatch();
 
-            this.AttributeValue = attrValue;
-            this.AttributeDef = attrValue.SetName;
+            avdp.AttributeValue = attrValue;
+            avdp.AttributeDef = attrValue.SetName;
+
+            return avdp;
         }
 
         /// <summary>

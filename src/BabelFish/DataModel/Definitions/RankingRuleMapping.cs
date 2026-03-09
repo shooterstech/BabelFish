@@ -46,5 +46,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return rankingRules;
         }
+
+        /// <summary>
+        /// Returns the RANKING RULE definition that cooresponds to the past in Score Config Name.
+        /// If the value of scoreConfigName is not defined in this RankingRuleMapping, then the
+        /// default RANKING RULE is returned in its place.
+        /// </summary>
+        /// <param name="scoreConfigName"></param>
+        /// <returns></returns>
+        public SetName GetRankingRuleDef( string scoreConfigName ) {
+            if (this.TryGetValue( scoreConfigName, out SetName rankingRuleDef )) {
+                return rankingRuleDef;
+            }
+
+            return DEFAULT_RANKING_RULE_DEF;
+        }
     }
 }

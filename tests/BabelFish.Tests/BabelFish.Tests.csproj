@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
+      <RootNamespace>Scopos.BabelFish</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

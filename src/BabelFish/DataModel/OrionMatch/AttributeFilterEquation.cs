@@ -48,6 +48,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<AttributeFilter> Arguments { get; set; } = new List<AttributeFilter>();
 
+        public override string ToString() {
+            return string.Join( $" {Boolean} ", Arguments );
+        }
+
         /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
         /// <inheritdoc />

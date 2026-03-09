@@ -5,13 +5,44 @@ using Scopos.BabelFish.DataModel.Definitions;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
-    /// 
+    ///
+    /// <para>It is generally best to construct a new instance using the <see cref="FactoryAsync(SetName)"/> method.</para>
     /// </summary>
     /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
     public class CourseOfFireStructure : IGetCourseOfFireDefinition {
 
+        public CourseOfFireStructure() { }
+
+        public static async Task<CourseOfFireStructure> FactoryAsync( SetName setName ) {
+
+            if (setName.IsDefault)
+                throw new DefinitionNotFoundException( "May not add a new COURSE OF FIRE using default." );
+
+            var cof = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
+
+            var structure = new CourseOfFireStructure();
+            structure.CourseOfFireDef = setName;
+            structure.CourseOfFireName = cof.CommonName;
+            structure.StartDate = DateTime.Today;
+            structure.EndDate = DateTime.Today;
+            structure.ScoreConfigName = cof.ScoreConfigDefault;
+            structure.TargetCollectionName = cof.DefaultTargetCollectionName;
+            if (!cof.RequiredAttributeDef.IsDefault)
+                structure.Attributes.Add( await AttributeConfiguration.FactoryAsync( cof.RequiredAttributeDef ) );
+
+            return structure;
+        }
+
+        /// <summary>
+        /// Unique identifier, usually incremented, within a <see cref="Match"/>
+        /// <para>The value of 0 is reserved and may not be used. </para>
+        /// </summary>
         public int CourseOfFireId { get; set; } = 1;
 
+        /// <summary>
+        /// Human readable name given to this CourseOfFireStruccture. It is generally best if it is unique
+        /// within a <see cref="Match"/>, but not required.
+        /// </summary>
         public string CourseOfFireName { get; set; } = string.Empty;
 
         public SetName CourseOfFireDef { get; set; } = SetName.Parse( "v1.0:orion:Default" );

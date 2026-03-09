@@ -181,6 +181,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
+        public override string ToString() {
+            return this.ResultName;
+        }
+
+        /// <inheritdoc />
         public override bool Equals( object obj ) {
             if (obj is ResultListAbbr afe) {
                 return Equals( afe );
