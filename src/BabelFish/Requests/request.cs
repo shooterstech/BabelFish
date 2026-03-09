@@ -189,17 +189,6 @@ namespace Scopos.BabelFish.Requests {
             return $"{OperationId} request";
         }
 
-        public static string GetEnumMemberValue(Enum value) {
-            var type = value.GetType();
-            var name = Enum.GetName(type, value);
-
-            if (name == null)
-                return value.ToString();
-
-            var field = type.GetField(name);
-            var attr = field?.GetCustomAttribute<EnumMemberAttribute>();
-
-            return attr?.Value ?? name;
-        }
+        
     }
 }

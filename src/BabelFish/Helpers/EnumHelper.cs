@@ -40,6 +40,19 @@ namespace Scopos.BabelFish.Helpers {
             return attribute == null ? value.ToString() : attribute.Description;
         }
 
+        public static string MemberValue(Enum value) {
+            var type = value.GetType();
+            var name = Enum.GetName(type, value);
+
+            if (name == null)
+                return value.ToString();
+
+            var field = type.GetField(name);
+            var attr = field?.GetCustomAttribute<EnumMemberAttribute>();
+
+            return attr?.Value ?? name;
+        }
+
         /*
          * To use the above method on an enum, need to declare the enum like the following
          * public enum MyEnum {

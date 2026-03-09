@@ -55,9 +55,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Tournament member enrollment policy.
-        /// Typical values are OPEN, REQUEST, or INVITE.
+        /// Options are OPEN, REQUEST, or INVITE.
         /// </summary>
         [G_NS.JsonProperty( Order = 40 )]
-        public string MemberPolicy { get; set; } = "INVITE";
+        public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicyOption.INVITE;
     }
 }

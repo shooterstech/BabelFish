@@ -49,6 +49,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          */
     }
 
+    /// <summary>
+    /// Tournament member enrollment policy.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum MemberPolicyOption {
+        /// <summary>
+        /// Users can only join by invitation.
+        /// </summary>
+        [Description( "INVITE" )]
+        [EnumMember( Value = "INVITE" )]
+        INVITE,
+
+        /// <summary>
+        /// Users may request to join.
+        /// </summary>
+        [Description( "REQUEST" )]
+        [EnumMember( Value = "REQUEST" )]
+        REQUEST,
+
+        /// <summary>
+        /// Users can join without approval.
+        /// </summary>
+        [Description( "OPEN" )]
+        [EnumMember( Value = "OPEN" )]
+        OPEN
+    }
+
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum CompetitionTypeOptions {
         /// <summary>
@@ -590,5 +617,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A Mix of scoring systems were used.
         /// </summary>
         MIXED
+    }
+
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum ApprovalStatus {
+        [Description( "UNKNOWN" )]
+        [EnumMember( Value = "UNKNOWN" )]
+        UNKNOWN,
+
+        [Description( "PENDING" )]
+        [EnumMember( Value = "PENDING" )]
+        PENDING,
+
+        [Description( "APPROVED" )]
+        [EnumMember( Value = "APPROVED" )]
+        APPROVED,
+
+        [Description( "REJECTED" )]
+        [EnumMember( Value = "REJECTED" )]
+        REJECTED
     }
 }

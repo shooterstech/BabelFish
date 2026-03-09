@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
                 OwnerId = "OrionAcct0002255",
                 Visibility = VisibilityOption.PROTECTED,
                 IncludeInSearchResults = true,
-                MemberPolicy = "OPEN"
+                MemberPolicy = MemberPolicyOption.INVITE
             };
 
             var response = await client.CreateTournamentAuthenticatedAsync( tournament, userAuthentication );

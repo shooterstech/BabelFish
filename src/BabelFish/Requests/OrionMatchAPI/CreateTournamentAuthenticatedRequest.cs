@@ -48,7 +48,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// <summary>
         /// Optional member policy value. Valid values are OPEN, REQUEST, and INVITE.
         /// </summary>
-        public string? MemberPolicy { get; set; } = "INVITE"; 
+        public MemberPolicyOption? MemberPolicy { get; set; } = MemberPolicyOption.INVITE;
 
         /// <inheritdoc />
         public override string RelativePath {
@@ -69,12 +69,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                     { "owner-id", new List<string> { OwnerId.ToString() } }
                 };
 
-                parameterList.Add("visibility", new List<string> { GetEnumMemberValue(Visibility) });
+                parameterList.Add("visibility", new List<string> { EnumHelper.MemberValue(Visibility) });
 
                 parameterList.Add("show-on-search", new List<string> { ShowOnSearch.ToString() });
 
-                if (!string.IsNullOrWhiteSpace( MemberPolicy )) {
-                    parameterList.Add( "member-policy", new List<string> { MemberPolicy } );
+                if (MemberPolicy.HasValue) {
+                    parameterList.Add( "member-policy", new List<string> { EnumHelper.MemberValue( MemberPolicy.Value ) } );
                 }
 
                 return parameterList;
