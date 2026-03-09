@@ -214,6 +214,49 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task BasicHappyPathDeleteTournamentMemberWithRequestTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Delete Tournament Member Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+            createRequest.TournamentName = tournamentName;
+            createRequest.OwnerId = 2;
+            createRequest.Visibility = VisibilityOption.PUBLIC;
+            createRequest.MemberPolicy = MemberPolicyOption.INVITE;
+            createRequest.ShowOnSearch = true;
+
+            var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+            Assert.IsTrue( createResponse.HasOkStatusCode );
+            Assert.IsNotNull( createResponse.Tournament );
+
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
+            var addResponse = await client.AddTournamentMemberAuthenticatedAsync(
+                createResponse.Tournament.TournamentId,
+                tournamentMemberMatchId,
+                userAuthentication );
+
+            Assert.IsTrue( addResponse.HasOkStatusCode );
+            Assert.IsNotNull( addResponse.TournamentMember );
+
+            var deleteRequest = new DeleteTournamentMemberAuthenticatedRequest(
+                userAuthentication,
+                createResponse.Tournament.TournamentId,
+                tournamentMemberMatchId );
+            var deleteResponse = await client.DeleteTournamentMemberAuthenticatedAsync( deleteRequest );
+
+            Assert.IsTrue( deleteResponse.HasOkStatusCode );
+            Assert.IsNotNull( deleteResponse.TournamentMember );
+            Assert.AreEqual( tournamentMemberMatchId, deleteResponse.TournamentMember.MatchId );
+            Assert.AreEqual( ApprovalStatus.DELETED, deleteResponse.TournamentMember.ApprovalStatus );
+        }
+
+
+
+        [TestMethod]
         public async Task EriksPlayground() {
 
             var client = new OrionMatchAPIClient();

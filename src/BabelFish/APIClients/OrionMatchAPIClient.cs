@@ -760,6 +760,32 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Delete Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">DeleteTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<DeleteTournamentMemberAuthenticatedResponse> DeleteTournamentMemberAuthenticatedAsync( DeleteTournamentMemberAuthenticatedRequest requestParameters ) {
+            DeleteTournamentMemberAuthenticatedResponse response = new DeleteTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Tournament Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="matchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<DeleteTournamentMemberAuthenticatedResponse> DeleteTournamentMemberAuthenticatedAsync( MatchID tournamentId, MatchID matchId, UserAuthentication credentials ) {
+            var request = new DeleteTournamentMemberAuthenticatedRequest( credentials, tournamentId, matchId );
+
+            return await DeleteTournamentMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
         /// Get Tournament Detail API
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
