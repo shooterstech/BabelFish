@@ -1,4 +1,3 @@
-using System.Linq;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -18,7 +17,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             
             HttpMethod = HttpMethod.Post;
             TournamentName = tournament.TournamentName;
-            OwnerId = ParseOwnerId( tournament.OwnerId );
+            OwnerId = tournament.OwnerId;
             Visibility = tournament.Visibility;
             ShowOnSearch = tournament.IncludeInSearchResults;
             MemberPolicy = tournament.MemberPolicy;
@@ -33,7 +32,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// <summary>
         /// License number of the Orion account that owns this tournament.
         /// </summary>
-        public int OwnerId { get; set; }
+        public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
         /// Optional visibility value. Valid values are Public, Protected, and Private.
@@ -66,7 +65,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>() {
                     { "name", new List<string> { TournamentName } },
-                    { "owner-id", new List<string> { OwnerId.ToString() } }
+                    { "owner-id", new List<string> { OwnerId } }
                 };
 
                 parameterList.Add("visibility", new List<string> { EnumHelper.MemberValue(Visibility) });
@@ -79,23 +78,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 return parameterList;
             }
-        }
-
-        private static int ParseOwnerId( string ownerId ) {
-            if (string.IsNullOrWhiteSpace( ownerId )) {
-                throw new ArgumentNullException( nameof( ownerId ), "The owner id must be set on the Tournament object." );
-            }
-
-            if (int.TryParse( ownerId, out int parsedOwnerId )) {
-                return parsedOwnerId;
-            }
-
-            var ownerIdDigits = new string( ownerId.Where( char.IsDigit ).ToArray() );
-            if (int.TryParse( ownerIdDigits, out parsedOwnerId )) {
-                return parsedOwnerId;
-            }
-
-            throw new ArgumentException( "The Tournament.OwnerId must contain a numeric Orion account id (for example, \"2255\" or \"OrionAcct0002255\")." );
         }
 
     }

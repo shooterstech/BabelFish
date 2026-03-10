@@ -46,18 +46,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 30 )]
         public List<TournamentMember> TournamentMembers { get; set; } = new List<TournamentMember>();
 
+        public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicyOption.INVITE;
+
         /// <summary>
         /// 
         /// </summary>
         [G_NS.JsonProperty( Order = 35 )]
         public List<MergedResultList> MergedResultLists { get; set; } = new List<MergedResultList>();
-
-
-        /// <summary>
-        /// Tournament member enrollment policy.
-        /// Options are OPEN, REQUEST, or INVITE.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 40 )]
-        public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicyOption.INVITE;
     }
 }

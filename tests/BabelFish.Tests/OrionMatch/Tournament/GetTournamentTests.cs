@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             var tournamentName = $"BabelFish API Create Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
             var request = new CreateTournamentAuthenticatedRequest( userAuthentication);
             request.TournamentName = tournamentName;
-            request.OwnerId = 2;
+            request.OwnerId = "OrionAcct000002";
             request.Visibility = VisibilityOption.PUBLIC;
             request.ShowOnSearch = true;
 
@@ -100,7 +100,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             var tournamentName = $"BabelFish API Delete Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
             var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
             createRequest.TournamentName = tournamentName;
-            createRequest.OwnerId = 2;
+            createRequest.OwnerId = "OrionAcct000002";
             createRequest.Visibility = VisibilityOption.PUBLIC;
             createRequest.ShowOnSearch = true;
 
@@ -128,7 +128,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             var tournamentName = $"BabelFish API Delete TournamentId Test {DateTime.UtcNow:yyyyMMddHHmmss}";
             var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
             createRequest.TournamentName = tournamentName;
-            createRequest.OwnerId = 2;
+            createRequest.OwnerId = "OrionAcct000002";
             createRequest.Visibility = VisibilityOption.PUBLIC;
             createRequest.ShowOnSearch = true;
 
@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             var tournamentName = $"BabelFish API Add Tournament Member Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
             var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
             createRequest.TournamentName = tournamentName;
-            createRequest.OwnerId = 2;
+            createRequest.OwnerId = "OrionAcct000002";
             createRequest.Visibility = VisibilityOption.PUBLIC;
             createRequest.MemberPolicy = MemberPolicyOption.INVITE;
             createRequest.ShowOnSearch = true;
@@ -191,7 +191,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             var tournamentName = $"BabelFish API Add Tournament Member Id Test {DateTime.UtcNow:yyyyMMddHHmmss}";
             var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
             createRequest.TournamentName = tournamentName;
-            createRequest.OwnerId = 2;
+            createRequest.OwnerId = "OrionAcct000002";
             createRequest.Visibility = VisibilityOption.PUBLIC;
             createRequest.ShowOnSearch = true;
 
@@ -224,7 +224,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             var tournamentName = $"BabelFish API Delete Tournament Member Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
             var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
             createRequest.TournamentName = tournamentName;
-            createRequest.OwnerId = 2;
+            createRequest.OwnerId = "OrionAcct000002";
             createRequest.Visibility = VisibilityOption.PUBLIC;
             createRequest.MemberPolicy = MemberPolicyOption.INVITE;
             createRequest.ShowOnSearch = true;
@@ -233,7 +233,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             Assert.IsTrue( createResponse.HasOkStatusCode );
             Assert.IsNotNull( createResponse.Tournament );
 
-            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" ); 
             var addResponse = await client.AddTournamentMemberAuthenticatedAsync(
                 createResponse.Tournament.TournamentId,
                 tournamentMemberMatchId,

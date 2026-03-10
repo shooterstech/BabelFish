@@ -54,6 +54,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum MemberPolicyOption {
+        [Description( "UNKNOWN" )]
+        [EnumMember( Value = "UNKNOWN" )]
+        UNKNOWN,
+
         /// <summary>
         /// Users can only join by invitation.
         /// </summary>
