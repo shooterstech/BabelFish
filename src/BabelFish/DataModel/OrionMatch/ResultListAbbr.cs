@@ -15,40 +15,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </remarks>
     public class ResultListAbbr : IEquatable<ResultListAbbr>, IEqualityComparer<ResultListAbbr> {
 
-        /*
-        {
-            "Status": "OFFICIAL",
-            "ResultName": "Individual - Sporter",
-            "ResultListID": "-4606155898983857195",
-            "Primary": true,
-            "Team" : false,
-            "ResultListFormatDef" : "",
-            "RankingRuleDef" : "",
-            "ScoreConfigName" : "",
-            "UserDefinedText" : {},
-            "AttributeFilters" : [
-                {
-                    "Operation" : "EQUATION", //Consistent with ShowWhen
-                    "Boolean" : "AND", //Consistent with ShowWhen
-                    "Arguments" : [ //Consistent with ShowWhen
-                        {
-                            "Operation" : "ATTRIBUTE_VALUE",
-                            "AttributeValue" : {
-                                "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                                "Visibility": "PUBLIC",
-                                "AttributeValue": {
-                                    "Three-Position Air Rifle Type": "Sporter"
-                                },
-                                "ConcreteClassId": 2
-                            }
-                        }
-                    ]
-                }
-                                    
-            ]
-        }
-        */
-
         /// <summary>
         /// Default public constructor
         /// </summary>
@@ -121,13 +87,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ScoreConfigName { get; set; } = string.Empty;
 
         /// <summary>
-        /// An AttributeFilter describes how a This ResultList will be filtered. That is to say, of the
+        /// An AttributeFilter describes how this ResultList will be filtered from the list of all participants. That is to say, of the
         /// participants who shot the Evente, which of those should be included in this ResultList.
         /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
         /// the Precision Air Rifle marksmen).</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 14 )]
-        public List<AttributeFilter> AttributeFilters { get; set; } = new List<AttributeFilter>();
+        public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
+
+        /// <summary>
+        /// Newtonsoft.json helper method, to determine if AttributeFilters should be serialized.
+        /// </summary>
+        public bool ShouldSerializeAttributeFilter() {
+            //Only serialize if AttributeFilters is not null and is not the default (which is the same as no filter)
+            return (AttributeFilter is not null) && !AttributeFilter.IsDefault();
+        }
 
         /// <summary>
         /// On RESULT LIST FORMAT definitions that provided for the option, the user (usually the Match Director) may specify their own
@@ -173,9 +147,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             sb.Append( this.ResultListFormatDef.ToString() );
             sb.Append( this.RankingRuleDef.ToString() );
             sb.Append( this.ScoreConfigName );
-            foreach (var filter in this.AttributeFilters) {
-                sb.Append( filter.GetHashCode() );
-            }
+            sb.Append( this.AttributeFilter.GetHashCode() );
             //Also choosing not to include UserDefinedText, as this too does nto effect the structure of the ResultList
             return sb.ToString().GetHashCode();
         }

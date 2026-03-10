@@ -97,9 +97,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                 ScoreConfigName = cofStructure.ScoreConfigName,
                                 CourseOfFireId = courseOfFireId,
-                                AttributeFilters = new List<AttributeFilter>() {
-                                 await AttributeFilterAttributeValue.FactoryAsync( attrValue1 )
-                            }
+                                AttributeFilter = await AttributeFilterAttributeValue.FactoryAsync( attrValue1 )
                             } );
                         }
 
@@ -122,12 +120,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                         ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                         ScoreConfigName = cofStructure.ScoreConfigName,
                                         CourseOfFireId = courseOfFireId,
-                                        AttributeFilters = new List<AttributeFilter>() {
-                                            new AttributeFilterEquation() {
-                                                Boolean = ShowWhenBoolean.AND,
-                                                Arguments = new List<AttributeFilter>() {
-                                                    await AttributeFilterAttributeValue.FactoryAsync( attrValue2 )
-                                                }
+                                        AttributeFilter = new AttributeFilterEquation() {
+                                            Boolean = ShowWhenBoolean.AND,
+                                            Arguments = new List<AttributeFilter>() {
+                                                await AttributeFilterAttributeValue.FactoryAsync( attrValue2 )
                                             }
                                         }
                                     } );
@@ -142,13 +138,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                         ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                         ScoreConfigName = cofStructure.ScoreConfigName,
                                         CourseOfFireId = courseOfFireId,
-                                        AttributeFilters = new List<AttributeFilter>() {
-                                            new AttributeFilterEquation() {
-                                                Boolean = ShowWhenBoolean.AND,
-                                                Arguments = new List<AttributeFilter>() {
-                                                    await AttributeFilterAttributeValue.FactoryAsync( attrValue1 ),
-                                                    await AttributeFilterAttributeValue.FactoryAsync( attrValue2 )
-                                                }
+                                        AttributeFilter = new AttributeFilterEquation() {
+                                            Boolean = ShowWhenBoolean.AND,
+                                            Arguments = new List<AttributeFilter>() {
+                                                await AttributeFilterAttributeValue.FactoryAsync( attrValue1 ),
+                                                await AttributeFilterAttributeValue.FactoryAsync( attrValue2 )
                                             }
                                         }
                                     } );
@@ -172,12 +166,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                 ScoreConfigName = cofStructure.ScoreConfigName,
                                                 CourseOfFireId = courseOfFireId,
-                                                AttributeFilters = new List<AttributeFilter>() {
-                                                    new AttributeFilterEquation() {
-                                                        Boolean = ShowWhenBoolean.AND,
-                                                        Arguments = new List<AttributeFilter>() {
-                                                            await AttributeFilterAttributeValue.FactoryAsync( attrValue3 )
-                                                        }
+                                                AttributeFilter = new AttributeFilterEquation() {
+                                                    Boolean = ShowWhenBoolean.AND,
+                                                    Arguments = new List<AttributeFilter>() {
+                                                        await AttributeFilterAttributeValue.FactoryAsync( attrValue3 )
                                                     }
                                                 }
                                             } );
@@ -191,13 +183,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
                                                     CourseOfFireId = courseOfFireId,
-                                                    AttributeFilters = new List<AttributeFilter>() {
-                                                        new AttributeFilterEquation() {
-                                                            Boolean = ShowWhenBoolean.AND,
-                                                            Arguments = new List<AttributeFilter>() {
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue2),
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
-                                                            }
+                                                    AttributeFilter = new AttributeFilterEquation() {
+                                                        Boolean = ShowWhenBoolean.AND,
+                                                        Arguments = new List<AttributeFilter>() {
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue2),
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
                                                         }
                                                     }
                                                 } );
@@ -212,13 +202,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
                                                     CourseOfFireId = courseOfFireId,
-                                                    AttributeFilters = new List<AttributeFilter>() {
-                                                        new AttributeFilterEquation() {
-                                                            Boolean = ShowWhenBoolean.AND,
-                                                            Arguments = new List<AttributeFilter>() {
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue1),
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
-                                                            }
+                                                    AttributeFilter = new AttributeFilterEquation() {
+                                                        Boolean = ShowWhenBoolean.AND,
+                                                        Arguments = new List<AttributeFilter>() {
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue1),
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
                                                         }
                                                     }
                                                 } );
@@ -234,14 +222,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
                                                     CourseOfFireId = courseOfFireId,
-                                                    AttributeFilters = new List<AttributeFilter>() {
-                                                        new AttributeFilterEquation() {
-                                                            Boolean = ShowWhenBoolean.AND,
-                                                            Arguments = new List<AttributeFilter>() {
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue1),
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue2),
-                                                                await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
-                                                            }
+                                                    AttributeFilter = new AttributeFilterEquation() {
+                                                        Boolean = ShowWhenBoolean.AND,
+                                                        Arguments = new List<AttributeFilter>() {
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue1),
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue2),
+                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
                                                         }
                                                     }
                                                 } );

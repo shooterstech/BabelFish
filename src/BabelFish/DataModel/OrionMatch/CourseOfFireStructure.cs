@@ -105,9 +105,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (existingResultList == null) {
                 ResultLists.Add( resultList );
 
-                foreach (var filter in resultList.AttributeFilters) {
-                    filter.UpdateCourseOfFireId( CourseOfFireId );
-                }
+                resultList.AttributeFilter.UpdateCourseOfFireId( CourseOfFireId );
+
                 return true;
             }
 

@@ -29,32 +29,32 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             ResultListAbbr? rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - All" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 0, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 0, rlUnderTest.AttributeFilter.Count );
             Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - All" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 0, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 0, rlUnderTest.AttributeFilter.Count );
             Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Sporter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
             Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Sporter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
             Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Precision" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
             Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Precision" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
             Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( match, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializer ) );
@@ -87,43 +87,43 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             ResultListAbbr? rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - All" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 0, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 0, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - All" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 0, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 0, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Sporter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Sporter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - New Shooter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - New Shooter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Precision" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Precision" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 1, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Sporter - New Shooter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 2, rlUnderTest.AttributeFilter.Count );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Sporter - New Shooter" );
             Assert.IsTrue( rlUnderTest != null );
-            Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.AreEqual( 2, rlUnderTest.AttributeFilter.Count );
         }
     }
 }

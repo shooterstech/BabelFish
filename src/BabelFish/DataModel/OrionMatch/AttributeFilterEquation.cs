@@ -21,11 +21,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <remarks>Using the existing enum ShowWhenBoolean, which has all of the boolean operations defined.
         /// Choosing not to rename it (for now) to be more generic, as that would be a breaking change.</remarks>
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public ShowWhenBoolean Boolean { get; set; } = ShowWhenBoolean.AND;
 
         /// <summary>
         /// The list of AttributeFilter to apply the boolean logic too.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public List<AttributeFilter> Arguments { get; set; } = new List<AttributeFilter>();
 
         /// <inheritdoc />
@@ -34,6 +36,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 arg.UpdateCourseOfFireId( courseOfFireId );
             }
         }
+
+        /// <inheritdoc />
+        public override int Count => Arguments.Sum( arg => arg.Count );
 
         /// <inheritdoc/>
         public override string ToString() {

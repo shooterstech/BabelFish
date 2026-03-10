@@ -40,7 +40,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             //this.CourseOfFireDef = resultListAbbr.CourseOfFireDef.ToString();
             this.ScoreConfigName = resultListAbbr.ScoreConfigName;
             this.ResultListFormatDef = resultListAbbr.ResultListFormatDef;
-            this.AttributeFilters = resultListAbbr.AttributeFilters.Clone();
+            this.AttributeFilter = resultListAbbr.AttributeFilter.Clone();
             this.UserDefinedText = resultListAbbr.UserDefinedText.Clone();
 
             this.Metadata.Add( match.MatchID, new ResultListMetadata() {
@@ -320,7 +320,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// the Precision Air Rifle marksmen).</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 24 )]
-        public List<AttributeFilter> AttributeFilters { get; set; } = new List<AttributeFilter>();
+        public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
 
         /// <inheritdoc />
         [G_NS.JsonProperty( Order = 25 )]

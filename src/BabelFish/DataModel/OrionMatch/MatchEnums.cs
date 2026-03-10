@@ -15,7 +15,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// AttributeFilter class is of concrete type AttributeFilterEquation
         /// </summary>
-        EQUATION
+        EQUATION,
+
+        /// <summary>
+        /// None type AttributeFilter
+        /// </summary>
+        NONE
     }
 
     public enum AttributeFilterRule {

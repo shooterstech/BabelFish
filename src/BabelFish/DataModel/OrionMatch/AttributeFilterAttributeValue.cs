@@ -23,11 +23,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The filter rule to apply.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public AttributeFilterRule FilterRule { get; set; } = AttributeFilterRule.HAVE_ALL;
 
         /// <summary>
         /// A list of Attribute Values to test against the participant's Attributes. The interpretation of this list depends on the FilterRule.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public List<AttributeValueDataPacketMatch> Values { get; set; } = new List<AttributeValueDataPacketMatch>();
 
         /// <summary>
@@ -38,8 +40,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foreach (var val in this.Values) {
                 val.CourseOfFireId = courseOfFireId;
             }
-
         }
+
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        public override int Count => 1;
 
         /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
