@@ -54,16 +54,25 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (attributeBins[3].Count == 0)
                 attributeBins[3].Add( await AttributeConfiguration.FactoryAsync( defaultAttributeValue ) );
 
-            List<Tuple<string, bool>> teamEvents = new List<Tuple<string, bool>>() {
-                new Tuple<string, bool>( "Individual", false),
-                new Tuple<string, bool>( "Team", true )
+            // Item1 DisplayName
+            // Item2 EventName
+            // Item3 Team boolean
+            List<Tuple<string, string, bool>> teamEvents = new List<Tuple<string, string, bool>>() {
+                new Tuple<string, string, bool>( "Individual", topLevelEvent.EventName, false),
+                new Tuple<string, string, bool>( "Team", topLevelEvent.EventName, true )
             };
+
+            if (stageEvents.Count > 1) {
+                foreach (var stage in stageEvents) {
+                    teamEvents.Add( new Tuple<string, string, bool>( stage.EventName, stage.EventName, false ) );
+                }
+            }
 
             foreach (var team in teamEvents) {
                 resultLists.Add( new ResultListAbbr() {
-                    EventName = topLevelEvent.EventName,
+                    EventName = team.Item2,
                     ResultName = $"{team.Item1} - All",
-                    Team = team.Item2,
+                    Team = team.Item3,
                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                     ScoreConfigName = cofStructure.ScoreConfigName,
@@ -81,9 +90,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                         if (!attribute1.SetName.IsDefault) {
                             resultLists.Add( new ResultListAbbr() {
-                                EventName = topLevelEvent.EventName,
+                                EventName = team.Item2,
                                 ResultName = $"{team.Item1} - {value1.Value}",
-                                Team = team.Item2,
+                                Team = team.Item3,
                                 RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                 ScoreConfigName = cofStructure.ScoreConfigName,
@@ -106,9 +115,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                                 if (!attribute2.SetName.IsDefault) {
                                     resultLists.Add( new ResultListAbbr() {
-                                        EventName = topLevelEvent.EventName,
+                                        EventName = team.Item2,
                                         ResultName = $"{team.Item1} - {value2.Value}",
-                                        Team = team.Item2,
+                                        Team = team.Item3,
                                         RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                         ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                         ScoreConfigName = cofStructure.ScoreConfigName,
@@ -126,9 +135,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                                 if (!attribute1.SetName.IsDefault && !attribute2.SetName.IsDefault) {
                                     resultLists.Add( new ResultListAbbr() {
-                                        EventName = topLevelEvent.EventName,
+                                        EventName = team.Item2,
                                         ResultName = $"{team.Item1} - {value1.Value} - {value2.Value}",
-                                        Team = team.Item2,
+                                        Team = team.Item3,
                                         RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                         ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                         ScoreConfigName = cofStructure.ScoreConfigName,
@@ -156,9 +165,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                                         if (!attribute3.SetName.IsDefault) {
                                             resultLists.Add( new ResultListAbbr() {
-                                                EventName = topLevelEvent.EventName,
+                                                EventName = team.Item2,
                                                 ResultName = $"{team.Item1} - {value3.Value}",
-                                                Team = team.Item2,
+                                                Team = team.Item3,
                                                 RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                 ScoreConfigName = cofStructure.ScoreConfigName,
@@ -175,9 +184,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                                             if (!attribute2.SetName.IsDefault) {
                                                 resultLists.Add( new ResultListAbbr() {
-                                                    EventName = topLevelEvent.EventName,
+                                                    EventName = team.Item2,
                                                     ResultName = $"{team.Item1} - {value2.Value} - {value3.Value}",
-                                                    Team = team.Item2,
+                                                    Team = team.Item3,
                                                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
@@ -196,9 +205,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                                             if (!attribute1.SetName.IsDefault) {
                                                 resultLists.Add( new ResultListAbbr() {
-                                                    EventName = topLevelEvent.EventName,
+                                                    EventName = team.Item2,
                                                     ResultName = $"{team.Item1} - {value1.Value} - {value3.Value}",
-                                                    Team = team.Item2,
+                                                    Team = team.Item3,
                                                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
@@ -218,9 +227,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                                             if (!attribute1.SetName.IsDefault && !attribute2.SetName.IsDefault) {
                                                 resultLists.Add( new ResultListAbbr() {
-                                                    EventName = topLevelEvent.EventName,
+                                                    EventName = team.Item2,
                                                     ResultName = $"{team.Item1} - {value1.Value} - {value2.Value} - {value3.Value}",
-                                                    Team = team.Item2,
+                                                    Team = team.Item3,
                                                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,

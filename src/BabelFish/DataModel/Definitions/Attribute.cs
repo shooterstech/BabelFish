@@ -159,12 +159,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// Returns True if this Attribute is considered a 'Simple String Attribute,' which is a further specification of <see cref="SimpleAttribute"/>.
+        /// Returns True if this Attribute is considered a 'Really Simple Attribute,' which is a further specific instance of <see cref="SimpleAttribute"/>.
         /// This is when <see cref="MultipleValues" /> is False, has only one <see cref="Fields">field defined</see>,
         /// the field also has its <see cref="AttributeFieldBase.MultipleValues"/> set to False, AND (this is the distinction between a SimpleAttribute)
         /// the one field is of type AttributeFieldString.
         /// </summary>
-        public bool SimpleStringAttribute {
+        public bool ReallySimpleAttribute {
 
             get {
                 return !MultipleValues

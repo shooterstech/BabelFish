@@ -16,26 +16,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this.Operation = AttributeFilterOperation.EQUATION;
         }
 
-        /*
-        {
-            "Operation" : "EQUATION", //Consistent with ShowWhen
-            "Boolean" : "AND", //Consistent with ShowWhen
-            "Arguments" : [ //Consistent with ShowWhen
-                {
-                    "Operation" : "ATTRIBUTE_VALUE",
-                    "AttributeValue" : {
-                        "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                        "Visibility": "PUBLIC",
-                        "AttributeValue": {
-                            "Three-Position Air Rifle Type": "Sporter"
-                        },
-                        "ConcreteClassId": 2
-                    }
-                }
-            ]
-        }
-        */
-
         /// <summary>
         /// The boolean operation to apply.
         /// </summary>
@@ -48,6 +28,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<AttributeFilter> Arguments { get; set; } = new List<AttributeFilter>();
 
+        /// <inheritdoc />
+        public override void UpdateCourseOfFireId( int courseOfFireId ) {
+            foreach (var arg in this.Arguments) {
+                arg.UpdateCourseOfFireId( courseOfFireId );
+            }
+        }
+
+        /// <inheritdoc/>
         public override string ToString() {
             return string.Join( $" {Boolean} ", Arguments );
         }

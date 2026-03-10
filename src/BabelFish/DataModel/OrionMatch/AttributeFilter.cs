@@ -11,31 +11,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeFilterConverter ) )]
     public abstract class AttributeFilter {
 
-        /*
-        {
-            "Operation" : "EQUATION", //Consistent with ShowWhen
-            "Boolean" : "AND", //Consistent with ShowWhen
-            "Arguments" : [ //Consistent with ShowWhen
-                {
-                    "Operation" : "ATTRIBUTE_VALUE",
-                    "AttributeValue" : {
-                        "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                        "Visibility": "PUBLIC",
-                        "AttributeValue": {
-                            "Three-Position Air Rifle Type": "Sporter"
-                        },
-                        "ConcreteClassId": 2
-                    }
-                }
-            ]
-        }
-        */
-
         /// <summary>
         /// Concret class identifier. 
         /// </summary>
         /// <remarks>Concrete class implementations should set this value in their constructors.</remarks>
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public AttributeFilterOperation Operation { get; protected set; } = AttributeFilterOperation.ATTRIBUTE_VALUE;
+
+        /// <summary>
+        /// Helper method used by <see cref="CourseOfFireStructure.AddResultList(ResultListAbbr)"/>, to update the CourseOfFireId of this AttributeFilter and all of its arguments.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        public abstract void UpdateCourseOfFireId( int courseOfFireId );
     }
 }

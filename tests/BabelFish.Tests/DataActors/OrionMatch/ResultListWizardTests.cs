@@ -18,6 +18,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            CourseOfFireStructure cof;
+            match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
 
             //Let the wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );
@@ -28,26 +30,35 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             ResultListAbbr? rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - All" );
             Assert.IsTrue( rlUnderTest != null );
             Assert.AreEqual( 0, rlUnderTest.AttributeFilters.Count );
+            Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - All" );
             Assert.IsTrue( rlUnderTest != null );
             Assert.AreEqual( 0, rlUnderTest.AttributeFilters.Count );
+            Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Sporter" );
             Assert.IsTrue( rlUnderTest != null );
             Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Sporter" );
             Assert.IsTrue( rlUnderTest != null );
             Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Individual - Precision" );
             Assert.IsTrue( rlUnderTest != null );
             Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
 
             rlUnderTest = resultLists.Find( x => x.ResultName == "Team - Precision" );
             Assert.IsTrue( rlUnderTest != null );
             Assert.AreEqual( 1, rlUnderTest.AttributeFilters.Count );
+            Assert.IsTrue( cof.AddResultList( rlUnderTest ) );
+
+            Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( match, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializer ) );
+
         }
 
         /// <summary>

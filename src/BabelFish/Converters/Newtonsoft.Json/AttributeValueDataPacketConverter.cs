@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Converters.Newtonsoft {
@@ -38,8 +39,23 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             JObject o = new JObject();
 
             o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
-            o["Visibility"] = attrValueDataPacket.Visibility.ToString();
             o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
+            //For reasons I dont' quite understand, because VisibilityOptions have inline defined int values, we have to do a switch statement to get the string value instead of just calling ToString() on the enum value.
+            switch (attrValueDataPacket.Visibility) {
+                case VisibilityOption.PRIVATE:
+                default:
+                    o["Visibility"] = "Private";
+                    break;
+                case VisibilityOption.PROTECTED:
+                    o["Visibility"] = "Protected";
+                    break;
+                case VisibilityOption.INTERNAL:
+                    o["Visibility"] = "Internal";
+                    break;
+                case VisibilityOption.PUBLIC:
+                    o["Visibility"] = "Public";
+                    break;
+            }
 
             if (attrValueDataPacket.AttributeValue != null) {
                 if (attrValueDataPacket.AttributeValue.IsMultipleValue) {

@@ -38,7 +38,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonPropertyOrder( 1 )]
         [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
-            "and each CourseOfFireDef will have its own Squadding. The multiple Courses of Fire are defined within the MatchStructure property" )]
+            "and each CourseOfFireDef will have its own Squadding. The multiple Courses of Fire are defined within the MatchStructure property" +
+            "Deprecated March 2026" )]
         public List<SquaddingEvent> SquaddingEvents { get; set; } = new List<SquaddingEvent>();
 
         [JsonPropertyOrder( 2 )]
@@ -59,7 +60,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonPropertyOrder( 3 )]
         [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
-            "and each CourseOfFireDef will have its own list of Results. The multiple Courses of Fire are defined within the MatchStructure property" )]
+            "and each CourseOfFireDef will have its own list of Results. The multiple Courses of Fire are defined within the MatchStructure property" +
+            "Deprecated March 2026." )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
@@ -74,16 +76,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [JsonPropertyOrder( 5 )]
         public DateTime ResultEventsLastUpdate { get; set; } = new DateTime();
 
-        [JsonPropertyOrder( 6 )]
-        [Obsolete( "Use AttributeNames instead." )]
-        public List<Attribute> Attributes { get; set; } = new List<Attribute>();
-
         /// <summary>
         /// List of Attribute SetNames used in this match.
         /// </summary>
         [JsonPropertyOrder( 6 )]
         [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
-            "and each CourseOfFireDef will have its set of Attributes. The multiple Courses of Fire are defined within the MatchStructure property" )]
+            "and each CourseOfFireDef will have its set of Attributes. The multiple Courses of Fire are defined within the MatchStructure property." +
+            "Deprecated March 2026." )]
         public List<string> AttributeNames { get; set; } = new List<string>();
 
         /// <summary>
@@ -189,7 +188,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE. This property will be replaced.</remarks>
         [JsonPropertyOrder( 16 )]
         [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
-            "and each CourseOfFireDef will have its own CourseOfFireDef. The multiple Courses of Fire are defined within the MatchStructure property" )]
+            "and each CourseOfFireDef will have its own CourseOfFireDef. The multiple Courses of Fire are defined within the MatchStructure property." +
+            "Deprecated Martch 2026" )]
         public string CourseOfFireDef { get; set; } = string.Empty;
 
         /// <summary>
@@ -198,7 +198,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonPropertyOrder( 17 )]
         [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
-            "and each CourseOfFireDef will have its own ScoreConfigName. The multiple Courses of Fire are defined within the MatchStructure property" )]
+            "and each CourseOfFireDef will have its own ScoreConfigName. The multiple Courses of Fire are defined within the MatchStructure property" +
+            "Deprecated March 2026" )]
         public string ScoreConfigName { get; set; }
 
         /// <summary>
@@ -206,7 +207,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [JsonPropertyOrder( 18 )]
         [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will be able to have multiple COURSES OF FIRE, " +
-            "and each CourseOfFireDef will have its own TargetCollectionName. The multiple Courses of Fire are defined within the MatchStructure property" )]
+            "and each CourseOfFireDef will have its own TargetCollectionName. The multiple Courses of Fire are defined within the MatchStructure property" +
+            "Deprecated Martch 2026" )]
         public string TargetCollectionName { get; set; }
 
         /// <summary>
@@ -330,7 +332,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// shot data, etc.
         /// </summary>
         [JsonPropertyOrder( 50 )]
-        [Obsolete( "Replaced with user based Authorization with RoleAuthorization" )]
+        [Obsolete( "Replaced with user based Authorization with RoleAuthorization." +
+            "Deprecated December 2025." )]
         public string SharedKey { get; set; } = String.Empty;
 
         /// <summary>

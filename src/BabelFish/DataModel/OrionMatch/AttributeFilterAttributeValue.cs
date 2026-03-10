@@ -31,6 +31,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<AttributeValueDataPacketMatch> Values { get; set; } = new List<AttributeValueDataPacketMatch>();
 
         /// <summary>
+        /// Updates the Course of Fire identifier for all values in the collection.
+        /// </summary>
+        /// <param name="courseOfFireId">The identifier to assign to the CourseOfFireId property of each value in the collection.</param>
+        public override void UpdateCourseOfFireId( int courseOfFireId ) {
+            foreach (var val in this.Values) {
+                val.CourseOfFireId = courseOfFireId;
+            }
+
+        }
+
+        /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
         /// <inheritdoc />
         public override int GetHashCode() {

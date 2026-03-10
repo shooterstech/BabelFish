@@ -88,5 +88,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
             return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
         }
+
+        /// <summary>
+        /// Gets or sets the collection of result events represented by abbreviated result lists.
+        /// <para>The preferred method of adding a new ResultListAbbr is by calling <see cref="AddResultList(ResultListAbbr)"/> which checks for duplicates before adding.</para>
+        /// </summary>
+        public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
+
+        /// <summary>
+        /// Adds the specified result list to the ResultLists collection, checking that it is not already a member.
+        /// </summary>
+        /// <param name="resultList">The result list to add to the collection. Must not be null.</param>
+        public bool AddResultList( ResultListAbbr resultList ) {
+            var existingResultList = ResultLists.Find( x => x.GetHashCode() == resultList.GetHashCode() );
+
+            if (existingResultList == null) {
+                ResultLists.Add( resultList );
+
+                foreach (var filter in resultList.AttributeFilters) {
+                    filter.UpdateCourseOfFireId( CourseOfFireId );
+                }
+                return true;
+            }
+
+            return false;
+        }
     }
 }
