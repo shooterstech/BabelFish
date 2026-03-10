@@ -37,5 +37,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para></para>
         /// </summary>
         public int CourseOfFireId { get; set; } = 0;
+
+        public override int GetHashCode() {
+            StringBuilder sb = new StringBuilder();
+            sb.Append( this.AttributeDef );
+            sb.Append( this.AttributeValue.GetHashCode() );
+            sb.Append( this.Visibility.ToString() );
+            sb.Append( this.CourseOfFireId.ToString() );
+            return sb.ToString().GetHashCode();
+        }
     }
 }

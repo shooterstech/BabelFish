@@ -112,5 +112,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return false;
         }
+
+        protected internal async Task FinishInitializationAsync() {
+            foreach (var localAttribute in Attributes) {
+                await localAttribute.FinishInitializationAsync();
+            }
+            foreach (var rl in ResultLists) {
+                await rl.FinishInitializationAsync();
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Clubs;
-using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoposData;
@@ -108,7 +107,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<DataModel.Definitions.ValueType>() );
 
                     //Common Enums
-                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<VisibilityOption>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.VisibilityOptionJsonConverter() );
 
                     //Club Enums
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ClubAuthorizationRole>() );

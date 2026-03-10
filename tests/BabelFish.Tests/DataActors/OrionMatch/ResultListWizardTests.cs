@@ -1,9 +1,10 @@
 
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.OrionMatch {
+namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
     [TestClass]
     public class ResultListWizardTests : BaseTestClass {
 

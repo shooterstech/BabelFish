@@ -91,5 +91,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public int GetHashCode( AttributeFilterAttributeValue obj ) => obj.GetHashCode();
+
+        protected internal override async Task FinishInitializationAsync() {
+            foreach (var val in this.Values) {
+                await val.FinishInitializationAsync();
+            }
+        }
     }
 }

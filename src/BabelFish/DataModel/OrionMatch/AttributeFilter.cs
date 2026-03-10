@@ -41,6 +41,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public abstract int Count { get; }
 
+        protected internal abstract Task FinishInitializationAsync();
+
     }
 
     public class AttributeFilterNone : AttributeFilter {
@@ -55,5 +57,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc/>
         [G_NS.JsonIgnore]
         public override int Count => 0;
+
+        public override int GetHashCode() => 0;
+
+        protected internal override async Task FinishInitializationAsync() {
+            ;
+        }
     }
 }

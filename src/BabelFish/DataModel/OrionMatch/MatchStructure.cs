@@ -62,5 +62,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return cof.CourseOfFireId;
         }
+
+        protected internal async Task FinishInitializationAsync() {
+            foreach (var sharedAttribute in this.SharedAttributes) {
+                await sharedAttribute.FinishInitializationAsync();
+            }
+
+            foreach (var cof in this.CoursesOfFire) {
+                await cof.FinishInitializationAsync();
+            }
+        }
     }
 }
