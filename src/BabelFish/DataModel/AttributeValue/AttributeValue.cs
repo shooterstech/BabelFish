@@ -4,6 +4,12 @@ using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
+    /// <summary>
+    /// An ATTRIBUTE VALUE stores the values for a given ATTRIBUTE for one Individual, Participant, or Club.
+    /// <para>Programmatically, an ATTRIBUTE VALUE are dictionaries that store name (key) value pairs, containing the data
+    /// from an <see cref="Scopos.BabelFish.DataModel.Definitions.Attribute">ATTRIBUTE</see>.</para>
+    /// <para></para>It is generally best to construct a new instance using the <see cref="CreateAsync(SetName)"/> method.</para>
+    /// </summary>
     [Serializable]
     public class AttributeValue : IEquatable<AttributeValue> {
 
@@ -170,6 +176,17 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             get {
                 return definition.MultipleValues;
             }
+        }
+
+        /// <summary>
+        /// Helper property to return the Attribute definition for this AttributeValue. 
+        /// </summary>
+        [G_NS.JsonIgnore]
+        protected internal Definitions.Attribute Definition {
+            get {
+                return definition;
+            }
+
         }
         #endregion Definition
 

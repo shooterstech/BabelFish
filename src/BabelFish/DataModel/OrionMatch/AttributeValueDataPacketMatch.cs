@@ -1,4 +1,5 @@
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -23,12 +24,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Public constructor initializaing the instance with the passed in AttributeValue.
         /// </summary>
-        public static async Task<AttributeValueDataPacketMatch> FactoryAsync( AttributeValue.AttributeValue attrValue ) {
+        public static async Task<AttributeValueDataPacketMatch> CreateAsync( AttributeValue.AttributeValue attrValue, VisibilityOption visibility = VisibilityOption.PRIVATE ) {
             AttributeValueDataPacketMatch avdp = new AttributeValueDataPacketMatch();
 
             avdp.AttributeValue = attrValue;
             avdp.AttributeDef = attrValue.SetName;
-
+            avdp.Visibility = visibility;
             return avdp;
         }
 
@@ -39,12 +40,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int CourseOfFireId { get; set; } = 0;
 
         public override int GetHashCode() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append( this.AttributeDef );
-            sb.Append( this.AttributeValue.GetHashCode() );
-            sb.Append( this.Visibility.ToString() );
-            sb.Append( this.CourseOfFireId.ToString() );
-            return sb.ToString().GetHashCode();
+            int hashCode = this.AttributeDef.GetHashCode()
+                ^ this.AttributeValue.GetHashCode()
+                ^ this.Visibility.GetHashCode()
+                ^ this.CourseOfFireId.GetHashCode();
+            return hashCode;
         }
     }
 }

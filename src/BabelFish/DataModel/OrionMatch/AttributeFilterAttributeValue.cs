@@ -1,22 +1,26 @@
+using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
     /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue.AttributeValue"/> field values.
     /// </summary>
-    public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue> {
+    public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue>, IFinishInitializationAsync {
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
+        /// <para>Unless you are a deserializer, the preferred method for creating an instance of this class is to use <see cref="CreateAsync(AttributeValue.AttributeValue)"/></para>
         /// </summary>
         public AttributeFilterAttributeValue() { }
 
         /// <summary>
-        /// Public constructyor that initializes with the passed in AttributeValue.
+        /// Public Craete method that initializes with the passed in AttributeValue. This is the preferred method of creating an instance of this class.
         /// </summary>
         /// <param name="attributeValue"></param>
-        public static async Task<AttributeFilterAttributeValue> FactoryAsync( AttributeValue.AttributeValue attributeValue ) {
+        public static async Task<AttributeFilterAttributeValue> CreateAsync( AttributeValue.AttributeValue attributeValue, VisibilityOption visibility = VisibilityOption.PRIVATE ) {
             AttributeFilterAttributeValue afav = new AttributeFilterAttributeValue();
-            afav.Values.Add( await AttributeValueDataPacketMatch.FactoryAsync( attributeValue ) );
+            afav.Values.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeValue ) );
             return afav;
         }
 
@@ -50,16 +54,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
         /// <inheritdoc />
         public override int GetHashCode() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append( this.Operation.ToString() );
-            sb.Append( this.FilterRule.ToString() );
-            //Since the order of the valued does not matter, we will use a bitwas xor operator.
-            int temp = 0;
+            int hashCode = ((int)this.Operation << 16) | (int)this.FilterRule;
             foreach (var val in this.Values) {
-                temp ^= val.GetHashCode();
+                hashCode ^= val.GetHashCode();
             }
-            sb.Append( temp );
-            return sb.ToString().GetHashCode();
+            return hashCode;
         }
 
         /// <inheritdoc />
@@ -92,7 +91,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int GetHashCode( AttributeFilterAttributeValue obj ) => obj.GetHashCode();
 
-        protected internal override async Task FinishInitializationAsync() {
+        /// <inheritdoc />
+        public override async Task FinishInitializationAsync() {
             foreach (var val in this.Values) {
                 await val.FinishInitializationAsync();
             }

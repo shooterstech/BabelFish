@@ -1,3 +1,5 @@
+using Scopos.BabelFish.DataModel.AttributeValue;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
@@ -9,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.AttributeFilterConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeFilterConverter ) )]
-    public abstract class AttributeFilter {
+    public abstract class AttributeFilter : IFinishInitializationAsync {
 
         public static readonly AttributeFilter DEFAULT = new AttributeFilterNone();
 
@@ -41,7 +43,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public abstract int Count { get; }
 
-        protected internal abstract Task FinishInitializationAsync();
+        /// <inheritdoc />
+        public abstract Task FinishInitializationAsync();
 
     }
 
@@ -58,9 +61,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public override int Count => 0;
 
+        /// <inheritdoc />
         public override int GetHashCode() => 0;
 
-        protected internal override async Task FinishInitializationAsync() {
+        /// <inheritdoc />
+        public override async Task FinishInitializationAsync() {
+            //Do nothing, since this filter has no attribute values to initialize.
             ;
         }
     }

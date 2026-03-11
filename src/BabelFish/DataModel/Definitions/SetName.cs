@@ -350,7 +350,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public override int GetHashCode() {
-            return ToString().GetHashCode();
+            return (_majorVersion << 16 | _minorVersion) ^ _nameSpace.GetHashCode() ^ _properName.GetHashCode();
         }
 
         public bool Equals( HierarchicalName other ) {

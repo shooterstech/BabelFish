@@ -1,15 +1,18 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
-    /// A Match is the data model that describes a competition or a practice session within the sport of shooting. 
+    /// A Match is the data model that describes a competition or a practice session within the sport of shooting.
+    /// <para>The prefered method for deserializing from json is to use <see cref="LoadFromFileAsync(FileInfo)"/> or <see cref="LoadFromFileAsync(string)"/>.
+    /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</para>
     /// </summary>
     [Serializable]
-    public class Match : ISaveToFile {
+    public class Match : ISaveToFile, IFinishInitializationAsync {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -502,6 +505,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Reads a Match object from a JSON file. The JSON file is expected to be formatted according to the BabelFish's standard.
+        /// <para>The method automatically calls the <see cref="FinishInitializationAsync"/> method after deserialization to ensure that all AttributeValues are fully initialized.</para>
         /// </summary>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
@@ -523,7 +527,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return await LoadFromFileAsync( fileInfo );
         }
 
-        protected internal async Task FinishInitializationAsync() {
+        /// <inheritdoc />
+        /// <remarks>The prefered method for deserializing from json is to use <see cref="LoadFromFileAsync(FileInfo)"/> or <see cref="LoadFromFileAsync(string)"/>.
+        /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</remarks>
+        public async Task FinishInitializationAsync() {
             await this.MatchStructure.FinishInitializationAsync();
         }
     }

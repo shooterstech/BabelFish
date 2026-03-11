@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                 ScoreConfigName = cofStructure.ScoreConfigName,
                                 CourseOfFireId = courseOfFireId,
-                                AttributeFilter = await AttributeFilterAttributeValue.FactoryAsync( attrValue1 )
+                                AttributeFilter = await AttributeFilterAttributeValue.CreateAsync( attrValue1, this.Match.Visibility )
                             } );
                         }
 
@@ -123,7 +123,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                         AttributeFilter = new AttributeFilterEquation() {
                                             Boolean = ShowWhenBoolean.AND,
                                             Arguments = new List<AttributeFilter>() {
-                                                await AttributeFilterAttributeValue.FactoryAsync( attrValue2 )
+                                                await AttributeFilterAttributeValue.CreateAsync( attrValue2, this.Match.Visibility )
                                             }
                                         }
                                     } );
@@ -141,8 +141,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                         AttributeFilter = new AttributeFilterEquation() {
                                             Boolean = ShowWhenBoolean.AND,
                                             Arguments = new List<AttributeFilter>() {
-                                                await AttributeFilterAttributeValue.FactoryAsync( attrValue1 ),
-                                                await AttributeFilterAttributeValue.FactoryAsync( attrValue2 )
+                                                await AttributeFilterAttributeValue.CreateAsync( attrValue1, this.Match.Visibility ),
+                                                await AttributeFilterAttributeValue.CreateAsync( attrValue2, this.Match.Visibility )
                                             }
                                         }
                                     } );
@@ -169,7 +169,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                 AttributeFilter = new AttributeFilterEquation() {
                                                     Boolean = ShowWhenBoolean.AND,
                                                     Arguments = new List<AttributeFilter>() {
-                                                        await AttributeFilterAttributeValue.FactoryAsync( attrValue3 )
+                                                        await AttributeFilterAttributeValue.CreateAsync( attrValue3, this.Match.Visibility )
                                                     }
                                                 }
                                             } );
@@ -186,8 +186,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     AttributeFilter = new AttributeFilterEquation() {
                                                         Boolean = ShowWhenBoolean.AND,
                                                         Arguments = new List<AttributeFilter>() {
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue2),
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue2, this.Match.Visibility),
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue3, this.Match.Visibility)
                                                         }
                                                     }
                                                 } );
@@ -205,8 +205,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     AttributeFilter = new AttributeFilterEquation() {
                                                         Boolean = ShowWhenBoolean.AND,
                                                         Arguments = new List<AttributeFilter>() {
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue1),
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue1, this.Match.Visibility),
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue3, this.Match.Visibility)
                                                         }
                                                     }
                                                 } );
@@ -225,9 +225,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     AttributeFilter = new AttributeFilterEquation() {
                                                         Boolean = ShowWhenBoolean.AND,
                                                         Arguments = new List<AttributeFilter>() {
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue1),
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue2),
-                                                            await AttributeFilterAttributeValue.FactoryAsync(attrValue3)
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue1, this.Match.Visibility),
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue2, this.Match.Visibility),
+                                                            await AttributeFilterAttributeValue.CreateAsync(attrValue3, this.Match.Visibility)
                                                         }
                                                     }
                                                 } );

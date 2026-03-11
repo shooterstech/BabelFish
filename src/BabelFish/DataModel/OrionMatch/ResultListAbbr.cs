@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
 
@@ -13,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
     /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
     /// </remarks>
-    public class ResultListAbbr : IEquatable<ResultListAbbr>, IEqualityComparer<ResultListAbbr> {
+    public class ResultListAbbr : IEquatable<ResultListAbbr>, IEqualityComparer<ResultListAbbr>, IFinishInitializationAsync {
 
         /// <summary>
         /// Default public constructor
@@ -139,17 +140,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Returns a hash code that unique defines the structure of the Result List.</summary>
         /// <inheritdoc />
         public override int GetHashCode() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append( this.ResultName );
-            sb.Append( this.Primary );
-            sb.Append( this.Team );
-            //Choosing not to include Status, as Status does not effect the structure of the ResultList
-            sb.Append( this.ResultListFormatDef.ToString() );
-            sb.Append( this.RankingRuleDef.ToString() );
-            sb.Append( this.ScoreConfigName );
-            sb.Append( this.AttributeFilter.GetHashCode() );
-            //Also choosing not to include UserDefinedText, as this too does nto effect the structure of the ResultList
-            return sb.ToString().GetHashCode();
+            return this.ResultName.GetHashCode()
+                ^ (this.Primary ? 32 : 0) | (this.Team ? 1 : 0)
+                ^ this.ResultListFormatDef.GetHashCode()
+                ^ this.RankingRuleDef.GetHashCode()
+                ^ this.ScoreConfigName.GetHashCode()
+                ^ this.AttributeFilter.GetHashCode();
         }
 
         /// <inheritdoc />
@@ -176,7 +172,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int GetHashCode( ResultListAbbr obj ) => obj.GetHashCode();
 
-        protected internal async Task FinishInitializationAsync() {
+        /// <inheritdoc/>
+        public async Task FinishInitializationAsync() {
             await this.AttributeFilter.FinishInitializationAsync();
         }
 

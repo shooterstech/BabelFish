@@ -72,6 +72,15 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 Console.WriteLine( $"Comparing ResultList: {resultList.ResultName}" );
                 Assert.AreEqual( resultList.ResultName, deserializedResultList.ResultName );
                 Assert.AreEqual( resultList.AttributeFilter.Count, deserializedResultList.AttributeFilter.Count );
+
+                //Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( resultList, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializer ) );
+                //Console.WriteLine( resultList.AttributeFilter.GetHashCode() );
+                //Console.WriteLine( ((AttributeFilterAttributeValue)resultList.AttributeFilter).Values[0].GetHashCode() );
+
+                //Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( deserializedResultList, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializer ) );
+                //Console.WriteLine( deserializedResultList.AttributeFilter.GetHashCode() );
+                //Console.WriteLine( ((AttributeFilterAttributeValue)deserializedResultList.AttributeFilter).Values[0].GetHashCode() );
+
                 Assert.AreEqual( resultList.GetHashCode(), deserializedResultList.GetHashCode() );
             }
         }

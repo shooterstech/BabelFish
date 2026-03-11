@@ -1,3 +1,4 @@
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -7,7 +8,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// specifies the boolean logic of how multiple AttributeFilter instances are combined.
     ///
     /// </summary>
-    public class AttributeFilterEquation : AttributeFilter, IEquatable<AttributeFilterEquation>, IEqualityComparer<AttributeFilterEquation> {
+    public class AttributeFilterEquation : AttributeFilter, IEquatable<AttributeFilterEquation>, IEqualityComparer<AttributeFilterEquation>, IFinishInitializationAsync {
 
         /// <summary>
         /// Constructor
@@ -77,7 +78,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int GetHashCode( AttributeFilterEquation obj ) => obj.GetHashCode();
 
-        protected internal override async Task FinishInitializationAsync() {
+        /// <inheritdoc />
+        public override async Task FinishInitializationAsync() {
             foreach (var arg in Arguments) {
                 await arg.FinishInitializationAsync();
             }

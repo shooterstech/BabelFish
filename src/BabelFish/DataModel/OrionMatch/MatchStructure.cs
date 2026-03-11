@@ -1,4 +1,5 @@
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -8,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// or it may be used as a template to create a new Match.
     /// </summary>
     /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
-    public class MatchStructure {
+    public class MatchStructure : IFinishInitializationAsync {
 
         /// <summary>
         /// Public constructor.
@@ -63,7 +64,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return cof.CourseOfFireId;
         }
 
-        protected internal async Task FinishInitializationAsync() {
+        /// <inheritdoc/>
+        public async Task FinishInitializationAsync() {
             foreach (var sharedAttribute in this.SharedAttributes) {
                 await sharedAttribute.FinishInitializationAsync();
             }
