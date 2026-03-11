@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// These are called <see cref="MergedResultList"/>.</para>
     /// <para>The <see cref="MatchID"/> for tournaments always end in ".2".</para>
     /// </summary>
-    public class Tournament : MatchBase {
+    public class Tournament : MatchBase {  
 
         /// <summary>
         /// Public constructor.
@@ -53,5 +53,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 35 )]
         public List<MergedResultList> MergedResultLists { get; set; } = new List<MergedResultList>();
+
+        /// <summary>
+        /// Indicates whether the tournament is abbreviated. Abbreviated tournamnents may still have members/result lists but these lists may be incomplete
+        /// or include only requested information (e.g. for incoming invites)
+        /// </summary>
+        public bool Abbreviated { get; set; } = false;
     }
 }

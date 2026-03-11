@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
@@ -254,6 +256,118 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
             Assert.AreEqual( ApprovalStatus.DELETED, deleteResponse.TournamentMember.ApprovalStatus );
         }
 
+        [TestMethod]
+        public async Task BasicHappyPathTournamentSearchAuthenticatedWithRequestTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Tournament Search Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            MatchID? createdTournamentId = null;
+
+            try {
+                var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+                createRequest.TournamentName = tournamentName;
+                createRequest.OwnerId = "OrionAcct000002";
+                createRequest.Visibility = VisibilityOption.PUBLIC;
+                createRequest.ShowOnSearch = true;
+
+                var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+                Assert.IsTrue( createResponse.HasOkStatusCode );
+                Assert.IsNotNull( createResponse.Tournament );
+                createdTournamentId = createResponse.Tournament.TournamentId;
+
+                var searchRequest = new TournamentSearchAuthenticatedRequest( userAuthentication );
+                searchRequest.Name = tournamentName;
+                searchRequest.OwnerId = "OrionAcct000002";
+                searchRequest.Visibility = VisibilityOption.PUBLIC;
+                searchRequest.Limit = 5;
+
+                var searchResponse = await client.TournamentSearchAuthenticatedAsync( searchRequest );
+
+                Assert.IsTrue( searchResponse.HasOkStatusCode );
+                Assert.IsNotNull( searchResponse.TournamentSearchList );
+                Assert.IsTrue( searchResponse.TournamentSearchList.TotalCount >= 1 );
+                Assert.IsTrue( searchResponse.TournamentSearchList.Items.Count >= 1 );
+
+                var returnedTournament = searchResponse.TournamentSearchList.Items
+                    .FirstOrDefault( x => x.TournamentId.ToString() == createdTournamentId!.ToString() );
+
+                Assert.IsNotNull( returnedTournament );
+                Assert.AreEqual( tournamentName, returnedTournament!.TournamentName );
+                Assert.AreEqual( MatchType.TOURNAMENT, returnedTournament.MatchType );
+            } finally {
+                if (createdTournamentId != null) {
+                    await client.DeleteTournamentAuthenticatedAsync( createdTournamentId, userAuthentication );
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task BasicHappyPathTournamentSearchAuthenticatedNextTokenTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentNamePrefix = $"BabelFish API Tournament Search Token Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createdTournamentIds = new List<MatchID>();
+
+            try {
+                for (var i = 1; i <= 2; i++) {
+                    var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+                    createRequest.TournamentName = $"{tournamentNamePrefix} {i}";
+                    createRequest.OwnerId = "OrionAcct000002";
+                    createRequest.Visibility = VisibilityOption.PUBLIC;
+                    createRequest.ShowOnSearch = true;
+
+                    var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+                    Assert.IsTrue( createResponse.HasOkStatusCode );
+                    Assert.IsNotNull( createResponse.Tournament );
+                    createdTournamentIds.Add( createResponse.Tournament.TournamentId );
+                }
+
+                var searchRequest = new TournamentSearchAuthenticatedRequest( userAuthentication );
+                searchRequest.Name = tournamentNamePrefix;
+                searchRequest.OwnerId = "OrionAcct000002";
+                searchRequest.Visibility = VisibilityOption.PUBLIC;
+                searchRequest.Limit = 1;
+
+                var searchResponse1 = await client.TournamentSearchAuthenticatedAsync( searchRequest );
+
+                Assert.IsTrue( searchResponse1.HasOkStatusCode );
+                Assert.IsTrue( searchResponse1.TournamentSearchList.TotalCount >= 2 );
+                Assert.IsTrue( searchResponse1.TournamentSearchList.Items.Count == 1 );
+                Assert.IsTrue( searchResponse1.HasMoreItems );
+
+                var request2 = searchResponse1.GetNextRequest();
+                Assert.IsFalse( string.IsNullOrEmpty( request2.Token ) );
+
+                var searchResponse2 = await client.TournamentSearchAuthenticatedAsync( request2 );
+
+                Assert.IsTrue( searchResponse2.HasOkStatusCode );
+                Assert.IsTrue( searchResponse2.TournamentSearchList.Items.Count >= 1 );
+
+                var returnedTournamentIds = new HashSet<string>();
+                foreach (var tournament in searchResponse1.TournamentSearchList.Items) {
+                    returnedTournamentIds.Add( tournament.TournamentId.ToString() );
+                }
+                foreach (var tournament in searchResponse2.TournamentSearchList.Items) {
+                    returnedTournamentIds.Add( tournament.TournamentId.ToString() );
+                }
+
+                foreach (var createdTournamentId in createdTournamentIds) {
+                    Assert.IsTrue( returnedTournamentIds.Contains( createdTournamentId.ToString() ) );
+                }
+            } finally {
+                foreach (var createdTournamentId in createdTournamentIds) {
+                    await client.DeleteTournamentAuthenticatedAsync( createdTournamentId, userAuthentication );
+                }
+            }
+        }
 
 
         [TestMethod]

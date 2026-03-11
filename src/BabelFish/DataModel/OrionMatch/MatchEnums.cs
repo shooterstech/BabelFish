@@ -80,6 +80,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         OPEN
     }
 
+    /// <summary>
+    /// Preset options for authenticated tournament search filters.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum TournamentSearchPresetOption {
+        [Description( "incoming-invites" )]
+        [EnumMember( Value = "incoming-invites" )]
+        INCOMING_INVITES,
+
+        [Description( "outgoing-requests" )]
+        [EnumMember( Value = "outgoing-requests" )]
+        OUTGOING_REQUESTS
+    }
+
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum CompetitionTypeOptions {
         /// <summary>
