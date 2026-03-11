@@ -1,4 +1,3 @@
-using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -46,9 +45,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <param name="setName"></param>
         /// <returns>The newly added CoruseOfFire's Id.</returns>
-        /// <exception cref="DefinitionNotFoundException">Thrown if the past in SetName is not a known COURSE OF FIRE definition
+        /// <exception cref="DefinitionNotFoundException">Thrown if the past in SetName is not a known COURSE OF FIRE definition.
+        /// <exception cref="InvalidOperationException">Thrown if the Match already has 24 Courses of Fire.
         /// or it is the DEFUALT.</exception>
         public async Task<int> AddCourseOfFireAsync( SetName setName ) {
+            // The max of 24 Courses of fire is somewhat arbitrary, but comes from keeping resources constrained and having 2 matches a month for a year.
+            if (this.CoursesOfFire.Count >= 24) {
+                throw new InvalidOperationException( "A Match cannot have more than 24 Courses of Fire." );
+            }
+
             var cof = await CourseOfFireStructure.FactoryAsync( setName );
 
             var maxId = 0;

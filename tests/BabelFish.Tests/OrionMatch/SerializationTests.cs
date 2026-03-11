@@ -18,9 +18,10 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Match match = new Match();
             match.Name = "SerializationFileNameTest";
             var expectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "SerializationFileNameTest", "SerializationFileNameTest.json" );
-            File.Delete( expectedFullFileName );
+            if (File.Exists( expectedFullFileName ))
+                File.Delete( expectedFullFileName );
 
-            Assert.AreEqual( "SerializationTest.json", match.GetFileName() );
+            Assert.AreEqual( "SerializationFileNameTest.json", match.GetFileName() );
             Assert.AreEqual( Path.Combine( "SerializationFileNameTest", "SerializationFileNameTest.json" ), match.GetRelativePath() );
             var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
             Assert.AreEqual( expectedFullFileName, fullFileName );

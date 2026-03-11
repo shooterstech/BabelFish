@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace Scopos.BabelFish.Helpers {
 
@@ -787,43 +785,63 @@ namespace Scopos.BabelFish.Helpers {
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
 		public static string SanitizeFullFilenamePath( string fullFilePath ) {
-			if (string.IsNullOrEmpty( fullFilePath ))
-				throw new ArgumentException( "Path cannot be null or empty.", nameof( fullFilePath ) );
+            if (string.IsNullOrEmpty( fullFilePath ))
+                throw new ArgumentException( "Path cannot be null or empty.", nameof( fullFilePath ) );
 
             var fileInfo = new FileInfo( fullFilePath );
             var fileName = fileInfo.Name;
             var directory = fileInfo.Directory.ToString();
 
             return $"{SanitizeDirectoryPath( directory )}\\{SanitizeFileName( fileName )}";
-		}
+        }
 
-		public static string SanitizeDirectoryPath( string directoryPath ) {
-			if (string.IsNullOrEmpty( directoryPath ))
-				throw new ArgumentException( "Path cannot be null or empty.", nameof( directoryPath ) );
+        public static string SanitizeDirectoryPath( string directoryPath ) {
+            if (string.IsNullOrEmpty( directoryPath ))
+                throw new ArgumentException( "Path cannot be null or empty.", nameof( directoryPath ) );
 
-			char[] invalidPathChars = Path.GetInvalidPathChars();
+            char[] invalidPathChars = Path.GetInvalidPathChars();
 
-			return new string( directoryPath.Select( c => invalidPathChars.Contains( c ) ? '-' : c ).ToArray() );
-		}
+            return new string( directoryPath.Select( c => invalidPathChars.Contains( c ) ? '-' : c ).ToArray() );
+        }
 
-		public static string SanitizeFileName( string fileName ) {
-			if (string.IsNullOrEmpty( fileName ))
-				throw new ArgumentException( "Path cannot be null or empty.", nameof( fileName ) );
+        public static string SanitizeFileName( string fileName ) {
+            if (string.IsNullOrEmpty( fileName ))
+                throw new ArgumentException( "Path cannot be null or empty.", nameof( fileName ) );
 
-			char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
+            char[] invalidFileNameChars = Path.GetInvalidFileNameChars();
 
-			return new string( fileName.Select( c => invalidFileNameChars.Contains( c ) ? '-' : c ).ToArray() );
-		}
+            return new string( fileName.Select( c => invalidFileNameChars.Contains( c ) ? '-' : c ).ToArray() );
+        }
 
         public static string SanitizePath( string directoryPath, string fileName ) {
-			if (string.IsNullOrEmpty( directoryPath ))
-				throw new ArgumentException( "Path cannot be null or empty.", nameof( directoryPath ) );
-			if (string.IsNullOrEmpty( fileName ))
-				throw new ArgumentException( "Path cannot be null or empty.", nameof( fileName ) );
+            if (string.IsNullOrEmpty( directoryPath ))
+                throw new ArgumentException( "Path cannot be null or empty.", nameof( directoryPath ) );
+            if (string.IsNullOrEmpty( fileName ))
+                throw new ArgumentException( "Path cannot be null or empty.", nameof( fileName ) );
 
-			return $"{SanitizeDirectoryPath( directoryPath )}\\{SanitizeFileName( fileName )}";
+            return $"{SanitizeDirectoryPath( directoryPath )}\\{SanitizeFileName( fileName )}";
 
-		}
+        }
 
-	}
+        /// <summary>
+        /// Generates a unique ID string of a specified byte length (default is 8 bytes, which is 64 bits).
+        /// The generated ID is a Base64 string that has been modified to be URL-safe by replacing certain characters and trimming padding.
+        /// his method uses a cryptographically secure random number generator to ensure uniqueness and randomness of the generated ID.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        /// <remarks>Used in places where we don't need UUIDs but need uniqueness.</remarks>
+        public static string GenerateUniqueId( int bytes = 8 ) // 8 bytes = 64 bits
+{
+            var buffer = new byte[bytes];
+            RandomNumberGenerator.Fill( buffer );
+            return Convert.ToBase64String( buffer )
+                .Replace( "/", "_" )
+                .Replace( "+", "-" )
+                .TrimEnd( '=' );
+        }
+
+
+
+    }
 }

@@ -61,6 +61,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 3 )]
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
+        [Obsolete( "Deprecated, because the value of ParentID can be derived from the MatchID. Deprecated Match 2024." )]
         public MatchID? ParentID {
             get {
                 return this.MatchID.GetParentMatchID();

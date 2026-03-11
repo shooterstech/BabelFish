@@ -166,6 +166,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     };
 
     /// <summary>
+    /// Entry status for a Match Participant in a Course of Fire. Basically whether the Participant is entered in the Course of Fire, not entered, or withdrew from the Course of Fire.
+    /// </summary>
+    public enum EntryStatus {
+        /// <summary>
+        /// The Participant is not entered in this Course of Fire.
+        /// </summary>
+        NOT_ENTERED,
+        /// <summary>
+        /// The Participant is entered in this Course of Fire.
+        /// </summary>
+        ENTERED,
+        /// <summary>
+        /// The Participant was entered in this Course of Fire, but has withdrew and will not be competing in this Course of Fire.
+        /// </summary>
+        WITHDREW
+    }
+
+    /// <summary>
     /// The types of registration entires that a <see cref="CourseOfFireStructure"/> can accept.
     /// </summary>
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
@@ -191,8 +209,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Description( "TeamOnly" )]
         [EnumMember( Value = "TeamOnly" )]
         TEAM_ONLY
-
-
     }
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
