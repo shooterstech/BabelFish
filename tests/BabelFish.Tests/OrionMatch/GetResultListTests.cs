@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.IsTrue( getResultListResponse.HasOkStatusCode );
             var resultList = getResultListResponse.ResultList;
 
-            Assert.AreEqual( matchId.ToString(), resultList.MatchID );
+            Assert.AreEqual( matchId, resultList.MatchID );
             Assert.AreEqual( resultListName, resultList.ResultName );
 
             Assert.IsTrue( resultList.Items.Count > 0 );
@@ -51,7 +51,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, resultListResponse.RestApiStatusCode );
             var resultList = resultListResponse.ResultList;
 
-            Assert.AreEqual( matchId.ToString(), resultList.MatchID );
+            Assert.AreEqual( matchId, resultList.MatchID );
             Assert.AreEqual( resultListName, resultList.ResultName );
 
             Assert.IsTrue( resultList.Items.Count > 0 );
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var client = new OrionMatchAPIClient( APIStage.BETA );
 
             //This match id has three relays of 20 athletes
-            var matchId = new MatchID( "1.1.2023011915575119.0" ); 
+            var matchId = new MatchID( "1.1.2023011915575119.0" );
             var resultListName = "Individual - All";
 
             var requestInit = new GetResultListPublicRequest( matchId, resultListName ) {
@@ -75,13 +75,13 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, resultListResponseInit.RestApiStatusCode );
             var resultListInit = resultListResponseInit.ResultList;
 
-            Assert.AreEqual( matchId.ToString(), resultListInit.MatchID );
+            Assert.AreEqual( matchId, resultListInit.MatchID );
             Assert.AreEqual( resultListName, resultListInit.ResultName );
             Assert.IsTrue( resultListInit.Items.Count > 0 );
             Assert.AreNotEqual( "", resultListInit.NextToken );
 
             //Set up the next request
-            var requestNext = (GetResultListPublicRequest) resultListResponseInit.GetNextRequest();
+            var requestNext = (GetResultListPublicRequest)resultListResponseInit.GetNextRequest();
             Assert.AreEqual( resultListInit.NextToken, requestNext.Token );
 
             var taskResultListResponseNext = client.GetResultListPublicAsync( requestNext );
@@ -90,31 +90,29 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( HttpStatusCode.OK, resultListResponseNext.RestApiStatusCode );
             var resultListNext = resultListResponseNext.ResultList;
 
-            Assert.AreEqual( matchId.ToString(), resultListNext.MatchID );
+            Assert.AreEqual( matchId, resultListNext.MatchID );
             Assert.AreEqual( resultListName, resultListNext.ResultName );
             Assert.IsTrue( resultListNext.Items.Count > 0 );
             Assert.AreNotEqual( "", resultListNext.NextToken );
         }
 
         [TestMethod]
-        public async Task LiamsPlayground()
-        {
+        public async Task LiamsPlayground() {
 
-            var client = new OrionMatchAPIClient(APIStage.PRODUCTION);
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
 
-            var matchId = new MatchID("1.15.2025102016585824.0");
+            var matchId = new MatchID( "1.15.2025102016585824.0" );
             //var resultListName = "Individual - All";
             //var resultListName = "Individual - Sporter";
             var resultListName = "Individual - Precision";
 
-            var response = await client.GetResultListPublicAsync(matchId, resultListName);
+            var response = await client.GetResultListPublicAsync( matchId, resultListName );
             DataModel.Definitions.CommandAutomationRemark automation = new DataModel.Definitions.CommandAutomationRemark() {
                 ParticipantRanks = new DataModel.Definitions.ValueSeries( "1..8" )
             };
-            var listOfParticipantsInRL = automation.GetParticipantListToApply(response.ResultList);
-            foreach (var m in listOfParticipantsInRL)
-            {
-                Debug.WriteLine(m.ToString());
+            var listOfParticipantsInRL = automation.GetParticipantListToApply( response.ResultList );
+            foreach (var m in listOfParticipantsInRL) {
+                Debug.WriteLine( m.ToString() );
             }
 
         }
@@ -127,7 +125,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var matchId = new MatchID( "1.1.2025100109364878.1" );
 
             //Retreives information about the match
-            var getMatchResponse = await client.GetMatchAsync(matchId);
+            var getMatchResponse = await client.GetMatchAsync( matchId );
             if (getMatchResponse.HasOkStatusCode) {
                 var match = getMatchResponse.Match;
                 Console.WriteLine( match.Name );
@@ -135,7 +133,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
                 Console.WriteLine( match.EndDate );
 
                 //Loop through and find the primary result lists
-                foreach( var resultEvent in match.ResultEvents ) {
+                foreach (var resultEvent in match.ResultEvents) {
                     foreach (var resultListAbbr in resultEvent.ResultLists) {
                         if (resultListAbbr.Primary) {
 
@@ -172,7 +170,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
 
                                 //Print the results, one row at a time.
                                 foreach (var row in rlif.ShownRows) {
-                                    foreach( var colIndex in rlif.GetShownColumnIndexes() ) {
+                                    foreach (var colIndex in rlif.GetShownColumnIndexes()) {
                                         Console.Write( row.GetColumnBodyCell( colIndex ).Text );
                                         Console.Write( "  " );
                                     }

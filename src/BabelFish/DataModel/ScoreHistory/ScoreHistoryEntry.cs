@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
@@ -21,12 +22,12 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// String formatted as a SetName, representing the CourseOfFire Definition shot for this ScoreHistoryEntry
         /// This field may be an empty string if the object is a member of a ScoreHistoryEventStyleEntry's .StageScores list
         /// </summary>
-        public string CourseOfFireDef { get; set; } = "";
+        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// NOTE: Current this field is TypeOfMatch, but it will soon be renmaed int eh API
         /// </summary>
-        
+
         public CompetitionTypeOptions MatchType { get; set; } = CompetitionTypeOptions.TRAINING;
 
         public string MatchName { get; set; } = "";
@@ -35,15 +36,15 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// The Match ID that this score was shot in. An empty string means the match ID is 
         /// either not known, or the score was entered manually. 
         /// </summary>
-        public string MatchID { get; set; } = "";
-        
+        public MatchID MatchID { get; set; } = MatchID.DEFAULT;
+
         public string MatchLocation { get; set; } = "";
 
         public string ScoreFormatted { get; set; } = "";
 
         public Athena.Score Score { get; set; }
 
-        
+
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
     }
 }

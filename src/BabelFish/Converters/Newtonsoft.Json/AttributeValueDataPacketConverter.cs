@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Responses.AttributeValueAPI;
-using Scopos.BabelFish.DataModel.Definitions;
-using NLog;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Converters.Newtonsoft {
 
@@ -31,7 +25,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
         public override bool CanWrite { get { return true; } }
 
         //Reading should be handled by System.Text.Json, not by Newtonsoft
-        public override bool CanRead {  get { return false; } }
+        public override bool CanRead { get { return false; } }
 
         /// <inheritdoc/>
         public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
@@ -45,8 +39,23 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             JObject o = new JObject();
 
             o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
-            o["Visibility"] = attrValueDataPacket.Visibility.ToString();
             o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
+            //For reasons I dont' quite understand, because VisibilityOptions have inline defined int values, we have to do a switch statement to get the string value instead of just calling ToString() on the enum value.
+            switch (attrValueDataPacket.Visibility) {
+                case VisibilityOption.PRIVATE:
+                default:
+                    o["Visibility"] = "Private";
+                    break;
+                case VisibilityOption.PROTECTED:
+                    o["Visibility"] = "Protected";
+                    break;
+                case VisibilityOption.INTERNAL:
+                    o["Visibility"] = "Internal";
+                    break;
+                case VisibilityOption.PUBLIC:
+                    o["Visibility"] = "Public";
+                    break;
+            }
 
             if (attrValueDataPacket.AttributeValue != null) {
                 if (attrValueDataPacket.AttributeValue.IsMultipleValue) {
@@ -55,12 +64,12 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                         var nextObject = new JObject();
                         foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
                             if (!field.MultipleValues) {
-                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key);
+                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key );
                             } else {
                                 nextObject[field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key ) );
                             }
                         }
-                        ((JArray) o["AttributeValue"]).Add( nextObject );
+                        ((JArray)o["AttributeValue"]).Add( nextObject );
                     }
                 } else {
                     o["AttributeValue"] = new JObject();
@@ -73,7 +82,18 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                     }
                 }
             }
-            
+
+            if (attrValueDataPacket is AttributeValueDataPacketMatch avdpm) {
+                //Note a AttributeConfiguration inherits from AttributeValueDataPacket.
+                o["CourseOfFireId"] = avdpm.CourseOfFireId;
+            }
+
+            if (attrValueDataPacket is AttributeConfiguration) {
+                o["Constant"] = ((AttributeConfiguration)attrValueDataPacket).Constant;
+            }
+
+            // There are no unique fields for AttributeValueDataPacketAttribute, so we don't need to add anything to the JSON for that class
+
             o.WriteTo( writer );
         }
 

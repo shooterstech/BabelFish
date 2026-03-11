@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -16,7 +17,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
             var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2025100211025190.2" ) );
-            var tournamentMerger = await Scopos.BabelFish.DataActors.Tournaments.TournamentMerger.FactoryAsync( getTournamentResponse.Tournament, "Individual Rankings" );
+            var tournamentMerger = await ResultListMergerEngine.FactoryAsync( getTournamentResponse.Tournament, "Individual Rankings" );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
             Assert.IsNotNull( mergedResultList );
@@ -66,7 +67,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
             var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2025100211025190.2" ) );
-            var tournamentMerger = await Scopos.BabelFish.DataActors.Tournaments.TournamentMerger.FactoryAsync( getTournamentResponse.Tournament, "Individual Rankings" );
+            var tournamentMerger = await ResultListMergerEngine.FactoryAsync( getTournamentResponse.Tournament, "Individual Rankings" );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
             Assert.IsNotNull( mergedResultList );

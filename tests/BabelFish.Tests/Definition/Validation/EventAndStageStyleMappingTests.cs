@@ -1,39 +1,39 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition.Validation {
     [TestClass]
-	public class EventAndStageStyleMappingTests : BaseTestClass {
+    public class EventAndStageStyleMappingTests : BaseTestClass {
 
-		[TestMethod]
-		public async Task HappyPathAttributeValid() {
+        [TestMethod]
+        public async Task HappyPathAttributeValid() {
 
-			var client = new DefinitionAPIClient();
-			var setName = SetName.Parse( "v1.0:orion:Air Rifle" );
+            var client = new DefinitionAPIClient();
+            var setName = SetName.Parse( "v1.0:orion:Air Rifle" );
 
-			var candidate = (await client.GetEventAndStageStyleMappingDefinitionAsync( setName )).Value;
+            var candidate = (await client.GetEventAndStageStyleMappingDefinitionAsync( setName )).Value;
 
-			var validation = new IsEventAndStageStyleMappingValid();
+            var validation = new IsEventAndStageStyleMappingValid();
 
-			var valid = await validation.IsSatisfiedByAsync( candidate );
+            var valid = await validation.IsSatisfiedByAsync( candidate );
 
-			Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
-		}
+            Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
+        }
 
-		[TestMethod]
-		public async Task DefaultMappingDoesNotExistTest() {
+        [TestMethod]
+        public async Task DefaultMappingDoesNotExistTest() {
 
             var setName = SetName.Parse( "v1.0:orion:Air Rifle" );
-			var definition = (await DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync( setName )).Clone();
+            var definition = (await DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync( setName )).Clone();
 
-			var validation = new IsEventAndStageStyleMappingValid();
+            var validation = new IsEventAndStageStyleMappingValid();
 
-			//Delete the DefaultMapping, which should cause a failure.
-			definition.DefaultMapping = null;
+            //Delete the DefaultMapping, which should cause a failure.
+            definition.DefaultMapping = null;
 
-			Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
         }
 
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             var validation = new IsEventAndStageStyleMappingValid();
 
             //Delete the DefaultMapping, which should cause a failure.
-            definition.DefaultMapping.DefaultStageStyleDef = "v1.0:orion:not a real definition";
+            definition.DefaultMapping.DefaultStageStyleDef = SetName.Parse( "v1.0:orion:not a real definition" );
 
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             var validation = new IsEventAndStageStyleMappingValid();
 
             //Delete the DefaultMapping, which should cause a failure.
-            definition.DefaultMapping.DefaultEventStyleDef = "v1.0:orion:not a real definition";
+            definition.DefaultMapping.DefaultEventStyleDef = SetName.Parse( "v1.0:orion:not a real definition" );
 
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var validation = new IsEventAndStageStyleMappingValid();
 
-            definition.DefaultMapping.StageStyleMappings[0].StageStyleDef = "";
+            definition.DefaultMapping.StageStyleMappings[0].StageStyleDef = SetName.DEFAULT;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
         }
@@ -154,7 +154,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var validation = new IsEventAndStageStyleMappingValid();
 
-            definition.DefaultMapping.EventStyleMappings[0].EventStyleDef = "";
+            definition.DefaultMapping.EventStyleMappings[0].EventStyleDef = SetName.DEFAULT;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
         }

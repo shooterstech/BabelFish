@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
         [TestMethod]
         public void BasicConstructorTests() {
 
-            var defaultConstructorClient = new AttributeValueAPIClient( );
+            var defaultConstructorClient = new AttributeValueAPIClient();
             var apiStageConstructorClient = new AttributeValueAPIClient( APIStage.BETA );
 
             Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
@@ -35,8 +35,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
                 Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var setNameProfileName = "v1.0:orion:Profile Name";
-            List<string> myAttributes = new List<string>()
+            var setNameProfileName = SetName.Parse( "v1.0:orion:Profile Name" );
+            List<SetName> myAttributes = new List<SetName>()
             {
                setNameProfileName
             };
@@ -47,23 +47,23 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             //The returned data should have one AttriuteValueDataPacket if the Profile Name set name.
             var attributeValueDataPackets = response.AttributeValues;
             Assert.IsTrue( attributeValueDataPackets.Count == 1 );
-            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameProfileName  ) );
+            Assert.IsTrue( attributeValueDataPackets.ContainsKey( setNameProfileName ) );
 
             //Retreive the data packet and check that the status code is success.
             var profileNameAttributeValueDataPacket = attributeValueDataPackets[setNameProfileName];
-            Assert.IsTrue( profileNameAttributeValueDataPacket.StatusCode== System.Net.HttpStatusCode.OK );
+            Assert.IsTrue( profileNameAttributeValueDataPacket.StatusCode == System.Net.HttpStatusCode.OK );
 
             //Pull the attribute value back, and check we have reasonable values.
             var profileNameAttributeValue = profileNameAttributeValueDataPacket.AttributeValue;
 
-            Assert.AreEqual( "Christopher", (string) profileNameAttributeValue.GetFieldValue( "GivenName" ) );
+            Assert.AreEqual( "Christopher", (string)profileNameAttributeValue.GetFieldValue( "GivenName" ) );
             Assert.AreEqual( "Jones", (string)profileNameAttributeValue.GetFieldValue( "FamilyName" ) );
         }
 
         /// <summary>
         /// Tests the retreival of multiple attributes
         /// </summary>
-            [TestMethod]
+        [TestMethod]
         public async Task GetAttributeValue_MultipleValue() {
 
             var client = new AttributeValueAPIClient( APIStage.BETA );
@@ -73,21 +73,21 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
                 Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var setNameProfileName = "v1.0:orion:Profile Name";
-            var setNameDOB = "v1.0:orion:Date of Birth";
-            var setNameEmail = "v2.0:orion:Email Address";
-            var setNameAddress = "v1.0:orion:Address";
+            var setNameProfileName = SetName.Parse( "v1.0:orion:Profile Name" );
+            var setNameDOB = SetName.Parse( "v1.0:orion:Date of Birth" );
+            var setNameEmail = SetName.Parse( "v2.0:orion:Email Address" );
+            var setNameAddress = SetName.Parse( "v1.0:orion:Address" );
 
             List<SetName> myAttributes = new List<SetName>()
             {
-               SetName.Parse( setNameProfileName ),
-               SetName.Parse( setNameDOB ),
-               SetName.Parse( setNameEmail ),
-               SetName.Parse( setNameAddress )
+               setNameProfileName,
+               setNameDOB,
+               setNameEmail,
+               setNameAddress
             };
 
             //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
-            var request = new GetAttributeValueAuthenticatedRequest( userAuthentication ) { 
+            var request = new GetAttributeValueAuthenticatedRequest( userAuthentication ) {
                 AttributeNames = myAttributes,
                 ReturnDefaultValues = true
             };
@@ -134,17 +134,17 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
                 Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var setNameProfileName = "v1.0:orion:Profile Name";
-            var setNameDOB = "v1.0:orion:Date of Birth";
-            var setNameEmail = "v2.0:orion:Email Address";
-            var setNamePhone = "v2.0:orion:Phone Number";
+            var setNameProfileName = SetName.Parse( "v1.0:orion:Profile Name" );
+            var setNameDOB = SetName.Parse( "v1.0:orion:Date of Birth" );
+            var setNameEmail = SetName.Parse( "v2.0:orion:Email Address" );
+            var setNamePhone = SetName.Parse( "v2.0:orion:Phone Number" );
 
             List<SetName> myAttributes = new List<SetName>()
             {
-               SetName.Parse( setNamePhone ),
-               SetName.Parse( setNameProfileName ),
-               SetName.Parse( setNameDOB ),
-               SetName.Parse( setNameEmail )
+               setNamePhone,
+               setNameProfileName,
+               setNameDOB,
+               setNameEmail
             };
 
             //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).
@@ -188,8 +188,8 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
                 Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
-            var setNameNotARealAttribute = "v1.0:orion:Not a Real Attribute";
-            List<string> myAttributes = new List<string>()
+            var setNameNotARealAttribute = SetName.Parse( "v1.0:orion:Not a Real Attribute" );
+            List<SetName> myAttributes = new List<SetName>()
             {
                setNameNotARealAttribute
             };

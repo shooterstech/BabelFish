@@ -1,7 +1,7 @@
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
     public class AverageMethod : MergeMethod {
 
         /// <summary>
@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public AverageMethod( TournamentMerger tournamentMerger, AverageMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
+        public AverageMethod( ResultListMergerEngine tournamentMerger, AverageMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
 
             this.TopLevelEventname = "Average";
         }

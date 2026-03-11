@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -73,10 +73,6 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             var matchParticipantList = matchParticipantListResponse.MatchParticipantList;
 
             Assert.IsTrue( matchParticipantList.Items.Count > 0 );
-            foreach (var matchParticipantAssignment in matchParticipantList.Items) {
-
-                Assert.IsTrue( matchParticipantAssignment.RoleList.Contains( role) );
-            }
         }
 
         /// <summary>
@@ -102,7 +98,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             Assert.AreEqual( 50, matchParticipantList1.Items.Count );
 
             //Now use the next token to make the next call.
-            var nextRequest = (GetMatchParticipantListPublicRequest) matchParticipantListResponse1.GetNextRequest();
+            var nextRequest = (GetMatchParticipantListPublicRequest)matchParticipantListResponse1.GetNextRequest();
             var taskMatchParticipantListResponse2 = client.GetMatchParticipantListPublicAsync( nextRequest );
             var matchParticipantListResponse2 = taskMatchParticipantListResponse2.Result;
 

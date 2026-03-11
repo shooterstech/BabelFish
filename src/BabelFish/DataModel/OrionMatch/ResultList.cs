@@ -3,6 +3,11 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+    /// <summary>
+    /// Formally, a Result List (capitol R and L) is raw data of competitor performance from an event.
+    /// Includes all competitors and all (reasonable) data from the competition. During the Future and
+    /// Intermediate status of the competition Includes an absolute and predictive ranking of competitors based on their performance.
+    /// </summary>
     [Serializable]
     public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
 
@@ -10,8 +15,41 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Default constructor, initializes the list of ResultEvents to an empty list.
+        /// </summary>
         public ResultList() {
             Items = new List<ResultEvent>();
+        }
+
+        public ResultList( Match match, ResultListAbbr resultListAbbr ) {
+            if (match == null) {
+                throw new ArgumentNullException( nameof( match ) );
+            }
+            if (resultListAbbr == null) {
+                throw new ArgumentNullException( nameof( resultListAbbr ) );
+            }
+            this.MatchName = match.Name;
+            this.EventName = resultListAbbr.EventName;
+            this.CourseOfFireId = resultListAbbr.CourseOfFireId;
+            this.ResultName = resultListAbbr.ResultName;
+            this.Primary = resultListAbbr.Primary;
+            this.Team = resultListAbbr.Team;
+            this.RankingRuleDef = resultListAbbr.RankingRuleDef;
+            //The next line is to be completed, after the Match data model is updated to allow multiple courses of fire. 
+            //this.CourseOfFireDef = resultListAbbr.CourseOfFireDef.ToString();
+            this.ScoreConfigName = resultListAbbr.ScoreConfigName;
+            this.ResultListFormatDef = resultListAbbr.ResultListFormatDef;
+            this.AttributeFilter = resultListAbbr.AttributeFilter.Clone();
+            this.UserDefinedText = resultListAbbr.UserDefinedText.Clone();
+
+            this.Metadata.Add( match.MatchID, new ResultListMetadata() {
+                Creator = match.Creator,
+                OwnerId = match.OwnerId,
+                MatchID = match.MatchID,
+                StartDate = match.StartDate,
+                EndDate = match.EndDate
+            } );
         }
 
         /// <summary>
@@ -33,28 +71,35 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string EventName { get; set; } = string.Empty;
 
         /// <summary>
+        /// A value of 1 or greater indicates the Course of Fire that this Result List is associated with within the match.
+        /// A value of 0 would indicate that this is a Merged Result List, and not associated with a single Course of Fire within a Match.
+        /// <para>Most Matches only contain one Course of Fire (prior to Orion 3.0 (and BabelFish 2.0) Orion only supported 1 coruse of fire in a match). 1 is the starting index. </para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
+        public int CourseOfFireId { get; set; } = 1;
+
+        /// <summary>
         /// If this is a local match, returns the local match id.
         /// If this is from a virtual match, retur s the virtual match id.
         /// </summary>
         /// <remarks>This value is not serialized.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string MatchID {
+        public MatchID MatchID {
             get {
                 if (this.Metadata.Count == 0) {
                     //This shouldn't happen
-                    return "1.1.1.1";
+                    return MatchID.DEFAULT;
                 }
 
                 if (this.Metadata.Count == 1)
                     return this.Metadata.First().Key;
 
                 //Likely a Virtual Match
-                foreach (var mId in this.Metadata.Keys) {
-                    if (Scopos.BabelFish.DataModel.OrionMatch.MatchID.TryParse( mId, out var matchID )) {
-                        if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
-                            return mId;
-                        }
+                foreach (var matchID in this.Metadata.Keys) {
+                    if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
+                        return matchID;
                     }
                 }
 
@@ -90,10 +135,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 ResultListMetadata parentMetaData = null;
                 MatchID matchId;
                 foreach (var meta in Metadata) {
-                    //The Key is the match id in string form
+                    //The Key is the match id
                     try {
-                        matchId = new MatchID( meta.Key );
-                        if (matchId.VirtualMatchParent) {
+                        if (meta.Key.VirtualMatchParent) {
                             parentMetaData = meta.Value;
                             break;
                         }
@@ -242,19 +286,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Local Matches will have exactly one value.
         /// </summary>
         [G_NS.JsonProperty( Order = 15 )]
-        public Dictionary<string, ResultListMetadata> Metadata { get; set; } = new Dictionary<string, ResultListMetadata>();
+        public Dictionary<MatchID, ResultListMetadata> Metadata { get; set; } = new Dictionary<MatchID, ResultListMetadata>();
 
         /// <summary>
         /// Set name of the RANKING RULE definition used to rank this result list.
         /// </summary>
         [G_NS.JsonProperty( Order = 20 )]
-        public string RankingRuleDef { get; set; } = string.Empty;
+        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The SetName of the Course of Fire
         /// </summary>
         [G_NS.JsonProperty( Order = 21 )]
-        public string CourseOfFireDef { get; set; } = string.Empty;
+        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
@@ -267,10 +311,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the RESULT LIST FORMAT definition to use when displaying this result list.
         /// </summary>
         [G_NS.JsonProperty( Order = 23 )]
-        public string ResultListFormatDef { get; set; } = string.Empty;
+        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
+
+        /// <summary>
+        /// An AttributeFilter describes how a This ResultList will be filtered. That is to say, of the
+        /// participants who shot the Evente, which of those should be included in this ResultList.
+        /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
+        /// the Precision Air Rifle marksmen).</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 24 )]
+        public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
 
         /// <inheritdoc />
-        [G_NS.JsonProperty( Order = 24 )]
+        [G_NS.JsonProperty( Order = 25 )]
         public Dictionary<UserDefinedFieldNames, string> UserDefinedText { get; set; } = new Dictionary<UserDefinedFieldNames, string>() {
             [UserDefinedFieldNames.USER_DEFINED_FIELD_1] = string.Empty,
             [UserDefinedFieldNames.USER_DEFINED_FIELD_2] = string.Empty,
@@ -351,7 +404,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 90 )]
         [Obsolete( "Use .Metadata.Creator" )]
-        public string Creator { get; set; }
+        public string Creator { get; set; } = string.Empty;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
@@ -376,45 +429,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultListID { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef is empty, known to happen with older versions of Orion. </exception>
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
-            if (string.IsNullOrEmpty( CourseOfFireDef ))
-                throw new ArgumentNullException( $"The value for CourseOfFireDef is empty or null." );
-
-            SetName cofSetName = SetName.Parse( CourseOfFireDef );
-            return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
+            return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">Thrown if the value for RankingRuleDef is empty, or if the Get Definition call was unsuccessful.</exception>
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<RankingRule> GetRankingRuleDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( RankingRuleDef ))
-                throw new ArgumentNullException( $"The value for RankingRuleDef is empty or null." );
-
-            SetName rrSetName = SetName.Parse( RankingRuleDef );
-            return await DefinitionCache.GetRankingRuleDefinitionAsync( rrSetName );
+            return await DefinitionCache.GetRankingRuleDefinitionAsync( RankingRuleDef );
         }
 
         /// <inheritdoc />
-        /// <exception cref="ArgumentNullException">Thrown if the value for ResultListFormatDef is empty, or if the Get Definition call was unsuccessful.</exception>
         /// <exception cref="XApiKeyNotSetException" ></exception>
         /// <exception cref="DefinitionNotFoundException" ></exception>
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<ResultListFormat> GetResultListFormatDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( ResultListFormatDef ))
-                throw new ArgumentNullException( $"The value for ResultListFormatDef is empty or null." );
-
-            SetName rlfSetName = SetName.Parse( ResultListFormatDef );
-            return await DefinitionCache.GetResultListFormatDefinitionAsync( rlfSetName );
+            return await DefinitionCache.GetResultListFormatDefinitionAsync( ResultListFormatDef );
         }
 
         /// <summary>

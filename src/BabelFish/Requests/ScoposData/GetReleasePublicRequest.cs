@@ -1,17 +1,13 @@
-﻿using Scopos.BabelFish.DataModel.ScoposData;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
-using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.ScoposData;
 
 
-namespace Scopos.BabelFish.Requests.ScoposData
-{
-    public class GetReleasePublicRequest : Request
-    {
+namespace Scopos.BabelFish.Requests.ScoposData {
+    public class GetReleasePublicRequest : Request {
         /// <summary>
         /// Public constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public GetReleasePublicRequest() : base("GetRelease") { }
+        public GetReleasePublicRequest() : base( "GetRelease" ) { }
 
         /// <summary>
         /// VersionLevel to request
@@ -54,8 +50,7 @@ namespace Scopos.BabelFish.Requests.ScoposData
         public string OwnerID { get; set; } = "";
 
         /// <inheritdoc />
-        public override string RelativePath
-        {
+        public override string RelativePath {
             get { return $"/release"; }
         }
 
@@ -70,36 +65,32 @@ namespace Scopos.BabelFish.Requests.ScoposData
                 "owner-id" : "OrionAcct000015"
             }
          */
-        public override Dictionary<string, List<string>> QueryParameters
-        {
-            get
-            {
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
 
-                parameterList.Add("release-phase", new List<string>() { ReleasePhase.Description() });
+                parameterList.Add( "release-phase", new List<string>() { ReleasePhase.Description() } );
 
-                if (ApplicationItems != null && ApplicationItems.Count > 0)
-                {
-                    parameterList.Add("application-items", ApplicationItems);
+                if (ApplicationItems != null && ApplicationItems.Count > 0) {
+                    parameterList.Add( "application-items", ApplicationItems );
                 }
 
-                if ( !string.IsNullOrEmpty( this.ThingName ) )
-                    parameterList.Add("thing-name", new List<string>() { ThingName });
+                if (!string.IsNullOrEmpty( this.ThingName ))
+                    parameterList.Add( "thing-name", new List<string>() { ThingName } );
 
-                if ( !(ThingVersion is null) ) {
+                if (!(ThingVersion is null)) {
                     parameterList.Add( "thing-version", new List<string>() { ThingVersion.ToString() } );
                 }
 
-                parameterList.Add("orion-eula-accepted", new List<string>() { OrionEulaAccepted.ToString() });
+                parameterList.Add( "orion-eula-accepted", new List<string>() { OrionEulaAccepted.ToString() } );
 
-                parameterList.Add("athena-eula-accepted", new List<string>() { AthenaEulaAccepted.ToString() });
+                parameterList.Add( "athena-eula-accepted", new List<string>() { AthenaEulaAccepted.ToString() } );
 
-                parameterList.Add("return-history", new List<string>() { ReturnHistory.ToString() });
+                parameterList.Add( "return-history", new List<string>() { ReturnHistory.ToString() } );
 
-                if ( !string.IsNullOrEmpty( this.OwnerID ) )
-                {
-                    parameterList.Add("owner-id", new List<string>() { OwnerID.ToString() });
+                if (!string.IsNullOrEmpty( this.OwnerID )) {
+                    parameterList.Add( "owner-id", new List<string>() { OwnerID.ToString() } );
                 }
 
                 return parameterList;

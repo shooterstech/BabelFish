@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
@@ -34,8 +31,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             bool oneIsUnofficial = false;
 
             EventScore eventScore;
-            foreach( var re in  resultList.Items ) {
-                if ( re.EventScores.TryGetValue( resultList.EventName, out eventScore ) ) {
+            foreach (var re in resultList.Items) {
+                if (re.EventScores.TryGetValue( resultList.EventName, out eventScore )) {
                     allAreFuture &= (eventScore.Status == ResultStatus.FUTURE);
                     oneIsIntermediate |= (eventScore.Status == ResultStatus.INTERMEDIATE);
                     oneIsUnofficial |= (eventScore.Status == ResultStatus.UNOFFICIAL);
@@ -44,9 +41,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             if (allAreFuture) { return ResultStatus.FUTURE; }
 
-            if (oneIsIntermediate) {  return ResultStatus.INTERMEDIATE; }
+            if (oneIsIntermediate) { return ResultStatus.INTERMEDIATE; }
 
-            if (oneIsUnofficial) {  return ResultStatus.UNOFFICIAL; }
+            if (oneIsUnofficial) { return ResultStatus.UNOFFICIAL; }
 
             return resultList.Status;
         }
@@ -57,7 +54,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// but the status is UNOFFICIAL or OFFICIAL. This could happen if a user turns Orion off, 
         /// before having all scores turned in, and we're past the end date of the match.
         /// </summary>
-        public static void ReSortIfOfficial(this ResultList resultList) {
+        public static void ReSortIfOfficial( this ResultList resultList ) {
 
             if (resultList is not null
                 && resultList.Projected &&
@@ -80,11 +77,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="eventName"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName, RemarkList remarkList)
-        {
+        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName, RemarkList remarkList ) {
             //If the match's status is official, then so to are all evetns
-            if (matchStatus == ResultStatus.OFFICIAL)
-            {
+            if (matchStatus == ResultStatus.OFFICIAL) {
                 eventScore.Status = ResultStatus.OFFICIAL;
                 return;
             }
@@ -96,25 +91,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             //If shots have not been fired yet, then status if future
-            if (numberOfShotsFired == 0)
-            {
+            if (numberOfShotsFired == 0) {
                 eventScore.Status = ResultStatus.FUTURE;
                 return;
             }
 
-            var @event = topLevelEvent.FindEventComposite(eventName);
-            if (@event != null)
-            {
+            var @event = topLevelEvent.FindEventComposite( eventName );
+            if (@event != null) {
                 var numberOfShots = @event.GetAllSingulars().Count();
 
                 //if the number of shots fired is equal to expected number of shots
-                if (numberOfShotsFired >= numberOfShots)
-                {
+                if (numberOfShotsFired >= numberOfShots) {
                     eventScore.Status = ResultStatus.UNOFFICIAL;
                     return;
-                }
-                else if (numberOfShotsFired > 0)
-                {
+                } else if (numberOfShotsFired > 0) {
                     //if shots have been fired, but not yet complete
                     eventScore.Status = ResultStatus.INTERMEDIATE;
                     return;
@@ -124,5 +114,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             eventScore.Status = matchStatus;
             return;
         }
+
     }
 }

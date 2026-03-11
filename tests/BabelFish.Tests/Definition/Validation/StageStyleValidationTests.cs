@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             var valid = await validation.IsSatisfiedByAsync( stageStyle );
 
-            Assert.IsTrue( valid, string.Join(", ", validation.Messages ) );
+            Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
         }
 
         [TestMethod]
@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
 
             //The unaltered should pass
             Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
-            
+
             //0 shots should fail
             stageStyle.ShotsInSeries = 0;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
@@ -63,15 +63,7 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
 
             //empty string should fail
-            stageStyle.ScoreFormatCollectionDef = "";
-            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
-
-            //Invalid set name should fail
-            stageStyle.ScoreFormatCollectionDef = "not a real set name";
-            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
-
-            //valid set name but doesn't exist should fail
-            stageStyle.ScoreFormatCollectionDef = "v1.0:orion:not a real definition";
+            stageStyle.ScoreFormatCollectionDef = SetName.DEFAULT;
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
         }
 
@@ -138,6 +130,45 @@ namespace Scopos.BabelFish.Tests.Definition.Validation {
             stageStyle.RelatedStageStyles.Add( "v1.0:nra:Sporter Air Rifle Standing" );
             stageStyle.RelatedStageStyles.Add( "v1.0:orion:not a real definition" );
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+        }
+
+        [TestMethod]
+        public async Task IsRelativeDifficultyValidTests() {
+            var stageStyle = new StageStyle();
+            var validation = new IsStageStyleRelativeDifficultyValid();
+
+            //Should pass with the default value.
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            //Should pass with these values, including edge cases of .5f and 1.1f.
+            stageStyle.RelativeDifficulty = 0.5f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 0.8f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 1f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 1.1f;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            //Should fail with these values, including edge cases of -.49f and 1.101f.
+            stageStyle.RelativeDifficulty = 0.49f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 1.11f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 0f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = -1f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
+            stageStyle.RelativeDifficulty = 100f;
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
+
         }
     }
 }

@@ -270,7 +270,7 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        private static DirectoryInfo? _localStorageDirectory = null;
+        private static DirectoryInfo? _localStorageDirectory { get; set; }
 
         /// <summary>
         /// The directory that BabelFish may use to read and store cached responses. 

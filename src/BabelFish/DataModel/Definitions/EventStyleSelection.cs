@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// String formatted as a SetName. The EVENT STYLE definition to use in this mapping.
         /// </summary>
         [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
-        public string EventStyleDef { get; set; } = "v1.0:orion:Default";
+        public SetName EventStyleDef { get; set; } = SetName.DEFAULT;
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 100 )]
@@ -31,8 +31,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="DefinitionNotFoundException" ></exception>
         public async Task<EventStyle> GetEventStyleDefinitionAsync() {
 
-            var sb = SetName.Parse( EventStyleDef );
-            return await DefinitionCache.GetEventStyleDefinitionAsync( sb );
+            return await DefinitionCache.GetEventStyleDefinitionAsync( EventStyleDef );
         }
 
         /// <inheritdoc/>

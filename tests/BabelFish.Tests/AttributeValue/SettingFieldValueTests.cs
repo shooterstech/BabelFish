@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -106,13 +105,6 @@ namespace Scopos.BabelFish.Tests.AttributeValue {
             var testAttrValue = Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameTestAttriubte ).Result;
 
             testAttrValue.SetFieldValue( "AString", 1234, "MyFieldKey" );
-        }
-
-        [TestMethod]
-        public async Task EriksPlayground() {
-            var setName = SetName.Parse( "v1.0:nra:Age Categories" );
-            var attrValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
-            attrValue.SetFieldValue( "Age Category", "Sub Junior" );
         }
     }
 }

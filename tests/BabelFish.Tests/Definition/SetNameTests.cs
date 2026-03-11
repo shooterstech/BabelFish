@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.Definition {
 
@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.Tests.Definition {
         /// Tests that we can instantiate SetName objects with valid set name strings.
         /// </summary>
         [TestMethod]
-        public void HappyPathInstantiation () {
+        public void HappyPathInstantiation() {
 
             var aStr = "v1.2:orion:Profile Name";
             var a = SetName.Parse( aStr );
@@ -89,5 +89,33 @@ namespace Scopos.BabelFish.Tests.Definition {
 
         }
 
+        [TestMethod]
+        /// <summary>
+        /// Tests that we can cast SetName objects to strings and that the resulting string is in the correct format.
+        /// </summary>
+        public void SetNameCastingTests() {
+            SetName sn = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
+
+            // Implicit cast
+            string snAsString = sn;
+
+            // Explicit cast
+            string snAsString2 = (string)sn;
+
+            Assert.AreEqual( "v1.0:ntparc:Three-Position Sporter Air Rifle", snAsString );
+
+            Assert.AreEqual( "v1.0:ntparc:Three-Position Sporter Air Rifle", snAsString2 );
+        }
+
+        [TestMethod]
+        public void SetNameEqualityTests() {
+            var sn1 = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
+            var sn2 = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
+            var sn3 = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle" );
+            Assert.IsTrue( sn1.Equals( sn2 ) );
+            Assert.IsFalse( sn1.Equals( sn3 ) );
+            Assert.IsTrue( sn1.Equals( "v1.0:ntparc:Three-Position Sporter Air Rifle" ) );
+            Assert.IsFalse( sn3.Equals( "v1.0:ntparc:Three-Position Sporter Air Rifle" ) );
+        }
     }
 }

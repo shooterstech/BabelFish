@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     public class ReentryMethodConfiguration : MergeConfiguration, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IGetResultListFormatDefinition {
 
@@ -28,21 +25,21 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// </summary>
         //[G_STJ_SER.JsonConverter(typeof(G_BF_STJ_CONV.SetNameConverter))]
         //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ))]
-        public SetName CourseOfFireDef {  get; set; }
+        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The SetName of the RANKING RULE definition that should be used to rank the merged results.
         /// </summary>
         //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
         //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
-        public SetName RankingRuleDef { get; set; }
+        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The SetName of the RESULT LIST FORMAT definition that should be used to format the merged results.
         /// </summary>
         //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
         //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
-        public SetName ResultListFormatDef { get; set; }
+        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef 
@@ -52,7 +49,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <exception cref="ScoposAPIException" ></exception>
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
 
-            if ( CourseOfFireDef is null)
+            if (CourseOfFireDef is null)
                 throw new ArgumentNullException( $"The value for CourseOfFireDef is null." );
 
             return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );

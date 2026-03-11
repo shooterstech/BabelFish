@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
     public class ReentryMethod : MergeMethod {
 
         /// <summary>
@@ -17,7 +14,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private EventComposite _topLevelEvent;
 
-        public ReentryMethod( TournamentMerger tournamentMerger, ReentryMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
+        public ReentryMethod( ResultListMergerEngine tournamentMerger, ReentryMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
 
         }
 
@@ -65,10 +62,10 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                     eventScores.Sort( comparer );
                     highestEventScore = eventScores[0];
                     re.EventScores.Add( reentryEvent.EventName, highestEventScore );
-                    
-                    foreach( var childEvent in reentryEvent.Children ) {
+
+                    foreach (var childEvent in reentryEvent.Children) {
                         key = ResultEvent.KeyForResultCofScore( highestEventScore.MatchId, childEvent.EventName );
-                        if ( re.ResultCofScores.TryGetValue( key, out var score )) {
+                        if (re.ResultCofScores.TryGetValue( key, out var score )) {
                             re.EventScores.Add( childEvent.EventName, score );
                         }
                     }
@@ -80,7 +77,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             if (MergeConfiguration.EventType != EventtType.EVENT) {
                 EventScore aggregate = new EventScore();
                 foreach (var reentryEvent in reentryEvents) {
-                    if ( re.EventScores.TryGetValue( reentryEvent.EventName, out EventScore es )) {
+                    if (re.EventScores.TryGetValue( reentryEvent.EventName, out EventScore es )) {
                         aggregate.Score += es.Score;
                         //aggregate.Projected += es.Projected;
                     }

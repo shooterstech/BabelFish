@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Runtime;
-using NLog;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
 
@@ -20,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// Uses the default RankingRule
         /// </summary>
         /// <param name="resultList"></param>
-        public ResultEngine(ResultList resultList) {
+        public ResultEngine( ResultList resultList ) {
             this.ResultList = resultList;
             this.RankingRule = null; //RankingRule to be learned during the .LearnDefaultRankingRule() method.
         }
@@ -46,37 +41,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// </exception>
         private async Task LearnDefaultRankingRuleAsync() {
 
-            SetName cofSetName;
             SetName rankingRuleSetName;
 
             //Load the Course of Fire definition
-            if (SetName.TryParse( this.ResultList.CourseOfFireDef, out cofSetName )) {
-                this.CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
-            } else {
-                string msg = $"Could not parse the Course of Fire SetName '{this.ResultList.CourseOfFireDef}'.";
-                throw new ScoposException( msg, logger );
-            }
+            this.CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( this.ResultList.CourseOfFireDef );
 
             //If the user passed in the Ranking Rule, we don't need to look it up
             if (this.RankingRule != null)
                 return;
 
             //First try and use the RankingRule that's listed in the ResultList
-            if (!string.IsNullOrEmpty( this.ResultList.RankingRuleDef ) && SetName.TryParse( this.ResultList.RankingRuleDef, out rankingRuleSetName )) {
-                this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Result List." );
+            if (!this.ResultList.RankingRuleDef.IsDefault) {
+                this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( this.ResultList.RankingRuleDef );
+                logger.Info( $"Ranking Rule '{this.ResultList.RankingRuleDef}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Result List." );
                 return;
             }
 
             //If that didn't work, try and use the RankingRule that's listed in the Coruse of fire's Event
             foreach (var @event in this.CourseOfFire.Events) {
                 if (@event.EventName == this.ResultList.EventName) {
-                    if (!string.IsNullOrEmpty( @event.RankingRuleDef ) && SetName.TryParse( @event.RankingRuleDef, out rankingRuleSetName )) {
-                        this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( rankingRuleSetName );
-                        logger.Info( $"Ranking Rule '{rankingRuleSetName}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
-
-                        return;
-                    }
+                    this.RankingRule = await DefinitionCache.GetRankingRuleDefinitionAsync( @event.RankingRuleDef );
+                    logger.Info( $"Ranking Rule '{@event.RankingRuleDef}' will be used to sort Result List '{this.ResultList.ResultName}', learned by reading the .RankingRuleDef value in the Event '{@event.EventName}'." );
                 }
             }
 
@@ -93,21 +78,21 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         public RankingRule RankingRule { get; private set; }
 
-		/// <summary>
-		/// Sets the Result List to use to calculate the Rank Delta for each participant.
-		/// The static class ResultListSlidingWindow is written to know which Result List
-		/// should be set to CompareResultList. 
-		/// <para>A value of null means dont' calculate a comparision.</para>
-		/// </summary>
-		public ResultList CompareResultList { get; set; } = null;
+        /// <summary>
+        /// Sets the Result List to use to calculate the Rank Delta for each participant.
+        /// The static class ResultListSlidingWindow is written to know which Result List
+        /// should be set to CompareResultList. 
+        /// <para>A value of null means dont' calculate a comparision.</para>
+        /// </summary>
+        public ResultList CompareResultList { get; set; } = null;
 
-		/// <summary>
-		/// Enables or disables projecting scores and ranking participants by their projection. 
-		/// This value is traditionally specified by the COURSE OF FIRE Range Scrip's Command.ResultEngineScoreProjection property.
-		/// A value of true (to disable) only has an effect if score projection would otherwise
-		/// be used (e.g. result list status is INTERMEDIATE). A value of false, has no effect.
-		/// </summary>
-		public bool DisableScoreProjection { get; set; } = false;
+        /// <summary>
+        /// Enables or disables projecting scores and ranking participants by their projection. 
+        /// This value is traditionally specified by the COURSE OF FIRE Range Scrip's Command.ResultEngineScoreProjection property.
+        /// A value of true (to disable) only has an effect if score projection would otherwise
+        /// be used (e.g. result list status is INTERMEDIATE). A value of false, has no effect.
+        /// </summary>
+        public bool DisableScoreProjection { get; set; } = false;
 
         /// <summary>
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
@@ -184,7 +169,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             //Project scores and perform a ranking by Projected Score
             //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL), and the user has not turned it off.
-            if (this.ResultList.Status == ResultStatus.INTERMEDIATE && ! DisableScoreProjection) {
+            if (this.ResultList.Status == ResultStatus.INTERMEDIATE && !DisableScoreProjection) {
 
 
                 //Project (predict) the scores of athlets at the end of the match.
@@ -272,12 +257,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             //Calculate the RankDelta 
             ResultEvent compare;
-            if (this.CompareResultList != null 
+            if (this.CompareResultList != null
                 && this.CompareResultList.ResultName == this.ResultList.ResultName
-                && this.ResultList.Status == ResultStatus.INTERMEDIATE ) {
+                && this.ResultList.Status == ResultStatus.INTERMEDIATE) {
                 foreach (var re in this.ResultList.Items) {
                     if ((re.CurrentlyCompetingOrRecentlyDone())
-						&& this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )
+                        && this.CompareResultList.TryGetByResultCOFID( re.ResultCOFID, out compare )
                         && compare.CurrentlyCompetingOrRecentlyDone()) {
 
                         if (this.ResultList.Projected && this.CompareResultList.Projected) {
@@ -289,9 +274,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                             re.RankDelta = compare.Rank - re.ProjectedRank;
                         } else {
                             logger.Error( $"RE {re.Participant.DisplayName} {re.ResultCOFID} {re.Rank} {this.ResultList.LastUpdated}" );
-							logger.Error( $"Compare {compare.Participant.DisplayName} {compare.ResultCOFID} {compare.Rank} {CompareResultList.LastUpdated}" );
+                            logger.Error( $"Compare {compare.Participant.DisplayName} {compare.ResultCOFID} {compare.Rank} {CompareResultList.LastUpdated}" );
                             logger.Error( $"{re.RankDelta}" );
-							re.RankDelta = compare.Rank - re.Rank;
+                            re.RankDelta = compare.Rank - re.Rank;
                         }
                     } else {
                         re.RankDelta = 0;

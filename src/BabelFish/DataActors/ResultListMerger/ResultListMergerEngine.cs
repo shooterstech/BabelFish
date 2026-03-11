@@ -4,7 +4,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 
-namespace Scopos.BabelFish.DataActors.Tournaments {
+namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     /// <summary>
     /// A TournamentMerger does the heavy lifting of merging Result Lists together.
@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
     /// in one or more of the Tournament <see cref="ResultListMember">members</see>, and then asks the <see cref="MergeMethod"/> to
     /// perform its merging calculation.</para>
     /// </summary>
-    public class TournamentMerger {
+    public class ResultListMergerEngine {
 
         public Tournament Tournament { get; private set; }
 
@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <summary>
         /// Constructor. Purposefully private, users must call <see cref="FactoryAsync(Tournament, string)"/> instead.
         /// </summary>
-        private TournamentMerger() {
+        private ResultListMergerEngine() {
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
         /// <param name="resultName"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">If resultName is not found within the Tournament's MergedResultLists.</exception>
-        public static async Task<TournamentMerger> FactoryAsync( Tournament tournament, string resultName ) {
+        public static async Task<ResultListMergerEngine> FactoryAsync( Tournament tournament, string resultName ) {
 
             //Test that resultName is found in the tournament's .MergedResultLists list.
             if (!tournament.MergedResultLists.Any( mrl => mrl.ResultName == resultName )) {
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
                 throw new ArgumentException( msg );
             }
 
-            TournamentMerger tm = new TournamentMerger();
+            ResultListMergerEngine tm = new ResultListMergerEngine();
             tm.Tournament = tournament;
             tm.ResultName = resultName;
 
@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
             var rlf = new ResultListFormat();
             rlf.SetDefaultValues();
             rlf.ScoreConfigDefault = _mergeResultList.Configuration.ScoreConfigName;
-            rlf.ScoreFormatCollectionDef = _mergeResultList.Configuration.ScoreFormatCollectionDef.ToString();
+            rlf.ScoreFormatCollectionDef = _mergeResultList.Configuration.ScoreFormatCollectionDef;
             rlf.Fields.Clear();
 
             rlf.Fields.Add( new ResultListField() {
@@ -344,7 +344,7 @@ namespace Scopos.BabelFish.DataActors.Tournaments {
 
             ResultList rl = new ResultList();
             //Each ResultList instance needs a COURSE OF FIRE definition. However, these merged result lists are dynamic ... so not sure yet what to put as the .CourseOfFireDef
-            rl.CourseOfFireDef = "v1.0:ntparc:40 Shot Standing";
+            rl.CourseOfFireDef = SetName.Parse( "v1.0:ntparc:40 Shot Standing" );
             rl.EventName = _mergeResultList.ResultName;
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
             rl.Items.AddRange( _mergedResultEvents.Values );

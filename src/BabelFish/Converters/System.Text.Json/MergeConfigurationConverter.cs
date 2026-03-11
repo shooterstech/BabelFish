@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.DataActors.Tournaments;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
     public class MergeConfigurationConverter : JsonConverter<MergeConfiguration> {

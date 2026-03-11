@@ -17,6 +17,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// to retreive either the textual value of each cell or a CallValue object that is the text value plus
     /// css class list.
     /// </summary>
+    /// <remarks>
+    /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+    /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+    /// the result list intermediate formatter to format the result list to the console.
+    /// </remarks>
     public class ResultListIntermediateFormatted {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
@@ -320,13 +325,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             get {
                 //The ScoreFormatCollection should be included in the ResultListFormat,
                 //but in case it isn't, ,pass back the default value of Standard Score Formats.
-                SetName setName;
-                try {
-                    setName = SetName.Parse( ResultListFormat.ScoreFormatCollectionDef );
-                } catch {
-                    setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
-                }
-                return setName;
+                if (!ResultListFormat.ScoreFormatCollectionDef.IsDefault)
+                    return ResultListFormat.ScoreFormatCollectionDef;
+                else
+                    return SetName.Parse( "v1.0:orion:Standard Score Formats" );
             }
         }
 
@@ -898,10 +900,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             foreach (var metaData in this.ResultList.Metadata.Values) {
                 //Make the request for all the squadding lists in parrallel
                 try {
-                    var matchId = new MatchID( metaData.MatchID );
                     var squaddingListName = metaData.SquaddingListName;
                     if (!string.IsNullOrEmpty( squaddingListName )) {
-                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( metaData.MatchID, squaddingListName ) );
                     }
                 } catch (Exception ex) {
                     _logger.Error( ex );
