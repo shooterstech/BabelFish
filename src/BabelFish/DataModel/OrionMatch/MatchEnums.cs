@@ -15,7 +15,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// AttributeFilter class is of concrete type AttributeFilterEquation
         /// </summary>
-        EQUATION
+        EQUATION,
+
+        /// <summary>
+        /// None type AttributeFilter
+        /// </summary>
+        NONE
     }
 
     public enum AttributeFilterRule {
@@ -204,6 +209,52 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         REMARK
     };
+
+    /// <summary>
+    /// Entry status for a Match Participant in a Course of Fire. Basically whether the Participant is entered in the Course of Fire, not entered, or withdrew from the Course of Fire.
+    /// </summary>
+    public enum EntryStatus {
+        /// <summary>
+        /// The Participant is not entered in this Course of Fire.
+        /// </summary>
+        NOT_ENTERED,
+        /// <summary>
+        /// The Participant is entered in this Course of Fire.
+        /// </summary>
+        ENTERED,
+        /// <summary>
+        /// The Participant was entered in this Course of Fire, but has withdrew and will not be competing in this Course of Fire.
+        /// </summary>
+        WITHDREW
+    }
+
+    /// <summary>
+    /// The types of registration entires that a <see cref="CourseOfFireStructure"/> can accept.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum EntryTypes {
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for both Individuals and Teams. This is the default.
+        /// </summary>
+        [Description( "IndividualAndTeam" )]
+        [EnumMember( Value = "IndividualAndTeam" )]
+        INDIVIDUAL_AND_TEAM,
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for Individuals only.
+        /// </summary>
+        [Description( "IndividualOnly" )]
+        [EnumMember( Value = "IndividualOnly" )]
+        INDIVIDUAL_ONLY,
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for Teams only.
+        /// </summary>
+        [Description( "TeamOnly" )]
+        [EnumMember( Value = "TeamOnly" )]
+        TEAM_ONLY
+    }
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueRankingRuleType {

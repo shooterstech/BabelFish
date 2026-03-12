@@ -1,7 +1,8 @@
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
-    /// Class representing a Participant and their squadding assignment in a Match's event. 
+    /// REST API Response Object class representing a Participant and their squadding assignment in a Match's event.
+    /// It is the Item in a SquaddingList.
     /// </summary>
     public class Squadding : IRLIFItem {
 

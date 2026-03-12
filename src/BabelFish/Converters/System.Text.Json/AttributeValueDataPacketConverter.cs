@@ -50,6 +50,15 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             ((AttributeValueDataPacketMatch)attributeValueDataPacket).CourseOfFireId = temp.GetInt32();
                         break;
 
+                    case AttributeConfiguration.CONCRETE_CLASS_ID:
+                        attributeValueDataPacket = new AttributeConfiguration();
+
+                        if (root.TryGetProperty( "CourseOfFireId", out temp ))
+                            ((AttributeConfiguration)attributeValueDataPacket).CourseOfFireId = temp.GetInt32();
+                        if (root.TryGetProperty( "Constant", out temp ))
+                            ((AttributeConfiguration)attributeValueDataPacket).Constant = temp.GetBoolean();
+                        break;
+
                     case AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID:
                     default:
                         attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
@@ -79,7 +88,13 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     var attrValueAsJsonElement = CopyJsonElement( root.GetProperty( "AttributeValue" ) );
                     attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( attributeValueDataPacket.AttributeDef, attrValueAsJsonElement );
                     if (root.TryGetProperty( "Visibility", out temp ))
-                        attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), temp.GetString() );
+                        attributeValueDataPacket.Visibility = temp.GetString() switch {
+                            "Public" => VisibilityOption.PUBLIC,
+                            "Internal" => VisibilityOption.INTERNAL,
+                            "Protected" => VisibilityOption.PROTECTED,
+                            "Private" => VisibilityOption.PRIVATE,
+                            _ => VisibilityOption.PRIVATE
+                        };
                 }
 
                 return attributeValueDataPacket;
@@ -253,6 +268,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
         }
 
     }
+
     public class AttributeValueDataPacketMatchConverter : JsonConverter<AttributeValueDataPacketMatch> {
 
         private Logger logger = LogManager.GetCurrentClassLogger();

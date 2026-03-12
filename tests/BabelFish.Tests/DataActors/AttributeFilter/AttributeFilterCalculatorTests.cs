@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -9,43 +8,54 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
     [TestClass]
     public class AttributeFilterCalculatorTests : BaseTestClass {
 
+        /// <summary>
+        /// Tests the AttributeFilterCalculator with a single attribute value on the Participant and various filter rules (HAVE_ONE, HAVE_ALL, NOT_HAVE_ANY),
+        /// with each filter only have one value that either matches or does not match the Participant's attribute value.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task SingleAttributeValue() {
             Participant participant = new Individual();
             SetName setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
+
+            // Create a Participant with the "Three-Position Air Rifle Type" attribute set to "Sporter"
             var attrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
             attrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
-            participant.AttributeValues.Add( new AttributeValueDataPacketMatch( attrValue ) );
+            participant.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attrValue ) );
+
+            // Create some Attribute Values to test against 
+            var sporterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            sporterAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
+            var dataPacketMatchSporter = await AttributeValueDataPacketMatch.CreateAsync( sporterAttrValue );
+
+            var precisionAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            precisionAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
+            var dataPacketMatchPrecision = await AttributeValueDataPacketMatch.CreateAsync( precisionAttrValue );
+
 
             AttributeFilterAttributeValue sporterFilterHasOne = new AttributeFilterAttributeValue();
-            sporterFilterHasOne.AttributeDef = setName;
             sporterFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            sporterFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasOne.Values.Add( dataPacketMatchSporter );
 
             AttributeFilterAttributeValue precisionFilterHasOne = new AttributeFilterAttributeValue();
-            precisionFilterHasOne.AttributeDef = setName;
             precisionFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            precisionFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasOne.Values.Add( dataPacketMatchPrecision );
 
             AttributeFilterAttributeValue sporterFilterHasAll = new AttributeFilterAttributeValue();
-            sporterFilterHasAll.AttributeDef = setName;
             sporterFilterHasAll.FilterRule = AttributeFilterRule.HAVE_ALL;
-            sporterFilterHasAll.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasAll.Values.Add( dataPacketMatchSporter );
 
             AttributeFilterAttributeValue precisionFilterHasAll = new AttributeFilterAttributeValue();
-            precisionFilterHasAll.AttributeDef = setName;
             precisionFilterHasAll.FilterRule = AttributeFilterRule.HAVE_ALL;
-            precisionFilterHasAll.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasAll.Values.Add( dataPacketMatchPrecision );
 
             AttributeFilterAttributeValue sporterFilterHasNone = new AttributeFilterAttributeValue();
-            sporterFilterHasNone.AttributeDef = setName;
             sporterFilterHasNone.FilterRule = AttributeFilterRule.NOT_HAVE_ANY;
-            sporterFilterHasNone.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasNone.Values.Add( dataPacketMatchSporter );
 
             AttributeFilterAttributeValue precisionFilterHasNone = new AttributeFilterAttributeValue();
-            precisionFilterHasNone.AttributeDef = setName;
             precisionFilterHasNone.FilterRule = AttributeFilterRule.NOT_HAVE_ANY;
-            precisionFilterHasNone.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasNone.Values.Add( dataPacketMatchPrecision );
 
 
             Assert.IsTrue( AttributeFilterCalculator.Passes( sporterFilterHasOne, participant ) );
@@ -61,32 +71,49 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
             Participant participant = new Individual();
             SetName setNameAirRifleType = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
             SetName setNameNewShooter = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
+
+            // Create a Participant with the "Three-Position Air Rifle Type" attribute set to "Sporter" and Net Shooter set to "New Shooter"
             var airRifleTypeAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameAirRifleType );
             airRifleTypeAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
+            var nsAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameNewShooter );
+            nsAttrValue.SetFieldValue( "Three-Position New Shooter", "New Shooter" );
+            participant.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( airRifleTypeAttrValue ) );
+            participant.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( nsAttrValue ) );
+
+            // Create some Attribute Values to test against. 
+            var sporterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameAirRifleType );
+            sporterAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
+            var dataPacketMatchSporter = await AttributeValueDataPacketMatch.CreateAsync( sporterAttrValue );
+
+            var precisionAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameAirRifleType );
+            precisionAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
+            var dataPacketMatchPrecision = await AttributeValueDataPacketMatch.CreateAsync( precisionAttrValue );
+
             var newShooterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameNewShooter );
             newShooterAttrValue.SetFieldValue( "Three-Position New Shooter", "New Shooter" );
-            participant.AttributeValues.Add( new AttributeValueDataPacketMatch( airRifleTypeAttrValue ) );
-            participant.AttributeValues.Add( new AttributeValueDataPacketMatch( newShooterAttrValue ) );
+            var dataPacketNewShooter = await AttributeValueDataPacketMatch.CreateAsync( newShooterAttrValue );
+
+            var oldShooterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameNewShooter );
+            oldShooterAttrValue.SetFieldValue( "Three-Position New Shooter", "Old Shooter" );
+            var dataPacketOldShooter = await AttributeValueDataPacketMatch.CreateAsync( oldShooterAttrValue );
+
+
 
             AttributeFilterAttributeValue sporterFilterHasOne = new AttributeFilterAttributeValue();
-            sporterFilterHasOne.AttributeDef = setNameAirRifleType;
             sporterFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            sporterFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Sporter" ) );
+            sporterFilterHasOne.Values.Add( dataPacketMatchSporter );
 
             AttributeFilterAttributeValue precisionFilterHasOne = new AttributeFilterAttributeValue();
-            precisionFilterHasOne.AttributeDef = setNameAirRifleType;
             precisionFilterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            precisionFilterHasOne.Values.Add( new ConstantFieldValue( "Three-Position Air Rifle Type", "Precision" ) );
+            precisionFilterHasOne.Values.Add( dataPacketMatchPrecision );
 
             AttributeFilterAttributeValue newShooterHasOne = new AttributeFilterAttributeValue();
-            newShooterHasOne.AttributeDef = setNameNewShooter;
             newShooterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            newShooterHasOne.Values.Add( new ConstantFieldValue( "Three-Position New Shooter", "New Shooter" ) );
+            newShooterHasOne.Values.Add( dataPacketNewShooter );
 
             AttributeFilterAttributeValue oldShooterHasOne = new AttributeFilterAttributeValue();
-            oldShooterHasOne.AttributeDef = setNameNewShooter;
             oldShooterHasOne.FilterRule = AttributeFilterRule.HAVE_ONE;
-            oldShooterHasOne.Values.Add( new ConstantFieldValue( "Three-Position New Shooter", "Old Shooter" ) );
+            oldShooterHasOne.Values.Add( dataPacketOldShooter );
 
             AttributeFilterEquation sporterAndNewShooter = new AttributeFilterEquation();
             sporterAndNewShooter.Boolean = ShowWhenBoolean.AND;

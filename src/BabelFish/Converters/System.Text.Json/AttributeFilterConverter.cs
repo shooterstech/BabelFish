@@ -21,9 +21,10 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                         return JsonSerializer.Deserialize<AttributeFilterEquation>( root.GetRawText(), options );
                     case "ATTRIBUTE_VALUE":
                         return JsonSerializer.Deserialize<AttributeFilterAttributeValue>( root.GetRawText(), options );
+                    case "NONE":
                     default:
                         //If we get here, it is probable because of ill-formed json
-                        return new AttributeFilterAttributeValue();
+                        return AttributeFilter.DEFAULT;
                 }
             }
         }

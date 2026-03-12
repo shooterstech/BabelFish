@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// <seealso cref="AttributeDef"/> that defines the data, as well as the value <seealso cref="AttributeValue"/>
     /// </summary>
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
-    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass, IGetAttributeDefinition {
+    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass, IGetAttributeDefinition, IFinishInitializationAsync {
 
         /// <summary>
         /// Default constructor.
@@ -45,8 +45,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// is then handled in an async call sepeartly.
         /// </summary>
         /// <returns></returns>
-        protected internal async Task FinishInitializationAsync() {
-            AttributeValue = await AttributeValueTask;
+        public async Task FinishInitializationAsync() {
+            if (AttributeValueTask != null)
+                AttributeValue = await AttributeValueTask;
         }
 
 
@@ -62,10 +63,24 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
             return await DefinitionCache.GetAttributeDefinitionAsync( AttributeDef );
         }
 
+        private VisibilityOption _visibility = VisibilityOption.PRIVATE;
+
         /// <summary>
         /// Property storing how broadly this AttributeValue may be shared.
+        /// <para>Checks against the maximum visibility allowed by the Attribute definition. If the passed in value is greater than the max visibility, the max visibility is stored instead.</para>
         /// </summary>
-        public VisibilityOption Visibility { get; set; }
+        public VisibilityOption Visibility {
+            get { return _visibility; }
+            set {
+                if (this.AttributeValue is not null
+                    && this.AttributeValue.Definition is not null
+                    && value > this.AttributeValue.Definition.MaxVisibility) {
+                    _visibility = this.AttributeValue.Definition.MaxVisibility;
+                } else {
+                    _visibility = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Implementation of the IDeserializableAbstractClass interface.

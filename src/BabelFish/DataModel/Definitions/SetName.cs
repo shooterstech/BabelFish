@@ -340,13 +340,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public override bool Equals( object obj ) {
-            if (obj == null || !(obj is SetName))
+            if (obj == null || !(obj is SetName)) {
+                if (obj is string) {
+                    return this.ToString() == (string)obj;
+                }
                 return false;
+            }
             return base.Equals( (SetName)obj );
         }
 
         public override int GetHashCode() {
-            return ToString().GetHashCode();
+            return (_majorVersion << 16 | _minorVersion) ^ _nameSpace.GetHashCode() ^ _properName.GetHashCode();
         }
 
         public bool Equals( HierarchicalName other ) {
@@ -355,6 +359,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public static void ClearCache() {
             _cache.Clear();
+        }
+
+        /// <summary>
+        /// Implicitly converts a SetName instance to its string representation.
+        /// <para>This conversion returns the default string representation of SetName if the provided
+        /// instance is null.</para>
+        /// </summary>
+        /// <remarks>It is safe to mark this as an implicit operator since SetName has a well known string representation.</remarks>
+        /// <param name="sn">The SetName instance to convert. If null, the default string representation is returned.</param>
+        public static implicit operator string( SetName sn ) {
+            if (sn is null)
+                return SetName.DEFAULT.ToString();
+            else
+                return sn.ToString();
+
         }
     }
 }

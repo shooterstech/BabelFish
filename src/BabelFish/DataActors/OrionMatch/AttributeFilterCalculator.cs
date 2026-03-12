@@ -110,23 +110,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public static bool Passes( AttributeFilterAttributeValue filter, Participant participant ) {
 
-            AttributeValue? attrValue = null;
-            foreach (var attrValueToInspect in participant.AttributeValues) {
-                if (attrValueToInspect.AttributeDef.Equals( filter.AttributeDef )) {
-                    attrValue = attrValueToInspect.AttributeValue;
-                    break;
-                }
-            }
-
             switch (filter.FilterRule) {
 
                 case AttributeFilterRule.HAVE_ONE:
-                    // To pass, the Participant must have one of the values listed in
-                    // the AttributeFilterAttributeValue's .Values array.
-                    if (attrValue == null) return false;
-
                     foreach (var expectedValue in filter.Values) {
-                        if (HasValue( attrValue, expectedValue )) {
+                        if (HasValue( expectedValue, participant )) {
                             return true;
                         }
                     }
@@ -134,23 +122,17 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     return false;
 
                 case AttributeFilterRule.HAVE_ALL:
-                    // To pass, the Participant must have all of the values listed in
-                    // the AttributeFilterAttributeValue's .Values array, but may have additional values.
-                    if (attrValue == null) return false;
 
                     bool foundValue = true;
                     foreach (var expectedValue in filter.Values) {
-                        foundValue &= HasValue( attrValue, expectedValue );
+                        foundValue &= HasValue( expectedValue, participant );
                     }
                     return foundValue;
 
                 case AttributeFilterRule.NOT_HAVE_ANY:
-                    // To pass, the Participant must not have any of the values listed in
-                    // the AttributeFilterAttributeValue's .Values array.
-                    if (attrValue == null) return true;
 
                     foreach (var expectedValue in filter.Values) {
-                        if (HasValue( attrValue, expectedValue )) {
+                        if (HasValue( expectedValue, participant )) {
                             return false;
                         }
                     }
@@ -163,24 +145,23 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         }
 
         /// <summary>
-        /// Tests if the passed in Participant satisfies the conditions specified in the passed in AttributeFilter.
+        /// Returns true if the passed in Participant has an AttributeValue that's equal to the value specified in the passed in AttributeValueDataPacketMatch filter, and false otherwise.
         /// </summary>
         /// <param name="filter"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public static bool Passes( AttributeFilterAttributeValue filter, IParticipant participant ) {
-            return AttributeFilterCalculator.Passes( filter, participant.Participant );
-        }
+        private static bool HasValue( AttributeValueDataPacketMatch filter, Participant participant ) {
+            AttributeValue? attrValue = null;
+            foreach (var attrValueToInspect in participant.AttributeValues) {
+                if (attrValueToInspect.AttributeDef.Equals( filter.AttributeDef )) {
+                    attrValue = attrValueToInspect.AttributeValue;
+                    break;
+                }
+            }
 
-        /// <summary>
-        /// Helper method that tests the passed in AttributeValue with the passed in expected value
-        /// </summary>
-        /// <param name="attrValue"></param>
-        /// <param name="expectedAttrValue">Item1 is the FieldName, Item2 is the expected fieldValue</param>
-        /// <returns></returns>
-        private static bool HasValue( AttributeValue attrValue, ConstantFieldValue expectedAttrValue ) {
-            var foundFieldValue = attrValue.GetFieldValue( expectedAttrValue.FieldName );
-            return foundFieldValue == expectedAttrValue.Value;
+            if (attrValue == null) return false;
+
+            return attrValue.Equals( filter.AttributeValue );
         }
     }
 }

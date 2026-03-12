@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests.DefinitionAPI;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-	[Serializable]
+    [Serializable]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DefinitionConverter ) )]
-    public abstract class Definition : SparseDefinition, IReconfigurableRulebookObject {
+    public abstract class Definition : SparseDefinition, IReconfigurableRulebookObject, ISaveToFile {
 
         private string _commonName = string.Empty;
 
@@ -23,16 +20,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             Discontinued = false;
         }
 
-        internal void OnDeserializedMethod(StreamingContext context) {
-			//Note, each subclass of Definition will have to call base.OnSerializedMethod
+        internal void OnDeserializedMethod( StreamingContext context ) {
+            //Note, each subclass of Definition will have to call base.OnSerializedMethod
 
-			//Assures that Tags won't be null and as a default will be an empty list.
-		}
+            //Assures that Tags won't be null and as a default will be an empty list.
+        }
 
-		/// <summary>
-		/// HierarchicalName is namespace:properName
-		/// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 3 )]
+        /// <summary>
+        /// HierarchicalName is namespace:properName
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 3 )]
         [G_NS.JsonProperty( Order = 3 )]
         public string HierarchicalName { get; set; } = string.Empty;
 
@@ -123,7 +120,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_STJ_SER.JsonPropertyOrder( 98 )]
         [G_NS.JsonProperty( Order = 98 )]
         [DefaultValue( "2020-03-31" )]
-		public string JSONVersion { get; set; } = "2020-03-31";
+        public string JSONVersion { get; set; } = "2020-03-31";
 
         /// <inheritdoc/>
         [G_STJ_SER.JsonPropertyOrder( 99 )]
@@ -137,12 +134,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// If false, returns the Version based on the version in the file
         /// </summary>
         /// <returns></returns>
-        public SetName GetSetName(bool originalSetName = false) {
+        public SetName GetSetName( bool originalSetName = false ) {
             SetName sn;
             if (originalSetName)
-                Scopos.BabelFish.DataModel.Definitions.SetName.TryParse(SetName, out sn);
+                Scopos.BabelFish.DataModel.Definitions.SetName.TryParse( SetName, out sn );
             else
-                Scopos.BabelFish.DataModel.Definitions.SetName.TryParse(Version, HierarchicalName, out sn);
+                Scopos.BabelFish.DataModel.Definitions.SetName.TryParse( Version, HierarchicalName, out sn );
             return sn;
         }
 
@@ -170,7 +167,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //Check if this definition is for a specific version (e.g. v1.10) and not a most recent version (e.g. v1.0).
             //If it is for a specific version, then there can never be an update for it. 
             if (currentSetName.MinorVersion != 0)
-                return false; 
+                return false;
 
             var specificVersion = this.GetDefinitionVersion();
             //Request a check of the current version stored in the Rest API
@@ -182,10 +179,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 //The happy path
                 var apiVersion = versionResponse.Value.GetDefinitionVersion();
                 return specificVersion < apiVersion;
-            } else if ( versionResponse.OverallStatusCode == Responses.RequestStatusCode.TimeOutError ) {
+            } else if (versionResponse.OverallStatusCode == Responses.RequestStatusCode.TimeOutError) {
                 //Likely user is not connected to Internet
                 return false;
-            } else if ( versionResponse.RestApiStatusCode == System.Net.HttpStatusCode.NotFound ) {
+            } else if (versionResponse.RestApiStatusCode == System.Net.HttpStatusCode.NotFound) {
                 //Likely means that this is a new Definition, that's not been uploaded before
                 return false;
             } else {
@@ -199,11 +196,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
         /// </summary>
         /// <returns></returns>
-        public string GetFileName( bool useDevelopmentVersioning = false ) {
+        public string GetFileName( bool useDevelopmentVersioning ) {
             if (!useDevelopmentVersioning)
                 return $"{SetName.ToString().Replace( ':', ' ' )}.json";
 
             return $"d0.0 {HierarchicalName.ToString().Replace( ':', ' ' )}.json";
+        }
+
+        /// <inheritdoc />
+        public string GetFileName() {
+            return GetFileName( false );
         }
 
         /// <summary>
@@ -254,7 +256,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// returns that standard relative path. 
         /// </summary>
         /// <returns></returns>
-        public string GetRelativePath( ) {
+        public string GetRelativePath() {
             string relativePath = $"DEFINITIONS\\{Type.Description()}\\{GetFileName( false )}";
             return relativePath;
         }

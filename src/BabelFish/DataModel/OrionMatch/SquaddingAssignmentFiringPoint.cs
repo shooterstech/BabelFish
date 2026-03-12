@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
@@ -11,47 +7,55 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class SquaddingAssignmentFiringPoint : SquaddingAssignment, IComparable<SquaddingAssignmentFiringPoint> {
 
         public SquaddingAssignmentFiringPoint() : base() {
-			SquaddingType = SquaddingAssignmentType.FIRING_POINT;
-
-			ReentryTag = "";
+            SquaddingType = SquaddingAssignmentType.FIRING_POINT;
         }
-
-        /// <summary>
-        /// The name of the firing point the Individual is squadded on. Usually represented by an integer or a single character.
-        /// </summary>
-        public string FiringPoint { get; set; }
 
         /// <summary>
         /// The name of the relay the Individual is squadded on. Usually represented by an integer value.
         /// </summary>
+        [G_NS.JsonProperty( Order = 5 )]
         public string Relay { get; set; }
 
-        public int CompareTo(SquaddingAssignmentFiringPoint other) {
-            int compare = this.Range.CompareTo(other.Range);
+        /// <summary>
+        /// The name of the firing point the Individual is squadded on. Usually represented by an integer or a single character.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 6 )]
+        public string FiringPoint { get; set; }
+
+        /// <inheritdoc/>
+        public override bool NotYetSquadded {
+            get {
+                // EKA NOTE: March 2026 I could be persuaded on how to calculate NotYetSquaddedd. Right now my thinking is, unless there is both a Relay and a FiringPoint, the Participant is not yet completly squadded.
+                return (string.IsNullOrWhiteSpace( Relay ) || Relay == "0") && (string.IsNullOrWhiteSpace( FiringPoint ) || FiringPoint == "0");
+            }
+        }
+
+        public int CompareTo( SquaddingAssignmentFiringPoint other ) {
+            int compare = this.Range.CompareTo( other.Range );
             if (compare != 0)
                 return compare;
 
-            compare = this.Relay.CompareTo(other.Relay);
+            compare = this.Relay.CompareTo( other.Relay );
             if (compare != 0)
                 return compare;
 
-            compare = this.FiringPoint.CompareTo(other.FiringPoint);
+            compare = this.FiringPoint.CompareTo( other.FiringPoint );
             if (compare != 0)
                 return compare;
 
-            compare = this.ReentryTag.CompareTo(other.ReentryTag);
+            compare = this.ReentryTag.CompareTo( other.ReentryTag );
             if (compare != 0)
                 return compare;
 
-            return this.FiringOrder.CompareTo(other.FiringOrder);
+            return this.FiringOrder.CompareTo( other.FiringOrder );
         }
 
         public override string ToString( bool useAbbreviation ) {
             if (useAbbreviation) {
                 return $"R{this.Relay} FP{this.FiringPoint}";
             } else {
-				return $"Relay {this.Relay} FP {this.FiringPoint}";
-			}
+                return $"Relay {this.Relay} FP {this.FiringPoint}";
+            }
         }
     }
 }

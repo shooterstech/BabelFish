@@ -1,3 +1,4 @@
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -7,7 +8,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// specifies the boolean logic of how multiple AttributeFilter instances are combined.
     ///
     /// </summary>
-    public class AttributeFilterEquation : AttributeFilter, IEquatable<AttributeFilterEquation>, IEqualityComparer<AttributeFilterEquation> {
+    public class AttributeFilterEquation : AttributeFilter, IEquatable<AttributeFilterEquation>, IEqualityComparer<AttributeFilterEquation>, IFinishInitializationAsync {
 
         /// <summary>
         /// Constructor
@@ -16,37 +17,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this.Operation = AttributeFilterOperation.EQUATION;
         }
 
-        /*
-        {
-            "Operation" : "EQUATION", //Consistent with ShowWhen
-            "Boolean" : "AND", //Consistent with ShowWhen
-            "Arguments" : [ //Consistent with ShowWhen
-                {
-                    "Operation" : "ATTRIBUTE_VALUE",
-                    "AttributeValue" : {
-                        "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                        "Visibility": "PUBLIC",
-                        "AttributeValue": {
-                            "Three-Position Air Rifle Type": "Sporter"
-                        },
-                        "ConcreteClassId": 2
-                    }
-                }
-            ]
-        }
-        */
-
         /// <summary>
         /// The boolean operation to apply.
         /// </summary>
         /// <remarks>Using the existing enum ShowWhenBoolean, which has all of the boolean operations defined.
         /// Choosing not to rename it (for now) to be more generic, as that would be a breaking change.</remarks>
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public ShowWhenBoolean Boolean { get; set; } = ShowWhenBoolean.AND;
 
         /// <summary>
         /// The list of AttributeFilter to apply the boolean logic too.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public List<AttributeFilter> Arguments { get; set; } = new List<AttributeFilter>();
+
+        /// <inheritdoc />
+        public override void UpdateCourseOfFireId( int courseOfFireId ) {
+            foreach (var arg in this.Arguments) {
+                arg.UpdateCourseOfFireId( courseOfFireId );
+            }
+        }
+
+        /// <inheritdoc />
+        public override int Count => Arguments.Sum( arg => arg.Count );
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return string.Join( $" {Boolean} ", Arguments );
+        }
 
         /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
@@ -79,5 +77,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public int GetHashCode( AttributeFilterEquation obj ) => obj.GetHashCode();
+
+        /// <inheritdoc />
+        public override async Task FinishInitializationAsync() {
+            foreach (var arg in Arguments) {
+                await arg.FinishInitializationAsync();
+            }
+        }
     }
 }

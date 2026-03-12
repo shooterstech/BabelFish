@@ -1,3 +1,5 @@
+using Scopos.BabelFish.DataModel.AttributeValue;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
@@ -9,27 +11,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.AttributeFilterConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeFilterConverter ) )]
-    public abstract class AttributeFilter {
+    public abstract class AttributeFilter : IFinishInitializationAsync {
 
-        /*
-        {
-            "Operation" : "EQUATION", //Consistent with ShowWhen
-            "Boolean" : "AND", //Consistent with ShowWhen
-            "Arguments" : [ //Consistent with ShowWhen
-                {
-                    "Operation" : "ATTRIBUTE_VALUE",
-                    "AttributeValue" : {
-                        "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                        "Visibility": "PUBLIC",
-                        "AttributeValue": {
-                            "Three-Position Air Rifle Type": "Sporter"
-                        },
-                        "ConcreteClassId": 2
-                    }
-                }
-            ]
-        }
-        */
+        public static readonly AttributeFilter DEFAULT = new AttributeFilterNone();
 
         /// <summary>
         /// Concret class identifier. 
@@ -37,5 +21,53 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>Concrete class implementations should set this value in their constructors.</remarks>
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public AttributeFilterOperation Operation { get; protected set; } = AttributeFilterOperation.ATTRIBUTE_VALUE;
+
+        /// <summary>
+        /// Helper method used by <see cref="CourseOfFireStructure.AddResultList(ResultListAbbr)"/>, to update the CourseOfFireId of this AttributeFilter and all of its arguments.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        public abstract void UpdateCourseOfFireId( int courseOfFireId );
+
+        /// <summary>
+        /// Returns true if this AttributeFilter is the default filter (i.e. it has no arguments and does not filter out any participants).
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool IsDefault() {
+            return Operation == AttributeFilterOperation.NONE;
+        }
+
+        /// <summary>
+        /// Returns the number of AttributeFilterAtributeValue arguments in total.
+        /// <para>Largely a helper property used in unit tests, purposefully not serialized.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public abstract int Count { get; }
+
+        /// <inheritdoc />
+        public abstract Task FinishInitializationAsync();
+
+    }
+
+    public class AttributeFilterNone : AttributeFilter {
+        public AttributeFilterNone() {
+            Operation = AttributeFilterOperation.NONE;
+        }
+
+        public override void UpdateCourseOfFireId( int courseOfFireId ) {
+            // Do nothing, since this filter has no arguments.
+        }
+
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        public override int Count => 0;
+
+        /// <inheritdoc />
+        public override int GetHashCode() => 0;
+
+        /// <inheritdoc />
+        public override async Task FinishInitializationAsync() {
+            //Do nothing, since this filter has no attribute values to initialize.
+            ;
+        }
     }
 }

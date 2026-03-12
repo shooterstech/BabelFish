@@ -1,3 +1,4 @@
+using System.IO;
 using OfficeOpenXml;
 using Scopos.BabelFish.APIClients;
 
@@ -5,6 +6,9 @@ namespace Scopos.BabelFish.Tests {
 
     [TestClass]
     public class BaseTestClass {
+
+
+        public static DirectoryInfo RelativeDirectoryForTesting { get; set; } = new System.IO.DirectoryInfo( @"C:\temp" );
 
         [TestInitialize]
         public virtual void InitializeTest() {
@@ -23,7 +27,7 @@ namespace Scopos.BabelFish.Tests {
             }
             
 
-            DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
+            DefinitionAPIClient.LocalStoreDirectory = RelativeDirectoryForTesting;
 
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         }

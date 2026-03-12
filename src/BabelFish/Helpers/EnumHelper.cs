@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using System.Reflection;
 
+
 namespace Scopos.BabelFish.Helpers {
 
     /// <summary>

@@ -7,6 +7,7 @@ namespace Scopos.BabelFish.DataModel.Common {
     /// <summary>
     /// Options to set how visible data may be. Commonly used in <seealso cref="AttributeValue.AttributeValue"/> or <seealso cref="Match"/> visibility. 
     /// </summary>
+    [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VisibilityOptionJsonConverter ) )]
     public enum VisibilityOption {
         /*
          * Setting the values for the enum so we can have accurate comparisons, e.g. (PUBLIC > INTERNAL)

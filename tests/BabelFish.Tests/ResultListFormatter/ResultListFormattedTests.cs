@@ -5,6 +5,7 @@ using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
@@ -497,6 +498,45 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
                     Console.WriteLine();
                 }
             }
+        }
+
+        [TestMethod]
+        public async Task EriksPlayground2() {
+
+            var matchId = new MatchID( "1.5042.2026022609515391.0" );
+            var resultListName = "Team - Sporter";
+            var request = new GetResultListPublicRequest( matchId, resultListName );
+            var resultListResponse = await matchClient.GetResultListPublicAsync( request );
+
+            var resultList = resultListResponse.ResultList;
+            //resultList.ReSortIfOfficial();
+            var resultListToDisplay = resultList;
+            ResultListIntermediateFormatted? RLIF = null;
+
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultListToDisplay );
+            var resultListFormatDefinition = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            RLIF = new ResultListIntermediateFormatted( resultListToDisplay, resultListFormatDefinition, null );
+            //RLIF.GetCompletionPercentageStringPtr = ResultList.CompletionPercentageFormatting;
+            await RLIF.InitializeAsync();
+            RLIF.ResolutionWidth = 100; //Tell it, it is the smallest size screen
+            RLIF.ShowNumberOfChildRows = 0;
+            RLIF.ShowNumberOfBodyRows = 3;
+            RLIF.ShowSupplementalInformation = false;
+            RLIF.ShowZeroScoresWithOFFICIAL = false;
+            RLIF.Engagable = true;
+            RLIF.ShowRanks = 0;
+            RLIF.RefreshAllRowsParticipantAttributeFields();
+
+
+            var request2 = new GetResultListPublicRequest( matchId, resultListName );
+            var resultListResponse2 = await matchClient.GetResultListPublicAsync( request2 );
+
+            var resultList2 = resultListResponse2.ResultList;
+            resultListToDisplay = resultList2;
+            RLIF.Clear();
+            RLIF.RefreshResultList( resultListToDisplay );
+            RLIF.AppendTokenizedResultList( resultListToDisplay );
+
         }
     }
 }

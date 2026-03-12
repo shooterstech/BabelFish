@@ -1,4 +1,5 @@
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -14,8 +15,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Public constructor.
-        /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeValueDataPacketMatch using the althernative
-        /// constructor where you pass in an AttributeValue.</para>
+        /// <para>Unless you are a JSON deserializer, it is generally best to instantiate a new AttributeValueDataPacketMatch using the FactoryAsync() method..</para>
         /// </summary>
         public AttributeValueDataPacketMatch() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
@@ -24,11 +24,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Public constructor initializaing the instance with the passed in AttributeValue.
         /// </summary>
-        public AttributeValueDataPacketMatch( AttributeValue.AttributeValue attrValue ) {
-            this.ConcreteClassId = CONCRETE_CLASS_ID;
+        public static async Task<AttributeValueDataPacketMatch> CreateAsync( AttributeValue.AttributeValue attrValue, VisibilityOption visibility = VisibilityOption.PRIVATE ) {
+            AttributeValueDataPacketMatch avdp = new AttributeValueDataPacketMatch();
 
-            this.AttributeValue = attrValue;
-            this.AttributeDef = attrValue.SetName;
+            avdp.AttributeValue = attrValue;
+            avdp.AttributeDef = attrValue.SetName;
+            avdp.Visibility = visibility;
+            return avdp;
         }
 
         /// <summary>
@@ -36,5 +38,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para></para>
         /// </summary>
         public int CourseOfFireId { get; set; } = 0;
+
+        public override int GetHashCode() {
+            int hashCode = this.AttributeDef.GetHashCode()
+                ^ this.AttributeValue.GetHashCode()
+                ^ this.Visibility.GetHashCode()
+                ^ this.CourseOfFireId.GetHashCode();
+            return hashCode;
+        }
     }
 }

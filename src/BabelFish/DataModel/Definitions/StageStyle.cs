@@ -77,7 +77,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 15 )]
         [G_NS.JsonProperty( Order = 15 )]
-        public float RelativeDifficulty { get; set; } = .9f;
+        public float RelativeDifficulty { get; set; } = .97f;
+
+        /*
+         * Use the following SQL to determine RelativeDifficulty values, using the 85th percentile as the basis (so that the value is based on high level of performance, but not outliers). 
+         * 
+            with percentiles as (
+            select ( score_decimal / shot_count ) as myAverage,
+            ntile(100) over (order by ( score_decimal / shot_count )) as percentile_rank
+            from score_history_stage
+            where stage_style_def = "v1.0:nra:BB Gun Sitting" 
+              and shot_count >= 10 and score_decimal > 1 and `date` >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)
+            )
+            select avg( myAverage ) as myValue
+            from percentiles
+            where percentile_rank = 85 or percentile_rank = 84
+         */
 
         /// <summary>
         /// A list of common ways to display scores for this Stage Style. The first item in the list is considered the default.

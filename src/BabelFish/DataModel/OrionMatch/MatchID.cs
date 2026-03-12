@@ -334,10 +334,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #endregion
 
+        /// <summary>
+        /// Returns a boolean indicating if this MatchID is the default MatchID. The default MatchID has the following values for its fields: DomainID = 1, ComponentID = 1, PrimaryMatchID = 1, SubMatchID = 1.
+        /// </summary>
         public bool IsDefault {
             get {
                 return _componentID == 1 && _domainID == 1 && _primaryMatchID == 1 && _subMatchID == 1;
             }
+        }
+
+        /// <summary>
+        /// Implicitly converts a MatchID instance to its string representation.
+        /// <para>This conversion returns the default string representation of MatchID if the provided
+        /// instance is null.</para>
+        /// </summary>
+        /// <remarks>It is safe to mark this as an implicit operator since MatchID has a well known string representation.</remarks>
+        /// <param name="sn">The MatchID instance to convert. If null, the default string representation is returned.</param>
+        public static implicit operator string( MatchID matchId ) {
+            if (matchId is null)
+                return MatchID.DEFAULT.ToString();
+            else
+                return matchId.ToString();
+
         }
     }
 }

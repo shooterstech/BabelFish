@@ -1,83 +1,75 @@
-using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
-    /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue"/> field values.
+    /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue.AttributeValue"/> field values.
     /// </summary>
-    public class AttributeFilterAttributeValue : AttributeFilter, IGetAttributeDefinition, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue> {
-
-        /*
-        {
-            "Operation" : "EQUATION", //Consistent with ShowWhen
-            "Boolean" : "AND", //Consistent with ShowWhen
-            "Arguments" : [ //Consistent with ShowWhen
-                {
-                    "Operation" : "ATTRIBUTE_VALUE",
-                    "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
-                    "Values": {
-                        "Three-Position Air Rifle Type": "Sporter"
-                    },
-                    "FilterRule" : "EQUAL" //HAVE_ONE, HAVE_ALL, NOT_EQUAL, NOT_HAVE_ANY
-                }
-            ]
-        }
-        */
+    public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue>, IFinishInitializationAsync {
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
+        /// <para>Unless you are a deserializer, the preferred method for creating an instance of this class is to use <see cref="CreateAsync(AttributeValue.AttributeValue)"/></para>
         /// </summary>
-        public AttributeFilterAttributeValue() {
-            this.Operation = AttributeFilterOperation.ATTRIBUTE_VALUE;
-        }
+        public AttributeFilterAttributeValue() { }
 
         /// <summary>
-        /// The SetName of the <seealso cref="Attribute">ATTRIBUTE</seealso> to test values against.
+        /// Public Craete method that initializes with the passed in AttributeValue. This is the preferred method of creating an instance of this class.
         /// </summary>
-        public SetName AttributeDef { get; set; } = SetName.DEFAULT;
+        /// <param name="attributeValue"></param>
+        public static async Task<AttributeFilterAttributeValue> CreateAsync( AttributeValue.AttributeValue attributeValue, VisibilityOption visibility = VisibilityOption.PRIVATE ) {
+            AttributeFilterAttributeValue afav = new AttributeFilterAttributeValue();
+            afav.Values.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeValue ) );
+            return afav;
+        }
 
         /// <summary>
         /// The filter rule to apply.
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public AttributeFilterRule FilterRule { get; set; } = AttributeFilterRule.HAVE_ALL;
 
         /// <summary>
-        /// A list of field name and filed value pairs that we will test against.
-        /// <para>Item1 is the Attribute's FieldName, Item2 is the Attribute's FieldValue</para>
+        /// A list of Attribute Values to test against the participant's Attributes. The interpretation of this list depends on the FilterRule.
         /// </summary>
-        public ConstantFieldValueList Values { get; set; } = new ConstantFieldValueList();
+        [G_NS.JsonProperty( Order = 3 )]
+        public List<AttributeValueDataPacketMatch> Values { get; set; } = new List<AttributeValueDataPacketMatch>();
 
-        /// <inheritdoc />
-        /// <remarks>
-        /// Returns the ATTRIBUTE definition from .DefaultAttributeDef
-        /// <para>It is a best practice to check for null or empty string on .DefaultAttributeDef before calling this method.</para>
-        /// </remarks>
-        /// <exception cref="XApiKeyNotSetException" />
-        /// <exception cref="DefinitionNotFoundException" />
-        /// <exception cref="ScoposAPIException" />
-        public async Task<Definitions.Attribute> GetAttributeDefinitionAsync() {
-
-            return await DefinitionCache.GetAttributeDefinitionAsync( this.AttributeDef );
+        /// <summary>
+        /// Updates the Course of Fire identifier for all values in the collection.
+        /// </summary>
+        /// <param name="courseOfFireId">The identifier to assign to the CourseOfFireId property of each value in the collection.</param>
+        public override void UpdateCourseOfFireId( int courseOfFireId ) {
+            foreach (var val in this.Values) {
+                val.CourseOfFireId = courseOfFireId;
+            }
         }
+
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        public override int Count => 1;
 
         /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>
         /// <inheritdoc />
         public override int GetHashCode() {
-            StringBuilder sb = new StringBuilder();
-            sb.Append( this.Operation.ToString() );
-            sb.Append( this.AttributeDef.ToString() );
-            sb.Append( this.FilterRule.ToString() );
-            //Since the order of the valued does not matter, we will use a bitwas xor operator.
-            int temp = 0;
+            int hashCode = ((int)this.Operation << 16) | (int)this.FilterRule;
             foreach (var val in this.Values) {
-                temp ^= val.FieldName.GetHashCode();
-                temp ^= val.Value.GetHashCode();
+                hashCode ^= val.GetHashCode();
             }
-            sb.Append( temp );
-            return sb.ToString().GetHashCode();
+            return hashCode;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            StringBuilder sb = new StringBuilder( "Must " );
+            sb.Append( this.FilterRule.ToString() );
+            sb.Append( " " );
+            foreach (var val in this.Values) {
+                sb.Append( val.AttributeValue.GetFieldValue() );
+            }
+            return sb.ToString();
         }
 
         /// <inheritdoc />
@@ -98,5 +90,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public int GetHashCode( AttributeFilterAttributeValue obj ) => obj.GetHashCode();
+
+        /// <inheritdoc />
+        public override async Task FinishInitializationAsync() {
+            foreach (var val in this.Values) {
+                await val.FinishInitializationAsync();
+            }
+        }
     }
 }
