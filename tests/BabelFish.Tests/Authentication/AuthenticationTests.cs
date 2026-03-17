@@ -1,8 +1,7 @@
-﻿using System.Threading.Tasks;
-using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.Runtime;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.Authentication {
 
@@ -37,18 +36,17 @@ namespace Scopos.BabelFish.Tests.Authentication {
         }
 
         [TestMethod]
-        public async Task TestAuthenticationFromCognitoUser()
-        {
+        public async Task TestAuthenticationFromCognitoUser() {
             var goodAuth = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
-                Constants.TestDev7Credentials.Password);
+                Constants.TestDev7Credentials.Password );
             await goodAuth.InitializeAsync();
 
-            var userAuthentication = new UserAuthentication(goodAuth.CognitoUser);
-            Assert.IsFalse(string.IsNullOrEmpty(userAuthentication.RefreshToken));
-            Assert.IsFalse(string.IsNullOrEmpty(userAuthentication.AccessToken));
-            Assert.IsFalse(string.IsNullOrEmpty(userAuthentication.IdToken));
-            Assert.IsNotNull(userAuthentication.CognitoUser);
+            var userAuthentication = new UserAuthentication( goodAuth.CognitoUser );
+            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
+            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
+            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.IdToken ) );
+            Assert.IsNotNull( userAuthentication.CognitoUser );
 
             await userAuthentication.GenerateIAMCredentialsAsync(); //no init call needed
         }
@@ -66,45 +64,6 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 "not the right password" );
             await userAuthentication.InitializeAsync();
         }
-
-        /*
-        [TestMethod]
-        public async Task HappyPathAuthenticationWithExistingDevice() {
-
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev7Credentials.Username,
-                Constants.TestDev7Credentials.Password,
-                Constants.TestDev7Credentials.DeviceKey,
-                Constants.TestDev7Credentials.DeviceGroupKey );
-            await userAuthentication.InitializeAsync();
-
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.Email ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
-            Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.IdToken ) );
-            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
-            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
-            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
-            Assert.IsNotNull( userAuthentication.CognitoUser );
-            Assert.IsNotNull( userAuthentication.CognitoUser.Device );
-
-        }
-        */
-
-        /*
-        [TestMethod]
-        [ExpectedException( typeof( DeviceNotKnownException ) )]
-        public async Task WrongDeviceKey() {
-
-            //Should throw a DeviceNotKnownException, since we're mixing user 1 with user 7 credentials
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev1Credentials.Username,
-                Constants.TestDev1Credentials.Password,
-                Constants.TestDev7Credentials.DeviceKey,
-                Constants.TestDev7Credentials.DeviceGroupKey );
-            await userAuthentication.InitializeAsync();
-        }
-        */
 
         [TestMethod]
         public async Task HappyPathAuthenticationWithExistingTokens() {
@@ -138,7 +97,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             userAuthentication.OnRefreshTokensFailed += onFailureHandler;
 
             //Passing true forces the tokens to refresh, regardless of Expiration time. Inreal life, one would not need to call .RefreshToken normally, let alone eith true.
-            await userAuthentication.RefreshTokensAsync(true);
+            await userAuthentication.RefreshTokensAsync( true );
 
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.Email ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
@@ -194,12 +153,12 @@ namespace Scopos.BabelFish.Tests.Authentication {
             Assert.AreEqual( Constants.TestDev7UserId, userId );
 
         }
-        
+
         /// <summary>
-         /// Attempts to clean up Devices attached to our test users. This isn't a real unit test, it just cleans things up.
-         /// Ideally this method would be marked with the ClassCleanup attribute. However, when doing so, VS doesn't want 
-         /// to run any of the tests. To get around this limitation, trying ot run this last. 
-         /// </summary>
+        /// Attempts to clean up Devices attached to our test users. This isn't a real unit test, it just cleans things up.
+        /// Ideally this method would be marked with the ClassCleanup attribute. However, when doing so, VS doesn't want 
+        /// to run any of the tests. To get around this limitation, trying ot run this last. 
+        /// </summary>
         [TestMethod]
         public async Task Z_Cleanup() {
 
@@ -234,7 +193,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             var expirationTime = userAuthentication1.ExpirationTime;
             var issuedTime = userAuthentication1.IssuedTime;
 
-            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( );
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient();
             var getMatch1 = await matchClient.GetMatchAuthenticatedAsync( new MatchID( "1.2038.2024071609575863.0" ), userAuthentication1 );
             Assert.AreEqual( System.Net.HttpStatusCode.OK, getMatch1.RestApiStatusCode );
 
