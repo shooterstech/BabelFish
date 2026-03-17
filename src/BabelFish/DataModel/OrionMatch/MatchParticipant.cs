@@ -47,11 +47,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Participant Participant { get; set; }
 
         /// <summary>
-        /// A list of entries (CourseOfFireEntry) for this Participant. Basically say which events this Participant is entered in, and what their squadding assignment is for each event. 
+        /// A list of entries (CourseOfFireEntry) for this Participant. Basically say which events this Participant is entered in,
+        /// and what their squadding assignment is for each event. 
         /// </summary>
         /// <remarks>This property replaced MatchParticipantResults</remarks>
         [G_NS.JsonProperty( Order = 6 )]
         public List<CourseOfFireEntry> Entries { get; set; } = new List<CourseOfFireEntry>();
+
+        public CourseOfFireEntry CreateEntry( int courseOfFireId ) {
+            int currentEntryIndex = Entries.FindIndex( e => e.CourseOfFireId == courseOfFireId );
+            if (currentEntryIndex == -1) {
+
+                CourseOfFireEntry entry;
+                if (this.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
+                    entry = new CourseOfFireEntryIndividual();
+                    entry.EntryStatus = EntryStatus.NOT_ENTERED;
+                } else {
+                    entry = new CourseOfFireEntryTeam();
+                }
+
+                entry.CourseOfFireId = courseOfFireId;
+                return entry;
+            } else {
+                return Entries[currentEntryIndex];
+            }
+        }
 
 
 

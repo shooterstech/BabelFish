@@ -14,5 +14,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string BaseName { get; private set; }
 
         public List<MatchParticipant> Participants { get; set; } = new List<MatchParticipant>();
+
+        public MatchParticipant CreateMatchParticipant( string familyName, string givenName ) {
+
+            MatchParticipant mp = new MatchParticipant();
+            mp.Participant = new Individual() {
+                FamilyName = familyName,
+                GivenName = givenName
+            };
+
+            Participants.Add( mp );
+
+            foreach (var cof in Match.MatchStructure.CoursesOfFire) {
+                mp.CreateEntry( cof.CourseOfFireId );
+            }
+
+            return mp;
+        }
     }
 }
