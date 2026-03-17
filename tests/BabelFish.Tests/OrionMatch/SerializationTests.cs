@@ -17,13 +17,15 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task FileNameTests() {
             Match match = new Match();
             match.Name = "SerializationFileNameTest";
+            MatchComposite composite = new MatchComposite( match );
+
             var expectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "SerializationFileNameTest", "SerializationFileNameTest.json" );
             if (File.Exists( expectedFullFileName ))
                 File.Delete( expectedFullFileName );
 
-            Assert.AreEqual( "SerializationFileNameTest.json", match.GetFileName() );
-            Assert.AreEqual( Path.Combine( "SerializationFileNameTest", "SerializationFileNameTest.json" ), match.GetRelativePath() );
-            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
+            Assert.AreEqual( "SerializationFileNameTest.json", match.GetFileName( composite ) );
+            Assert.AreEqual( Path.Combine( "SerializationFileNameTest", "SerializationFileNameTest.json" ), match.GetRelativePath( composite ) );
+            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting, composite );
             Assert.AreEqual( expectedFullFileName, fullFileName );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
         }
@@ -32,6 +34,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         public async Task SerializaeDeserializeTests() {
             Match match = new Match();
             match.Name = "SerializationTest";
+            MatchComposite composite = new MatchComposite( match );
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
@@ -51,7 +54,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
             foreach (var resultList in resultLists)
                 cof.AddResultList( resultList );
 
-            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
+            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting, composite );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist" );
 
             var deserializedMatch = await Match.LoadFromFileAsync( fullFileName );

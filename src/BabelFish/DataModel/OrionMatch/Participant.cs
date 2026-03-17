@@ -36,6 +36,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string DisplayNameShort { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Implementation of the IDeserializableAbstractClass interface.
+        /// To have added control over the Deserialization of abstract classes, in to
+        /// Concrete classes, the JSON should include a ConcreteClassId that specifies
+        /// the Concrete class.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        [Obsolete( "Use ParticipantType. Deprecated March 2026" )]
+        public int ConcreteClassId { get; set; }
+
+        /// <summary>
+        /// Concrete class identifying the type of Participant.
+        /// This is used during deserialization to determine which concrete class to deserialize to, either a <see cref="Individual"/> or a <see cref="Team"/>.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public ParticipantType ParticipantType { get; set; } = ParticipantType.INDIVIDUAL;
+
         /*
          * JsonProperty Order values 5 .. 9 reserved for concrete classes
          */
@@ -146,14 +163,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override string ToString() {
             return this.DisplayName;
         }
-
-        /// <summary>
-        /// Implementation of the IDeserializableAbstractClass interface.
-        /// To have added control over the Deserialization of abstract classes, in to
-        /// Concrete classes, the JSON should include a ConcreteClassId that specifies
-        /// the Concrete class.
-        /// </summary>
-        public int ConcreteClassId { get; set; }
 
         /// <summary>
         /// Calculated value to use to identify the same particpant accross multiple result lists.

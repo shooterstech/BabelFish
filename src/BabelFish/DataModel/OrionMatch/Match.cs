@@ -433,8 +433,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc/>
-        public string GetFileName() {
-            return $"{Name}.json";
+        /// <param name="composite">Expected to be a <see cref="MatchComposite"/> instance.</param>
+        public string GetFileName( IBaseName composite ) {
+
+            return $"{composite.BaseName}.json";
         }
 
         /// <summary>
@@ -442,14 +444,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The file name is derived from the Match's Name property.
         /// </summary>
         /// <param name="relativeDirectory">Usually the My Matches directory.</param>
+        /// <param name="composite">Expected to be a <see cref="MatchComposite"/> instance.</param>
         /// <returns>The full path to the saved file.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+        public string SaveToFile( DirectoryInfo relativeDirectory, IBaseName composite ) {
 
             if (relativeDirectory == null)
                 throw new ArgumentNullException( nameof( relativeDirectory ) );
 
-            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath( composite ) );
 
             var directoryPath = Path.GetDirectoryName( filePath );
 
@@ -487,9 +490,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Returns the standard relative path for this Match. It is relative to the My Matches directory.
         /// </summary>
+        /// <param name="composite">Expected to be a <see cref="MatchComposite"/> instance.</param>
         /// <returns></returns>
-        public string GetRelativePath() {
-            return Path.Combine( this.Name, this.GetFileName() );
+        public string GetRelativePath( IBaseName composite ) {
+            return Path.Combine( composite.BaseName, this.GetFileName( composite ) );
         }
 
         /// <summary>

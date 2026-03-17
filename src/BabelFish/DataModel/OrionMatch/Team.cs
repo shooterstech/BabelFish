@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Any Team, or group of Participants in a Match. The group of Participants can be athletes or other teams
@@ -11,8 +7,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public const int CONCRETE_CLASS_ID = 2;
 
+        /// <summary>
+        /// Constructor for Team. Sets the ParticipantTyhpe to the correct value for a Team, and initializes the TeamMembers and TeamCaptains lists.
+        /// </summary>
         public Team() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
+            ParticipantType = ParticipantType.TEAM;
             this.TeamMembers = new List<Participant>();
             this.TeamCaptains = new List<Individual>();
         }

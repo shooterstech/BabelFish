@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -17,10 +11,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public const int CONCRETE_CLASS_ID = 1;
 
         /// <summary>
-        /// Default public constructor
+        /// Default public constructor. Sets the correct value for ParticipantType and ConcreteClassId, which are used during deserialization to determine which concrete class to deserialize to, either a <see cref="Individual"/> or a <see cref="Team"/>.
         /// </summary>
         public Individual() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
+            ParticipantType = ParticipantType.INDIVIDUAL;
         }
 
         /// <summary>
@@ -82,15 +77,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The unique identifier that represents the score (result cof object) this Individual had in this match. 
         /// </summary>
-        [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults.")]
-        public string ResultCOFID { get; set;} = string.Empty;
+        [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults." )]
+        public string ResultCOFID { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public override int UniqueMergeId {
             get {
                 if (!string.IsNullOrEmpty( UserID ))
                     return this.UserID.GetHashCode();
-                else 
+                else
                     return this.DisplayName.ToUpper().Trim().GetHashCode();
             }
         }

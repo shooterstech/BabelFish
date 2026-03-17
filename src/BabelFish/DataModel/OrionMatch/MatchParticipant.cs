@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -6,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// A MatchParticipant is a <see cref="Individual"/> or a <see cref="Team"/> participating in a <see cref="Match"/>.
     /// </summary>
     [Serializable]
-    public class MatchParticipant : IParticipant {
+    public class MatchParticipant : IParticipant, ISaveToFile {
 
         public MatchParticipant() {
             Participant = new Individual();
@@ -64,6 +65,66 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LastUpdated { get; set; }
+
+        #region
+        /// <inheritdoc/>
+        /// <param name="composite">Expected to be a <see cref="MatchComposite"/> instance.</param>
+        public string GetFileName( IBaseName composite ) {
+            /*
+             * Ideally I would like to use Display Name for the file name. However, the user can change the display name and it's not guaranteed to be unique, 
+             * so for now using ParticipantID, which is guaranteed to be unique and not changeable.
+             */
+            return $"{ParticipantID}.json";
+        }
+
+        /// <inheritdoc/>
+        /// <param name="composite">Expected to be a <see cref="MatchComposite"/> instance.</param>
+        public string GetRelativePath( IBaseName composite ) {
+            return Path.Combine( composite.BaseName, this.GetFileName( composite ) );
+        }
+
+        /// <inheritdoc/>
+        /// <param name="composite">Expected to be a <see cref="MatchComposite"/> instance.</param>
+        public string SaveToFile( DirectoryInfo relativeDirectory, IBaseName composite ) {
+
+            if (relativeDirectory == null)
+                throw new ArgumentNullException( nameof( relativeDirectory ) );
+
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath( composite ) );
+
+            var directoryPath = Path.GetDirectoryName( filePath );
+
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
+
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            File.WriteAllText( filePath, json );
+
+            return filePath;
+        }
+
+        /// <inheritdoc/>
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
+        /// <inheritdoc/>
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
+        }
+        #endregion
 
         /// <inheritdoc/>
         public override string ToString() {
