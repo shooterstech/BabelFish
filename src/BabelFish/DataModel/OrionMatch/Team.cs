@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Any Team, or group of Participants in a Match. The group of Participants can be athletes or other teams
@@ -22,6 +18,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
         public List<Participant> TeamMembers { get; set; }
+
+        /// <summary>
+        /// Returns the same value as DisplayName, but is intended to be used when the Participant is a Team. The setter does nothing, as the TeamName is always the same as DisplayName.
+        /// </summary>
+        [G_NS.JsonIgnore] // TeamName is always the same as DisplayName, so ignore it for JSON purposes.
+        public override string TeamName { get => base.DisplayName; set {; } }
 
         /// <summary>
         /// The designated team captains for this team. A Team captain may also be a coach and may also be a member.

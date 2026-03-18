@@ -70,6 +70,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The team name the Participant is a member of. Note, this is NOT the same as any club the Participant is affiliated with.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 14 )]
+        [DefaultValue( "" )]
+        public virtual string TeamName { get; set; } = string.Empty;
+
         /*
          * JsonProperty Order values 15 .. 19 reserved for concrete classes
          */

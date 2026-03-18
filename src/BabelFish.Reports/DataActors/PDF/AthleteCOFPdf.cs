@@ -6,6 +6,7 @@ using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.Helpers.Extensions;
 using Scopos.BabelFish.Runtime;
 
 namespace Scopos.BabelFish.DataActors.PDF {
@@ -47,6 +48,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
             }
         }
 
+        /// <summary>
+        /// Optional text to include in the header with demographic information about the athlete. Uses string interpolation with feidls
+        /// such  as {CompetitorNumber}, {Club}, and {Country} as variables to be replaced with the athlete's information.
+        /// </summary>
+        public string DemographicText { get; set; } = string.Empty;
+
         public override QuestPDF.Fluent.Document GeneratePdf( PageSize pageSize, string filePath ) {
             if (CourseOfFire == null)
                 throw new InitializeAsyncNotCompletedException();
@@ -86,21 +93,24 @@ namespace Scopos.BabelFish.DataActors.PDF {
             .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
             .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
-            .Padding( 10 )
+            .Padding( 6 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
                     column.Item().ShrinkVertical().Row( row => {
-                        row.RelativeItem( 2 ).AlignLeft().Text( ResultCOF.Participant.DisplayName ).SemiBold().FontSize( 16 ).FontColor( this.DefaultHeaderTextColor );
+                        row.RelativeItem( 2 ).AlignLeft().Text( ResultCOF.Participant.DisplayName ).SemiBold().FontSize( 14 ).FontColor( this.DefaultHeaderTextColor );
                         row.RelativeItem( 1 ).AlignRight().Text( text => {
                             text.Span( $"{TopLevelEvent.EventName} : {ResultCOF.EventScores[TopLevelEvent.EventName].ScoreFormatted}" )
                                 .SemiBold()
-                                .FontSize( 16 )
+                                .FontSize( 14 )
                                 .FontColor( this.DefaultHeaderTextColor );
                         } );
                     } );
-                    column.Item().Text( $"{ResultCOF.MatchName} | {StringFormatting.SingleDate( ResultCOF.LocalDate )}" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"Status: {ResultCOF.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"{ResultCOF.MatchName} | {StringFormatting.SingleDate( ResultCOF.LocalDate )}" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"Course of Fire: {CourseOfFire.CommonName}" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"Status: {ResultCOF.Status} | Printed at {StringFormatting.SingleDateTime( DateTime.Now )}" ).FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    if (!string.IsNullOrEmpty( DemographicText )) {
+                        column.Item().Text( DemographicText.Replace( this.ResultCOF ) ).FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    }
                 } );
             } );
         }

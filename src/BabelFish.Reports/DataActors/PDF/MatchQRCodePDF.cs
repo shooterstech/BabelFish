@@ -69,20 +69,20 @@ namespace Scopos.BabelFish.DataActors.PDF {
             .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
             .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
-            .Padding( 10 )
+            .Padding( 6 )
             .Row( row => {
 
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( Title ).SemiBold().FontSize( 16 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( StringFormatting.Hometown( MatchDetail.Location ) ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( StringFormatting.SpanOfDates( MatchDetail.StartDate, MatchDetail.EndDate ) ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( Title ).SemiBold().FontSize( 14 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( StringFormatting.Hometown( MatchDetail.Location ) ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( StringFormatting.SpanOfDates( MatchDetail.StartDate, MatchDetail.EndDate ) ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
 
                 using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Reports.Resources.Images.scopos_owl_transparent_orange.png" )) {
 
-                    row.ConstantItem( 2.5f, Unit.Centimetre )
+                    row.ConstantItem( 3.0f, Unit.Centimetre )
                    .AspectRatio( 1 )
                    .Padding( 1 )
                    .Image( stream );
