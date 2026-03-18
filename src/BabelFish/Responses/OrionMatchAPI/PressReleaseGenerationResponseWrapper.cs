@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using System;
 using System.Collections.Generic;

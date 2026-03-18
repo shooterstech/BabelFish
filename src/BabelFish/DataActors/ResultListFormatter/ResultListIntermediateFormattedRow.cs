@@ -272,7 +272,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             return dna;
 
                         //if that's too long, try the display name short, if it exists
-                        dna = _item.Participant.DisplayNameShort;
+                        //NOTE DisplayNameShort by convention is to be 20 characters or less.
+                        dna = _item.Participant.GetDisplayNameShort();
                         if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
                             return dna;
 
@@ -293,7 +294,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeDisplayNameShortPtr != null)
                         return _resultListFormatted.GetParticipantAttributeDisplayNameShortPtr( this._item, this._resultListFormatted );
 
-                    var dns = _item.Participant.DisplayNameShort;
+                    var dns = _item.Participant.GetDisplayNameShort();
                     if (!string.IsNullOrEmpty( dns ))
                         return dns;
 
@@ -348,7 +349,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeTeamPtr != null)
                         return _resultListFormatted.GetParticipantAttributeTeamPtr( this._item, this._resultListFormatted );
 
-                    return _item.Participant.TeamName;
+                    throw new NotImplementedException( "Not sure where to store and pull TeamName from in the new BabelFish 2.0 datamodel." );
+                    return "Unknown";
 
                 case "CompetitorNumber":
                     if (_resultListFormatted.GetParticipantAttributeCompetitorNumberPtr != null)

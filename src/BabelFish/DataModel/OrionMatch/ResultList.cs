@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {

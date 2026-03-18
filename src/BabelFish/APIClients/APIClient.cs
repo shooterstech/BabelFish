@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json;
-using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Runtime.Authentication;

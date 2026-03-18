@@ -12,26 +12,41 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</para>
     /// </summary>
     [Serializable]
-    public class Match : ISaveToFile, IFinishInitializationAsync {
+    public class Match : ISaveToFile, IFinishInitializationAsync, G_STJ_SER.IJsonOnDeserialized {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
+
+        #region Constructors, Factories, and Initialization
 
         /// <summary>
         /// Public constructor.
         /// </summary>
         public Match() { }
 
+        /// <inheritdoc />
+        /// <remarks>The prefered method for deserializing from json is to use <see cref="LoadFromFileAsync(FileInfo)"/> or <see cref="LoadFromFileAsync(string)"/>.
+        /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</remarks>
+        public async Task FinishInitializationAsync() {
+            await this.MatchStructure.FinishInitializationAsync();
+        }
+
 
         /// <summary>
-        /// After an object is deserialized form JSON,
-        /// adds defaults to empty properties
+        /// This method is called after deserialization with Newtonsoft.Json.
         /// </summary>
         /// <param name="context"></param>
         [OnDeserialized()]
-        public void OnDeserialized( StreamingContext context ) {
+        public void OnDeserialized( StreamingContext context ) => OnDeserialized();
+
+        /// <summary>
+        /// This method is called after deserialization with System.Text.Json. 
+        /// </summary>
+        public void OnDeserialized() {
             if (ScoringSystems.Count == 0)
                 ScoringSystems.Add( "Orion Scoring System" );
         }
+
+        #endregion
 
         /// <summary>
         /// The name of the Match
@@ -530,13 +545,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             FileInfo fileInfo = new FileInfo( fullPath );
             return await LoadFromFileAsync( fileInfo );
-        }
-
-        /// <inheritdoc />
-        /// <remarks>The prefered method for deserializing from json is to use <see cref="LoadFromFileAsync(FileInfo)"/> or <see cref="LoadFromFileAsync(string)"/>.
-        /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</remarks>
-        public async Task FinishInitializationAsync() {
-            await this.MatchStructure.FinishInitializationAsync();
         }
     }
 }

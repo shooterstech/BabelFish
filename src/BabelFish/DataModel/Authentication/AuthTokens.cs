@@ -1,5 +1,4 @@
-﻿
-using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Authentication {
     /// <summary>

@@ -67,6 +67,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
 
                 entry.CourseOfFireId = courseOfFireId;
+                Entries.Add( entry );
                 return entry;
             } else {
                 return Entries[currentEntryIndex];

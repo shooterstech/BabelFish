@@ -965,7 +965,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         MiddleName,
         CompetitorNumber,
         DisplayName,
-        DisplayNameShort,
         HomeTown,
         Country,
         Club

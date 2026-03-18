@@ -1,5 +1,5 @@
-﻿using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.Clubs;
+using Scopos.BabelFish.DataModel.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;

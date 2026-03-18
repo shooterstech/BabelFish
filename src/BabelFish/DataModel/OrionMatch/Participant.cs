@@ -10,31 +10,77 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
-    public abstract class Participant : IDeserializableAbstractClass {
+    public abstract class Participant : G_STJ_SER.IJsonOnDeserializing, G_STJ_SER.IJsonOnDeserialized {
 
-        /*
-         * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
-         */
+        /// <summary>
+        /// The expected maximum length of the DisplayNameShort property. This is not a hard limit, but by convention DisplayNameShorts should be 20 characters or less. DisplayName may be any length.
+        /// </summary>
+        public const int DISPLAY_NAME_SHORT_MAX_LENGTH = 20;
 
+        #region Private and Protected Fields
+        protected string _displayName = string.Empty;
+        protected bool _ignoreEvents = false;
+        #endregion
+
+        #region Constructors, Factory Methods, and Initialization
         public Participant() {
             Coaches = new List<Individual>();
         }
 
+        public void OnDeserialized() {
+            _ignoreEvents = false;
+        }
 
+        public void OnDeserializing() {
+            _ignoreEvents = true;
+        }
+        #endregion
+
+        #region Event Handlers
+        /// <summary>
+        /// Eventhanderl that gets invoked with DisplayName changes. The event args include the Participant whose DisplayName changed, and the PreviousDisplayName property can be used to get the previous value of DisplayName.
+        /// </summary>
+        public EventHandler<EventArgs<Participant>> OnDisplayNameChanged;
+
+        #endregion
+
+        #region Data Properties
         /// <summary>
         /// When a competitor's name is displayed, this is the default display value.
         /// </summary>
         [G_NS.JsonProperty( Order = 1 )]
-        public string DisplayName { get; set; } = string.Empty;
+        public string DisplayName {
+            get {
+                return _displayName;
+            }
+            set {
+                PreviousDisplayName = _displayName;
+                _displayName = value;
+
+                if (!_ignoreEvents) {
+                    //This code will not run during deserialization, since _ignoreEvents is set to true during deserialization.
+                    //This is intentional, as we don't want to trigger DisplayName change events during deserialization.
+                    DefaultDisplayName = false;
+                    OnDisplayNameChanged?.Invoke( this, new EventArgs<Participant>( this ) );
+                }
+            }
+        }
 
         /// <summary>
-        /// When a competitor's name is displayed, and there is limited number of characters, use this value. 
-        /// 
-        /// There is no rule as to how long the Short value could be, but by convention 12 characters or less.
+        /// Specifies if the DisplayName is the default value. Would be true if the user hasn't modified the DisplayName. Would be false if the user has set the DisplayName.
+        /// <para>It is generally not recommended to manually set this property. It is managed automatically based on whether the DisplayName has been modified by the user.</para>
         /// </summary>
-        [G_NS.JsonProperty( Order = 2 )]
-        [DefaultValue( "" )]
-        public string DisplayNameShort { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.IgnoreAndPopulate )]
+        [DefaultValue( true )]
+        public bool DefaultDisplayName { get; set; } = true;
+
+        /// <summary>
+        /// When the DisplayName is changed, this property holds the previous value of DisplayName.
+        /// Often event handlers will want to know both the new and old display name, so this property is included for that purpose.
+        /// This value is not serialized, and is only intended to be used during event handling of DisplayName changes. 
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public string PreviousDisplayName { get; private set; } = string.Empty;
 
         /// <summary>
         /// Implementation of the IDeserializableAbstractClass interface.
@@ -87,25 +133,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
-        /// <summary>
-        /// The team name the Participant is a member of. Note, this is NOT the same as any club the Participant is affiliated with.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 14 )]
-        [DefaultValue( "" )]
-        public virtual string TeamName { get; set; } = string.Empty;
-
         /*
          * JsonProperty Order values 15 .. 19 reserved for concrete classes
-         */
-
-        /*
-         * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
-         * garand / springfield / vintage military rifle competition is one eacmple. On the first re-entry they may shoot a garand 
-         * rifle, the seocnd a sprinfield, and so on. 
-         * 
-         * To represent this, need a way to override AttributeValues based on the reentry tag.
-         * 
-         * The Medea.Participant had a .ReentryTag property. Currently choosing not to implement it.
          */
 
         /// <summary>
@@ -166,10 +195,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (Coaches != null && Coaches.Count > 0);
         }
 
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Sets the value of <see cref="DisplayName"/> based on the values of other properties of the Participant, such as FamilyName and GivenName for an Individual, or TeamName for a Team.
+        /// </summary>
+        /// <remarks>The concrete class implementers should set _displayNameSet and _displayNameShorSet to false, as this represents the user has not modified the default values of DisplayName yet.</remarks>
+        public abstract void SetDefaultDisplayName();
+
+        public virtual string GetDisplayNameShort() {
+            if (this.DisplayName.Length <= DISPLAY_NAME_SHORT_MAX_LENGTH) {
+                return this.DisplayName;
+            } else {
+                return StringFormatting.GetTruncatedString( this.DisplayName, DISPLAY_NAME_SHORT_MAX_LENGTH );
+            }
+        }
+
         /// <inheritdoc />
         public override string ToString() {
             return this.DisplayName;
         }
+
+        #endregion
 
         /// <summary>
         /// Calculated value to use to identify the same particpant accross multiple result lists.

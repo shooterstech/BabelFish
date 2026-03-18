@@ -28,11 +28,11 @@ namespace Scopos.BabelFish.Helpers.Extensions {
         public static string Replace( this string source, IParticipant participant ) {
             var values = new Dictionary<string, string>() {
                 { "DisplayName", participant.Participant.DisplayName },
-                { "DisplayNameShort", participant.Participant.DisplayNameShort },
+                { "DisplayNameShort", participant.Participant.GetDisplayNameShort() },
                 { "Country", participant.Participant.Country },
                 { "Hometown", participant.Participant.HomeTown },
-                { "Club", participant.Participant.Club  },
-                { "Team", participant.Participant.TeamName }
+                { "Club", participant.Participant.Club  }
+                //{ "Team", participant.TeamName } Not sure where to pull this from, as the IParticipant does not have a TeamName property in the new BabelFish 2.0 data model.
             };
 
             if (participant.Participant is Individual inv) {

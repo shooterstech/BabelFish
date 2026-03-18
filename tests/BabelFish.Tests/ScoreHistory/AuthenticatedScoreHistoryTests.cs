@@ -1,14 +1,15 @@
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoreHistory;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Requests.ScoreHistoryAPI;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
 using Scopos.BabelFish.Runtime.Authentication;
+using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.Tests.ScoreHistory {
 
@@ -35,7 +36,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             body.LocalDate = DateTime.Today;
             body.CourseOfFireDef = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
-            body.MatchType = DataModel.OrionMatch.CompetitionTypeOptions.PRACTICE;
+            body.MatchType = CompetitionTypeOptions.PRACTICE;
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
             body.EventStyleDef = eventStyleDef;
@@ -89,7 +90,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
             body.LocalDate = DateTime.Today;
             body.CourseOfFireDef = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
-            body.MatchType = DataModel.OrionMatch.CompetitionTypeOptions.PRACTICE;
+            body.MatchType = CompetitionTypeOptions.PRACTICE;
             body.MatchLocation = "mosby";
             body.MatchName = "matchname";
             body.EventStyleDef = eventStyleDef;
@@ -118,7 +119,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
             var patchbody = postResponse.ScoreHistoryPost;
             patchRequest.ScoreHistoryPatch = patchbody;
             patchbody.LocalDate = new DateTime( 2012, 04, 1 );
-            patchbody.MatchType = DataModel.OrionMatch.CompetitionTypeOptions.PRACTICE;
+            patchbody.MatchType = CompetitionTypeOptions.PRACTICE;
             patchbody.MatchLocation = "newmosby";
             patchbody.MatchName = "newmatchname";
             patchbody.Visibility = VisibilityOption.PUBLIC;
