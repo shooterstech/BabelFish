@@ -21,6 +21,8 @@ All notable changes to BabelFish will be documented in this file.
 ### Enhancements
 #### GetClubList
 - Added a list of ClubAuthorizationRoles the authenticated caller has to each returned Club.
+#### ResultListIntermediateFormatted
+- Added 'Team' as a standard field name, displaying the Team Name that the participant is competing for.
 ### Bug Fixes
 #### ResultCOF
 - Added 'Visibility' as a property to ResultCOF

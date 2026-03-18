@@ -111,19 +111,19 @@ namespace Scopos.BabelFish.DataActors.PDF {
             .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
             .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
-            .Padding( 10 )
+            .Padding( 6 )
             .Row( row => {
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( titleText ).SemiBold().FontSize( 16 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( line1Text ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( line2Text ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( line3Text ).FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( line4Text ).FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( titleText ).SemiBold().FontSize( 14 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line1Text ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line2Text ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line3Text ).FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( line4Text ).FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
 
                 if (Match.Visibility == DataModel.Common.VisibilityOption.PUBLIC) {
-                    row.ConstantItem( 3, Unit.Centimetre )
+                    row.ConstantItem( 3.0f, Unit.Centimetre )
                         .AspectRatio( 1 )
                         .Background( Colors.White )
                         .Svg( size => {

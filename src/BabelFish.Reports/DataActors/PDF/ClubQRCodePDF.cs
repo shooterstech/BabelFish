@@ -68,14 +68,14 @@ namespace Scopos.BabelFish.DataActors.PDF {
             .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
             .BackgroundLinearGradient( 45, this.DefaultHeaderBackgroundColors )
             .CornerRadius( 5 )
-            .Padding( 10 )
+            .Padding( 6 )
             .Row( row => {
 
                 row.RelativeItem().Column( column => {
-                    column.Item().Text( ClubDetail.Name ).SemiBold().FontSize( 16 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"{ClubDetail.Hometown}" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"{uri}" ).SemiBold().FontSize( 12 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( ClubDetail.Name ).SemiBold().FontSize( 14 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"{ClubDetail.Hometown}" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"{uri}" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
 
