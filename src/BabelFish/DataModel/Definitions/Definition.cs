@@ -192,6 +192,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
+        #region ISaveToFile Implementation
         /// <summary>
         /// Returns the file name for this Definition. It should be stored in a directory named after the definition type.
         /// </summary>
@@ -205,7 +206,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc />
         /// <param name="baseName">Value is ignored. Included as a parameter to satisfy the ISaveToFile interface.</param>
-        public string GetFileName( IBaseName baseName = null ) {
+        public string GetFileName() {
             //baseName is purposefully ignored, as the file name for a definition is always based on the SetName and HierarchicalName, not the BaseName.
 
             return GetFileName( false );
@@ -216,15 +217,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>Will save the definition file under [definitionDirectory]/DEFINITIONS/[Definition Type]/[SetName].json</para>
         /// </summary>
         /// <param name="definitionDirectory"></param>
-        /// <param name="baseName">Value is ignored. Included as a parameter to satisfy the ISaveToFile interface.</param>
         /// <returns>The full path of the saved file.</returns>
-        public string SaveToFile( DirectoryInfo definitionDirectory, IBaseName baseName = null ) {
-            //baseName is purposefully ignored, as the file name for a definition is always based on the SetName and HierarchicalName, not the BaseName.
+        public string SaveToFile( DirectoryInfo definitionDirectory ) {
 
             if (definitionDirectory == null)
                 throw new ArgumentNullException( nameof( definitionDirectory ) );
 
-            string filePath = $"{definitionDirectory.FullName}\\{GetRelativePath( baseName )}";
+            string filePath = $"{definitionDirectory.FullName}\\{GetRelativePath()}";
 
             var directoryPath = Path.GetDirectoryName( filePath );
 
@@ -262,7 +261,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         /// <param name="baseName">Value is ignored. Included as a parameter to satisfy the ISaveToFile interface.</param>
         /// <returns></returns>
-        public string GetRelativePath( IBaseName baseName = null ) {
+        public string GetRelativePath() {
             //baseName is purposefully ignored, as the file name for a definition is always based on the SetName and HierarchicalName, not the BaseName.
 
             string relativePath = $"DEFINITIONS\\{Type.Description()}\\{GetFileName( false )}";
@@ -278,6 +277,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
             return json;
         }
+
+        #endregion
 
         /// <summary>
         /// Method to set default values on a new Definition. Implementation specific for each definition type.

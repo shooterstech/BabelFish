@@ -40,13 +40,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Eventhanderl that gets invoked with DisplayName changes. The event args include the Participant whose DisplayName changed, and the PreviousDisplayName property can be used to get the previous value of DisplayName.
         /// </summary>
+        [G_NS.JsonIgnore]
         public EventHandler<EventArgs<Participant>> OnDisplayNameChanged;
 
         #endregion
 
         #region Data Properties
         /// <summary>
-        /// When a competitor's name is displayed, this is the default display value.
+        /// When a competitor's name is displayed, this is the value that is displayed vy default.
+        /// <para>Alternatively, on a reduced width screen a shorter display name is returned using <see cref="GetDisplayNameShort()"/>.</para>
+        /// <para>By default, the DisplayName is calculated based on other properties of the Participant, such as FamilyName and GivenName for an Individual, or TeamName for a Team.
+        /// If those properties are modified after the DisplayName is set, the DisplayName will not automatically update to reflect those changes.
+        /// If DisplayName is set outside of these other properties, then the value is no longer calculated and only the value it is set to is returned.</para>
+        /// <para>To get notified when DisplayName changes, subscribe to the <see cref="OnDisplayNameChanged"/> event.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 1 )]
         public string DisplayName {
@@ -152,15 +158,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (AttributeValues != null && AttributeValues.Count > 0);
         }
 
-        /*
-         * TODO: In some re-rentry matches a Particpant will have different AttributeValues for different re-entry stages. The CMPs 
-         * garand / springfield / vintage military rifle competition is one eacmple. On the first re-entry they may shoot a garand 
-         * rifle, the seocnd a sprinfield, and so on. 
-         * 
-         * To represent this, need a way to override AttributeValues based on the reentry tag.
-         */
-
-
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
@@ -182,10 +179,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 23 )]
         public List<Individual> Coaches { get; set; }
 
-        /*
-         * JsonProperty Order values 25 .. 29 reserved for concrete classes
-         */
-
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
         /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
@@ -195,15 +188,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (Coaches != null && Coaches.Count > 0);
         }
 
+        /*
+         * JsonProperty Order values 25 .. 29 reserved for concrete classes
+         */
+
         #endregion
 
         #region Methods
         /// <summary>
-        /// Sets the value of <see cref="DisplayName"/> based on the values of other properties of the Participant, such as FamilyName and GivenName for an Individual, or TeamName for a Team.
+        /// Calling this method sets (or restores) the value of <see cref="DisplayName"/> based on the values of other properties of the Participant, such as FamilyName and GivenName for an Individual, or TeamName for a Team.
+        /// It also marks that the DisplayName is the default value by setting <see cref="DefaultDisplayName"/> to true. 
         /// </summary>
         /// <remarks>The concrete class implementers should set _displayNameSet and _displayNameShorSet to false, as this represents the user has not modified the default values of DisplayName yet.</remarks>
         public abstract void SetDefaultDisplayName();
 
+        /// <summary>
+        /// Calculates a shorter version of the <see cref="DisplayName"/> property. Intended to be used on screens of reduced width.
+        /// <para>Concrete classes may override the <see cref="GetDisplayNameShort"/> method to provide a custom implementation.</para>
+        /// <para>By convention, the shortened display name should be no longer than <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (20) characters.</para>
+        /// </summary>
+        /// <returns></returns>
         public virtual string GetDisplayNameShort() {
             if (this.DisplayName.Length <= DISPLAY_NAME_SHORT_MAX_LENGTH) {
                 return this.DisplayName;
@@ -215,6 +219,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return this.DisplayName;
+        }
+
+        #endregion
+
+        #region IFinishInitializationAsync Implementation
+
+        /// <inheritdoc />
+        /// <remarks>The prefered method for deserializing from json is to use <see cref="MatchParticipant.LoadFromFileAsync(FileInfo)"/> or <see cref="MatchParticipant.LoadFromFileAsync(string)"/>.
+        /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Participant object.</remarks>
+        public async Task FinishInitializationAsync() {
+            foreach (var attributeValue in this.AttributeValues) {
+                await attributeValue.FinishInitializationAsync();
+            }
         }
 
         #endregion

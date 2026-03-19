@@ -16,16 +16,19 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task MatchFileNameTests() {
             Match match = new Match();
-            match.Name = "SerializationFileNameTest";
-            MatchComposite composite = new MatchComposite( match );
+            match.Name = "MatchFileNameTests";
 
-            var expectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "SerializationFileNameTest", "SerializationFileNameTest.json" );
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( match, RelativeDirectoryForTesting );
+            Directory.Delete( project.ProjectDirectory.FullName, true );
+
+            var expectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "MatchFileNameTests", "MatchFileNameTests.json" );
             if (File.Exists( expectedFullFileName ))
                 File.Delete( expectedFullFileName );
 
-            Assert.AreEqual( "SerializationFileNameTest.json", match.GetFileName( composite ) );
-            Assert.AreEqual( Path.Combine( "SerializationFileNameTest", "SerializationFileNameTest.json" ), match.GetRelativePath( composite ) );
-            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting, composite );
+            Assert.AreEqual( "MatchFileNameTests.json", match.GetFileName() );
+            Assert.AreEqual( Path.Combine( "MatchFileNameTests", "MatchFileNameTests.json" ), match.GetRelativePath() );
+            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
             Assert.AreEqual( expectedFullFileName, fullFileName );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
         }
@@ -33,12 +36,15 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task MatchSerializaeDeserializeTests() {
             Match match = new Match();
-            match.Name = "SerializationTest";
-            MatchComposite composite = new MatchComposite( match );
+            match.Name = "MatchSerializaeDeserializeTests";
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
+
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( match, RelativeDirectoryForTesting );
+            Directory.Delete( project.ProjectDirectory.FullName, true );
 
             SetName newShooterSetName = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
             CourseOfFireStructure cof, deserializedCof;
@@ -54,7 +60,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             foreach (var resultList in resultLists)
                 cof.AddResultList( resultList );
 
-            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting, composite );
+            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist" );
 
             var deserializedMatch = await Match.LoadFromFileAsync( fullFileName );
@@ -77,14 +83,6 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Assert.AreEqual( resultList.ResultName, deserializedResultList.ResultName );
                 Assert.AreEqual( resultList.AttributeFilter.Count, deserializedResultList.AttributeFilter.Count );
 
-                //Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( resultList, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializer ) );
-                //Console.WriteLine( resultList.AttributeFilter.GetHashCode() );
-                //Console.WriteLine( ((AttributeFilterAttributeValue)resultList.AttributeFilter).Values[0].GetHashCode() );
-
-                //Console.WriteLine( Newtonsoft.Json.JsonConvert.SerializeObject( deserializedResultList, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializer ) );
-                //Console.WriteLine( deserializedResultList.AttributeFilter.GetHashCode() );
-                //Console.WriteLine( ((AttributeFilterAttributeValue)deserializedResultList.AttributeFilter).Values[0].GetHashCode() );
-
                 Assert.AreEqual( resultList.GetHashCode(), deserializedResultList.GetHashCode() );
             }
         }
@@ -96,9 +94,13 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         /// <returns></returns>
         [TestMethod]
         public async Task CourseOfFireEntryFileNameTests() {
+
             Match match = new Match();
             match.Name = "CourseOfFireEntryFileNameTest";
-            MatchComposite composite = new MatchComposite( match );
+
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( match, RelativeDirectoryForTesting );
+            ClearDirectory( project.ProjectDirectory.FullName );
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
@@ -111,21 +113,52 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.IsNotNull( cof );
             cof.Attributes.Add( await AttributeConfiguration.FactoryAsync( newShooterSetName ) );
 
-            var johnSmith = composite.CreateMatchParticipant( "Smith", "John" );
-            var janeDoe = composite.CreateMatchParticipant( "Doe", "Jane" );
+            var johnSmith = await project.CreateMatchParticipantAsync( "Smith", "John" );
+            var janeDoe = await project.CreateMatchParticipantAsync( "Doe", "Jane" );
 
-            var johnSmithExpectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", $"{johnSmith.ParticipantID}.json" );
-            var janeDoeExpectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", $"{janeDoe.ParticipantID}.json" );
-            if (File.Exists( johnSmithExpectedFullFileName ))
-                File.Delete( johnSmithExpectedFullFileName );
-            if (File.Exists( janeDoeExpectedFullFileName ))
-                File.Delete( janeDoeExpectedFullFileName );
+            var johnSmithExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
+            var janeDoeExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{janeDoe.Participant.DisplayName} {janeDoe.ParticipantID}.json" );
 
-            Assert.AreEqual( $"{johnSmith.ParticipantID}.json", johnSmith.GetFileName( composite ) );
-            Assert.AreEqual( Path.Combine( "CourseOfFireEntryFileNameTest", $"{johnSmith.ParticipantID}.json" ), johnSmith.GetRelativePath( composite ) );
-            var fullFileName = johnSmith.SaveToFile( BaseTestClass.RelativeDirectoryForTesting, composite );
+            Assert.AreEqual( $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json", johnSmith.GetFileName() );
+            Assert.AreEqual( $"{MatchParticipant.FOLDER_NAME}\\{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json", johnSmith.GetRelativePath() );
+
+            var fullFileName = johnSmith.SaveToFile();
             Assert.AreEqual( johnSmithExpectedFullFileName, fullFileName );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
+
+            fullFileName = janeDoe.SaveToFile();
+            Assert.AreEqual( janeDoeExpectedFullFileName, fullFileName );
+            Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
+
+            //Update the display name and verify that the file name changes accordingly
+            johnSmith.Participant.DisplayName = "Johnathan Smith";
+            var johnSmithUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
+            Assert.IsTrue( File.Exists( johnSmithUpdatedExpectedFullFileName ), $"File does not exist: {johnSmithUpdatedExpectedFullFileName}" );
+
+            //Now try and deserialize one of the files.
+            var newJohnSmith = await MatchParticipant.LoadFromFileAsync( johnSmithUpdatedExpectedFullFileName );
+            Assert.AreEqual( johnSmith.Participant.DisplayName, newJohnSmith.Participant.DisplayName );
+            Assert.AreEqual( johnSmith.ParticipantID, newJohnSmith.ParticipantID );
+            Assert.AreEqual( ((Individual)johnSmith.Participant).GivenName, ((Individual)newJohnSmith.Participant).GivenName );
+            Assert.AreEqual( ((Individual)johnSmith.Participant).FamilyName, ((Individual)newJohnSmith.Participant).FamilyName );
+            Assert.IsTrue( newJohnSmith.Entries.Count == 1 );
+            Assert.AreEqual( ((CourseOfFireEntryIndividual)johnSmith.Entries[0]).ResultCofId, ((CourseOfFireEntryIndividual)newJohnSmith.Entries[0]).ResultCofId );
+        }
+
+        /// <summary>
+        /// Helper method to clean up a directory by deleting all files and subdirectories within it. This is used to ensure a clean slate for tests that involve file creation and serialization.
+        /// </summary>
+        /// <param name="directory"></param>
+        void ClearDirectory( string directory ) {
+            // Delete files
+            foreach (var file in Directory.GetFiles( directory )) {
+                File.Delete( file );
+            }
+
+            // Delete subdirectories
+            foreach (var dir in Directory.GetDirectories( directory )) {
+                Directory.Delete( dir, recursive: true );
+            }
         }
     }
 }

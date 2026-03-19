@@ -406,5 +406,16 @@ namespace Scopos.BabelFish.Helpers {
                 return trimmedValue;
             }
         }
+
+        /// <summary>
+        /// Converts a string to a safe file name by replacing invalid characters with underscores.
+        /// </summary>
+        /// <param name="input">The input string to be converted.</param>
+        /// <returns>A string that is safe to use as a file name.</returns>
+        public static string MakeSafeFileName( string input ) {
+            var invalid = Path.GetInvalidFileNameChars();
+            return string.Concat( input.Select( c => invalid.Contains( c ) ? '_' : c ) );
+        }
+
     }
 }

@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// </summary>
         /// <param name="composite"></param>
         /// <returns></returns>
-        string GetFileName( IBaseName composite );
+        string GetFileName();
 
         /// <summary>
         /// Saves this class instance to a file with the standard file name (as returned by GetFileName()) in the provided relative directory.
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <param name="relativeDirectory"></param>
         /// <param name="composite"></param>
         /// <returns></returns>
-        string SaveToFile( DirectoryInfo relativeDirectory, IBaseName composite );
+        string SaveToFile( DirectoryInfo relativeDirectory );
 
         /// <summary>
         /// Saves this class instance to the provided file.
@@ -34,29 +34,16 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// </summary>
         /// <param name="composite"></param>
         /// <returns></returns>
-        string GetRelativePath( IBaseName composite );
+        string GetRelativePath();
 
         /// <summary>
         /// Returns this class instance as serialized json.
         /// </summary>
         /// <returns></returns>
         string SerializeToJson();
-    }
 
-    public interface IBaseName {
-
-        string BaseName { get; }
-    }
-
-    public class StandardBaseName : IBaseName {
-
-        public static StandardBaseName NONE = new StandardBaseName( "" );
-
-        private StandardBaseName( string baseName ) {
-            this.BaseName = baseName;
-        }
-
-        public string BaseName { get; private set; }
-
+        /*
+         * NOTE Can not add LoadFromFile() type methods to this interface because the method needs to be static, and C# does not allow static methods in interfaces.
+         */
     }
 }

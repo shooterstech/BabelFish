@@ -34,6 +34,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// Factory method to create a new AttributeValueDataPacketMatch from an AttributeConfiguration. 
+        /// </summary>
+        /// <param name="attrConfiguration"></param>
+        /// <returns></returns>
+        public static async Task<AttributeValueDataPacketMatch> CreateAsync( AttributeConfiguration attrConfiguration ) {
+            AttributeValueDataPacketMatch avdp = new AttributeValueDataPacketMatch();
+
+            if (attrConfiguration.Constant)
+                avdp.AttributeValue = attrConfiguration.AttributeValue;
+            else
+                avdp.AttributeValue = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( attrConfiguration.AttributeDef );
+
+            avdp.AttributeDef = attrConfiguration.AttributeDef;
+            avdp.Visibility = attrConfiguration.Visibility;
+            avdp.CourseOfFireId = attrConfiguration.CourseOfFireId;
+            return avdp;
+        }
+
+        /// <summary>
         /// Some AttributeValues are specific to a specific course of fire within a Match. A value of 0 means the AttributeValue is not specific to a course of fire, and applies to the whole match. Any other value should be the CourseOfFireId of the course of fire that this AttributeValue is specific to.
         /// <para></para>
         /// </summary>

@@ -55,6 +55,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Methods
 
+        /// <inheritdoc />
         public override void SetDefaultDisplayName() {
             this.DefaultDisplayName = true;
             this._displayName = this.TeamName;

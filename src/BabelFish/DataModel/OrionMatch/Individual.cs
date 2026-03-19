@@ -114,7 +114,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Methods
-
+        /// <inheritdoc />
         public override void SetDefaultDisplayName() {
 
             this.DefaultDisplayName = true;
@@ -130,6 +130,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+
+        /// <inheritdoc />
         public override string GetDisplayNameShort() {
 
             //The rule of thumb is the DisplayNameShort should be 20 characters or less if possible.
