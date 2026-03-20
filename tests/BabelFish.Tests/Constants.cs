@@ -1,4 +1,4 @@
-﻿
+
 namespace Scopos.BabelFish.Tests {
     public static class Constants {
 
@@ -22,6 +22,16 @@ namespace Scopos.BabelFish.Tests {
 
         public static BasicUserCredentials TestDev9Credentials = new BasicUserCredentials() {
             Username = "test_dev_9@shooterstech.net",
+            Password = "abcd1234"
+        };
+
+        public static BasicUserCredentials TestDev11Credentials = new BasicUserCredentials() {
+            Username = "test_dev_11@shooterstech.net",
+            Password = "testdev11"
+        };
+
+        public static BasicUserCredentials TestDev13Credentials = new BasicUserCredentials() {
+            Username = "test_dev_13@shooterstech.net",
             Password = "abcd1234"
         };
 

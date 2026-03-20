@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         }
 
-        public MatchSearchAbstractRequest( string operationId, UserAuthentication credentials ) : base( operationId ) {
+        public MatchSearchAbstractRequest( string operationId, UserAuthentication credentials ) : base( operationId, credentials ) {
 
         }
         public static MatchSearchAbstractRequest Factory( UserAuthentication credentials = null ) {
