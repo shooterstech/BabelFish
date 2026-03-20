@@ -216,6 +216,89 @@ namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task BasicHappyPathPatchTournamentMemberWithRequestTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Patch Tournament Member Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+            createRequest.TournamentName = tournamentName;
+            createRequest.OwnerId = "OrionAcct000002";
+            createRequest.Visibility = VisibilityOption.PUBLIC;
+            createRequest.MemberPolicy = MemberPolicyOption.REQUEST;
+            createRequest.ShowOnSearch = true;
+
+            var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+            Assert.IsTrue( createResponse.HasOkStatusCode );
+            Assert.IsNotNull( createResponse.Tournament );
+
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
+            var addResponse = await client.AddTournamentMemberAuthenticatedAsync(
+                createResponse.Tournament.TournamentId,
+                tournamentMemberMatchId,
+                userAuthentication );
+
+            Assert.IsTrue( addResponse.HasOkStatusCode );
+            Assert.IsNotNull( addResponse.TournamentMember );
+
+            var patchRequest = new PatchTournamentMemberAuthenticatedRequest( userAuthentication ); //member policy is request, so only match owner can modify member status
+            patchRequest.TournamentId = createResponse.Tournament.TournamentId;
+            patchRequest.MatchId = tournamentMemberMatchId;
+            patchRequest.ApprovalStatus = ApprovalStatus.REJECTED;
+            var patchResponse = await client.PatchTournamentMemberAuthenticatedAsync( patchRequest );
+
+            Assert.IsTrue( patchResponse.HasOkStatusCode );
+            Assert.IsNotNull( patchResponse.TournamentMember );
+            Assert.AreEqual( tournamentMemberMatchId, patchResponse.TournamentMember.MatchId );
+            Assert.AreEqual( ApprovalStatus.REJECTED, patchResponse.TournamentMember.ApprovalStatus );
+        }
+
+        [TestMethod]
+        public async Task BasicHappyPathPatchTournamentMemberWithTournamentMemberObjectTest() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Patch Tournament Member Object Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+            createRequest.TournamentName = tournamentName;
+            createRequest.OwnerId = "OrionAcct000002";
+            createRequest.Visibility = VisibilityOption.PUBLIC;
+            createRequest.MemberPolicy = MemberPolicyOption.REQUEST;
+            createRequest.ShowOnSearch = true;
+
+            var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+            Assert.IsTrue( createResponse.HasOkStatusCode );
+            Assert.IsNotNull( createResponse.Tournament );
+
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
+            var addResponse = await client.AddTournamentMemberAuthenticatedAsync(
+                createResponse.Tournament.TournamentId,
+                tournamentMemberMatchId,
+                userAuthentication );
+
+            Assert.IsTrue( addResponse.HasOkStatusCode );
+            Assert.IsNotNull( addResponse.TournamentMember );
+
+            var patchMember = new TournamentMember() {
+                TournamentId = createResponse.Tournament.TournamentId,
+                MatchId = tournamentMemberMatchId,
+                ApprovalStatus = ApprovalStatus.APPROVED
+            };
+            var patchResponse = await client.PatchTournamentMemberAuthenticatedAsync( patchMember, userAuthentication );
+
+            Assert.IsTrue( patchResponse.HasOkStatusCode );
+            Assert.IsNotNull( patchResponse.TournamentMember );
+            Assert.AreEqual( tournamentMemberMatchId, patchResponse.TournamentMember.MatchId );
+            Assert.AreEqual( ApprovalStatus.APPROVED, patchResponse.TournamentMember.ApprovalStatus );
+        }
+
+        [TestMethod]
         public async Task BasicHappyPathDeleteTournamentMemberWithRequestTest() {
             var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
