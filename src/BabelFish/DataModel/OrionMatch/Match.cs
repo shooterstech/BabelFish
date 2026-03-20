@@ -23,7 +23,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>Unless you are a deserializer, it is best to use the alternative constructor that takes a MatchProject,
         /// so that this Match object is associated with a project and can access project level data such as Participants and Scores, etc.</para>
         /// </summary>
-        public Match() { }
+        public Match() {
+            this.MatchStructure = new MatchStructure( this );
+        }
 
         /// <summary>
         /// Preferred constructor for creating a Match object. Associates this Match with a MatchProject, which allows the Match to access project level data such as Participants and Scores, etc.
@@ -31,6 +33,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="project">The MatchProject associated with this Match instance.</param>
         public Match( MatchProject project ) {
             this.Project = project;
+            this.MatchStructure = new MatchStructure( this );
         }
 
         /// <inheritdoc />
@@ -236,7 +239,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
         [G_STJ_SER.JsonPropertyOrder( 30 )]
         [G_NS.JsonProperty( Order = 30 )]
-        public MatchStructure MatchStructure { get; set; } = new MatchStructure();
+        public MatchStructure MatchStructure { get; set; }
         #endregion
 
         /// <summary>

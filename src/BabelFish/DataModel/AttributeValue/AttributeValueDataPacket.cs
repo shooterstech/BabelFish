@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// is then handled in an async call sepeartly.
         /// </summary>
         /// <returns></returns>
-        public async Task FinishInitializationAsync() {
+        public virtual async Task FinishInitializationAsync() {
             if (AttributeValueTask != null)
                 AttributeValue = await AttributeValueTask;
         }

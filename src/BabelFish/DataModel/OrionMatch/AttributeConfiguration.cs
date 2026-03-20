@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The AttributeValue's AttributeDef specifies the ATTRIBUTE for this AttributeConfiguration.</param>
         /// <param name="constant">if true, then the values listed in the parameter attrValue initialize the values of this AttributeConfiguration. If false, then no Attribute Values are included.</param>
         /// <exception cref="ArgumentException">Thrown if the AttributeValue passed is not a <see cref="Definitions.Attribute.ReallySimpleAttribute"/>.</exception>"
-        public static async Task<AttributeConfiguration> FactoryAsync( AttributeValue.AttributeValue attrValue, bool constant = false ) {
+        public static async Task<AttributeConfiguration> CreateAsync( AttributeValue.AttributeValue attrValue, bool constant = false ) {
 
             AttributeConfiguration configuration = new AttributeConfiguration();
 
@@ -53,10 +53,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 configuration.AttributeValue = attrValue;
             }
 
+            configuration.IsForIndividuals = attribute.Designation.Contains( AttributeDesignation.ATHLETE );
+            configuration.IsForTeams = attribute.Designation.Contains( AttributeDesignation.TEAM );
+
             return configuration;
         }
 
-        public static async Task<AttributeConfiguration> FactoryAsync( SetName setName ) {
+        public static async Task<AttributeConfiguration> CreateAsync( SetName setName ) {
             if (setName.IsDefault)
                 throw new DefinitionNotFoundException( "Can not create a instance of AttributeConfiguration using the default Attribute." );
             var attribute = await DefinitionCache.GetAttributeDefinitionAsync( setName );
@@ -69,7 +72,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             configuration.AttributeDef = setName;
             configuration.Constant = false;
 
+            configuration.IsForIndividuals = attribute.Designation.Contains( AttributeDesignation.ATHLETE );
+            configuration.IsForTeams = attribute.Designation.Contains( AttributeDesignation.TEAM );
+
             return configuration;
+        }
+
+        public override async Task FinishInitializationAsync() {
+            await base.FinishInitializationAsync();
+            var attribute = await DefinitionCache.GetAttributeDefinitionAsync( this.AttributeDef );
+
+            this.IsForIndividuals = attribute.Designation.Contains( AttributeDesignation.ATHLETE );
+            this.IsForTeams = attribute.Designation.Contains( AttributeDesignation.TEAM );
         }
 
         /// <summary>
@@ -81,6 +95,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>If Constnat is false, the <see cref="AttributeValue"/> should ben an empty list.</para></remarks>
         [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public bool Constant { get; set; } = false;
+
+        /// <summary>
+        /// Helper property to indicate whether this AttributeConfiguration is intended to be used to describe Individuals within a Match
+        /// </summary>
+        /// <remarks>Values are set during the CreateAsync methods.</remarks>
+        [G_NS.JsonIgnore]
+        public bool IsForIndividuals { get; private set; }
+
+        /// <summary>
+        /// Helper property to indicate whether this AttributeConfiguration is intended to be used to describe Teams within a Match
+        /// </summary>
+        /// <remarks>Values are set during the CreateAsync methods.</remarks>
+        [G_NS.JsonIgnore]
+        public bool IsForTeams { get; private set; }
 
         /// <summary>
         /// Returns a string that provides a concise description of the current AttributeConfiguration instance,

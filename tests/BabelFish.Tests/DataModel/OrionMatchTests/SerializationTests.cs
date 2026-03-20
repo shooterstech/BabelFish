@@ -50,7 +50,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             CourseOfFireStructure cof, deserializedCof;
             match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
             Assert.IsNotNull( cof );
-            cof.Attributes.Add( await AttributeConfiguration.FactoryAsync( newShooterSetName ) );
+            cof.AddAttributeConfigurationAsync( newShooterSetName );
 
             //Let the Wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );
@@ -111,13 +111,16 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             CourseOfFireStructure cof, deserializedCof;
             match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
             Assert.IsNotNull( cof );
-            cof.Attributes.Add( await AttributeConfiguration.FactoryAsync( newShooterSetName ) );
+            cof.AddAttributeConfigurationAsync( newShooterSetName );
 
             var johnSmith = await project.CreateMatchParticipantAsync( "Smith", "John" );
             var janeDoe = await project.CreateMatchParticipantAsync( "Doe", "Jane" );
+            var aTeam = await project.CreateMatchParticipantAsync( "Team A" );
 
             var johnSmithExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
             var janeDoeExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{janeDoe.Participant.DisplayName} {janeDoe.ParticipantID}.json" );
+            var aTeamExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{aTeam.Participant.DisplayName} {aTeam.ParticipantID}.json" );
+
 
             Assert.AreEqual( $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json", johnSmith.GetFileName() );
             Assert.AreEqual( $"{MatchParticipant.FOLDER_NAME}\\{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json", johnSmith.GetRelativePath() );
@@ -130,12 +133,20 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.AreEqual( janeDoeExpectedFullFileName, fullFileName );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
 
-            //Update the display name and verify that the file name changes accordingly
+            fullFileName = aTeam.SaveToFile();
+            Assert.AreEqual( aTeamExpectedFullFileName, fullFileName );
+            Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
+
+            //Update the display name for an individual and verify that the file name changes accordingly
             johnSmith.Participant.DisplayName = "Johnathan Smith";
             var johnSmithUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
             Assert.IsTrue( File.Exists( johnSmithUpdatedExpectedFullFileName ), $"File does not exist: {johnSmithUpdatedExpectedFullFileName}" );
 
-            //Now try and deserialize one of the files.
+            aTeam.Participant.DisplayName = "Team Alpha";
+            var aTeamUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{aTeam.Participant.DisplayName} {aTeam.ParticipantID}.json" );
+            Assert.IsTrue( File.Exists( aTeamUpdatedExpectedFullFileName ), $"File does not exist: {aTeamUpdatedExpectedFullFileName}" );
+
+            //Now try and deserialize one of the individual files.
             var newJohnSmith = await MatchParticipant.LoadFromFileAsync( johnSmithUpdatedExpectedFullFileName );
             Assert.AreEqual( johnSmith.Participant.DisplayName, newJohnSmith.Participant.DisplayName );
             Assert.AreEqual( johnSmith.ParticipantID, newJohnSmith.ParticipantID );
@@ -143,6 +154,12 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.AreEqual( ((Individual)johnSmith.Participant).FamilyName, ((Individual)newJohnSmith.Participant).FamilyName );
             Assert.IsTrue( newJohnSmith.Entries.Count == 1 );
             Assert.AreEqual( ((CourseOfFireEntryIndividual)johnSmith.Entries[0]).ResultCofId, ((CourseOfFireEntryIndividual)newJohnSmith.Entries[0]).ResultCofId );
+
+            var newATeam = await MatchParticipant.LoadFromFileAsync( aTeamUpdatedExpectedFullFileName );
+            Assert.AreEqual( aTeam.Participant.DisplayName, newATeam.Participant.DisplayName );
+            Assert.AreEqual( aTeam.ParticipantID, newATeam.ParticipantID );
+            Assert.AreEqual( ((Team)aTeam.Participant).TeamName, ((Team)newATeam.Participant).TeamName );
+            Assert.IsTrue( newATeam.Entries.Count == 1 );
         }
 
         /// <summary>

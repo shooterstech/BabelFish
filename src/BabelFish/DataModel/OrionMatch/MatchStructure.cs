@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -8,20 +9,99 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// or it may be used as a template to create a new Match.
     /// </summary>
     /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
-    public class MatchStructure : IFinishInitializationAsync {
+    public class MatchStructure : IFinishInitializationAsync, G_STJ_SER.IJsonOnDeserializing, G_STJ_SER.IJsonOnDeserialized {
 
+        #region Private and Protected Fields
+        protected bool _ignoreEvents = false;
+        #endregion
+
+        #region Constructors, Facory Methods, and Initialization Methods
         /// <summary>
-        /// Public constructor.
+        /// Public constructor. Unless you are the deserializer, it is generally best to construct a new instance
+        /// using the <see cref="MatchStructure(Match)"/> constructor, as this sets the container property <see cref="Match"/>.
         /// </summary>
         public MatchStructure() {
 
         }
 
         /// <summary>
+        /// Preferred public constructor. Sets the container property <see cref="Match"/>.
+        /// </summary>
+        /// <param name="match">The Match that created and contains this instance.</param>
+        public MatchStructure( Match match ) {
+            this.Match = match;
+        }
+
+        /// <summary>
+        /// Gets called after System.Text.Json deserializes an instance of this class.
+        /// Sets _ignoreEvents to false so that events will fire as expected after deserialization.
+        /// </summary>
+        public void OnDeserialized() {
+            _ignoreEvents = false;
+        }
+
+        /// <summary>
+        /// Gets called before System.Text.Json deserializes an instance of this class.
+        /// Sets _ignoreEvents to true to prevent events from firing during deserialization.
+        /// </summary>
+        public void OnDeserializing() {
+            _ignoreEvents = true;
+        }
+
+        /// <inheritdoc/>
+        public async Task FinishInitializationAsync() {
+            foreach (var sharedAttribute in this.SharedAttributes) {
+                await sharedAttribute.FinishInitializationAsync();
+            }
+
+            foreach (var cof in this.CoursesOfFire) {
+                await cof.FinishInitializationAsync();
+            }
+        }
+        #endregion
+
+        #region Event Handlers
+        /// <summary>
+        /// Occurs when a new <see cref="CourseOfFireStructure"/> is added to this instance.
+        /// <para>the preferred way of adding a new CourseOfFireStructure is to use the <see cref="AddCourseOfFireAsync(SetName)"/> method.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public EventHandler<EventArgs<CourseOfFireStructure>> OnCourseOfFireAdded;
+
+        /// <summary>
+        /// Occurs when a new global <see cref="AttributeConfiguration"/> is added to this instance.
+        /// <para>The preferred way of adding a new AttributeConfiguration is to use <see cref="AddAttributeConfigurationAsync(SetName)"/>. </para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public EventHandler<EventArgs<AttributeConfiguration>> OnAttributeConfigurationAdded;
+        #endregion
+
+        #region Data Model Properties
+        /// <summary>
         /// <para>Unless you are the deserializer, it is generally best to add new CourseOfFireStructures using the
         /// <see cref="AddCourseOfFireAsync(SetName)"/> method. Ass this method sets a known good value for CourseOfFireId.</para>
         /// </summary>
         public List<CourseOfFireStructure> CoursesOfFire { get; set; } = new List<CourseOfFireStructure>();
+
+        /// <summary>
+        /// All participants in a <see cref="Match"/> must have a value for each SharedAttributes, and that value is used within each COF.
+        /// <para>Shared AttributeConfigurations are sometimes called global attributes, since all participants have one, and there AttributeValue
+        /// is common accross all CoursesOfFire.</para>
+        /// </summary>
+        public List<AttributeConfiguration> SharedAttributes { get; set; } = new List<AttributeConfiguration>();
+
+        #endregion
+
+        #region Helper Properties
+
+        /// <summary>
+        /// Pointer to the Match instance that contains this MatchStructure.
+        /// </summary>
+        public Match Match { get; internal set; }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Attempts to find the CourseOfFireStructure with courseOfFireId. Returns a boolean indicating it's success or lack there of.
@@ -34,11 +114,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return cof is not null;
         }
-
-        /// <summary>
-        /// All participants in a <see cref="Match"/> must have a value for each SharedAttributes, and that value is used within each COF.
-        /// </summary>
-        public List<AttributeConfiguration> SharedAttributes { get; set; } = new List<AttributeConfiguration>();
 
         /// <summary>
         /// 
@@ -54,7 +129,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 throw new InvalidOperationException( "A Match cannot have more than 24 Courses of Fire." );
             }
 
-            var cof = await CourseOfFireStructure.FactoryAsync( setName );
+            var cof = await CourseOfFireStructure.CreateAsync( this, setName );
 
             var maxId = 0;
             foreach (var existingCof in CoursesOfFire) {
@@ -66,18 +141,44 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             this.CoursesOfFire.Add( cof );
 
+            if (!_ignoreEvents) {
+                OnCourseOfFireAdded?.Invoke( this, new EventArgs<CourseOfFireStructure>( cof ) );
+            }
+
             return cof.CourseOfFireId;
         }
 
-        /// <inheritdoc/>
-        public async Task FinishInitializationAsync() {
-            foreach (var sharedAttribute in this.SharedAttributes) {
-                await sharedAttribute.FinishInitializationAsync();
+        public async Task<AttributeConfiguration> AddAttributeConfigurationAsync( SetName attributeDef ) {
+
+            if (attributeDef.IsDefault) {
+
+                throw new ArgumentException( "May not add an AttributeConfiguration using default." );
             }
 
-            foreach (var cof in this.CoursesOfFire) {
-                await cof.FinishInitializationAsync();
+            var attributeConfig = await AttributeConfiguration.CreateAsync( attributeDef );
+            attributeConfig.CourseOfFireId = 0; //0 indicates it is a shared attribute, and not specific to any one Course of Fire.
+            SharedAttributes.Add( attributeConfig );
+
+            if (Match is not null && Match.Project is not null) {
+                foreach (var mp in Match.Project.Participants) {
+                    if (attributeConfig.IsForIndividuals && mp.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
+                        var avdp = await AttributeValueDataPacketMatch.CreateAsync( attributeConfig );
+                        avdp.CourseOfFireId = 0; //0 indicates it is a shared attribute, and not specific to any one Course of Fire.
+                        mp.Participant.AttributeValues.Add( avdp );
+                    }
+                }
+            } else {
+                Debug.Assert( Match is not null, "The Match property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
+                Debug.Assert( Match.Project is not null, "The Project property of the Match property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
             }
+
+            if (!_ignoreEvents) {
+                OnAttributeConfigurationAdded?.Invoke( this, new EventArgs<AttributeConfiguration>( attributeConfig ) );
+            }
+
+            return attributeConfig;
         }
+
+        #endregion
     }
 }
