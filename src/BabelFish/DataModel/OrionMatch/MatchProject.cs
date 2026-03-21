@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
-        private MatchProject() {
+        public MatchProject() {
 
             this.OnProjectNameChanged += RenameFile;
         }
@@ -26,11 +26,43 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             var project = new MatchProject();
             project.Match = new Match( club, project );
             project.ProjectName = matchName;
+            project.Match.Name = matchName;
 
             project.ProjectDirectory = new DirectoryInfo( Path.Combine( myMatchesDirectory.FullName, project.ProjectName ) );
             project.ProjectDirectory.Create();
 
             return project;
+        }
+
+        public static async Task<MatchProject> LoadFromFileAsync( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            using (var stream = fileInfo.OpenRead()) {
+                var matchProject = G_STJ.JsonSerializer.Deserialize<MatchProject>( stream, Helpers.SerializerOptions.SystemTextJsonDeserializer );
+                matchProject.ProjectDirectory = fileInfo.Directory;
+
+                //Load the Match.
+                matchProject.Match = await Match.LoadFromFileAsync( Path.Combine( matchProject.ProjectDirectory.FullName, matchProject.MatchFileName ) );
+
+                //Load the Participants
+                var participantDirectory = new DirectoryInfo( Path.Combine( matchProject.ProjectDirectory.FullName, MatchParticipant.FOLDER_NAME ) );
+                if (participantDirectory.Exists) {
+                    foreach (var participantFile in participantDirectory.GetFiles()) {
+                        var participant = await MatchParticipant.LoadFromFileAsync( participantFile );
+                        matchProject.Participants.Add( participant );
+                    }
+                }
+
+                return matchProject;
+            }
+        }
+
+        public static async Task<MatchProject> LoadFromFileAsync( string fullPath ) {
+
+            FileInfo fileInfo = new FileInfo( fullPath );
+            return await LoadFromFileAsync( fileInfo );
         }
 
         /// <summary>
@@ -74,6 +106,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             }
         }
+
+        public string MatchFileName { get; set; }
 
         [G_NS.JsonIgnore]
         public Match Match { get; private set; }
@@ -184,6 +218,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (relativeDirectory == null)
                 throw new ArgumentNullException( nameof( relativeDirectory ) );
 
+            this.MatchFileName = this.Match.GetRelativePath();
             string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
 
             var directoryPath = Path.GetDirectoryName( filePath );
@@ -195,6 +230,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             string json = G_NS.JsonConvert.SerializeObject( this, SerializerOptions.NewtonsoftJsonSerializer );
 
             File.WriteAllText( filePath, json );
+
+            this.Match.SaveToFile( this.ProjectDirectory );
+            foreach (var participant in Participants) {
+                participant.SaveToFile( this.ProjectDirectory );
+            }
 
             return filePath;
         }
@@ -212,9 +252,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (fileInfo == null)
                 throw new ArgumentNullException( nameof( fileInfo ) );
 
+            this.MatchFileName = this.Match.GetRelativePath();
             string json = G_NS.JsonConvert.SerializeObject( this, SerializerOptions.NewtonsoftJsonSerializer );
 
             File.WriteAllText( fileInfo.FullName, json );
+
+            this.Match.SaveToFile( this.ProjectDirectory );
+            foreach (var participant in Participants) {
+                participant.SaveToFile( this.ProjectDirectory );
+            }
 
             return fileInfo.FullName;
         }

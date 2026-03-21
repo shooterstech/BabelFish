@@ -173,12 +173,22 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
 
+            var johnSmith = await project.CreateMatchParticipantAsync( "Smith", "John" );
+            var janeDoe = await project.CreateMatchParticipantAsync( "Doe", "Jane" );
+            var aTeam = await project.CreateMatchParticipantAsync( "Team A" );
+
             Assert.AreEqual( "MatchProjectSerializationTest.orion", project.GetFileName() );
 
             var expectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, project.GetFileName() );
 
             project.SaveToFile();
             Assert.IsTrue( File.Exists( expectedFullFileName ), $"File does not exist: {expectedFullFileName}" );
+
+            var newProject = await MatchProject.LoadFromFileAsync( expectedFullFileName );
+            Assert.IsNotNull( newProject );
+            Assert.AreEqual( project.ProjectName, newProject.ProjectName );
+            Assert.AreEqual( project.Match.Name, newProject.Match.Name );
+            Assert.AreEqual( project.Participants.Count, newProject.Participants.Count );
         }
 
         /// <summary>
