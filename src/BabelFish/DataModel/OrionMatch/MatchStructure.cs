@@ -97,6 +97,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Pointer to the Match instance that contains this MatchStructure.
         /// </summary>
+        [G_NS.JsonIgnore]
         public Match Match { get; internal set; }
 
         #endregion
@@ -128,6 +129,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (this.CoursesOfFire.Count >= 24) {
                 throw new InvalidOperationException( "A Match cannot have more than 24 Courses of Fire." );
             }
+
+            if (this.Match is null) {
+                throw new InvalidOperationException( "The Match property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
+            }
+
+            //NOTE this.Match.Project could be null if the Match was deserialized without its Project, such as when a Match is read from the REST API.
 
             var cof = await CourseOfFireStructure.CreateAsync( this, setName );
 

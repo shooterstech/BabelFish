@@ -15,36 +15,35 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         /// <returns></returns>
         [TestMethod]
         public async Task MatchFileNameTests() {
-            Match match = new Match();
-            match.Name = "MatchFileNameTests";
+            var matchName = "MatchFileNameTests";
 
             //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
-            MatchProject project = await MatchProject.CreateAsync( match, RelativeDirectoryForTesting );
-            Directory.Delete( project.ProjectDirectory.FullName, true );
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            var match = project.Match;
+            ClearDirectory( project.ProjectDirectory.FullName );
 
-            var expectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, "MatchFileNameTests", "MatchFileNameTests.json" );
-            if (File.Exists( expectedFullFileName ))
-                File.Delete( expectedFullFileName );
 
-            Assert.AreEqual( "MatchFileNameTests.json", match.GetFileName() );
-            Assert.AreEqual( Path.Combine( "MatchFileNameTests", "MatchFileNameTests.json" ), match.GetRelativePath() );
-            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
+            Assert.AreEqual( $"{matchName}.json", match.GetFileName() );
+            Assert.AreEqual( $"{matchName}.json", match.GetRelativePath() );
+
+            var expectedFullFileName = Path.Combine( BaseTestClass.RelativeDirectoryForTesting.FullName, matchName, $"{matchName}.json" );
+            var fullFileName = match.SaveToFile( project.ProjectDirectory );
             Assert.AreEqual( expectedFullFileName, fullFileName );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist: {fullFileName}" );
         }
 
         [TestMethod]
         public async Task MatchSerializaeDeserializeTests() {
-            Match match = new Match();
-            match.Name = "MatchSerializaeDeserializeTests";
+            var matchName = "MatchSerializaeDeserializeTests";
+
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            ClearDirectory( project.ProjectDirectory.FullName );
+            var match = project.Match;
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
             var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
-
-            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
-            MatchProject project = await MatchProject.CreateAsync( match, RelativeDirectoryForTesting );
-            Directory.Delete( project.ProjectDirectory.FullName, true );
 
             SetName newShooterSetName = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
             CourseOfFireStructure cof, deserializedCof;
@@ -60,7 +59,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             foreach (var resultList in resultLists)
                 cof.AddResultList( resultList );
 
-            var fullFileName = match.SaveToFile( BaseTestClass.RelativeDirectoryForTesting );
+            var fullFileName = match.SaveToFile( project.ProjectDirectory );
             Assert.IsTrue( File.Exists( fullFileName ), $"File does not exist" );
 
             var deserializedMatch = await Match.LoadFromFileAsync( fullFileName );
@@ -94,12 +93,11 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         /// <returns></returns>
         [TestMethod]
         public async Task CourseOfFireEntryFileNameTests() {
-
-            Match match = new Match();
-            match.Name = "CourseOfFireEntryFileNameTest";
+            var matchName = "CourseOfFireEntryFileNameTest";
 
             //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
-            MatchProject project = await MatchProject.CreateAsync( match, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            var match = project.Match;
             ClearDirectory( project.ProjectDirectory.FullName );
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
@@ -117,9 +115,9 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             var janeDoe = await project.CreateMatchParticipantAsync( "Doe", "Jane" );
             var aTeam = await project.CreateMatchParticipantAsync( "Team A" );
 
-            var johnSmithExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
-            var janeDoeExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{janeDoe.Participant.DisplayName} {janeDoe.ParticipantID}.json" );
-            var aTeamExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{aTeam.Participant.DisplayName} {aTeam.ParticipantID}.json" );
+            var johnSmithExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
+            var janeDoeExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, MatchParticipant.FOLDER_NAME, $"{janeDoe.Participant.DisplayName} {janeDoe.ParticipantID}.json" );
+            var aTeamExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, MatchParticipant.FOLDER_NAME, $"{aTeam.Participant.DisplayName} {aTeam.ParticipantID}.json" );
 
 
             Assert.AreEqual( $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json", johnSmith.GetFileName() );
@@ -139,11 +137,11 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Update the display name for an individual and verify that the file name changes accordingly
             johnSmith.Participant.DisplayName = "Johnathan Smith";
-            var johnSmithUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
+            var johnSmithUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, MatchParticipant.FOLDER_NAME, $"{johnSmith.Participant.DisplayName} {johnSmith.ParticipantID}.json" );
             Assert.IsTrue( File.Exists( johnSmithUpdatedExpectedFullFileName ), $"File does not exist: {johnSmithUpdatedExpectedFullFileName}" );
 
             aTeam.Participant.DisplayName = "Team Alpha";
-            var aTeamUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, "CourseOfFireEntryFileNameTest", MatchParticipant.FOLDER_NAME, $"{aTeam.Participant.DisplayName} {aTeam.ParticipantID}.json" );
+            var aTeamUpdatedExpectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, MatchParticipant.FOLDER_NAME, $"{aTeam.Participant.DisplayName} {aTeam.ParticipantID}.json" );
             Assert.IsTrue( File.Exists( aTeamUpdatedExpectedFullFileName ), $"File does not exist: {aTeamUpdatedExpectedFullFileName}" );
 
             //Now try and deserialize one of the individual files.
@@ -160,6 +158,27 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.AreEqual( aTeam.ParticipantID, newATeam.ParticipantID );
             Assert.AreEqual( ((Team)aTeam.Participant).TeamName, ((Team)newATeam.Participant).TeamName );
             Assert.IsTrue( newATeam.Entries.Count == 1 );
+        }
+
+        [TestMethod]
+        public async Task MatchProjectSerializationTest() {
+            var matchName = "MatchProjectSerializationTest";
+
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            var match = project.Match;
+            ClearDirectory( project.ProjectDirectory.FullName );
+
+            //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
+            SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
+            var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
+
+            Assert.AreEqual( "MatchProjectSerializationTest.orion", project.GetFileName() );
+
+            var expectedFullFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, project.GetFileName() );
+
+            project.SaveToFile();
+            Assert.IsTrue( File.Exists( expectedFullFileName ), $"File does not exist: {expectedFullFileName}" );
         }
 
         /// <summary>

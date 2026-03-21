@@ -10,7 +10,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
-    public abstract class Participant : G_STJ_SER.IJsonOnDeserializing, G_STJ_SER.IJsonOnDeserialized {
+    public abstract class Participant :
+        G_STJ_SER.IJsonOnDeserializing,
+        G_STJ_SER.IJsonOnDeserialized {
 
         /// <summary>
         /// The expected maximum length of the DisplayNameShort property. This is not a hard limit, but by convention DisplayNameShorts should be 20 characters or less. DisplayName may be any length.

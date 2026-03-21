@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -12,7 +13,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</para>
     /// </summary>
     [Serializable]
-    public class Match : ISaveToFile, IFinishInitializationAsync, G_STJ_SER.IJsonOnDeserialized {
+    public class Match :
+        ISaveToFile,
+        IFinishInitializationAsync,
+        G_STJ_SER.IJsonOnDeserialized,
+        G_STJ_SER.IJsonOnDeserializing {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -30,8 +35,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Preferred constructor for creating a Match object. Associates this Match with a MatchProject, which allows the Match to access project level data such as Participants and Scores, etc.
         /// </summary>
+        /// <param name="club">The Club associated with this Match instance.</param>
         /// <param name="project">The MatchProject associated with this Match instance.</param>
-        public Match( MatchProject project ) {
+        public Match( ClubAbbr club, MatchProject project ) {
+            this.MatchID = new MatchID( club );
             this.Project = project;
             this.MatchStructure = new MatchStructure( this );
         }
@@ -57,6 +64,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public void OnDeserialized() {
             if (ScoringSystems.Count == 0)
                 ScoringSystems.Add( "Orion Scoring System" );
+        }
+
+        /// <summary>
+        /// Method is called before deserialization with System.Text.Json.
+        /// </summary>
+        public void OnDeserializing() {
+            ;
         }
 
         /// <summary>
@@ -90,6 +104,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         #endregion
+
+        #region Event Handlers
+
+        #endregion 
 
         #region Data Model Properties
 
@@ -470,7 +488,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region ISaveToFile Implementation
         /// <inheritdoc/>
-        /// <param name="composite">Expected to be a <see cref="MatchProject"/> instance.</param>
         /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
         public string GetFileName() {
 
@@ -484,17 +501,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// SAves the current Match object to a JSON file in the specified relative directory.
         /// The file name is derived from the Match's Name property.
         /// </summary>
-        /// <param name="relativeDirectory">Usually the My Matches directory.</param>
-        /// <param name="composite">Expected to be a <see cref="MatchProject"/> instance.</param>
+        /// <param name="projectDirectory">The project directory is where the match file will be saved. Matches are always saved in the
+        /// root of the project directory</param>
         /// <returns>The full path to the saved file.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
-        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+        public string SaveToFile( DirectoryInfo projectDirectory ) {
 
-            if (relativeDirectory == null)
-                throw new ArgumentNullException( nameof( relativeDirectory ) );
+            if (projectDirectory == null)
+                throw new ArgumentNullException( nameof( projectDirectory ) );
 
-            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+            string filePath = Path.Combine( projectDirectory.FullName, GetRelativePath() );
 
             var directoryPath = Path.GetDirectoryName( filePath );
 
@@ -502,7 +519,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 Directory.CreateDirectory( directoryPath );
             }
 
-            string json = G_NS.JsonConvert.SerializeObject( this, SerializerOptions.NewtonsoftJsonSerializer );
+            string json = SerializeToJson();
 
             File.WriteAllText( filePath, json );
 
@@ -522,25 +539,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (fileInfo == null)
                 throw new ArgumentNullException( nameof( fileInfo ) );
 
-            string json = G_NS.JsonConvert.SerializeObject( this, SerializerOptions.NewtonsoftJsonSerializer );
+            string json = SerializeToJson();
 
             File.WriteAllText( fileInfo.FullName, json );
 
             return fileInfo.FullName;
         }
 
+        public void SaveToFile() {
+            if (Project is null)
+                throw new InvalidOperationException( "The MatchProject property Project is not set, and must be set before calling SaveToFile." );
+            SaveToFile( Project.ProjectDirectory );
+        }
+
         /// <summary>
-        /// Returns the standard relative path for this Match. It is relative to the My Matches directory.
+        /// Returns the standard relative path for this Match. It is relative to the Match Project's path.
         /// </summary>
-        /// <param name="composite">Expected to be a <see cref="MatchProject"/> instance.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
         public string GetRelativePath() {
 
-            if (Project is null)
-                throw new InvalidOperationException( "The MatchProject property Project is not set, and must be set before calling GetRelativePath." );
-
-            return Path.Combine( StringFormatting.MakeSafeFileName( Project.ProjectName ), this.GetFileName() );
+            return this.GetFileName();
         }
 
         /// <summary>

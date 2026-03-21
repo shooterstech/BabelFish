@@ -1,4 +1,5 @@
 using System.Collections;
+using Scopos.BabelFish.DataModel.Clubs;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -21,6 +22,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         private long _componentID = 0;
         private long _primaryMatchID = 0;
         private long _subMatchID = 0;
+
+        public MatchID( ClubAbbr club ) {
+            this._domainID = 1;
+            this._componentID = club.AccountNumber;
+            this._primaryMatchID = newPrimatchMatchID();
+            this._subMatchID = SUBMATCHID_LOCAL;
+        }
 
         /// <summary>
         /// Creates a new instance of a MatchID object based on the passed in string, that it expects to be in the MatchID format. 

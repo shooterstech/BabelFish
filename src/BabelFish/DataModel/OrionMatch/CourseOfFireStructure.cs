@@ -235,7 +235,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             } else {
                 Debug.Assert( MatchStructure is not null, "The MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
                 Debug.Assert( MatchStructure.Match is not null, "The Match property of the MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
-                Debug.Assert( MatchStructure.Match.Project is not null, "The Project property of the Match property of the MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
+
+                //The following assertion is not valid because a Match instance could live in its own file and be deserialized separately from the Project instance that contains it
+                //Debug.Assert( MatchStructure.Match.Project is not null, "The Project property of the Match property of the MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
             }
 
             if (!_ignoreEvents) {
