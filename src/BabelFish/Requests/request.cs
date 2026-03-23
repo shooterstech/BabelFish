@@ -1,16 +1,18 @@
-﻿using System;
-using System.Web;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
+using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
 using NLog;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.APIClients;
-using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
-using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Requests {
     /// <summary>
@@ -186,5 +188,7 @@ namespace Scopos.BabelFish.Requests {
         public override string ToString() {
             return $"{OperationId} request";
         }
+
+        
     }
 }

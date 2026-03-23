@@ -1,4 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.Reflection;
+
 
 namespace Scopos.BabelFish.Helpers {
 
@@ -32,6 +40,19 @@ namespace Scopos.BabelFish.Helpers {
         public static string Description( this Enum value ) {
             var attribute = value.GetAttributeOfType<DescriptionAttribute>();
             return attribute == null ? value.ToString() : attribute.Description;
+        }
+
+        public static string MemberValue(Enum value) {
+            var type = value.GetType();
+            var name = Enum.GetName(type, value);
+
+            if (name == null)
+                return value.ToString();
+
+            var field = type.GetField(name);
+            var attr = field?.GetCustomAttribute<EnumMemberAttribute>();
+
+            return attr?.Value ?? name;
         }
 
         /*

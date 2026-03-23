@@ -682,6 +682,148 @@ namespace Scopos.BabelFish.APIClients {
         #region Tournament API Calls
 
         /// <summary>
+        /// Create Tournament API
+        /// </summary>
+        /// <param name="requestParameters">CreateTournamentAuthenticatedRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<CreateTournamentAuthenticatedResponse> CreateTournamentAuthenticatedAsync( CreateTournamentAuthenticatedRequest requestParameters ) {
+            CreateTournamentAuthenticatedResponse response = new CreateTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// Create Tournament API
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Object</returns>
+        public async Task<CreateTournamentAuthenticatedResponse> CreateTournamentAuthenticatedAsync( Tournament tournament, UserAuthentication credentials ) {
+            var request = new CreateTournamentAuthenticatedRequest( credentials, tournament );
+
+            return await CreateTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Delete Tournament API
+        /// </summary>
+        /// <param name="requestParameters">DeleteTournamentAuthenticatedRequest object</param>
+        /// <returns>Delete Tournament Response data</returns>
+        public async Task<DeleteTournamentAuthenticatedResponse> DeleteTournamentAuthenticatedAsync( DeleteTournamentAuthenticatedRequest requestParameters ) {
+            DeleteTournamentAuthenticatedResponse response = new DeleteTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Tournament API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Delete Tournament Response data</returns>
+        public async Task<DeleteTournamentAuthenticatedResponse> DeleteTournamentAuthenticatedAsync( MatchID tournamentId, UserAuthentication credentials ) {
+            var request = new DeleteTournamentAuthenticatedRequest( credentials, tournamentId );
+
+            return await DeleteTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Add Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">AddTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<AddTournamentMemberAuthenticatedResponse> AddTournamentMemberAuthenticatedAsync( AddTournamentMemberAuthenticatedRequest requestParameters ) {
+            AddTournamentMemberAuthenticatedResponse response = new AddTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Add Tournament Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="matchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<AddTournamentMemberAuthenticatedResponse> AddTournamentMemberAuthenticatedAsync( MatchID tournamentId, MatchID matchId, UserAuthentication credentials ) {
+            var request = new AddTournamentMemberAuthenticatedRequest( credentials, tournamentId, matchId );
+
+            return await AddTournamentMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Patch Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">PatchTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<PatchTournamentMemberAuthenticatedResponse> PatchTournamentMemberAuthenticatedAsync( PatchTournamentMemberAuthenticatedRequest requestParameters ) {
+            PatchTournamentMemberAuthenticatedResponse response = new PatchTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Tournament Member API
+        /// </summary>
+        /// <param name="tournamentMember"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<PatchTournamentMemberAuthenticatedResponse> PatchTournamentMemberAuthenticatedAsync( TournamentMember tournamentMember, UserAuthentication credentials ) {
+            var request = new PatchTournamentMemberAuthenticatedRequest( credentials, tournamentMember );
+
+            return await PatchTournamentMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Delete Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">DeleteTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<DeleteTournamentMemberAuthenticatedResponse> DeleteTournamentMemberAuthenticatedAsync( DeleteTournamentMemberAuthenticatedRequest requestParameters ) {
+            DeleteTournamentMemberAuthenticatedResponse response = new DeleteTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Tournament Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="matchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<DeleteTournamentMemberAuthenticatedResponse> DeleteTournamentMemberAuthenticatedAsync( MatchID tournamentId, MatchID matchId, UserAuthentication credentials ) {
+            var request = new DeleteTournamentMemberAuthenticatedRequest( credentials, tournamentId, matchId );
+
+            return await DeleteTournamentMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Tournament Search API
+        /// </summary>
+        /// <param name="requestParameters">TournamentSearchAuthenticatedRequest object</param>
+        /// <returns>Tournament search list data</returns>
+        public async Task<TournamentSearchAuthenticatedResponse> TournamentSearchAuthenticatedAsync( TournamentSearchAuthenticatedRequest requestParameters ) {
+            TournamentSearchAuthenticatedResponse response = new TournamentSearchAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
         /// Get Tournament Detail API
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>

@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+    
+
     public class TournamentMember {
 
         /// <summary>
@@ -18,5 +22,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
         public string MatchName { get; set; }
+
+        /// <summary>
+        /// The Match ID of the Tournament that this Match is a member of.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
+        public MatchID TournamentId { get; set; }
+
+
+        [G_NS.JsonProperty( Order = 4 )]
+        public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.UNKNOWN;
+        
     }
 }
