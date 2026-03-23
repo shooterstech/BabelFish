@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task OrionMatchAPI_GetAMatch() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchPublicAsync( matchId );
 
