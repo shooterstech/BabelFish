@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// <seealso cref="AttributeDef"/> that defines the data, as well as the value <seealso cref="AttributeValue"/>
     /// </summary>
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
-    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass, IGetAttributeDefinition, IFinishInitializationAsync {
+    public abstract class AttributeValueDataPacket : IGetAttributeDefinition, IFinishInitializationAsync {
 
         /// <summary>
         /// Default constructor.
@@ -45,7 +45,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// is then handled in an async call sepeartly.
         /// </summary>
         /// <returns></returns>
-        public async Task FinishInitializationAsync() {
+        public virtual async Task FinishInitializationAsync() {
             if (AttributeValueTask != null)
                 AttributeValue = await AttributeValueTask;
         }

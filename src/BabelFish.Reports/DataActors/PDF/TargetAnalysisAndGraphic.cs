@@ -243,49 +243,12 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     var fileName = $"{ResultCOF.MatchID}_{ResultCOF.ResultCOFID}_{EventName}";
                     dynamic seriesName;
                     if (!string.IsNullOrEmpty( _scoreFormatted )) {
-                        seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName};;Aggregate: {_scoreFormatted}";
+                        seriesName = $@"{ResultCOF.Participant.GetDisplayNameShort()};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName};;Aggregate: {_scoreFormatted}";
                     } else {
-                        seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName}";
+                        seriesName = $@"{ResultCOF.Participant.GetDisplayNameShort()};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName}";
                     }
 
                     var match = Match;
-
-                    // commenting out, will break direct share but fix coming
-                    // this is causing a rendering error that occurs only in the mobile view
-                    // if (match != null)
-                    // {
-                    //     var matchDates = StringFormatting.SpanOfDates(match.StartDate, match.EndDate);
-                    //     var location = StringFormatting.Location(Match.Location.City, Match.Location.State, Match.Location.Country);
-                    //     var ogDescription = new StringBuilder();
-                    //     ogDescription.Append($"<div style='width: 100%;'>");
-                    //     ogDescription.Append($"<span style='font-size: 54px; line-height: 60px;'>{ResultCOF.Participant.DisplayName}</span><br />");
-                    //     ogDescription.Append($"<br />");
-                    //     ogDescription.Append($"<span style='font-size: 36px; line-height: 42px;'>{match.Name}</span><br />");
-                    //     ogDescription.Append($"<br />");
-                    //     ogDescription.Append($"<span style='font-size: 28px; line-height: 36px;'>{matchDates}</span><br />");
-                    //     if (!string.IsNullOrEmpty(location))
-                    //     {
-                    //         ogDescription.Append($"<span style='font-size: 28px; line-height: 36px;'>{location}</span><br />");
-                    //     }
-                    //     ogDescription.Append($"<br />");
-                    //     ogDescription.Append($"<span style='font-size: 54px; line-height: 60px;'>{EventName}: {ScoreFormatted}</span><br />");
-                    //     ogDescription.Append($"</div>");
-                    //     float lastShotOutlineY;
-                    //     var transformedSvgContent = TransformSvgContent(SvgMarkup, out lastShotOutlineY);
-
-                    //     var outputPath = Path.Combine(WebHostEnvironment.WebRootPath, "Renders", "Stage", $"{fileName}.png");
-                    //     var secondColumnPlaceHolder = $@"
-                    //                                 <div style='transform: scale(0.6); transform-origin: top center; text-align: center; padding-top: 10px;'>
-                    //                             {transformedSvgContent}
-                    //                                 </div>";
-
-                    //     var bootstrap = BuildTableWithTwoColumns(ogDescription.ToString(), secondColumnPlaceHolder);
-
-                    //     var imageResponse = await MatchImageService.RenderHtmlAsImage(bootstrap,
-                    //         "https://cdn.scopos.tech/headers/rezults-header-blank.png");
-                    //     await MatchImageService.SaveImageToDisk(imageResponse, outputPath);
-
-                    // }
                 } catch
                       (Exception e) {
                     _logger.Error( e );

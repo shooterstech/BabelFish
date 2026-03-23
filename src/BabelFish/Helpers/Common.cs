@@ -832,13 +832,15 @@ namespace Scopos.BabelFish.Helpers {
         /// <returns></returns>
         /// <remarks>Used in places where we don't need UUIDs but need uniqueness.</remarks>
         public static string GenerateUniqueId( int bytes = 8 ) // 8 bytes = 64 bits
-{
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var buffer = new byte[bytes];
-            RandomNumberGenerator.Fill( buffer );
-            return Convert.ToBase64String( buffer )
-                .Replace( "/", "_" )
-                .Replace( "+", "-" )
-                .TrimEnd( '=' );
+            RandomNumberGenerator.Fill(buffer);
+            var result = new char[bytes];
+            for (int i = 0; i < bytes; i++) {
+                result[i] = chars[buffer[i] % chars.Length];
+            }
+            return new string(result);
         }
 
 

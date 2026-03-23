@@ -10,6 +10,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// Returns the standard file name used for this class instance. This should be 
         /// used by GetRelativePath() and SaveToFile().
         /// </summary>
+        /// <param name="composite"></param>
         /// <returns></returns>
         string GetFileName();
 
@@ -17,6 +18,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// Saves this class instance to a file with the standard file name (as returned by GetFileName()) in the provided relative directory.
         /// </summary>
         /// <param name="relativeDirectory"></param>
+        /// <param name="composite"></param>
         /// <returns></returns>
         string SaveToFile( DirectoryInfo relativeDirectory );
 
@@ -30,6 +32,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <summary>
         /// Returns the relative path where this class instance is saved.
         /// </summary>
+        /// <param name="composite"></param>
         /// <returns></returns>
         string GetRelativePath();
 
@@ -38,5 +41,9 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// </summary>
         /// <returns></returns>
         string SerializeToJson();
+
+        /*
+         * NOTE Can not add LoadFromFile() type methods to this interface because the method needs to be static, and C# does not allow static methods in interfaces.
+         */
     }
 }

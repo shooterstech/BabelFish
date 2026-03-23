@@ -78,7 +78,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             CourseOfFireStructure cof;
             match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
             Assert.IsNotNull( cof );
-            cof.Attributes.Add( await AttributeConfiguration.FactoryAsync( newShooterSetName ) );
+            cof.Attributes.Add( await AttributeConfiguration.CreateAsync( newShooterSetName ) );
 
             //Let the Wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );

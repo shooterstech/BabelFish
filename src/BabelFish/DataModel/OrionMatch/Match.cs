@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -12,26 +13,103 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</para>
     /// </summary>
     [Serializable]
-    public class Match : ISaveToFile, IFinishInitializationAsync {
+    public class Match :
+        ISaveToFile,
+        IFinishInitializationAsync,
+        G_STJ_SER.IJsonOnDeserialized,
+        G_STJ_SER.IJsonOnDeserializing {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
+        #region Constructors, Factories, and Initialization
+
         /// <summary>
         /// Public constructor.
+        /// <para>Unless you are a deserializer, it is best to use the alternative constructor that takes a MatchProject,
+        /// so that this Match object is associated with a project and can access project level data such as Participants and Scores, etc.</para>
         /// </summary>
-        public Match() { }
+        public Match() {
+            this.MatchStructure = new MatchStructure( this );
+        }
+
+        /// <summary>
+        /// Preferred constructor for creating a Match object. Associates this Match with a MatchProject, which allows the Match to access project level data such as Participants and Scores, etc.
+        /// </summary>
+        /// <param name="club">The Club associated with this Match instance.</param>
+        /// <param name="project">The MatchProject associated with this Match instance.</param>
+        public Match( ClubAbbr club, MatchProject project ) {
+            this.MatchID = new MatchID( club );
+            this.Project = project;
+            this.MatchStructure = new MatchStructure( this );
+        }
+
+        /// <inheritdoc />
+        /// <remarks>The prefered method for deserializing from json is to use <see cref="LoadFromFileAsync(FileInfo)"/> or <see cref="LoadFromFileAsync(string)"/>.
+        /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</remarks>
+        public async Task FinishInitializationAsync() {
+            await this.MatchStructure.FinishInitializationAsync();
+        }
 
 
         /// <summary>
-        /// After an object is deserialized form JSON,
-        /// adds defaults to empty properties
+        /// This method is called after deserialization with Newtonsoft.Json.
         /// </summary>
         /// <param name="context"></param>
         [OnDeserialized()]
-        public void OnDeserialized( StreamingContext context ) {
+        public void OnDeserialized( StreamingContext context ) => OnDeserialized();
+
+        /// <summary>
+        /// This method is called after deserialization with System.Text.Json. 
+        /// </summary>
+        public void OnDeserialized() {
             if (ScoringSystems.Count == 0)
                 ScoringSystems.Add( "Orion Scoring System" );
         }
+
+        /// <summary>
+        /// Method is called before deserialization with System.Text.Json.
+        /// </summary>
+        public void OnDeserializing() {
+            ;
+        }
+
+        /// <summary>
+        /// Reads a Match object from a JSON file. The JSON file is expected to be formatted according to the BabelFish's standard.
+        /// <para>The method automatically calls the <see cref="FinishInitializationAsync"/> method after deserialization to ensure that all AttributeValues are fully initialized.</para>
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<Match> LoadFromFileAsync( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+            using (var stream = fileInfo.OpenRead()) {
+                var match = G_STJ.JsonSerializer.Deserialize<Match>( stream, Helpers.SerializerOptions.SystemTextJsonDeserializer );
+                await match.FinishInitializationAsync();
+                return match;
+            }
+        }
+
+        /// <summary>
+        /// Reads a Match object from a JSON file. The JSON file is expected to be formatted according to the BabelFish's standard.
+        /// <para>The method automatically calls the <see cref="FinishInitializationAsync"/> method after deserialization to ensure that all AttributeValues are fully initialized.</para>
+        /// </summary>
+        /// <param name="fullPath">The full path to the file from which to load the match. This path must be valid and accessible.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains the loaded match.</returns>
+        public static async Task<Match> LoadFromFileAsync( string fullPath ) {
+
+            FileInfo fileInfo = new FileInfo( fullPath );
+            return await LoadFromFileAsync( fileInfo );
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        #endregion 
+
+        #region Data Model Properties
 
         /// <summary>
         /// The name of the Match
@@ -179,7 +257,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
         [G_STJ_SER.JsonPropertyOrder( 30 )]
         [G_NS.JsonProperty( Order = 30 )]
-        public MatchStructure MatchStructure { get; set; } = new MatchStructure();
+        public MatchStructure MatchStructure { get; set; }
         #endregion
 
         /// <summary>
@@ -276,7 +354,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 99 )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
-        #region Deprecated Properties
         /*
          * The properties in this region are deprecated, and should not be used anymore. They are only kept here for backward compatibility with older versions of the API, and to avoid breaking changes. They will eventually be removed in a future version, but for now they are marked as Obsolete.
          */
@@ -364,8 +441,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             "Deprecated December 2025." )]
         public string SharedKey { get; set; } = String.Empty;
 
-        #endregion
-
         /*
          * EKA Note November 2025
          * Removed as a property, because Role Authorization is saved instead to the MatchParticipant object. No need to replicate that data here.
@@ -382,39 +457,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<MatchAuthorization> AuthorizationList { get; set; } = new List<MatchAuthorization>();
         */
 
-        /*
-         * EKA Note November 2025
-         * Removed as a property, because its been marked as deprecated for so long.
-         * 
-        /// <summary>
-        /// A list of match participants, but only the athletes, not the teams. 
-        /// 
-        /// This information is largely rhetotical with Get Participant List API call.
-        ///
-        /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
-        /// sent back as part of an API request.
-        /// </summary>
-        [Obsolete( "Will be replaced soon with a more proper participant list." )]
-        public List<MatchParticipantResult> MatchParticipantResults { get; set; } = new List<MatchParticipantResult>();
-        */
-
-        /*
-         * EKA Note November 2025
-         * Removed as a property, because its been marked as deprecated for so long.
-         * 
-        /// <summary>
-        /// A list of Result COF that the logged in user owns for this match. Meaning, these are the
-        /// scores the logged in user shot. If a user is not logged in, or the logged in user is
-        /// not an athletes, then this will be an empty list.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder ( 20 )]
-        [Obsolete( "Format of this data is in the old ResultCOF (pre 2022). Make a separate call using GetResultCOF() instead, which returns data in the 2022 format." )]
-        public List<ResultCOF> ParticipantResults { get; set; } = new List<ResultCOF>();
-        */
-
         /// <summary>
         /// Helper function that indicates if this Match is currently going on. Which is 
         /// determined by the Match's Start and End Date.
+        /// <para>Value is not serialized.</para>
         /// </summary>
         [G_NS.JsonIgnore]
         public bool IsOnGoing {
@@ -424,6 +470,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        [G_NS.JsonIgnore]
+        public MatchProject Project { get; internal set; }
+
+        #endregion
+
+        #region Methods
+
         /// <inheritdoc />
         public override string ToString() {
             StringBuilder foo = new StringBuilder();
@@ -431,25 +484,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( Name );
             return foo.ToString();
         }
+        #endregion
 
+        #region ISaveToFile Implementation
         /// <inheritdoc/>
+        /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
         public string GetFileName() {
-            return $"{Name}.json";
+
+            if (Project is null)
+                throw new InvalidOperationException( "The MatchProject property Project is not set, and must be set before calling GetRelativePath." );
+
+            return $"{StringFormatting.MakeSafeFileName( Project.ProjectName )}.json";
         }
 
         /// <summary>
         /// SAves the current Match object to a JSON file in the specified relative directory.
         /// The file name is derived from the Match's Name property.
         /// </summary>
-        /// <param name="relativeDirectory">Usually the My Matches directory.</param>
+        /// <param name="projectDirectory">The project directory is where the match file will be saved. Matches are always saved in the
+        /// root of the project directory</param>
         /// <returns>The full path to the saved file.</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+        /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
+        public string SaveToFile( DirectoryInfo projectDirectory ) {
 
-            if (relativeDirectory == null)
-                throw new ArgumentNullException( nameof( relativeDirectory ) );
+            if (projectDirectory == null)
+                throw new ArgumentNullException( nameof( projectDirectory ) );
 
-            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+            string filePath = Path.Combine( projectDirectory.FullName, GetRelativePath() );
 
             var directoryPath = Path.GetDirectoryName( filePath );
 
@@ -457,7 +519,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 Directory.CreateDirectory( directoryPath );
             }
 
-            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+            string json = SerializeToJson();
 
             File.WriteAllText( filePath, json );
 
@@ -477,19 +539,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (fileInfo == null)
                 throw new ArgumentNullException( nameof( fileInfo ) );
 
-            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+            string json = SerializeToJson();
 
             File.WriteAllText( fileInfo.FullName, json );
 
             return fileInfo.FullName;
         }
 
+        public void SaveToFile() {
+            if (Project is null)
+                throw new InvalidOperationException( "The MatchProject property Project is not set, and must be set before calling SaveToFile." );
+            SaveToFile( Project.ProjectDirectory );
+        }
+
         /// <summary>
-        /// Returns the standard relative path for this Match. It is relative to the My Matches directory.
+        /// Returns the standard relative path for this Match. It is relative to the Match Project's path.
         /// </summary>
         /// <returns></returns>
+        /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
         public string GetRelativePath() {
-            return Path.Combine( this.Name, this.GetFileName() );
+
+            return this.GetFileName();
         }
 
         /// <summary>
@@ -504,35 +574,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return json;
         }
 
-        /// <summary>
-        /// Reads a Match object from a JSON file. The JSON file is expected to be formatted according to the BabelFish's standard.
-        /// <para>The method automatically calls the <see cref="FinishInitializationAsync"/> method after deserialization to ensure that all AttributeValues are fully initialized.</para>
-        /// </summary>
-        /// <param name="fileInfo"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public static async Task<Match> LoadFromFileAsync( FileInfo fileInfo ) {
-
-            if (fileInfo == null)
-                throw new ArgumentNullException( nameof( fileInfo ) );
-            using (var stream = fileInfo.OpenRead()) {
-                var match = G_STJ.JsonSerializer.Deserialize<Match>( stream, Helpers.SerializerOptions.SystemTextJsonDeserializer );
-                await match.FinishInitializationAsync();
-                return match;
-            }
-        }
-
-        public static async Task<Match> LoadFromFileAsync( string fullPath ) {
-
-            FileInfo fileInfo = new FileInfo( fullPath );
-            return await LoadFromFileAsync( fileInfo );
-        }
-
-        /// <inheritdoc />
-        /// <remarks>The prefered method for deserializing from json is to use <see cref="LoadFromFileAsync(FileInfo)"/> or <see cref="LoadFromFileAsync(string)"/>.
-        /// if you are deserializing outside of these methods besure to call FinishInitiializationAsync() before using your Match object.</remarks>
-        public async Task FinishInitializationAsync() {
-            await this.MatchStructure.FinishInitializationAsync();
-        }
+        #endregion
     }
 }

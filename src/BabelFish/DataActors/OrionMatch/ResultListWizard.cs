@@ -48,11 +48,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             // Forloops below will get skipped.
             var defaultAttributeValue = await AttributeValue.CreateAsync( SetName.DEFAULT );
             if (attributeBins[1].Count == 0)
-                attributeBins[1].Add( await AttributeConfiguration.FactoryAsync( defaultAttributeValue ) );
+                attributeBins[1].Add( await AttributeConfiguration.CreateAsync( defaultAttributeValue ) );
             if (attributeBins[2].Count == 0)
-                attributeBins[2].Add( await AttributeConfiguration.FactoryAsync( defaultAttributeValue ) );
+                attributeBins[2].Add( await AttributeConfiguration.CreateAsync( defaultAttributeValue ) );
             if (attributeBins[3].Count == 0)
-                attributeBins[3].Add( await AttributeConfiguration.FactoryAsync( defaultAttributeValue ) );
+                attributeBins[3].Add( await AttributeConfiguration.CreateAsync( defaultAttributeValue ) );
 
             // Item1 DisplayName
             // Item2 EventName

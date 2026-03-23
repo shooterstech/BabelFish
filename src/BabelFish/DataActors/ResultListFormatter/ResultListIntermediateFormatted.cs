@@ -958,7 +958,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRankPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRankPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the RankOrder field
@@ -968,7 +968,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRankOrderPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRankOrderPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the RankDelta field
@@ -978,7 +978,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRankDeltaPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRankDeltaPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the RankOrSquadding field
@@ -988,7 +988,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRankOrSquaddingPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRankOrSquaddingPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Empty field
@@ -998,7 +998,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeEmptyPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeEmptyPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the DisplayName field
@@ -1008,7 +1008,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeDisplayNamePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeDisplayNamePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the DisplayNameShort field
@@ -1018,7 +1018,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeDisplayNameShortPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeDisplayNameShortPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the FamilyName field
@@ -1028,7 +1028,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeFamilyNamePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeFamilyNamePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the GivenName field
@@ -1038,7 +1038,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeGivenNamePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeGivenNamePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the MiddleName field
@@ -1048,7 +1048,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeMiddleNamePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeMiddleNamePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the HomeTown field
@@ -1058,7 +1058,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeHomeTownPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeHomeTownPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Country field
@@ -1068,7 +1068,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeCountryPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeCountryPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Club field
@@ -1078,7 +1078,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeClubPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeClubPtr { get; set; } = null;
+
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Team field
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload? GetParticipantAttributeTeamPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the CompetitorNumber field
@@ -1088,7 +1097,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeCompetitorNumberPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeCompetitorNumberPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Coach field
@@ -1098,7 +1107,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantCoachPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantCoachPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchLocation field
@@ -1108,7 +1117,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeMatchLocationPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeMatchLocationPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the MatchID field
@@ -1118,7 +1127,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeMatchIDPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeMatchIDPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the LocalDate field
@@ -1128,7 +1137,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeLocalDatePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeLocalDatePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the ResultCOFID field
@@ -1138,7 +1147,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeResultCOFIDPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeResultCOFIDPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the UserID field
@@ -1148,7 +1157,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeUserIDPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeUserIDPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Creator field
@@ -1158,7 +1167,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeCreatorPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeCreatorPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Owner field
@@ -1168,7 +1177,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeOwnerPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeOwnerPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the TargetCollectionName field
@@ -1178,7 +1187,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeTargetCollectionNamePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeTargetCollectionNamePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Status field
@@ -1188,7 +1197,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeStatusPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeStatusPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the LastShot field
@@ -1198,7 +1207,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeLastShotPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeLastShotPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Remark field
@@ -1208,7 +1217,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRemarkPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRemarkPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1218,7 +1227,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeSquaddingPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeSquaddingPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1228,7 +1237,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRelayPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRelayPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1238,7 +1247,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeFiringPointPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeFiringPointPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1248,7 +1257,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeFiringOrderPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeFiringOrderPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1258,7 +1267,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeSquadPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeSquadPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1268,7 +1277,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeBankPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeBankPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1278,7 +1287,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeReentryPtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeReentryPtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
@@ -1288,12 +1297,16 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
         /// method in the field value.
         /// </remarks>
-        public ParticipantAttributeOverload GetParticipantAttributeRangePtr { get; set; } = null;
+        public ParticipantAttributeOverload? GetParticipantAttributeRangePtr { get; set; } = null;
 
         /// <summary>
         /// Overrides the method used to return a string to represent the completion percentage of an athletes stage.
         /// </summary>
-        public CompletionPercentageOverload GetCompletionPercentageStringPtr { get; set; } = null;
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public CompletionPercentageOverload? GetCompletionPercentageStringPtr { get; set; } = null;
 
         #endregion
     }

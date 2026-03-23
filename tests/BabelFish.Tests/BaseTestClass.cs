@@ -1,6 +1,7 @@
 using System.IO;
 using OfficeOpenXml;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Clubs;
 
 namespace Scopos.BabelFish.Tests {
 
@@ -9,6 +10,11 @@ namespace Scopos.BabelFish.Tests {
 
 
         public static DirectoryInfo RelativeDirectoryForTesting { get; set; } = new System.IO.DirectoryInfo( @"C:\temp" );
+
+        public static ClubAbbr TestClubAbbr { get; set; } = new ClubAbbr() {
+            AccountNumber = 0,
+            Name = "Unit Test Fake Club"
+        };
 
         [TestInitialize]
         public virtual void InitializeTest() {

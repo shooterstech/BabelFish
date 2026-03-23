@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -19,16 +20,16 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
             SetName setName = SetName.Parse( "v1.0:ntparc:Three-Position Air Rifle Type" );
 
             // Create a Participant with the "Three-Position Air Rifle Type" attribute set to "Sporter"
-            var attrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            var attrValue = await AttributeValue.CreateAsync( setName );
             attrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
             participant.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attrValue ) );
 
             // Create some Attribute Values to test against 
-            var sporterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            var sporterAttrValue = await AttributeValue.CreateAsync( setName );
             sporterAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
             var dataPacketMatchSporter = await AttributeValueDataPacketMatch.CreateAsync( sporterAttrValue );
 
-            var precisionAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            var precisionAttrValue = await AttributeValue.CreateAsync( setName );
             precisionAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
             var dataPacketMatchPrecision = await AttributeValueDataPacketMatch.CreateAsync( precisionAttrValue );
 
@@ -73,27 +74,27 @@ namespace Scopos.BabelFish.Tests.DataActors.AttributeFilter {
             SetName setNameNewShooter = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
 
             // Create a Participant with the "Three-Position Air Rifle Type" attribute set to "Sporter" and Net Shooter set to "New Shooter"
-            var airRifleTypeAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameAirRifleType );
+            var airRifleTypeAttrValue = await AttributeValue.CreateAsync( setNameAirRifleType );
             airRifleTypeAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
-            var nsAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameNewShooter );
+            var nsAttrValue = await AttributeValue.CreateAsync( setNameNewShooter );
             nsAttrValue.SetFieldValue( "Three-Position New Shooter", "New Shooter" );
             participant.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( airRifleTypeAttrValue ) );
             participant.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( nsAttrValue ) );
 
             // Create some Attribute Values to test against. 
-            var sporterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameAirRifleType );
+            var sporterAttrValue = await AttributeValue.CreateAsync( setNameAirRifleType );
             sporterAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Sporter" );
             var dataPacketMatchSporter = await AttributeValueDataPacketMatch.CreateAsync( sporterAttrValue );
 
-            var precisionAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameAirRifleType );
+            var precisionAttrValue = await AttributeValue.CreateAsync( setNameAirRifleType );
             precisionAttrValue.SetFieldValue( "Three-Position Air Rifle Type", "Precision" );
             var dataPacketMatchPrecision = await AttributeValueDataPacketMatch.CreateAsync( precisionAttrValue );
 
-            var newShooterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameNewShooter );
+            var newShooterAttrValue = await AttributeValue.CreateAsync( setNameNewShooter );
             newShooterAttrValue.SetFieldValue( "Three-Position New Shooter", "New Shooter" );
             var dataPacketNewShooter = await AttributeValueDataPacketMatch.CreateAsync( newShooterAttrValue );
 
-            var oldShooterAttrValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setNameNewShooter );
+            var oldShooterAttrValue = await AttributeValue.CreateAsync( setNameNewShooter );
             oldShooterAttrValue.SetFieldValue( "Three-Position New Shooter", "Old Shooter" );
             var dataPacketOldShooter = await AttributeValueDataPacketMatch.CreateAsync( oldShooterAttrValue );
 

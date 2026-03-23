@@ -281,10 +281,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     compare = x.Participant.DisplayName.CompareTo( y.Participant.DisplayName );
                     break;
 
-                case TieBreakingRuleParticipantAttributeSource.DisplayNameShort:
-                    compare = x.Participant.DisplayNameShort.CompareTo( y.Participant.DisplayNameShort );
-                    break;
-
                 case TieBreakingRuleParticipantAttributeSource.HomeTown:
                     compare = x.Participant.HomeTown.CompareTo( y.Participant.HomeTown );
                     break;

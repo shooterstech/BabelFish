@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {

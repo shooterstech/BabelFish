@@ -392,14 +392,30 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="untruncatedValue"></param>
         /// <returns></returns>
         public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
+            var trimmedValue = untruncatedValue.Trim();
+
+
             if (numberOfCharacters <= 4) {
                 //We can't truncate less than 4 characters
-                return untruncatedValue;
-            } else if (untruncatedValue.Length >= numberOfCharacters) {
-                return $"{untruncatedValue.Substring( 0, numberOfCharacters - 4 )}...";
+                numberOfCharacters = 4;
+            }
+
+            if (trimmedValue.Length > numberOfCharacters) {
+                return $"{trimmedValue.Substring( 0, numberOfCharacters - 3 ).Trim()}...";
             } else {
-                return untruncatedValue;
+                return trimmedValue;
             }
         }
+
+        /// <summary>
+        /// Converts a string to a safe file name by replacing invalid characters with underscores.
+        /// </summary>
+        /// <param name="input">The input string to be converted.</param>
+        /// <returns>A string that is safe to use as a file name.</returns>
+        public static string MakeSafeFileName( string input ) {
+            var invalid = Path.GetInvalidFileNameChars();
+            return string.Concat( input.Select( c => invalid.Contains( c ) ? '_' : c ) );
+        }
+
     }
 }

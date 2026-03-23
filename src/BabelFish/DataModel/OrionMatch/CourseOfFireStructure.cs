@@ -1,37 +1,114 @@
+using System.Diagnostics;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
     ///
-    /// <para>It is generally best to construct a new instance using the <see cref="FactoryAsync(SetName)"/> method.</para>
+    /// <para>It is generally best to construct a new instance using the <see cref="CreateAsync(SetName)"/> method.</para>
     /// </summary>
     /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
-    public class CourseOfFireStructure : IGetCourseOfFireDefinition {
+    public class CourseOfFireStructure :
+        IFinishInitializationAsync,
+        IGetCourseOfFireDefinition,
+        G_STJ_SER.IJsonOnDeserializing,
+        G_STJ_SER.IJsonOnDeserialized {
 
+        #region Private and Protected Fields
+        protected bool _ignoreEvents = false;
+        #endregion
+
+        #region Constructors, Facory Methods, and Initialization Methods
+        /// <summary>
+        /// Public constructor. Unless you are a deserializer, it is generally best to construct a new instance using the
+        /// <see cref="CreateAsync(SetName)"/> method, which sets default values for properties based on the CourseOfFire definition.
+        /// </summary>
         public CourseOfFireStructure() { }
 
-        public static async Task<CourseOfFireStructure> FactoryAsync( SetName setName ) {
+        /// <summary>
+        /// Creates a new instance of the CourseOfFireStructure class using the specified <see cref="Definitions.CourseOfFire"/> set name.
+        /// </summary>
+        /// <remarks>The created CourseOfFireStructure is initialized with properties from the provided
+        /// match structure and course of fire definition. The start and end dates are set to the current date. If the
+        /// course of fire definition specifies a required attribute configuration, it is added to the structure
+        /// as well.</remarks>
+        /// <param name="matchStructure">The match structure that this instance will be a part of.</param>
+        /// <param name="setName">The name of the course of fire set to use for creation. This value must not be the default set name.</param>
+        /// <returns>Returns the newly created CourseOfFireStructure instance.</returns>
+        /// <exception cref="ArgumentException">Thrown when the specified setname is the default</exception>
+        /// <exception cref="DefinitionNotFoundException">Thrown when the provided setname is not a known COURSE OF FIRE definition.</exception>"
+        public static async Task<CourseOfFireStructure> CreateAsync( MatchStructure matchStructure, SetName setName ) {
 
             if (setName.IsDefault)
-                throw new DefinitionNotFoundException( "May not add a new COURSE OF FIRE using default." );
+                throw new ArgumentException( "May not add a new COURSE OF FIRE using default." );
 
             var cof = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
 
             var structure = new CourseOfFireStructure();
+            structure.MatchStructure = matchStructure;
             structure.CourseOfFireDef = setName;
             structure.CourseOfFireName = cof.CommonName;
             structure.StartDate = DateTime.Today;
             structure.EndDate = DateTime.Today;
             structure.ScoreConfigName = cof.ScoreConfigDefault;
             structure.TargetCollectionName = cof.DefaultTargetCollectionName;
-            if (!cof.RequiredAttributeDef.IsDefault)
-                structure.Attributes.Add( await AttributeConfiguration.FactoryAsync( cof.RequiredAttributeDef ) );
+            if (!cof.RequiredAttributeDef.IsDefault) {
+                await structure.AddAttributeConfigurationAsync( cof.RequiredAttributeDef );
+            }
 
             return structure;
         }
+
+        /// <summary>
+        /// Gets called after System.Text.Json deserializes an instance of this class.
+        /// Sets _ignoreEvents to false so that events will fire as expected after deserialization.
+        /// </summary>
+        public void OnDeserialized() {
+            _ignoreEvents = false;
+        }
+
+        /// <summary>
+        /// Gets called before System.Text.Json deserializes an instance of this class.
+        /// Sets _ignoreEvents to true to prevent events from firing during deserialization.
+        /// </summary>
+        public void OnDeserializing() {
+            _ignoreEvents = true;
+        }
+
+        /// <inheritdoc />
+        public async Task FinishInitializationAsync() {
+            foreach (var localAttribute in Attributes) {
+                await localAttribute.FinishInitializationAsync();
+            }
+            foreach (var rl in ResultLists) {
+                await rl.FinishInitializationAsync();
+            }
+        }
+        #endregion
+
+
+        #region Event Handlers
+        /// <summary>
+        /// Occurs when a new <see cref="ResultListAbbr"/> is added.
+        /// <para>The preferred way of adding a new ResultListAbbr is to use the <see cref="AddResultList(ResultListAbbr)"/> method.
+        /// Adding a ResultListAbbr directly to <see cref="ResultLists"/> will not result in this event handler being fired.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        EventHandler<EventArgs<ResultListAbbr>> OnResultListAdded;
+
+        /// <summary>
+        /// Occurs when a new <see cref="AttributeConfiguration"/> is added.
+        /// <para>The preferred way of adding a new AttributeConfiguration is to use the <see cref="AddAttributeConfigurationAsync(SetName)"/> method.
+        /// Adding an AttributeConfiguration directly to <see cref="Attributes"/> will not result in this event handler being fired.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        EventHandler<EventArgs<AttributeConfiguration>> OnAttributeConfigurationAdded;
+        #endregion
+
+        #region Data Model Properties
 
         /// <summary>
         /// Unique identifier, usually incremented, within a <see cref="Match"/>
@@ -45,6 +122,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string CourseOfFireName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The SetName of the <see cref="CourseOfFire"/> definition that this CourseOfFireStructure is based on.
+        /// </summary>
         public SetName CourseOfFireDef { get; set; } = SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
@@ -79,21 +159,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own TargetColle3citonName. This property will be replaced.</remarks>
         public string TargetCollectionName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the types of entries that can be recorded, which may include individual and team entries.
+        /// </summary>
         [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public EntryTypes TypesOfEntries { get; set; } = EntryTypes.INDIVIDUAL_AND_TEAM;
 
+        /// <summary>
+        /// The list of AttributeConfigurations that are specific to this Course of Fire.
+        /// These attributes will be available to be added to entries in this Course of Fire, but not entries in other Courses of Fire in the same match.
+        /// If there are attributes that should be shared across all Courses of Fire in a match, those should be added
+        /// to the <see cref="MatchStructure.SharedAttributes"/> collection instead.
+        /// <para>When adding a new AttributeConfiguration to this collection, it is generally best to use the
+        /// <see cref="AddAttributeConfigurationAsync(SetName)"/> method which adds the attribute to each
+        /// exisitng entry in the match.</para>
+        /// </summary>
         public List<AttributeConfiguration> Attributes { get; set; } = new List<AttributeConfiguration>();
-
-        /// <inheritdoc />
-        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
-            return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
-        }
 
         /// <summary>
         /// Gets or sets the collection of result events represented by abbreviated result lists.
         /// <para>The preferred method of adding a new ResultListAbbr is by calling <see cref="AddResultList(ResultListAbbr)"/> which checks for duplicates before adding.</para>
         /// </summary>
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
+
+        #endregion
+
+        #region Helper Properties
+        [G_NS.JsonIgnore]
+        public MatchStructure MatchStructure { get; internal set; }
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Adds the specified result list to the ResultLists collection, checking that it is not already a member.
@@ -107,19 +203,54 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
                 resultList.AttributeFilter.UpdateCourseOfFireId( CourseOfFireId );
 
+                if (!_ignoreEvents) {
+                    OnResultListAdded?.Invoke( this, new EventArgs<ResultListAbbr>( resultList ) );
+                }
+
                 return true;
             }
 
             return false;
         }
 
-        protected internal async Task FinishInitializationAsync() {
-            foreach (var localAttribute in Attributes) {
-                await localAttribute.FinishInitializationAsync();
+        public async Task<AttributeConfiguration> AddAttributeConfigurationAsync( SetName attributeDef ) {
+
+            if (attributeDef.IsDefault) {
+
+                throw new ArgumentException( "May not add an AttributeConfiguration using default." );
             }
-            foreach (var rl in ResultLists) {
-                await rl.FinishInitializationAsync();
+
+            var attributeConfig = await AttributeConfiguration.CreateAsync( attributeDef );
+            attributeConfig.CourseOfFireId = this.CourseOfFireId;
+            Attributes.Add( attributeConfig );
+
+            if (MatchStructure is not null && MatchStructure.Match is not null && MatchStructure.Match.Project is not null) {
+                foreach (var mp in MatchStructure.Match.Project.Participants) {
+                    if (attributeConfig.IsForIndividuals && mp.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
+                        var avdp = await AttributeValueDataPacketMatch.CreateAsync( attributeConfig );
+                        avdp.CourseOfFireId = this.CourseOfFireId;
+                        mp.Participant.AttributeValues.Add( avdp );
+                    }
+                }
+            } else {
+                Debug.Assert( MatchStructure is not null, "The MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
+                Debug.Assert( MatchStructure.Match is not null, "The Match property of the MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
+
+                //The following assertion is not valid because a Match instance could live in its own file and be deserialized separately from the Project instance that contains it
+                //Debug.Assert( MatchStructure.Match.Project is not null, "The Project property of the Match property of the MatchStructure property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
             }
+
+            if (!_ignoreEvents) {
+                OnAttributeConfigurationAdded?.Invoke( this, new EventArgs<AttributeConfiguration>( attributeConfig ) );
+            }
+
+            return attributeConfig;
         }
+
+        /// <inheritdoc />
+        public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+            return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
+        }
+        #endregion
     }
 }

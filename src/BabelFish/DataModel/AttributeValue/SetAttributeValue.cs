@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Scopos.BabelFish.DataModel;
+using System.Text;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 

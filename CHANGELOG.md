@@ -17,6 +17,17 @@ All notable changes to BabelFish will be documented in this file.
 - Added specification to check that RequiredAttributeDef is a simple attribute, of type string, and each field value specifies an Attribute Value Appelation.
 
 
+## [1.12.4] - 2026-03-00
+### Enhancements
+#### GetClubList
+- Added a list of ClubAuthorizationRoles the authenticated caller has to each returned Club.
+#### ResultListIntermediateFormatted
+- Added 'Team' as a standard field name, displaying the Team Name that the participant is competing for.
+### Bug Fixes
+#### ResultCOF
+- Added 'Visibility' as a property to ResultCOF
+
+
 ## [1.12.3] - 2026-03-03
 ### Enhancements
 #### ProjectScoresByAverageShotFired

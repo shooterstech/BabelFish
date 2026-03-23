@@ -1,5 +1,6 @@
-﻿using Scopos.BabelFish.DataActors.OrionMatch;
 using System.ComponentModel;
+using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -42,12 +43,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultStatus Status { get; set; } = ResultStatus.FUTURE;
 
         /// <summary>
-        /// The Version string of the JSON document.
-        /// Should be "2022-04-09"
+        /// Gets or sets the visibility for this Result COF.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        public string JSONVersion { get; set; } = string.Empty;
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         /// <summary>
         /// The IoT Topic to monitor to receive live updates to this Result Course of Fire.
@@ -56,15 +56,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
         public string LiveTopic { get; set; } = string.Empty;
-
-        /// <summary>
-        /// The GMT time this ResultCOF was last updated
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 6 )]
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
-        [G_NS.JsonProperty( Order = 6 )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// Boolean indicating if this is a partial Result COF that contains only delta (Delta is true),
@@ -201,7 +192,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         [G_STJ_SER.JsonPropertyOrder( 51 )]
         [G_NS.JsonProperty( Order = 51 )]
-        public Athena.Shot.Shot ? LastShot { get; set; } = null;
+        public Athena.Shot.Shot? LastShot { get; set; } = null;
 
 
         /// <inheritdoc />
@@ -244,21 +235,40 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public List<ShotGraphicDisplay> PostDisplay { get; set; } = new List<ShotGraphicDisplay>();
 
         /*
-         * TODO: Make this an enum
+         * Question: Should this be an enum?
          */
         /// <summary>
         /// The event that caused the publication of this Result COF.
         /// Current known values are an empty string, ShotDetected, and NotSureButWasntAShot
         /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 62 )]
+        [G_NS.JsonProperty( Order = 62 )]
         public string GenerativeEvent { get; set; } = "ShotDetected";
+
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// Should be "2022-04-09"
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 90 )]
+        [G_NS.JsonProperty( Order = 90 )]
+        public string JSONVersion { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The GMT time this ResultCOF was last updated
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 91 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonProperty( Order = 91 )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        public DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// The Owner of this data. 
         /// If it starts with "OrionAcct" this it is owned by a club, and the data is considered public.
         /// If it is a GUID, this it is the User ID of the person who owns the data, and is considered protected.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 99 )]
-        [G_NS.JsonProperty( Order = 99 )]
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
         [Obsolete( "Use OwnerId instead." )]
         public string Owner {
             get { return this.OwnerId; }
@@ -281,8 +291,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastCompetitionShot()
-        {
+        public Scopos.BabelFish.DataModel.Athena.Shot.Shot? GetLastCompetitionShot() {
             Athena.Shot.Shot lastShot = null;
 
             if (Shots != null) {
@@ -318,8 +327,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             ;
         }
 
-		/// <inheritdoc />
-		public bool CurrentlyCompetingOrRecentlyDone() {
+        /// <inheritdoc />
+        public bool CurrentlyCompetingOrRecentlyDone() {
             if (GetStatus() == ResultStatus.INTERMEDIATE)
                 return true;
 
@@ -329,5 +338,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return false;
         }
 
-	}
+    }
 }

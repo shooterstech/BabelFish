@@ -51,6 +51,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeValueDataPacketMatchConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CalculationVariableConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CommandAutomationConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.CourseOfFireEntryConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DefinitionConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.DisplayEntityConfigurationConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
@@ -119,6 +120,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AttributeFilterOperation>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<AttributeFilterRule>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<CompetitionTypeOptions>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EntryStatus>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<EntryTypes>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueRankingRuleType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<LeagueSeasonType>() );
@@ -128,6 +130,8 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MatchType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<MemberPolicyOption>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ApprovalStatus>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ParticipantRemark>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ParticipantType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultStatus>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SquaddingAssignmentType>() );
 

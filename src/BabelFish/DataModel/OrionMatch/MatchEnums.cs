@@ -624,6 +624,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     };
 
     /// <summary>
+    /// The concrete class identifier for <see cref="Participant"/>. Whether the Participant is an Individual or a Team.
+    /// </summary>
+    public enum ParticipantType {
+
+        /// <summary>
+        /// A <see cref="Participant"/> that is a person, formally known as an <see cref="Individual"/>. Individuals have a family name, given name, and middle name.
+        /// </summary>
+        [Description( "Individual" )]
+        [EnumMember( Value = "Individual" )]
+        INDIVIDUAL,
+
+        /// <summary>
+        /// A <see cref="Participant"/> that is a team. Teams have a team name and a list of team members.
+        /// </summary>
+        [Description( "Team" )]
+        [EnumMember( Value = "Team" )]
+        TEAM
+    }
+
+    /// <summary>
     /// Specifies the type of action to take on a CommandAutomationRemark.
     /// </summary>
 	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]

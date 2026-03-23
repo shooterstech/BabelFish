@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThirdParty.BouncyCastle.Asn1;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.Helpers.Extensions
-{
-    public static class StringInterpolation
-    {
+namespace Scopos.BabelFish.Helpers.Extensions {
+    public static class StringInterpolation {
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
@@ -17,8 +10,7 @@ namespace Scopos.BabelFish.Helpers.Extensions
         /// <param name="source">The string to replace values with. All values must be in {}.</param>
         /// <param name="values">The dictionary, that holds the name value pairs for replacement.</param>
         /// <returns></returns>
-        public static string Replace(this string source, Dictionary<string, string> values)
-        {
+        public static string Replace( this string source, Dictionary<string, string> values ) {
             try {
                 if (string.IsNullOrEmpty( source ))
                     return string.Empty;
@@ -33,6 +25,34 @@ namespace Scopos.BabelFish.Helpers.Extensions
             }
         }
 
+        public static string Replace( this string source, IParticipant participant ) {
+            var values = new Dictionary<string, string>() {
+                { "DisplayName", participant.Participant.DisplayName },
+                { "DisplayNameShort", participant.Participant.GetDisplayNameShort() },
+                { "Country", participant.Participant.Country },
+                { "Hometown", participant.Participant.HomeTown },
+                { "Club", participant.Participant.Club  }
+                //{ "Team", participant.TeamName } Not sure where to pull this from, as the IParticipant does not have a TeamName property in the new BabelFish 2.0 data model.
+            };
+
+            if (participant.Participant is Individual inv) {
+                values.Add( "FamilyName", inv.FamilyName );
+                values.Add( "GivenName", inv.GivenName );
+                values.Add( "MiddleName", inv.MiddleName );
+                values.Add( "UserID", inv.UserID );
+                values.Add( "CompetitorNumber", inv.CompetitorNumber );
+            }
+
+            var coachList = participant.Participant.Coaches;
+            if (coachList != null && coachList.Count > 0) {
+                values.Add( "Coach", coachList[0].DisplayName );
+            } else {
+                values.Add( "Coach", string.Empty );
+            }
+
+            return source.Replace( values );
+        }
+
         /// <summary>
         /// Inputs a string such as "{XXXX}" and returns the portion of the 
         /// string that's inside the curly brackets. Wich in this example
@@ -42,7 +62,7 @@ namespace Scopos.BabelFish.Helpers.Extensions
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        public static string ExtractFieldValue(this string source) {
+        public static string ExtractFieldValue( this string source ) {
             //Remove the curly braces and return the inner value.
             if (source.StartsWith( "{" ) && source.EndsWith( "{" ))
                 return source.Substring( 1, source.Length - 2 );

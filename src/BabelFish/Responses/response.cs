@@ -1,5 +1,5 @@
-﻿using System.Net;
-using Scopos.BabelFish.DataModel;
+using System.Net;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 
 namespace Scopos.BabelFish.Responses
