@@ -7,7 +7,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Tests.OrionMatch.Tournament {
+namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
     /*
      * Test data and permission assumptions for these tests:
      * - TestDev7 is authenticated and can create/read/delete tournaments for OrionAcct000002.

@@ -1,6 +1,7 @@
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
+
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
     public class DeleteTournamentAuthenticatedResponse : Response<DeleteTournamentResponseWrapper> {
 

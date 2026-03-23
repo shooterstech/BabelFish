@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         [TestMethod]
         public async Task BasicHappyPathGetTournamentTest() {
 
-            var client = new OrionMatchAPIClient();
+            var client = new OrionMatchAPIClient(APIStage.BETA);
             var mId = new MatchID( "1.1.2025100211025190.2" );
 
             var request = new GetTournamentPublicRequest( mId );
@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             var tournament = new Scopos.BabelFish.DataModel.OrionMatch.Tournament() {
                 MatchName = tournamentName,
                 OwnerId = "OrionAcct000002",
-                Visibility = VisibilityOption.PROTECTED,
+                Visibility = VisibilityOption.PUBLIC,
                 IncludeInSearchResults = true,
                 MemberPolicy = MemberPolicyOption.INVITE
             };
@@ -455,7 +455,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task EriksPlayground() {
-
+            return; //uncomment when testing
             var client = new OrionMatchAPIClient();
             //var mId = new MatchID( "1.1.2025100211025190.2" );
             var mId = new MatchID( "1.2255.2025111109531371.2" );

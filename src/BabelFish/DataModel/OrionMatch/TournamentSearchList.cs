@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
-
+using Scopos.BabelFish.DataModel.Common;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Represents the data returned by a Tournament Search API call.
