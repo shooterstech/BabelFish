@@ -39,6 +39,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "HomeTown", //Deprecated
             "Hometown",
             "Club",
+            "Team",
             "Coach",
             "CompetitorNumber",
             "Country",
@@ -342,6 +343,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeClubPtr != null)
                         return _resultListFormatted.GetParticipantAttributeClubPtr( this._item, this._resultListFormatted );
                     return _item.Participant.Club;
+
+                case "Team":
+                    if (_resultListFormatted.GetParticipantAttributeTeamPtr != null)
+                        return _resultListFormatted.GetParticipantAttributeTeamPtr( this._item, this._resultListFormatted );
+
+                    return _item.Participant.TeamName;
 
                 case "CompetitorNumber":
                     if (_resultListFormatted.GetParticipantAttributeCompetitorNumberPtr != null)
