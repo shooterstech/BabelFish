@@ -16,7 +16,7 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.4990.2025122906283918.0" );
-            var resultListName = "Individual - Sporter";
+            var resultListName = "Team - Sporter";
 
             var getResultListResponse = await client.GetResultListPublicAsync( matchId, resultListName );
             var resultList = getResultListResponse.ResultList;

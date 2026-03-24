@@ -168,7 +168,9 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 foreach (var row in RLIF.ShownRows) {
                     foreach (var subRow in row) {
                         foreach (var rowCell in subRow.GetShownRow()) {
-                            table.Cell().ColumnSpan( (uint)rowCell.ColumnSpan ).Padding( 1 ).Text( rowCell.Text );
+                            var foo = table.Cell().ColumnSpan( (uint)rowCell.ColumnSpan ).Padding( 1 ).Text( rowCell.Text );
+                            if (row.GetClassList().Contains( "rlf-row-team" ))
+                                foo.Bold();
                         }
                     }
                 }
