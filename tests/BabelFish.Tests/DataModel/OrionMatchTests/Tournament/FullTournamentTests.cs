@@ -32,7 +32,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         private static readonly MatchID KnownPublicMatchOwner1BothSides = new MatchID( "1.1.2021020310584218.1" );
         private static readonly MatchID KnownPublicMatchOwner1003 = new MatchID( "1.1003.637477891.1" );
 
-        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.BETA );
+        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.PRODUCTION );
 
         private static string UniqueName( string prefix ) {
             return $"{prefix} {DateTime.UtcNow:yyyyMMddHHmmssfff}";
@@ -238,6 +238,56 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             var response = await client.GetTournamentPublicAsync( UnknownTournamentId() );
 
             Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+        }
+
+        [TestMethod]
+        public async Task GetTournamentAuthenticatedIncludesEditPermissionForTournamentCreator() {
+            // Intention: verify GetTournamentAuthenticated returns creator-side permissions including tournament.edit.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    authorizedUser,
+                    UniqueName( "Full Tournament Get Auth Creator" ),
+                    VisibilityOption.PRIVATE,
+                    showOnSearch: false );
+
+                var response = await client.GetTournamentAuthenticatedAsync( tournamentId, authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+                Assert.AreEqual( tournamentId, response.Tournament.TournamentId );
+                Assert.IsTrue( response.Permissions.Contains( Permission.TOURNAMENT_READ ) );
+                Assert.IsTrue( response.Permissions.Contains( Permission.TOURNAMENT_EDIT ) );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task GetTournamentAuthenticatedReturnsUnauthorizedForCallerWithoutAccess() {
+            // Intention: verify GetTournamentAuthenticated denies a caller without tournament access to a private tournament.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var unauthorizedUser = await AuthenticateAsync( Constants.TestDev13Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    authorizedUser,
+                    UniqueName( "Full Tournament Get Auth Unauthorized" ),
+                    VisibilityOption.PRIVATE,
+                    showOnSearch: false );
+
+                var response = await client.GetTournamentAuthenticatedAsync( tournamentId, unauthorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.Unauthorized, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
         }
 
         [TestMethod]
