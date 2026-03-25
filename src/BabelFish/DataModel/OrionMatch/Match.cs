@@ -17,9 +17,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ISaveToFile,
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserialized,
-        G_STJ_SER.IJsonOnDeserializing {
+        G_STJ_SER.IJsonOnDeserializing,
+        IEquatable<Match> {
 
+        #region Private and Protected Fields
+        private bool _ignoreEvents = false;
         private Logger _logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
 
         #region Constructors, Factories, and Initialization
 
@@ -64,13 +69,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public void OnDeserialized() {
             if (ScoringSystems.Count == 0)
                 ScoringSystems.Add( "Orion Scoring System" );
+
+            _ignoreEvents = false;
+            this.MatchStructure.Match = this;
         }
 
         /// <summary>
         /// Method is called before deserialization with System.Text.Json.
         /// </summary>
         public void OnDeserializing() {
-            ;
+
+            _ignoreEvents = true;
         }
 
         /// <summary>
@@ -312,6 +321,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 51 )]
         [G_NS.JsonProperty( Order = 51 )]
+        [Obsolete( "Will be replaced with the Permissions list, which is returned in parrallel to GetMatchDetail API call. Deprecated March 2026." )]
         public List<MatchAuthorizationCapability> Authorization { get; set; } = new List<MatchAuthorizationCapability>();
 
         /// <summary>
@@ -484,6 +494,38 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( Name );
             return foo.ToString();
         }
+
+        /// <summary>
+        /// Returns the hash code for this Match object, which is derived from the MatchID property. 
+        /// </summary>
+        /// <returns>The hash code for this Match object.</returns>
+        public override int GetHashCode() {
+            return this.MatchID.GetHashCode();
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current Match instance based on the MatchID value.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current Match instance. The comparison returns true only if the object is a
+        /// Match and has the same MatchID.</param>
+        /// <returns>true if the specified object is a Match with the same MatchID as the current instance; otherwise, false.</returns>
+        public override bool Equals( object? obj ) {
+            if (obj is Match otherMatch) {
+                return this.MatchID.Equals( otherMatch.MatchID );
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether the current Match object is equal to the specified Match object based on their MatchID
+        /// values.
+        /// </summary>
+        /// <param name="other">The Match object to compare with the current Match object.</param>
+        /// <returns>true if the specified Match object has the same MatchID as the current Match object; otherwise, false.</returns>
+        public bool Equals( Match other ) {
+            return this.MatchID.Equals( other.MatchID );
+        }
+
         #endregion
 
         #region ISaveToFile Implementation

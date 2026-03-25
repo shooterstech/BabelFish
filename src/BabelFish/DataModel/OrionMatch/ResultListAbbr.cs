@@ -14,7 +14,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
     /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
     /// </remarks>
-    public class ResultListAbbr : IEquatable<ResultListAbbr>, IEqualityComparer<ResultListAbbr>, IFinishInitializationAsync {
+    public class ResultListAbbr :
+        IEquatable<ResultListAbbr>,
+        IEqualityComparer<ResultListAbbr>,
+        IFinishInitializationAsync {
+
+        #region Private and Protected Fields
+        private bool _ignoreEvents = false;
+        private Logger _logger = LogManager.GetCurrentClassLogger();
+        #endregion
+
+        #region Constructors, Factory, and Initialization Methods
 
         /// <summary>
         /// Default public constructor
@@ -22,6 +32,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultListAbbr() {
 
         }
+
+        /// <inheritdoc/>
+        public async Task FinishInitializationAsync() {
+            await this.AttributeFilter.FinishInitializationAsync();
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        #endregion
+
+        #region Data Model Properties
 
         /// <summary>
         /// The name of the Result List. Will be unique within a Course of fire within a match. 
@@ -33,11 +56,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Each Match may contain multiple Courses of Fire, and each Course of Fire may have multiple Result Lists. This is the unique idtifier to the Course of Fire that this Result List is associated with.
         /// <para>Most Matches only contain one Course of Fire (prior to Orion 3.0 (and BabelFish 2.0) Orion only supported 1 coruse of fire in a match). 1 is the starting index. </para>
+        /// <para>A value of 0 would indicate that this is a Merged Result List. But since ResultListAbbr
+        /// should not be used to described a Merged Result List, the value should always be >= 1. </para>
         /// </summary>
-        /// <remarks>A value of 0 would indicate that this is a Merged Result List. But since ResultListAbbr should not be used to described a Merged Result List, the value should always be >= 1. </remarks>
+        /// <remarks>Value is not serialized. Instead, value is set either by
+        /// <see cref="CourseOfFireStructure.OnDeserialized"/> or <see cref="CourseOfFireStructure.AddResultList(ResultListAbbr)"/>.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        public int CourseOfFireId { get; set; } = 1;
+        [G_NS.JsonIgnore]
+        public int CourseOfFireId { get; internal set; } = 1;
 
         /// <summary>
         /// The Event Name, as defined in the COURSE OF FIRE definiton, that's the top level event for this ResultList.
@@ -136,6 +163,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )));
         }
 
+        #endregion
+
+        #region Methods 
+
         /// <summary>
         /// Returns a hash code that unique defines the structure of the Result List.</summary>
         /// <inheritdoc />
@@ -172,10 +203,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public int GetHashCode( ResultListAbbr obj ) => obj.GetHashCode();
 
-        /// <inheritdoc/>
-        public async Task FinishInitializationAsync() {
-            await this.AttributeFilter.FinishInitializationAsync();
-        }
+        #endregion
 
     }
 }

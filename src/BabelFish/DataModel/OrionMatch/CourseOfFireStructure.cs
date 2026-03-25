@@ -67,6 +67,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Sets _ignoreEvents to false so that events will fire as expected after deserialization.
         /// </summary>
         public void OnDeserialized() {
+            foreach (var rl in ResultLists) {
+                rl.CourseOfFireId = this.CourseOfFireId;
+                rl.AttributeFilter.UpdateCourseOfFireId( this.CourseOfFireId );
+            }
             _ignoreEvents = false;
         }
 
@@ -147,16 +151,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
-        /// SetName of the ScoreConfig used in this match.
-        /// NOTE: The name of the ScoreFormatCollection is specified in the Course of Fire 
+        /// Name of the ScoreConfig used in this match.
         /// </summary>
-        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own ScoreConfigName. This property will be replaced.</remarks>
+        /// <remarks>The name of the SCORE FORMAT COLLECTION is specified in the COUSE OF FIRE. </remarks>
         public string ScoreConfigName { get; set; }
 
         /// <summary>
-        /// Name of the TargetCollection used in this match.
+        /// Name of the TargetCollection used in this Course of Fire.
         /// </summary>
-        /// <remarks>In the future MatchV2 class, Matches will be able to have multiple COURSES OF FIRE, and with each CourseOfFireDef will have its own TargetColle3citonName. This property will be replaced.</remarks>
+        /// <remarks>The TARGET COLLECTION is specified in the COURSE OF FIRE. </remarks>
         public string TargetCollectionName { get; set; }
 
         /// <summary>
@@ -201,7 +204,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (existingResultList == null) {
                 ResultLists.Add( resultList );
 
-                resultList.AttributeFilter.UpdateCourseOfFireId( CourseOfFireId );
+                resultList.CourseOfFireId = this.CourseOfFireId;
+                resultList.AttributeFilter.UpdateCourseOfFireId( this.CourseOfFireId );
 
                 if (!_ignoreEvents) {
                     OnResultListAdded?.Invoke( this, new EventArgs<ResultListAbbr>( resultList ) );

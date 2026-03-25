@@ -111,6 +111,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Training (this value is usually set by Orion)
         /// </summary>
+        [Obsolete( "Use Practice instead. Deprecated March 2026" )]
         [Description( "Training" )]
         [EnumMember( Value = "Training" )]
         TRAINING,
@@ -125,6 +126,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Practice Match
         /// </summary>
+        [Obsolete( "Use Practice instead. Deprecated March 2026" )]
         [Description( "Practice Match" )]
         [EnumMember( Value = "Practice Match" )]
         PRACTICE_MATCH,
