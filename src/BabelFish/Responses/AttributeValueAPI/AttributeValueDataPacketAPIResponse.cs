@@ -1,4 +1,5 @@
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI {
 
@@ -19,6 +20,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
         /// </summary>
         public AttributeValueDataPacketAPIResponse() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
+            this.Type = AttributeValueType.API_RESPPONSE;
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -20,7 +21,9 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 return mId;
             }
 
-            _logger.Error( $"Failed to parse MatchID from string: {matchIdString}. Returning default MatchID." );
+            var msg = $"Failed to parse MatchID from string: {matchIdString}. Returning default MatchID.";
+            Debug.Assert( false, msg );
+            _logger.Error( msg );
             return MatchID.DEFAULT;
         }
 

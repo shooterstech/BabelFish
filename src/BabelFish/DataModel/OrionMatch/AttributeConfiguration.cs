@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public AttributeConfiguration() {
             this.ConcreteClassId = CONCRETE_CLASS_ID;
+            this.Type = AttributeValueType.CONFIGURATION;
         }
 
         /// <summary>

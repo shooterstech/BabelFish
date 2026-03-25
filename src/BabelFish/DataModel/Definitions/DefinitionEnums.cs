@@ -102,6 +102,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         HIDDEN
     }
 
+    public enum AttributeValueType {
+
+        [Description( "MATCH" )]
+        [EnumMember( Value = "MATCH" )]
+        MATCH,
+
+        [Description( "API" )]
+        [EnumMember( Value = "API" )]
+        API_RESPPONSE,
+
+        [Description( "CONFIG" )]
+        [EnumMember( Value = "CONFIG" )]
+        CONFIGURATION
+    }
+
     /// <summary>
     /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product.
     /// </summary>

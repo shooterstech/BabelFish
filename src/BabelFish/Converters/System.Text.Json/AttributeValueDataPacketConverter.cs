@@ -26,31 +26,43 @@ namespace Scopos.BabelFish.Converters.Microsoft {
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
                 JsonElement root = doc.RootElement;
 
+                AttributeValueType avType = AttributeValueType.MATCH;
+
+                // First attempt to identify the type of AttributeValueDataPacket using the "Type" property, which is included in newer serializations.
+                // If the "Type" property is not present, attempt to identify the type using the "ConcreteClassId" property, which is included in older serializations.
                 int id = 0;
                 try {
-                    id = root.GetProperty( "ConcreteClassId" ).GetInt32();
+                    if (root.TryGetProperty( "Type", out temp ) && Enum.TryParse<AttributeValueType>( temp.GetString(), true, out var parsedType )) {
+                        avType = parsedType;
+                    } else {
+                        id = root.GetProperty( "ConcreteClassId" ).GetInt32();
+                        if (id == AttributeValueDataPacketMatch.CONCRETE_CLASS_ID)
+                            avType = AttributeValueType.MATCH;
+                        else if (id == AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID)
+                            avType = AttributeValueType.API_RESPPONSE;
+                        else if (id == AttributeConfiguration.CONCRETE_CLASS_ID)
+                            avType = AttributeValueType.CONFIGURATION;
+                    }
                 } catch (KeyNotFoundException) {
                     //On some older serializations, the ConcreteClassId was not included. Infer the value based on what else is in the json
                     if (root.TryGetProperty( "StatusCode", out temp ))
-                        id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
-                    else if (root.TryGetProperty( "StatusCode", out temp ))
-                        id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+                        avType = AttributeValueType.API_RESPPONSE;
                     else
-                        id = AttributeValueDataPacketMatch.CONCRETE_CLASS_ID;
+                        avType = AttributeValueType.MATCH;
                 }
 
                 AttributeValueDataPacket attributeValueDataPacket;
                 bool okToDeserialize = true;
 
-                switch (id) {
-                    case AttributeValueDataPacketMatch.CONCRETE_CLASS_ID:
+                switch (avType) {
+                    case AttributeValueType.MATCH:
                         attributeValueDataPacket = new AttributeValueDataPacketMatch();
 
                         if (root.TryGetProperty( "CourseOfFireId", out temp ))
                             ((AttributeValueDataPacketMatch)attributeValueDataPacket).CourseOfFireId = temp.GetInt32();
                         break;
 
-                    case AttributeConfiguration.CONCRETE_CLASS_ID:
+                    case AttributeValueType.CONFIGURATION:
                         attributeValueDataPacket = new AttributeConfiguration();
 
                         if (root.TryGetProperty( "CourseOfFireId", out temp ))
@@ -59,7 +71,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             ((AttributeConfiguration)attributeValueDataPacket).Constant = temp.GetBoolean();
                         break;
 
-                    case AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID:
+                    case AttributeValueType.API_RESPPONSE:
                     default:
                         attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
 

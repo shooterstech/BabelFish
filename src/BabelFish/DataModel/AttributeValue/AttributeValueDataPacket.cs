@@ -17,6 +17,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         public AttributeValueDataPacket() {
             this.ConcreteClassId = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+            this.Type = AttributeValueType.API_RESPPONSE;
         }
 
         /// <summary>
@@ -88,6 +89,13 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// Concrete classes, the JSON should include a ConcreteClassId that specifies
         /// the Concrete class.
         /// </summary>
+        [Obsolete( "Use Type instead of ConcreteClassId to determine the concrete class of the AttributeValueDataPacket." )]
         public int ConcreteClassId { get; protected set; }
+
+        /// <summary>
+        /// The concrete class identifier of this AttributeValueDataPacket. This is used to determine the
+        /// concrete class of this AttributeValueDataPacket, and is set by the overridden ReadJson() method of AttributeValueDataPacketConverter class during deserialization.
+        /// </summary>
+        public AttributeValueType Type { get; protected set; }
     }
 }

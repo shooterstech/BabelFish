@@ -36,6 +36,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="fullMatchID"></param>
         /// <exception cref="FormatException">Thrown if the passed in fullMatchID string is not in the expected format.</exception>
         public MatchID( string fullMatchID ) {
+            if (!string.IsNullOrEmpty(fullMatchID) && fullMatchID.EndsWith("U")) {
+                fullMatchID = fullMatchID.Substring(0, fullMatchID.Length - 1);
+            }
+
             string[] parts = fullMatchID.Split( new char[] { '.' } );
 
             if (parts.Length == 4

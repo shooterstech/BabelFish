@@ -349,7 +349,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeTeamPtr != null)
                         return _resultListFormatted.GetParticipantAttributeTeamPtr( this._item, this._resultListFormatted );
 
-                    throw new NotImplementedException( "Not sure where to store and pull TeamName from in the new BabelFish 2.0 datamodel." );
+                    //throw new NotImplementedException( "Not sure where to store and pull TeamName from in the new BabelFish 2.0 datamodel." );
                     return "Unknown";
 
                 case "CompetitorNumber":
