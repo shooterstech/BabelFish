@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task OrionMatchAPI_GetAMatch() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchPublicAsync( matchId );
 
@@ -66,6 +66,8 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
             Assert.AreEqual( "Unit Test Match", match.Name );
             Assert.AreEqual( VisibilityOption.PUBLIC, match.Visibility );
             Assert.AreEqual( new DateTime( 2023, 1, 19 ), match.StartDate );
+            //The following test is added to check that the OnDeserialized method is being called, which sets the MatchStructure.Match property to the match itself. If this test fails, it may indicate an issue with the deserialization process.
+            Assert.AreEqual( match, match.MatchStructure.Match );
         }
 
         [TestMethod]
