@@ -2,8 +2,7 @@ using System.Net;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 
-namespace Scopos.BabelFish.Responses
-{
+namespace Scopos.BabelFish.Responses {
     /// <summary>
     /// Abstract class representing all Rest API Responses.
     /// A concret implementation of a Response class should coorespond to exactly one REST API method call.
@@ -44,20 +43,20 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         public Request Request { get; protected set; }
 
-		/// <summary>
-		/// Returns the time that the response object is considered out of date and
+        /// <summary>
+        /// Returns the time that the response object is considered out of date and
         /// should not longer be used in a cached response. 
         /// 
         /// To enable cache for a API call two things needs to happen. First the concrete
         /// APIClient needs to enabled caching response by setting .IgnoreLocalCache to false.
         /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
         /// to a value in the future.
-		/// </summary>
-		/// <returns></returns>
-		protected internal virtual DateTime GetCacheValueExpiryTime() {
+        /// </summary>
+        /// <returns></returns>
+        protected internal virtual DateTime GetCacheValueExpiryTime() {
             //Return a default value indicating the cahce value has already expired.
             return DateTime.MinValue;
-		}
+        }
 
         /// <summary>
         /// If true, indicates this response was from in memory cache, and not from an API call.
@@ -69,24 +68,24 @@ namespace Scopos.BabelFish.Responses
         /// </summary>
         public bool FileSystemCachedResponse { get; protected internal set; } = false;
 
-		/// <summary>
-		/// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard 
+        /// <summary>
+        /// Gets or sets the MesageResponse *status* data object returned by the Rest API Call. The Message Response contains all of the standard 
         /// fields returned in a Scopos Rest API call, including Message and NextToken (if used). What it doesn't contain is the requested data model object.
-		/// </summary>
-		public MessageResponse MessageResponse
-        {
+        /// </summary>
+        public MessageResponse MessageResponse {
             get;
             internal set;
-        } = new MessageResponse();        
+        } = new MessageResponse();
 
         /// <summary>
         /// Gets or sets the data object returned by the Rest API Call.
         /// </summary>
-        public T Value
-        {
+        public T Value {
             get;
             internal set;
         } = default( T );
+
+        public HashSet<Permission> Permissions { get; internal set; } = new HashSet<Permission>();
 
         /// <summary>
         /// Gets or Sets the Status Code returned by the Rest API call.
@@ -116,16 +115,16 @@ namespace Scopos.BabelFish.Responses
         /// <summary>
         /// Raw body returned by the Rest API Call.
         /// </summary>
-        private G_STJ.JsonDocument body = null;
+        private G_STJ.JsonDocument _body = null;
 
         /// <summary>
         /// Gets or Sets the raw body returned by the Rest API Call.
         /// If the StatusCode is something other than OK (200), the value of Body will be invalid.
         /// </summary>
         public G_STJ.JsonDocument Body {
-            get { return body; }
+            get { return _body; }
             internal set {
-                body = value;
+                _body = value;
                 this.ConvertBodyToValue();
             }
         }
@@ -144,7 +143,7 @@ namespace Scopos.BabelFish.Responses
         protected virtual void ConvertBodyToValue() {
             if (RestApiStatusCode == HttpStatusCode.OK)
                 Value = G_STJ.JsonSerializer.Deserialize<T>( Body.RootElement, SerializerOptions.SystemTextJsonDeserializer );
-            else 
+            else
                 Value = new T();
 
             /*
@@ -164,9 +163,9 @@ namespace Scopos.BabelFish.Responses
         public string ExceptionMessage { get; set; }
     }
 
-    public enum RequestStatusCode { 
-        OK, 
-        RestApiServerError, 
+    public enum RequestStatusCode {
+        OK,
+        RestApiServerError,
         DeserializaingError,
         TimeOutError,
         UnknownError //If we get this, we should discover why and update ReqeustStatusCode

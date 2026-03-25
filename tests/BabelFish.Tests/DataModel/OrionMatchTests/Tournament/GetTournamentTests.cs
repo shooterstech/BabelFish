@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
@@ -7,9 +5,9 @@ using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
     [TestClass]
@@ -18,7 +16,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         [TestMethod]
         public async Task BasicHappyPathGetTournamentTest() {
 
-            var client = new OrionMatchAPIClient(APIStage.BETA);
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var mId = new MatchID( "1.1.2025100211025190.2" );
 
             var request = new GetTournamentPublicRequest( mId );
@@ -35,18 +33,20 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             Assert.IsTrue( tournament.TournamentMembers.Count > 0 );
             Assert.IsTrue( tournament.MergedResultLists.Count > 0 );
             Assert.IsTrue( tournament.MergedResultLists[0].Configuration is AverageMethodConfiguration );
+
+            Assert.IsTrue( response.Permissions.Contains( Permission.TOURNAMENT_READ ) );
         }
 
         [TestMethod]
         public async Task BasicHappyPathCreateTournamentWithRequestTest() {
-            var client = new OrionMatchAPIClient(APIStage.BETA);
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
             await userAuthentication.InitializeAsync();
 
             var tournamentName = $"BabelFish API Create Request Test {DateTime.UtcNow:yyyyMMddHHmmss}";
-            var request = new CreateTournamentAuthenticatedRequest( userAuthentication);
+            var request = new CreateTournamentAuthenticatedRequest( userAuthentication );
             request.TournamentName = tournamentName;
             request.OwnerId = "OrionAcct000002";
             request.Visibility = VisibilityOption.PUBLIC;
@@ -66,7 +66,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathCreateTournamentWithTournamentObjectTest() {
-            var client = new OrionMatchAPIClient(APIStage.BETA);
+            var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -86,7 +86,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             Assert.IsTrue( response.HasOkStatusCode );
             Assert.IsNotNull( response.Tournament );
             Assert.AreEqual( tournamentName, response.Tournament.TournamentName );
-            Assert.AreEqual("OrionAcct000002", response.Tournament.OwnerId );
+            Assert.AreEqual( "OrionAcct000002", response.Tournament.OwnerId );
             Assert.IsTrue( response.Tournament.IncludeInSearchResults );
             Assert.IsTrue( response.Tournament.TournamentId.ToString().EndsWith( ".2" ) );
         }
@@ -166,7 +166,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             Assert.IsTrue( createResponse.HasOkStatusCode );
             Assert.IsNotNull( createResponse.Tournament );
 
-            var tournamentMemberMatchId = new MatchID("1.1.1011318990.1");
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
             var addRequest = new AddTournamentMemberAuthenticatedRequest(
                 userAuthentication,
                 createResponse.Tournament.TournamentId,
@@ -201,7 +201,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             Assert.IsTrue( createResponse.HasOkStatusCode );
             Assert.IsNotNull( createResponse.Tournament );
 
-            var tournamentMemberMatchId = new MatchID("1.1.1011318990.1");
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
             var addResponse = await client.AddTournamentMemberAuthenticatedAsync(
                 createResponse.Tournament.TournamentId,
                 tournamentMemberMatchId,
@@ -318,7 +318,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             Assert.IsTrue( createResponse.HasOkStatusCode );
             Assert.IsNotNull( createResponse.Tournament );
 
-            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" ); 
+            var tournamentMemberMatchId = new MatchID( "1.1.1011318990.1" );
             var addResponse = await client.AddTournamentMemberAuthenticatedAsync(
                 createResponse.Tournament.TournamentId,
                 tournamentMemberMatchId,

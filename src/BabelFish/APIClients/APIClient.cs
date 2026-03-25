@@ -193,7 +193,7 @@ namespace Scopos.BabelFish.APIClients {
                 using (StreamReader sr = new StreamReader( s )) {
                     /*
                      * EKA Note Jan 2025: There are faster ways of parsing the stream into an object. However, by capturing the json (which slows things down)
-                     * it makes troubleshooting much easier. Any by saving the JsonDocument in .Body, makes reusing response in a cache easier.
+                     * it makes troubleshooting much easier. And by saving the JsonDocument in .Body, makes reusing response in a cache easier.
                      */
                     jsonAsString = sr.ReadToEnd();
                     //var stopWatch = Stopwatch.StartNew();
@@ -206,6 +206,13 @@ namespace Scopos.BabelFish.APIClients {
                     if (response.Body.RootElement.TryGetProperty( "Message", out messageArray ) && messageArray.ValueKind == G_STJ.JsonValueKind.Array) {
                         foreach (var message in messageArray.EnumerateArray()) {
                             response.MessageResponse.Message.Add( message.GetString() );
+                        }
+                    }
+
+                    G_STJ.JsonElement permissionsArray;
+                    if (response.Body.RootElement.TryGetProperty( "Permissions", out permissionsArray ) && permissionsArray.ValueKind == G_STJ.JsonValueKind.Array) {
+                        foreach (var permission in permissionsArray.EnumerateArray()) {
+                            response.Permissions.Add( Permission.Parse( permission.GetString(), false ) );
                         }
                     }
                 }
