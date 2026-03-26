@@ -11,6 +11,8 @@ namespace Scopos.BabelFish.DataModel.Common {
     public enum VisibilityOption {
         /*
          * Setting the values for the enum so we can have accurate comparisons, e.g. (PUBLIC > INTERNAL)
+         * 
+         * When serialized to JSON, the string values should be "Public", "Internal", "Protected", and "Private". This is handled by the VisibilityOptionJsonConverter class.
          */
 
         /// <summary>

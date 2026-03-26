@@ -25,8 +25,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.OnDeserializedMethod( context );
 
             //Designation is not required, but if the user doesn't include it, set it to all values except HIDDEN
-            if (designation == null || designation.Count() == 0)
-                designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
+            if (_designation == null || _designation.Count() == 0)
+                _designation = new List<AttributeDesignation>() { AttributeDesignation.ATHLETE, AttributeDesignation.CLUB, AttributeDesignation.MATCH_OFFICIAL, AttributeDesignation.TEAM, AttributeDesignation.TEAM_OFFICIAL, AttributeDesignation.USER };
         }
 
         private string displayName = string.Empty;
@@ -54,7 +54,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-        private List<AttributeDesignation> designation = new List<AttributeDesignation>();
+        private List<AttributeDesignation> _designation = new List<AttributeDesignation>();
 
         /// <summary>
         /// The type of participant, teams, or clubs that this Attribute may be applied to.
@@ -63,21 +63,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 12 )]
         public List<AttributeDesignation> Designation {
             get {
-                if (designation == null)
-                    designation = new List<AttributeDesignation>();
+                if (_designation == null)
+                    _designation = new List<AttributeDesignation>();
 
-                return designation;
+                return _designation;
             }
             set {
                 if (value.Count == 0) {
                     //In essence the reset condition. 
-                    designation.Clear();
+                    _designation.Clear();
                 } else {
                     //Avoid adding duplicates
-                    designation.Clear();
+                    _designation.Clear();
                     foreach (var d in value) {
-                        if (!designation.Contains( d ))
-                            designation.Add( d );
+                        if (!_designation.Contains( d ))
+                            _designation.Add( d );
                     }
                 }
             }
@@ -87,7 +87,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The maximum visibility the user can set for the ATTRIBUTE VALUE.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 13 )]
-        [G_NS.JsonProperty( Order = 13 )]
+        [G_NS.JsonProperty( Order = 13, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( VisibilityOption.PUBLIC )]
         public VisibilityOption MaxVisibility { get; set; } = VisibilityOption.PUBLIC;
 
@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Must be a Privacy value equal to or greater than the MaxVisibility.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 14 )]
-        [G_NS.JsonProperty( Order = 14 )]
+        [G_NS.JsonProperty( Order = 14, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( VisibilityOption.PUBLIC )]
         public VisibilityOption DefaultVisibility { get; set; } = VisibilityOption.PUBLIC;
 
@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Indicates if multiple field values may be assigned in the resulting ATTRIBUTE VALUEs.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 15 )]
-        [G_NS.JsonProperty( Order = 15 )]
+        [G_NS.JsonProperty( Order = 15, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         [DefaultValue( false )]
         public bool MultipleValues { get; set; } = false;
 

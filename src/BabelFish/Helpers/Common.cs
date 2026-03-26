@@ -835,12 +835,18 @@ namespace Scopos.BabelFish.Helpers {
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var buffer = new byte[bytes];
+#if NETSTANDARD2_1
             RandomNumberGenerator.Fill(buffer);
+#else
+            using (var rng = RandomNumberGenerator.Create()) {
+                rng.GetBytes( buffer );
+            }
+#endif
             var result = new char[bytes];
             for (int i = 0; i < bytes; i++) {
                 result[i] = chars[buffer[i] % chars.Length];
             }
-            return new string(result);
+            return new string( result );
         }
 
 
