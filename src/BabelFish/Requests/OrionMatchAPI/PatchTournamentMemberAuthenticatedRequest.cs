@@ -15,8 +15,8 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 throw new ArgumentNullException( nameof( tournamentMember ) );
             }
 
-            TournamentId = tournamentMember.TournamentId ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a tournament id." );
-            MatchId = tournamentMember.MatchId ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a match id." );
+            TournamentId = tournamentMember.Tournament.TournamentId ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a tournament id." );
+            MatchId = tournamentMember.MatchID ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a match id." );
             ApprovalStatus = tournamentMember.ApprovalStatus;
             SubDomain = APIClients.APISubDomain.AUTHAPI;
         }

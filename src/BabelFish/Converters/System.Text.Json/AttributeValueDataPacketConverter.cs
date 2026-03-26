@@ -2,7 +2,6 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
@@ -100,18 +99,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     var attrValueAsJsonElement = CopyJsonElement( root.GetProperty( "AttributeValue" ) );
                     attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( attributeValueDataPacket.AttributeDef, attrValueAsJsonElement );
                     if (root.TryGetProperty( "Visibility", out temp ))
-                        attributeValueDataPacket.Visibility = temp.GetString() switch {
-                            // In some older serailizations, Visibiliity was serialized as an all uppder case string, in newer (and correct) serializations it is serialized as a pascal case string. So we need to account for both.
-                            "Public" => VisibilityOption.PUBLIC,
-                            "PUBLIC" => VisibilityOption.PUBLIC,
-                            "Internal" => VisibilityOption.INTERNAL,
-                            "INTERNAL" => VisibilityOption.INTERNAL,
-                            "Protected" => VisibilityOption.PROTECTED,
-                            "PROTECTED" => VisibilityOption.PROTECTED,
-                            "Private" => VisibilityOption.PRIVATE,
-                            "PRIVATE" => VisibilityOption.PRIVATE,
-                            _ => VisibilityOption.PRIVATE
-                        };
+                        attributeValueDataPacket.Visibility = EnumHelper.ParseVisibilityOption( temp.GetString() );
                 }
 
                 return attributeValueDataPacket;

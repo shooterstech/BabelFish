@@ -1,12 +1,13 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Common {
 
     /// <summary>
     /// Options to set how visible data may be. Commonly used in <seealso cref="AttributeValue.AttributeValue"/> or <seealso cref="Match"/> visibility. 
     /// </summary>
+    /// <remarks>
+    /// To parse string values into a VisibilityOption, use the <see cref="EnumHelper.ParseVisibilityOption(string)"/> or <see cref="EnumHelper.ParseVisibilityOption(int)"/>
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VisibilityOptionJsonConverter ) )]
     public enum VisibilityOption {
         /*
