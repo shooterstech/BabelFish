@@ -9,7 +9,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// These are called <see cref="MergedResultList"/>.</para>
     /// <para>The <see cref="MatchID"/> for tournaments always end in ".2".</para>
     /// </summary>
-    public class Tournament : MatchBase {  
+    public class Tournament : MatchBase,
+        G_STJ_SER.IJsonOnDeserialized,
+        G_STJ_SER.IJsonOnDeserializing {
+
+        private bool _ignoreEvents = false;
 
         /// <summary>
         /// Public constructor.
@@ -27,6 +31,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             get {
                 return this.MatchId;
             }
+        }
+
+        /// <summary>
+        /// This method is called after deserialization with System.Text.Json. 
+        /// </summary>
+        public void OnDeserialized() {
+
+            _ignoreEvents = false;
+            foreach (var tournamentMember in TournamentMembers) {
+                tournamentMember.Tournament = this;
+            }
+        }
+
+        /// <summary>
+        /// Method is called before deserialization with System.Text.Json.
+        /// </summary>
+        public void OnDeserializing() {
+
+            _ignoreEvents = true;
         }
 
         /// <summary>

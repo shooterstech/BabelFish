@@ -1,12 +1,7 @@
-﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataModel.Common;
-using NLog;
 
-namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile
-{
+namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
 
     /// <summary>
     /// An in memory only implementation of the IUserProfileLookup interface. 
@@ -19,9 +14,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile
     public class BaseUserProfileLookup : IUserProfileLookup {
 
         //Key is the user's cognito user id
-        protected ConcurrentDictionary<string, UserProfile> UserProfileByUserIdCache = new ConcurrentDictionary<string, UserProfile>();
+        public ConcurrentDictionary<string, UserProfile> UserProfileByUserIdCache = new ConcurrentDictionary<string, UserProfile>();
         //Key is the user's account url, aka rezults url
-        protected ConcurrentDictionary<string, UserProfile> UserProfileByAccountUrlCache = new ConcurrentDictionary<string, UserProfile>();
+        public ConcurrentDictionary<string, UserProfile> UserProfileByAccountUrlCache = new ConcurrentDictionary<string, UserProfile>();
 
         protected Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
