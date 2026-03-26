@@ -52,6 +52,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             _ignoreEvents = true;
         }
 
+        public void AddMember(TournamentMember member) {
+            TournamentMembers.Add(member);
+            member.Tournament = this;
+        }
+
+
         /// <summary>
         /// Purposefully redundant. Exact same value as MatchName. But since this is a concrete 
         /// implementation of a Tournament we call it TournamentName.
