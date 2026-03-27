@@ -141,8 +141,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The <see cref="Team"/> that this Participant is a member of. A value of null
+        /// indicates that the Participant is not a member of any team. 
+        /// <para>Note, this is NOT the same as the Club property, which represents the hometown club the Participant represents.</para>
+        /// </summary>
+        /// <remark>
+        /// Value is not serialized, as this is a pointer back to the container Team.
+        /// </remark>
+        [G_NS.JsonIgnore]
+        public Team? Team { get; set; } = null;
+
+        /// <summary>
+        /// Gets the name of the team associated with the current participant.
+        /// </summary>
+        /// <remarks>If no team is assigned, this property returns an empty string. Use this property to
+        /// retrieve the display name of the participant's team, if available.</remarks>
+        [G_NS.JsonProperty( Order = 15 )]
+        public virtual string TeamName {
+            get {
+                return Team != null ? Team.TeamName : string.Empty;
+            }
+            set {
+                ; // an Individual doesn't have a team name, so the setter does nothing. For a Team, the TeamName is the same as the DisplayName, so the setter of TeamName sets the DisplayName.
+            }
+        }
+
         /*
-         * JsonProperty Order values 15 .. 19 reserved for concrete classes
+         * JsonProperty Order values 16 .. 19 reserved for concrete classes
          */
 
         /// <summary>
@@ -163,6 +189,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
+        /// <remarks>EKA Note March 2025. Not sure RemarkList belongs directly on a Particpant, as each COF a participant shoots in a Match may have its own RemarkList
+        /// </remarks>
         [G_NS.JsonProperty( Order = 22 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
 
@@ -183,7 +211,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeCoaches() {
@@ -194,9 +221,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          * JsonProperty Order values 25 .. 29 reserved for concrete classes
          */
 
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// Version 2022-04-09 represents ResultCOF in a dictionary format
+        /// Version < 2022 represent ResultCOF in a tree format
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
+        public string JSONVersion { get; set; } = string.Empty;
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Calling this method sets (or restores) the value of <see cref="DisplayName"/> based on the values of other properties of the Participant, such as FamilyName and GivenName for an Individual, or TeamName for a Team.
         /// It also marks that the DisplayName is the default value by setting <see cref="DefaultDisplayName"/> to true. 

@@ -7,6 +7,8 @@ namespace Scopos.BabelFish.Helpers {
     /// </summary>
     public static class Common {
 
+        public static readonly string DATA_MODEL_VERSION = "2.0.0";
+
         /// <summary>
         /// Returns the Levenshtein Distance between two strings.
         /// </summary>

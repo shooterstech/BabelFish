@@ -2,7 +2,6 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
@@ -32,21 +31,22 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 // If the "Type" property is not present, attempt to identify the type using the "ConcreteClassId" property, which is included in older serializations.
                 int id = 0;
                 try {
-                    if (root.TryGetProperty( "Type", out temp ) && Enum.TryParse<AttributeValueType>( temp.GetString(), true, out var parsedType )) {
+                    if (root.TryGetProperty( "Type", out temp )
+                        && EnumHelper.TryParseEnumByDescription<AttributeValueType>( temp.GetString(), out var parsedType )) {
                         avType = parsedType;
                     } else {
                         id = root.GetProperty( "ConcreteClassId" ).GetInt32();
                         if (id == AttributeValueDataPacketMatch.CONCRETE_CLASS_ID)
                             avType = AttributeValueType.MATCH;
                         else if (id == AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID)
-                            avType = AttributeValueType.API_RESPPONSE;
+                            avType = AttributeValueType.API_RESPONSE;
                         else if (id == AttributeConfiguration.CONCRETE_CLASS_ID)
                             avType = AttributeValueType.CONFIGURATION;
                     }
                 } catch (KeyNotFoundException) {
                     //On some older serializations, the ConcreteClassId was not included. Infer the value based on what else is in the json
                     if (root.TryGetProperty( "StatusCode", out temp ))
-                        avType = AttributeValueType.API_RESPPONSE;
+                        avType = AttributeValueType.API_RESPONSE;
                     else
                         avType = AttributeValueType.MATCH;
                 }
@@ -71,7 +71,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                             ((AttributeConfiguration)attributeValueDataPacket).Constant = temp.GetBoolean();
                         break;
 
-                    case AttributeValueType.API_RESPPONSE:
+                    case AttributeValueType.API_RESPONSE:
                     default:
                         attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
 
@@ -100,18 +100,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     var attrValueAsJsonElement = CopyJsonElement( root.GetProperty( "AttributeValue" ) );
                     attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( attributeValueDataPacket.AttributeDef, attrValueAsJsonElement );
                     if (root.TryGetProperty( "Visibility", out temp ))
-                        attributeValueDataPacket.Visibility = temp.GetString() switch {
-                            // In some older serailizations, Visibiliity was serialized as an all uppder case string, in newer (and correct) serializations it is serialized as a pascal case string. So we need to account for both.
-                            "Public" => VisibilityOption.PUBLIC,
-                            "PUBLIC" => VisibilityOption.PUBLIC,
-                            "Internal" => VisibilityOption.INTERNAL,
-                            "INTERNAL" => VisibilityOption.INTERNAL,
-                            "Protected" => VisibilityOption.PROTECTED,
-                            "PROTECTED" => VisibilityOption.PROTECTED,
-                            "Private" => VisibilityOption.PRIVATE,
-                            "PRIVATE" => VisibilityOption.PRIVATE,
-                            _ => VisibilityOption.PRIVATE
-                        };
+                        attributeValueDataPacket.Visibility = EnumHelper.ParseVisibilityOption( temp.GetString() );
                 }
 
                 return attributeValueDataPacket;
