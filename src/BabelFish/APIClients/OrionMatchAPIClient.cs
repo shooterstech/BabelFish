@@ -772,17 +772,6 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
-        /// <summary>
-        /// Patch Tournament Member API
-        /// </summary>
-        /// <param name="tournamentMember"></param>
-        /// <param name="credentials"></param>
-        /// <returns>Tournament Member data</returns>
-        public async Task<PatchTournamentMemberAuthenticatedResponse> PatchTournamentMemberAuthenticatedAsync( TournamentMember tournamentMember, UserAuthentication credentials ) {
-            var request = new PatchTournamentMemberAuthenticatedRequest( credentials, tournamentMember );
-
-            return await PatchTournamentMemberAuthenticatedAsync( request );
-        }
 
         /// <summary>
         /// Delete Tournament Member API

@@ -11,17 +11,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             SubDomain = APIClients.APISubDomain.AUTHAPI;
         }
 
-        public DeleteTournamentMemberAuthenticatedRequest( UserAuthentication credentials, TournamentMember tournamentMember ) : base( "DeleteTournamentMember", credentials ) {
-            HttpMethod = HttpMethod.Delete;
-            if (tournamentMember == null) {
-                throw new ArgumentNullException( nameof( tournamentMember ) );
-            }
-
-            TournamentId = tournamentMember.TournamentId ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a tournament id." );
-            MatchId = tournamentMember.MatchId ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a match id." );
-            SubDomain = APIClients.APISubDomain.AUTHAPI;
-        }
-
         /// <summary>
         /// The Match ID of the tournament where the member is being removed.
         /// </summary>

@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// Facade function that returns the same as this.Value.TournamentMember.
         /// </summary>
         public TournamentMember TournamentMember {
-            get { return Value.TournamentMember; }
+            get { return Value.TournamentMember; } 
         }
     }
 }

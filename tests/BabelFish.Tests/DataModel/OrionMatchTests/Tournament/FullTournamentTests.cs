@@ -518,8 +518,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var response = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1003, authorizedUser );
 
                 Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, response.TournamentMember.TournamentId );
-                Assert.AreEqual( KnownPublicMatchOwner1003, response.TournamentMember.MatchId );
+                Assert.AreEqual( KnownPublicMatchOwner1003, response.TournamentMember.MatchID );
                 Assert.IsTrue(
                     response.TournamentMember.ApprovalStatus == ApprovalStatus.APPROVED
                     || response.TournamentMember.ApprovalStatus == ApprovalStatus.PENDING );
@@ -793,8 +792,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var patchResponse = await client.PatchTournamentMemberAuthenticatedAsync( patchRequest );
 
                 Assert.AreEqual( HttpStatusCode.OK, patchResponse.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, patchResponse.TournamentMember.TournamentId );
-                Assert.AreEqual( KnownPublicMatchOwner1, patchResponse.TournamentMember.MatchId );
+                Assert.AreEqual( KnownPublicMatchOwner1, patchResponse.TournamentMember.MatchID );
                 Assert.AreEqual( ApprovalStatus.REJECTED, patchResponse.TournamentMember.ApprovalStatus );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
@@ -830,8 +828,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var patchResponse = await client.PatchTournamentMemberAuthenticatedAsync( patchRequest );
 
                 Assert.AreEqual( HttpStatusCode.OK, patchResponse.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, patchResponse.TournamentMember.TournamentId );
-                Assert.AreEqual( KnownPublicMatchOwner1PatchJoin, patchResponse.TournamentMember.MatchId );
+                Assert.AreEqual( KnownPublicMatchOwner1PatchJoin, patchResponse.TournamentMember.MatchID );
                 Assert.AreEqual( ApprovalStatus.REJECTED, patchResponse.TournamentMember.ApprovalStatus );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, tournamentOwnerUser );
@@ -1024,8 +1021,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var deleteResponse = await client.DeleteTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1003, authorizedUser );
 
                 Assert.AreEqual( HttpStatusCode.OK, deleteResponse.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, deleteResponse.TournamentMember.TournamentId );
-                Assert.AreEqual( KnownPublicMatchOwner1003, deleteResponse.TournamentMember.MatchId );
+                Assert.AreEqual( KnownPublicMatchOwner1003, deleteResponse.TournamentMember.MatchID );
                 Assert.AreEqual( ApprovalStatus.DELETED, deleteResponse.TournamentMember.ApprovalStatus );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
@@ -1295,7 +1291,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var tournament = response.TournamentSearchList.Items.FirstOrDefault( x => x.TournamentId.Equals( tournamentId ) );
                 Assert.IsNotNull( tournament );
                 Assert.IsTrue( tournament!.TournamentMembers.Count >= 1 );
-                Assert.IsTrue( tournament.TournamentMembers.Any( x => x.MatchId.Equals( KnownPublicMatchOwner1003 ) ) );
+                Assert.IsTrue( tournament.TournamentMembers.Any( x => x.MatchID.Equals( KnownPublicMatchOwner1003 ) ) );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
             }
