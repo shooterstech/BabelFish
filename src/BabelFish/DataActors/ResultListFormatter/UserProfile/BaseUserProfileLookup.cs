@@ -14,9 +14,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile {
     public class BaseUserProfileLookup : IUserProfileLookup {
 
         //Key is the user's cognito user id
-        public ConcurrentDictionary<string, UserProfile> UserProfileByUserIdCache = new ConcurrentDictionary<string, UserProfile>();
+        protected ConcurrentDictionary<string, UserProfile> UserProfileByUserIdCache = new ConcurrentDictionary<string, UserProfile>();
         //Key is the user's account url, aka rezults url
-        public ConcurrentDictionary<string, UserProfile> UserProfileByAccountUrlCache = new ConcurrentDictionary<string, UserProfile>();
+        protected ConcurrentDictionary<string, UserProfile> UserProfileByAccountUrlCache = new ConcurrentDictionary<string, UserProfile>();
 
         protected Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 

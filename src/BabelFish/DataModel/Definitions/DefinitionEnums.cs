@@ -104,16 +104,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
     public enum AttributeValueType {
 
-        [Description( "MATCH" )]
-        [EnumMember( Value = "MATCH" )]
+        [Description( "Match" )]
+        [EnumMember( Value = "Match" )]
         MATCH,
 
         [Description( "API" )]
         [EnumMember( Value = "API" )]
-        API_RESPPONSE,
+        API_RESPONSE,
 
-        [Description( "CONFIG" )]
-        [EnumMember( Value = "CONFIG" )]
+        [Description( "Config" )]
+        [EnumMember( Value = "Config" )]
         CONFIGURATION
     }
 

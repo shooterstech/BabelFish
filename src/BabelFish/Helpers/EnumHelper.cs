@@ -81,6 +81,32 @@ namespace Scopos.BabelFish.Helpers {
         }
 
         /// <summary>
+        /// Attempts to parse the passed in string into an enum of type <T> by matching the string to the Description attribute of the enum values. Returns true if a match is found, false otherwise.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value">The string value to match against the Description attributes of the enum values.</param>
+        /// <param name="result">The resulting enum value if a match is found.</param>
+        /// <returns>True if a match is found, false otherwise.</returns>
+        public static bool TryParseEnumByDescription<T>( this string value, out T result ) {
+            result = default( T );
+
+            if (string.IsNullOrEmpty( value )) {
+                return false;
+            }
+
+            foreach (var field in typeof( T ).GetFields()) {
+                var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
+                if (attr != null) {
+                    if (attr.Description == value) {
+                        result = (T)field.GetValue( null );
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Generates a 32 bit hash code for a list of enums.
         /// </summary>
         /// <typeparam name="TEnum"></typeparam>

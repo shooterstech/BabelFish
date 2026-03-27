@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         public AttributeValueDataPacket() {
             this.ConcreteClassId = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
-            this.Type = AttributeValueType.API_RESPPONSE;
+            this.Type = AttributeValueType.API_RESPONSE;
         }
 
         /// <summary>

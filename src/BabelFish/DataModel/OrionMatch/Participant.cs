@@ -141,8 +141,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The <see cref="Team"/> that this Participant is a member of. A value of null
+        /// indicates that the Participant is not a member of any team. 
+        /// <para>Note, this is NOT the same as the Club property, which represents the hometown club the Participant represents.</para>
+        /// </summary>
+        /// <remark>
+        /// Value is not serialized, as this is a pointer back to the container Team.
+        /// </remark>
+        [G_NS.JsonIgnore]
+        public Team? Team { get; set; } = null;
+
+        /// <summary>
+        /// Gets the name of the team associated with the current participant.
+        /// </summary>
+        /// <remarks>If no team is assigned, this property returns an empty string. Use this property to
+        /// retrieve the display name of the participant's team, if available.</remarks>
+        [G_NS.JsonProperty( Order = 15 )]
+        public virtual string TeamName {
+            get {
+                return Team != null ? Team.TeamName : string.Empty;
+            }
+            set {
+                ; // an Individual doesn't have a team name, so the setter does nothing. For a Team, the TeamName is the same as the DisplayName, so the setter of TeamName sets the DisplayName.
+            }
+        }
+
         /*
-         * JsonProperty Order values 15 .. 19 reserved for concrete classes
+         * JsonProperty Order values 16 .. 19 reserved for concrete classes
          */
 
         /// <summary>
@@ -183,7 +209,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeCoaches() {
@@ -197,6 +222,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Calling this method sets (or restores) the value of <see cref="DisplayName"/> based on the values of other properties of the Participant, such as FamilyName and GivenName for an Individual, or TeamName for a Team.
         /// It also marks that the DisplayName is the default value by setting <see cref="DefaultDisplayName"/> to true. 
