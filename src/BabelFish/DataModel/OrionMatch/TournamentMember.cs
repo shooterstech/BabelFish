@@ -9,6 +9,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public Tournament Tournament { get; set; }
 
+        public MatchID? TournamentId => Tournament?.TournamentId;
+
 
         [G_NS.JsonProperty( Order = 1 )] 
         public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.UNKNOWN;

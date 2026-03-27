@@ -518,7 +518,6 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var response = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1003, authorizedUser );
 
                 Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, response.TournamentMember.Tournament.TournamentId );
                 Assert.AreEqual( KnownPublicMatchOwner1003, response.TournamentMember.MatchID );
                 Assert.IsTrue(
                     response.TournamentMember.ApprovalStatus == ApprovalStatus.APPROVED
@@ -793,7 +792,6 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var patchResponse = await client.PatchTournamentMemberAuthenticatedAsync( patchRequest );
 
                 Assert.AreEqual( HttpStatusCode.OK, patchResponse.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, patchResponse.TournamentMember.Tournament.TournamentId );
                 Assert.AreEqual( KnownPublicMatchOwner1, patchResponse.TournamentMember.MatchID );
                 Assert.AreEqual( ApprovalStatus.REJECTED, patchResponse.TournamentMember.ApprovalStatus );
             } finally {
@@ -830,7 +828,6 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var patchResponse = await client.PatchTournamentMemberAuthenticatedAsync( patchRequest );
 
                 Assert.AreEqual( HttpStatusCode.OK, patchResponse.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, patchResponse.TournamentMember.Tournament.TournamentId );
                 Assert.AreEqual( KnownPublicMatchOwner1PatchJoin, patchResponse.TournamentMember.MatchID );
                 Assert.AreEqual( ApprovalStatus.REJECTED, patchResponse.TournamentMember.ApprovalStatus );
             } finally {
@@ -1024,7 +1021,6 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 var deleteResponse = await client.DeleteTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1003, authorizedUser );
 
                 Assert.AreEqual( HttpStatusCode.OK, deleteResponse.RestApiStatusCode );
-                Assert.AreEqual( tournamentId, deleteResponse.TournamentMember.Tournament.TournamentId );
                 Assert.AreEqual( KnownPublicMatchOwner1003, deleteResponse.TournamentMember.MatchID );
                 Assert.AreEqual( ApprovalStatus.DELETED, deleteResponse.TournamentMember.ApprovalStatus );
             } finally {

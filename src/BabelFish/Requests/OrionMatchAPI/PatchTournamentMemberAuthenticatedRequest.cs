@@ -9,17 +9,6 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             SubDomain = APIClients.APISubDomain.AUTHAPI;
         }
 
-        public PatchTournamentMemberAuthenticatedRequest( UserAuthentication credentials, TournamentMember tournamentMember ) : base( "PatchTournamentMember", credentials ) {
-            HttpMethod = new HttpMethod( "PATCH" );
-            if (tournamentMember == null) {
-                throw new ArgumentNullException( nameof( tournamentMember ) );
-            }
-
-            TournamentId = tournamentMember.Tournament.TournamentId ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a tournament id." );
-            MatchId = tournamentMember.MatchID ?? throw new ArgumentNullException( nameof( tournamentMember ), "The tournament member must have a match id." );
-            ApprovalStatus = tournamentMember.ApprovalStatus;
-            SubDomain = APIClients.APISubDomain.AUTHAPI;
-        }
 
         /// <summary>
         /// The Match ID of the tournament where the member is being updated.
