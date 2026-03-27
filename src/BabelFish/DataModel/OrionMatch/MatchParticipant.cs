@@ -118,6 +118,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string Creator { get; set; } = string.Empty;
 
         /// <summary>
+        /// When serialized, this is the BableFish version string that the data model of this MatchParticipant instance adheres to. 
+        /// </summary>
+        /// <remarks>Since each MatchParticipant is serialized seperatly, each instnace needs to store the JSON Version. In practice though
+        /// all MatchParticipant instances within the same MatchProject and ParticipantList will have the same JSON Version.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
+        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
+
+        /// <summary>
         /// UTC Time that this MatchParticipant was last updated. Thsi value is not set automatically, but should be set by the caller when changes are made to this MatchParticipant that should be tracked.
         /// This is intended to be used for synchronization and conflict resolution when multiple users are editing the same Match data.
         /// </summary>

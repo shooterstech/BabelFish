@@ -189,6 +189,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
+        /// <remarks>EKA Note March 2025. Not sure RemarkList belongs directly on a Particpant, as each COF a participant shoots in a Match may have its own RemarkList
+        /// </remarks>
         [G_NS.JsonProperty( Order = 22 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
 
@@ -218,6 +220,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /*
          * JsonProperty Order values 25 .. 29 reserved for concrete classes
          */
+
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// Version 2022-04-09 represents ResultCOF in a dictionary format
+        /// Version < 2022 represent ResultCOF in a tree format
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
+        public string JSONVersion { get; set; } = string.Empty;
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         #endregion
 

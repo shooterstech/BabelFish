@@ -349,13 +349,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string Creator { get; set; }
 
         /// <summary>
-        /// The Version string of the JSON document.
-        /// Version 2022-04-09 represents ResultCOF in a dictionary format
-        /// Version < 2022 represent ResultCOF in a tree format
+        /// When serialized, this is the BableFish version string that the data model of this Match instance adheres to.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 98 )]
         [G_NS.JsonProperty( Order = 98 )]
-        public string JSONVersion { get; set; } = string.Empty;
+        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
 
         /// <summary>
         /// UTC time the match data was last updated.

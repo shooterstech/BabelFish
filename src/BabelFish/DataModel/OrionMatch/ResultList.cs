@@ -355,10 +355,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// The Version string of the JSON document
+        /// When serialized, this is the BableFish version string that the data model of this ResultList instance adheres to.
         /// </summary>
         [G_NS.JsonProperty( Order = 41 )]
-        public string JSONVersion { get; set; } = string.Empty;
+        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
 
         #region ITokenItems implementation
         /// <inheritdoc />

@@ -40,7 +40,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
 
             o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
             o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId; //Deprecated and replaced with Type
-            o["Type"] = attrValueDataPacket.Type.ToString();
+            o["Type"] = attrValueDataPacket.Type.Description();
             //For reasons I dont' quite understand, because VisibilityOptions have inline defined int values, we have to do a switch statement to get the string value instead of just calling ToString() on the enum value.
             switch (attrValueDataPacket.Visibility) {
                 case VisibilityOption.PRIVATE:

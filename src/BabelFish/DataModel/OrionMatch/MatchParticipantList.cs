@@ -74,6 +74,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// Version 2022-04-09 represents ResultCOF in a dictionary format
+        /// Version < 2022 represent ResultCOF in a tree format
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
+        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+
         /// <inheritdoc />
         public override string ToString() {
             return $"MatchParticipantList from {MatchName} with {Items.Count} participants.";
