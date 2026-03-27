@@ -64,6 +64,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 7 )]
         public MatchID MatchID { get; set; }
 
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
+            }
+        }
+
         /// <summary>
         /// String holding the software (Orion Scoring System) and Version number of the software.
         /// </summary>

@@ -208,6 +208,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [Description( "RESULT LIST FORMAT" )][EnumMember( Value = "RESULT LIST FORMAT" )] RESULTLISTFORMAT,
 
         /// <summary>
+        /// RESULT Definition
+        /// </summary>
+        [Description( "RULEBOOK" )][EnumMember( Value = "RULEBOOK" )] RULEBOOK,
+
+        /// <summary>
         /// SCORE FORMAT COLLECTION Definition
         /// </summary>
         [Description( "SCORE FORMAT COLLECTION" )][EnumMember( Value = "SCORE FORMAT COLLECTION" )] SCOREFORMATCOLLECTION,

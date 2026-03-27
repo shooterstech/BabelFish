@@ -110,6 +110,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
+            }
+        }
+
         /// <summary>
         /// Indicates the completion status of this Result List. 
         /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
@@ -187,13 +196,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return ResultStatus.OFFICIAL;
             }
         }
-
-        /// <summary>
-        /// The MatchID that this Result List was generated from. It is called ParentID in case this is
-        /// from a Virtual Match.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 5 )]
-        public string ParentID { get; set; } = string.Empty;
 
         /// <summary>
         /// The start date that the underlying event, in this Result List, started on.

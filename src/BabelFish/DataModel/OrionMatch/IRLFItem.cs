@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The Parent ID of the match
         /// </summary>
-        string ParentID { get; set; }
+        MatchID ParentID { get; }
 
         /// <summary>
         /// On RESULT LIST FORMAT definitions that provided for the option, the user (usually the Match Director) may specify their own
