@@ -2,6 +2,9 @@ using System.ComponentModel;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+    /// <summary>
+    /// A complete <see cref="MatchStructure"/> template that a user could use to construct their own <see cref="Match"/>.
+    /// </summary>
     public class MatchStructureOption : IReconfigurableRulebookObject {
 
         #region Private Variables
@@ -9,6 +12,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         #endregion
 
         #region Constructors and Initialization
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
+        public MatchStructureOption() : base() {
+        }
         #endregion
 
         #region Event Handlers
