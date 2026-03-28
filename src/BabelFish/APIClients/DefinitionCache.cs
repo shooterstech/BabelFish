@@ -858,7 +858,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// Tries and returns the RULEBOOK requested, if it has already been loaded into the cache.
         /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
-        /// the definition may be available at a latter time (once the getting is successful).
+        /// the definition may be available at a later time (once the getting is successful).
         /// </summary>
         /// <param name="setName"></param>
         /// <param name="def"></param>
@@ -873,7 +873,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetRulebookDefinitionAsync( setName );
+            _ = GetRulebookDefinitionAsync( setName );
 
             return false;
         }
