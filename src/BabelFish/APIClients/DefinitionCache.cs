@@ -255,7 +255,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetAttributeDefinitionAsync( setName );
+            _ = GetAttributeDefinitionAsync( setName );
 
             return false;
         }
@@ -358,7 +358,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetCourseOfFireDefinitionAsync( setName );
+            _ = GetCourseOfFireDefinitionAsync( setName );
 
             return false;
         }
@@ -461,7 +461,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetEventAndStageStyleMappingDefinitionAsync( setName );
+            _ = GetEventAndStageStyleMappingDefinitionAsync( setName );
 
             return false;
         }
@@ -564,7 +564,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetEventStyleDefinitionAsync( setName );
+            _ = GetEventStyleDefinitionAsync( setName );
 
             return false;
         }
@@ -667,7 +667,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetRankingRuleDefinitionAsync( setName );
+            _ = GetRankingRuleDefinitionAsync( setName );
 
             return false;
         }
@@ -770,7 +770,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetResultListFormatDefinitionAsync( setName );
+            _ = GetResultListFormatDefinitionAsync( setName );
 
             return false;
         }
@@ -976,7 +976,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetScoreFormatCollectionDefinitionAsync( setName );
+            _ = GetScoreFormatCollectionDefinitionAsync( setName );
 
             return false;
         }
@@ -1079,7 +1079,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetStageStyleDefinitionAsync( setName );
+            _ = GetStageStyleDefinitionAsync( setName );
 
             return false;
         }
@@ -1182,7 +1182,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetTargetCollectionDefinitionAsync( setName );
+            _ = GetTargetCollectionDefinitionAsync( setName );
 
             return false;
         }
@@ -1285,7 +1285,7 @@ namespace Scopos.BabelFish.APIClients {
 
             //If it is not loaded, make a call to read / download it.
             //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
-            GetTargetDefinitionAsync( setName );
+            _ = GetTargetDefinitionAsync( setName );
 
             return false;
         }

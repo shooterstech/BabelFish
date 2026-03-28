@@ -78,13 +78,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return DEFAULT;
             }
 
-            if (setName.Length == 0) {
-                var msg = "The set name string is empty.";
-                _logger.Error( msg );
-                if (throwExceptionOnError)
-                    throw new ArgumentException( msg, nameof( setName ) );
-                return DEFAULT;
-            }
             //Look up in cache first
             SetName sn;
             if (_cache.TryGetValue( setName, out sn ))
