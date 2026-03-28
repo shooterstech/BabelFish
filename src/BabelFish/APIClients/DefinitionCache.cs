@@ -861,7 +861,7 @@ namespace Scopos.BabelFish.APIClients {
         /// the definition may be avalaible at a latter time (once the getting is successful).
         /// </summary>
         /// <param name="setName"></param>
-        /// <param name="c"></param>
+        /// <param name="def"></param>
         /// <returns></returns>
         public static bool TryGetRulebookDefinition( SetName setName, out Rulebook def ) {
 
