@@ -49,6 +49,9 @@ namespace Scopos.BabelFish.APIClients {
         private static ConcurrentDictionary<SetName, ResultListFormat> ResultListFormatCache = new ConcurrentDictionary<SetName, ResultListFormat>();
         private static ConcurrentDictionary<SetName, DateTime> ResultListFormatNotFoundCache = new ConcurrentDictionary<SetName, DateTime>();
 
+        private static ConcurrentDictionary<SetName, Rulebook> RulebookCache = new ConcurrentDictionary<SetName, Rulebook>();
+        private static ConcurrentDictionary<SetName, DateTime> RulebookNotFoundCache = new ConcurrentDictionary<SetName, DateTime>();
+
         private static ConcurrentDictionary<SetName, ScoreFormatCollection> ScoreFormatCollectionCache = new ConcurrentDictionary<SetName, ScoreFormatCollection>();
         private static ConcurrentDictionary<SetName, DateTime> ScoreFormatCollectionNotFoundCache = new ConcurrentDictionary<SetName, DateTime>();
 
@@ -799,6 +802,109 @@ namespace Scopos.BabelFish.APIClients {
                     await DefinitionFetcher.FETCHER.GetDefinitionAsync<ResultListFormat>( request, response );
                     if (response.HasOkStatusCode) {
                         ResultListFormatCache[setName] = response.Definition;
+                        return true;
+                    }
+                }
+            } catch (Exception ex) {
+                _logger.Error( ex, $"Caught error while trying to check and download if there was a new {def.Type} Definition for {def.SetName}" );
+                //Swallowing the error, as its simple enough to say the operation was not successful.
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region RULEBOOK
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public static async Task<Rulebook> GetRulebookDefinitionAsync( SetName setName ) {
+
+            if (RulebookCache.TryGetValue( setName, out Rulebook c )) {
+
+                if (AutoDownloadNewDefinitionVersions)
+                    //Purposefully not awaiting this call
+                    DownloadNewMinorVersionIfAvaliableAsync( c );
+
+                return c;
+            }
+
+            DateTime lastChecked;
+            if (RulebookNotFoundCache.TryGetValue( setName, out lastChecked ) && (DateTime.UtcNow - lastChecked).TotalSeconds < NOT_FOUND_RECHECK_TIME)
+                throw new DefinitionNotFoundException( $"Rulebook definition '{setName}' not found. " );
+
+            var response = await DefinitionFetcher.FETCHER.GetRulebookDefinitionAsync( setName );
+            if (response.HasOkStatusCode) {
+                var definition = response.Definition;
+
+                RulebookCache.TryAdd( setName, definition );
+                return definition;
+            } else if (response.RestApiStatusCode == System.Net.HttpStatusCode.NotFound) {
+                //Also cache any NotFound requests
+                RulebookNotFoundCache.TryAdd( setName, DateTime.UtcNow );
+                throw new DefinitionNotFoundException( $"Rulebook definition '{setName}' not found. " );
+            } else {
+                throw new ScoposAPIException( $"Unable to retreive Rulebook definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
+            }
+        }
+
+        /// <summary>
+        /// Tries and returns the RULEBOOK requested, if it has already been loaded into the cache.
+        /// Returns false, if it has not been loaded yet. Then tries and reads or downloads it in the background. Which means 
+        /// the definition may be avalaible at a latter time (once the getting is successful).
+        /// </summary>
+        /// <param name="setName"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static bool TryGetRulebookDefinition( SetName setName, out Rulebook def ) {
+
+            //Try and read from the cache. If its previously been loaded, then return it. 
+            if (RulebookCache.TryGetValue( setName, out def )) {
+
+                return true;
+            }
+
+            //If it is not loaded, make a call to read / download it.
+            //Purposefully not awaiting this call. This way this method may remain synchronous, and the download can happen in the background.
+            GetRulebookDefinitionAsync( setName );
+
+            return false;
+        }
+
+        /// <summary>
+        /// Method checks to see if there is a new minor release avaliable for the past in Definition.
+        /// If so, it tries and download it and update the cache.
+        /// </summary>
+        /// <param name="def"></param>
+        /// <returns>Boolean indicating if there was a new minor release avaliable and if it was successful in downloading it.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static async Task<bool> DownloadNewMinorVersionIfAvaliableAsync( Rulebook def ) {
+            if (def == null)
+                throw new ArgumentNullException( nameof( def ) );
+
+            try {
+                if (await def.IsVersionUpdateAvaliableAsync()) {
+
+                    SetName setName = def.GetSetName( true );
+
+                    //Make a request, that ignores all of our local caching
+                    var request = new GetDefinitionPublicRequest( setName, def.Type ) {
+                        IgnoreInMemoryCache = true,
+                        IgnoreFileSystemCache = true,
+                        IgnoreRestAPICache = true
+                    };
+                    var response = new GetDefinitionPublicResponse<Rulebook>( request );
+
+                    await DefinitionFetcher.FETCHER.GetDefinitionAsync<Rulebook>( request, response );
+                    if (response.HasOkStatusCode) {
+                        RulebookCache[setName] = response.Definition;
                         return true;
                     }
                 }

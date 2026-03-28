@@ -61,18 +61,46 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
             Assert.IsFalse( SetName.TryParse( dStr, out setName ) );
         }
 
+        /// <summary>
+        /// Tests that the parse method throws an exception if the passed in set name is not in the correct format and that the exception is of the correct type.
+        /// </summary>
         [TestMethod]
         [ExpectedException( typeof( ArgumentException ) )]
         public void BadSetNameFormatTwo() {
 
-            var setName = SetName.Parse( "not a real set name" );
+            var setName = SetName.Parse( "not a real set name", true );
         }
 
+        /// <summary>
+        /// Tests that the SetName.Parse method throws an ArgumentNullException when a null value is provided as input.
+        /// </summary>
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
+        [ExpectedException( typeof( ArgumentNullException ) )]
         public void BadSetNameFormatThree() {
 
-            var setName = SetName.Parse( null );
+            var setName = SetName.Parse( null, true );
+        }
+
+        /// <summary>
+        /// Tests that the SetName.Parse method returns the default set name when provided with an invalid set name
+        /// string, and throwExceptionOnError is set to false (the default).
+        /// </summary>
+        [TestMethod]
+        public void BadSetNameFormatFour() {
+
+            var setName = SetName.Parse( "not a real set name", false );
+            Assert.IsTrue( setName.IsDefault );
+        }
+
+        /// <summary>
+        /// Tests that the SetName.Parse method returns the default set name when provided with a null value
+        /// and throwExceptionOnError is set to false (the default).
+        /// </summary>
+        [TestMethod]
+        public void BadSetNameFormatFive() {
+
+            var setName = SetName.Parse( null, false );
+            Assert.IsTrue( setName.IsDefault );
         }
 
         [TestMethod]

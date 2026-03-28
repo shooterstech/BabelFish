@@ -337,6 +337,8 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         [TestMethod]
         public void DoEventsGrowInOrder() {
 
+            EventComposite.ClearCache();
+
             var cof = CourseOfFireHelper.Get_3x20_KPS_Cof();
             var cof2 = CourseOfFireHelper.Get_60_Standing_Cof();
             EventComposite eventTree = EventComposite.GrowEventTree( cof );

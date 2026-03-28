@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Scopos.BabelFish.Requests;
-using Scopos.BabelFish.Responses;
-using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Requests.DefinitionAPI;
-using Scopos.BabelFish.Responses.DefinitionAPI;
-using Scopos.BabelFish.Helpers;
 using System.Net;
-using System.Text.Json;
-using Scopos.BabelFish.DataModel;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.Requests;
+using Scopos.BabelFish.Requests.DefinitionAPI;
+using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.Responses.DefinitionAPI;
 
 namespace Scopos.BabelFish.APIClients {
     public class DefinitionAPIClient : APIClient<DefinitionAPIClient> {
@@ -24,14 +17,14 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="apiKey"></param>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public DefinitionAPIClient( ) : base( ) {
+        public DefinitionAPIClient() : base() {
             IgnoreInMemoryCache = false;
             IgnoreFileSystemCache = false;
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         public DefinitionAPIClient( APIStage apiStage ) : base( apiStage ) {
-			IgnoreInMemoryCache = false;
+            IgnoreInMemoryCache = false;
             IgnoreFileSystemCache = false;
         }
 
@@ -108,17 +101,17 @@ namespace Scopos.BabelFish.APIClients {
                 return Task.CompletedTask;
 
             //As the DefinitionAPIClient handels more than just get definition requests, we can ignore anything that's not a GetDefinition request.
-            if (! response.WriteToFileSystemCacheOnSuccess)
+            if (!response.WriteToFileSystemCacheOnSuccess)
                 return Task.CompletedTask;
 
             var definitionRequest = (GetDefinitionPublicRequest)request;
 
             try {
-                if (LocalDefinitionDirectory != null ) {
+                if (LocalDefinitionDirectory != null) {
 
                     //Create the directory structure
                     string definitionTypeDirectory = $"{LocalDefinitionDirectory.FullName}\\{definitionRequest.DefinitionType.Description()}";
-                    if ( ! Directory.Exists( definitionTypeDirectory ) )
+                    if (!Directory.Exists( definitionTypeDirectory ))
                         Directory.CreateDirectory( definitionTypeDirectory );
 
                     string definitionFileName = $"{definitionRequest.SetName}.json".Replace( ':', ' ' );
@@ -144,7 +137,7 @@ namespace Scopos.BabelFish.APIClients {
                 } else {
                     logger.Warn( $"Not writing {definitionRequest.DefinitionType.Description()} definition {definitionRequest.SetName} to the file system because the LocalStoreDirectory has not been set." );
                 }
-            } catch (Exception ex ) {
+            } catch (Exception ex) {
                 logger.Error( ex, $"Unable to write {definitionRequest.DefinitionType.Description()} definition {definitionRequest.SetName} to the file system due to an exception {ex}." );
             }
 
@@ -280,6 +273,23 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Makes a request to return an RULEBOOK Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// </summary>
+        /// <remarks>It is generally best NOT to use this method directly. Instead, use <see cref="DefinitionCache.GetRulebookDefinitionAsync"/>.</remarks>
+        /// <param name="setName"></param>
+        /// <returns></returns>
+        public virtual async Task<GetDefinitionPublicResponse<Rulebook>> GetRulebookDefinitionAsync( SetName setName ) {
+
+            var definitionType = DefinitionType.RULEBOOK;
+
+            GetDefinitionPublicRequest request = new GetDefinitionPublicRequest( setName, definitionType );
+
+            GetDefinitionPublicResponse<Rulebook> response = new GetDefinitionPublicResponse<Rulebook>( request );
+
+            return await GetDefinitionAsync( request, response ).ConfigureAwait( false );
+        }
+
+        /// <summary>
         /// Makes a request to return an SCORE FORMAT COLLECTION Definition given its SetName. Will try and use local file system cache and memory cache.
         /// </summary>
         /// <remarks>It is generally best NOT to use this method directly. Instead, use DefinitionCache.GetScoreFormatCollectionDefinitionAsync()</remarks>
@@ -354,10 +364,10 @@ namespace Scopos.BabelFish.APIClients {
             await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
-		}
+        }
 
         public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( DefinitionType type ) {
-			GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
+            GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
 
             return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
 
@@ -368,19 +378,19 @@ namespace Scopos.BabelFish.APIClients {
 
             GetDefinitionVersionPublicResponse response = new GetDefinitionVersionPublicResponse( request );
 
-            await this.CallAPIAsync( request, response ).ConfigureAwait ( false );
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }
 
-        public async Task<GetDefinitionVersionPublicResponse> GetDefinitionVersionPublicAsync( 
+        public async Task<GetDefinitionVersionPublicResponse> GetDefinitionVersionPublicAsync(
             DefinitionType type, SetName setName ) {
             GetDefinitionVersionPublicRequest request = new GetDefinitionVersionPublicRequest( setName, type );
             //as we always want to return the latest version number, we will turn off cache
             request.IgnoreFileSystemCache = true;
             request.IgnoreInMemoryCache = true;
 
-            return await this.GetDefinitionVersionPublicAsync(request ).ConfigureAwait( false );
+            return await this.GetDefinitionVersionPublicAsync( request ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -390,7 +400,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="searchTerm"></param>
         /// <returns></returns>
 		public async Task<GetDefinitionListPublicResponse> GetDefinitionListPublicAsync( DefinitionType type, string searchTerm ) {
-			GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
+            GetDefinitionListPublicRequest request = new GetDefinitionListPublicRequest( type );
             request.Search = searchTerm;
             request.Limit = 20;
 
@@ -398,8 +408,8 @@ namespace Scopos.BabelFish.APIClients {
             request.IgnoreFileSystemCache = true;
             request.IgnoreInMemoryCache = true;
 
-			return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
+            return await this.GetDefinitionListPublicAsync( request ).ConfigureAwait( false );
 
-		}
-	}
+        }
+    }
 }
