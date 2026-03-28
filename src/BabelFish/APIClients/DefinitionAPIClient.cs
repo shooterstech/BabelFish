@@ -273,7 +273,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// Makes a request to return an RULEBOOK Definition given its SetName. Will try and use local file system cache and memory cache.
+        /// Makes a request to return a RULEBOOK Definition given its SetName. Will try and use local file system cache and memory cache.
         /// </summary>
         /// <remarks>It is generally best NOT to use this method directly. Instead, use <see cref="DefinitionCache.GetRulebookDefinitionAsync"/>.</remarks>
         /// <param name="setName"></param>
