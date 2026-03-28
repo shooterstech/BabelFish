@@ -851,7 +851,7 @@ namespace Scopos.BabelFish.APIClients {
                 RulebookNotFoundCache.TryAdd( setName, DateTime.UtcNow );
                 throw new DefinitionNotFoundException( $"Rulebook definition '{setName}' not found. " );
             } else {
-                throw new ScoposAPIException( $"Unable to retreive Rulebook definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
+                throw new ScoposAPIException( $"Unable to retrieve Rulebook definition {setName}. Overall: {response.OverallStatusCode}, REST API {response.RestApiStatusCode}" );
             }
         }
 
