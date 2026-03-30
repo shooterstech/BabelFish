@@ -259,8 +259,8 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
                 Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
                 Assert.AreEqual( tournamentId, response.Tournament.TournamentId );
-                Assert.IsTrue( response.Permissions.Contains( Permission.TOURNAMENT_READ ) );
-                Assert.IsTrue( response.Permissions.Contains( Permission.TOURNAMENT_EDIT ) );
+                Assert.IsTrue( response.Permissions[tournamentId.ToString()].Contains( Permission.TOURNAMENT_READ ) );
+                Assert.IsTrue( response.Permissions[tournamentId.ToString()].Contains( Permission.TOURNAMENT_EDIT ) );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
             }
