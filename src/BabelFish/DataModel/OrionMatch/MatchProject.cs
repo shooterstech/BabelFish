@@ -112,6 +112,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public Match Match { get; private set; }
 
+        /*
+         * EKA March 2026: Isn't this the same as a MatchParticipantList? Do we need both? Maybe we can just use a MatchParticipantList here instead of a List<MatchParticipant>?
+         */
         [G_NS.JsonIgnore]
         public List<MatchParticipant> Participants { get; set; } = new List<MatchParticipant>();
 

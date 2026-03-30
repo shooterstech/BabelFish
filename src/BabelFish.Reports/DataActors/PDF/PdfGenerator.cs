@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Reflection;
+using NLog;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -14,6 +16,8 @@ namespace Scopos.BabelFish.DataActors.PDF {
     /// </code>
     /// </summary>
     public abstract class PdfGenerator {
+
+        protected Logger _logger = LogManager.GetCurrentClassLogger();
 
         public abstract QuestPDF.Fluent.Document GeneratePdf( PageSize pageSize, string filePath );
 
@@ -97,12 +101,24 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     .Text( "" );
                 }
 
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Reports.Resources.Images.scopos_logo.png" )) {
-                    row.RelativeItem( 1 )
-                    .AlignCenter()
-                    .Padding( 1 )
-                    .Height( .75f, Unit.Centimetre )
-                    .Image( stream );
+                try {
+                    /* 
+                     * Use this code to debug resource loading issues. It will print the names of all embedded resources in the assembly, which can help identify if the expected resource is present and correctly named.
+                    
+                    foreach (var name in Assembly.GetExecutingAssembly().GetManifestResourceNames())
+                        Console.WriteLine( name );
+                    */
+
+                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_logo.png" )) {
+                        row.RelativeItem( 1 )
+                        .AlignCenter()
+                        .Padding( 1 )
+                        .Height( .75f, Unit.Centimetre )
+                        .Image( stream );
+                    }
+                } catch (Exception ex) {
+                    _logger.Error( ex, "Error loading logo image for PDF footer" );
+                    Debug.Assert( false, "Error loading logo image for PDF footer, Scopos.BabelFish.Reports.Resources.Images.scopos_logo.png" );
                 }
 
                 if (IncludeProjectedScoreIndicatorInFooter) {
