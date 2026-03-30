@@ -1,13 +1,23 @@
 using System.ComponentModel;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
-    public class CourseOfFireOption : IReconfigurableRulebookObject {
+    /// <summary>
+    /// A suggested <see cref="CourseOfFire"/> that a user could use to construct their own <see cref="MatchStructure"/>.
+    /// </summary>
+    public class CourseOfFireOption : IReconfigurableRulebookObject, IGetCourseOfFireDefinition {
 
         #region Private Variables
         private Logger _logger = LogManager.GetCurrentClassLogger();
         #endregion
 
         #region Constructors and Initialization
+
+        /// <summary>
+        /// Public Constructor.
+        /// </summary>
+        public CourseOfFireOption() { }
         #endregion
 
         #region Event Handlers
@@ -30,6 +40,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         #endregion
 
         #region Methods
+        /// <inheritdoc/>
+        public Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
+            return DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
+        }
+
         #endregion
     }
 }
