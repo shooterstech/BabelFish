@@ -8,12 +8,6 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
     /// </summary>
     public class SumMethod : MergeMethod {
 
-        /// <summary>
-        /// Each MergeMethod concrete class has a unique identifier. It is used in the serialization of MergedResultLists instances
-        /// to identify how the Merged Result List should be calculated.
-        /// </summary>
-        public const string IDENTIFIER = "Sum";
-
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
@@ -45,7 +39,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             EventScore mergedEventScore = new EventScore();
 
             List<EventScore> listOfScores = new List<EventScore>();
-            foreach (var resultListMember in TournamentMerger.ResultListsMembers) {
+            foreach (var resultListMember in ResultListMergerEngine.ResultListsMembers) {
                 var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
 
                 if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore ) && eventScore.Score != null) {
@@ -78,7 +72,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 }
             }
 
-            re.ResultCofScores[ResultEvent.KeyForResultCofScore( TournamentMerger.Tournament.TournamentId, this.TopLevelEventname )] = mergedEventScore;
+            re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, this.TopLevelEventname )] = mergedEventScore;
         }
     }
 }

@@ -1,37 +1,23 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Requests.OrionMatchAPI;
-using Scopos.BabelFish.Responses.OrionMatchAPI;
 
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
     /// <summary>
-    /// A TournamentMerger does the heavy lifting of merging Result Lists together.
-    /// <para>The <see cref="MergeAsync"/> in particular (after initialization) identifies participants that are
-    /// in one or more of the Tournament <see cref="ResultListMember">members</see>, and then asks the <see cref="MergeMethod"/> to
+    /// A ResultListMergerEngine does the heavy lifting of merging Result Lists together.
+    /// <para>The <see cref="MergeAsync"/> method in particular (after initialization) identifies participants that are
+    /// in one or more of the Match's <see cref="ResultListMember">members</see>, and then asks the <see cref="MergeMethod"/> to
     /// perform its merging calculation.</para>
     /// </summary>
     public class ResultListMergerEngine {
 
-        public Tournament Tournament { get; private set; }
-
-        /// <summary>
-        /// The name of the merged result list.
-        /// <para>Set during the construction of the TournamentMerger. Must be a name listed in the Tournament's .MergedResultLists property.</para>
-        /// </summary>
-        public string ResultName { get; private set; }
+        #region Private Variables
 
         private MergeMethod _mergeMethod;
-        private MergedResultList _mergeResultList;
 
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
-
-        /// <summary>
-        /// The set of Result Lists that will be merged.
-        /// </summary>
-        public List<ResultList> ResultListsMembers { get; private set; } = new List<ResultList>();
 
         /// <summary>
         /// Dictionary of all the participants (teams or athletes) that competed in at least one of the
@@ -41,6 +27,81 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// instance has its dictionary called .ResultCofScores where the scores are stored.</para>
         /// </summary>
         private Dictionary<int, ResultEvent> _mergedResultEvents = new Dictionary<int, ResultEvent>();
+
+        #endregion
+
+        #region Constructors, Factory Methods, and Initialization Methods
+
+        /// <summary>
+        /// Constructor. Purposefully private, users must call <see cref="CreateAsync(Tournament, string)"/> instead.
+        /// </summary>
+        private ResultListMergerEngine() {
+        }
+
+        /// <summary>
+        /// Factory method to construct a new ResultListMergerEngine instance.
+        /// <para>It constructs an instance based on the passed in Tournament and result list name (that better be part of that Tournament).</para>
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="resultName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If resultName is not found within the Tournament's MergedResultLists.</exception>
+        public static async Task<ResultListMergerEngine> CreateAsync( MergedResultList mergedResultList ) {
+
+            ResultListMergerEngine resultListMerger = new ResultListMergerEngine();
+
+            resultListMerger.MergedResultList = mergedResultList;
+
+            resultListMerger.ResultListsMembers = await resultListMerger.Container.ResultListFetcher.GetResultListsAsync( mergedResultList );
+
+            resultListMerger._mergeMethod = await MergeMethod.CreateAsync( resultListMerger );
+            //If the MergeMethod does not set values for ResultListFormat or RankingRule, then try and auto generate them.
+            if (resultListMerger.ResultListFormat is null)
+                resultListMerger.AutoGenerateResultListFormat();
+            if (resultListMerger.RankingRule is null)
+                resultListMerger.AutoGenerateRankingRule();
+
+            return resultListMerger;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
+        #endregion
+
+        #region Data Model Properties
+        //Of which there should not be any, as this class is a data actor, not a data model class.
+        #endregion
+
+        #region Helper Properties
+        /// <summary>
+        /// Container is a pointer to the container that holds <see cref="MergedResultList"/>, and presumable wants to calculate
+        /// the results of merging result lists together. Both <see cref="Tournament"/> and <see cref="MatchStructure"/> can be this containers
+        /// as they both implement <see cref="IMergedResultListContainer"/>.
+        /// </summary>
+        public IMergedResultListContainer Container {
+            get {
+                return this.MergedResultList.Container;
+            }
+        }
+
+        /// <summary>
+        /// The name of the merged result list.
+        /// <para>Set during the construction of the ResultListMergerEngine. Must be a name listed in the Match's .MergedResultLists property.</para>
+        /// </summary>
+        public string ResultName {
+            get {
+                return this.MergedResultList.ResultName;
+            }
+        }
+
+        public MergedResultList MergedResultList { get; private set; }
+
+        /// <summary>
+        /// The set of Result Lists that will be merged.
+        /// </summary>
+        public List<ResultList> ResultListsMembers { get; private set; } = new List<ResultList>();
 
         /// <summary>
         /// The RESULT LIST FORMAT to use to display this merged Result List.
@@ -54,108 +115,34 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// </summary>
         public RankingRule RankingRule { get; set; } = null;
 
-        /// <summary>
-        /// Constructor. Purposefully private, users must call <see cref="FactoryAsync(Tournament, string)"/> instead.
-        /// </summary>
-        private ResultListMergerEngine() {
-        }
+        #endregion
 
-        /// <summary>
-        /// Factory method to construct a new TournamentMerger instance.
-        /// <para>It constructs an instance based on the passed in Tournament and result list name (that better be part of that Tournament).</para>
-        /// </summary>
-        /// <param name="tournament"></param>
-        /// <param name="resultName"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException">If resultName is not found within the Tournament's MergedResultLists.</exception>
-        public static async Task<ResultListMergerEngine> FactoryAsync( Tournament tournament, string resultName ) {
-
-            //Test that resultName is found in the tournament's .MergedResultLists list.
-            if (!tournament.MergedResultLists.Any( mrl => mrl.ResultName == resultName )) {
-                var msg = $"The value for resultName, '{resultName}' was not found amongst the Tournament's MergedResultLists instances.";
-                if (tournament.MergedResultLists.Count > 0) {
-                    var expectedValues = string.Join( ", ", tournament.MergedResultLists.Select( item => item.ResultName ) );
-                    msg += $" The value for resultName must be one of {expectedValues}.";
-                } else {
-                    msg += " The reason it was not found is, there are no .MergedResultLists to speak of.";
-                }
-
-                throw new ArgumentException( msg );
-            }
-
-            ResultListMergerEngine tm = new ResultListMergerEngine();
-            tm.Tournament = tournament;
-            tm.ResultName = resultName;
-
-            tm._mergeResultList = tournament.MergedResultLists.First( mrl => mrl.ResultName == resultName );
-
-            GetResultListPublicRequest getResultListRequest;
-            GetResultListPublicResponse getResultListResponse;
-            ResultList resultList = null;
-            foreach (var rlm in tm._mergeResultList.ResultListMembers) {
-
-                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
-
-                do {
-                    getResultListResponse = await _apiClient.GetResultListPublicAsync( getResultListRequest );
-                    if (getResultListResponse.HasOkStatusCode) {
-                        if (resultList is null) {
-                            //This is the first set of result list items. the result list may have more
-                            resultList = getResultListResponse.ResultList;
-                            tm.ResultListsMembers.Add( resultList );
-                        } else {
-                            //This is the second or more set of result list items.
-                            resultList.Items.AddRange( getResultListResponse.ResultList.Items );
-                        }
-
-                        //Check if we have more items.
-                        if (getResultListResponse.HasMoreItems)
-                            getResultListRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
-                    } else {
-                        var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
-                        _logger.Error( msg );
-                    }
-                } while (getResultListResponse.HasMoreItems);
-
-                //By setting resultList ot null, we indicate the next loop is a new result list.
-                resultList = null;
-            }
-
-            tm._mergeMethod = await MergeMethod.FactoryAsync( tm, tm._mergeResultList );
-
-            //If the MergeMethod does not set values for ResultListFormat or RankingRule, then try and auto generate them.
-            if (tm.ResultListFormat is null)
-                tm.AutoGenerateResultListFormat();
-            if (tm.RankingRule is null)
-                tm.AutoGenerateRankingRule();
-
-            return tm;
-        }
+        #region Methods
 
         /// <summary>
         /// Method to dynamically auto-generate a RESULT LIST FORMAT definition based on the <see cref="ResultListMember">members</see> and <see cref="MergeConfiguration">configuration</see>."/>
-        /// <para>Typically not called directly (although you can), instead the <see cref="FactoryAsync(Tournament, string)"/> calls this methos when it initializes.</para>
+        /// <para>Typically not called directly (although you can), instead the <see cref="CreateAsync(Tournament, string)"/> calls this methos when it initializes.</para>
         /// <para>Users may also use their own specified RESULT LIST FORMAT by setting the ResultListFormat property.</para>
         /// </summary>
         public void AutoGenerateResultListFormat() {
             var rlf = new ResultListFormat();
             rlf.SetDefaultValues();
-            rlf.ScoreConfigDefault = _mergeResultList.Configuration.ScoreConfigName;
-            rlf.ScoreFormatCollectionDef = _mergeResultList.Configuration.ScoreFormatCollectionDef;
+            rlf.ScoreConfigDefault = MergedResultList.Configuration.ScoreConfigName;
+            rlf.ScoreFormatCollectionDef = MergedResultList.Configuration.ScoreFormatCollectionDef;
             rlf.Fields.Clear();
 
             rlf.Fields.Add( new ResultListField() {
                 FieldName = "Aggregate",
                 Method = ResultFieldMethod.SCORE,
                 Source = new FieldSource() {
-                    Name = ResultEvent.KeyForResultCofScore( this.Tournament.TournamentId, _mergeMethod.TopLevelEventname ),
+                    Name = ResultEvent.KeyForResultCofScore( this.Container.MatchId, _mergeMethod.TopLevelEventname ),
                     ScoreFormat = "Events"
                 }
             } );
 
-            for (int i = this._mergeResultList.ResultListMembers.Count - 1; i >= 0; i--) {
+            for (int i = this.MergedResultList.ResultListMembers.Count - 1; i >= 0; i--) {
                 var resultList = this.ResultListsMembers[i];
-                var resultListMember = this._mergeResultList.ResultListMembers[i];
+                var resultListMember = this.MergedResultList.ResultListMembers[i];
 
                 var key = ResultEvent.KeyForResultCofScore( resultList.MatchID, resultList.EventName );
 
@@ -202,7 +189,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             for (int i = 0; i < this.ResultListsMembers.Count; i++) {
                 var resultList = this.ResultListsMembers[i];
-                var resultListMember = this._mergeResultList.ResultListMembers[i];
+                var resultListMember = this.MergedResultList.ResultListMembers[i];
 
                 rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                     Header = resultListMember.HeaderName,
@@ -242,7 +229,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
         /// <summary>
         /// Method dynamically auto-generate a RANKING RULE definition based on the <see cref="ResultListMember">members</see> and <see cref="MergeConfiguration">configuration</see>."/>
-        /// <para>Typically not called directly (although you can), instead the <see cref="FactoryAsync(Tournament, string)"/> calls this methos when it initializes.</para>
+        /// <para>Typically not called directly (although you can), instead the <see cref="CreateAsync(Tournament, string)"/> calls this methos when it initializes.</para>
         /// <para>Users may also use their own specified RANKNG RULE by setting the .RankingRule property.</para>
         /// </summary>
         public void AutoGenerateRankingRule() {
@@ -253,11 +240,11 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             //TODO: The next three lines of code assumes the Standard Score Formats. Need to make this more generic.
             var source = TieBreakingRuleScoreSource.D;
-            if (_mergeResultList.Configuration.ScoreConfigName != "Decimal")
+            if (this.MergedResultList.Configuration.ScoreConfigName != "Decimal")
                 source = TieBreakingRuleScoreSource.IX;
 
             rankingRule.Rules.Add( new TieBreakingRuleScore() {
-                EventName = ResultEvent.KeyForResultCofScore( this.Tournament.TournamentId, _mergeMethod.TopLevelEventname ),
+                EventName = ResultEvent.KeyForResultCofScore( this.Container.MatchId, _mergeMethod.TopLevelEventname ),
                 SortOrder = SortBy.DESCENDING,
                 Source = source,
                 Comment = "Auto generated default Tie Breaking Rule"
@@ -265,7 +252,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             for (int i = this.ResultListsMembers.Count - 1; i >= 0; i--) {
                 var resultList = this.ResultListsMembers[i];
-                var resultListMember = this._mergeResultList.ResultListMembers[i];
+                var resultListMember = this.MergedResultList.ResultListMembers[i];
 
                 var key = ResultEvent.KeyForResultCofScore( resultList.MatchID, resultList.EventName );
 
@@ -343,9 +330,8 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             }
 
             ResultList rl = new ResultList();
-            //Each ResultList instance needs a COURSE OF FIRE definition. However, these merged result lists are dynamic ... so not sure yet what to put as the .CourseOfFireDef
-            rl.CourseOfFireDef = SetName.Parse( "v1.0:ntparc:40 Shot Standing" );
-            rl.EventName = _mergeResultList.ResultName;
+            //NOTE: Normally a ResultList requires a COURSE OF FIRE definition, but in this case we are merging together Result Lists that may have different Course of Fire definitions, so we can't really assign a Course of Fire definition to this merged Result List.
+            rl.EventName = MergedResultList.ResultName;
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
             rl.Items.AddRange( _mergedResultEvents.Values );
 
@@ -357,5 +343,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             return rl;
         }
+
+        #endregion
     }
 }

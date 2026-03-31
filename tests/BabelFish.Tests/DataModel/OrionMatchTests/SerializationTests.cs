@@ -43,13 +43,14 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
-            var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cof = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cofId = cof.CourseOfFireId;
 
             SetName newShooterSetName = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
-            CourseOfFireStructure cof, deserializedCof;
+            CourseOfFireStructure deserializedCof;
             match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
             Assert.IsNotNull( cof );
-            cof.AddAttributeConfigurationAsync( newShooterSetName );
+            await cof.AddAttributeConfigurationAsync( newShooterSetName );
 
             //Let the Wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );
@@ -102,11 +103,12 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
-            var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cof = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cofId = cof.CourseOfFireId;
 
             //Add a second Attribute for good measure.
             SetName newShooterSetName = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
-            CourseOfFireStructure cof, deserializedCof;
+            CourseOfFireStructure deserializedCof;
             match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
             Assert.IsNotNull( cof );
             cof.AddAttributeConfigurationAsync( newShooterSetName );
@@ -160,6 +162,14 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.IsTrue( newATeam.Entries.Count == 1 );
         }
 
+        /// <summary>
+        /// Tests the serialization and deserialization of a MatchProject, ensuring that the project data is correctly
+        /// saved and loaded from a file.
+        /// </summary>
+        /// <remarks>This test creates a MatchProject, adds participants and a course of fire, and
+        /// verifies that the project can be saved to and loaded from a file. It checks that the loaded project matches
+        /// the original project in terms of name and participant count.</remarks>
+        /// <returns></returns>
         [TestMethod]
         public async Task MatchProjectSerializationTest() {
             var matchName = "MatchProjectSerializationTest";
@@ -189,6 +199,85 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.AreEqual( project.ProjectName, newProject.ProjectName );
             Assert.AreEqual( project.Match.Name, newProject.Match.Name );
             Assert.AreEqual( project.Participants.Count, newProject.Participants.Count );
+        }
+
+        /// <summary>
+        /// Tests that MergedResultLists and their members are correctly serialized and deserialized, including all relevant properties such as ResultName, Method, MergedId, and the details of each ResultListMember.
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task MergeMembersSeralizationTests() {
+
+            var matchName = "MergeMembersSeralizationTests";
+
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            ClearDirectory( project.ProjectDirectory.FullName );
+            var match = project.Match;
+
+            //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
+            SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
+            var cof1 = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cof2 = await match.MatchStructure.AddCourseOfFireAsync( setName );
+
+            ResultListWizard wizard = new ResultListWizard( match );
+
+            //Add only the first two Result Lists, that's all we need for this unit test as we are only testing serialization.
+            var resultLists1 = await wizard.GenerateAsync( cof1.CourseOfFireId );
+            cof1.AddResultList( resultLists1.Find( x => x.ResultName == "Individual - All" ) );
+            cof1.AddResultList( resultLists1.Find( x => x.ResultName == "Team - All" ) );
+
+            var resultLists2 = await wizard.GenerateAsync( cof2.CourseOfFireId );
+            cof2.AddResultList( resultLists2.Find( x => x.ResultName == "Individual - All" ) );
+            cof2.AddResultList( resultLists2.Find( x => x.ResultName == "Team - All" ) );
+
+            var invMergedResult = await match.MatchStructure.AddMergedResultListAsync( "Individual - All", MergeMethodType.SUM );
+            var teamMergedResult = await match.MatchStructure.AddMergedResultListAsync( "Team - All", MergeMethodType.SUM );
+
+            await invMergedResult.AddResultListMemberAsync( resultLists1.Find( x => x.ResultName == "Individual - All" ) );
+            await invMergedResult.AddResultListMemberAsync( resultLists2.Find( x => x.ResultName == "Individual - All" ) );
+
+            await teamMergedResult.AddResultListMemberAsync( resultLists1.Find( x => x.ResultName == "Team - All" ) );
+            await teamMergedResult.AddResultListMemberAsync( resultLists2.Find( x => x.ResultName == "Team - All" ) );
+
+            Assert.AreEqual( $"{matchName}.orion", project.GetFileName() );
+            var expectedProjectFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, project.GetFileName() );
+            Assert.AreEqual( $"{matchName}.json", match.GetFileName() );
+            var expectedMatchFileName = Path.Combine( RelativeDirectoryForTesting.FullName, matchName, match.GetFileName() );
+
+            project.SaveToFile();
+            Assert.IsTrue( File.Exists( expectedProjectFileName ), $"File does not exist: {expectedProjectFileName}" );
+            Assert.IsTrue( File.Exists( expectedMatchFileName ), $"File does not exist: {expectedMatchFileName}" );
+
+            var newProject = await MatchProject.LoadFromFileAsync( expectedProjectFileName );
+            Assert.IsNotNull( newProject );
+            Assert.AreEqual( project.ProjectName, newProject.ProjectName );
+            Assert.AreEqual( project.Match.Name, newProject.Match.Name );
+
+            var newMatch = newProject.Match;
+            Assert.IsNotNull( newMatch );
+            Assert.AreEqual( match.MatchStructure.CoursesOfFire.Count, newMatch.MatchStructure.CoursesOfFire.Count );
+            Assert.AreEqual( match.MatchStructure.MergedResultLists.Count, newMatch.MatchStructure.MergedResultLists.Count );
+
+            for (int i = 0; i < match.MatchStructure.MergedResultLists.Count; i++) {
+                var mergedResultList = match.MatchStructure.MergedResultLists[i];
+                var deserializedMergedResultList = newMatch.MatchStructure.MergedResultLists[i];
+
+                Assert.AreEqual( mergedResultList.ResultName, deserializedMergedResultList.ResultName );
+                Assert.AreEqual( mergedResultList.Method, deserializedMergedResultList.Method );
+                Assert.AreEqual( mergedResultList.MergedId, deserializedMergedResultList.MergedId );
+                Assert.AreEqual( mergedResultList.ResultListMembers.Count, deserializedMergedResultList.ResultListMembers.Count );
+
+                for (int j = 0; j < mergedResultList.ResultListMembers.Count; j++) {
+                    var memberResultList = mergedResultList.ResultListMembers[j];
+                    var deserializedMemberResultList = deserializedMergedResultList.ResultListMembers[j];
+
+                    Assert.AreEqual( memberResultList.ResultName, deserializedMemberResultList.ResultName );
+                    Assert.AreEqual( memberResultList.MatchId, deserializedMemberResultList.MatchId );
+                    Assert.AreEqual( memberResultList.HeaderName, deserializedMemberResultList.HeaderName );
+                    Assert.AreEqual( memberResultList.CourseOfFireId, deserializedMemberResultList.CourseOfFireId );
+                }
+            }
         }
 
         /// <summary>

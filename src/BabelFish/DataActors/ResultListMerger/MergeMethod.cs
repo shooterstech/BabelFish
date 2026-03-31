@@ -12,9 +12,9 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Gets the <see cref="TournamentMerger"/> instance in use.
+        /// Gets the <see cref="ResultListMerger.ResultListMergerEngine"/> instance in use.
         /// </summary>
-        public ResultListMergerEngine TournamentMerger { get; private set; }
+        public ResultListMergerEngine ResultListMergerEngine { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="MergeConfiguration"/> instance in use.
@@ -24,10 +24,10 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <summary>
         /// Constructor. Protected so end users can not call it directly. Instead, use the <see cref="FactoryAsync(ResultListMergerEngine, MergedResultList)"/> method.
         /// </summary>
-        /// <param name="tournamentMerger"></param>
-        /// <param name="configuration"></param>
-        protected MergeMethod( ResultListMergerEngine tournamentMerger, MergeConfiguration configuration ) {
-            this.TournamentMerger = tournamentMerger;
+        /// <param name="resultListMergerEngine">The <see cref="ResultListMergerEngine"/> instance in use.</param>
+        /// <param name="configuration">The <see cref="MergeConfiguration"/> instance in use.</param>
+        protected MergeMethod( ResultListMergerEngine resultListMergerEngine, MergeConfiguration configuration ) {
+            this.ResultListMergerEngine = resultListMergerEngine;
             this._mergeConfiguration = configuration;
         }
 
@@ -46,21 +46,22 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <param name="mrl"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public static async Task<MergeMethod> FactoryAsync( ResultListMergerEngine tournamentMerger, MergedResultList mrl ) {
+        public static async Task<MergeMethod> CreateAsync( ResultListMergerEngine resultListMerger ) {
 
             MergeMethod mm;
+            var mrl = resultListMerger.MergedResultList;
 
             switch (mrl.Method) {
-                case SumMethod.IDENTIFIER:
-                    mm = new SumMethod( tournamentMerger, (SumMethodConfiguration)mrl.Configuration );
+                case MergeMethodType.SUM:
+                    mm = new SumMethod( resultListMerger, (SumMethodConfiguration)mrl.Configuration );
                     break;
 
-                case AverageMethod.IDENTIFIER:
-                    mm = new AverageMethod( tournamentMerger, (AverageMethodConfiguration)mrl.Configuration );
+                case MergeMethodType.AVERAGE:
+                    mm = new AverageMethod( resultListMerger, (AverageMethodConfiguration)mrl.Configuration );
                     break;
 
-                case ReentryMethod.IDENTIFIER:
-                    mm = new ReentryMethod( tournamentMerger, (ReentryMethodConfiguration)mrl.Configuration );
+                case MergeMethodType.REENTRY:
+                    mm = new ReentryMethod( resultListMerger, (ReentryMethodConfiguration)mrl.Configuration );
                     break;
 
                 default:

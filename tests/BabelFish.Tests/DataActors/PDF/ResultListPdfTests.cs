@@ -67,7 +67,7 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             var client = new OrionMatchAPIClient();
 
-            var resultCofId = "e49aeb69 -d009-4c9c-9fdb-66a359a46e59";
+            var resultCofId = "f5854dc0-8c3c-446d-b613-459b1e02992d";
 
             var getResultCofResponse = await client.GetResultCourseOfFireDetailPublicAsync( resultCofId );
             var resultCof = getResultCofResponse.ResultCOF;

@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -9,7 +11,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// or it may be used as a template to create a new Match.
     /// </summary>
     /// <remarks>New with BabelFish 2.0 / Orion 3.0 DataModel</remarks>
-    public class MatchStructure : IFinishInitializationAsync, G_STJ_SER.IJsonOnDeserializing, G_STJ_SER.IJsonOnDeserialized {
+    public class MatchStructure :
+        IMergedResultListContainer,
+        IFinishInitializationAsync,
+        G_STJ_SER.IJsonOnDeserializing,
+        G_STJ_SER.IJsonOnDeserialized {
 
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
@@ -37,6 +43,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Sets _ignoreEvents to false so that events will fire as expected after deserialization.
         /// </summary>
         public void OnDeserialized() {
+            //Populate the backwards pointer.
+            foreach (var mrl in MergedResultLists) {
+                mrl.Container = this;
+            }
+
             _ignoreEvents = false;
         }
 
@@ -65,21 +76,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Occurs when a new <see cref="CourseOfFireStructure"/> is added to this instance.
         /// <para>the preferred way of adding a new CourseOfFireStructure is to use the <see cref="AddCourseOfFireAsync(SetName)"/> method.</para>
         /// </summary>
-        [G_NS.JsonIgnore]
-        public EventHandler<EventArgs<CourseOfFireStructure>> OnCourseOfFireAdded;
+        public event EventHandler<EventArgs<CourseOfFireStructure>> OnCourseOfFireAdded;
 
         /// <summary>
         /// Occurs when a new global <see cref="AttributeConfiguration"/> is added to this instance.
         /// <para>The preferred way of adding a new AttributeConfiguration is to use <see cref="AddAttributeConfigurationAsync(SetName)"/>. </para>
         /// </summary>
-        [G_NS.JsonIgnore]
-        public EventHandler<EventArgs<AttributeConfiguration>> OnAttributeConfigurationAdded;
+        public event EventHandler<EventArgs<AttributeConfiguration>> OnAttributeConfigurationAdded;
+
+        public event EventHandler<EventArgs<MergedResultList>> OnMergedResultListAdded;
         #endregion
 
         #region Data Model Properties
         /// <summary>
         /// <para>Unless you are the deserializer, it is generally best to add new CourseOfFireStructures using the
-        /// <see cref="AddCourseOfFireAsync(SetName)"/> method. Ass this method sets a known good value for CourseOfFireId.</para>
+        /// <see cref="AddCourseOfFireAsync(SetName)"/> method. As this method sets a known good value for CourseOfFireId.</para>
         /// </summary>
         public List<CourseOfFireStructure> CoursesOfFire { get; set; } = new List<CourseOfFireStructure>();
 
@@ -89,6 +100,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// is common accross all CoursesOfFire.</para>
         /// </summary>
         public List<AttributeConfiguration> SharedAttributes { get; set; } = new List<AttributeConfiguration>();
+
+        /// <summary>
+        /// A Match may have 0 or more MergedResultLists. Each MergedResultList describes a way to merge scores from different Courses of Fire's ResultLists together.
+        /// </summary>
+        public List<MergedResultList> MergedResultLists { get; set; } = new List<MergedResultList>();
 
         #endregion
 
@@ -100,6 +116,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public Match Match { get; internal set; }
 
+        /// <inheritdoc />
+        [G_NS.JsonIgnore]
+        public MatchID MatchId {
+            get {
+                return Match.MatchID;
+            }
+        }
+
+        /// <inheritdoc />
+        [G_NS.JsonIgnore]
+        public IResultListFetcher ResultListFetcher {
+            get {
+                return Match.Project;
+            }
+        }
         #endregion
 
         #region Methods
@@ -124,7 +155,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <exception cref="DefinitionNotFoundException">Thrown if the past in SetName is not a known COURSE OF FIRE definition.
         /// <exception cref="InvalidOperationException">Thrown if the Match already has 24 Courses of Fire.
         /// or it is the DEFUALT.</exception>
-        public async Task<int> AddCourseOfFireAsync( SetName setName ) {
+        public async Task<CourseOfFireStructure> AddCourseOfFireAsync( SetName setName ) {
             // The max of 24 Courses of fire is somewhat arbitrary, but comes from keeping resources constrained and having 2 matches a month for a year.
             if (this.CoursesOfFire.Count >= 24) {
                 throw new InvalidOperationException( "A Match cannot have more than 24 Courses of Fire." );
@@ -140,7 +171,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             var maxId = 0;
             foreach (var existingCof in CoursesOfFire) {
-                if (maxId > existingCof.CourseOfFireId) {
+                if (existingCof.CourseOfFireId > maxId) {
                     maxId = existingCof.CourseOfFireId;
                 }
             }
@@ -152,7 +183,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 OnCourseOfFireAdded?.Invoke( this, new EventArgs<CourseOfFireStructure>( cof ) );
             }
 
-            return cof.CourseOfFireId;
+            return cof;
         }
 
         public async Task<AttributeConfiguration> AddAttributeConfigurationAsync( SetName attributeDef ) {
@@ -184,6 +215,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             return attributeConfig;
+        }
+
+        /// <summary>
+        /// Creates a new MergedResultList and adds it to <see cref="MergedResultLists"/>, then invokes the <see cref="OnMergedResultListAdded"/> event.
+        /// The configuration of the MergedResultList is determined by the passed in MergeMethodType. For example, if MergeMethodType.SUM is passed in,
+        /// then the MergedResultList's Configuration will be set to a new instance of SumMethodConfiguration.
+        /// </summary>
+        /// <param name="resultListName"></param>
+        /// <param name="mergeMethodType"></param>
+        /// <returns></returns>
+        /// <remarks>NOTE This code is effectively the same as <see cref="Tournament.CreateMergedResultListAsync(MergeMethodType)"/>. If you change
+        /// code here, change it there too.</remarks>
+        public async Task<MergedResultList> AddMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType ) {
+
+            var mrl = await MergedResultList.CreateAsync( this, resultListName, mergeMethodType );
+
+            MergedResultLists.Add( mrl );
+
+            if (!_ignoreEvents) {
+                OnMergedResultListAdded?.Invoke( this, new EventArgs<MergedResultList>( mrl ) );
+            }
+            return mrl;
         }
 
         #endregion

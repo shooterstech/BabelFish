@@ -198,7 +198,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Adds the specified result list to the ResultLists collection, checking that it is not already a member.
         /// </summary>
         /// <param name="resultList">The result list to add to the collection. Must not be null.</param>
-        public bool AddResultList( ResultListAbbr resultList ) {
+        /// <exception cref="ArgumentNullException">Thrown when the provided resultList is null.</exception>"
+        public bool AddResultList( ResultListAbbr? resultList ) {
+            if (resultList is null) {
+                throw new ArgumentNullException( nameof( resultList ) );
+            }
+
             var existingResultList = ResultLists.Find( x => x.GetHashCode() == resultList.GetHashCode() );
 
             if (existingResultList == null) {

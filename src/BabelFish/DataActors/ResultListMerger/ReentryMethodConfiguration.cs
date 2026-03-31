@@ -1,44 +1,55 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
-    public class ReentryMethodConfiguration : MergeConfiguration, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IGetResultListFormatDefinition {
+    /// <summary>
+    /// <see cref="MergeConfiguration"/> specific for a <see cref="MergedResultList"/> of type <see cref="MergeMethodType.REENTRY"/>.
+    /// </summary>
+    public class ReentryMethodConfiguration :
+        MergeConfiguration,
+        IGetCourseOfFireDefinition,
+        IGetRankingRuleDefinition,
+        IGetResultListFormatDefinition {
 
+        /// <summary>
+        /// Public constructor.
+        /// <para>Unless you are a deserializer, rarely would you construct an instance of ReentryMethodConfiguration directly. Instead instances
+        /// are creaed as part of the <see cref="MergedResultList.CreateAsync(IMergedResultListContainer, string, MergeMethodType)"/> method.</para>
+        /// </summary>
         public ReentryMethodConfiguration() : base() {
             /*
              * NOTE: MergeConfiguration classes use the same concrete class identifier
              * as the cooresponding MergeMethod classes.
              */
 
-            this.Method = "Reentry";
+            this.Method = DataModel.OrionMatch.MergeMethodType.REENTRY;
         }
 
         /// <summary>
         /// The level, within the COURSE OF FIRE Event Tree to perform the reentry score selection.
         /// </summary>
+        [G_NS.JsonProperty( Order = 11, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EventtType EventType { get; set; } = EventtType.EVENT;
 
         /// <summary>
         /// The SetName of the COURSE OF FIRE definition that all result lists are 
         /// expected to be composed from.
         /// </summary>
-        //[G_STJ_SER.JsonConverter(typeof(G_BF_STJ_CONV.SetNameConverter))]
-        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ))]
+        [G_NS.JsonProperty( Order = 12 )]
         public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The SetName of the RANKING RULE definition that should be used to rank the merged results.
         /// </summary>
-        //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
-        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+        [G_NS.JsonProperty( Order = 13 )]
         public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The SetName of the RESULT LIST FORMAT definition that should be used to format the merged results.
         /// </summary>
-        //[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
-        //[G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+        [G_NS.JsonProperty( Order = 14 )]
         public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
 
         /// <inheritdoc />
