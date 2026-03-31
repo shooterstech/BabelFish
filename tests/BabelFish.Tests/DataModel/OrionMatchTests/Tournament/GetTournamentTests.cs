@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             Assert.IsTrue( tournament.MergedResultLists.Count > 0 );
             Assert.IsTrue( tournament.MergedResultLists[0].Configuration is AverageMethodConfiguration );
 
-            Assert.IsTrue( response.Permissions.Contains( Permission.TOURNAMENT_READ ) );
+            Assert.IsTrue( response.Permissions[mId.ToString()].Contains( Permission.TOURNAMENT_READ ) );
         }
 
         [TestMethod]

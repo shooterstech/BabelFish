@@ -85,7 +85,7 @@ namespace Scopos.BabelFish.Responses {
             internal set;
         } = default( T );
 
-        public HashSet<Permission> Permissions { get; internal set; } = new HashSet<Permission>();
+        public Dictionary<string, HashSet<Permission>> Permissions { get; internal set; } = new Dictionary<string, HashSet<Permission>>(); //Keep as string to allow permissions to apply to any type of resource, not just Match resources.
 
         /// <summary>
         /// Gets or Sets the Status Code returned by the Rest API call.

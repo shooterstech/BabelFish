@@ -209,10 +209,23 @@ namespace Scopos.BabelFish.APIClients {
                         }
                     }
 
-                    G_STJ.JsonElement permissionsArray;
-                    if (response.Body.RootElement.TryGetProperty( "Permissions", out permissionsArray ) && permissionsArray.ValueKind == G_STJ.JsonValueKind.Array) {
-                        foreach (var permission in permissionsArray.EnumerateArray()) {
-                            response.Permissions.Add( Permission.Parse( permission.GetString(), false ) );
+                    G_STJ.JsonElement permissionsObject;
+                    if (response.Body.RootElement.TryGetProperty( "Permissions", out permissionsObject ) && permissionsObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        foreach (var resourcePermissions in permissionsObject.EnumerateObject()) {
+                            if (resourcePermissions.Value.ValueKind != G_STJ.JsonValueKind.Array) {
+                                continue;
+                            }
+
+                            var parsedPermissions = new HashSet<Permission>();
+                            foreach (var permission in resourcePermissions.Value.EnumerateArray()) {
+                                if (permission.ValueKind != G_STJ.JsonValueKind.String) {
+                                    continue;
+                                }
+
+                                parsedPermissions.Add( Permission.Parse( permission.GetString(), false ) );
+                            }
+
+                            response.Permissions[resourcePermissions.Name] = parsedPermissions;
                         }
                     }
                 }
