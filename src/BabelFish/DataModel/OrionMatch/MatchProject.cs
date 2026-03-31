@@ -1,9 +1,11 @@
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class MatchProject :
         ISaveToFile,
+        IResultListFetcher,
         G_STJ_SER.IJsonOnDeserialized,
         G_STJ_SER.IJsonOnDeserializing {
 
@@ -198,6 +200,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
             return mp;
         }
+
+        public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 
         #endregion
 

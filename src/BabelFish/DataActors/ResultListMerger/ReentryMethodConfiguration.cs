@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
              * as the cooresponding MergeMethod classes.
              */
 
-            this.Method = "Reentry";
+            this.Method = DataModel.OrionMatch.MergeMethodType.REENTRY;
         }
 
         /// <summary>

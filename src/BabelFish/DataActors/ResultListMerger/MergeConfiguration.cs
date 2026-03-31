@@ -1,5 +1,6 @@
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
@@ -13,7 +14,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// Concrete class identifier. Its value will be the same value as the cooresponding
         /// MergeMethod class' .Method.
         /// </summary>
-        public string Method { get; protected set; }
+        public MergeMethodType Method { get; protected set; }
 
         /// <summary>
         /// The SCORE FORMAT COLLECTION definition to us while displaying scores for this MergedResultList

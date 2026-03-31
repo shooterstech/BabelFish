@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
              * NOTE: MergeConfiguration classes use the same concrete class identifier
              * as the cooresponding MergeMethod classes.
              */
-            this.Method = "Sum";
+            this.Method = DataModel.OrionMatch.MergeMethodType.SUM;
         }
 
         /// <summary>

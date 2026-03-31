@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
              * as the cooresponding MergeMethod classes.
              */
 
-            this.Method = "Average";
+            this.Method = DataModel.OrionMatch.MergeMethodType.AVERAGE;
         }
 
         /// <summary>

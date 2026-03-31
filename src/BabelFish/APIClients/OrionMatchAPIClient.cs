@@ -1,10 +1,13 @@
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
-    public class OrionMatchAPIClient : APIClient<OrionMatchAPIClient> {
+    public class OrionMatchAPIClient :
+        APIClient<OrionMatchAPIClient>,
+        IResultListFetcher {
 
         /// <summary>
         /// Default constructor.
@@ -241,6 +244,83 @@ namespace Scopos.BabelFish.APIClients {
             else
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
+
+        /*
+        public async Task<List<ResultList>> GetResultListsAsync2( MergedResultList mergedResultList ) {
+            List<ResultList> resultLists = new List<ResultList>();
+
+            GetResultListPublicRequest getResultListRequest;
+            GetResultListPublicResponse getResultListResponse;
+            ResultList resultList = null;
+            foreach (var rlm in mergedResultList.ResultListMembers) {
+
+                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
+
+                do {
+                    getResultListResponse = await this.GetResultListPublicAsync( getResultListRequest );
+                    if (getResultListResponse.HasOkStatusCode) {
+                        if (resultList is null) {
+                            //This is the first set of result list items. the result list may have more
+                            resultList = getResultListResponse.ResultList;
+                            resultLists.Add( resultList );
+                        } else {
+                            //This is the second or more set of result list items.
+                            resultList.Items.AddRange( getResultListResponse.ResultList.Items );
+                        }
+
+                        //Check if we have more items.
+                        if (getResultListResponse.HasMoreItems)
+                            getResultListRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
+                    } else {
+                        var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
+                        _logger.Error( msg );
+                    }
+                } while (getResultListResponse.HasMoreItems);
+
+                //By setting resultList ot null, we indicate the next loop is a new result list.
+                resultList = null;
+            }
+            return resultLists;
+        }
+        */
+
+        public async Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) {
+            var tasks = new List<Task<ResultList?>>();
+
+            // Retreives each ResultList in parallel, and if there are multiple pages of results for a ResultList, retreive those pages sequentially and add them to the same ResultList object.
+            foreach (var rlm in mergedResultList.ResultListMembers) {
+                tasks.Add( Task.Run( async () => {
+                    var getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
+                    ResultList? resultList = null;
+                    GetResultListPublicResponse getResultListResponse;
+                    do {
+                        getResultListResponse = await this.GetResultListPublicAsync( getResultListRequest );
+                        if (getResultListResponse.HasOkStatusCode) {
+                            if (resultList is null) {
+                                resultList = getResultListResponse.ResultList;
+                            } else {
+                                resultList.Items.AddRange( getResultListResponse.ResultList.Items );
+                            }
+                            if (getResultListResponse.HasMoreItems)
+                                getResultListRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
+                        } else {
+                            var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
+                            _logger.Error( msg );
+                        }
+                    } while (getResultListResponse.HasMoreItems);
+                    return resultList;
+                } ) );
+            }
+
+            var resultLists = await Task.WhenAll( tasks );
+            var resultListsToReturn = new List<ResultList>();
+            foreach (var resultList in resultLists) {
+                if (resultList != null) {
+                    resultListsToReturn.Add( resultList );
+                }
+            }
+            return resultListsToReturn;
         }
         #endregion
 

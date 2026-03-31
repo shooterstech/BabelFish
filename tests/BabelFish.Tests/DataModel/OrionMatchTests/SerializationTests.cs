@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -189,6 +190,33 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.AreEqual( project.ProjectName, newProject.ProjectName );
             Assert.AreEqual( project.Match.Name, newProject.Match.Name );
             Assert.AreEqual( project.Participants.Count, newProject.Participants.Count );
+        }
+
+        public async Task MergeMembersSeralizationTests() {
+
+            var matchName = "MergeMembersSeralizationTests";
+
+            //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            ClearDirectory( project.ProjectDirectory.FullName );
+            var match = project.Match;
+
+            //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
+            SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
+            var cofId1 = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cofId2 = await match.MatchStructure.AddCourseOfFireAsync( setName );
+
+            ResultListWizard wizard = new ResultListWizard( match );
+
+            //Add only the first two Result Lists, that's all we need for this unit test.
+            var resultLists1 = await wizard.GenerateAsync( cofId1 );
+            foreach (var resultList in resultLists1.Take( 2 ))
+                match.MatchStructure.CoursesOfFire[cofId1].AddResultList( resultList );
+
+            var resultLists2 = await wizard.GenerateAsync( cofId2 );
+            foreach (var resultList in resultLists2.Take( 2 ))
+                match.MatchStructure.CoursesOfFire[cofId2].AddResultList( resultList );
+
         }
 
         /// <summary>

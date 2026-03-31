@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
         public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
-        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Key is the timeout in seconds.

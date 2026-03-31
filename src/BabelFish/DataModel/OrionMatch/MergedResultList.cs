@@ -10,25 +10,80 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     public class MergedResultList : IGetScoreFormatCollectionDefinition {
 
+        #region Private Variables
+
+        #endregion
+
+        #region Constructors
         /// <summary>
-        /// Globally unique identifier assigned to this MergedResultList.
-        /// <para>The SQL table tournament_merged_result_list assigns this value.</para>
-        /// <para>A value of 0 means a value hasn't been assigned yet.</para>
+        /// Public Constructor.
+        /// <para>Unless you are a deserializer, it is generally best to construct a new instance
+        /// using the <see cref="CreateAsync(string, MergeMethodType)"/> method, as this sets the configuration property <see cref="Configuration"/>.</para>
         /// </summary>
-        [G_NS.JsonProperty( Order = 1 )]
-        public int MergedId { get; set; } = 0;
+        public MergedResultList() { }
+
+        /// <summary>
+        /// This is the preferred method for creating a new instance of MergedResultList. This method sets the <see cref="Method"/> property,
+        /// and also initializes the <see cref="Configuration"/> property with a new instance of the appropriate type based on the MergeMethodType specified.
+        /// </summary>
+        /// <param name="resultListName">The name of the result list.</param>
+        /// <param name="mergeMethodType">The type of merge method to use.</param>
+        /// <returns>A new instance of <see cref="MergedResultList"/>.</returns>
+        public static async Task<MergedResultList> CreateAsync( IMergedResultListContainer container, string resultListName, MergeMethodType mergeMethodType ) {
+
+            /*
+             * Even though this method is asynchronous, there are currently no asynchronous calls within it. However, 
+             * it is possible that in the future, we may want to add asynchronous calls (e.g. to fetch default configuration from an API), 
+             * so we will keep the async signature to avoid breaking changes in the future.
+             */
+
+            MergedResultList mrl = new MergedResultList() {
+                Method = mergeMethodType,
+                ResultName = resultListName,
+                Container = container
+            };
+
+            switch (mergeMethodType) {
+                case MergeMethodType.SUM:
+                    mrl.Configuration = new SumMethodConfiguration();
+                    break;
+                case MergeMethodType.AVERAGE:
+                    mrl.Configuration = new AverageMethodConfiguration();
+                    break;
+                case MergeMethodType.REENTRY:
+                    mrl.Configuration = new ReentryMethodConfiguration();
+                    break;
+            }
+
+            return mrl;
+        }
+        #endregion
+
+        #region Event Handlers
+
+        #endregion
+
+        #region Data Model Properties
 
         /// <summary>
         /// The human readable name of this Result List
         /// </summary>
-        [G_NS.JsonProperty( Order = 2 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public string ResultName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Globally unique identifier assigned to this MergedResultList.
+        /// <para>String formatted as a UUID.</para>
+        /// <para>Its is a fantastically bad idea to change this value after Construction.</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
+        public int MergedId { get; set; } = 1; // Guid.NewGuid().ToString();
 
         /// <summary>
         /// The Tournament Method identifier to use to merge this Result List.
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        public string Method { get; set; } = string.Empty;
+        public MergeMethodType Method { get; set; } = MergeMethodType.SUM;
 
         /// <summary>
         /// The SCORE FORMAT COLLECTION to use while displaying scores for this MergedResultList
@@ -56,6 +111,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 7 )]
         public MergeConfiguration Configuration { get; set; }
 
+        #endregion
+
+        #region Helper Properties
+        /// <summary>
+        /// Backwards pointer to the <see cref="MatchStructure"/> or <see cref="Tournament"/> (both of which implement the <see cref="IMergedResultListContainer"/> interface)
+        /// that is holding this MergedResultList. Populated on deserialization.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public IMergedResultListContainer Container { get; internal set; }
+        #endregion
+
+        #region Methods
+
         /// <inheritdoc />
         /// <exception cref="XApiKeyNotSetException" />
         /// <exception cref="DefinitionNotFoundException" />
@@ -63,5 +131,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( this.Configuration.ScoreFormatCollectionDef );
         }
+
+        #endregion
     }
 }

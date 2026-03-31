@@ -39,7 +39,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             int count = 0;
 
             List<EventScore> listOfScores = new List<EventScore>();
-            foreach (var resultListMember in TournamentMerger.ResultListsMembers) {
+            foreach (var resultListMember in ResultListMergerEngine.ResultListsMembers) {
                 var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
 
                 if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore )) {
@@ -85,7 +85,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             mergedEventScore.Score /= count;
             mergedEventScore.Projected /= count;
 
-            re.ResultCofScores[ResultEvent.KeyForResultCofScore( TournamentMerger.Tournament.TournamentId, this.TopLevelEventname )] = mergedEventScore;
+            re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, this.TopLevelEventname )] = mergedEventScore;
         }
     }
 }

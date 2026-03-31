@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -83,6 +84,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Description( "OPEN" )]
         [EnumMember( Value = "OPEN" )]
         OPEN
+    }
+
+    /// <summary>
+    /// Concrete class identifier for both <see cref="MergeConfiguration"/> and <see cref="MergedResultList"/>. Its value determines the type of MergeMethod to use when merging result lists together.
+    /// </summary>
+    public enum MergeMethodType {
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="SumMethod"/>
+        /// </summary>
+        [Description( "Sum" )]
+        [EnumMember( Value = "SUM" )]
+        SUM,
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="AverageMethod"/>
+        /// </summary>  
+        [Description( "Average" )]
+        [EnumMember( Value = "Average" )]
+        AVERAGE,
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="ReentryMethod"/>
+        /// </summary>
+        [Description( "Reentry" )]
+        [EnumMember( Value = "Reentry" )]
+        REENTRY
     }
 
     /// <summary>
