@@ -14,16 +14,19 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// Concrete class identifier. Its value will be the same value as the cooresponding
         /// MergeMethod class' .Method.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public MergeMethodType Method { get; protected set; }
 
         /// <summary>
         /// The SCORE FORMAT COLLECTION definition to us while displaying scores for this MergedResultList
         /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
         public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION, , while displaying scores for this MergedResultList
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public string ScoreConfigName { get; set; } = "Decimal";
 
         /// <inheritdoc />

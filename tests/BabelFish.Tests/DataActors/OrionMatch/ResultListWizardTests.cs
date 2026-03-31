@@ -18,9 +18,8 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
-            var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
-            CourseOfFireStructure cof;
-            match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
+            var cof = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cofId = cof.CourseOfFireId;
 
             //Let the wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );
@@ -72,11 +71,10 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             //Add a CourseOfFireStructure into the Match. The Three-Position Air Rifle 3x10 has one required attriubte (Air Rifle Type)
             SetName setName = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" );
-            var cofId = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cof = await match.MatchStructure.AddCourseOfFireAsync( setName );
+            var cofId = cof.CourseOfFireId;
 
             SetName newShooterSetName = SetName.Parse( "v1.0:ntparc:Three-Position New Shooter" );
-            CourseOfFireStructure cof;
-            match.MatchStructure.TryGetCourseOfFireStructure( cofId, out cof );
             Assert.IsNotNull( cof );
             cof.Attributes.Add( await AttributeConfiguration.CreateAsync( newShooterSetName ) );
 

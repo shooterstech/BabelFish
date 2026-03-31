@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <param name="resultListName">The name of the new MergedResultList.</param>
         /// <param name="mergeMethodType">The type of merge method to use.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created MergedResultList.</returns>
-        public Task<MergedResultList> CreateMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType );
+        public Task<MergedResultList> AddMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType );
 
         /// <summary>
         /// The MatchID of the Container. This is necessary for the <see cref="ResultListMergerEngine"/> to fetch the necessary ResultLists to perform the merge.

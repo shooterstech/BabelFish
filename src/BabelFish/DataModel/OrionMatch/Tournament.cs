@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         /// <remarks>NOTE This code is effectively the same as <see cref="MatchStructure.CreateMergedResultListAsync(MergeMethodType)"/>. If you change
         /// code here, change it there too.</remarks>
-        public async Task<MergedResultList> CreateMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType ) {
+        public async Task<MergedResultList> AddMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType ) {
 
             MergedResultList mrl = await MergedResultList.CreateAsync( this, resultListName, mergeMethodType );
 

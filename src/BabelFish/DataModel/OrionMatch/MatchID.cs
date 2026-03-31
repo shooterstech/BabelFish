@@ -36,15 +36,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="fullMatchID"></param>
         /// <exception cref="FormatException">Thrown if the passed in fullMatchID string is not in the expected format.</exception>
         public MatchID( string fullMatchID ) {
-            if (!string.IsNullOrEmpty(fullMatchID) && fullMatchID.EndsWith("U")) {
-                fullMatchID = fullMatchID.Substring(0, fullMatchID.Length - 1);
+            if (!string.IsNullOrEmpty( fullMatchID ) && fullMatchID.EndsWith( "U" )) {
+                fullMatchID = fullMatchID.Substring( 0, fullMatchID.Length - 1 );
             }
 
             string[] parts = fullMatchID.Split( new char[] { '.' } );
 
             if (parts.Length == 4
              && long.TryParse( parts[0], out _domainID ) && _domainID > 0
-             && long.TryParse( parts[1], out _componentID ) && _componentID > 0
+             && long.TryParse( parts[1], out _componentID ) && _componentID >= 0 // The Component ID, which usually identifiess the account number, is normally not zero. If it is zero it represents a test-only club account.
              && long.TryParse( parts[2], out _primaryMatchID ) && _primaryMatchID > 0
              && long.TryParse( parts[3], out _subMatchID ) && _subMatchID >= 0) {
                 //Expected Match ID format

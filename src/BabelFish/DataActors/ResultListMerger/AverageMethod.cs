@@ -4,12 +4,6 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
     public class AverageMethod : MergeMethod {
 
-        /// <summary>
-        /// Each MergeMethod concrete class has a unique identifier. It is used in the serialization of MergedResultLists instances
-        /// to identify how the Merged Result List should be calculated.
-        /// </summary>
-        public const string IDENTIFIER = "Average";
-
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public AverageMethod( ResultListMergerEngine tournamentMerger, AverageMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {

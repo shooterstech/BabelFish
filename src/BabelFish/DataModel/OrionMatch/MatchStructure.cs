@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <exception cref="DefinitionNotFoundException">Thrown if the past in SetName is not a known COURSE OF FIRE definition.
         /// <exception cref="InvalidOperationException">Thrown if the Match already has 24 Courses of Fire.
         /// or it is the DEFUALT.</exception>
-        public async Task<int> AddCourseOfFireAsync( SetName setName ) {
+        public async Task<CourseOfFireStructure> AddCourseOfFireAsync( SetName setName ) {
             // The max of 24 Courses of fire is somewhat arbitrary, but comes from keeping resources constrained and having 2 matches a month for a year.
             if (this.CoursesOfFire.Count >= 24) {
                 throw new InvalidOperationException( "A Match cannot have more than 24 Courses of Fire." );
@@ -171,7 +171,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             var maxId = 0;
             foreach (var existingCof in CoursesOfFire) {
-                if (maxId > existingCof.CourseOfFireId) {
+                if (existingCof.CourseOfFireId > maxId) {
                     maxId = existingCof.CourseOfFireId;
                 }
             }
@@ -183,7 +183,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 OnCourseOfFireAdded?.Invoke( this, new EventArgs<CourseOfFireStructure>( cof ) );
             }
 
-            return cof.CourseOfFireId;
+            return cof;
         }
 
         public async Task<AttributeConfiguration> AddAttributeConfigurationAsync( SetName attributeDef ) {
@@ -227,7 +227,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         /// <remarks>NOTE This code is effectively the same as <see cref="Tournament.CreateMergedResultListAsync(MergeMethodType)"/>. If you change
         /// code here, change it there too.</remarks>
-        public async Task<MergedResultList> CreateMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType ) {
+        public async Task<MergedResultList> AddMergedResultListAsync( string resultListName, MergeMethodType mergeMethodType ) {
 
             var mrl = await MergedResultList.CreateAsync( this, resultListName, mergeMethodType );
 

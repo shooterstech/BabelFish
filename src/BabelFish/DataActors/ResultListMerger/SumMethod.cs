@@ -8,12 +8,6 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
     /// </summary>
     public class SumMethod : MergeMethod {
 
-        /// <summary>
-        /// Each MergeMethod concrete class has a unique identifier. It is used in the serialization of MergedResultLists instances
-        /// to identify how the Merged Result List should be calculated.
-        /// </summary>
-        public const string IDENTIFIER = "Sum";
-
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>

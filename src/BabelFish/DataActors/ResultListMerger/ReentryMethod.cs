@@ -5,12 +5,6 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
     public class ReentryMethod : MergeMethod {
 
-        /// <summary>
-        /// Each MergeMethod concrete class has a unique identifier. It is used in the serialization of MergedResultLists instances
-        /// to identify how the Merged Result List should be calculated.
-        /// </summary>
-        public const string IDENTIFIER = "Reentry";
-
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private EventComposite _topLevelEvent;
 
