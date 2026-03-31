@@ -24,10 +24,10 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <summary>
         /// Constructor. Protected so end users can not call it directly. Instead, use the <see cref="FactoryAsync(ResultListMergerEngine, MergedResultList)"/> method.
         /// </summary>
-        /// <param name="tournamentMerger"></param>
-        /// <param name="configuration"></param>
-        protected MergeMethod( ResultListMergerEngine tournamentMerger, MergeConfiguration configuration ) {
-            this.ResultListMergerEngine = tournamentMerger;
+        /// <param name="resultListMergerEngine">The <see cref="ResultListMergerEngine"/> instance in use.</param>
+        /// <param name="configuration">The <see cref="MergeConfiguration"/> instance in use.</param>
+        protected MergeMethod( ResultListMergerEngine resultListMergerEngine, MergeConfiguration configuration ) {
+            this.ResultListMergerEngine = resultListMergerEngine;
             this._mergeConfiguration = configuration;
         }
 

@@ -330,8 +330,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             }
 
             ResultList rl = new ResultList();
-            //Each ResultList instance needs a COURSE OF FIRE definition. However, these merged result lists are dynamic ... so not sure yet what to put as the .CourseOfFireDef
-            rl.CourseOfFireDef = SetName.Parse( "v1.0:ntparc:40 Shot Standing" );
+            //NOTE: Normally a ResultList requires a COURSE OF FIRE definition, but in this case we are merging together Result Lists that may have different Course of Fire definitions, so we can't really assign a Course of Fire definition to this merged Result List.
             rl.EventName = MergedResultList.ResultName;
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
             rl.Items.AddRange( _mergedResultEvents.Values );

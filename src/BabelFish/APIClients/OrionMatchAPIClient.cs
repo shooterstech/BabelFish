@@ -246,45 +246,7 @@ namespace Scopos.BabelFish.APIClients {
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
 
-        /*
-        public async Task<List<ResultList>> GetResultListsAsync2( MergedResultList mergedResultList ) {
-            List<ResultList> resultLists = new List<ResultList>();
-
-            GetResultListPublicRequest getResultListRequest;
-            GetResultListPublicResponse getResultListResponse;
-            ResultList resultList = null;
-            foreach (var rlm in mergedResultList.ResultListMembers) {
-
-                getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
-
-                do {
-                    getResultListResponse = await this.GetResultListPublicAsync( getResultListRequest );
-                    if (getResultListResponse.HasOkStatusCode) {
-                        if (resultList is null) {
-                            //This is the first set of result list items. the result list may have more
-                            resultList = getResultListResponse.ResultList;
-                            resultLists.Add( resultList );
-                        } else {
-                            //This is the second or more set of result list items.
-                            resultList.Items.AddRange( getResultListResponse.ResultList.Items );
-                        }
-
-                        //Check if we have more items.
-                        if (getResultListResponse.HasMoreItems)
-                            getResultListRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
-                    } else {
-                        var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
-                        _logger.Error( msg );
-                    }
-                } while (getResultListResponse.HasMoreItems);
-
-                //By setting resultList ot null, we indicate the next loop is a new result list.
-                resultList = null;
-            }
-            return resultLists;
-        }
-        */
-
+        /// <inheritdoc />
         public async Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) {
             var tasks = new List<Task<ResultList?>>();
 

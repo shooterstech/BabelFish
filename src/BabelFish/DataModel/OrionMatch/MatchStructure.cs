@@ -116,6 +116,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public Match Match { get; internal set; }
 
+        /// <inheritdoc />
         [G_NS.JsonIgnore]
         public MatchID MatchId {
             get {
@@ -123,6 +124,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <inheritdoc />
         [G_NS.JsonIgnore]
         public IResultListFetcher ResultListFetcher {
             get {

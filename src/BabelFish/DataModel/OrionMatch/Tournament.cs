@@ -92,6 +92,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// The policy in place to allow new matches (in the form of TournamentMembers) to be added to this Tournament. For example,
+        /// if the policy is set to "Invite", then new members can only be added by being invited by the owner of the tournament.
+        /// If the policy is set to "Open", then anyone can add themselves as a member of the tournament.
+        /// </summary>
         [G_NS.JsonProperty( Order = 10 )]
         public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicyOption.INVITE;
 
@@ -119,6 +124,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Helper Properties
 
+        /// <inheritdoc />
         [G_NS.JsonIgnore]
         public IResultListFetcher ResultListFetcher { get; private set; } = new OrionMatchAPIClient();
 

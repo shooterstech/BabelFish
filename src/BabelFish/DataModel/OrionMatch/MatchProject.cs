@@ -201,6 +201,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return mp;
         }
 
+        /// <inheritdoc />
         public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 
         #endregion
