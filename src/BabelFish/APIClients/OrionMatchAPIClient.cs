@@ -802,6 +802,19 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// Tournament Search API
         /// </summary>
+        /// <param name="requestParameters">TournamentSearchPublicRequest object</param>
+        /// <returns>Tournament search list data</returns>
+        public async Task<TournamentSearchPublicResponse> TournamentSearchPublicAsync( TournamentSearchPublicRequest requestParameters ) {
+            TournamentSearchPublicResponse response = new TournamentSearchPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Tournament Search API
+        /// </summary>
         /// <param name="requestParameters">TournamentSearchAuthenticatedRequest object</param>
         /// <returns>Tournament search list data</returns>
         public async Task<TournamentSearchAuthenticatedResponse> TournamentSearchAuthenticatedAsync( TournamentSearchAuthenticatedRequest requestParameters ) {
@@ -810,6 +823,20 @@ namespace Scopos.BabelFish.APIClients {
             await this.CallAPIAsync( requestParameters, response );
 
             return response;
+        }
+
+        /// <summary>
+        /// Tournament Search API
+        /// </summary>
+        /// <param name="requestParameters">TournamentSearchAbstractRequest object</param>
+        /// <returns>Tournament search list data</returns>
+        public async Task<TournamentSearchAbstractResponse> TournamentSearchAsync( TournamentSearchAbstractRequest requestParameters ) {
+            if (requestParameters is TournamentSearchPublicRequest)
+                return await this.TournamentSearchPublicAsync( (TournamentSearchPublicRequest)requestParameters );
+            else if (requestParameters is TournamentSearchAuthenticatedRequest)
+                return await this.TournamentSearchAuthenticatedAsync( (TournamentSearchAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
 
         /// <summary>

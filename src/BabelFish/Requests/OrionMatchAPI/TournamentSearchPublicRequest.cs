@@ -1,18 +1,12 @@
-using Scopos.BabelFish.Runtime.Authentication;
-
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class TournamentSearchAuthenticatedRequest : TournamentSearchAbstractRequest {
+    public class TournamentSearchPublicRequest : TournamentSearchAbstractRequest {
 
-        /// <summary>
-        /// Authenticated constructor.
-        /// </summary>
-        public TournamentSearchAuthenticatedRequest( UserAuthentication credentials ) : base( "TournamentSearch", credentials ) {
-            this.RequiresCredentials = true;
+        public TournamentSearchPublicRequest() : base( "TournamentSearch" ) {
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new TournamentSearchAuthenticatedRequest( Credentials );
+            var newRequest = new TournamentSearchPublicRequest();
             newRequest.Name = Name;
             newRequest.OwnerId = OwnerId;
             newRequest.LicenseNumber = LicenseNumber;

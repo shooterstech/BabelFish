@@ -1114,6 +1114,38 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task TournamentSearchPublicReturnsCreatedTournamentWhenFilteredByNameAndOwner() {
+            // Intention: verify TournamentSearch public path returns a newly created public tournament using name/owner filters.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                var tournamentName = UniqueName( "Full Tournament Public Search Name Filter" );
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    authorizedUser,
+                    tournamentName,
+                    VisibilityOption.PUBLIC,
+                    showOnSearch: true );
+
+                var request = new TournamentSearchPublicRequest() {
+                    Name = tournamentName,
+                    OwnerId = TournamentOwnerId,
+                    Visibility = VisibilityOption.PUBLIC,
+                    Limit = 10
+                };
+
+                var response = await client.TournamentSearchPublicAsync( request );
+
+                Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+                Assert.IsTrue( response.TournamentSearchList.Items.Any( x => x.TournamentId.Equals( tournamentId ) ) );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
         public async Task TournamentSearchReturnsCreatedTournamentWhenFilteredByNameAndOwner() {
             // Intention: verify TournamentSearch success path returns a newly created tournament using name/owner filters.
             var client = CreateClient();
