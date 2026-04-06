@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
-    <AssemblyVersion>1.12.0</AssemblyVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
     <!-- Update with each build -->
-    <FileVersion>1.12.4.4</FileVersion>
+    <FileVersion>2.1.1-alpha.2</FileVersion>
     <!-- Updaet with each release, may use -alpha, -beta -->
-    <Version>1.12.4.4</Version>
+    <Version>2.1.1-alpha.2</Version>
     <PackageId>Scopos.BabelFish.Reports</PackageId>
     <Authors>Scopos LLC</Authors>
     <Company>Scopos LLC</Company>

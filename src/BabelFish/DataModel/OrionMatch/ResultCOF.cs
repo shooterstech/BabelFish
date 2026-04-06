@@ -72,7 +72,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8 )]
-        public string MatchID { get; set; } = string.Empty;
+        public MatchID MatchID { get; set; } = MatchID.DEFAULT;
+
+        public int CourseOfFireId { get; set; } = 1;
 
         /// <summary>
         /// Human readable name of the match.
@@ -92,9 +94,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Unique ID for the parent of this match, if this is a Virtual Match. If this is not a
         /// Virtual Match, then it will be the same value as MatchID.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 11 )]
-        [G_NS.JsonProperty( Order = 11 )]
-        public string ParentID { get; set; } = string.Empty;
+        [G_NS.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
+            }
+        }
 
 
         [G_STJ_SER.JsonPropertyOrder( 12 )]

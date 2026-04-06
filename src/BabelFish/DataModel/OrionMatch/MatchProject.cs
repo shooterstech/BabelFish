@@ -1,9 +1,11 @@
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class MatchProject :
         ISaveToFile,
+        IResultListFetcher,
         G_STJ_SER.IJsonOnDeserialized,
         G_STJ_SER.IJsonOnDeserializing {
 
@@ -112,6 +114,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public Match Match { get; private set; }
 
+        /*
+         * EKA March 2026: Isn't this the same as a MatchParticipantList? Do we need both? Maybe we can just use a MatchParticipantList here instead of a List<MatchParticipant>?
+         */
         [G_NS.JsonIgnore]
         public List<MatchParticipant> Participants { get; set; } = new List<MatchParticipant>();
 
@@ -195,6 +200,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
             return mp;
         }
+
+        /// <inheritdoc />
+        public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 
         #endregion
 

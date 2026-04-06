@@ -66,8 +66,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="setName"></param>
         /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return the default SetName (v1.0:orion:default).</param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed and throwExceptionOnError is true.</exception>
-        public static SetName Parse( string setName, bool throwExceptionOnError = false ) {
+        /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed, the setName string is empty or otherwise invalid, and throwExceptionOnError is true.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the passed in setName string is null and throwExceptionOnError is true.</exception>
+        public static SetName Parse( string? setName, bool throwExceptionOnError = false ) {
+
+            if (setName is null) {
+                var msg = "The set name string is null.";
+                _logger.Error( msg );
+                if (throwExceptionOnError)
+                    throw new ArgumentNullException( nameof( setName ), msg );
+                return DEFAULT;
+            }
 
             //Look up in cache first
             SetName sn;

@@ -5,12 +5,6 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
     public class ReentryMethod : MergeMethod {
 
-        /// <summary>
-        /// Each MergeMethod concrete class has a unique identifier. It is used in the serialization of MergedResultLists instances
-        /// to identify how the Merged Result List should be calculated.
-        /// </summary>
-        public const string IDENTIFIER = "Reentry";
-
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private EventComposite _topLevelEvent;
 
@@ -22,8 +16,8 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             var cof = await MergeConfiguration.GetCourseOfFireDefinitionAsync();
             _topLevelEvent = EventComposite.GrowEventTree( cof );
             this.TopLevelEventname = _topLevelEvent.EventName;
-            this.TournamentMerger.ResultListFormat = await MergeConfiguration.GetResultListFormatDefinitionAsync();
-            this.TournamentMerger.RankingRule = await MergeConfiguration.GetRankingRuleDefinitionAsync();
+            this.ResultListMergerEngine.ResultListFormat = await MergeConfiguration.GetResultListFormatDefinitionAsync();
+            this.ResultListMergerEngine.RankingRule = await MergeConfiguration.GetRankingRuleDefinitionAsync();
         }
 
         public ReentryMethodConfiguration MergeConfiguration {
@@ -50,7 +44,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             foreach (var reentryEvent in reentryEvents) {
                 eventScores.Clear();
 
-                foreach (var resultListMember in TournamentMerger.ResultListsMembers) {
+                foreach (var resultListMember in ResultListMergerEngine.ResultListsMembers) {
                     key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, reentryEvent.EventName );
                     if (re.ResultCofScores.TryGetValue( key, out var score )) {
                         eventScores.Add( score );

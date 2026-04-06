@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
             definition.SetDefaultValues();
 
             Assert.IsTrue( definition.Fields.Count == 2 );
-            Assert.IsTrue( definition.Format.Columns.Count == 8 );
+            Assert.IsTrue( definition.Format.Columns.Count == 7 );
             Assert.IsTrue( definition.Format.Display.Header.ClassSet.Count == 1 );
             Assert.IsTrue( definition.Format.Display.Body.ClassSet.Count == 1 );
             Assert.IsTrue( definition.Format.Display.Children.ClassSet.Count == 1 );

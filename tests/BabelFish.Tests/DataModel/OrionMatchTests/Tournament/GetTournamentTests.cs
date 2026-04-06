@@ -427,7 +427,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             var tournament = response.Tournament;
             var mergedResultList = tournament.MergedResultLists[0];
             var configuration = (ReentryMethodConfiguration)mergedResultList.Configuration;
-            var tournamentMerger = await ResultListMergerEngine.FactoryAsync( tournament, mergedResultList.ResultName );
+            var tournamentMerger = await ResultListMergerEngine.CreateAsync( mergedResultList );
 
             var resultList = await tournamentMerger.MergeAsync();
 

@@ -12,11 +12,11 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 if (root.TryGetProperty( "Method", out JsonElement methodValue )) {
 
                     switch (methodValue.ToString()) {
-                        case SumMethod.IDENTIFIER:
+                        case "SUM":
                             return JsonSerializer.Deserialize<SumMethodConfiguration>( root.GetRawText(), options );
-                        case AverageMethod.IDENTIFIER:
+                        case "AVERAGE":
                             return JsonSerializer.Deserialize<AverageMethodConfiguration>( root.GetRawText(), options );
-                        case ReentryMethod.IDENTIFIER:
+                        case "REENTRY":
                             var foo = JsonSerializer.Deserialize<ReentryMethodConfiguration>( root.GetRawText(), options );
                             return foo;
                         default:

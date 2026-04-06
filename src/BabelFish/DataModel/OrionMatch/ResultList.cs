@@ -10,12 +10,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Intermediate status of the competition Includes an absolute and predictive ranking of competitors based on their performance.
     /// </summary>
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
+    public class ResultList :
+        ITokenItems<ResultEvent>,
+        IRLIFList,
+        IGetResultListFormatDefinition,
+        IGetCourseOfFireDefinition,
+        IGetRankingRuleDefinition,
+        IPublishTransactions {
 
+        #region Private Variables
         private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
+        #endregion
 
+        #region Constructors, Initialization, and Deserialization
         /// <summary>
         /// Default constructor, initializes the list of ResultEvents to an empty list.
         /// </summary>
@@ -52,6 +61,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 EndDate = match.EndDate
             } );
         }
+        #endregion
+
+        #region Event Handlers
+
+        #endregion
+
+        #region Data Model Properties
 
         /// <summary>
         /// The name of the match, that this Result List was generated from.
@@ -79,45 +95,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
         public int CourseOfFireId { get; set; } = 1;
-
-        /// <summary>
-        /// If this is a local match, returns the local match id.
-        /// If this is from a virtual match, retur s the virtual match id.
-        /// </summary>
-        /// <remarks>This value is not serialized.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public MatchID MatchID {
-            get {
-                if (this.Metadata.Count == 0) {
-                    //This shouldn't happen
-                    return MatchID.DEFAULT;
-                }
-
-                if (this.Metadata.Count == 1)
-                    return this.Metadata.First().Key;
-
-                //Likely a Virtual Match
-                foreach (var matchID in this.Metadata.Keys) {
-                    if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
-                        return matchID;
-                    }
-                }
-
-                //Um, not really sure how we got this far.
-                return this.Metadata.First().Key;
-
-            }
-        }
-
-        /// <inheritdoc/>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public MatchID ParentID {
-            get {
-                return this.MatchID.GetParentMatchID();
-            }
-        }
 
         /// <summary>
         /// Indicates the completion status of this Result List. 
@@ -274,14 +251,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public bool Partial { get; set; } = false;
 
         /// <summary>
-        /// UTC time that this Result List was updated.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 12 )]
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
-
-        /// <summary>
         /// Key is the local match ID.
         /// Value is the Metadate for the generative match.
         /// When Orion generates a ResultList there will only be 1 value in Metadata.
@@ -334,33 +303,108 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         };
 
         /// <summary>
-        /// Newtonsoft.json helper method, to determine if UserDefinedText should be serialized.
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeUserDefinedText() {
-            //Serialized when UserDefinedText has at least one value that's not an empty string.
-            return (UserDefinedText is not null) &&
-                ((UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string text1 ) && !string.IsNullOrEmpty( text1 )) ||
-                (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string text2 ) && !string.IsNullOrEmpty( text2 )) ||
-                (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )));
-        }
-
-        /// <summary>
         /// The ranked (and should be sorted) list of participants.
         /// </summary>
         [G_NS.JsonProperty( Order = 30 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
 
+        /// <summary>
+        /// When serialized, this is the BableFish version string that the data model of this ResultList instance adheres to.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 98 )]
+        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
+
+        /// <summary>
+        /// UTC time that this Result List was updated.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 99 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+
+        #region Helper Data Model Properties
+
+        /// <summary>
+        /// If this is a local match, returns the local match id.
+        /// If this is from a virtual match, retur s the virtual match id.
+        /// </summary>
+        /// <remarks>This value is not serialized.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public MatchID MatchID {
+            get {
+                if (this.Metadata.Count == 0) {
+                    //This shouldn't happen
+                    return MatchID.DEFAULT;
+                }
+
+                if (this.Metadata.Count == 1)
+                    return this.Metadata.First().Key;
+
+                //Likely a Virtual Match
+                foreach (var matchID in this.Metadata.Keys) {
+                    if (matchID.League || matchID.VirtualMatchParent || matchID.MatchGroup) {
+                        return matchID;
+                    }
+                }
+
+                //Um, not really sure how we got this far.
+                return this.Metadata.First().Key;
+
+            }
+        }
+
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
+            }
+        }
+
+        #endregion
+
+        #region Deprecated Data Model Properties
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 90 )]
+        [Obsolete( "Use .Metadata.Creator" )]
+        public string Creator { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The orion account or at home account who owns this match.
+        /// </summary>
+        /// <example>OrionAcct000001 or AtHomeAcct123456</example>
+        [Obsolete( "Use .MetaData.OwnerId" )]
+        [G_NS.JsonProperty( Order = 91 )]
+        public string OwnerId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// EKA Note Jan 2026: Not really sure what this property does. Likely a artjifact of saveing Result Lists in dynamo.
+        /// </summary>
+        [Obsolete( "Likely will remove soon." )]
+        [G_NS.JsonProperty( Order = 92 )]
+        public string UniqueID { get; set; } = string.Empty;
+
+        /// <summary>
+        /// EKA Note Jan 2026: Not really sure what this property does. Likely a artjifact of saveing Result Lists in dynamo.
+        /// </summary>
+        [Obsolete( "Likely will remove soon." )]
+        [G_NS.JsonProperty( Order = 93 )]
+        public string ResultListID { get; set; } = string.Empty;
+
+        #endregion
+
+        #endregion
+
+        #region Methods
+
         /// <inheritdoc />
         public List<IRLIFItem> GetAsIRLItemsList() {
             return Items.ToList<IRLIFItem>();
         }
-
-        /// <summary>
-        /// When serialized, this is the BableFish version string that the data model of this ResultList instance adheres to.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 41 )]
-        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
 
         #region ITokenItems implementation
         /// <inheritdoc />
@@ -402,34 +446,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
 
-        /// <summary>
-        /// String holding the software (Orion Scoring System) and Version number of the software.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 90 )]
-        [Obsolete( "Use .Metadata.Creator" )]
-        public string Creator { get; set; } = string.Empty;
 
         /// <summary>
-        /// The orion account or at home account who owns this match.
+        /// Newtonsoft.json helper method, to determine if UserDefinedText should be serialized.
         /// </summary>
-        /// <example>OrionAcct000001 or AtHomeAcct123456</example>
-        [Obsolete( "Use .MetaData.OwnerId" )]
-        [G_NS.JsonProperty( Order = 91 )]
-        public string OwnerId { get; set; } = string.Empty;
-
-        /// <summary>
-        /// EKA Note Jan 2026: Not really sure what this property does. Likely a artjifact of saveing Result Lists in dynamo.
-        /// </summary>
-        [Obsolete( "Likely will remove soon." )]
-        [G_NS.JsonProperty( Order = 92 )]
-        public string UniqueID { get; set; } = string.Empty;
-
-        /// <summary>
-        /// EKA Note Jan 2026: Not really sure what this property does. Likely a artjifact of saveing Result Lists in dynamo.
-        /// </summary>
-        [Obsolete( "Likely will remove soon." )]
-        [G_NS.JsonProperty( Order = 93 )]
-        public string ResultListID { get; set; } = string.Empty;
+        /// <returns></returns>
+        public bool ShouldSerializeUserDefinedText() {
+            //Serialized when UserDefinedText has at least one value that's not an empty string.
+            return (UserDefinedText is not null) &&
+                ((UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string text1 ) && !string.IsNullOrEmpty( text1 )) ||
+                (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string text2 ) && !string.IsNullOrEmpty( text2 )) ||
+                (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )));
+        }
 
         /// <inheritdoc />
         /// <exception cref="XApiKeyNotSetException" ></exception>
@@ -490,5 +518,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             resultEvent = null;
             return false;
         }
+
+        #endregion
     }
 }
