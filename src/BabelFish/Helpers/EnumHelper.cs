@@ -71,7 +71,7 @@ namespace Scopos.BabelFish.Helpers {
             foreach (var field in typeof( T ).GetFields()) {
                 var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
                 if (attr != null) {
-                    if (attr.Description == value) {
+                    if (string.Equals(attr.Description, value, StringComparison.OrdinalIgnoreCase)) {
                         returnEnum = (T)field.GetValue( null );
                         break;
                     }
@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.Helpers {
             foreach (var field in typeof( T ).GetFields()) {
                 var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
                 if (attr != null) {
-                    if (attr.Description == value) {
+                    if (string.Equals(attr.Description, value, StringComparison.OrdinalIgnoreCase)) {
                         result = (T)field.GetValue( null );
                         return true;
                     }
