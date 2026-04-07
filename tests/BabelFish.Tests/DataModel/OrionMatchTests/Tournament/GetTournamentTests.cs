@@ -38,6 +38,47 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task GetTournamentAuthenticatedCacheRetainsPermissions() {
+            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev7Credentials.Username,
+                Constants.TestDev7Credentials.Password );
+            await userAuthentication.InitializeAsync();
+
+            var tournamentName = $"BabelFish API Cache Permission Test {DateTime.UtcNow:yyyyMMddHHmmss}";
+            var createRequest = new CreateTournamentAuthenticatedRequest( userAuthentication );
+            createRequest.TournamentName = tournamentName;
+            createRequest.OwnerId = "OrionAcct000002";
+            createRequest.Visibility = VisibilityOption.PRIVATE;
+            createRequest.ShowOnSearch = false;
+
+            MatchID? tournamentId = null;
+
+            try {
+                var createResponse = await client.CreateTournamentAuthenticatedAsync( createRequest );
+                Assert.IsTrue( createResponse.HasOkStatusCode );
+                tournamentId = createResponse.Tournament.TournamentId;
+
+                var uncachedResponse = await client.GetTournamentAuthenticatedAsync( tournamentId, userAuthentication );
+                Assert.IsTrue( uncachedResponse.HasOkStatusCode );
+                Assert.IsFalse( uncachedResponse.InMemoryCachedResponse );
+                Assert.IsTrue( uncachedResponse.Permissions[tournamentId.ToString()].Contains( Permission.TOURNAMENT_READ ) );
+                Assert.IsTrue( uncachedResponse.Permissions[tournamentId.ToString()].Contains( Permission.TOURNAMENT_EDIT ) );
+
+                var cachedResponse = await client.GetTournamentAuthenticatedAsync( tournamentId, userAuthentication );
+                Assert.IsTrue( cachedResponse.HasOkStatusCode );
+                Assert.IsTrue( cachedResponse.InMemoryCachedResponse );
+                Assert.IsTrue( cachedResponse.Permissions[tournamentId.ToString()].Contains( Permission.TOURNAMENT_READ ) );
+                Assert.IsTrue( cachedResponse.Permissions[tournamentId.ToString()].Contains( Permission.TOURNAMENT_EDIT ) );
+            } finally {
+                if (tournamentId != null) {
+                    var deleteRequest = new DeleteTournamentAuthenticatedRequest( userAuthentication, tournamentId );
+                    await client.DeleteTournamentAuthenticatedAsync( deleteRequest );
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task BasicHappyPathCreateTournamentWithRequestTest() {
             var client = new OrionMatchAPIClient( APIStage.BETA );
             var userAuthentication = new UserAuthentication(

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 
@@ -119,9 +120,11 @@ namespace Scopos.BabelFish.APIClients {
 
         public RequestStatusCode OverallStatusCode { get; set; }
 
-        public MessageResponse MessageResponse { get; set; }
+        public MessageResponse MessageResponse { get; set; } = new MessageResponse();
 
         public G_STJ.JsonDocument Body { get; set; }
+
+        public Dictionary<string, HashSet<Permission>> Permissions { get; set; } = new Dictionary<string, HashSet<Permission>>();
 
         public DateTime ValidUntil { get; set; }
     }

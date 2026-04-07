@@ -103,13 +103,10 @@ namespace Scopos.BabelFish.APIClients {
                 //We'll assume everythning will go A-OK ;) 
                 response.RestApiStatusCode = HttpStatusCode.OK;
                 response.OverallStatusCode = RequestStatusCode.OK;
-
-                //response.MessageResponse = cachedResponse.MessageResponse.Copy();
-                //response.MessageResponse.Message.Add( "In memory cached response" );
-                //var stopWatch = Stopwatch.StartNew();
+                // response.MessageResponse = CloneMessageResponse( cachedResponse.MessageResponse );
                 response.Body = cachedResponse.Body;
+                response.Permissions = ClonePermissions( cachedResponse.Permissions );
                 response.TimeToRun = DateTime.Now - startTime;
-                //stopWatch.Stop();
                 response.InMemoryCachedResponse = true;
 
                 _logger.Info( $"Returning a in-memory cached Response for {request}." );
@@ -124,8 +121,9 @@ namespace Scopos.BabelFish.APIClients {
                 if (fileSystemReadResponse.Item1) {
                     response.RestApiStatusCode = HttpStatusCode.OK;
                     response.OverallStatusCode = RequestStatusCode.OK;
-                    //response.MessageResponse.Message.Add( "Read from file system response" );
+                    // response.MessageResponse = CloneMessageResponse( fileSystemReadResponse.Item2.MessageResponse );
                     response.Body = fileSystemReadResponse.Item2.Body;
+                    response.Permissions = ClonePermissions( fileSystemReadResponse.Item2.Permissions );
                     response.TimeToRun = DateTime.Now - startTime;
                     response.FileSystemCachedResponse = true;
 
@@ -240,9 +238,10 @@ namespace Scopos.BabelFish.APIClients {
                         cachedResponse = new ResponseIntermediateObject() {
                             RestApiStatusCode = response.RestApiStatusCode,
                             OverallStatusCode = RequestStatusCode.OK,
-                            //MessageResponse = response.MessageResponse.Copy(),
+                            // MessageResponse = CloneMessageResponse( response.MessageResponse ),
                             Request = request,
                             Body = response.Body,
+                            Permissions = ClonePermissions( response.Permissions ),
                             ValidUntil = response.GetCacheValueExpiryTime()
                         };
 
@@ -288,6 +287,32 @@ namespace Scopos.BabelFish.APIClients {
                 _logger.Fatal( ex, $"API Call failed: {ex.Message}" );
                 _logger.Debug( jsonAsString );
             }
+        }
+
+        private static MessageResponse CloneMessageResponse( MessageResponse? source ) { //currently MessageResponse caching is commented out
+            var clone = new MessageResponse();
+
+            if (source?.Message != null) {
+                clone.Message.AddRange( source.Message );
+            }
+
+            return clone;
+        }
+
+        private static Dictionary<string, HashSet<Permission>> ClonePermissions( Dictionary<string, HashSet<Permission>>? source ) {
+            var clone = new Dictionary<string, HashSet<Permission>>();
+
+            if (source == null) {
+                return clone;
+            }
+
+            foreach (var entry in source) {
+                clone[entry.Key] = entry.Value == null
+                    ? new HashSet<Permission>()
+                    : new HashSet<Permission>( entry.Value );
+            }
+
+            return clone;
         }
 
         private static DirectoryInfo? _localStorageDirectory { get; set; }
