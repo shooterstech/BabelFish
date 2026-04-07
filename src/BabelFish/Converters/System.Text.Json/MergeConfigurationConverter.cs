@@ -13,10 +13,13 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
                     switch (methodValue.ToString()) {
                         case "SUM":
+                        case "Sum":
                             return JsonSerializer.Deserialize<SumMethodConfiguration>( root.GetRawText(), options );
                         case "AVERAGE":
+                        case "Average":
                             return JsonSerializer.Deserialize<AverageMethodConfiguration>( root.GetRawText(), options );
                         case "REENTRY":
+                        case "Reentry":
                             var foo = JsonSerializer.Deserialize<ReentryMethodConfiguration>( root.GetRawText(), options );
                             return foo;
                         default:

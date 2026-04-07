@@ -100,27 +100,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>Its is a fantastically bad idea to change this value after Construction.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        public int MergedId { get; set; } = 1; // Guid.NewGuid().ToString();
+        public string MergedId { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// The Tournament Method identifier to use to merge this Result List.
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
         public MergeMethodType Method { get; set; } = MergeMethodType.SUM;
-
-        /// <summary>
-        /// The SCORE FORMAT COLLECTION to use while displaying scores for this MergedResultList
-        /// </summary>
-        [G_NS.JsonProperty( Order = 4 )]
-        [Obsolete( "Use .Configuration.ScoreFormatCollectionDef instead." )]
-        public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
-
-        /// <summary>
-        /// The ScoreConfigName to use, from the SCORE FORMAT COLLECTION, while displaying scores for this MergedResultList
-        /// </summary>
-        [G_NS.JsonProperty( Order = 5 )]
-        [Obsolete( "Use .Configuration.ScoreConfigName instead." )]
-        public string ScoreConfigName { get; set; } = "Decimal";
 
         /// <summary>
         /// The list of Result Lists (in the form of <see cref="ResultListMember"/> to pull data from for this MergedResultList.
