@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -201,7 +200,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
             //Now clear the cache so we are starting with a blank slate
             Initializer.ClearCache( false );
 
-            var swFirstCall = Stopwatch.StartNew();
+            var swFirstCall = System.Diagnostics.Stopwatch.StartNew();
             try {
                 await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
             } catch (DefinitionNotFoundException) {
@@ -209,7 +208,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
                 swFirstCall.Stop();
             }
 
-            var swSecondCall = Stopwatch.StartNew();
+            var swSecondCall = System.Diagnostics.Stopwatch.StartNew();
             try {
                 await DefinitionCache.GetAttributeDefinitionAsync( notARealAttrDefinition );
             } catch (DefinitionNotFoundException) {
@@ -235,7 +234,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
 
             //Set the LocalStoreDirectory and preload. Which should also save to file system
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"c:\temp" );
-            Stopwatch loadFromRestApi = Stopwatch.StartNew();
+            var loadFromRestApi = System.Diagnostics.Stopwatch.StartNew();
             await DefinitionCache.PreLoadAsync();
             loadFromRestApi.Stop();
 
@@ -250,7 +249,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
             Assert.AreEqual( 0, DefinitionCache.GetCacheSize( DefinitionType.SCOREFORMATCOLLECTION ) );
 
             //Re-run preload, which will read the files from the local file system (since they should exist now)
-            Stopwatch loadFromFileSystem = Stopwatch.StartNew();
+            var loadFromFileSystem = System.Diagnostics.Stopwatch.StartNew();
             await DefinitionCache.PreLoadAsync();
             loadFromFileSystem.Stop();
 

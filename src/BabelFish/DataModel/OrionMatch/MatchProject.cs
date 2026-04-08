@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
@@ -13,6 +14,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         private bool _ignoreEvents = false;
         private string _projectName;
+
+        private ConcurrentDictionary<string, MatchParticipant> _participantsByResultCOFID = new ConcurrentDictionary<string, MatchParticipant>();
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
@@ -32,6 +35,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             project.ProjectDirectory = new DirectoryInfo( Path.Combine( myMatchesDirectory.FullName, project.ProjectName ) );
             project.ProjectDirectory.Create();
+
+            project.ShotMapper = new ShotMapper( project );
 
             return project;
         }
@@ -129,6 +134,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [G_NS.JsonIgnore]
         public DirectoryInfo ProjectDirectory { get; set; }
+
+        [G_NS.JsonIgnore]
+        public ShotMapper ShotMapper { get; private set; }
         #endregion
 
         #region Methods
@@ -154,7 +162,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Participants.Add( mp );
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
-                mp.CreateEntry( cof.CourseOfFireId );
+                var entry = (CourseOfFireEntryIndividual)mp.CreateEntry( cof.CourseOfFireId );
+                _participantsByResultCOFID.TryAdd( entry.ResultCofId, mp );
             }
 
             foreach (var attributeConfiguration in Match.MatchStructure.SharedAttributes) {
@@ -186,7 +195,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Participants.Add( mp );
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
-                mp.CreateEntry( cof.CourseOfFireId );
+                var entry = mp.CreateEntry( cof.CourseOfFireId );
+                //No need to save Result COF ID to _participantsByResultCOFID here, because teams don't have Result COF IDs. Only individuals do.
             }
 
             foreach (var attributeConfiguration in Match.MatchStructure.SharedAttributes) {
@@ -201,9 +211,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return mp;
         }
 
+        /// <summary>
+        /// Tries and finds the <see cref="MatchParticipant"/> associated with the specified result COFID. 
+        /// </summary>
+        /// <param name="resultCOFID">UUID formatted Result COF ID.</param>
+        /// <param name="participant">If a match was made, this will return the MatchParticipant associated with the specified result COFID.</param>
+        /// <returns>A boolean indicating whether the participant was found.</returns>
+        public bool TryGetParticipantByResultCOFID( string resultCOFID, out MatchParticipant participant ) {
+            return _participantsByResultCOFID.TryGetValue( resultCOFID, out participant );
+        }
+
         /// <inheritdoc />
         public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 
+        public void SetScoringSystem( ScoringSystem scoringSystemType, string nameOfScoringSystem ) {
+#if DEBUG
+            // No-op placeholder
+            ;
+
+#else
+            throw new NotImplementedException( "SetScoringSystem() is not yet implemented. Need to figure out how to handle different scoring systems." );
+#endif
+
+
+        }
         #endregion
 
         #region ISaveToFile Implementation

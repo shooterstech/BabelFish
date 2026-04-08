@@ -161,6 +161,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Attempts to locate and return the CourseOfFireEntry in the Entries list with the specified courseOfFireId. Returns true if an entry with the specified courseOfFireId is found, and false otherwise.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        public bool TryGetEntryByCourseOfFireId( int courseOfFireId, out CourseOfFireEntry entry ) {
+            int currentEntryIndex = Entries.FindIndex( e => e.CourseOfFireId == courseOfFireId );
+            if (currentEntryIndex == -1) {
+                entry = null;
+                return false;
+            } else {
+                entry = Entries[currentEntryIndex];
+                return true;
+            }
+        }
+
         /// <inheritdoc/>
         public override string ToString() {
             return Participant.DisplayName;
