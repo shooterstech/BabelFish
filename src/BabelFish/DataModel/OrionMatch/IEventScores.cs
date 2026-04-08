@@ -1,14 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Shot = Scopos.BabelFish.DataModel.Athena.Shot.Shot;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     public interface IEventScores : IParticipant {
 
+        /// <summary>
+        /// Compiled <see cref="EventScore"/> fired by the participant within a Result COF, organized by event name.
+        /// <para>Key is the EventName (as defined by the COURSE OF FIRE).</para>
+        /// <para>Value is the compiled EventScore.</para>
+        /// </summary>
         Dictionary<string, EventScore> EventScores { get; }
 
+        /// <summary>
+        /// Set of <see cref="Shot">Shots</see> fired by the participant within a Result COF.
+        /// <para>Key is the sequence number of the shot represented as a string.</para>
+        /// <para>Value is the Shot.</para>
+        /// </summary>
         Dictionary<string, Shot> Shots { get; }
 
         /// <summary>
