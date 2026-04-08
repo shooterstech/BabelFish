@@ -24,18 +24,33 @@ namespace Scopos.BabelFish.Tests {
             //Initialize the system, without pre-poulating the Definitino Cache (which avoids unnecessary API calls).
             Initializer.Initialize( xApiKey, false );
 
-            if(excelPackageLicense != null) {
+            if (excelPackageLicense != null) {
                 //add EPPlus license, was unable to add it to app.config
-                ExcelPackage.License.SetCommercial(excelPackageLicense);
+                ExcelPackage.License.SetCommercial( excelPackageLicense );
+            } else {
+                Console.WriteLine( "ExcelPackageLicense environment variable not set, EPPlus will run in non-commercial mode which may cause some features to not work." );
             }
-            else {
-                Console.WriteLine("ExcelPackageLicense environment variable not set, EPPlus will run in non-commercial mode which may cause some features to not work.");
-            }
-            
+
 
             DefinitionAPIClient.LocalStoreDirectory = RelativeDirectoryForTesting;
 
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+        }
+
+        /// <summary>
+        /// Helper method to clean up a directory by deleting all files and subdirectories within it. This is used to ensure a clean slate for tests that involve file creation and serialization.
+        /// </summary>
+        /// <param name="directory"></param>
+        protected void ClearDirectory( string directory ) {
+            // Delete files
+            foreach (var file in Directory.GetFiles( directory )) {
+                File.Delete( file );
+            }
+
+            // Delete subdirectories
+            foreach (var dir in Directory.GetDirectories( directory )) {
+                Directory.Delete( dir, recursive: true );
+            }
         }
     }
 }

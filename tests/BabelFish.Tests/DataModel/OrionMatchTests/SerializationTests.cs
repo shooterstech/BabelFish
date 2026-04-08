@@ -279,21 +279,5 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 }
             }
         }
-
-        /// <summary>
-        /// Helper method to clean up a directory by deleting all files and subdirectories within it. This is used to ensure a clean slate for tests that involve file creation and serialization.
-        /// </summary>
-        /// <param name="directory"></param>
-        void ClearDirectory( string directory ) {
-            // Delete files
-            foreach (var file in Directory.GetFiles( directory )) {
-                File.Delete( file );
-            }
-
-            // Delete subdirectories
-            foreach (var dir in Directory.GetDirectories( directory )) {
-                Directory.Delete( dir, recursive: true );
-            }
-        }
     }
 }

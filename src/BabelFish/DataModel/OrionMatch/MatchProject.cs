@@ -221,6 +221,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return _participantsByResultCOFID.TryGetValue( resultCOFID, out participant );
         }
 
+        /// <summary>
+        /// Tries and finds the <see cref="CourseOfFireEntryIndividual"/> associated with the specified result COFID..
+        /// </summary>
+        /// <param name="resultCOFID"></param>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        public bool TryGetCourseOfFireEntryByResultCOFID( string resultCOFID, out CourseOfFireEntryIndividual? entry ) {
+            if (_participantsByResultCOFID.TryGetValue( resultCOFID, out MatchParticipant participant )) {
+                foreach (var entryToTest in participant.Entries) {
+                    if (entryToTest is CourseOfFireEntryIndividual invEntry
+                        && invEntry.ResultCofId == resultCOFID) {
+                        entry = invEntry;
+                        return true;
+                    }
+                }
+            }
+
+            entry = null;
+            return false;
+        }
+
         /// <inheritdoc />
         public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
 
@@ -156,19 +157,71 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <para>Intended to be used to populate the Shots dictionary in <see cref="IEventScores"/>.</para>
         /// <para>Returned dictionary is empty, if the passed in resultCOFID is not known.</para>
         /// </summary>
-        public Dictionary<string, Shot> GetShots( string resultCOFID ) {
+        public async Task<Dictionary<string, Shot>> GetShotsBySequenceAsync( string resultCOFID ) {
+
+            var shotDictionaryToReturn = new Dictionary<string, Shot>();
+            CourseOfFireEntryIndividual entry;
+            if (!MatchProject.TryGetCourseOfFireEntryByResultCOFID( resultCOFID, out entry )) {
+                return shotDictionaryToReturn;
+            }
+
+            //Look up the Course of Fire Structure for this course of fire entry. If the course of fire structure, which should not happen can not be found, return an empty dictionary.
+            CourseOfFireStructure cofStructure;
+            if (!MatchProject.Match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {
+                Debug.Fail( $"Was not able to find Course of Fire Structure for Course of Fire Entry with Result COF ID {resultCOFID}. This should not happen, as the Course of Fire Entry should not have been able to be created without a Course of Fire Structure." );
+                return shotDictionaryToReturn;
+            }
+
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+
+            // We will need to look up stages based on the StageLabel.
+            // Key is the StageLabel, value is the list of leafs (singular events) under the stage.
+            Dictionary<string, Queue<EventComposite>> stageLabelLookup = new Dictionary<string, Queue<EventComposite>>();
+            var tempQueue = new Queue<EventComposite>();
+            foreach (var singular in topLevelEvent.GetAllSingulars()) {
+                if (!stageLabelLookup.TryGetValue( singular.StageLabel, out tempQueue )) {
+                    tempQueue = new Queue<EventComposite>();
+                    stageLabelLookup[singular.StageLabel] = tempQueue;
+                }
+                tempQueue.Enqueue( singular );
+            }
 
             //First get the mutex for the Shot List for this Result COF ID. If it doesn't exist, create it.
             var mutex = _shotListMutexes.GetOrAdd( resultCOFID, new object() );
             lock (mutex) {
                 //Generate the dictionary of shots to return, if the resultCOFID is known.
                 if (_shotDictionary.TryGetValue( resultCOFID, out var shots )) {
-                    return shots.ToDictionary( s => s.Sequence.ToString(), s => s );
+
+                    foreach (var shot in shots) {
+                        shotDictionaryToReturn[shot.Sequence.ToString()] = shot;
+
+                        var stageLabel = shot.StageLabel;
+                        if ((stageLabelLookup.TryGetValue( stageLabel, out Queue<EventComposite> queue )
+                            && queue.Count > 0)) {
+                            var singular = queue.Dequeue();
+                            shot.EventName = singular.EventName;
+                        }
+                    }
+
+                    return shotDictionaryToReturn;
                 }
             }
 
             //Return an empty dictionary if the resultCOFID is not known.
             return new Dictionary<string, Shot>();
+        }
+
+        public async Task<Dictionary<string, Shot>> GetShotsByEventNameAsync( string resultCOFID ) {
+
+            var shotsBySequence = await this.GetShotsBySequenceAsync( resultCOFID );
+            var shotsByEventName = new Dictionary<string, Shot>();
+            foreach (var shot in shotsBySequence.Values) {
+                if (shot.EventName is not null) {
+                    shotsByEventName[shot.EventName] = shot;
+                }
+            }
+            return shotsByEventName;
         }
 
         /// <summary>
@@ -183,8 +236,48 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="resultCOFID"></param>
         /// <param name="topLevelEvent">The top level EventComposite from the <see cref="CourseOfFire">COURSE OF FIRE</see>.</param>
         /// <returns></returns>
-        public Dictionary<string, EventScore> GetEventScores( string resultCOFID, EventComposite topLevelEvent ) {
+        public async Task<Dictionary<string, EventScore>> GetEventScoresAsync( string resultCOFID ) {
+
             throw new NotImplementedException();
+
+            //Todo, how to implement this method for teams?
+
+            //Look up the participant for this result COF ID. If the result COF ID is not known, return an empty dictionary.
+            CourseOfFireEntryIndividual entry;
+            var eventScores = new Dictionary<string, EventScore>();
+            if (!MatchProject.TryGetCourseOfFireEntryByResultCOFID( resultCOFID, out entry )) {
+                return eventScores;
+            }
+
+            //Look up the Course of Fire Structure for this course of fire entry. If the course of fire structure, which should not happen can not be found, return an empty dictionary.
+            CourseOfFireStructure cofStructure;
+            if (!MatchProject.Match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {
+                Debug.Fail( $"Was not able to find Course of Fire Structure for Course of Fire Entry with Result COF ID {resultCOFID}. This should not happen, as the Course of Fire Entry should not have been able to be created without a Course of Fire Structure." );
+                return eventScores;
+            }
+
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+
+            CalculateScore( eventScores, topLevelEvent );
+
+        }
+
+        private Score CalculateScore( Dictionary<string, EventScore> eventScores, EventComposite eventComponent ) {
+
+            throw new NotImplementedException();
+
+            if (eventComponent.EventType == EventtType.SINGULAR) {
+            }
+            switch (eventComponent.Calculation) {
+                case EventCalculation.SUM:
+                    Score summation = new Score();
+                    foreach (var child in eventComponent.Children) {
+                        summation += CalculateScore( eventScores, child );
+                    }
+                    return summation;
+
+            }
         }
 
         /// <summary>
