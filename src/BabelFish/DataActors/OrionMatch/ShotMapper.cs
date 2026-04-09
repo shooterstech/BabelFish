@@ -260,14 +260,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var scoreFormatCollectionDefinition = await cofDefinition.GetScoreFormatCollectionDefinitionAsync();
+            var scoreConfigName = cofStructure.ScoreConfigName;
             var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
             var shotsByEventName = await shotsByEventNameTask;
 
-            CalculateScore( eventScores, shotsByEventName, topLevelEvent );
+            CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
+
+            return eventScores;
 
         }
 
-        private Score CalculateScore( Dictionary<string, EventScore> eventScores, Dictionary<string, Shot> shotsByEventName, EventComposite eventComponent ) {
+        private Score CalculateScore( Dictionary<string, EventScore> eventScores,
+            Dictionary<string, Shot> shotsByEventName,
+            EventComposite eventComponent,
+            ScoreFormatCollection scoreFormatCollectionDefinition,
+            string scoreConfigName ) {
 
             if (eventComponent.EventType == EventtType.SINGULAR) {
                 //NOTE: As this is a shot, we dont' add it to the eventScores dictionary.
@@ -279,27 +287,45 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     return new Score();
                 }
             } else {
+                CalculationVariableScoreComponent calculationVariable;
                 switch (eventComponent.Calculation) {
                     case EventCalculation.SUM:
                         Score summation = new Score();
-                        foreach (var child in eventComponent.Children) {
-                            summation += CalculateScore( eventScores, shotsByEventName, child );
+                        for (int i = 0; i < eventComponent.Children.Count; i++) {
+                            var child = eventComponent.Children[i];
+
+                            // Determine how the child's score shold be added into the summation. Which is determiend by the CalculationVariable at the same index as the child.
+                            // If there is not a CalculationVariable at the same index as the child, or if the CalculationVariable is not of type CalculationVariableScoreComponent,
+                            // then we will default to adding the child's score into the summation using ScoreComponent.S.
+                            if (eventComponent.CalculationVariables != null
+                                && eventComponent.CalculationVariables.Count > i
+                                && eventComponent.CalculationVariables[i] is CalculationVariableScoreComponent) {
+                                calculationVariable = (CalculationVariableScoreComponent)eventComponent.CalculationVariables[i];
+                            } else {
+                                calculationVariable = new CalculationVariableScoreComponent() { Value = ScoreComponent.S };
+                            }
+
+                            //Find out the score for the child, and add it into the summation according to the CalculationVariable.
+                            var childScore = CalculateScore( eventScores, shotsByEventName, child, scoreFormatCollectionDefinition, scoreConfigName );
+                            summation.Add( childScore, calculationVariable.Value );
                         }
-                        //Todo calculate special sum using the CalculationVariables
 
                         eventScores[eventComponent.EventName] = new EventScore() {
                             Score = summation,
                             EventName = eventComponent.EventName,
-                            EventType = eventComponent.EventType.ToString(),
+                            EventType = eventComponent.EventType,
+                            ScoreFormatted = Helpers.StringFormatting.FormatScore( scoreFormatCollectionDefinition, scoreConfigName, eventComponent.ScoreFormat, summation )
                         };
                         return summation;
 
                     case EventCalculation.AVERAGE:
                         Debug.Fail( $"Have not implemented calculation for EventCalculation type {eventComponent.Calculation}. Likely because I haven't gotten around to it." );
+                        throw new NotImplementedException();
                         break;
 
                     default:
                         Debug.Fail( $"Have not implemented calculation for EventCalculation type {eventComponent.Calculation}. Likely because this method is deprecated." );
+                        throw new NotImplementedException();
                         break;
 
                 }

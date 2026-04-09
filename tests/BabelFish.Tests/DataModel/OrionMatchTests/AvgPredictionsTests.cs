@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 30,
-                EventType = "EVENT",
+                EventType = EventtType.EVENT,
                 Status = ResultStatus.INTERMEDIATE,
                 EventStyleDef = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" )
             };
@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 10,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.FUTURE,
                 StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" )
             };
@@ -46,7 +46,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 95, D = 99.4f, X = 4 },
                 ScoreFormatted = "",
                 NumShotsFired = 0,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.INTERMEDIATE,
                 StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" )
             };
@@ -58,7 +58,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 180, D = 188.8f, X = 12 },
                 ScoreFormatted = "",
                 NumShotsFired = 20,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.UNOFFICIAL,
                 StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" )
             };
@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 10,
-                EventType = "EVENT",
+                EventType = EventtType.EVENT,
                 Status = ResultStatus.INTERMEDIATE,
                 EventStyleDef = SetName.Parse( "v1.0:nra:BB Gun 4P with Test Qualification" )
             };
@@ -108,7 +108,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 10,
-                EventType = "NONE",
+                EventType = EventtType.NONE,
                 Status = ResultStatus.INTERMEDIATE
             };
             resultEvent.EventScores.Add( "Positions", positions );
@@ -119,7 +119,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 97, D = 101.4f, X = 4 },
                 ScoreFormatted = "",
                 NumShotsFired = 10,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.INTERMEDIATE,
                 StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Prone" )
             };
@@ -131,7 +131,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 40, D = 45.5f, X = 1 },
                 ScoreFormatted = "",
                 NumShotsFired = 5,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.FUTURE,
                 StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Standing" )
             };
@@ -143,7 +143,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 0,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.UNOFFICIAL,
                 StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Sitting" )
             };
@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 0,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.UNOFFICIAL,
                 StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Kneeling" )
             };
@@ -172,7 +172,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 Score = new Score { I = 85, D = 85, X = 0 },
                 ScoreFormatted = "",
                 NumShotsFired = 10,
-                EventType = "STAGE",
+                EventType = EventtType.STAGE,
                 Status = ResultStatus.UNOFFICIAL,
                 StageStyleDef = SetName.Parse( "v1.0:nra:BB Gun Test" )
             };

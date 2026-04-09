@@ -201,7 +201,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (string.IsNullOrEmpty( _topLevelEventName )) {
                 if (this.EventScores is not null) {
                     foreach (var es in this.EventScores.Values) {
-                        if (es.EventType == "EVENT") {
+                        if (es.EventType == Definitions.EventtType.EVENT) {
                             _topLevelEventName = es.EventName;
                             return es.Status;
                         }

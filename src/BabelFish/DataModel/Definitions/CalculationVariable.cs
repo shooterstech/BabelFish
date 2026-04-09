@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        public CalculationVariableType VariableType { get; set; } = CalculationVariableType.INTEGER;
+        public CalculationVariableType VariableType { get; protected set; } = CalculationVariableType.INTEGER;
 
         /// <inheritdoc/>
         [DefaultValue( "" )]

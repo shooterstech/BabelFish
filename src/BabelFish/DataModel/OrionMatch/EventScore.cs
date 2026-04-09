@@ -112,18 +112,38 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Public Methods
-
+        /// <summary>
+        /// Returns a string that represents the current object, including the event name and the formatted score.
+        /// </summary>
+        public override string ToString() {
+            return $"{this.EventName}: {this.ScoreFormatted}";
+        }
         #endregion
 
         #region Protected and Private Methods
+        /// <summary>
+        /// Newtonsoft.json helper method to determine whether the Projected property should be serialized. We only want to
+        /// serialize it if it's not null and not zero, as otherwise it doesn't add any information and just takes up space in the JSON.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeProjected() {
             return this.Projected != null && !this.Projected.IsZero;
         }
 
+        /// <summary>
+        /// Newtonsoft.json helper method to determine whether the EventStyleDef property should be serialized. We only want to
+        /// serialize it if it's not the default value, as otherwise it doesn't add any information and just takes up space in the JSON.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeEventStyleDef() {
             return !this.EventStyleDef.IsDefault;
         }
 
+        /// <summary>
+        /// Newtonsoft.json helper method to determine whether the StageStyleDef property should be serialized. We only want to
+        /// serialize it if it's not the default value, as otherwise it doesn't add any information and just takes up space in the JSON.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeStageStyleDef() {
             return !this.StageStyleDef.IsDefault;
         }
