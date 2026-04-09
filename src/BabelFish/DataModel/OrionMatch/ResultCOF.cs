@@ -184,6 +184,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 40 )]
         public Dictionary<string, EventScore> EventScores { get; set; } = new Dictionary<string, EventScore>();
 
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 45 )]
+        [G_NS.JsonProperty( Order = 45 )]
+        public RemarkList RemarkList { get; set; }
+
+        /// <summary>
+        /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
+        }
+
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.

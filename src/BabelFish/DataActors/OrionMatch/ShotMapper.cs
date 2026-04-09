@@ -281,6 +281,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 //NOTE: As this is a shot, we dont' add it to the eventScores dictionary.
                 if (shotsByEventName.TryGetValue( eventComponent.EventName, out var shot )) {
                     var score = shot.Score;
+                    score.NumShotsFired = 1;
                     return score;
                 } else {
                     //This means there were no shots fired for this singular event, so we will return a zero score.
@@ -314,7 +315,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                             Score = summation,
                             EventName = eventComponent.EventName,
                             EventType = eventComponent.EventType,
-                            ScoreFormatted = Helpers.StringFormatting.FormatScore( scoreFormatCollectionDefinition, scoreConfigName, eventComponent.ScoreFormat, summation )
+                            ScoreFormatted = Helpers.StringFormatting.FormatScore( scoreFormatCollectionDefinition, scoreConfigName, eventComponent.ScoreFormat, summation ),
+                            NumShotsFired = summation.NumShotsFired
                         };
                         return summation;
 

@@ -25,6 +25,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EntryStatus EntryStatus { get; set; } = EntryStatus.NOT_ENTERED;
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        public bool ShouldSerializeRemarkList() {
+            return RemarkList != null && RemarkList.Count > 0;
+        }
     }
 
     public class CourseOfFireEntryIndividual : CourseOfFireEntry {

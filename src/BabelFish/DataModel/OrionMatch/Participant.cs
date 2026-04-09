@@ -189,8 +189,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
-        /// <remarks>EKA Note March 2025. Not sure RemarkList belongs directly on a Particpant, as each COF a participant shoots in a Match may have its own RemarkList
         /// </remarks>
+        [Obsolete( "RemarkList is now implemented as part of the CourseOfFireEntry class. As each Course of Fire a participants shoots may have a different RemarkList. Deprecated April 2025." )]
         [G_NS.JsonProperty( Order = 22 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
 

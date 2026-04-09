@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="eventName"></param>
         /// <param name="participant"></param>
         /// <returns></returns>
-        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, int numberOfShotsFired, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName, RemarkList remarkList ) {
+        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName, RemarkList remarkList ) {
             //If the match's status is official, then so to are all evetns
             if (matchStatus == ResultStatus.OFFICIAL) {
                 eventScore.Status = ResultStatus.OFFICIAL;
@@ -91,6 +91,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             //If shots have not been fired yet, then status if future
+            var numberOfShotsFired = eventScore.NumShotsFired;
             if (numberOfShotsFired == 0) {
                 eventScore.Status = ResultStatus.FUTURE;
                 return;
@@ -98,10 +99,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var @event = topLevelEvent.FindEventComposite( eventName );
             if (@event != null) {
-                var numberOfShots = @event.GetAllSingulars().Count();
+                var numberOfShotsExpected = @event.GetAllSingulars().Count();
 
                 //if the number of shots fired is equal to expected number of shots
-                if (numberOfShotsFired >= numberOfShots) {
+                if (numberOfShotsFired >= numberOfShotsExpected) {
                     eventScore.Status = ResultStatus.UNOFFICIAL;
                     return;
                 } else if (numberOfShotsFired > 0) {

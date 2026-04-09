@@ -233,6 +233,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (TeamMembers != null && TeamMembers.Count > 0);
         }
 
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 25 )]
+        [G_NS.JsonProperty( Order = 25 )]
+        public RemarkList RemarkList { get; set; }
+
+        /// <summary>
+        /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
+        }
+
         /// <inheritdoc />
         public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
             if (shotsByEventName != null)

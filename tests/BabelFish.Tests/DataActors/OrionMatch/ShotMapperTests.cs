@@ -133,10 +133,12 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
                     Assert.IsTrue( eventScores.ContainsKey( stage.EventName ) );
                     Assert.IsTrue( Math.Abs( expectedSoreOfEvents[stage.EventName] - eventScores[stage.EventName].Score.D ) < 0.0001 );
+                    Assert.AreEqual( stage.GetAllSingulars().Count, eventScores[stage.EventName].NumShotsFired );
                 }
 
                 Assert.IsTrue( eventScores.ContainsKey( topLevelEvent.EventName ) );
                 Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.D ) < 0.0001 );
+                Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
             }
         }
 
@@ -197,6 +199,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 var eventScores = await shotMapper.GetEventScoresAsync( invEntry.ResultCofId );
                 foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
                     Assert.IsTrue( eventScores.ContainsKey( stage.EventName ) );
+                    Assert.AreEqual( stage.GetAllSingulars().Count, eventScores[stage.EventName].NumShotsFired );
                     if (stage.EventName == "Standing") {
                         Assert.IsTrue( Math.Abs( expectedSoreOfEvents[stage.EventName] - eventScores[stage.EventName].Score.I ) < 0.0001 );
                     } else {
@@ -207,6 +210,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
                 Assert.IsTrue( eventScores.ContainsKey( topLevelEvent.EventName ) );
                 Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.S ) < 0.0001 );
+                Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
             }
         }
     }
