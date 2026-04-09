@@ -240,9 +240,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public async Task<Dictionary<string, EventScore>> GetEventScoresAsync( string resultCOFID ) {
 
-            throw new NotImplementedException();
-
             //Todo, how to implement this method for teams?
+
+            // Run GetShotsByEventNameAsync as a task that we will await later. Hopefully spending things up a bit.
+            var shotsByEventNameTask = this.GetShotsByEventNameAsync( resultCOFID );
 
             //Look up the participant for this result COF ID. If the result COF ID is not known, return an empty dictionary.
             CourseOfFireEntryIndividual entry;
@@ -260,25 +261,48 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
             var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var shotsByEventName = await shotsByEventNameTask;
 
-            CalculateScore( eventScores, topLevelEvent );
+            CalculateScore( eventScores, shotsByEventName, topLevelEvent );
 
         }
 
-        private Score CalculateScore( Dictionary<string, EventScore> eventScores, EventComposite eventComponent ) {
-
-            throw new NotImplementedException();
+        private Score CalculateScore( Dictionary<string, EventScore> eventScores, Dictionary<string, Shot> shotsByEventName, EventComposite eventComponent ) {
 
             if (eventComponent.EventType == EventtType.SINGULAR) {
-            }
-            switch (eventComponent.Calculation) {
-                case EventCalculation.SUM:
-                    Score summation = new Score();
-                    foreach (var child in eventComponent.Children) {
-                        summation += CalculateScore( eventScores, child );
-                    }
-                    return summation;
+                //NOTE: As this is a shot, we dont' add it to the eventScores dictionary.
+                if (shotsByEventName.TryGetValue( eventComponent.EventName, out var shot )) {
+                    var score = shot.Score;
+                    return score;
+                } else {
+                    //This means there were no shots fired for this singular event, so we will return a zero score.
+                    return new Score();
+                }
+            } else {
+                switch (eventComponent.Calculation) {
+                    case EventCalculation.SUM:
+                        Score summation = new Score();
+                        foreach (var child in eventComponent.Children) {
+                            summation += CalculateScore( eventScores, shotsByEventName, child );
+                        }
+                        //Todo calculate special sum using the CalculationVariables
 
+                        eventScores[eventComponent.EventName] = new EventScore() {
+                            Score = summation,
+                            EventName = eventComponent.EventName,
+                            EventType = eventComponent.EventType.ToString(),
+                        };
+                        return summation;
+
+                    case EventCalculation.AVERAGE:
+                        Debug.Fail( $"Have not implemented calculation for EventCalculation type {eventComponent.Calculation}. Likely because I haven't gotten around to it." );
+                        break;
+
+                    default:
+                        Debug.Fail( $"Have not implemented calculation for EventCalculation type {eventComponent.Calculation}. Likely because this method is deprecated." );
+                        break;
+
+                }
             }
         }
 

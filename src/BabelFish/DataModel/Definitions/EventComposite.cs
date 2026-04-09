@@ -67,6 +67,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public EventCalculation Calculation { get; private set; } = EventCalculation.NONE;
 
+        public List<CalculationVariable> CalculationVariables { get; set; } = new List<CalculationVariable>();
+
         public bool HasChildren {
             get {
                 return Children.Count > 0;
@@ -284,6 +286,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventStyleMapping = topLevelEvent.EventStyleMapping,
                 ScoreFormat = topLevelEvent.ScoreFormat,
                 Calculation = topLevelEvent.Calculation,
+                CalculationVariables = topLevelEvent.CalculationVariables,
                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                 RankingRuleMapping = topLevelEvent.RankingRuleMapping,
                 TargetCollectionIndex = MIX_TARGET_EVENT
@@ -321,6 +324,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     EventStyleMapping = e.EventStyleMapping,
                     ScoreFormat = e.ScoreFormat,
                     Calculation = e.Calculation,
+                    CalculationVariables = e.CalculationVariables,
                     ResultListFormatDef = e.ResultListFormatDef,
                     RankingRuleMapping = e.RankingRuleMapping
                 };
