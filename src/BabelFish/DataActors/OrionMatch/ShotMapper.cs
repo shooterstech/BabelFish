@@ -201,6 +201,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                             && queue.Count > 0)) {
                             var singular = queue.Dequeue();
                             shot.EventName = singular.EventName;
+                        } else {
+                            shot.EventName = string.Empty;
                         }
                     }
 
@@ -217,7 +219,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var shotsBySequence = await this.GetShotsBySequenceAsync( resultCOFID );
             var shotsByEventName = new Dictionary<string, Shot>();
             foreach (var shot in shotsBySequence.Values) {
-                if (shot.EventName is not null) {
+                if (!string.IsNullOrEmpty( shot.EventName )) {
                     shotsByEventName[shot.EventName] = shot;
                 }
             }
