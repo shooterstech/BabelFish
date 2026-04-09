@@ -776,6 +776,112 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Create Merged Result List API
+        /// </summary>
+        /// <param name="requestParameters">CreateMergedResultListAuthenticatedRequest object</param>
+        /// <returns>Merged Result List data</returns>
+        public async Task<CreateMergedResultListAuthenticatedResponse> CreateMergedResultListAuthenticatedAsync( CreateMergedResultListAuthenticatedRequest requestParameters ) {
+            CreateMergedResultListAuthenticatedResponse response = new CreateMergedResultListAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Create Merged Result List API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedResultList"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Merged Result List data</returns>
+        public async Task<CreateMergedResultListAuthenticatedResponse> CreateMergedResultListAuthenticatedAsync( MatchID tournamentId, MergedResultList mergedResultList, UserAuthentication credentials ) {
+            var request = new CreateMergedResultListAuthenticatedRequest( credentials, tournamentId, mergedResultList );
+
+            return await CreateMergedResultListAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Delete Merged Result List API
+        /// </summary>
+        /// <param name="requestParameters">DeleteMergedResultListAuthenticatedRequest object</param>
+        /// <returns>Delete Merged Result List response data</returns>
+        public async Task<DeleteMergedResultListAuthenticatedResponse> DeleteMergedResultListAuthenticatedAsync( DeleteMergedResultListAuthenticatedRequest requestParameters ) {
+            DeleteMergedResultListAuthenticatedResponse response = new DeleteMergedResultListAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Merged Result List API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Delete Merged Result List response data</returns>
+        public async Task<DeleteMergedResultListAuthenticatedResponse> DeleteMergedResultListAuthenticatedAsync( MatchID tournamentId, string mergedId, UserAuthentication credentials ) {
+            var request = new DeleteMergedResultListAuthenticatedRequest( credentials, tournamentId, mergedId );
+
+            return await DeleteMergedResultListAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Add Merged Result List Member API
+        /// </summary>
+        /// <param name="requestParameters">AddMergedResultListMemberAuthenticatedRequest object</param>
+        /// <returns>Result List Member data</returns>
+        public async Task<AddMergedResultListMemberAuthenticatedResponse> AddMergedResultListMemberAuthenticatedAsync( AddMergedResultListMemberAuthenticatedRequest requestParameters ) {
+            AddMergedResultListMemberAuthenticatedResponse response = new AddMergedResultListMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Add Merged Result List Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedId"></param>
+        /// <param name="resultListMember"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Result List Member data</returns>
+        public async Task<AddMergedResultListMemberAuthenticatedResponse> AddMergedResultListMemberAuthenticatedAsync( MatchID tournamentId, string mergedId, ResultListMember resultListMember, UserAuthentication credentials ) {
+            var request = new AddMergedResultListMemberAuthenticatedRequest( credentials, tournamentId, mergedId, resultListMember );
+
+            return await AddMergedResultListMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Remove Merged Result List Member API
+        /// </summary>
+        /// <param name="requestParameters">RemoveMergedResultListMemberAuthenticatedRequest object</param>
+        /// <returns>Result List Member data</returns>
+        public async Task<RemoveMergedResultListMemberAuthenticatedResponse> RemoveMergedResultListMemberAuthenticatedAsync( RemoveMergedResultListMemberAuthenticatedRequest requestParameters ) {
+            RemoveMergedResultListMemberAuthenticatedResponse response = new RemoveMergedResultListMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Remove Merged Result List Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedId"></param>
+        /// <param name="resultListMember"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Result List Member data</returns>
+        public async Task<RemoveMergedResultListMemberAuthenticatedResponse> RemoveMergedResultListMemberAuthenticatedAsync( MatchID tournamentId, string mergedId, ResultListMember resultListMember, UserAuthentication credentials ) {
+            var request = new RemoveMergedResultListMemberAuthenticatedRequest( credentials, tournamentId, mergedId, resultListMember );
+
+            return await RemoveMergedResultListMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
         /// Add Tournament Member API
         /// </summary>
         /// <param name="requestParameters">AddTournamentMemberAuthenticatedRequest object</param>
