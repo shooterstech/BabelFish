@@ -134,11 +134,13 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                     Assert.IsTrue( eventScores.ContainsKey( stage.EventName ) );
                     Assert.IsTrue( Math.Abs( expectedSoreOfEvents[stage.EventName] - eventScores[stage.EventName].Score.D ) < 0.0001 );
                     Assert.AreEqual( stage.GetAllSingulars().Count, eventScores[stage.EventName].NumShotsFired );
+                    Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[stage.EventName].Status );
                 }
 
                 Assert.IsTrue( eventScores.ContainsKey( topLevelEvent.EventName ) );
                 Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.D ) < 0.0001 );
                 Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
+                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[topLevelEvent.EventName].Status );
             }
         }
 
@@ -200,6 +202,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
                     Assert.IsTrue( eventScores.ContainsKey( stage.EventName ) );
                     Assert.AreEqual( stage.GetAllSingulars().Count, eventScores[stage.EventName].NumShotsFired );
+                    Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[stage.EventName].Status );
                     if (stage.EventName == "Standing") {
                         Assert.IsTrue( Math.Abs( expectedSoreOfEvents[stage.EventName] - eventScores[stage.EventName].Score.I ) < 0.0001 );
                     } else {
@@ -211,6 +214,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.IsTrue( eventScores.ContainsKey( topLevelEvent.EventName ) );
                 Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.S ) < 0.0001 );
                 Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
+                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[topLevelEvent.EventName].Status );
             }
         }
     }

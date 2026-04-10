@@ -19,6 +19,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
+        private bool _official = false;
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
@@ -144,6 +145,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets a boolean indicator of whether this Course of Fire is official. The value of this property is always true if the
+        /// current date is past the end date of the Course of Fire, and is otherwise determined by the value set to this property.
+        /// </summary>
+        /// <remarks>Unlike a Result List, a COF Structure can only be not-official or official (A result list may be future, intermediate,
+        /// unofficial, or official). The designation of official means the Match Director has blessed the results and says everythign is done.
+        /// </remarks>
+        public bool Official {
+            get {
+                if (DateTime.Today > EndDate) {
+                    return true;
+                }
+                return _official;
+            }
+            set {
+                _official = value;
+            }
+        }
 
         /// <summary>
         /// Human readable description for this Course of Fire.

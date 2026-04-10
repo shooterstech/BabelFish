@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         #region Private Variables
 
-        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private bool _initializing = false;
         private FileInfo _shotLogFile;
         private volatile bool _threadsShouldDie = false;
@@ -266,9 +266,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var shotsByEventName = await shotsByEventNameTask;
 
             CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
+            await CalculateEventStatusAsync( eventScores, entry );
 
             return eventScores;
-
         }
 
         private Score CalculateScore( Dictionary<string, EventScore> eventScores,
@@ -331,6 +331,80 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                         break;
 
                 }
+            }
+        }
+
+        private async Task CalculateEventStatusAsync( Dictionary<string, EventScore> eventScores, CourseOfFireEntryIndividual entry ) {
+            if (entry.MatchParticipant is null) {
+                var msg = $"Course of Fire Entry with Result COF ID {entry.ResultCofId} does not have a Match Participant assigned. This should not happen, as a Match Participant should have been assigned before the Course of Fire Entry was created.";
+                Debug.Fail( msg );
+                _logger.Error( msg );
+                return;
+            }
+
+            if (entry.MatchParticipant.Project is null) {
+                var msg = $"Match Participant with Participant ID {entry.MatchParticipant.ParticipantID} does not have a Match Project assigned. This should not happen, as the Match Participant should have been assigned to a Match Project before the Course of Fire Entry was created.";
+                Debug.Fail( msg );
+                _logger.Error( msg );
+                return;
+            }
+
+            var participant = entry.MatchParticipant;
+            var project = participant.Project;
+            var match = project.Match;
+            CourseOfFireStructure cofStructure;
+            if (!match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {
+                var msg = $"Was not able to find Course of Fire Structure for Course of Fire Entry with Result COF ID {entry.ResultCofId}. This should not happen, as the Course of Fire Entry should not have been able to be created without a Course of Fire Structure.";
+                Debug.Fail( msg );
+                _logger.Error( msg );
+                return;
+            }
+            var cofIsOfficial = cofStructure.Official;
+            var remarkList = entry.RemarkList;
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var lastShot = this.GetLastShot( entry.ResultCofId );
+
+            foreach (var es in eventScores) {
+                var eventName = es.Key;
+                var eventScore = es.Value;
+
+                //If the COF's status is official, then so to are all evetns
+                if (cofIsOfficial) {
+                    eventScore.Status = ResultStatus.OFFICIAL;
+                    continue;
+                }
+
+                if ((lastShot != null && (DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalHours > 1.0) ||
+                     (remarkList.HasNonCompletionRemark)) {
+                    eventScore.Status = ResultStatus.UNOFFICIAL;
+                    continue;
+                }
+
+                //If shots have not been fired yet, then status if future
+                var numberOfShotsFired = eventScore.NumShotsFired;
+                if (numberOfShotsFired == 0) {
+                    eventScore.Status = ResultStatus.FUTURE;
+                    continue;
+                }
+
+                var @event = topLevelEvent.FindEventComposite( eventName );
+                if (@event != null) {
+                    var numberOfShotsExpected = @event.GetAllSingulars().Count();
+
+                    //if the number of shots fired is equal to expected number of shots
+                    if (numberOfShotsFired >= numberOfShotsExpected) {
+                        eventScore.Status = ResultStatus.UNOFFICIAL;
+                        continue;
+                    } else if (numberOfShotsFired > 0) {
+                        //if shots have been fired, but not yet complete
+                        eventScore.Status = ResultStatus.INTERMEDIATE;
+                        continue;
+                    }
+                }
+
+                //I dont' thinnk we would ever get here, but if we do, we will default to official status.
+                eventScore.Status = ResultStatus.OFFICIAL;
             }
         }
 

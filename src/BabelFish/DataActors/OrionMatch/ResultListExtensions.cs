@@ -65,56 +65,5 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 resultList.Projected = false;
             }
         }
-
-        /// <summary>
-        /// Determines the status of an Event for an Athlete. This method does not work for Teams
-        /// </summary>
-        /// <param name="eventScore"></param>
-        /// <param name="matchStatus"></param>
-        /// <param name="lastShot"></param>
-        /// <param name="numberOfShotsFired"></param>
-        /// <param name="topLevelEvent"></param>
-        /// <param name="eventName"></param>
-        /// <param name="participant"></param>
-        /// <returns></returns>
-        public static void SetEventStatus( this EventScore eventScore, ResultStatus matchStatus, Scopos.BabelFish.DataModel.Athena.Shot.Shot lastShot, Scopos.BabelFish.DataModel.Definitions.EventComposite topLevelEvent, string eventName, RemarkList remarkList ) {
-            //If the match's status is official, then so to are all evetns
-            if (matchStatus == ResultStatus.OFFICIAL) {
-                eventScore.Status = ResultStatus.OFFICIAL;
-                return;
-            }
-
-            if ((lastShot != null && (DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalHours > 1.0) ||
-                 (remarkList.HasNonCompletionRemark)) {
-                eventScore.Status = ResultStatus.UNOFFICIAL;
-                return;
-            }
-
-            //If shots have not been fired yet, then status if future
-            var numberOfShotsFired = eventScore.NumShotsFired;
-            if (numberOfShotsFired == 0) {
-                eventScore.Status = ResultStatus.FUTURE;
-                return;
-            }
-
-            var @event = topLevelEvent.FindEventComposite( eventName );
-            if (@event != null) {
-                var numberOfShotsExpected = @event.GetAllSingulars().Count();
-
-                //if the number of shots fired is equal to expected number of shots
-                if (numberOfShotsFired >= numberOfShotsExpected) {
-                    eventScore.Status = ResultStatus.UNOFFICIAL;
-                    return;
-                } else if (numberOfShotsFired > 0) {
-                    //if shots have been fired, but not yet complete
-                    eventScore.Status = ResultStatus.INTERMEDIATE;
-                    return;
-                }
-            }
-
-            eventScore.Status = matchStatus;
-            return;
-        }
-
     }
 }

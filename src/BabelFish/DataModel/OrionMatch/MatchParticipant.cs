@@ -8,12 +8,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// A MatchParticipant is a <see cref="Individual"/> or a <see cref="Team"/> participating in a <see cref="Match"/>.
     /// </summary>
     [Serializable]
-    public class MatchParticipant : IParticipant, ISaveToFile, IFinishInitializationAsync {
+    public class MatchParticipant :
+        IParticipant,
+        ISaveToFile,
+        IFinishInitializationAsync,
+        G_STJ_SER.IJsonOnDeserializing,
+        G_STJ_SER.IJsonOnDeserialized {
 
         /// <summary>
         /// The Folder name, with respect to the MatchProject's root directory, that MatchParticipant instances are stored in.
         /// </summary>
         public const string FOLDER_NAME = "Participants";
+
+        #region Private Variables
+        private bool _ignoreEvents = false;
+
+        #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
         /// <summary>
@@ -65,6 +75,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             FileInfo fileInfo = new FileInfo( fullPath );
             return await LoadFromFileAsync( fileInfo );
         }
+
+        public void OnDeserialized() {
+            foreach (var entry in Entries) {
+                entry.MatchParticipant = this;
+            }
+
+            _ignoreEvents = false;
+        }
+
+        public void OnDeserializing() {
+            _ignoreEvents = true;
+        }
         #endregion
 
         #region Data Model Properties
@@ -104,7 +126,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A list of entries (CourseOfFireEntry) for this Participant. Basically say which events this Participant is entered in,
-        /// and what their squadding assignment is for each event. 
+        /// and what their squadding assignment is for each event.
+        /// <para>The preferred method for creating a new entry is to use the <see cref="CreateEntry(int)"/> method.</para>
         /// </summary>
         /// <remarks>This property replaced MatchParticipantResults</remarks>
         [G_NS.JsonProperty( Order = 6 )]
@@ -135,6 +158,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
+        /// <summary>
+        /// Backwards pointer to the project holding this MatchParticipant. 
+        /// </summary>
         [G_NS.JsonIgnore]
         public MatchProject? Project { get; internal set; } = null;
 
@@ -154,6 +180,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
 
                 entry.CourseOfFireId = courseOfFireId;
+                entry.MatchParticipant = this;
                 Entries.Add( entry );
                 return entry;
             } else {
