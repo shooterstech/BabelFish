@@ -44,6 +44,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                     throw new ArgumentNullException( nameof( MergedResultList ), "The merged result list must be set to create a merged result list." );
                 }
 
+                if (MergedResultList.ResultListMembers.Count >= 0) {
+                    throw new ArgumentException( "The merged result list members must be empty when creating a merged result list.", nameof( MergedResultList ) );
+                }
+
                 var jsonAsString = G_NS.JsonConvert.SerializeObject( MergedResultList, SerializerOptions.NewtonsoftJsonSerializer );
                 return new StringContent( jsonAsString, Encoding.UTF8, "application/json" );
             }

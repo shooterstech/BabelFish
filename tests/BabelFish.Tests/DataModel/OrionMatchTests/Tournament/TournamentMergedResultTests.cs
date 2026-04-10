@@ -15,16 +15,33 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         private const string TournamentOwnerId = "OrionAcct000002";
         
-        // Requirements for this fixture match:
+        // Additional fixture assumptions for these tests:
+        // - TestDev7 is authenticated and has tournament-side permission for OrionAcct000002 to create tournaments,
+        //   edit merged result lists, add and approve tournament members, and delete the test tournaments during cleanup.
+        // - TestDev11 is authenticated but does not have OrionAcct000002 tournament edit permissions.
+        // - MatchID 1.1.1011319229.1 is a public match owned by OrionAcct000001 where TestDev11 has match-side
+        //   tournament.join permission and the match exposes at least one named result list.
+        // - MatchID 1.1.2021020310584218.1 is a public match owned by OrionAcct000001 that TestDev7 can add to an
+        //   OrionAcct000002 tournament and approve when needed, and the match exposes at least one named result list.
+        // Requirements for these fixture matches:
         // - Public match owned by OrionAcct000001.
-        // - Accessible to the test user with match-side permissions.
+        // - Accessible to the test user needed for that fixture path.
         // - Contains at least one result list with a non-empty ResultName.
+        private static readonly MatchID KnownPublicMatchOwner1PatchJoin = new MatchID( "1.1.1011319229.1" );
         private static readonly MatchID KnownPublicMatchOwner1BothSides = new MatchID( "1.1.2021020310584218.1" );
 
         private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.PRODUCTION );
 
         private static string UniqueName( string prefix ) {
             return $"{prefix} {DateTime.UtcNow:yyyyMMddHHmmssfff}";
+        }
+
+        private static MatchID UnknownTournamentId() {
+            return new MatchID( $"1.999999.{DateTime.UtcNow.Ticks}.2" );
+        }
+
+        private static string UnknownMergedId() {
+            return Guid.NewGuid().ToString();
         }
 
         private static async Task<UserAuthentication> AuthenticateAsync( BasicUserCredentials credentials ) {
@@ -45,13 +62,18 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             }
         }
 
-        private static async Task<MatchID> CreateTournamentAsync( OrionMatchAPIClient client, UserAuthentication credentials, string name ) {
+        private static async Task<MatchID> CreateTournamentAsync(
+            OrionMatchAPIClient client,
+            UserAuthentication credentials,
+            string name,
+            MemberPolicyOption? memberPolicy = MemberPolicyOption.INVITE ) {
+
             var request = new CreateTournamentAuthenticatedRequest( credentials ) {
                 TournamentName = name,
                 OwnerId = TournamentOwnerId,
                 Visibility = VisibilityOption.PUBLIC,
                 ShowOnSearch = false,
-                MemberPolicy = MemberPolicyOption.INVITE
+                MemberPolicy = memberPolicy
             };
 
             var response = await client.CreateTournamentAuthenticatedAsync( request );
@@ -64,6 +86,24 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 ResultName = resultName,
                 Method = MergeMethodType.SUM,
                 Configuration = new SumMethodConfiguration()
+            };
+        }
+
+        private static async Task<ResultListMember> CreateResultListMemberFromMatchAsync( OrionMatchAPIClient client, MatchID matchId ) {
+            var matchResponse = await client.GetMatchPublicAsync( matchId );
+            Assert.AreEqual( HttpStatusCode.OK, matchResponse.RestApiStatusCode, "Known member match lookup failed for merged result list test." );
+
+            var resultList = matchResponse.Match.MatchStructure.CoursesOfFire
+                .SelectMany( cof => cof.ResultLists.Select( rl => new { cof.CourseOfFireId, ResultList = rl } ) )
+                .FirstOrDefault( x => !string.IsNullOrWhiteSpace( x.ResultList.ResultName ) );
+
+            Assert.IsNotNull( resultList, "No result list metadata was available from the known member match." );
+
+            return new ResultListMember() {
+                MatchId = matchId,
+                CourseOfFireId = resultList!.CourseOfFireId,
+                ResultName = resultList.ResultList.ResultName,
+                HeaderName = string.IsNullOrWhiteSpace( resultList.ResultList.EventName ) ? resultList.ResultList.ResultName : resultList.ResultList.EventName
             };
         }
 
@@ -83,21 +123,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 Assert.AreEqual( ApprovalStatus.APPROVED, patchResponse.TournamentMember.ApprovalStatus );
             }
 
-            var matchResponse = await client.GetMatchPublicAsync( KnownPublicMatchOwner1BothSides );
-            Assert.AreEqual( HttpStatusCode.OK, matchResponse.RestApiStatusCode, "Known member match lookup failed for merged result list test." );
-
-            var resultList = matchResponse.Match.MatchStructure.CoursesOfFire
-                .SelectMany( cof => cof.ResultLists.Select( rl => new { cof.CourseOfFireId, ResultList = rl } ) )
-                .FirstOrDefault( x => !string.IsNullOrWhiteSpace( x.ResultList.ResultName ) );
-
-            Assert.IsNotNull( resultList, "No result list metadata was available from the known member match." );
-
-            return new ResultListMember() {
-                MatchId = KnownPublicMatchOwner1BothSides,
-                CourseOfFireId = resultList!.CourseOfFireId,
-                ResultName = resultList.ResultList.ResultName,
-                HeaderName = string.IsNullOrWhiteSpace( resultList.ResultList.EventName ) ? resultList.ResultList.ResultName : resultList.ResultList.EventName
-            };
+            return await CreateResultListMemberFromMatchAsync( client, KnownPublicMatchOwner1BothSides );
         }
 
         private static async Task<OrionTournament> GetTournamentAsync( OrionMatchAPIClient client, MatchID tournamentId, UserAuthentication credentials ) {
@@ -155,6 +181,72 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
                 var tournament = await GetTournamentAsync( client, tournamentId, authorizedUser );
                 Assert.IsTrue( tournament.MergedResultLists.Any( x => x.MergedId == response.MergedResultList.MergedId ) );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task CreateMergedResultListRejectsDuplicateResultNameWithinTournament() {
+            // Intention: verify CreateMergedResultList returns BadRequest when a tournament already contains the same ResultName.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Create Duplicate" ) );
+                var duplicateName = UniqueName( "Merged Result Duplicate Name" );
+
+                var firstResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( duplicateName ),
+                    authorizedUser );
+                var secondResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( duplicateName ),
+                    authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.OK, firstResponse.RestApiStatusCode );
+                Assert.AreEqual( HttpStatusCode.BadRequest, secondResponse.RestApiStatusCode );
+
+                var tournament = await GetTournamentAsync( client, tournamentId, authorizedUser );
+                Assert.AreEqual( 1, tournament.MergedResultLists.Count( x => x.ResultName == duplicateName ) );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task CreateMergedResultListReturnsNotFoundWhenTournamentDoesNotExist() {
+            // Intention: verify CreateMergedResultList returns NotFound for a tournament id that does not exist.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            var response = await client.CreateMergedResultListAuthenticatedAsync(
+                UnknownTournamentId(),
+                CreateMergedResultListModel( UniqueName( "Merged Result Unknown Tournament" ) ),
+                authorizedUser );
+
+            Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+        }
+
+        [TestMethod]
+        public async Task CreateMergedResultListReturnsUnauthorizedForCallerWithoutPermission() {
+            // Intention: verify CreateMergedResultList returns Unauthorized when the caller lacks tournament-side permissions.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var lowPrivilegeUser = await AuthenticateAsync( Constants.TestDev11Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Create Unauthorized" ) );
+
+                var response = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Result Unauthorized" ) ),
+                    lowPrivilegeUser );
+
+                Assert.AreEqual( HttpStatusCode.Unauthorized, response.RestApiStatusCode );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
             }
@@ -256,6 +348,221 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task AddMergedResultListMemberRejectsDuplicateMemberForMergedResultList() {
+            // Intention: verify AddMergedResultListMember returns BadRequest when the same member is added twice to one merged result list.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Add Duplicate Member" ) );
+                var createResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Duplicate Member" ) ),
+                    authorizedUser );
+                var member = await CreateKnownApprovedResultListMemberAsync( client, tournamentId, authorizedUser );
+
+                var firstAdd = await client.AddMergedResultListMemberAuthenticatedAsync( tournamentId, createResponse.MergedResultList.MergedId, member, authorizedUser );
+                var secondAdd = await client.AddMergedResultListMemberAuthenticatedAsync( tournamentId, createResponse.MergedResultList.MergedId, member, authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.OK, firstAdd.RestApiStatusCode );
+                Assert.AreEqual( HttpStatusCode.BadRequest, secondAdd.RestApiStatusCode );
+
+                var tournament = await GetTournamentAsync( client, tournamentId, authorizedUser );
+                var mergedResultList = tournament.MergedResultLists.First( x => x.MergedId == createResponse.MergedResultList.MergedId );
+                Assert.AreEqual( 1, mergedResultList.ResultListMembers.Count( x =>
+                    x.MatchId.Equals( member.MatchId )
+                    && x.CourseOfFireId == member.CourseOfFireId
+                    && x.ResultName == member.ResultName
+                    && x.HeaderName == member.HeaderName ) );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task AddMergedResultListMemberReturnsNotFoundWhenMergedResultListDoesNotExist() {
+            // Intention: verify AddMergedResultListMember returns NotFound when the merged-id does not exist for the tournament.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Add Missing Merged Id" ) );
+                var member = await CreateKnownApprovedResultListMemberAsync( client, tournamentId, authorizedUser );
+
+                var response = await client.AddMergedResultListMemberAuthenticatedAsync( tournamentId, UnknownMergedId(), member, authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task AddMergedResultListMemberReturnsUnauthorizedWhenTournamentMemberIsPendingApproval() {
+            // Intention: verify AddMergedResultListMember returns Unauthorized when the target tournament member exists but is not APPROVED.
+            var client = CreateClient();
+            var tournamentOwnerUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var matchSideOnlyUser = await AuthenticateAsync( Constants.TestDev11Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    tournamentOwnerUser,
+                    UniqueName( "Merged Result Add Pending Member" ),
+                    MemberPolicyOption.REQUEST );
+
+                var createResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Pending Member" ) ),
+                    tournamentOwnerUser );
+
+                var addTournamentMemberResponse = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1PatchJoin, matchSideOnlyUser );
+                Assert.AreEqual( HttpStatusCode.OK, addTournamentMemberResponse.RestApiStatusCode, "Tournament member setup failed for pending merged result list test." );
+                Assert.AreEqual( ApprovalStatus.PENDING, addTournamentMemberResponse.TournamentMember.ApprovalStatus, "Expected the fixture match to remain pending for this test." );
+
+                var member = await CreateResultListMemberFromMatchAsync( client, KnownPublicMatchOwner1PatchJoin );
+
+                var response = await client.AddMergedResultListMemberAuthenticatedAsync(
+                    tournamentId,
+                    createResponse.MergedResultList.MergedId,
+                    member,
+                    tournamentOwnerUser );
+
+                Assert.AreEqual( HttpStatusCode.Unauthorized, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, tournamentOwnerUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task AddMergedResultListMemberReturnsNotFoundWhenCourseOfFireDoesNotExistForMemberMatch() {
+            // Intention: verify AddMergedResultListMember returns NotFound when the member match exists but the supplied CourseOfFireId does not.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Add Missing Cof" ) );
+                var createResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Missing Cof" ) ),
+                    authorizedUser );
+                var member = await CreateKnownApprovedResultListMemberAsync( client, tournamentId, authorizedUser );
+
+                var invalidCourseOfFireMember = new ResultListMember() {
+                    MatchId = member.MatchId,
+                    CourseOfFireId = int.MaxValue,
+                    ResultName = member.ResultName,
+                    HeaderName = member.HeaderName
+                };
+
+                var response = await client.AddMergedResultListMemberAuthenticatedAsync(
+                    tournamentId,
+                    createResponse.MergedResultList.MergedId,
+                    invalidCourseOfFireMember,
+                    authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task RemoveMergedResultListMemberReturnsNotFoundWhenMemberWasNeverAdded() {
+            // Intention: verify RemoveMergedResultListMember returns NotFound when the merged result list exists but the requested member row does not.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Remove Missing Member" ) );
+                var createResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Remove Missing Member" ) ),
+                    authorizedUser );
+                var member = await CreateKnownApprovedResultListMemberAsync( client, tournamentId, authorizedUser );
+
+                var response = await client.RemoveMergedResultListMemberAuthenticatedAsync(
+                    tournamentId,
+                    createResponse.MergedResultList.MergedId,
+                    member,
+                    authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task RemoveMergedResultListMemberReturnsNotFoundWhenMergedResultListDoesNotExist() {
+            // Intention: verify RemoveMergedResultListMember returns NotFound when the merged-id does not exist for the tournament but does exist for another tournament.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            MatchID? otherTournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Remove Missing Merged Id" ) );
+                otherTournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Remove Other Tournament" ) );
+                var otherTournamentMergedResult = await client.CreateMergedResultListAuthenticatedAsync(
+                    otherTournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Remove Other Tournament" ) ),
+                    authorizedUser );
+                var member = await CreateKnownApprovedResultListMemberAsync( client, tournamentId, authorizedUser );
+
+                var response = await client.RemoveMergedResultListMemberAuthenticatedAsync(
+                    tournamentId,
+                    otherTournamentMergedResult.MergedResultList.MergedId,
+                    member,
+                    authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, otherTournamentId, authorizedUser );
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task RemoveMergedResultListMemberReturnsUnauthorizedForCallerWithoutPermission() {
+            // Intention: verify RemoveMergedResultListMember returns Unauthorized when the caller lacks permission to edit the tournament.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var lowPrivilegeUser = await AuthenticateAsync( Constants.TestDev11Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Remove Unauthorized" ) );
+                var createResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Remove Unauthorized" ) ),
+                    authorizedUser );
+                var member = await CreateKnownApprovedResultListMemberAsync( client, tournamentId, authorizedUser );
+                var addResponse = await client.AddMergedResultListMemberAuthenticatedAsync(
+                    tournamentId,
+                    createResponse.MergedResultList.MergedId,
+                    member,
+                    authorizedUser );
+                Assert.AreEqual( HttpStatusCode.OK, addResponse.RestApiStatusCode );
+
+                var response = await client.RemoveMergedResultListMemberAuthenticatedAsync(
+                    tournamentId,
+                    createResponse.MergedResultList.MergedId,
+                    member,
+                    lowPrivilegeUser );
+
+                Assert.AreEqual( HttpStatusCode.Unauthorized, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
         public async Task DeleteMergedResultListWithRequestRemovesMergedResultListFromTournament() {
             var client = CreateClient();
             var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
@@ -303,6 +610,53 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
                 var tournamentAfterDelete = await GetTournamentAsync( client, tournamentId, authorizedUser );
                 Assert.IsFalse( tournamentAfterDelete.MergedResultLists.Any( x => x.MergedId == createResponse.MergedResultList.MergedId ) );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task DeleteMergedResultListReturnsNotFoundWhenMergedResultListDoesNotExist() {
+            // Intention: verify DeleteMergedResultList returns NotFound when the requested merged-id is missing from the tournament.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Delete Missing Merged Id" ) );
+
+                var response = await client.DeleteMergedResultListAuthenticatedAsync( tournamentId, UnknownMergedId(), authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.NotFound, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task DeleteMergedResultListReturnsUnauthorizedForCallerWithoutPermission() {
+            // Intention: verify DeleteMergedResultList returns Unauthorized when the caller lacks permission to edit the tournament.
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var lowPrivilegeUser = await AuthenticateAsync( Constants.TestDev11Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync( client, authorizedUser, UniqueName( "Merged Result Delete Unauthorized" ) );
+                var createResponse = await client.CreateMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    CreateMergedResultListModel( UniqueName( "Merged Delete Unauthorized" ) ),
+                    authorizedUser );
+
+                var response = await client.DeleteMergedResultListAuthenticatedAsync(
+                    tournamentId,
+                    createResponse.MergedResultList.MergedId,
+                    lowPrivilegeUser );
+
+                Assert.AreEqual( HttpStatusCode.Unauthorized, response.RestApiStatusCode );
+
+                var tournament = await GetTournamentAsync( client, tournamentId, authorizedUser );
+                Assert.IsTrue( tournament.MergedResultLists.Any( x => x.MergedId == createResponse.MergedResultList.MergedId ) );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
             }
