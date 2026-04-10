@@ -7,12 +7,18 @@ using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
+using OrionTournament = Scopos.BabelFish.DataModel.OrionMatch.Tournament;
 
 namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
     [TestClass]
     public class TournamentMergedResultTests : BaseTestClass {
 
         private const string TournamentOwnerId = "OrionAcct000002";
+        
+        // Requirements for this fixture match:
+        // - Public match owned by OrionAcct000001.
+        // - Accessible to the test user with match-side permissions.
+        // - Contains at least one result list with a non-empty ResultName.
         private static readonly MatchID KnownPublicMatchOwner1BothSides = new MatchID( "1.1.2021020310584218.1" );
 
         private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.PRODUCTION );
@@ -94,7 +100,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             };
         }
 
-        private static async Task<Tournament> GetTournamentAsync( OrionMatchAPIClient client, MatchID tournamentId, UserAuthentication credentials ) {
+        private static async Task<OrionTournament> GetTournamentAsync( OrionMatchAPIClient client, MatchID tournamentId, UserAuthentication credentials ) {
             var request = new GetTournamentAuthenticatedRequest( tournamentId, credentials ) {
                 IgnoreInMemoryCache = true,
                 IgnoreFileSystemCache = true
