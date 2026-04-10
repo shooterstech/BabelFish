@@ -150,6 +150,19 @@ namespace Scopos.BabelFish.DataModel.Athena {
         }
 
         /// <summary>
+        /// Method to turn a score to 0. Most often used in cases where the participant received a DSQ, and thus there score is 0. 
+        /// </summary>
+        public void MakeScoreZero() {
+            X = 0;
+            D = 0;
+            I = 0;
+            S = 0;
+            J = 0;
+            K = 0;
+            L = 0;
+        }
+
+        /// <summary>
         /// Returns a string representation of the current object using the decimal score component format.
         /// </summary>
         public override string ToString() {

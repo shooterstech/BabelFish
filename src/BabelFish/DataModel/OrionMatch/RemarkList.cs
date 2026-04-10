@@ -1,11 +1,10 @@
-﻿
-using Amazon.Auth.AccessControlPolicy;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// A list of RemarkActions, each holding a ParticiapntRemark, reason, and visibility (show/don't show).
     /// <para>To avoid corrupting the data, use Apply(), AddShowRemark(), HideRemark(), or RemoveRemark()</para>
+    /// <para>Generally the best way to test if a RemarkList includes a specific <see cref="RemarkAction"/> is to use the IsShowingParticipantRemark() method.</para>
     /// </summary>
     [Serializable]
     public class RemarkList : List<RemarkAction> {
@@ -24,12 +23,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     ParticipantRemark.LEADER};
 
         public void Apply( CommandAutomationRemark commandAutomation ) {
-            if ( commandAutomation.Action == RemarkVisibility.SHOW ) {
+            if (commandAutomation.Action == RemarkVisibility.SHOW) {
                 this.AddShowParticipantRemark( commandAutomation.Condition, string.Empty, commandAutomation.Id );
-            } else if ( commandAutomation.Action == RemarkVisibility.HIDE ) {
+            } else if (commandAutomation.Action == RemarkVisibility.HIDE) {
                 this.HideParticipantRemark( commandAutomation.Condition, string.Empty, commandAutomation.Id );
-            } else if ( commandAutomation.Action == RemarkVisibility.DELETE ) {
-                this.RemoveAutomationRemark(commandAutomation.Condition);
+            } else if (commandAutomation.Action == RemarkVisibility.DELETE) {
+                this.RemoveAutomationRemark( commandAutomation.Condition );
             }
         }
 
@@ -86,9 +85,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// command automation id equal to the passed in automationId.
         /// </summary>
         /// <param name="automationId"></param>
-        public void RemoveAutomationRemark(int automationId) {
+        public void RemoveAutomationRemark( int automationId ) {
             List<RemarkAction> remarksToRemove = new List<RemarkAction>();
-            foreach( var ra in this ) {
+            foreach (var ra in this) {
                 if (ra.ActionId == automationId) {
                     remarksToRemove.Add( ra );
                 }
@@ -103,19 +102,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// ParticipantRemark of the passed in parameter
         /// </summary>
         /// <param name="remark"></param>
-        public void RemoveAutomationRemark(ParticipantRemark remark)
-        {
+        public void RemoveAutomationRemark( ParticipantRemark remark ) {
             List<RemarkAction> remarksToRemove = new List<RemarkAction>();
-            foreach (var ra in this)
-            {
-                if (ra.ParticipantRemark == remark)
-                {
-                    remarksToRemove.Add(ra);
+            foreach (var ra in this) {
+                if (ra.ParticipantRemark == remark) {
+                    remarksToRemove.Add( ra );
                 }
             }
 
             foreach (var ra in remarksToRemove)
-                this.Remove(ra);
+                this.Remove( ra );
         }
 
         /// <summary>
@@ -165,7 +161,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Show visility RemarkAction with type remark.
         /// </summary>
         /// <param name="remark"></param>
-        public int GetParticipantRemarkCount(ParticipantRemark remark) {
+        public int GetParticipantRemarkCount( ParticipantRemark remark ) {
             int count = 0;
             foreach (var re in this)
                 if (re.ParticipantRemark == remark && re.Visibility == RemarkVisibility.SHOW)
@@ -195,7 +191,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public override string ToString() {
-            return $"{this.Count} Actions: {GetSummary(false)}";
+            return $"{this.Count} Actions: {GetSummary( false )}";
         }
 
         /// <summary>
@@ -239,7 +235,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 } else {
                     return "ELIM";
                 }
-            if (this.IsShowingParticipantRemark(ParticipantRemark.ELLIPSES))
+            if (this.IsShowingParticipantRemark( ParticipantRemark.ELLIPSES ))
                 return "...";
             if (this.IsShowingParticipantRemark( ParticipantRemark.BUBBLE ))
                 if (!useAbbreviations) {

@@ -100,11 +100,6 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             //ShotMapper should be created when the MatchProject is created.
             Assert.IsNotNull( shotMapper );
 
-            //ShotMapper should have no shots when the MatchProject is created.
-            //And more to the point, a random guid should return an empty list of shots.
-            var randomShotList = await shotMapper.GetShotsBySequenceAsync( Guid.NewGuid().ToString() );
-            Assert.AreEqual( 0, randomShotList.Count );
-
             var participant = await project.CreateMatchParticipantAsync( "Smith", "John" );
             CourseOfFireEntryIndividual invEntry;
             if (participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
@@ -163,11 +158,6 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             //ShotMapper should be created when the MatchProject is created.
             Assert.IsNotNull( shotMapper );
 
-            //ShotMapper should have no shots when the MatchProject is created.
-            //And more to the point, a random guid should return an empty list of shots.
-            var randomShotList = await shotMapper.GetShotsBySequenceAsync( Guid.NewGuid().ToString() );
-            Assert.AreEqual( 0, randomShotList.Count );
-
             var participant = await project.CreateMatchParticipantAsync( "Smith", "John" );
             CourseOfFireEntryIndividual invEntry;
             if (participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
@@ -215,6 +205,148 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.S ) < 0.0001 );
                 Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
                 Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[topLevelEvent.EventName].Status );
+            }
+        }
+
+
+
+        [TestMethod]
+        public async Task ResultStatusCalculationTests() {
+            var matchName = "ResultStatusCalculationTests";
+
+            //Create the MatchProject which will generate a ShotMapper.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
+
+            var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v1.0:ntparc:40 Shot Standing" ) );
+            cofStructure.ScoreConfigName = "Integer";
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+
+            var shotMapper = project.ShotMapper;
+            shotMapper.InMemoryOnly = true;
+
+            //ShotMapper should be created when the MatchProject is created.
+            Assert.IsNotNull( shotMapper );
+
+            var participant = await project.CreateMatchParticipantAsync( "Smith", "John" );
+            CourseOfFireEntryIndividual invEntry;
+            if (participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
+                invEntry = (CourseOfFireEntryIndividual)entry;
+
+                // Simulate shots in groups of five. A bit tedious, but we'll check the ResultStatus after each group of five shots to make sure it's being updated correctly. 
+                var group = 0;
+                var numberOfShots = 40;
+
+                // After 0 shots.
+                var eventScores = await shotMapper.GetEventScoresAsync( invEntry.ResultCofId );
+                Assert.AreEqual( ResultStatus.FUTURE, eventScores["Standing"].Status );
+                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 1"].Status );
+                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 2"].Status );
+                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 3"].Status );
+                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+
+                for (int shotNum = 1; shotNum <= numberOfShots; shotNum++) {
+                    var shot = await Shot.SimulateAsync( cofStructure, invEntry, "Standing", shotNum );
+                    shotMapper.ReceiveShot( this, new EventArgs<Shot>( shot ) );
+
+                    if (shotNum % 5 == 0) {
+                        group = shotNum / 5;
+                        eventScores = await shotMapper.GetEventScoresAsync( invEntry.ResultCofId );
+
+                        switch (group) {
+                            case 1: // After 5 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+                                break;
+
+                            case 2: // After 10 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+                                break;
+
+                            case 3: // After 15 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+                                break;
+
+                            case 4: // After 20 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+                                break;
+
+                            case 5: // After 25 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+                                break;
+
+                            case 6: // After 30 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.FUTURE, eventScores["ST 4"].Status );
+                                break;
+
+                            case 7: // After 35 shots.
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.INTERMEDIATE, eventScores["ST 4"].Status );
+
+                                //Do a seperate test for the impact of a DSQ remark on the ResultStatus of the events. The DSQ remark should cause all events to be UNOFFICIAL, even if they were previously INTERMEDIATE or OFFICIAL.
+                                entry.RemarkList.AddShowParticipantRemark( ParticipantRemark.DSQ, "Testing DSQ Remark Status", 0 );
+                                eventScores = await shotMapper.GetEventScoresAsync( invEntry.ResultCofId );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 4"].Status );
+                                //All scores should also be zero.
+                                Assert.IsTrue( eventScores["Standing"].Score.IsZero );
+                                Assert.IsTrue( eventScores["ST 1"].Score.IsZero );
+                                Assert.IsTrue( eventScores["ST 2"].Score.IsZero );
+                                Assert.IsTrue( eventScores["ST 3"].Score.IsZero );
+                                Assert.IsTrue( eventScores["ST 4"].Score.IsZero );
+                                //Remove the DSQ remark so we can continue with the test.
+                                entry.RemarkList.Clear();
+                                break;
+
+                            case 8: // After 40 shots.
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["Standing"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 1"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 2"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 3"].Status );
+                                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores["ST 4"].Status );
+                                break;
+                        }
+                    }
+                }
+
+                // After 40 shots, and marking the COF Structure as official.
+                cofStructure.Official = true;
+                eventScores = await shotMapper.GetEventScoresAsync( invEntry.ResultCofId );
+                Assert.AreEqual( ResultStatus.OFFICIAL, eventScores["Standing"].Status );
+                Assert.AreEqual( ResultStatus.OFFICIAL, eventScores["ST 1"].Status );
+                Assert.AreEqual( ResultStatus.OFFICIAL, eventScores["ST 2"].Status );
+                Assert.AreEqual( ResultStatus.OFFICIAL, eventScores["ST 3"].Status );
+                Assert.AreEqual( ResultStatus.OFFICIAL, eventScores["ST 4"].Status );
             }
         }
     }

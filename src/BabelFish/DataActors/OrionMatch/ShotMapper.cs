@@ -264,8 +264,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var scoreConfigName = cofStructure.ScoreConfigName;
             var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
             var shotsByEventName = await shotsByEventNameTask;
+            var remarkList = entry.RemarkList;
 
             CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
+            CheckForRemarks( eventScores, entry );
             await CalculateEventStatusAsync( eventScores, entry );
 
             return eventScores;
@@ -405,6 +407,21 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                 //I dont' thinnk we would ever get here, but if we do, we will default to official status.
                 eventScore.Status = ResultStatus.OFFICIAL;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the CourseOfFireEntry has any remarks that would impact the EventScores, such as a DSQ remark.
+        /// If such a remark is found, the EventScores are updated accordingly, such as making the score zero for a DSQ remark.
+        /// </summary>
+        /// <param name="eventScores"></param>
+        /// <param name="entry"></param>
+        private void CheckForRemarks( Dictionary<string, EventScore> eventScores, CourseOfFireEntryIndividual entry ) {
+            if (entry.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
+                foreach (var es in eventScores) {
+                    es.Value.Score.MakeScoreZero();
+                    es.Value.ScoreFormatted = string.Empty; //Choosing not to format the score using StringFormatting.FormatScore().
+                }
             }
         }
 
