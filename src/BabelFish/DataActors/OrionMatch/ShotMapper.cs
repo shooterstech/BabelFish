@@ -464,7 +464,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             // The COF's RequiredAttribute is the one to use to look up and Participant's Attribute Value Applelation.
             var attrSetName = cofDefinition.RequiredAttributeDef;
 
-            var attrValue = entry.MatchParticipant.Participant.GetAttributeValue( attrSetName, entry.CourseOfFireId );
+            var attrValue = await entry.MatchParticipant.Participant.GetAttributeValueAsync( attrSetName, entry.CourseOfFireId );
             var attrValueappellation = attrValue.AttributeValue.AttributeValueAppellation;
 
             foreach (var es in eventScores) {

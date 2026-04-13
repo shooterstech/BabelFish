@@ -192,7 +192,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The list of AttributeConfigurations that are specific to this Course of Fire.
         /// These attributes will be available to be added to entries in this Course of Fire, but not entries in other Courses of Fire in the same match.
         /// If there are attributes that should be shared across all Courses of Fire in a match, those should be added
-        /// to the <see cref="MatchStructure.SharedAttributes"/> collection instead.
+        /// to the <see cref="MatchStructure.GlobalAttributes"/> collection instead.
         /// <para>When adding a new AttributeConfiguration to this collection, it is generally best to use the
         /// <see cref="AddAttributeConfigurationAsync(SetName)"/> method which adds the attribute to each
         /// exisitng entry in the match.</para>
@@ -242,6 +242,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return false;
         }
 
+        /// <summary>
+        /// The preferred method of adding a new AttributeConfiguration to this CourseOfFireStructure. This method creates a new AttributeConfiguration based on the provided set name and adds it to the Attributes collection.
+        /// </summary>
+        /// <param name="attributeDef"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception></para>
         public async Task<AttributeConfiguration> AddAttributeConfigurationAsync( SetName attributeDef ) {
 
             if (attributeDef.IsDefault) {
@@ -253,8 +259,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             attributeConfig.CourseOfFireId = this.CourseOfFireId;
             Attributes.Add( attributeConfig );
 
-            if (MatchStructure is not null && MatchStructure.Match is not null && MatchStructure.Match.Project is not null) {
-                foreach (var mp in MatchStructure.Match.Project.Participants) {
+            if (MatchStructure is not null && MatchStructure.Match is not null && MatchStructure.Match.MatchProject is not null) {
+                foreach (var mp in MatchStructure.Match.MatchProject.Participants) {
                     if (attributeConfig.IsForIndividuals && mp.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
                         var avdp = await AttributeValueDataPacketMatch.CreateAsync( attributeConfig );
                         avdp.CourseOfFireId = this.CourseOfFireId;

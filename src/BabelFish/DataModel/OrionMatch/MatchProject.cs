@@ -166,15 +166,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 _participantsByResultCOFID.TryAdd( entry.ResultCofId, mp );
             }
 
-            foreach (var attributeConfiguration in Match.MatchStructure.SharedAttributes) {
-                if (attributeConfiguration.IsForIndividuals) {
+            foreach (var attributeConfiguration in Match.MatchStructure.GlobalAttributes) {
+                if (!attributeConfiguration.Constant && attributeConfiguration.IsForIndividuals) {
                     individual.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ) );
                 }
             }
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
                 foreach (var attributeConfiguration in cof.Attributes) {
-                    if (attributeConfiguration.IsForTeams) {
+                    if (!attributeConfiguration.Constant && attributeConfiguration.IsForTeams) {
                         individual.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ) );
                     }
                 }
@@ -183,6 +183,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return mp;
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Team"/> participant for the match. Adding a <see cref="CourseOfFireEntryTeam"/> for that team.
+        /// </summary>
+        /// <param name="teamName">The name of the team.</param>
+        /// <returns>Returns the created <see cref="MatchParticipant"/>.</returns>
         public async Task<MatchParticipant> CreateMatchParticipantAsync( string teamName ) {
 
             MatchParticipant mp = new MatchParticipant( this, ParticipantType.TEAM );
@@ -199,15 +204,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //No need to save Result COF ID to _participantsByResultCOFID here, because teams don't have Result COF IDs. Only individuals do.
             }
 
-            foreach (var attributeConfiguration in Match.MatchStructure.SharedAttributes) {
-                team.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ) );
+            foreach (var attributeConfiguration in Match.MatchStructure.GlobalAttributes) {
+                if (!attributeConfiguration.Constant && attributeConfiguration.IsForTeams) {
+                    team.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ) );
+                }
             }
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
                 foreach (var attributeConfiguration in cof.Attributes) {
-                    team.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ) );
+                    if (!attributeConfiguration.Constant && attributeConfiguration.IsForTeams) {
+                        team.AttributeValues.Add( await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ) );
+                    }
                 }
             }
+
             return mp;
         }
 

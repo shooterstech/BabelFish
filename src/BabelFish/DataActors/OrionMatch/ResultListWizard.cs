@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             };
 
             //Add in the globally shared attributes
-            foreach (var attributeConfig in this.Match.MatchStructure.SharedAttributes) {
+            foreach (var attributeConfig in this.Match.MatchStructure.GlobalAttributes) {
                 var attribute = await attributeConfig.GetAttributeDefinitionAsync();
                 attributeBins[attribute.GroupByPriority].Add( attributeConfig );
             }

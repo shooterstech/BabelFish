@@ -61,7 +61,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc/>
         public async Task FinishInitializationAsync() {
-            foreach (var sharedAttribute in this.SharedAttributes) {
+            foreach (var sharedAttribute in this.GlobalAttributes) {
                 await sharedAttribute.FinishInitializationAsync();
             }
 
@@ -84,6 +84,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public event EventHandler<EventArgs<AttributeConfiguration>> OnAttributeConfigurationAdded;
 
+        /// <summary>
+        /// Occurs when a new <see cref="MergedResultList"/> is added to this instance.
+        /// </summary>
         public event EventHandler<EventArgs<MergedResultList>> OnMergedResultListAdded;
         #endregion
 
@@ -92,18 +95,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>Unless you are the deserializer, it is generally best to add new CourseOfFireStructures using the
         /// <see cref="AddCourseOfFireAsync(SetName)"/> method. As this method sets a known good value for CourseOfFireId.</para>
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public List<CourseOfFireStructure> CoursesOfFire { get; set; } = new List<CourseOfFireStructure>();
 
         /// <summary>
-        /// All participants in a <see cref="Match"/> must have a value for each SharedAttributes, and that value is used within each COF.
-        /// <para>Shared AttributeConfigurations are sometimes called global attributes, since all participants have one, and there AttributeValue
-        /// is common accross all CoursesOfFire.</para>
+        /// Each participants in a <see cref="Match"/> will have a single value for each GlobalAttributes, and that value is used with each COF.
+        /// <para>Global AttributeConfigurations are sometimes called shared attributes, since all participants have one, and their AttributeValue
+        /// is common across all CoursesOfFire.</para>
+        /// <para>A GlobalAttribute is not the same as a Constant Attribute. A Constant Attribute is one where all participants, throughout the match, share the same
+        /// AttributeValue. Constant Attributes are demarkated within an AttributeConfiguration using the <see cref="AttributeConfiguration.Constant"/> property.</para>
         /// </summary>
-        public List<AttributeConfiguration> SharedAttributes { get; set; } = new List<AttributeConfiguration>();
+        /// <remarks>The full implementation of Global Attributes and Constant Attributes is delayed until after Orion 3.0.</remarks>
+        [G_NS.JsonProperty( Order = 2 )]
+        public List<AttributeConfiguration> GlobalAttributes { get; set; } = new List<AttributeConfiguration>();
 
         /// <summary>
         /// A Match may have 0 or more MergedResultLists. Each MergedResultList describes a way to merge scores from different Courses of Fire's ResultLists together.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public List<MergedResultList> MergedResultLists { get; set; } = new List<MergedResultList>();
 
         #endregion
@@ -126,9 +135,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [G_NS.JsonIgnore]
-        public IResultListFetcher ResultListFetcher {
+        public IResultListFetcher? ResultListFetcher {
             get {
-                return Match.Project;
+                return Match?.MatchProject ?? null;
             }
         }
         #endregion
@@ -195,10 +204,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             var attributeConfig = await AttributeConfiguration.CreateAsync( attributeDef );
             attributeConfig.CourseOfFireId = 0; //0 indicates it is a shared attribute, and not specific to any one Course of Fire.
-            SharedAttributes.Add( attributeConfig );
+            GlobalAttributes.Add( attributeConfig );
 
-            if (Match is not null && Match.Project is not null) {
-                foreach (var mp in Match.Project.Participants) {
+            if (Match is not null && Match.MatchProject is not null) {
+                foreach (var mp in Match.MatchProject.Participants) {
                     if (attributeConfig.IsForIndividuals && mp.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
                         var avdp = await AttributeValueDataPacketMatch.CreateAsync( attributeConfig );
                         avdp.CourseOfFireId = 0; //0 indicates it is a shared attribute, and not specific to any one Course of Fire.
@@ -207,7 +216,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             } else {
                 Debug.Assert( Match is not null, "The Match property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
-                Debug.Assert( Match.Project is not null, "The Project property of the Match property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
+                Debug.Assert( Match.MatchProject is not null, "The MatchProject property of the Match property of this CourseOfFireStructure is null. Likely means it was not set when this instance was created or deserialized." );
             }
 
             if (!_ignoreEvents) {

@@ -32,6 +32,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public MatchParticipant() {
             Participant = new Individual();
+            Participant.MatchParticipant = this;
         }
 
         public MatchParticipant( MatchProject project, ParticipantType participantType ) {
@@ -43,6 +44,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 Participant = new Team();
             }
 
+            Participant.MatchParticipant = this;
             this.Participant.OnDisplayNameChanged += RenameFile;
         }
 
@@ -80,6 +82,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foreach (var entry in Entries) {
                 entry.MatchParticipant = this;
             }
+
+            this.Participant.MatchParticipant = this;
 
             _ignoreEvents = false;
         }

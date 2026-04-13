@@ -48,6 +48,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             configuration.AttributeDef = attrValue.SetName;
             configuration.Constant = constant;
+            configuration.AttributeValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( attrValue.SetName );
 
             if (constant) {
                 //Should I clone or copy the AttributeValue here to avoid potential issues with mutability?
@@ -72,6 +73,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             AttributeConfiguration configuration = new AttributeConfiguration();
             configuration.AttributeDef = setName;
             configuration.Constant = false;
+            configuration.AttributeValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
 
             configuration.IsForIndividuals = attribute.Designation.Contains( AttributeDesignation.ATHLETE );
             configuration.IsForTeams = attribute.Designation.Contains( AttributeDesignation.TEAM );
@@ -110,6 +112,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>Values are set during the CreateAsync methods.</remarks>
         [G_NS.JsonIgnore]
         public bool IsForTeams { get; private set; }
+
+        /// <summary>
+        /// Creates a copy of this instance as a <see cref="AttributeValueDataPacketMatch"/>. 
+        /// </summary>
+        /// <returns></returns>
+        public AttributeValueDataPacketMatch GetAsAttributeValueDataPacketMatch() {
+            AttributeValueDataPacketMatch dataPacket = new AttributeValueDataPacketMatch();
+            dataPacket.AttributeDef = this.AttributeDef;
+            dataPacket.AttributeValue = this.AttributeValue.Copy();
+            dataPacket.Visibility = this.Visibility;
+            return dataPacket;
+        }
 
         /// <summary>
         /// Returns a string that provides a concise description of the current AttributeConfiguration instance,
