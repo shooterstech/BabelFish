@@ -9,7 +9,8 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
     public class ShotMapperTests : BaseTestClass {
 
         /// <summary>
-        /// Tests that the ShotMapper correctly receives shots and can return them  via the GetShots() method, based on the ResultCofId of the CourseOfFireEntryIndividual.
+        /// Tests that the ShotMapper correctly receives shots and can return them  via the GetShots() method,
+        /// based on the ResultCofId of the CourseOfFireEntryIndividual.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -81,6 +82,10 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Tests that ShotMapper correctly calculates the Scores for each event, using a commong COF tree, namely the 3x10 air rifle.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task EventScoreCalculationTests() {
             var matchName = "EventScoreCalculationTests";
@@ -130,15 +135,30 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                     Assert.IsTrue( Math.Abs( expectedSoreOfEvents[stage.EventName] - eventScores[stage.EventName].Score.D ) < 0.0001 );
                     Assert.AreEqual( stage.GetAllSingulars().Count, eventScores[stage.EventName].NumShotsFired );
                     Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[stage.EventName].Status );
+
+                    if (stage.EventName == "Kneeling")
+                        Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" ), eventScores[stage.EventName].StageStyleDef );
+                    else if (stage.EventName == "Prone")
+                        Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" ), eventScores[stage.EventName].StageStyleDef );
+                    else if (stage.EventName == "Standing")
+                        Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" ), eventScores[stage.EventName].StageStyleDef );
                 }
 
                 Assert.IsTrue( eventScores.ContainsKey( topLevelEvent.EventName ) );
                 Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.D ) < 0.0001 );
                 Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
                 Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[topLevelEvent.EventName].Status );
+                Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" ), eventScores[topLevelEvent.EventName].EventStyleDef );
             }
         }
 
+
+        /// <summary>
+        /// This test is similiar to the above EventScoreCalculationTests, but it tests with a COF that defines how the special sum ("S")
+        /// score is calculated from two different score types ("I" and "D"). This is to test that the ShotMapper correctly calculates the "S"
+        /// score based on the "I" and "D" scores of the shots, according to the calculation defined in the COF.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task AccumulativeFinalCalculationTests() {
             var matchName = "AccumulativeFinalCalculationTests";
@@ -209,7 +229,12 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
         }
 
 
-
+        /// <summary>
+        /// Tests that as a shots are fired within a COF, that the ShotMapper correctly updates the ResultStatus of the events in the COF,
+        /// based on the number of shots fired and the official status of the COF. Also tests that a DSQ remark on the entry causes all events to be UNOFFICIAL
+        /// and that the scores go to zero.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task ResultStatusCalculationTests() {
             var matchName = "ResultStatusCalculationTests";

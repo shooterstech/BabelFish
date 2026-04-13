@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Definitions;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -269,10 +270,35 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
             CheckForRemarks( eventScores, entry );
             await CalculateEventStatusAsync( eventScores, entry );
+            await CalculateEventAndStageStyleAsync( eventScores, entry, cofStructure );
 
             return eventScores;
         }
 
+        /// <summary>
+        /// Returns the last <see cref="Shot"/> fired by a participant identified by the Result COF ID.
+        /// <para>Intended to be used to populate the Shots dictionary in <see cref="IEventScores"/>.</para>
+        /// </summary>
+        /// <param name="resultCOFID"></param>
+        /// <returns>The last <see cref="Shot"/> fired by the participant, or null if no shots are found.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Shot? GetLastShot( string resultCOFID ) {
+
+            //First get the mutex for the Shot List for this Result COF ID. If it doesn't exist, create it.
+            var mutex = _shotListMutexes.GetOrAdd( resultCOFID, new object() );
+            lock (mutex) {
+                //Generate the dictionary of shots to return, if the resultCOFID is known.
+                if (_shotDictionary.TryGetValue( resultCOFID, out var shots ) && shots.Count > 0) {
+                    return shots.Last();
+                }
+            }
+
+            //Return null if the resultCOFID is not known or an empty list
+            return null;
+        }
+        #endregion
+
+        #region Protected and Private Methods
         private Score CalculateScore( Dictionary<string, EventScore> eventScores,
             Dictionary<string, Shot> shotsByEventName,
             EventComposite eventComponent,
@@ -425,30 +451,37 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
-        /// <summary>
-        /// Returns the last <see cref="Shot"/> fired by a participant identified by the Result COF ID.
-        /// <para>Intended to be used to populate the Shots dictionary in <see cref="IEventScores"/>.</para>
-        /// </summary>
-        /// <param name="resultCOFID"></param>
-        /// <returns>The last <see cref="Shot"/> fired by the participant, or null if no shots are found.</returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public Shot? GetLastShot( string resultCOFID ) {
+        private async Task CalculateEventAndStageStyleAsync( Dictionary<string, EventScore> eventScores,
+            CourseOfFireEntryIndividual entry,
+            CourseOfFireStructure cofStructure ) {
 
-            //First get the mutex for the Shot List for this Result COF ID. If it doesn't exist, create it.
-            var mutex = _shotListMutexes.GetOrAdd( resultCOFID, new object() );
-            lock (mutex) {
-                //Generate the dictionary of shots to return, if the resultCOFID is known.
-                if (_shotDictionary.TryGetValue( resultCOFID, out var shots ) && shots.Count > 0) {
-                    return shots.Last();
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var eventAndStageStyleMappingDefinition = await cofDefinition.GetEventAndStageStyleMappingDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var targetCollectionName = cofStructure.TargetCollectionName;
+            var calculator = new EventAndStageStyleMappingCalculation( eventAndStageStyleMappingDefinition );
+
+            // The COF's RequiredAttribute is the one to use to look up and Participant's Attribute Value Applelation.
+            var attrSetName = cofDefinition.RequiredAttributeDef;
+
+            var attrValue = entry.MatchParticipant.Participant.GetAttributeValue( attrSetName, entry.CourseOfFireId );
+            var attrValueappellation = attrValue.AttributeValue.AttributeValueAppellation;
+
+            foreach (var es in eventScores) {
+                var eventName = es.Key;
+                var eventScore = es.Value;
+                if (eventScore.EventType == EventtType.EVENT) {
+                    var eventMapping = topLevelEvent.FindEventComposite( eventName ).EventStyleMapping;
+                    var eventStyleDef = calculator.GetEventStyleDef( attrValueappellation, targetCollectionName, eventMapping );
+                    eventScore.EventStyleDef = eventStyleDef;
+                } else if (eventScore.EventType == EventtType.STAGE) {
+                    var stageMapping = topLevelEvent.FindEventComposite( eventName ).StageStyleMapping;
+                    var stageStyleDef = calculator.GetStageStyleDef( attrValueappellation, targetCollectionName, stageMapping );
+                    eventScore.StageStyleDef = stageStyleDef;
                 }
             }
-
-            //Return null if the resultCOFID is not known or an empty list
-            return null;
         }
-        #endregion
 
-        #region Protected and Private Methods
         private void LoadShot( Shot shot ) {
 
             _loadShotStopWatch.Start();

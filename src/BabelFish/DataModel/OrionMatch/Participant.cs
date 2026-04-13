@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -173,18 +174,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A list of AttributeValues assigned to this Participant.
+        /// <para>It should only contain AttributeValues that are COF specific. AttributeValues that are
+        /// gloval (apply to the whole match) are assumed and defined else where.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 21 )]
         public List<AttributeValueDataPacketMatch> AttributeValues { get; set; } = new List<AttributeValueDataPacketMatch>();
-
-        /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeAttributeValues() {
-            return (AttributeValues != null && AttributeValues.Count > 0);
-        }
 
         /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
@@ -195,27 +189,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public RemarkList RemarkList { get; set; } = new RemarkList();
 
         /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeRemarkList() {
-            return (RemarkList != null && RemarkList.Count() > 0);
-        }
-
-        /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
         [G_NS.JsonProperty( Order = 23 )]
         public List<Individual> Coaches { get; set; }
-
-        /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeCoaches() {
-            return (Coaches != null && Coaches.Count > 0);
-        }
 
         /*
          * JsonProperty Order values 25 .. 29 reserved for concrete classes
@@ -260,6 +237,46 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             } else {
                 return StringFormatting.GetTruncatedString( this.DisplayName, DISPLAY_NAME_SHORT_MAX_LENGTH );
             }
+        }
+
+        public AttributeValueDataPacketMatch? GetAttributeValue( SetName setName, int courseOfFireId ) {
+            /* 
+             * WIP
+             * Need to return global Attribute Values if courseOfFireId is 0 
+             * What to do if the Participant doesn't have an AttributeValue yes ? Do we return a default?
+             */
+            foreach (var attributeValue in this.AttributeValues) {
+                if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId) {
+                    return attributeValue;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAttributeValues() {
+            return (AttributeValues != null && AttributeValues.Count > 0);
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCoaches() {
+            return (Coaches != null && Coaches.Count > 0);
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count() > 0);
         }
 
         /// <inheritdoc />
