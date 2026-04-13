@@ -264,7 +264,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return StringFormatting.GetTruncatedString( this.DisplayName, DISPLAY_NAME_SHORT_MAX_LENGTH );
             }
         }
-
         /// <summary>
         /// Gets the AttributeValue for a specific SetName and CourseOfFireId. 
         /// <para>To get global AttributeValues that apply to the whole match, use a CourseOfFireId of 0.</para>
@@ -276,69 +275,80 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="setName">The SetName of the attribute.</param>
         /// <param name="courseOfFireId">The CourseOfFireId of the attribute.</param>
         /// <returns>The AttributeValueDataPacketMatch if found, otherwise null.</returns>
+        /// <remarks>This method is asynchronous to allow for the possibility of needing to create default AttributeValues, but in most cases it will complete synchronously. The
+        /// nearly equivalent synchronous method is <see cref="TryGetAttributeValue"/>.</remarks>
         public async Task<AttributeValueDataPacketMatch?> GetAttributeValueAsync( SetName setName, int courseOfFireId ) {
 
-            if (setName.IsDefault) {
+            return await Task.FromResult( GetAttributeValueInternal( setName, courseOfFireId,
+                attributeConfiguration => {
+                    // If not found, create a default AttributeValue
+                    return AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ).GetAwaiter().GetResult();
+                } ) );
+        }
+
+        /// <summary>
+        /// Attempts to get the AttributeValue for a specific SetName and CourseOfFireId. Returns true if found, false otherwise. The result is returned through an out parameter.
+        /// <para>A default value is not created by this method, if the attribute value is not found. To create a default value if not found, use <see cref="GetAttributeValueAsync"/>.</para>
+        /// </summary>
+        /// <param name="setName">The SetName of the attribute.</param>
+        /// <param name="courseOfFireId">The CourseOfFireId of the attribute.</param>
+        /// <param name="result">The AttributeValueDataPacketMatch if found, otherwise null.</param>
+        /// <returns>True if the AttributeValueDataPacketMatch was found, otherwise false.</returns>
+        public bool TryGetAttributeValue( SetName setName, int courseOfFireId, out AttributeValueDataPacketMatch? result ) {
+            result = GetAttributeValueInternal(
+                setName,
+                courseOfFireId,
+                ( attributeConfiguration ) => null // Don't create, just return null
+            );
+            return result != null;
+        }
+
+        private AttributeValueDataPacketMatch? GetAttributeValueInternal(
+            SetName setName,
+            int courseOfFireId,
+            Func<AttributeConfiguration, AttributeValueDataPacketMatch?> createDefault ) {
+            if (setName.IsDefault)
                 return null;
-            }
 
-            //If CourseOfFireId is greater than 0, then we are looking for an AttributeValue that is specific to a Course of Fire. If CourseOfFireId is 0, then we are looking for a global AttributeValue that applies to the whole match.
             if (courseOfFireId > 0) {
-
-                // Try and look up the AttributeConfiguration for this SetName and CourseOfFireId in the MatchStructure.
-                // In other words, validate the request.
                 if (this.MatchProject?.Match?.MatchStructure?.TryGetCourseOfFireStructure( courseOfFireId, out var courseOfFire ) ?? false) {
                     foreach (var attributeConfiguration in courseOfFire.Attributes) {
                         if (attributeConfiguration.AttributeDef.Equals( setName )) {
-                            // Check to see if the requested Attribute is a Constant Attribute defined for the CourseOfFire. If it is, then we return the constant value.
-                            // In this method, if the Participant does have an AttributeValue for the requested SetName and CourseOfFireId, the constant value overrides it.
-                            if (attributeConfiguration.Constant) {
-                                var constantAttrValue = attributeConfiguration.GetAsAttributeValueDataPacketMatch();
-                                return constantAttrValue;
-                            }
+                            if (attributeConfiguration.Constant)
+                                return attributeConfiguration.GetAsAttributeValueDataPacketMatch();
 
-                            // Check if the Participant has an AttributeValue for this SetName and CourseOfFireId in their AttributeValues list. If they do, return it. 
                             foreach (var attributeValue in this.AttributeValues) {
-                                if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId) {
+                                if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId)
                                     return attributeValue;
-                                }
                             }
 
-                            // If they don't, we will create a default AttributeValue for this participant and return it.
-                            var defaultAttrValue = await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration );
-                            this.AttributeValues.Add( defaultAttrValue );
-                            return defaultAttrValue;
+                            // If not found, use the provided delegate to handle creation
+                            return createDefault( attributeConfiguration );
                         }
                     }
                 }
-
             } else {
-                // CourseOfFireId of 0 indicates a global attribute that applies to the whole match, and stored within the MatchStructure.GlobalAttributes. 
                 foreach (var attributeConfiguration in this.MatchProject?.Match?.MatchStructure?.GlobalAttributes ?? Enumerable.Empty<AttributeConfiguration>()) {
                     if (attributeConfiguration.AttributeDef.Equals( setName )) {
-                        // Check to see if the requested Attribute is a Constant Attribute defined for the CourseOfFire. If it is, then we return the constant value.
-                        // In this method, if the Participant does have an AttributeValue for the requested SetName and CourseOfFireId, the constant value overrides it.
-                        if (attributeConfiguration.Constant) {
-                            var constantAttrValue = attributeConfiguration.GetAsAttributeValueDataPacketMatch();
-                            return constantAttrValue;
-                        }
+                        if (attributeConfiguration.Constant)
+                            return attributeConfiguration.GetAsAttributeValueDataPacketMatch();
 
-                        // Check if the Participant has an AttributeValue for this SetName and CourseOfFireId in their AttributeValues list. If they do, return it. 
                         foreach (var attributeValue in this.AttributeValues) {
-                            if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId) {
+                            if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId)
                                 return attributeValue;
-                            }
                         }
 
-                        //If they don't, we will create a default AttributeValue for this participant and return it.
-                        var defaultAttrValue = await AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration );
-                        this.AttributeValues.Add( defaultAttrValue );
-                        return defaultAttrValue;
+                        // If not found, use the provided delegate to handle creation
+                        return createDefault( attributeConfiguration );
                     }
                 }
             }
 
-            // If the we get here, the user made a request for an AttributeValue for a SetName and CourseOfFireId that doesn't exist in the MatchStructure, so we return null to indicate that the request was invalid.
+            foreach (var attributeValue in this.AttributeValues) {
+                if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId)
+                    return attributeValue;
+            }
+
             return null;
         }
 
