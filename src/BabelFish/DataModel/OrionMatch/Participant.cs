@@ -30,6 +30,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Coaches = new List<Individual>();
         }
 
+        /// <summary>
+        /// Generates a deep copy of this Participant instance, with the notable exception of the participant's attribute values.
+        /// The AttributeValues list of the copied Participant is populated based on the provided CourseOfFireStructure, which includes
+        /// both the Course of Fire specific attributes and the global attributes for the match.
+        /// </summary>
+        /// <param name="cofStructure"></param>
+        /// <returns></returns>
+        /// <remarks>This method is intended to be used in the generation of <see cref="ResultCOF"/> or <see cref="ResultEvent"/> instances.</remarks>
+        public async Task<Participant> CopyAsync( CourseOfFireStructure cofStructure ) {
+            var copy = this.Clone(); //Using Clone is slow, but works
+            copy.AttributeValues = new List<AttributeValueDataPacketMatch>();
+
+            // Populate the Participant Attribute Values specific to this Course of Fire. Which includes the attributes specific to the course of fire structure, and then the global attributes for the match.
+            // By calling GetAttributeValueAsync we also include the correct values for Constant attributes.
+
+            foreach (var attrConfig in cofStructure.Attributes) {
+                var attrValue = await this.GetAttributeValueAsync( attrConfig.AttributeDef, cofStructure.CourseOfFireId );
+                if (attrValue is not null) {
+                    copy.AttributeValues.Add( attrValue );
+                }
+            }
+            foreach (var attrConfig in cofStructure.MatchStructure.GlobalAttributes) {
+                var attrValue = await this.GetAttributeValueAsync( attrConfig.AttributeDef, 0 );
+                if (attrValue is not null) {
+                    copy.AttributeValues.Add( attrValue );
+                }
+            }
+
+            return copy;
+        }
+
         public void OnDeserialized() {
             _ignoreEvents = false;
         }

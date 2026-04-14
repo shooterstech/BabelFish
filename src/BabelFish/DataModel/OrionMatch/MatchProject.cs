@@ -37,6 +37,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             project.ProjectDirectory.Create();
 
             project.ShotMapper = new ShotMapper( project );
+            project.ResultGenerator = new ResultDocumentGenerator( project );
 
             return project;
         }
@@ -114,6 +115,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// The file name of the serialized <see cref="Match"/> object associated with this MatchProject. This is stored so that when we load the MatchProject from file, we know where to find the Match file to load it.
+        /// </summary>
         public string MatchFileName { get; set; }
 
         [G_NS.JsonIgnore]
@@ -124,6 +128,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          */
         [G_NS.JsonIgnore]
         public List<MatchParticipant> Participants { get; set; } = new List<MatchParticipant>();
+
+        /// <summary>
+        /// A string represenging the name of the software and version number of that software that created and maintains this MatchProject.
+        /// This is used for informational and debugging purposes, and is not intended to be a comprehensive.
+        /// </summary>
+        /// <example>BabelFish version 2.0.0.0 </example>
+        public string Creator { get; set; } = $"BabelFish version {Helpers.Common.DATA_MODEL_VERSION}";
 
         #endregion
 
@@ -137,6 +148,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [G_NS.JsonIgnore]
         public ShotMapper ShotMapper { get; private set; }
+
+        [G_NS.JsonIgnore]
+        public ResultDocumentGenerator ResultGenerator { get; private set; }
         #endregion
 
         #region Methods
@@ -227,7 +241,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="resultCOFID">UUID formatted Result COF ID.</param>
         /// <param name="participant">If a match was made, this will return the MatchParticipant associated with the specified result COFID.</param>
         /// <returns>A boolean indicating whether the participant was found.</returns>
-        public bool TryGetParticipantByResultCOFID( string resultCOFID, out MatchParticipant participant ) {
+        public bool TryGetMatchParticipantByResultCOFID( string resultCOFID, out MatchParticipant participant ) {
             return _participantsByResultCOFID.TryGetValue( resultCOFID, out participant );
         }
 

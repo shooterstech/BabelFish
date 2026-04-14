@@ -39,6 +39,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         private bool _initializing = false;
         private FileInfo _shotLogFile;
         private volatile bool _threadsShouldDie = false;
+        private DateTime _clearLastShotBeforeThisUTCTime = DateTime.MinValue;
 
         /*
          * These next two dictionaries _allShots and _shotDictionary will nearly contain the same data.
@@ -282,14 +283,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="resultCOFID"></param>
         /// <returns>The last <see cref="Shot"/> fired by the participant, or null if no shots are found.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Shot? GetLastShot( string resultCOFID ) {
+        public Shot? GetLastShot( string resultCOFID, bool filterLastShotByTimeScored = false ) {
 
             //First get the mutex for the Shot List for this Result COF ID. If it doesn't exist, create it.
             var mutex = _shotListMutexes.GetOrAdd( resultCOFID, new object() );
             lock (mutex) {
                 //Generate the dictionary of shots to return, if the resultCOFID is known.
                 if (_shotDictionary.TryGetValue( resultCOFID, out var shots ) && shots.Count > 0) {
-                    return shots.Last();
+                    var lastShot = shots.Last();
+
+                    //If the user didn't ask us to filter the last shot by time scored, then we will just return the last shot.
+                    if (!filterLastShotByTimeScored) {
+                        return lastShot;
+                    }
+
+                    // We will do two filtering checks to see if we return the lasst shot or not.
+                    // first, if the last shot was scored since the _clearLastShotBeforeThisUTCTime. This is to handle the case that Range Control clears the last shot values due to a Segment Group change.
+                    // Second, if the last shot was fired within five minutes.
+                    if ((lastShot.TimeScored.ToUniversalTime() > this._clearLastShotBeforeThisUTCTime)
+                        && (lastShot.TimeScored.ToUniversalTime() > DateTime.UtcNow.AddMinutes( -5 ))) {
+                        return lastShot;
+                    }
                 }
             }
 
@@ -492,7 +506,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             string sequenceStr = shot.Sequence.ToString();
             int updateNumber = shot.Update;
 
-            if (!MatchProject.TryGetParticipantByResultCOFID( shot.ResultCOFID, out var participant ))
+            if (!MatchProject.TryGetMatchParticipantByResultCOFID( shot.ResultCOFID, out var participant ))
                 operation = ESTShotOperation.UNKNOWNCOMPETITOR;
 
             //Pull the list of ESTShots for this participant. If the result COF ID is not yet known, create a new list and add it to the dictionary.
@@ -758,6 +772,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     this.MatchProject.SetScoringSystem( ScoringSystem.EST, estSystemName );
                 }
             }
+        }
+
+        /// <summary>
+        /// Event Handler for the Range Control when there is a segment group change.
+        /// <para>The intent is to clear last shot after each segment group change. Which will be more clear online to spectators.</para>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="ea"></param>
+        public void SegmentGroupChanged( object sender, EventArgs<SegmentGroup> ea ) {
+            _clearLastShotBeforeThisUTCTime = DateTime.UtcNow;
         }
 
         public void Dispose() {

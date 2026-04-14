@@ -1,10 +1,12 @@
 using System.ComponentModel;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
-    /// Result COF format for (JSONVersion) "2022-04-09"
+    /// A ResultCOF is considered a 'compiled' data structure. It contains data for a given Course of Fire fired within a Match.
+    /// This includes the Event Scores and Shots, as well as metadata about the match and participant who fired the scores..
     /// </summary>
     [Serializable]
     public class ResultCOF : IEventScoreProjection {
@@ -91,7 +93,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string MatchLocation { get; set; } = "";
 
         /// <summary>
-        /// Unique ID for the parent of this match, if this is a Virtual Match. If this is not a
+        /// Read only unique ID for the parent of this match, if this is a Virtual Match. If this is not a
         /// Virtual Match, then it will be the same value as MatchID.
         /// </summary>
         [G_NS.JsonIgnore]
@@ -118,11 +120,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
         /// <summary>
-        /// The Firing Point Label of the current match, this is a string because it could not be a number
+        /// The Firing Point Number that this Result COF was shot on. 
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14 )]
+        [Obsolete( "This field is being renamed to SquaddingAssignment, as FiringPointNumber is not an accurate description for all disciplines." )]
         public string FiringPointNumber { get; set; } = "0";
+
+        /// <summary>
+        /// The SquaddingAssignment (e.g. firing point number, squad number, etc.) that this Result COF was shot on.
+        /// <para>Value is null if it is not known.</para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
+        public SquaddingAssignment? SquaddingAssignment { get; set; } = null;
 
         /// <summary>
         /// String holding the software (Orion Scoring System) and Version number of the software.
@@ -147,7 +158,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ScoreConfigName { get; set; }
 
         /// <summary>
-        /// Name of the TargetCollection used in this match.
+        /// Name of the TargetCollection used in firing this Result Course of Fire. The <see cref="TargetCollection">TARGET COLLECTION</see>
+        /// is defined within the <see cref="CourseOfFire">COURSE OF FIRE</see>.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 22 )]
         [G_NS.JsonProperty( Order = 22 )]
@@ -159,15 +171,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 23 )]
         [G_NS.JsonProperty( Order = 23 )]
+        [Obsolete( "This field is no longer used. The default target definition should be specified in the Course of Fire definition." )]
         public string DefaultTargetDefinition { get; set; }
 
 
         /// <summary>
-        /// The GUID of the orion app user who shot this score. Is blank if not known.
+        /// Read only UUID of the Scopos account user who shot this score. Is blank if not known.
+        /// <para>This value is the same as <see cref="Participant.UserID"/>.</para>
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 30 )]
         [G_NS.JsonProperty( Order = 30 )]
-        public string UserID { get; set; } = string.Empty;
+        public string UserID {
+            get {
+                if (Participant is null && Participant is Individual inv)
+                    return inv?.UserID ?? string.Empty;
+
+                return string.Empty;
+            }
+        }
 
         /// <summary>
         /// Data on the person or team who shot this score.
@@ -302,8 +323,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Obsolete( "Use OwnerId instead." )]
         public string AccountNumber { get; set; } = string.Empty;
 
+        #region Methods
+        /// <summary>
+        /// Newtonsoft.json helper method to determine if SquaddingAssignment should be serialized.
+        /// We only want to serialize it if it is not null, and if it is not "Not Yet Squadded", which is the default value when we don't know the squadding assignment.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeSquaddingAssignment() {
+            return SquaddingAssignment is not null && !SquaddingAssignment.NotYetSquadded;
+        }
+
         /// <inheritdoc />
-		public override string ToString() {
+        public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "ResultCOF for " );
             foo.Append( Participant.DisplayName );
@@ -359,6 +390,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return false;
         }
+        #endregion
 
     }
 }
