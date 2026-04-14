@@ -158,94 +158,6 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 }
             }
         }
-
-
-        /*
-        /// <inheritdoc/>
-        public override void WriteJson( JsonWriter writer, object? value, JsonSerializer serializer ) {
-
-            var attrValueDataPacket = (AttributeValueDataPacket)value;
-            JObject o = new JObject();
-
-            o["AttributeDef"] = attrValueDataPacket.AttributeDef.ToString();
-            o["Visibility"] = attrValueDataPacket.Visibility.ToString();
-            o["ConcreteClassId"] = attrValueDataPacket.ConcreteClassId;
-            o["AttributeValue"] = new JObject();
-
-            if (attrValueDataPacket.AttributeValue != null) {
-                foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
-                    o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
-                }
-            }
-            
-            o.WriteTo( writer );
-        }
-
-        /// <inheritdoc/>
-        public override object? ReadJson( JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer ) {
-
-            JObject jo = JObject.Load( reader );
-
-            //first try using the ConcreteClassId, if it is a property of the json, as this will be a faster method.
-            var id = jo["ConcreteClassId"]?.Value<int>();
-
-            //if id is null, then attempt to identify the type of AttributeValueDataPacket based on payload
-            if (id == null) {
-                if (jo.ContainsKey( "StatusCode" ))
-                    id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
-                else if (jo.ContainsKey( "Message" ))
-                    id = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
-                else
-                    id = AttributeValueDataPacketMatch.CONCRETE_CLASS_ID;
-            }
-
-            AttributeValueDataPacket attributeValueDataPacket;
-            bool okToDeserialize = true;
-
-            switch (id) {
-                case AttributeValueDataPacketMatch.CONCRETE_CLASS_ID:
-                    attributeValueDataPacket = new AttributeValueDataPacketMatch();
-
-                    if (jo.ContainsKey( "ReentryTag" ))
-                        ((AttributeValueDataPacketMatch)attributeValueDataPacket).ReentryTag = jo["ReentryTag"]?.Value<string>();
-                    break;
-
-                case AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID:
-                default:
-                    attributeValueDataPacket = new AttributeValueDataPacketAPIResponse();
-
-                    if (jo.ContainsKey( "StatusCode" ))
-                        ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode = (HttpStatusCode)Enum.Parse( typeof( HttpStatusCode ), (string)jo["StatusCode"] );
-
-                    if (jo.ContainsKey( "Message" ) && jo.GetValue( "Message" ).HasValues ) {
-                        try {
-                            ((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message = (string)jo.GetValue( "Message" )[0];
-                        } catch (Exception ex) {
-                            logger.Error( ex, $"Unable to read the Message property." );
-                        }
-                    }
-
-                    if (((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).StatusCode != HttpStatusCode.OK) {
-                        okToDeserialize = false;
-                        logger.Info( $"Unable to deserialize, received message '{((AttributeValueDataPacketAPIResponse)attributeValueDataPacket).Message}'." );
-                    }
-                    break;
-            }
-
-            if (okToDeserialize) {
-                attributeValueDataPacket.AttributeDef = (string)jo.GetValue( "AttributeDef" );
-                //logger.Debug( $"About to call AttributeValue.CreateAsync() for {attributeValueDataPacket.AttributeDef}." );
-                attributeValueDataPacket.AttributeValueTask = AttributeValue.CreateAsync( SetName.Parse( attributeValueDataPacket.AttributeDef ), jo.GetValue( "AttributeValue" ) );
-                //logger.Debug( $"Returned from calling AttributeValue.CreateAsync() for {attributeValueDataPacket.AttributeDef}." );
-                if (jo.ContainsKey("Visibility"))
-                    attributeValueDataPacket.Visibility = (VisibilityOption)Enum.Parse( typeof( VisibilityOption ), (string)jo["Visibility"] );
-            }
-
-            return attributeValueDataPacket;
-        }
-        */
-
-
     }
 
     /// <summary>
@@ -290,7 +202,23 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
             BaseConverter.Write( writer, value, options );
         }
+    }
 
+    public class AttributeConfigurationConverter : JsonConverter<AttributeConfiguration> {
+
+        private Logger logger = LogManager.GetCurrentClassLogger();
+
+        private AttributeValueDataPacketConverter BaseConverter = new AttributeValueDataPacketConverter();
+
+        public override AttributeConfiguration? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
+
+            return (AttributeConfiguration)BaseConverter.Read( ref reader, typeToConvert, options );
+        }
+
+        public override void Write( Utf8JsonWriter writer, AttributeConfiguration value, JsonSerializerOptions options ) {
+
+            BaseConverter.Write( writer, value, options );
+        }
     }
 
     public class ListOfAttributeValueDataPackets : JsonConverter<List<AttributeValueDataPacket>> {

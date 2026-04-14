@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -181,6 +182,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <remarks>The TARGET COLLECTION is specified in the COURSE OF FIRE. </remarks>
         public string TargetCollectionName { get; set; }
+
+        public ProjectorOfScoresType ProjectorOfScores { get; set; } = ProjectorOfScoresType.AVERAGE_SHOT_FIRED;
 
         /// <summary>
         /// Gets or sets the types of entries that can be recorded, which may include individual and team entries.

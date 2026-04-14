@@ -293,12 +293,13 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <param name="right"></param>
         /// <param name="s"></param>
         public void Add( Score right, ScoreComponent s ) {
-            this.X += right.X;
-            this.D += right.D;
             this.I += right.I;
-            this.J += right.J;
-            this.K += right.K;
-            this.L += right.L;
+            this.X += right.X;
+            this.D = (float)Math.Round( this.D + right.D, 1 );
+            // J, K, and L are all special use case score components that are only used in certain cases, and are not always used to hold meaningful scores. Thus, when adding them together we want to round the result to 5 decimal places.
+            this.J = (float)Math.Round( this.J + right.J, 5 );
+            this.K = (float)Math.Round( this.K + right.K, 5 );
+            this.L = (float)Math.Round( this.L + right.L, 5 );
             this.NumShotsFired += right.NumShotsFired;
 
             // If S is NaN, that means it hasn't been set yet. Since we are about to assign it, we need to make sure to set it to 0 before we add to it
@@ -309,25 +310,25 @@ namespace Scopos.BabelFish.DataModel.Athena {
             //The S is for speical sum
             switch (s) {
                 case ScoreComponent.I:
-                    this.S += right.I;
+                    this.S = (float)Math.Round( this.S + right.I, 5 );
                     break;
                 case ScoreComponent.X:
-                    this.S += right.X;
+                    this.S = (float)Math.Round( this.S + right.X, 5 );
                     break;
                 case ScoreComponent.D:
-                    this.S += right.D;
+                    this.S = (float)Math.Round( this.S + right.D, 5 );
                     break;
                 case ScoreComponent.S:
-                    this.S += right.S;
+                    this.S = (float)Math.Round( this.S + right.S, 5 );
                     break;
                 case ScoreComponent.J:
-                    this.S += right.J;
+                    this.S = (float)Math.Round( this.S + right.J, 5 );
                     break;
                 case ScoreComponent.K:
-                    this.S += right.K;
+                    this.S = (float)Math.Round( this.S + right.K, 5 );
                     break;
                 case ScoreComponent.L:
-                    this.S += right.L;
+                    this.S = (float)Math.Round( this.S + right.L, 5 );
                     break;
             }
         }

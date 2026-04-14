@@ -9,10 +9,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// This includes the Event Scores and Shots, as well as metadata about the match and participant who fired the scores..
     /// </summary>
     [Serializable]
-    public class ResultCOF : IEventScoreProjection {
-        //Key is the Singular Event Name, Value is the Shot
-        private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
+    public class ResultCOF :
+        IEventScoreProjection,
+        ISaveToFile {
 
+        #region Private Variables
+        //Key is the Singular Event Name, Value is the Shot
+        private Dictionary<string, Athena.Shot.Shot> _shotsByEventName = null;
+
+        #endregion
+
+        #region Constructors, Initialization, and Factory Methods
+
+        #endregion
+
+        #region Events
+
+        #endregion
+
+        #region Data Model Properties
         /// <summary>
         /// GUID assigned to this result
         /// </summary>
@@ -237,28 +252,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 51 )]
         public Athena.Shot.Shot? LastShot { get; set; } = null;
 
-
         /// <inheritdoc />
-        public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
-            if (shotsByEventName != null)
-                return shotsByEventName;
-
-            shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
-
-            foreach (var t in Shots.Values)
-                if (!string.IsNullOrEmpty( t.EventName ))
-                    shotsByEventName.Add( t.EventName, t );
-
-            return shotsByEventName;
-        }
-
-        /// <inheritdoc />
+        [G_STJ_SER.JsonPropertyOrder( 55 )]
+        [G_NS.JsonProperty( Order = 55 )]
         public Dictionary<string, EventScore> ResultCofScores { get; set; } = null;
-
-        public bool ShouldSerializeResultCofScores() {
-            return this.ResultCofScores is not null
-                && this.ResultCofScores.Count > 0;
-        }
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
@@ -323,7 +320,36 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Obsolete( "Use OwnerId instead." )]
         public string AccountNumber { get; set; } = string.Empty;
 
+        #endregion
+
+        #region Helper Properties
+
+        #endregion
+
         #region Methods
+        /// <inheritdoc />
+        public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
+            if (_shotsByEventName != null)
+                return _shotsByEventName;
+
+            _shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
+
+            foreach (var t in Shots.Values)
+                if (!string.IsNullOrEmpty( t.EventName ))
+                    _shotsByEventName.Add( t.EventName, t );
+
+            return _shotsByEventName;
+        }
+
+        /// <summary>
+        /// Newtownsoft helper method to determine if ResultCofScores should be serialized. We only want to serialize it if it is not null, and if it has at least one score in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeResultCofScores() {
+            return this.ResultCofScores is not null
+                && this.ResultCofScores.Count > 0;
+        }
+
         /// <summary>
         /// Newtonsoft.json helper method to determine if SquaddingAssignment should be serialized.
         /// We only want to serialize it if it is not null, and if it is not "Not Yet Squadded", which is the default value when we don't know the squadding assignment.
@@ -390,6 +416,60 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return false;
         }
+
+        #region ISaveToFile Methods
+        /// <inheritdoc />
+        public string GetFileName() {
+            return $"{ResultCOFID}.json";
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+
+            if (relativeDirectory == null)
+                throw new ArgumentNullException( nameof( relativeDirectory ) );
+
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+
+            var directoryPath = Path.GetDirectoryName( filePath );
+
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( filePath, json );
+
+            return filePath;
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
+        /// <inheritdoc />
+        public string GetRelativePath() {
+            return this.GetFileName();
+        }
+
+        /// <inheritdoc />
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
+        }
+        #endregion
+
         #endregion
 
     }

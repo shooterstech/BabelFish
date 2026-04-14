@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -16,6 +17,14 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task ProjectedAvgScoresMaker3x20Test() {
             courseOfFire = CourseOfFireHelper.Get_3x20_KPS_Cof();
+            // To make this test repeatable, going to load the three stage styles and override their relative difficulty.
+            var proneStageStyle = await DefinitionCache.GetStageStyleDefinitionAsync( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" ) );
+            var standingStageStyle = await DefinitionCache.GetStageStyleDefinitionAsync( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" ) );
+            var kneelingStageStyle = await DefinitionCache.GetStageStyleDefinitionAsync( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" ) );
+            proneStageStyle.RelativeDifficulty = 0.95f;
+            standingStageStyle.RelativeDifficulty = .80f;
+            kneelingStageStyle.RelativeDifficulty = 0.9f;
+
             resultEvent.EventScores = new Dictionary<string, EventScore>();
             EventScore qually = new EventScore {
                 EventName = "Qualification",
@@ -33,7 +42,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 EventName = "Standing",
                 Score = new Score { I = 0, D = 0, X = 0 },
                 ScoreFormatted = "",
-                NumShotsFired = 10,
+                NumShotsFired = 0,
                 EventType = EventtType.STAGE,
                 Status = ResultStatus.FUTURE,
                 StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" )
@@ -45,7 +54,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                 EventName = "Prone",
                 Score = new Score { I = 95, D = 99.4f, X = 4 },
                 ScoreFormatted = "",
-                NumShotsFired = 0,
+                NumShotsFired = 10,
                 EventType = EventtType.STAGE,
                 Status = ResultStatus.INTERMEDIATE,
                 StageStyleDef = SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" )
@@ -66,24 +75,22 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
 
             resultEvent.ProjectScores( new ProjectScoresByAverageShotFired( courseOfFire ) );
-            Console.WriteLine( System.Text.Json.JsonSerializer.Serialize( resultEvent ) );
 
-            //flip these around plz, better output on fail.
-            Assert.AreEqual( 198, resultEvent.EventScores["Standing"].Projected.I );
-            Assert.AreEqual( 202.8f, resultEvent.EventScores["Standing"].Projected.D );
-            Assert.AreEqual( 8, resultEvent.EventScores["Standing"].Projected.X );
+            Assert.AreEqual( 159, resultEvent.EventScores["Standing"].Projected.I );
+            Assert.AreEqual( 167.6f, resultEvent.EventScores["Standing"].Projected.D );
+            Assert.AreEqual( 9, resultEvent.EventScores["Standing"].Projected.X );
 
-            Assert.AreEqual( 198, resultEvent.EventScores["Prone"].Projected.I );
-            Assert.AreEqual( 202.1f, resultEvent.EventScores["Prone"].Projected.D );
-            Assert.AreEqual( 10, resultEvent.EventScores["Prone"].Projected.X );
+            Assert.AreEqual( 190, resultEvent.EventScores["Prone"].Projected.I );
+            Assert.AreEqual( 198.8f, resultEvent.EventScores["Prone"].Projected.D );
+            Assert.AreEqual( 8, resultEvent.EventScores["Prone"].Projected.X );
 
-            Assert.AreEqual( 198, resultEvent.EventScores["Kneeling"].Projected.I );
-            Assert.AreEqual( 201.3f, resultEvent.EventScores["Kneeling"].Projected.D );
+            Assert.AreEqual( 180, resultEvent.EventScores["Kneeling"].Projected.I );
+            Assert.AreEqual( 188.8f, resultEvent.EventScores["Kneeling"].Projected.D );
             Assert.AreEqual( 12, resultEvent.EventScores["Kneeling"].Projected.X );
 
-            Assert.AreEqual( 594, resultEvent.EventScores["Qualification"].Projected.I );
-            Assert.AreEqual( 606.2f, resultEvent.EventScores["Qualification"].Projected.D );
-            Assert.AreEqual( 30, resultEvent.EventScores["Qualification"].Projected.X );
+            Assert.AreEqual( 529, resultEvent.EventScores["Qualification"].Projected.I );
+            Assert.AreEqual( 555.2f, resultEvent.EventScores["Qualification"].Projected.D );
+            Assert.AreEqual( 29, resultEvent.EventScores["Qualification"].Projected.X );
         }
 
         [TestMethod]

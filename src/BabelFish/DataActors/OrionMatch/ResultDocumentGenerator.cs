@@ -78,6 +78,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultCOF.LiveTopic = null;
             resultCOF.PostDisplay = null;
 
+            //Will this work for teams ? 
+            var projector = ProjectorOfScoresFactory.Create( cofStructure.ProjectorOfScores, courseOfFireDefinition );
+            resultCOF.ProjectScores( projector );
+
             return resultCOF;
 
         }

@@ -49,6 +49,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             configuration.AttributeDef = attrValue.SetName;
             configuration.Constant = constant;
             configuration.AttributeValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( attrValue.SetName );
+            configuration.Visibility = configuration.AttributeValue.Attribute.DefaultVisibility;
 
             if (constant) {
                 //Should I clone or copy the AttributeValue here to avoid potential issues with mutability?
@@ -74,6 +75,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             configuration.AttributeDef = setName;
             configuration.Constant = false;
             configuration.AttributeValue = await DataModel.AttributeValue.AttributeValue.CreateAsync( setName );
+            configuration.Visibility = configuration.AttributeValue.Attribute.DefaultVisibility;
 
             configuration.IsForIndividuals = attribute.Designation.Contains( AttributeDesignation.ATHLETE );
             configuration.IsForTeams = attribute.Designation.Contains( AttributeDesignation.TEAM );
