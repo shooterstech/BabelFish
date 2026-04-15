@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission TOURNAMENT_LEAVE = new Permission( "tournament.leave", "leave a tournament" );
         public static readonly Permission TOURNAMENT_READ = new Permission( "tournament.read", "Permission to read a tournament" );
         public static readonly Permission TOURNAMENT_REMOVE_MEMBER = new Permission( "tournament.remove_member", "Remove a member from the tournament" );
-
+        public static readonly Permission CREATE_MERGED_RESULTLIST = new Permission( "match.create_merged_resultlist", "Create and manage merged result lists for the match" );
         /// <summary>
         /// Default constructor. Purposefully made private.
         /// To crate a new instance, use the constructor that takes in a permission name, or use the static Parse instances defined in this class.
