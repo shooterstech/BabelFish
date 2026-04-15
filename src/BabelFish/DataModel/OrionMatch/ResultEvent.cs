@@ -240,7 +240,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 25 )]
         [G_NS.JsonProperty( Order = 25 )]
-        public RemarkList RemarkList { get; set; }
+        public RemarkList RemarkList { get; set; } = new RemarkList();
 
         /// <summary>
         /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
