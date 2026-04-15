@@ -72,6 +72,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
+        [Obsolete( "Being removed because it was never used in practice. Deprecated April 2026" )]
         public string LiveTopic { get; set; } = string.Empty;
 
         /// <summary>

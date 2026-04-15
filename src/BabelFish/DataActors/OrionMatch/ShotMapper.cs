@@ -159,7 +159,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <para>Intended to be used to populate the Shots dictionary in <see cref="IEventScores"/>.</para>
         /// <para>Returned dictionary is empty, if the passed in resultCOFID is not known.</para>
         /// </summary>
-        public async Task<Dictionary<string, Shot>> GetShotsBySequenceAsync( string resultCOFID ) {
+        public async Task<Dictionary<string, Shot>> GetShotsBySequenceAsync( string resultCOFID, bool includeSighters = true ) {
 
             var shotDictionaryToReturn = new Dictionary<string, Shot>();
             CourseOfFireEntryIndividual entry;
@@ -196,6 +196,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 if (_shotDictionary.TryGetValue( resultCOFID, out var shots )) {
 
                     foreach (var shot in shots) {
+                        if (!includeSighters && shot.IsASighter) {
+                            continue;
+                        }
+
                         shotDictionaryToReturn[shot.Sequence.ToString()] = shot;
 
                         var stageLabel = shot.StageLabel;
@@ -631,8 +635,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     LogShot( shot );
                     AddToAllShots( shot );
                     _loadShotStopWatch.Stop();
-                    if (!_initializing)
+                    if (!_initializing) {
+                        OnShotAdded?.Invoke( this, new EventArgs<Shot>( shot ) );
                         OnSighterReceived?.Invoke( this, new EventArgs<Shot>( shot ) );
+                    }
                     break;
 
                 case ESTShotOperation.REDUNDANT:

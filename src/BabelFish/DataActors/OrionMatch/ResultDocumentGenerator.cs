@@ -69,13 +69,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultCOF.TargetCollectionName = cofStructure.TargetCollectionName;
 
             resultCOF.EventScores = await MatchProject.ShotMapper.GetEventScoresAsync( resultCOFID );
-            resultCOF.Shots = await MatchProject.ShotMapper.GetShotsBySequenceAsync( resultCOFID );
+            resultCOF.Shots = await MatchProject.ShotMapper.GetShotsBySequenceAsync( resultCOFID, false );
             resultCOF.LastShot = MatchProject.ShotMapper.GetLastShot( resultCOFID, true );
             resultCOF.Status = resultCOF.EventScores[topLevelEvent.EventName].Status;
 
             //Need to figure out how to populate these later. For now, we will just set them to null.
             resultCOF.LiveDisplay = null;
-            resultCOF.LiveTopic = null;
             resultCOF.PostDisplay = null;
 
             //Will this work for teams ? 

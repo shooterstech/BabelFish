@@ -702,6 +702,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     }
 
     /// <summary>
+    /// Specifies the type of calculation method to use when calculating team scores. This is a concrete class identifier for the abstract class TeamCalculationMethod.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum TeamCalculationType {
+        [Description( "Sum" )]
+        [EnumMember( Value = "Sum" )]
+        SUM
+    }
+
+    /// <summary>
     /// The type of scoring system in use.
     /// </summary>
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]

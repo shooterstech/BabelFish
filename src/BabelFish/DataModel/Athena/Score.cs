@@ -251,6 +251,11 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <param name="right"></param>
         /// <returns></returns>
         public static Score operator +( Score left, Score right ) {
+            if (left is null)
+                left = new Score();
+            if (right is null)
+                right = new Score();
+
             return new Score {
                 X = left.X + right.X,
                 D = left.D + right.D,
@@ -293,6 +298,9 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <param name="right"></param>
         /// <param name="s"></param>
         public void Add( Score right, ScoreComponent s ) {
+            if (right is null)
+                right = new Score();
+
             this.I += right.I;
             this.X += right.X;
             this.D = (float)Math.Round( this.D + right.D, 1 );

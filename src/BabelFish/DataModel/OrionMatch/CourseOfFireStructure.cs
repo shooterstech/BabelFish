@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
 
-        #region Event Handlers
+        #region Events
         /// <summary>
         /// Occurs when a new <see cref="ResultListAbbr"/> is added.
         /// <para>The preferred way of adding a new ResultListAbbr is to use the <see cref="AddResultList(ResultListAbbr)"/> method.
@@ -183,6 +183,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>The TARGET COLLECTION is specified in the COURSE OF FIRE. </remarks>
         public string TargetCollectionName { get; set; }
 
+        /// <summary>
+        /// Specifies the algorithm to use to project INTERMEDIATE score.
+        /// The default value is AVERAGE_SHOT_FIRED which means it will use the <see cref="ProjectScoresByAverageShotFired"/> class.
+        /// </summary>
         public ProjectorOfScoresType ProjectorOfScores { get; set; } = ProjectorOfScoresType.AVERAGE_SHOT_FIRED;
 
         /// <summary>
@@ -208,6 +212,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
 
+        public TeamCalculationType TeamCalculation { get; set; } = TeamCalculationType.SUM;
         #endregion
 
         #region Helper Properties

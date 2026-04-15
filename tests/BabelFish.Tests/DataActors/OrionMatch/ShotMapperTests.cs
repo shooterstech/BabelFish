@@ -374,5 +374,66 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.AreEqual( ResultStatus.OFFICIAL, eventScores["ST 4"].Status );
             }
         }
+
+        [TestMethod]
+        public async Task SightersInShotMapperTest() {
+            var matchName = "SightersInShotMapperTest";
+
+            //Create the MatchProject which will generate a ShotMapper.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
+
+            var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v1.0:ntparc:40 Shot Standing" ) );
+            cofStructure.ScoreConfigName = "Integer";
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+
+            var shotMapper = project.ShotMapper;
+            shotMapper.InMemoryOnly = true;
+
+            //ShotMapper should be created when the MatchProject is created.
+            Assert.IsNotNull( shotMapper );
+
+            var participant = await project.CreateMatchParticipantAsync( "Smith", "John" );
+            CourseOfFireEntryIndividual invEntry;
+            if (participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
+                invEntry = (CourseOfFireEntryIndividual)entry;
+
+                var numberOfShots = 40;
+                var shotDictionary = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId, true );
+                Assert.AreEqual( 0, shotDictionary.Count );
+
+                //Simulate 5 sighter shots.
+                for (int shotNum = 1; shotNum <= 5; shotNum++) {
+                    var shot = await Shot.SimulateAsync( cofStructure, invEntry, "Standing", shotNum );
+                    shot.AddAttribute( Shot.SHOT_ATTRIBUTE_SIGHTER );
+                    shotMapper.ReceiveShot( this, new EventArgs<Shot>( shot ) );
+                }
+
+                shotDictionary = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId, true );
+                Assert.AreEqual( 5, shotDictionary.Count );
+
+                shotDictionary = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId, false );
+                Assert.AreEqual( 0, shotDictionary.Count );
+
+                var lastShot = shotMapper.GetLastShot( invEntry.ResultCofId, true );
+                Assert.IsTrue( lastShot.IsASighter );
+
+                //Simulate 40 record shots.
+                for (int shotNum = 6; shotNum <= 45; shotNum++) {
+                    var shot = await Shot.SimulateAsync( cofStructure, invEntry, "Standing", shotNum );
+                    shotMapper.ReceiveShot( this, new EventArgs<Shot>( shot ) );
+                }
+
+                shotDictionary = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId, true );
+                Assert.AreEqual( 45, shotDictionary.Count );
+
+                shotDictionary = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId, false );
+                Assert.AreEqual( 40, shotDictionary.Count );
+
+                lastShot = shotMapper.GetLastShot( invEntry.ResultCofId, true );
+                Assert.IsFalse( lastShot.IsASighter );
+            }
+        }
     }
 }
