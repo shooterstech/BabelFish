@@ -1098,7 +1098,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public string GetRemarks( bool useAbbreviation ) {
-            return _resultEvent?.RemarkList.GetSummary( useAbbreviation ) ?? string.Empty;
+            return _resultEvent?.RemarkList?.GetSummary( useAbbreviation ) ?? string.Empty;
         }
 
         public void SetSquaddingAssignment( SquaddingAssignment squadding ) {
