@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2026041417583776.2" ) );
             Assert.IsTrue( getTournamentResponse.HasOkStatusCode );
             var tournament = getTournamentResponse.Tournament;
-            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Individual Precision Results" );
+            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Individual Sporter Results" );
             var tournamentMerger = await ResultListMergerEngine.CreateAsync( invRanking );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
