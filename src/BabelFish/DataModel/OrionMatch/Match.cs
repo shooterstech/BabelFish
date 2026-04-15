@@ -215,6 +215,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// The Member Policy for the match, which determines who can be added as a participant in the match. Valid values are:
+        /// INVITE : Only participants who are explicitly invited by the match administrators can be added to the match.
+        /// OPEN : Any participant can be added to the match without an explicit invitation.
+        /// REQUEST: Participants can request to join the match, but must be approved by the match administrators before they are added.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 7 )]
+        [G_NS.JsonProperty( Order = 7 )]
+        public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicy.INVITE;
+
+        /// <summary>
         /// External Result URL
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 10 )]
