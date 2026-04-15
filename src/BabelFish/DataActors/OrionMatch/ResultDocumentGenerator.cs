@@ -84,6 +84,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             return resultCOF;
 
         }
+
+        public async Task<ResultCOF> GenerateResultListAsync( ResultListAbbr resultListAbbr ) {
+
+        }
         #endregion
     }
 }

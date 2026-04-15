@@ -3,16 +3,41 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.OrionMatch {
+
+    /// <summary>
+    /// The ResultListWizard generates a standardized list of ResultListAbbrs that could be used for a <see cref="Match"/> and <see cref="CourseOfFireStructure"/>.
+    /// The idea is that there are a standard set of ResultLists that should be generated for each combination of Attributes in the
+    /// Course of Fire Structure. It does this by looking at the global Attributes in the Match, and the Attributes in the Course of Fire Structure,
+    /// and generating a ResultListAbbr for each combination of Attribute values, for both Individual and Team events.
+    /// <para>The ResultListAbbr class
+    /// is used to store the information needed to generate each ResultList, without actually generating the ResultList itself.
+    /// The actual generation of the ResultLists is handled by the <see cref="ResultDocumentGenerator"> class.</para>
+    /// </summary>
     public class ResultListWizard {
 
         private Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="match"></param>
         public ResultListWizard( Match match ) {
             Match = match;
         }
 
+        /// <summary>
+        /// Gets the Match that this ResultListWizard is generating ResultLists for.
+        /// </summary>
         public Match Match { get; private set; }
 
+        /// <summary>
+        /// This method generates the list of ResultListAbbrs for a given CourseOfFireStructure. It does this by looking at the global Attributes in the Match, and the Attributes in the Course of Fire Structure,
+        /// and generating a ResultListAbbr for each combination of Attribute values, for both Individual and Team events. The ResultListAbbr class is used to store the information needed to generate each ResultList,
+        /// without actually generating the ResultList itself. The actual generation of the ResultLists is handled by the <see cref="ResultDocumentGenerator"/> class.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public async Task<List<ResultListAbbr>> GenerateAsync( int courseOfFireId ) {
             CourseOfFireStructure? cofStructure = this.Match.MatchStructure.CoursesOfFire.Find( x => x.CourseOfFireId == courseOfFireId );
 
