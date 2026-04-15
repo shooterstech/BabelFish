@@ -87,13 +87,20 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public EventCalculation Calculation { get; set; } = EventCalculation.SUM;
 
         /// <summary>
-        /// Additional information needed for the Event Calculation score. The type of data is dependent on the 
-        /// Calculation type. 
+        /// Additional variable information needed by <see cref="ShotMapper"/> to calculate the <see cref="Score"/> for this Event.
+        /// The type of <see cref="CalculationVariable"/> is dependent on the vlaue of <see cref="Calculation"/>.
+        /// <para>For example, if <see cref="Calculation"/> is AVERAGE, then there should be one <see cref="CalculationVariable"/> of type INTEGER,
+        /// which specifies the number of shots to average together when calculating the score for this Event. See the description of Calculation
+        /// for more details.</para>
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 9 )]
         [G_NS.JsonProperty( Order = 9 )]
         public List<CalculationVariable> CalculationVariables { get; set; } = new List<CalculationVariable>();
 
+        /// <summary>
+        /// Newtonsoft.json helper method, to determine if the CalculationVariables property should be serialized. We only want to serialize it if it is not null and has at least one element.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeCalculationVariables() {
             return CalculationVariables != null && CalculationVariables.Count > 0;
         }

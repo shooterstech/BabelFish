@@ -54,7 +54,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Some AttributeValues are specific to a specific course of fire within a Match. A value of 0 means the AttributeValue is not specific to a course of fire, and applies to the whole match. Any other value should be the CourseOfFireId of the course of fire that this AttributeValue is specific to.
+        /// Some AttributeValues are specific to a specific course of fire within a Match.
+        /// A value of 0 means the AttributeValue is not specific to a course of fire, and applies
+        /// to the whole match. Any other value should be the CourseOfFireId of the course of fire
+        /// that this AttributeValue is specific to.
         /// <para></para>
         /// </summary>
         public int CourseOfFireId { get; set; } = 0;

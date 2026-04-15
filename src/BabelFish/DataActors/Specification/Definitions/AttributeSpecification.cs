@@ -167,7 +167,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             bool valid = true;
 
             //The DefaultVisibility must be less than or equal to the MaxVisibility
-            valid = (candidate.DefaultVisibility <= candidate.DefaultVisibility);
+            valid = (candidate.DefaultVisibility <= candidate.MaxVisibility);
 
             if (!valid) {
                 Messages.Add( $"The DefaultVisibility must be greater than or equal to the MaxVisibility. Instead the DefaultVisibilityh is {candidate.DefaultVisibility.Description()} and the MaxVisibility is {candidate.MaxVisibility.Description()}" );

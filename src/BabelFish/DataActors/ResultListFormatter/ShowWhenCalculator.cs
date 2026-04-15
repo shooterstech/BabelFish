@@ -185,98 +185,102 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     if (participant == null || participant.Participant == null) {
                         foreach (var p in this.RLF.RLIFList.GetAsIRLItemsList()) {
-                            if (p.Participant.RemarkList.HasAnyShownParticipantRemark) {
-                                return true;
+                            if (p is ResultEvent re && re.RemarkList.HasAnyShownParticipantRemark) {
+                                answer = true;
                             }
                         }
-                        return false;
+                        answer = false;
                     } else {
-                        return participant.Participant.RemarkList.HasAnyShownParticipantRemark;
+                        if (participant is ResultEvent re) {
+                            answer = re.RemarkList.HasAnyShownParticipantRemark;
+                        } else {
+                            answer = false;
+                        }
                     }
-
+                    break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_LEADER:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.LEADER );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.LEADER );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_FIRST:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.FIRST );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.FIRST );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_SECOND:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.SECOND );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.SECOND );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_THIRD:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.THIRD );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.THIRD );
                     break;
 
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_DNS:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_DNF:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_DSQ:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_BUBBLE:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.BUBBLE );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.BUBBLE );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_ELIMINATED:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.ELIMINATED );
                     break;
 
                 case ShowWhenCondition.HAS_SHOWN_REMARK_QUALIFIED:
-                    if (participant == null || participant.Participant == null) {
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
                         answer = false;
                         break;
                     }
-                    answer = participant.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED );
+                    answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED );
                     break;
 
                 case ShowWhenCondition.PARTICIPANT_IS_INDIVIDUAL:

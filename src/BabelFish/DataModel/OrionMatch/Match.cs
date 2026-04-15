@@ -44,7 +44,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="project">The MatchProject associated with this Match instance.</param>
         public Match( ClubAbbr club, MatchProject project ) {
             this.MatchID = new MatchID( club );
-            this.Project = project;
+            this.MatchProject = project;
             this.MatchStructure = new MatchStructure( this );
         }
 
@@ -478,8 +478,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Backwards pointer to the MatchProject that this Match is associated with. Value is not serialized, but is set when the Match is added to a MatchProject, or when the Match is deserialized as part of a MatchProject.
+        /// Value might be null if the Match was instantiated or deserialized outside the context of a MatchProject.
+        /// </summary>
         [G_NS.JsonIgnore]
-        public MatchProject Project { get; internal set; }
+        public MatchProject? MatchProject { get; internal set; }
 
         #endregion
 
@@ -531,10 +535,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <exception cref="InvalidOperationException">Thrown if the MatchProject property Project is not set.</exception>
         public string GetFileName() {
 
-            if (Project is null)
-                throw new InvalidOperationException( "The MatchProject property Project is not set, and must be set before calling GetRelativePath." );
+            if (MatchProject is null)
+                throw new InvalidOperationException( "The MatchProject property MatchProject is not set, and must be set before calling GetRelativePath." );
 
-            return $"{StringFormatting.MakeSafeFileName( Project.ProjectName )}.json";
+            return $"{StringFormatting.MakeSafeFileName( MatchProject.ProjectName )}.json";
         }
 
         /// <summary>
@@ -587,9 +591,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         public void SaveToFile() {
-            if (Project is null)
-                throw new InvalidOperationException( "The MatchProject property Project is not set, and must be set before calling SaveToFile." );
-            SaveToFile( Project.ProjectDirectory );
+            if (MatchProject is null)
+                throw new InvalidOperationException( "The MatchProject property MatchProject is not set, and must be set before calling SaveToFile." );
+            SaveToFile( MatchProject.ProjectDirectory );
         }
 
         /// <summary>

@@ -9,7 +9,8 @@ namespace Scopos.BabelFish.Tests {
     public class BaseTestClass {
 
 
-        public static DirectoryInfo RelativeDirectoryForTesting { get; set; } = new System.IO.DirectoryInfo( @"C:\temp" );
+        public static DirectoryInfo RelativeDirectoryForDefinitions { get; set; } = new System.IO.DirectoryInfo( @"C:\temp" );
+        public static DirectoryInfo RelativeDirectoryForTesting { get; set; } = new System.IO.DirectoryInfo( @"C:\temp\UnitTests" );
 
         public static ClubAbbr TestClubAbbr { get; set; } = new ClubAbbr() {
             AccountNumber = 0,
@@ -32,7 +33,7 @@ namespace Scopos.BabelFish.Tests {
             }
 
 
-            DefinitionAPIClient.LocalStoreDirectory = RelativeDirectoryForTesting;
+            DefinitionAPIClient.LocalStoreDirectory = RelativeDirectoryForDefinitions;
 
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         }

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 /*
  * This is a single file that contains multiple definitions for enums, all used within the Scopos.BabelFish.DataModel.Definitions namespace
@@ -330,14 +331,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the 10 in the CalculationMeta field
         /// </summary>
+        /// <remarks>This method is deprecated and not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "AVG(10)" )]
         [EnumMember( Value = "AVG(10)" )]
         [Obsolete( "Use AVERAGE with CalculationVariables instead." )]
         AVG_TEN,
 
         /// <summary>
-        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specify the i, d in the CalculationMeta field
         /// </summary>
+        /// <remarks>This method is deprecated and not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "SUM(i, d)" )]
         [EnumMember( Value = "SUM(i, d)" )]
         [Obsolete( "Use SUM with CalculationVariables instead." )]
@@ -346,6 +349,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
         /// </summary>
+        /// <remarks>This method is deprecated and not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "SUM(i,d)" )]
         [EnumMember( Value = "SUM(i,d)" )]
         [Obsolete( "Use SUM with CalculationVariables instead." )]
@@ -354,6 +358,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Reserved for Singularities that don't have children.
         /// </summary>
+        /// <remarks>As this method is reserved for singularities, it is not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "NONE" )]
         [EnumMember( Value = "NONE" )]
         NONE

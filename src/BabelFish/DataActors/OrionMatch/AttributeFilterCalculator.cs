@@ -1,4 +1,3 @@
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -151,17 +150,15 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="participant"></param>
         /// <returns></returns>
         private static bool HasValue( AttributeValueDataPacketMatch filter, Participant participant ) {
-            AttributeValue? attrValue = null;
-            foreach (var attrValueToInspect in participant.AttributeValues) {
-                if (attrValueToInspect.AttributeDef.Equals( filter.AttributeDef )) {
-                    attrValue = attrValueToInspect.AttributeValue;
-                    break;
-                }
+            AttributeValueDataPacketMatch avdpm;
+            if (participant.TryGetAttributeValue( filter.AttributeDef, filter.CourseOfFireId, out avdpm )) {
+
+                if (avdpm == null) return false;
+
+                return avdpm.AttributeValue.Equals( filter.AttributeValue );
             }
 
-            if (attrValue == null) return false;
-
-            return attrValue.Equals( filter.AttributeValue );
+            return false;
         }
     }
 }

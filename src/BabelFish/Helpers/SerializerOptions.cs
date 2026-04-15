@@ -43,6 +43,7 @@ namespace Scopos.BabelFish.Helpers {
                     //Write indented
                     SystemTextJsonDeserializer.WriteIndented = true;
 
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeConfigurationConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeFilterConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AbbreviatedFormatChildConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.AttributeFieldConverter() );

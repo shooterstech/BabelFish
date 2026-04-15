@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -29,6 +30,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             Coaches = new List<Individual>();
         }
 
+        /// <summary>
+        /// Generates a deep copy of this Participant instance, with the notable exception of the participant's attribute values.
+        /// The AttributeValues list of the copied Participant is populated based on the provided CourseOfFireStructure, which includes
+        /// both the Course of Fire specific attributes and the global attributes for the match.
+        /// </summary>
+        /// <param name="cofStructure"></param>
+        /// <returns></returns>
+        /// <remarks>This method is intended to be used in the generation of <see cref="ResultCOF"/> or <see cref="ResultEvent"/> instances.</remarks>
+        public async Task<Participant> CopyAsync( CourseOfFireStructure cofStructure ) {
+            var copy = this.Clone(); //Using Clone is slow, but works
+            copy.AttributeValues = new List<AttributeValueDataPacketMatch>();
+
+            // Populate the Participant Attribute Values specific to this Course of Fire. Which includes the attributes specific to the course of fire structure, and then the global attributes for the match.
+            // By calling GetAttributeValueAsync we also include the correct values for Constant attributes.
+
+            foreach (var attrConfig in cofStructure.Attributes) {
+                var attrValue = await this.GetAttributeValueAsync( attrConfig.AttributeDef, cofStructure.CourseOfFireId );
+                if (attrValue is not null) {
+                    copy.AttributeValues.Add( attrValue );
+                }
+            }
+            foreach (var attrConfig in cofStructure.MatchStructure.GlobalAttributes) {
+                var attrValue = await this.GetAttributeValueAsync( attrConfig.AttributeDef, 0 );
+                if (attrValue is not null) {
+                    copy.AttributeValues.Add( attrValue );
+                }
+            }
+
+            return copy;
+        }
+
         public void OnDeserialized() {
             _ignoreEvents = false;
         }
@@ -47,7 +79,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #endregion
 
-        #region Data Properties
+        #region Data Model Properties
         /// <summary>
         /// When a competitor's name is displayed, this is the value that is displayed vy default.
         /// <para>Alternatively, on a reduced width screen a shorter display name is returned using <see cref="GetDisplayNameShort()"/>.</para>
@@ -173,49 +205,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// A list of AttributeValues assigned to this Participant.
+        /// <para>It should only contain non-Constant AttributeValues. Note a Constant AttributeValue is shared across all participants and is demarcated
+        /// using <see cref="AttributeConfiguration.Constant"/> within either the <see cref="CourseOfFireStructure"/> (for Course of Fire specific Attributes)
+        /// or <see cref="MatchStructure"/> for global attributes.</para>
+        /// <para>The preferred way to get an Attribute Value for a Participant, either COF specific or global is to use
+        /// <see cref="GetAttributeValueAsync"/>.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 21 )]
         public List<AttributeValueDataPacketMatch> AttributeValues { get; set; } = new List<AttributeValueDataPacketMatch>();
 
         /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeAttributeValues() {
-            return (AttributeValues != null && AttributeValues.Count > 0);
-        }
-
-        /// <summary>
         /// A list of Remark objects, each containing a RemarkName, sometimes a reason, and a status (show or don't)
         /// </summary>
-        /// <remarks>EKA Note March 2025. Not sure RemarkList belongs directly on a Particpant, as each COF a participant shoots in a Match may have its own RemarkList
         /// </remarks>
+        [Obsolete( "RemarkList is now implemented as part of the CourseOfFireEntry class. As each Course of Fire a participants shoots may have a different RemarkList. Deprecated April 2025." )]
         [G_NS.JsonProperty( Order = 22 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
-
-        /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
-        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeRemarkList() {
-            return (RemarkList != null && RemarkList.Count() > 0);
-        }
 
         /// <summary>
         /// A list of this Participant's coaches.
         /// </summary>
         [G_NS.JsonProperty( Order = 23 )]
         public List<Individual> Coaches { get; set; }
-
-        /// <summary>
-        /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeCoaches() {
-            return (Coaches != null && Coaches.Count > 0);
-        }
 
         /*
          * JsonProperty Order values 25 .. 29 reserved for concrete classes
@@ -239,6 +250,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #endregion
 
+        #region Helper Properties
+
+        /// <summary>
+        /// Backwards pointer to the MatchParticipant that this Participant is associated with. This is set during deserialization of the
+        /// MatchParticipant, and is used to allow the Participant to access information about the match and other participants if needed.
+        /// <para>Value might be null if this Participant was created or deserialized outside the context of a <see cref="MatchProject"/>.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public MatchParticipant? MatchParticipant { get; internal set; }
+
+        /// <summary>
+        /// Helper property, read only, property to get the MatchProject that this Participant is associated with, through the MatchParticipant. 
+        /// <para>Value might be null if this Participant was created or deserialized outside the context of a <see cref="MatchProject"/>,
+        /// for example the GetMatchParticipantList API call.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public MatchProject? MatchProject {
+            get {
+                return this.MatchParticipant?.Project ?? null;
+            }
+        }
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -260,6 +294,119 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             } else {
                 return StringFormatting.GetTruncatedString( this.DisplayName, DISPLAY_NAME_SHORT_MAX_LENGTH );
             }
+        }
+        /// <summary>
+        /// Gets the AttributeValue for a specific SetName and CourseOfFireId. 
+        /// <para>To get global AttributeValues that apply to the whole match, use a CourseOfFireId of 0.</para>
+        /// <para>If the Participant doesn't have an AttributeValue for the specified SetName and CourseOfFireId, but the Attribute
+        /// is defined within the <see cref="MatchStructure"/>, a default AttributeValue is generated, stored for the participant
+        /// and returned.</para>
+        /// <para>null is returned otherwise.</para>
+        /// </summary>
+        /// <param name="setName">The SetName of the attribute.</param>
+        /// <param name="courseOfFireId">The CourseOfFireId of the attribute.</param>
+        /// <returns>The AttributeValueDataPacketMatch if found, otherwise null.</returns>
+        /// <remarks>This method is asynchronous to allow for the possibility of needing to create default AttributeValues, but in most cases it will complete synchronously. The
+        /// nearly equivalent synchronous method is <see cref="TryGetAttributeValue"/>.</remarks>
+        public async Task<AttributeValueDataPacketMatch?> GetAttributeValueAsync( SetName setName, int courseOfFireId ) {
+
+            return await Task.FromResult( GetAttributeValueInternal( setName, courseOfFireId,
+                attributeConfiguration => {
+                    // If not found, create a default AttributeValue
+                    return AttributeValueDataPacketMatch.CreateAsync( attributeConfiguration ).GetAwaiter().GetResult();
+                } ) );
+        }
+
+        /// <summary>
+        /// Attempts to get the AttributeValue for a specific SetName and CourseOfFireId. Returns true if found, false otherwise. The result is returned through an out parameter.
+        /// <para>A default value is not created by this method, if the attribute value is not found. To create a default value if not found, use <see cref="GetAttributeValueAsync"/>.</para>
+        /// </summary>
+        /// <param name="setName">The SetName of the attribute.</param>
+        /// <param name="courseOfFireId">The CourseOfFireId of the attribute.</param>
+        /// <param name="result">The AttributeValueDataPacketMatch if found, otherwise null.</param>
+        /// <returns>True if the AttributeValueDataPacketMatch was found, otherwise false.</returns>
+        public bool TryGetAttributeValue( SetName setName, int courseOfFireId, out AttributeValueDataPacketMatch? result ) {
+            result = GetAttributeValueInternal(
+                setName,
+                courseOfFireId,
+                ( attributeConfiguration ) => null // Don't create, just return null
+            );
+            return result != null;
+        }
+
+        private AttributeValueDataPacketMatch? GetAttributeValueInternal(
+            SetName setName,
+            int courseOfFireId,
+            Func<AttributeConfiguration, AttributeValueDataPacketMatch?> createDefault ) {
+            if (setName.IsDefault)
+                return null;
+
+            if (courseOfFireId > 0) {
+                if (this.MatchProject?.Match?.MatchStructure?.TryGetCourseOfFireStructure( courseOfFireId, out var courseOfFire ) ?? false) {
+                    foreach (var attributeConfiguration in courseOfFire.Attributes) {
+                        if (attributeConfiguration.AttributeDef.Equals( setName )) {
+                            if (attributeConfiguration.Constant)
+                                return attributeConfiguration.GetAsAttributeValueDataPacketMatch();
+
+                            foreach (var attributeValue in this.AttributeValues) {
+                                if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId)
+                                    return attributeValue;
+                            }
+
+                            // If not found, use the provided delegate to handle creation
+                            return createDefault( attributeConfiguration );
+                        }
+                    }
+                }
+            } else {
+                foreach (var attributeConfiguration in this.MatchProject?.Match?.MatchStructure?.GlobalAttributes ?? Enumerable.Empty<AttributeConfiguration>()) {
+                    if (attributeConfiguration.AttributeDef.Equals( setName )) {
+                        if (attributeConfiguration.Constant)
+                            return attributeConfiguration.GetAsAttributeValueDataPacketMatch();
+
+                        foreach (var attributeValue in this.AttributeValues) {
+                            if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId)
+                                return attributeValue;
+                        }
+
+                        // If not found, use the provided delegate to handle creation
+                        return createDefault( attributeConfiguration );
+                    }
+                }
+            }
+
+            foreach (var attributeValue in this.AttributeValues) {
+                if (attributeValue.AttributeDef.Equals( setName ) && attributeValue.CourseOfFireId == courseOfFireId)
+                    return attributeValue;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAttributeValues() {
+            return (AttributeValues != null && AttributeValues.Count > 0);
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize Coaches when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeCoaches() {
+            return (Coaches != null && Coaches.Count > 0);
+        }
+
+        /// <summary>
+        /// A Newtonsoft Conditional Property to only serialize AttributeValues when the list has something in it.
+        /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count() > 0);
         }
 
         /// <inheritdoc />

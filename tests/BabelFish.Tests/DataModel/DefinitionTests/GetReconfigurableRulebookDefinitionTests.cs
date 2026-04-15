@@ -2,6 +2,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.Definitions;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
 

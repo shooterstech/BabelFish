@@ -7,6 +7,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <para>Withiin a <see cref="Match"/> there are multiple <see cref="CourseOfFireStructure">Courses of Fire</see>, and each Participant may be entered in some or all of the Course of Fire.
     /// This class represents the information about a single Course of Fire for a single Participant, including whether they are entered
     /// in the Course of Fire, and if so, their Squadding information for that Course of Fire.</para>
+    /// <para> The preferred method for creating a new entry is to use the <see cref="MatchParticipant.CreateEntry(int)"/> method.
+    /// Which will also set the backwards pointer <see cref="MatchParticipant"/></para>
     /// </summary>
     public abstract class CourseOfFireEntry {
 
@@ -25,6 +27,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public EntryStatus EntryStatus { get; set; } = EntryStatus.NOT_ENTERED;
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        /// <summary>
+        /// Backwards pointer to the MatchParticipant that owns this CourseOfFireEntry. This is set when the CourseOfFireEntry is created using the <see cref="MatchParticipant.CreateEntry(int)"/> method, and should not be set manually.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public MatchParticipant? MatchParticipant { get; internal set; } = null;
+
+        public bool ShouldSerializeRemarkList() {
+            return RemarkList != null && RemarkList.Count > 0;
+        }
     }
 
     public class CourseOfFireEntryIndividual : CourseOfFireEntry {

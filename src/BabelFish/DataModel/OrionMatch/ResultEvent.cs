@@ -201,7 +201,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (string.IsNullOrEmpty( _topLevelEventName )) {
                 if (this.EventScores is not null) {
                     foreach (var es in this.EventScores.Values) {
-                        if (es.EventType == "EVENT") {
+                        if (es.EventType == Definitions.EventtType.EVENT) {
                             _topLevelEventName = es.EventName;
                             return es.Status;
                         }
@@ -231,6 +231,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         public bool ShouldSerializeTeamMembers() {
             return (TeamMembers != null && TeamMembers.Count > 0);
+        }
+
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 25 )]
+        [G_NS.JsonProperty( Order = 25 )]
+        public RemarkList RemarkList { get; set; }
+
+        /// <summary>
+        /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
         }
 
         /// <inheritdoc />

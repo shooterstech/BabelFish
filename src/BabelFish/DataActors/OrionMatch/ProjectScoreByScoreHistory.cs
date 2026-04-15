@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Athena;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -152,15 +153,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         private Score RecurProjectScores( EventComposite eventComposite ) {
             EventScore eventScore;
             if (!this.Projection.EventScores.TryGetValue( eventComposite.EventName, out eventScore )) {
-                Console.Write( "Event name not found, this should NOT happen!!" );
+                Debug.Fail( "Event name not found, this should NOT happen!!" );
             }
 
-            if (!EventtType.TryParse( eventScore.EventType, out EventtType eventType )) {
-                Console.Write( "Event type invalid, this should NOT happen!!" );
-                eventType = EventtType.NONE;
-            }
-
-            if (eventType == EventtType.STAGE) //leaf node
+            if (eventComposite.EventType == EventtType.STAGE) //leaf node
             {
                 return ProjectStageScore( eventComposite, eventScore );
             }
@@ -180,9 +176,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             eventScore.Projected.D = (float)Math.Round( eventScore.Projected.D, 1 );
             eventScore.Projected.S = (float)Math.Round( eventScore.Projected.S, 1 );
             return eventScore.Projected;
-
-
-
         }
 
         /*

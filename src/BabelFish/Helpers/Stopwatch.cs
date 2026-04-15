@@ -53,8 +53,8 @@ namespace Scopos.BabelFish.Helpers {
         public void Log() {
             long avgTime = this.ElapsedMilliseconds / _count;
 
-            var msg = $"Stopwatch {Name} is averaging {avgTime}ms.";
-            Debug.Assert( avgTime > LogAsErrorIfTimeExceeds, msg );
+            var msg = $"Stopwatch {Name} is averaging {avgTime}ms which is greater than the {LogAsErrorIfTimeExceeds}ms threshold.";
+            Debug.Assert( avgTime < LogAsErrorIfTimeExceeds, msg );
 
             if (avgTime > LogAsErrorIfTimeExceeds) {
                 _logger.Error( msg );

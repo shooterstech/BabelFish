@@ -177,7 +177,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (this.Projection.EventScores.TryGetValue( eventComposite.EventName, out eventScore )) {
 
                 //See if we already have a projected score for this event.
-                if (eventScore.Projected != null)
+                if (eventScore.Projected != null && !eventScore.Projected.IsZero)
                     return eventScore.Projected;
 
                 //Check if we need to stop the recussion

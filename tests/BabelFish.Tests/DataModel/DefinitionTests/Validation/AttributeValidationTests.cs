@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Attribute = Scopos.BabelFish.DataModel.Definitions.Attribute;
 
@@ -73,6 +74,24 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             fieldTypeClosed.DefaultValue = "DDDD";
             Assert.IsTrue( await specification.IsSatisfiedByAsync( attr3 ), "Suggest Field with a Default Value not in the list. Should always pass regardless of value." );
+        }
+
+        [TestMethod]
+        public async Task DefaultVisibilityTests() {
+            var attribute = new Attribute();
+            IsAttributeDefaultVisibilityValid specification = new IsAttributeDefaultVisibilityValid();
+
+            attribute.DefaultVisibility = VisibilityOption.PUBLIC;
+            attribute.MaxVisibility = VisibilityOption.PUBLIC;
+            Assert.IsTrue( await specification.IsSatisfiedByAsync( attribute ), "Default Visibility is the same as Max Visibility. Should pass." );
+
+            attribute.DefaultVisibility = VisibilityOption.PUBLIC;
+            attribute.MaxVisibility = VisibilityOption.PROTECTED;
+            Assert.IsFalse( await specification.IsSatisfiedByAsync( attribute ), "Default Visibility is more restrictive than Max Visibility. Should fail." );
+
+            attribute.DefaultVisibility = VisibilityOption.PROTECTED;
+            attribute.MaxVisibility = VisibilityOption.PUBLIC;
+            Assert.IsTrue( await specification.IsSatisfiedByAsync( attribute ), "Default Visibility is less restrictive than Max Visibility. Should pass." );
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     if (eventScore.Score != null && !eventScore.Score.IsZero) {
                         //Don't include this score if it is a DNF and the configureation says not to use DNFs
                         if (MergeConfiguration.ExcludeDNFFromAverage
-                            && eventScore.Participant.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )) {
+                            && re.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )) {
                             continue;
                         }
 

@@ -1,7 +1,7 @@
-namespace Scopos.BabelFish.DataModel.Definitions {
+using Scopos.BabelFish.DataModel.Definitions;
 
-    //NOTE: Not sure if Scopos.BabelFish.DataModel.Definitions is the best namespace for this file, since it is not an object for a definition.
-    //However, ca'nt figure out a better place for it current. EKA July 2023
+namespace Scopos.BabelFish.DataActors.Definitions {
+
     public class EventAndStageStyleMappingCalculation {
 
         private EventAndStageStyleMapping _definition;
@@ -73,7 +73,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// Returns the SetName (as a string) of the StageStyle definition that cooresponds to the passed in attributeValueAppellation, targetCollectionName, and eventStyleMapping.
+        /// Returns the SetName of the StageStyle definition that cooresponds to the passed in attributeValueAppellation, targetCollectionName, and eventStyleMapping.
         /// </summary>
         /// <param name="attributeValueAppellation"></param>
         /// <param name="targetCollectionName"></param>

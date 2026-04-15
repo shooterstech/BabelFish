@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using Scopos.BabelFish.DataActors.Definitions;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -34,10 +35,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         #region Private Variables
 
-        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private bool _initializing = false;
         private FileInfo _shotLogFile;
         private volatile bool _threadsShouldDie = false;
+        private DateTime _clearLastShotBeforeThisUTCTime = DateTime.MinValue;
 
         /*
          * These next two dictionaries _allShots and _shotDictionary will nearly contain the same data.
@@ -157,7 +159,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <para>Intended to be used to populate the Shots dictionary in <see cref="IEventScores"/>.</para>
         /// <para>Returned dictionary is empty, if the passed in resultCOFID is not known.</para>
         /// </summary>
-        public async Task<Dictionary<string, Shot>> GetShotsBySequenceAsync( string resultCOFID ) {
+        public async Task<Dictionary<string, Shot>> GetShotsBySequenceAsync( string resultCOFID, bool includeSighters = true ) {
 
             var shotDictionaryToReturn = new Dictionary<string, Shot>();
             CourseOfFireEntryIndividual entry;
@@ -194,6 +196,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 if (_shotDictionary.TryGetValue( resultCOFID, out var shots )) {
 
                     foreach (var shot in shots) {
+                        if (!includeSighters && shot.IsASighter) {
+                            continue;
+                        }
+
                         shotDictionaryToReturn[shot.Sequence.ToString()] = shot;
 
                         var stageLabel = shot.StageLabel;
@@ -240,9 +246,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public async Task<Dictionary<string, EventScore>> GetEventScoresAsync( string resultCOFID ) {
 
-            throw new NotImplementedException();
-
             //Todo, how to implement this method for teams?
+
+            // Run GetShotsByEventNameAsync as a task that we will await later. Hopefully spending things up a bit.
+            var shotsByEventNameTask = this.GetShotsByEventNameAsync( resultCOFID );
 
             //Look up the participant for this result COF ID. If the result COF ID is not known, return an empty dictionary.
             CourseOfFireEntryIndividual entry;
@@ -259,27 +266,18 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
 
             var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var scoreFormatCollectionDefinition = await cofDefinition.GetScoreFormatCollectionDefinitionAsync();
+            var scoreConfigName = cofStructure.ScoreConfigName;
             var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var shotsByEventName = await shotsByEventNameTask;
+            var remarkList = entry.RemarkList;
 
-            CalculateScore( eventScores, topLevelEvent );
+            CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
+            CheckForRemarks( eventScores, entry );
+            await CalculateEventStatusAsync( eventScores, entry );
+            await CalculateEventAndStageStyleAsync( eventScores, entry, cofStructure );
 
-        }
-
-        private Score CalculateScore( Dictionary<string, EventScore> eventScores, EventComposite eventComponent ) {
-
-            throw new NotImplementedException();
-
-            if (eventComponent.EventType == EventtType.SINGULAR) {
-            }
-            switch (eventComponent.Calculation) {
-                case EventCalculation.SUM:
-                    Score summation = new Score();
-                    foreach (var child in eventComponent.Children) {
-                        summation += CalculateScore( eventScores, child );
-                    }
-                    return summation;
-
-            }
+            return eventScores;
         }
 
         /// <summary>
@@ -289,14 +287,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="resultCOFID"></param>
         /// <returns>The last <see cref="Shot"/> fired by the participant, or null if no shots are found.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        public Shot? GetLastShot( string resultCOFID ) {
+        public Shot? GetLastShot( string resultCOFID, bool filterLastShotByTimeScored = false ) {
 
             //First get the mutex for the Shot List for this Result COF ID. If it doesn't exist, create it.
             var mutex = _shotListMutexes.GetOrAdd( resultCOFID, new object() );
             lock (mutex) {
                 //Generate the dictionary of shots to return, if the resultCOFID is known.
                 if (_shotDictionary.TryGetValue( resultCOFID, out var shots ) && shots.Count > 0) {
-                    return shots.Last();
+                    var lastShot = shots.Last();
+
+                    //If the user didn't ask us to filter the last shot by time scored, then we will just return the last shot.
+                    if (!filterLastShotByTimeScored) {
+                        return lastShot;
+                    }
+
+                    // We will do two filtering checks to see if we return the lasst shot or not.
+                    // first, if the last shot was scored since the _clearLastShotBeforeThisUTCTime. This is to handle the case that Range Control clears the last shot values due to a Segment Group change.
+                    // Second, if the last shot was fired within five minutes.
+                    if ((lastShot.TimeScored.ToUniversalTime() > this._clearLastShotBeforeThisUTCTime)
+                        && (lastShot.TimeScored.ToUniversalTime() > DateTime.UtcNow.AddMinutes( -5 ))) {
+                        return lastShot;
+                    }
                 }
             }
 
@@ -306,6 +317,189 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         #endregion
 
         #region Protected and Private Methods
+        private Score CalculateScore( Dictionary<string, EventScore> eventScores,
+            Dictionary<string, Shot> shotsByEventName,
+            EventComposite eventComponent,
+            ScoreFormatCollection scoreFormatCollectionDefinition,
+            string scoreConfigName ) {
+
+            if (eventComponent.EventType == EventtType.SINGULAR) {
+                //NOTE: As this is a shot, we dont' add it to the eventScores dictionary.
+                if (shotsByEventName.TryGetValue( eventComponent.EventName, out var shot )) {
+                    var score = shot.Score;
+                    score.NumShotsFired = 1;
+                    return score;
+                } else {
+                    //This means there were no shots fired for this singular event, so we will return a zero score.
+                    return new Score();
+                }
+            } else {
+                CalculationVariableScoreComponent calculationVariable;
+                switch (eventComponent.Calculation) {
+                    case EventCalculation.SUM:
+                        Score summation = new Score();
+                        for (int i = 0; i < eventComponent.Children.Count; i++) {
+                            var child = eventComponent.Children[i];
+
+                            // Determine how the child's score shold be added into the summation. Which is determiend by the CalculationVariable at the same index as the child.
+                            // If there is not a CalculationVariable at the same index as the child, or if the CalculationVariable is not of type CalculationVariableScoreComponent,
+                            // then we will default to adding the child's score into the summation using ScoreComponent.S.
+                            if (eventComponent.CalculationVariables != null
+                                && eventComponent.CalculationVariables.Count > i
+                                && eventComponent.CalculationVariables[i] is CalculationVariableScoreComponent) {
+                                calculationVariable = (CalculationVariableScoreComponent)eventComponent.CalculationVariables[i];
+                            } else {
+                                calculationVariable = new CalculationVariableScoreComponent() { Value = ScoreComponent.S };
+                            }
+
+                            //Find out the score for the child, and add it into the summation according to the CalculationVariable.
+                            var childScore = CalculateScore( eventScores, shotsByEventName, child, scoreFormatCollectionDefinition, scoreConfigName );
+                            summation.Add( childScore, calculationVariable.Value );
+                        }
+
+                        eventScores[eventComponent.EventName] = new EventScore() {
+                            Score = summation,
+                            EventName = eventComponent.EventName,
+                            EventType = eventComponent.EventType,
+                            ScoreFormatted = Helpers.StringFormatting.FormatScore( scoreFormatCollectionDefinition, scoreConfigName, eventComponent.ScoreFormat, summation ),
+                            NumShotsFired = summation.NumShotsFired
+                        };
+                        return summation;
+
+                    case EventCalculation.AVERAGE:
+                        Debug.Fail( $"Have not implemented calculation for EventCalculation type {eventComponent.Calculation}. Likely because I haven't gotten around to it." );
+                        throw new NotImplementedException();
+                        break;
+
+                    default:
+                        Debug.Fail( $"Have not implemented calculation for EventCalculation type {eventComponent.Calculation}. Likely because this method is deprecated." );
+                        throw new NotImplementedException();
+                        break;
+
+                }
+            }
+        }
+
+        private async Task CalculateEventStatusAsync( Dictionary<string, EventScore> eventScores, CourseOfFireEntryIndividual entry ) {
+            if (entry.MatchParticipant is null) {
+                var msg = $"Course of Fire Entry with Result COF ID {entry.ResultCofId} does not have a Match Participant assigned. This should not happen, as a Match Participant should have been assigned before the Course of Fire Entry was created.";
+                Debug.Fail( msg );
+                _logger.Error( msg );
+                return;
+            }
+
+            if (entry.MatchParticipant.Project is null) {
+                var msg = $"Match Participant with Participant ID {entry.MatchParticipant.ParticipantID} does not have a Match Project assigned. This should not happen, as the Match Participant should have been assigned to a Match Project before the Course of Fire Entry was created.";
+                Debug.Fail( msg );
+                _logger.Error( msg );
+                return;
+            }
+
+            var participant = entry.MatchParticipant;
+            var project = participant.Project;
+            var match = project.Match;
+            CourseOfFireStructure cofStructure;
+            if (!match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {
+                var msg = $"Was not able to find Course of Fire Structure for Course of Fire Entry with Result COF ID {entry.ResultCofId}. This should not happen, as the Course of Fire Entry should not have been able to be created without a Course of Fire Structure.";
+                Debug.Fail( msg );
+                _logger.Error( msg );
+                return;
+            }
+            var cofIsOfficial = cofStructure.Official;
+            var remarkList = entry.RemarkList;
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var lastShot = this.GetLastShot( entry.ResultCofId );
+
+            foreach (var es in eventScores) {
+                var eventName = es.Key;
+                var eventScore = es.Value;
+
+                //If the COF's status is official, then so to are all evetns
+                if (cofIsOfficial) {
+                    eventScore.Status = ResultStatus.OFFICIAL;
+                    continue;
+                }
+
+                if ((lastShot != null && (DateTime.UtcNow - lastShot.TimeScored.ToUniversalTime()).TotalHours > 1.0) ||
+                     (remarkList.HasNonCompletionRemark)) {
+                    eventScore.Status = ResultStatus.UNOFFICIAL;
+                    continue;
+                }
+
+                //If shots have not been fired yet, then status if future
+                var numberOfShotsFired = eventScore.NumShotsFired;
+                if (numberOfShotsFired == 0) {
+                    eventScore.Status = ResultStatus.FUTURE;
+                    continue;
+                }
+
+                var @event = topLevelEvent.FindEventComposite( eventName );
+                if (@event != null) {
+                    var numberOfShotsExpected = @event.GetAllSingulars().Count();
+
+                    //if the number of shots fired is equal to expected number of shots
+                    if (numberOfShotsFired >= numberOfShotsExpected) {
+                        eventScore.Status = ResultStatus.UNOFFICIAL;
+                        continue;
+                    } else if (numberOfShotsFired > 0) {
+                        //if shots have been fired, but not yet complete
+                        eventScore.Status = ResultStatus.INTERMEDIATE;
+                        continue;
+                    }
+                }
+
+                //I dont' thinnk we would ever get here, but if we do, we will default to official status.
+                eventScore.Status = ResultStatus.OFFICIAL;
+            }
+        }
+
+        /// <summary>
+        /// Checks if the CourseOfFireEntry has any remarks that would impact the EventScores, such as a DSQ remark.
+        /// If such a remark is found, the EventScores are updated accordingly, such as making the score zero for a DSQ remark.
+        /// </summary>
+        /// <param name="eventScores"></param>
+        /// <param name="entry"></param>
+        private void CheckForRemarks( Dictionary<string, EventScore> eventScores, CourseOfFireEntryIndividual entry ) {
+            if (entry.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
+                foreach (var es in eventScores) {
+                    es.Value.Score.MakeScoreZero();
+                    es.Value.ScoreFormatted = string.Empty; //Choosing not to format the score using StringFormatting.FormatScore().
+                }
+            }
+        }
+
+        private async Task CalculateEventAndStageStyleAsync( Dictionary<string, EventScore> eventScores,
+            CourseOfFireEntryIndividual entry,
+            CourseOfFireStructure cofStructure ) {
+
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var eventAndStageStyleMappingDefinition = await cofDefinition.GetEventAndStageStyleMappingDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var targetCollectionName = cofStructure.TargetCollectionName;
+            var calculator = new EventAndStageStyleMappingCalculation( eventAndStageStyleMappingDefinition );
+
+            // The COF's RequiredAttribute is the one to use to look up and Participant's Attribute Value Applelation.
+            var attrSetName = cofDefinition.RequiredAttributeDef;
+
+            var attrValue = await entry.MatchParticipant.Participant.GetAttributeValueAsync( attrSetName, entry.CourseOfFireId );
+            var attrValueappellation = attrValue.AttributeValue.AttributeValueAppellation;
+
+            foreach (var es in eventScores) {
+                var eventName = es.Key;
+                var eventScore = es.Value;
+                if (eventScore.EventType == EventtType.EVENT) {
+                    var eventMapping = topLevelEvent.FindEventComposite( eventName ).EventStyleMapping;
+                    var eventStyleDef = calculator.GetEventStyleDef( attrValueappellation, targetCollectionName, eventMapping );
+                    eventScore.EventStyleDef = eventStyleDef;
+                } else if (eventScore.EventType == EventtType.STAGE) {
+                    var stageMapping = topLevelEvent.FindEventComposite( eventName ).StageStyleMapping;
+                    var stageStyleDef = calculator.GetStageStyleDef( attrValueappellation, targetCollectionName, stageMapping );
+                    eventScore.StageStyleDef = stageStyleDef;
+                }
+            }
+        }
+
         private void LoadShot( Shot shot ) {
 
             _loadShotStopWatch.Start();
@@ -316,7 +510,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             string sequenceStr = shot.Sequence.ToString();
             int updateNumber = shot.Update;
 
-            if (!MatchProject.TryGetParticipantByResultCOFID( shot.ResultCOFID, out var participant ))
+            if (!MatchProject.TryGetMatchParticipantByResultCOFID( shot.ResultCOFID, out var participant ))
                 operation = ESTShotOperation.UNKNOWNCOMPETITOR;
 
             //Pull the list of ESTShots for this participant. If the result COF ID is not yet known, create a new list and add it to the dictionary.
@@ -441,8 +635,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     LogShot( shot );
                     AddToAllShots( shot );
                     _loadShotStopWatch.Stop();
-                    if (!_initializing)
+                    if (!_initializing) {
+                        OnShotAdded?.Invoke( this, new EventArgs<Shot>( shot ) );
                         OnSighterReceived?.Invoke( this, new EventArgs<Shot>( shot ) );
+                    }
                     break;
 
                 case ESTShotOperation.REDUNDANT:
@@ -582,6 +778,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     this.MatchProject.SetScoringSystem( ScoringSystem.EST, estSystemName );
                 }
             }
+        }
+
+        /// <summary>
+        /// Event Handler for the Range Control when there is a segment group change.
+        /// <para>The intent is to clear last shot after each segment group change. Which will be more clear online to spectators.</para>
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="ea"></param>
+        public void SegmentGroupChanged( object sender, EventArgs<SegmentGroup> ea ) {
+            _clearLastShotBeforeThisUTCTime = DateTime.UtcNow;
         }
 
         public void Dispose() {

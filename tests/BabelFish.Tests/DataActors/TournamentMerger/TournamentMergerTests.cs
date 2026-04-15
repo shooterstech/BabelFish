@@ -58,7 +58,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
                     Console.Write( $"{cell.Text}, " );
                 }
                 Console.Write( " : " );
-                Console.Write( row.GetParticipant().RemarkList.ToString() );
+                Console.Write( row.GetRemarks( true ).ToString() );
                 Console.Write( " : " );
                 Console.Write( string.Join( ", ", row.GetClassList() ) );
                 Console.WriteLine();
@@ -110,7 +110,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
                     Console.Write( $"{cell.Text}, " );
                 }
                 Console.Write( " : " );
-                Console.Write( row.GetParticipant().RemarkList.ToString() );
+                Console.Write( row.GetRemarks( true ) );
                 Console.Write( " : " );
                 Console.Write( string.Join( ", ", row.GetClassList() ) );
                 Console.WriteLine();

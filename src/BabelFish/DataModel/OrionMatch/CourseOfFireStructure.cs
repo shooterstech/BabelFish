@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -19,6 +20,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
+        private bool _official = false;
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
@@ -94,7 +96,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
 
-        #region Event Handlers
+        #region Events
         /// <summary>
         /// Occurs when a new <see cref="ResultListAbbr"/> is added.
         /// <para>The preferred way of adding a new ResultListAbbr is to use the <see cref="AddResultList(ResultListAbbr)"/> method.
@@ -146,6 +148,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime EndDate { get; set; }
 
         /// <summary>
+        /// Gets or sets a boolean indicator of whether this Course of Fire is official. The value of this property is always true if the
+        /// current date is past the end date of the Course of Fire, and is otherwise determined by the value set to this property.
+        /// </summary>
+        /// <remarks>Unlike a Result List, a COF Structure can only be not-official or official (A result list may be future, intermediate,
+        /// unofficial, or official). The designation of official means the Match Director has blessed the results and says everythign is done.
+        /// </remarks>
+        public bool Official {
+            get {
+                if (DateTime.Today > EndDate) {
+                    return true;
+                }
+                return _official;
+            }
+            set {
+                _official = value;
+            }
+        }
+
+        /// <summary>
         /// Human readable description for this Course of Fire.
         /// </summary>
         public string Description { get; set; } = string.Empty;
@@ -163,6 +184,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string TargetCollectionName { get; set; }
 
         /// <summary>
+        /// Specifies the algorithm to use to project INTERMEDIATE score.
+        /// The default value is AVERAGE_SHOT_FIRED which means it will use the <see cref="ProjectScoresByAverageShotFired"/> class.
+        /// </summary>
+        public ProjectorOfScoresType ProjectorOfScores { get; set; } = ProjectorOfScoresType.AVERAGE_SHOT_FIRED;
+
+        /// <summary>
         /// Gets or sets the types of entries that can be recorded, which may include individual and team entries.
         /// </summary>
         [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
@@ -172,7 +199,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The list of AttributeConfigurations that are specific to this Course of Fire.
         /// These attributes will be available to be added to entries in this Course of Fire, but not entries in other Courses of Fire in the same match.
         /// If there are attributes that should be shared across all Courses of Fire in a match, those should be added
-        /// to the <see cref="MatchStructure.SharedAttributes"/> collection instead.
+        /// to the <see cref="MatchStructure.GlobalAttributes"/> collection instead.
         /// <para>When adding a new AttributeConfiguration to this collection, it is generally best to use the
         /// <see cref="AddAttributeConfigurationAsync(SetName)"/> method which adds the attribute to each
         /// exisitng entry in the match.</para>
@@ -185,6 +212,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
 
+        public TeamCalculationType TeamCalculation { get; set; } = TeamCalculationType.SUM;
         #endregion
 
         #region Helper Properties
@@ -222,6 +250,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return false;
         }
 
+        /// <summary>
+        /// The preferred method of adding a new AttributeConfiguration to this CourseOfFireStructure. This method creates a new AttributeConfiguration based on the provided set name and adds it to the Attributes collection.
+        /// </summary>
+        /// <param name="attributeDef"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception></para>
         public async Task<AttributeConfiguration> AddAttributeConfigurationAsync( SetName attributeDef ) {
 
             if (attributeDef.IsDefault) {
@@ -233,8 +267,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             attributeConfig.CourseOfFireId = this.CourseOfFireId;
             Attributes.Add( attributeConfig );
 
-            if (MatchStructure is not null && MatchStructure.Match is not null && MatchStructure.Match.Project is not null) {
-                foreach (var mp in MatchStructure.Match.Project.Participants) {
+            if (MatchStructure is not null && MatchStructure.Match is not null && MatchStructure.Match.MatchProject is not null) {
+                foreach (var mp in MatchStructure.Match.MatchProject.Participants) {
                     if (attributeConfig.IsForIndividuals && mp.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
                         var avdp = await AttributeValueDataPacketMatch.CreateAsync( attributeConfig );
                         avdp.CourseOfFireId = this.CourseOfFireId;

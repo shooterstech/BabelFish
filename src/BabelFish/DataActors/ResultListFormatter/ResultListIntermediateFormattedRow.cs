@@ -784,7 +784,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private string GetGap( FieldSource source ) {
             if (IsChildRow
-                || this._item.Participant.RemarkList.HasNonCompletionRemark) {
+                || (_resultEvent?.RemarkList.HasNonCompletionRemark ?? false)) {
                 return "";
             }
 
@@ -1098,7 +1098,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public string GetRemarks( bool useAbbreviation ) {
-            return this._item.Participant.RemarkList.GetSummary( useAbbreviation );
+            return _resultEvent?.RemarkList.GetSummary( useAbbreviation ) ?? string.Empty;
         }
 
         public void SetSquaddingAssignment( SquaddingAssignment squadding ) {
@@ -1212,9 +1212,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return true;
 
                 //We do show this row if the score is zero due to DNS, DNF, or DSQ
-                if (GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
-                    || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
-                    || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
+                if ((_resultEvent?.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS ) ?? false)
+                    || (_resultEvent?.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF ) ?? false)
+                    || (_resultEvent?.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ ) ?? false)) {
                     return true;
                 }
 
