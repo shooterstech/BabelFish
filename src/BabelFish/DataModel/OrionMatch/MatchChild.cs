@@ -68,6 +68,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public List<object> Officials { get; set; } = new List<object>();
 
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
+
         /// <summary>
         /// Approval status of this child match within the parent match.
         /// </summary>
