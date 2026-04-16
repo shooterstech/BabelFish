@@ -291,6 +291,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
 
         }
+        public void SetScoringSystem( ScoringSystem scoringSystemType ) { //For use with Manual or Unknown scoring systems where we don't need to know the name of the scoring system, but we still want to be able to set it on the MatchProject.
+#if DEBUG
+            // No-op placeholder
+            ;
+
+#else
+            throw new NotImplementedException( "SetScoringSystem() is not yet implemented. Need to figure out how to handle different scoring systems." );
+#endif
+
+
+        }
         #endregion
 
         #region ISaveToFile Implementation

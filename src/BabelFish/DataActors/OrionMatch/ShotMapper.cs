@@ -93,7 +93,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         }
         #endregion
 
-        #region Event Handlers
+        #region Events
 
         EventHandler<EventArgs<Shot>> OnShotAdded;
         EventHandler<EventArgs<Shot>> OnShotUpdated;
@@ -149,6 +149,56 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public void ReceiveShotList( object sender, ShotListReceivedEventArgs e ) {
             foreach (var shot in e.ShotList.Shots) {
                 LoadShot( shot );
+            }
+        }
+
+        public void ReceiveExternallyScoredShots( string resultCofId, List<Shot> completeShotList ) {
+
+            //Clear the shots that we currently have for this result COF ID, both in the _allShots and the _shotDictionary
+            if (_allShots.TryGetValue( resultCofId, out var shotsForResultCofId )) {
+                shotsForResultCofId.Clear();
+            }
+            if (_shotDictionary.TryGetValue( resultCofId, out var shotListForResultCofId )) {
+                shotListForResultCofId.Clear();
+            }
+
+            List<Shot> validatedShots = new List<Shot>();
+            HashSet<float> sequenceNumbers = new HashSet<float>();
+            foreach (var shot in completeShotList) {
+                if (shot.ResultCOFID != resultCofId) {
+                    var msg = $"Received shot with Result COF ID {shot.ResultCOFID} in ReceiveExternallyScoredShots for Result COF ID {resultCofId}. This should not happen, as all shots in the completeShotList should have the same Result COF ID as the one passed into the method.";
+                    Debug.Fail( msg );
+                    _logger.Error( msg );
+                    continue;
+                }
+
+                if (shot.Sequence <= 0) {
+                    var msg = $"Received shot with Sequence {shot.Sequence} in ReceiveExternallyScoredShots for Result COF ID {resultCofId}. This should not happen, as all shots in the completeShotList should have a Sequence greater than 0.";
+                    Debug.Fail( msg );
+                    _logger.Error( msg );
+                    continue;
+                } else if (sequenceNumbers.Contains( shot.Sequence )) {
+                    var msg = $"Received multiple shots with the same Sequence {shot.Sequence} in ReceiveExternallyScoredShots for Result COF ID {resultCofId}. This should not happen, as all shots in the completeShotList should have unique Sequence numbers.";
+                    Debug.Fail( msg );
+                    _logger.Error( msg );
+                    continue;
+                } else {
+                    sequenceNumbers.Add( shot.Sequence );
+                }
+
+                shot.AddAttribute( Shot.EXTERNALLY_SCORED );
+                validatedShots.Add( shot );
+            }
+
+            var mutex = _shotListMutexes.GetOrAdd( resultCofId, new object() );
+            lock (mutex) {
+                _shotDictionary[resultCofId] = validatedShots.OrderBy( o => o.Sequence ).ToList();
+            }
+
+            foreach (var shot in validatedShots) {
+                _allShots.GetOrAdd( resultCofId, new ConcurrentDictionary<float, ConcurrentDictionary<int, Shot>>() )
+                    .GetOrAdd( shot.Sequence, new ConcurrentDictionary<int, Shot>() )
+                    .AddOrUpdate( shot.Update, shot, ( updateNumber, existingShot ) => shot );
             }
         }
 
@@ -689,8 +739,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
              * re-queue the shot and wait for the next change to write. 
              */
 
-            while (!_threadsShouldDie) {
-                if (writeToLogQueue.TryDequeue( out var shot )) {
+            do {
+                while (writeToLogQueue.TryDequeue( out var shot )) {
                     try {
                         using (StreamWriter file = File.AppendText( _shotLogFile.FullName )) {
                             var shotSerialized = JsonConvert.SerializeObject( shot, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializerOneLine );
@@ -705,7 +755,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 }
 
                 Thread.Sleep( 100 );
-            }
+            } while (!_threadsShouldDie);
         }
 
         private void AddToAllShots( Shot shot ) {
@@ -776,6 +826,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                 if (dict.ContainsKey( "ESTSystem" )) {
                     string estSystemName = dict["ESTSystem"]?.ToString();
                     this.MatchProject.SetScoringSystem( ScoringSystem.EST, estSystemName );
+                } else if (dict.ContainsKey( "TargetReadingMachine" )) {
+                    string scoringSystemName = dict["TargetReadingMachine"]?.ToString();
+                    this.MatchProject.SetScoringSystem( ScoringSystem.TARGET_READING_MACHINE, scoringSystemName );
+                } else if (dict.ContainsKey( "Manual" )) {
+                    this.MatchProject.SetScoringSystem( ScoringSystem.MANUAL );
+                } else {
+                    this.MatchProject.SetScoringSystem( ScoringSystem.UNKNOWN );
                 }
             }
         }

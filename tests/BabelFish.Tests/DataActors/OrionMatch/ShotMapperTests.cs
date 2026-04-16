@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -100,15 +101,19 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
 
             var shotMapper = project.ShotMapper;
-            shotMapper.InMemoryOnly = true;
+            shotMapper.InMemoryOnly = false;
 
             //ShotMapper should be created when the MatchProject is created.
             Assert.IsNotNull( shotMapper );
+
+            // This first if block tests the basically happy path for EST Scored shots. Sending ShotMapper one shot at a time using the ReceiveShot() method,
+            // and then verifying that the scores for each event are being calculated correctly
 
             var participant = await project.CreateMatchParticipantAsync( "Smith", "John" );
             CourseOfFireEntryIndividual invEntry;
             if (participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
                 invEntry = (CourseOfFireEntryIndividual)entry;
+                Console.WriteLine( $"ResultCofId for {participant.Participant.DisplayName}: {invEntry.ResultCofId}" );
 
                 // Create a dictionary to keep track of the scores for each event, which we will use to verify that the scores are being calculated correctly.
                 Dictionary<string, float> expectedSoreOfEvents = new Dictionary<string, float>();
@@ -149,7 +154,63 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
                 Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[topLevelEvent.EventName].Status );
                 Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" ), eventScores[topLevelEvent.EventName].EventStyleDef );
+                Console.WriteLine( $"Total Score for {participant.Participant.DisplayName}: {eventScores[topLevelEvent.EventName].Score.D}" );
             }
+
+
+            // The second if block tests the happy path for Externally Scored shots. Sending ShotMapper a list of shots at once using the ReceiveExternallyScoredShots() method.
+
+            var participantJane = await project.CreateMatchParticipantAsync( "Smith", "Jane" );
+            if (participantJane.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entryJane )) {
+                invEntry = (CourseOfFireEntryIndividual)entryJane;
+                Console.WriteLine( $"ResultCofId for {participantJane.Participant.DisplayName}: {invEntry.ResultCofId}" );
+
+                // Create a dictionary to keep track of the scores for each event, which we will use to verify that the scores are being calculated correctly.
+                Dictionary<string, float> expectedSoreOfEvents = new Dictionary<string, float>();
+                expectedSoreOfEvents[topLevelEvent.EventName] = 0;
+
+                // Simulate shots for all stages and events in the course of fire, and send them to the ShotMapper.
+                var sequence = 1;
+                List<Shot> shotsOnPaper = new List<Shot>();
+                foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
+                    var numberOfShots = stage.GetAllSingulars().Count;
+                    expectedSoreOfEvents[stage.EventName] = 0;
+
+                    for (int shotNum = 1; shotNum <= numberOfShots; shotNum++) {
+                        var shot = await Shot.SimulateAsync( cofStructure, invEntry, stage.EventName, sequence++ );
+                        shotsOnPaper.Add( shot );
+                        expectedSoreOfEvents[stage.EventName] += shot.Score.D;
+                        expectedSoreOfEvents[topLevelEvent.EventName] += shot.Score.D;
+                    }
+                }
+
+                shotMapper.ReceiveExternallyScoredShots( invEntry.ResultCofId, shotsOnPaper );
+
+                // Now verify that the scores for each event are being calculated correctly by the ShotMapper.
+                var eventScores = await shotMapper.GetEventScoresAsync( invEntry.ResultCofId );
+                foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
+                    Assert.IsTrue( eventScores.ContainsKey( stage.EventName ) );
+                    Assert.IsTrue( Math.Abs( expectedSoreOfEvents[stage.EventName] - eventScores[stage.EventName].Score.D ) < 0.0001 );
+                    Assert.AreEqual( stage.GetAllSingulars().Count, eventScores[stage.EventName].NumShotsFired );
+                    Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[stage.EventName].Status );
+
+                    if (stage.EventName == "Kneeling")
+                        Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Kneeling" ), eventScores[stage.EventName].StageStyleDef );
+                    else if (stage.EventName == "Prone")
+                        Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Prone" ), eventScores[stage.EventName].StageStyleDef );
+                    else if (stage.EventName == "Standing")
+                        Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Sporter Air Rifle Standing" ), eventScores[stage.EventName].StageStyleDef );
+                }
+
+                Assert.IsTrue( eventScores.ContainsKey( topLevelEvent.EventName ) );
+                Assert.IsTrue( Math.Abs( expectedSoreOfEvents[topLevelEvent.EventName] - eventScores[topLevelEvent.EventName].Score.D ) < 0.0001 );
+                Assert.AreEqual( topLevelEvent.GetAllSingulars().Count, eventScores[topLevelEvent.EventName].NumShotsFired );
+                Assert.AreEqual( ResultStatus.UNOFFICIAL, eventScores[topLevelEvent.EventName].Status );
+                Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" ), eventScores[topLevelEvent.EventName].EventStyleDef );
+                Console.WriteLine( $"Total Score for {participantJane.Participant.DisplayName}: {eventScores[topLevelEvent.EventName].Score.D}" );
+            }
+
+            Thread.Sleep( 1000 );
         }
 
 
