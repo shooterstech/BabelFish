@@ -11,7 +11,9 @@ namespace Scopos.BabelFish.Tests.OrionMatch.VirtualMatches {
     [TestClass]
     public class ListParentMatchChildrenTests : BaseTestClass {
 
-        private static readonly MatchID ParentMatchId = new MatchID( "1.900.2026041417335579.1" );
+        private static readonly MatchID ParentMatchId_Invite = new MatchID( "1.900.2026041417335579.1" ); //ownerid OrionAcct000007
+        private static readonly MatchID ParentMatchId_Request = new MatchID( "1.900.2026041417335580.1" ); //ownerid OrionAcct000007
+        private static readonly MatchID ParentMatchId_Open = new MatchID( "1.900.2026041417335581.1" ); //ownerid OrionAcct000007
         private const string OwnerId = "OrionAcct000007";
 
         private static OrionMatchAPIClient CreateClient() {
@@ -24,7 +26,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.VirtualMatches {
             return $"{prefix} {DateTime.UtcNow:yyyyMMddHHmmssfff}";
         }
 
-        private static async Task<UserAuthentication> AuthenticateAsync() {
+        private static async Task<UserAuthentication> AuthenticateAsync() { //user with permissions for OrionAcct000007
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -33,9 +35,18 @@ namespace Scopos.BabelFish.Tests.OrionMatch.VirtualMatches {
             return userAuthentication;
         }
 
+        private static async Task<UserAuthentication> AuthenticateAsyncNoPermissions() { //user with no permissions
+            var userAuthentication = new UserAuthentication(
+                Constants.TestDev13Credentials.Username,
+                Constants.TestDev13Credentials.Password );
+
+            await userAuthentication.InitializeAsync();
+            return userAuthentication;
+        }
+
         private static async Task<MatchChild> CreateChildAsync( OrionMatchAPIClient client, UserAuthentication userAuthentication, string name ) {
             var response = await client.CreateMatchChildAuthenticatedAsync(
-                ParentMatchId,
+                ParentMatchId_Invite,
                 OwnerId,
                 name,
                 userAuthentication );
@@ -53,13 +64,13 @@ namespace Scopos.BabelFish.Tests.OrionMatch.VirtualMatches {
                 userAuthentication,
                 UniqueName( "BabelFish API Child List Overload Test" ) );
 
-            var response = await client.ListParentMatchChildrenAuthenticatedAsync( ParentMatchId, userAuthentication );
+            var response = await client.ListParentMatchChildrenAuthenticatedAsync( ParentMatchId_Invite, userAuthentication );
 
             Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
             Assert.IsNotNull( response.MatchChildList );
             Assert.IsTrue( response.MatchChildList.Items.Count > 0 );
             Assert.IsTrue( response.MatchChildList.Items.Any( x => x.MatchID.Equals( createdChild.MatchID ) ) );
-            Assert.IsTrue( response.MatchChildList.Items.All( x => x.ParentID.Equals( ParentMatchId ) ) );
+            Assert.IsTrue( response.MatchChildList.Items.All( x => x.ParentID.Equals( ParentMatchId_Invite ) ) );
         }
 
         [TestMethod]
@@ -70,7 +81,7 @@ namespace Scopos.BabelFish.Tests.OrionMatch.VirtualMatches {
             await CreateChildAsync( client, userAuthentication, UniqueName( "BabelFish API Child Token Test A" ) );
             await CreateChildAsync( client, userAuthentication, UniqueName( "BabelFish API Child Token Test B" ) );
 
-            var request = new ListParentMatchChildrenAuthenticatedRequest( userAuthentication, ParentMatchId ) {
+            var request = new ListParentMatchChildrenAuthenticatedRequest( userAuthentication, ParentMatchId_Invite ) {
                 Limit = 1,
                 IgnoreInMemoryCache = true
             };
