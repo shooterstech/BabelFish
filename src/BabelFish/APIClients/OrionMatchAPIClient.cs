@@ -140,6 +140,58 @@ namespace Scopos.BabelFish.APIClients {
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
+
+        /// <summary>
+        /// Create Match Child API
+        /// </summary>
+        /// <param name="requestParameters">CreateMatchChildAuthenticatedRequest object</param>
+        /// <returns>Match Child data</returns>
+        public async Task<CreateMatchChildAuthenticatedResponse> CreateMatchChildAuthenticatedAsync( CreateMatchChildAuthenticatedRequest requestParameters ) {
+            CreateMatchChildAuthenticatedResponse response = new CreateMatchChildAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Create Match Child API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="ownerId"></param>
+        /// <param name="name"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child data</returns>
+        public async Task<CreateMatchChildAuthenticatedResponse> CreateMatchChildAuthenticatedAsync( MatchID parentMatchId, string ownerId, string name, UserAuthentication credentials ) {
+            var request = new CreateMatchChildAuthenticatedRequest( credentials, parentMatchId, ownerId, name );
+
+            return await CreateMatchChildAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenAuthenticatedRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( ListParentMatchChildrenAuthenticatedRequest requestParameters ) {
+            ListParentMatchChildrenAuthenticatedResponse response = new ListParentMatchChildrenAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( MatchID parentMatchId, UserAuthentication credentials ) {
+            var request = new ListParentMatchChildrenAuthenticatedRequest( credentials, parentMatchId );
+
+            return await ListParentMatchChildrenAuthenticatedAsync( request );
+        }
         #endregion
 
         #region Get Result List

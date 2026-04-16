@@ -222,7 +222,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 7 )]
         [G_NS.JsonProperty( Order = 7 )]
-        public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicy.INVITE;
+        public MemberPolicyOption MemberPolicy { get; set; } = MemberPolicyOption.INVITE;
 
         /// <summary>
         /// External Result URL
