@@ -214,8 +214,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Helper Properties
+        /// <summary>
+        /// Readonly, backwares pointer to the MatchStructure that holds this CourseOfFireStructure.
+        /// </summary>
         [G_NS.JsonIgnore]
         public MatchStructure MatchStructure { get; internal set; }
+
+        /// <summary>
+        /// REadonly, runtime property to temporairly disable score projection. 
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public bool DisableScoreProjection { get; internal set; } = false;
         #endregion
 
         #region Methods
@@ -246,6 +255,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Adds each of the passed in ResultLists to this CourseOfFireStructure. If the ResultList is already a member of the CourseOfFireStructure, it is not added again.
+        /// After a ResultList is successfully added, the <see cref="OnResultListAdded"/> event is fired.
+        /// </summary>
+        /// <param name="resultLists"></param>
+        public void AddResultList( IEnumerable<ResultListAbbr> resultLists ) {
+            foreach (var rl in resultLists) {
+                AddResultList( rl );
+            }
         }
 
         /// <summary>
@@ -291,6 +311,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
             return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
+        }
+
+        /// <summary>
+        /// Event Handler for when a SegmentGroupCommand is changed  (from within a <see cref="RangeScript"/>. This is used to update the DisableScoreProjection property based on the ResultEngineDirectives of the SegmentGroupCommand.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        public void SegmentGroupCommandChanged( object sender, EventArgs<SegmentGroupCommand> args ) {
+            this.DisableScoreProjection = args?.Value?.GetResultEngineDirectives().DisableScoreProjection ?? false;
         }
         #endregion
     }

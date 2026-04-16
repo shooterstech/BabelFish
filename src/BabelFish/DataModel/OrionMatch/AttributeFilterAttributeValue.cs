@@ -6,6 +6,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// An AttributeFilterAttibuteValue is a concrete class implementation for AttributeFilter. It specifies a
     /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue.AttributeValue"/> field values.
     /// </summary>
+    /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
     public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue>, IFinishInitializationAsync {
 
         /// <summary>

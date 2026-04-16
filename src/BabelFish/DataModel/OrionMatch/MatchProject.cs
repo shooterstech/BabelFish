@@ -38,6 +38,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             project.ShotMapper = new ShotMapper( project );
             project.ResultGenerator = new ResultDocumentGenerator( project );
+            project.ResultListSlidingWindow = new ResultListSlidingWindow( project );
 
             return project;
         }
@@ -151,6 +152,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [G_NS.JsonIgnore]
         public ResultDocumentGenerator ResultGenerator { get; private set; }
+
+        [G_NS.JsonIgnore]
+        public ResultListSlidingWindow ResultListSlidingWindow { get; private set; }
 
         [G_NS.JsonIgnore]
         public DirectoryInfo MatchObjectDirectory {

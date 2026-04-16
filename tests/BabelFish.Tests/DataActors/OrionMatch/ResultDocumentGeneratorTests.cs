@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -72,6 +73,92 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
                 resultCof.SaveToFile( project.MatchObjectDirectory );
             }
+        }
+
+        [TestMethod]
+        public async Task GenerateBasicResultList() {
+
+            var matchName = "GenerateBasicResultList";
+
+            //Create the MatchProject which will generate a ShotMapper.
+            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
+
+            var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
+            cofStructure.ScoreConfigName = "Decimal";
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var airRifleSetName = cofStructure.Attributes[0].AttributeDef;
+
+            ResultListWizard wizard = new ResultListWizard( project.Match );
+            var resultLists = await wizard.GenerateAsync( cofStructure );
+            cofStructure.AddResultList( resultLists );
+
+            project.SaveToFile( project.MatchObjectDirectory );
+
+            var shotMapper = project.ShotMapper;
+            shotMapper.InMemoryOnly = true;
+
+            //ShotMapper should be created when the MatchProject is created.
+            Assert.IsNotNull( shotMapper );
+
+            // Create a few participant and set the air rifle type attribute to different values.
+            var participantJohn = await project.CreateMatchParticipantAsync( "Smith", "John" );
+            (await participantJohn.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Precision" );
+
+            var participantJane = await project.CreateMatchParticipantAsync( "Smith", "Jane" );
+            (await participantJane.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Precision" );
+
+            var participantMorgan = await project.CreateMatchParticipantAsync( "Smith", "Morgan" );
+            (await participantMorgan.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Sporter" );
+
+            var participantKyle = await project.CreateMatchParticipantAsync( "Smith", "Kyle" );
+            (await participantKyle.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Sporter" );
+
+            var participantEmily = await project.CreateMatchParticipantAsync( "Smith", "Emily" );
+            (await participantEmily.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Sporter" );
+
+            // Simulate shots for all stages and events in the course of fire, and send them to the ShotMapper.
+            foreach (var mp in project.Participants) {
+                CourseOfFireEntryIndividual invEntry;
+                if (mp.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
+                    invEntry = (CourseOfFireEntryIndividual)entry;
+                    var sequence = 1;
+                    foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
+                        var numberOfShots = stage.GetAllSingulars().Count;
+                        for (int shotNum = 1; shotNum <= numberOfShots; shotNum++) {
+                            var shot = await Shot.SimulateAsync( cofStructure, invEntry, stage.EventName, sequence++ );
+                            shotMapper.ReceiveShot( this, new EventArgs<Shot>( shot ) );
+                        }
+                    }
+                }
+            }
+
+            var invAllAbbr = resultLists.Find( rl => rl.ResultName == "Individual - All" );
+            Assert.IsNotNull( invAllAbbr );
+
+            var invAllResultList = await project.ResultGenerator.GenerateResultListAsync( invAllAbbr, string.Empty );
+            Assert.AreEqual( 5, invAllResultList.Items.Count );
+            invAllResultList.SaveToFile( project.MatchObjectDirectory );
+            // Test that the ranking was done correctly
+            Assert.IsTrue( invAllResultList.Items[0].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D );
+            Assert.IsTrue( invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D );
+            Assert.IsTrue( invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[3].EventScores[invAllResultList.EventName].Score.D );
+            Assert.IsTrue( invAllResultList.Items[3].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[4].EventScores[invAllResultList.EventName].Score.D );
+
+            var invSporterAbbr = resultLists.Find( rl => rl.ResultName == "Individual - Sporter" );
+            Assert.IsNotNull( invSporterAbbr );
+
+            var invSporterResultList = await project.ResultGenerator.GenerateResultListAsync( invSporterAbbr, string.Empty );
+            Assert.AreEqual( 3, invSporterResultList.Items.Count );
+            invSporterResultList.SaveToFile( project.MatchObjectDirectory );
+
+            var invPrecisionAbbr = resultLists.Find( rl => rl.ResultName == "Individual - Precision" );
+            Assert.IsNotNull( invPrecisionAbbr );
+
+            var invPrecisionResultList = await project.ResultGenerator.GenerateResultListAsync( invPrecisionAbbr, string.Empty );
+            Assert.AreEqual( 2, invPrecisionResultList.Items.Count );
+            invPrecisionResultList.SaveToFile( project.MatchObjectDirectory );
         }
     }
 }

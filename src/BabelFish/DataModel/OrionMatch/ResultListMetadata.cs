@@ -137,8 +137,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14 )]
-        [DefaultValue( null )]
-        public string SquaddingListName { get; set; } = null;
+        [DefaultValue( "" )]
+        [Obsolete( "To look up the squadding list from this event, use the MatchID and CourseOfFireId (a property of the ResultList). Deprecated Apr 2026." )]
+        public string SquaddingListName { get; set; } = string.Empty;
+
+        /* EKA Note Apr 2026 Should we include CourseOfFireId ? */
 
         /// <summary>
         /// The time the reference result list was generated to calculate the RankDelta and ProjectedRankDelta

@@ -54,7 +54,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Let the Wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );
-            var resultLists = await wizard.GenerateAsync( cofId );
+            var resultLists = await wizard.GenerateAsync( cof );
 
             //Add all the result lists so we have plenty to serialize and deserialize
             foreach (var resultList in resultLists)
@@ -223,11 +223,11 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             ResultListWizard wizard = new ResultListWizard( match );
 
             //Add only the first two Result Lists, that's all we need for this unit test as we are only testing serialization.
-            var resultLists1 = await wizard.GenerateAsync( cof1.CourseOfFireId );
+            var resultLists1 = await wizard.GenerateAsync( cof1 );
             cof1.AddResultList( resultLists1.Find( x => x.ResultName == "Individual - All" ) );
             cof1.AddResultList( resultLists1.Find( x => x.ResultName == "Team - All" ) );
 
-            var resultLists2 = await wizard.GenerateAsync( cof2.CourseOfFireId );
+            var resultLists2 = await wizard.GenerateAsync( cof2 );
             cof2.AddResultList( resultLists2.Find( x => x.ResultName == "Individual - All" ) );
             cof2.AddResultList( resultLists2.Find( x => x.ResultName == "Team - All" ) );
 

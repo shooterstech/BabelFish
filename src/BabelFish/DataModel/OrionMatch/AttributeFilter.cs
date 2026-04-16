@@ -8,6 +8,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
     /// the Precision Air Rifle marksmen).</para>
     /// </summary>
+    /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
     [Serializable]
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.AttributeFilterConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeFilterConverter ) )]
@@ -48,7 +49,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     }
 
+    /// <summary>
+    /// The AttributeFilterNone is a special type of <see cref="AttributeFilter"/> that represents a filter with no conditions, and thus always passes.
+    /// Intended to be used with <see cref="ResultList"/>s that should include all participants such as "Individual - All" and "Team - All".
+    /// </summary>
+    /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
     public class AttributeFilterNone : AttributeFilter {
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public AttributeFilterNone() {
             Operation = AttributeFilterOperation.NONE;
         }

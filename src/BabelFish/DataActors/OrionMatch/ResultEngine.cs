@@ -98,13 +98,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
         /// RankingRule definition.
         /// 
-        /// If the status of the ResultList is INTERMEDIATE then it also
+        /// <para>If the status of the ResultList is INTERMEDIATE then it also
         /// calculates Projected scores usiing the passed in ProjectorOfScores. It then calculates the projected 
-        /// rank based on the Projected Scores.
+        /// rank based on the Projected Scores.</para>
         /// 
-        /// In most cases, the ResultList.Items array remains sorted by absolute score. However, if the Status
+        /// <para>In most cases, the ResultList.Items array remains sorted by absolute score. However, if the Status
         /// is INTERMEDIATE and the parameter listAccordingToProjectedScores is true, then .Items is sorted
-        /// using the projected scores.
+        /// using the projected scores.</para>
+        ///
+        /// <para>The <see cref="ResultList.Status"/> should be set correctly prior to calling SortAsync(), as the
+        /// Status plays an important role in how the ResultList gets sorted.</para>
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ScoposException">

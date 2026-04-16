@@ -124,6 +124,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
         /// the Precision Air Rifle marksmen).</para>
         /// </summary>
+        /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
         [G_NS.JsonProperty( Order = 14 )]
         public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
 
