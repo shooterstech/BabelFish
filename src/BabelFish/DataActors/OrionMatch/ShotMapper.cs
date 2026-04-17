@@ -533,7 +533,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var attrSetName = cofDefinition.RequiredAttributeDef;
 
             var attrValue = await entry.MatchParticipant.Participant.GetAttributeValueAsync( attrSetName, entry.CourseOfFireId );
-            var attrValueappellation = attrValue.AttributeValue.AttributeValueAppellation;
+            var attrValueappellation = attrValue?.AttributeValue.AttributeValueAppellation ?? string.Empty;
 
             foreach (var es in eventScores) {
                 var eventName = es.Key;
@@ -754,7 +754,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     }
                 }
 
-                Thread.Sleep( 100 );
+                if (!_threadsShouldDie) {
+                    Thread.Sleep( 100 );
+                }
+
             } while (!_threadsShouldDie);
         }
 

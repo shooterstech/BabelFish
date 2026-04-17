@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
@@ -31,7 +33,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
         /// </summary>
+        [G_NS.JsonProperty( Order = 15 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        /// <summary>
+        /// Gets or sets a boolean indicating whether the Participant is shooting out of competition for this Course of Fire (aka shooting for score only).
+        /// Their scores will be listed, but not ranked. 
+        /// </summary>
+        [DefaultValue( false )]
+        public bool OutOfCompetition { get; set; } = false;
 
         /// <summary>
         /// Backwards pointer to the MatchParticipant that owns this CourseOfFireEntry. This is set when the CourseOfFireEntry is created using the <see cref="MatchParticipant.CreateEntry(int)"/> method, and should not be set manually.
@@ -58,6 +68,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The unique identifier for the Result Course of Fire.
         /// </summary>
+        [G_NS.JsonProperty( Order = 10 )]
         public string ResultCofId { get; set; } = string.Empty;
 
         /*
@@ -67,12 +78,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Gets or sets the squadding assignment that defines where the Participant will shoot for this Course of Fire.
         /// </summary>
+        [G_NS.JsonProperty( Order = 20 )]
         public SquaddingAssignment SquaddingAssignment { get; set; } = new SquaddingAssignmentFiringPoint();
     }
 
     /// <summary>
     /// Represents a team entry for a course of fire within a Match, with the participant type set to TEAM.
     /// </summary>
+    /// <remarks>Team members are tracked as part of the Team <see cref="Participant"/>.</remarks>
     public class CourseOfFireEntryTeam : CourseOfFireEntry {
 
         /// <summary>

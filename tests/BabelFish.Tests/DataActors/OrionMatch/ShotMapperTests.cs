@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -209,8 +208,6 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.AreEqual( SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" ), eventScores[topLevelEvent.EventName].EventStyleDef );
                 Console.WriteLine( $"Total Score for {participantJane.Participant.DisplayName}: {eventScores[topLevelEvent.EventName].Score.D}" );
             }
-
-            Thread.Sleep( 1000 );
         }
 
 

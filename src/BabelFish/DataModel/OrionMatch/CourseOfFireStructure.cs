@@ -21,6 +21,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
         private bool _official = false;
+        private int _numberOfTeamMembers = 4;
+        private int _maxNumberOfTeamMembers = 100;
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
@@ -211,6 +213,49 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>The preferred method of adding a new ResultListAbbr is by calling <see cref="AddResultList(ResultListAbbr)"/> which checks for duplicates before adding.</para>
         /// </summary>
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
+
+        /// <summary>
+        /// Gets and sets the number of Participants that contribute to a Team's score for this Course of Fire.
+        /// This property is only relevant if <see cref="TypesOfEntries"/> is set to allow team entries. The default value is 4.
+        /// <para>If the value is set to a number greater than <see cref="MaxNumberOfTeamMembers"/>, the <see cref="MaxNumberOfTeamMembers"/> property will be updated accordingly.</para>
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when the provided value is less than 2 (as that wouldn't be a team).</exception>
+        /// <remarks>NumberOfTeamMembers and MaxNumberOfTeamMembers differ in that MaxNumberOfTeamMembers is the number of
+        /// participants that may be allowed to make up a team. Number of TeamMembers is the number of participants who's score
+        /// counts towards the team total.</remarks>
+        public int NumberOfTeamMembers {
+            get {
+                return _numberOfTeamMembers;
+            }
+            set {
+                if (value < 2) {
+                    throw new ArgumentException( "Number of team members must be at least 2." );
+                }
+                _numberOfTeamMembers = value;
+                if (value > MaxNumberOfTeamMembers) {
+                    MaxNumberOfTeamMembers = _numberOfTeamMembers;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum number of team members allowed to be members of a team within this Course of Fire.
+        /// This property is only relevant if <see cref="TypesOfEntries"/> is set to allow team entries. The default value is 100.
+        /// Value must be greater than or equal to <see cref="NumberOfTeamMembers"/>, this rule is enforced during the setting process.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when the provided value is less than 2 (as that wouldn't be a team).</exception>
+        /// <remarks>NumberOfTeamMembers and MaxNumberOfTeamMembers differ in that MaxNumberOfTeamMembers is the number of
+        /// participants that may be allowed to make up a team. Number of TeamMembers is the number of participants who's score
+        /// counts towards the team total.</remarks>
+        public int MaxNumberOfTeamMembers {
+            get { return _maxNumberOfTeamMembers; }
+            set {
+                if (value < 2) {
+                    throw new ArgumentException( "Max number of team members must be at least 2." );
+                }
+                _maxNumberOfTeamMembers = Math.Max( NumberOfTeamMembers, value );
+            }
+        }
         #endregion
 
         #region Helper Properties

@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -21,21 +21,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         #endregion
 
         #region Methods
-        public async Task<ResultCOF> GenerateResultCOFAsync( string resultCOFID, string generativeEvent ) {
+        public async Task<ResultCOF> GenerateResultCOFAsync( CourseOfFireEntryIndividual entry, string generativeEvent ) {
 
             var resultCOF = new ResultCOF();
-            MatchParticipant matchParticipant;
-
-            if (!MatchProject.TryGetMatchParticipantByResultCOFID( resultCOFID, out matchParticipant )) {
-                return null;
-            }
-
-            //Look up the participant for this result COF ID. If the result COF ID is not known, return false
-            CourseOfFireEntryIndividual entry;
-            if (!MatchProject.TryGetCourseOfFireEntryByResultCOFID( resultCOFID, out entry )) {
-                _logger.Warn( $"Could not find Course Of Fire Entry for ResultCOFID {resultCOFID} in match project {MatchProject.ProjectName} ({MatchProject.Match?.MatchID})" );
-                return null;
-            }
+            var resultCOFID = entry.ResultCofId;
+            var matchParticipant = entry.MatchParticipant;
 
             //Look up the Course of Fire Structure for this course of fire entry. If the course of fire structure, which should not happen can not be found, return false
             CourseOfFireStructure cofStructure;
@@ -60,6 +50,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultCOF.MatchLocation = MatchProject.Match.Location.ToString();
             resultCOF.MatchName = MatchProject.Match.Name;
             resultCOF.MatchType = MatchProject.Match.MatchType;
+            resultCOF.OutOfCompetition = entry.OutOfCompetition;
             resultCOF.OwnerId = MatchProject.Match.Visibility == VisibilityOption.PUBLIC ? MatchProject.Match.OwnerId : matchParticipant.UserID;
             resultCOF.Participant = await participant.CopyAsync( cofStructure );
             resultCOF.RemarkList = entry.RemarkList;
@@ -84,6 +75,110 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             return resultCOF;
 
+        }
+
+        public async Task<ResultEvent> GenerateResultEntryAsync( CourseOfFireEntry entry ) {
+            if (entry is CourseOfFireEntryIndividual) {
+                return await GenerateResultEntryAsync( (CourseOfFireEntryIndividual)entry );
+            } else if (entry is CourseOfFireEntryTeam) {
+                return await GenerateResultEntryAsync( (CourseOfFireEntryTeam)entry );
+            } else {
+                throw new ArgumentException( $"Unknown type of CourseOfFireEntry: {entry.GetType()}" );
+            }
+        }
+
+        public async Task<ResultEvent> GenerateResultEntryAsync( CourseOfFireEntryIndividual entry ) {
+
+            var resultEvent = new ResultEvent();
+            var resultCOFID = entry.ResultCofId;
+            var matchParticipant = entry.MatchParticipant;
+
+            //Look up the Course of Fire Structure for this course of fire entry. If the course of fire structure, which should not happen can not be found, return false
+            CourseOfFireStructure cofStructure;
+            if (!MatchProject.Match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {
+                _logger.Warn( $"Could not find course of fire structure for course of fire entry with course of fire ID {entry.CourseOfFireId} in match project {MatchProject.ProjectName} ({MatchProject.Match?.MatchID})" );
+            }
+
+            var participant = matchParticipant.Participant;
+            var courseOfFireId = entry.CourseOfFireId;
+
+            resultEvent.LastUpdated = DateTime.UtcNow;
+            resultEvent.MatchID = MatchProject.Match.MatchID;
+            resultEvent.LocalDate = MatchProject.ShotMapper.GetLastShot( resultCOFID, false )?.TimeScored ?? DateTime.Today;
+            resultEvent.Participant = await participant.CopyAsync( cofStructure );
+            resultEvent.RemarkList = entry.RemarkList;
+            resultEvent.ResultCOFID = resultCOFID;
+            resultEvent.EventScores = await MatchProject.ShotMapper.GetEventScoresAsync( resultCOFID );
+            resultEvent.LastShot = MatchProject.ShotMapper.GetLastShot( resultCOFID, true );
+            resultEvent.OutOfCompetition = entry.OutOfCompetition;
+
+            // NOTE: Not setting Shots or SquaddingAssignment, as this is not part of a serialized ResultList.
+            // NOTE: Do not need to project scores, as GenerateResultListAsync() will do so instead.
+
+            return resultEvent;
+
+        }
+
+        public async Task<ResultEvent> GenerateResultEntryAsync( CourseOfFireEntryTeam entry ) {
+
+            var resultEvent = new ResultEvent();
+            var matchParticipant = entry.MatchParticipant;
+
+            //Look up the Course of Fire Structure for this course of fire entry. If the course of fire structure, which should not happen can not be found, return false
+            CourseOfFireStructure cofStructure;
+            if (!MatchProject.Match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {
+                _logger.Warn( $"Could not find course of fire structure for course of fire entry with course of fire ID {entry.CourseOfFireId} in match project {MatchProject.ProjectName} ({MatchProject.Match?.MatchID})" );
+            }
+
+            var courseOfFireDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var topLevelEvent = EventComposite.GrowEventTree( courseOfFireDefinition );
+            var teamMemberComparer = new CompareByRankingDirective( courseOfFireDefinition, RankingDirective.GetDefault( topLevelEvent.EventName, cofStructure.ScoreConfigName ) );
+            var resultStatusCalculator = new ResultStatusCalculator( cofStructure );
+
+            var participant = (Team)matchParticipant.Participant;
+            var courseOfFireId = entry.CourseOfFireId;
+
+            resultEvent.LastUpdated = DateTime.UtcNow;
+            resultEvent.MatchID = MatchProject.Match.MatchID;
+            resultEvent.Participant = await participant.CopyAsync( cofStructure );
+            resultEvent.RemarkList = entry.RemarkList;
+            resultEvent.OutOfCompetition = entry.OutOfCompetition;
+            resultEvent.TeamMembers = new List<ResultEvent>();
+            foreach (var tm in participant.TeamMembers) {
+                CourseOfFireEntry teamMemberEntry;
+                if (tm.MatchParticipant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out teamMemberEntry )) {
+                    resultEvent.TeamMembers.Add( await this.GenerateResultEntryAsync( teamMemberEntry ) );
+                }
+            }
+
+            // Sort the Team Members.
+            var rankingRuleDefinition = await DefinitionCache.GetRankingRuleDefinitionAsync( topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ) );
+            var teamMemberList = resultEvent.TeamMembers.Cast<IEventScores>().ToList();
+            ResultEngine.Sort( teamMemberList, rankingRuleDefinition, courseOfFireDefinition );
+            resultEvent.TeamMembers = teamMemberList.Cast<ResultEvent>().ToList();
+            resultEvent.EventScores = new Dictionary<string, EventScore>();
+
+            // Calculate the score and status for the team events.
+            foreach (var @event in topLevelEvent.GetEvents( true, true, true, true, true, false, true )) {
+                resultEvent.EventScores[@event.EventName] = new EventScore();
+                resultStatusCalculator.ClearEventScores();
+                for (int i = 0; i < Math.Min( cofStructure.NumberOfTeamMembers, resultEvent.TeamMembers.Count ); i++) {
+                    var teamMemberResultEvent = resultEvent.TeamMembers[i];
+                    if (teamMemberResultEvent.EventScores.TryGetValue( @event.EventName, out var teamMemberEventScore )) {
+                        resultEvent.EventScores[@event.EventName].Score += teamMemberEventScore.Score;
+                        resultStatusCalculator.AddEventScores( teamMemberResultEvent );
+                    }
+                }
+                resultEvent.EventScores[@event.EventName].Status = resultStatusCalculator.Calculate( @event.EventName );
+            }
+
+            // resultEvent.Status = ??
+            // resultEvent.LocalDate = ??
+
+            // NOTE: Not setting Shots or SquaddingAssignment, as this is not part of a serialized ResultList.
+            // NOTE: Do not need to project scores, as GenerateResultListAsync() will do so instead.
+
+            return resultEvent;
         }
 
         public async Task<ResultList> GenerateResultListAsync( ResultListAbbr resultListAbbr, string segmentGroupName ) {
@@ -125,19 +220,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultList.UserDefinedText = resultListAbbr.UserDefinedText;
 
             foreach (var mp in this.MatchProject.Participants) {
-                if (mp.Entries.Any( e => e.CourseOfFireId == resultListAbbr.CourseOfFireId )
+                if (mp.IsTeam == resultListAbbr.Team
+                    && mp.Entries.Any( e => e.CourseOfFireId == resultListAbbr.CourseOfFireId )
                     && AttributeFilterCalculator.Passes( resultListAbbr.AttributeFilter, mp )) {
-                    var entry = (CourseOfFireEntryIndividual)mp.Entries.First( e => e.CourseOfFireId == resultListAbbr.CourseOfFireId );
-                    var resultEvent = new ResultEvent();
-                    resultEvent.Participant = await mp.Participant.CopyAsync( cofStructure );
-                    resultEvent.RemarkList = entry.RemarkList;
-                    resultEvent.ResultCOFID = entry.ResultCofId;
-                    resultEvent.EventScores = await MatchProject.ShotMapper.GetEventScoresAsync( entry.ResultCofId );
-                    resultEvent.LastShot = MatchProject.ShotMapper.GetLastShot( entry.ResultCofId, true );
-
+                    var entry = mp.Entries.First( e => e.CourseOfFireId == resultListAbbr.CourseOfFireId );
+                    var resultEvent = await this.GenerateResultEntryAsync( entry );
 
                     resultList.Items.Add( resultEvent );
-
                 }
             }
 
@@ -188,52 +277,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public static void CalculateResultListStatus( ResultList resultList, CourseOfFireStructure cofStructure ) {
 
-            if (cofStructure.Official) {
-                resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.OFFICIAL;
-                return;
-            }
+            ResultStatusCalculator calculator = new ResultStatusCalculator( cofStructure );
 
-            if (resultList.Items.Count == 0) {
-                resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.FUTURE;
-                return;
-            }
-
-            if (string.IsNullOrEmpty( resultList.EventName )) {
-                Debug.Fail( "ResultList does not have an EventName. This should not happen, but if it does, we will just set the result list status to OFFICIAL." );
-                resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.OFFICIAL;
-                return;
-            }
-
-            bool allAreFuture = true;
-            bool oneIsIntermediate = false;
-            bool oneIsUnofficial = false;
-
-            EventScore eventScore;
             foreach (var re in resultList.Items) {
-                if (re.EventScores.TryGetValue( resultList.EventName, out eventScore )) {
-                    allAreFuture &= (eventScore.Status == ResultStatus.FUTURE);
-                    oneIsIntermediate |= (eventScore.Status == ResultStatus.INTERMEDIATE);
-                    oneIsUnofficial |= (eventScore.Status == ResultStatus.UNOFFICIAL);
-                }
+                calculator.AddEventScores( re );
             }
 
-            if (allAreFuture) {
-                resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.FUTURE;
-                return;
-            }
-
-            if (oneIsIntermediate) {
-                resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.INTERMEDIATE;
-                return;
-            }
-
-            if (oneIsUnofficial) {
-                resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.UNOFFICIAL;
-                return;
-            }
-
-            resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = ResultStatus.OFFICIAL;
-            return;
+            var status = calculator.Calculate( resultList.EventName );
+            resultList.Metadata[cofStructure.MatchStructure.Match.MatchID].Status = status;
 
         }
         #endregion

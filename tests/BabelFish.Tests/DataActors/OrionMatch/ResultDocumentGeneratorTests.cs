@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                     }
                 }
 
-                ResultCOF resultCof = await project.ResultGenerator.GenerateResultCOFAsync( invEntry.ResultCofId, "Unit Test" );
+                ResultCOF resultCof = await project.ResultGenerator.GenerateResultCOFAsync( invEntry, "Unit Test" );
                 Assert.IsNotNull( resultCof );
 
                 Assert.AreEqual( participant.Participant.DisplayName, resultCof.Participant.DisplayName );
@@ -86,6 +86,8 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
             cofStructure.ScoreConfigName = "Decimal";
+            cofStructure.NumberOfTeamMembers = 2;
+            cofStructure.MaxNumberOfTeamMembers = 100;
             var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
             var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
             var airRifleSetName = cofStructure.Attributes[0].AttributeDef;
@@ -94,7 +96,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var resultLists = await wizard.GenerateAsync( cofStructure );
             cofStructure.AddResultList( resultLists );
 
-            project.SaveToFile( project.MatchObjectDirectory );
+            project.SaveToFile( project.ProjectDirectory );
 
             var shotMapper = project.ShotMapper;
             shotMapper.InMemoryOnly = true;
@@ -118,6 +120,9 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var participantEmily = await project.CreateMatchParticipantAsync( "Smith", "Emily" );
             (await participantEmily.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Sporter" );
 
+            var participantForrest = await project.CreateMatchParticipantAsync( "Smith", "Forrest" );
+            (await participantForrest.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Precision" );
+
             // Simulate shots for all stages and events in the course of fire, and send them to the ShotMapper.
             foreach (var mp in project.Participants) {
                 CourseOfFireEntryIndividual invEntry;
@@ -134,17 +139,20 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 }
             }
 
+            /**** Individual Result List Testing ****/
+
             var invAllAbbr = resultLists.Find( rl => rl.ResultName == "Individual - All" );
             Assert.IsNotNull( invAllAbbr );
 
             var invAllResultList = await project.ResultGenerator.GenerateResultListAsync( invAllAbbr, string.Empty );
-            Assert.AreEqual( 5, invAllResultList.Items.Count );
+            Assert.AreEqual( 6, invAllResultList.Items.Count );
             invAllResultList.SaveToFile( project.MatchObjectDirectory );
             // Test that the ranking was done correctly
             Assert.IsTrue( invAllResultList.Items[0].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D );
             Assert.IsTrue( invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D );
             Assert.IsTrue( invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[3].EventScores[invAllResultList.EventName].Score.D );
             Assert.IsTrue( invAllResultList.Items[3].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[4].EventScores[invAllResultList.EventName].Score.D );
+            Assert.IsTrue( invAllResultList.Items[4].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[5].EventScores[invAllResultList.EventName].Score.D );
 
             var invSporterAbbr = resultLists.Find( rl => rl.ResultName == "Individual - Sporter" );
             Assert.IsNotNull( invSporterAbbr );
@@ -157,8 +165,27 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             Assert.IsNotNull( invPrecisionAbbr );
 
             var invPrecisionResultList = await project.ResultGenerator.GenerateResultListAsync( invPrecisionAbbr, string.Empty );
-            Assert.AreEqual( 2, invPrecisionResultList.Items.Count );
+            Assert.AreEqual( 3, invPrecisionResultList.Items.Count );
             invPrecisionResultList.SaveToFile( project.MatchObjectDirectory );
+
+            /**** Team Result List Testing ****/
+            var teamA = await project.CreateMatchParticipantAsync( "A Team" );
+            ((Team)teamA.Participant).TeamMembers.Add( participantJohn.Participant );
+            ((Team)teamA.Participant).TeamMembers.Add( participantJane.Participant );
+            ((Team)teamA.Participant).TeamMembers.Add( participantForrest.Participant );
+
+            var teamB = await project.CreateMatchParticipantAsync( "B Team" );
+            ((Team)teamB.Participant).TeamMembers.Add( participantMorgan.Participant );
+            ((Team)teamB.Participant).TeamMembers.Add( participantKyle.Participant );
+            ((Team)teamB.Participant).TeamMembers.Add( participantEmily.Participant );
+
+            var teamAll = resultLists.Find( rl => rl.ResultName == "Team - All" );
+            Assert.IsNotNull( teamAll );
+            var teamAllResultList = await project.ResultGenerator.GenerateResultListAsync( teamAll, string.Empty );
+            Assert.AreEqual( 2, teamAllResultList.Items.Count );
+            teamAllResultList.SaveToFile( project.MatchObjectDirectory );
+
+            Assert.IsTrue( teamAllResultList.Items[0].EventScores[teamAllResultList.EventName].Score.D >= teamAllResultList.Items[1].EventScores[teamAllResultList.EventName].Score.D );
         }
     }
 }

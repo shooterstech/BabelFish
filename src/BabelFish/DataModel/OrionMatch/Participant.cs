@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Generates a deep copy of this Participant instance, with the notable exception of the participant's attribute values.
+        /// Generates a deep copy of this Participant instance, with the notable exception of the participant's attribute values and Team Members.
         /// The AttributeValues list of the copied Participant is populated based on the provided CourseOfFireStructure, which includes
         /// both the Course of Fire specific attributes and the global attributes for the match.
         /// </summary>
@@ -40,6 +40,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>This method is intended to be used in the generation of <see cref="ResultCOF"/> or <see cref="ResultEvent"/> instances.</remarks>
         public async Task<Participant> CopyAsync( CourseOfFireStructure cofStructure ) {
             var copy = this.Clone(); //Using Clone is slow, but works
+
+            //TeamMembers are not included becausein the Seriailzied version of ResultEntry, Team Members have their own property, that's not under Participant.
+            if (copy is Team team)
+                team.TeamMembers = null;
+
             copy.AttributeValues = new List<AttributeValueDataPacketMatch>();
 
             // Populate the Participant Attribute Values specific to this Course of Fire. Which includes the attributes specific to the course of fire structure, and then the global attributes for the match.

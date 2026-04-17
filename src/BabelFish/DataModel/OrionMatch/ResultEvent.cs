@@ -218,11 +218,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
+        /// If this is a team score, the TeamMembers will be the scores of the team members. If this is an Individual value will be null.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 21 )]
         [G_NS.JsonProperty( Order = 21 )]
-        public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
+        public List<ResultEvent>? TeamMembers { get; set; }
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize TeamMembers when the list has something in it.
@@ -241,6 +241,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 25 )]
         [G_NS.JsonProperty( Order = 25 )]
         public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        /// <inheritdoc/>
+        [G_STJ_SER.JsonPropertyOrder( 26 )]
+        [G_NS.JsonProperty( Order = 26 )]
+        public bool OutOfCompetition { get; set; }
 
         /// <summary>
         /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.

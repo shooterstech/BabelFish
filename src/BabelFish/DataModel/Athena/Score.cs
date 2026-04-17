@@ -258,12 +258,12 @@ namespace Scopos.BabelFish.DataModel.Athena {
 
             return new Score {
                 X = left.X + right.X,
-                D = left.D + right.D,
                 I = left.I + right.I,
-                S = left.S + right.S,
-                J = left.J + right.J,
-                K = left.K + right.K,
-                L = left.L + right.L,
+                D = (float)Math.Round( left.D + right.D, 1 ),
+                S = (float)Math.Round( left.S + right.S, 5 ),
+                J = (float)Math.Round( left.J + right.J, 5 ),
+                K = (float)Math.Round( left.K + right.K, 5 ),
+                L = (float)Math.Round( left.L + right.L, 5 ),
                 NumShotsFired = left.NumShotsFired + right.NumShotsFired,
             };
         }

@@ -162,12 +162,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
+        #endregion
+
+        #region Helper Properties
+        /// <summary>
+        /// Helper property to indicate if this MatchParticipant is an Individual or a Team, based on the ParticipantType of the Participant property.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public bool IsTeam {
+            get {
+                return Participant.ParticipantType == ParticipantType.TEAM;
+            }
+        }
+
         /// <summary>
         /// Backwards pointer to the project holding this MatchParticipant. 
         /// </summary>
         [G_NS.JsonIgnore]
         public MatchProject? Project { get; internal set; } = null;
-
         #endregion
 
         #region Methods
