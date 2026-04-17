@@ -1220,6 +1220,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public ParticipantAttributeOverload? GetParticipantAttributeRemarkPtr { get; set; } = null;
 
         /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the OutOfCompetition field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload? GetParticipantAttributeOutOfCompetitionPtr { get; set; } = null;
+        /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
         /// in each row. 
         /// </summary>

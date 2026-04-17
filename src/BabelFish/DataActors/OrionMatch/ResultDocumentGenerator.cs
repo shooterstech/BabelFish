@@ -162,12 +162,23 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             foreach (var @event in topLevelEvent.GetEvents( true, true, true, true, true, false, true )) {
                 resultEvent.EventScores[@event.EventName] = new EventScore();
                 resultStatusCalculator.ClearEventScores();
-                for (int i = 0; i < Math.Min( cofStructure.NumberOfTeamMembers, resultEvent.TeamMembers.Count ); i++) {
+                // Sums the scores of the contributing team members.
+                for (int i = 0; i < Math.Min( cofStructure.NumberOfTeamMembers, resultEvent.TeamMembers.Count( item => !item.OutOfCompetition ) ); i++) {
                     var teamMemberResultEvent = resultEvent.TeamMembers[i];
                     if (teamMemberResultEvent.EventScores.TryGetValue( @event.EventName, out var teamMemberEventScore )) {
                         resultEvent.EventScores[@event.EventName].Score += teamMemberEventScore.Score;
-                        resultStatusCalculator.AddEventScores( teamMemberResultEvent );
                     }
+                }
+
+
+                for (int i = 0; i < resultEvent.TeamMembers.Count; i++) {
+                    var teamMemberResultEvent = resultEvent.TeamMembers[i];
+                    //All members of a team (even the crappy shooters) contribute to the team's Result Status.
+                    resultStatusCalculator.AddEventScores( teamMemberResultEvent );
+
+                    // Within a team, while team members are sorted according to their score, they do not have a value for Rank or RankOrder.
+                    teamMemberResultEvent.Rank = 0;
+                    teamMemberResultEvent.RankOrder = 0;
                 }
                 resultEvent.EventScores[@event.EventName].Status = resultStatusCalculator.Calculate( @event.EventName );
             }

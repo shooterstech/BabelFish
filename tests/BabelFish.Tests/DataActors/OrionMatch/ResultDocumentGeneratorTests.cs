@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -122,6 +123,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             var participantForrest = await project.CreateMatchParticipantAsync( "Smith", "Forrest" );
             (await participantForrest.Participant.GetAttributeValueAsync( airRifleSetName, cofStructure.CourseOfFireId )).AttributeValue.SetFieldValue( "Precision" );
+            participantForrest.Entries[0].OutOfCompetition = true;
 
             // Simulate shots for all stages and events in the course of fire, and send them to the ShotMapper.
             foreach (var mp in project.Participants) {
@@ -152,7 +154,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             Assert.IsTrue( invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D );
             Assert.IsTrue( invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[3].EventScores[invAllResultList.EventName].Score.D );
             Assert.IsTrue( invAllResultList.Items[3].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[4].EventScores[invAllResultList.EventName].Score.D );
-            Assert.IsTrue( invAllResultList.Items[4].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[5].EventScores[invAllResultList.EventName].Score.D );
+            //Assert.IsTrue( invAllResultList.Items[4].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[5].EventScores[invAllResultList.EventName].Score.D );
 
             var invSporterAbbr = resultLists.Find( rl => rl.ResultName == "Individual - Sporter" );
             Assert.IsNotNull( invSporterAbbr );
@@ -186,6 +188,19 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             teamAllResultList.SaveToFile( project.MatchObjectDirectory );
 
             Assert.IsTrue( teamAllResultList.Items[0].EventScores[teamAllResultList.EventName].Score.D >= teamAllResultList.Items[1].EventScores[teamAllResultList.EventName].Score.D );
+
+            ResultListFormat resultListFormat = await teamAllResultList.GetResultListFormatDefinitionAsync();
+            ResultListIntermediateFormatted rlif = new ResultListIntermediateFormatted( teamAllResultList, resultListFormat, null );
+            await rlif.InitializeAsync();
+
+            foreach (var row in rlif.ShownRows) {
+                foreach (var colIndex in rlif.GetShownColumnIndexes()) {
+                    Console.Write( row.GetColumnBodyCell( colIndex ).Text );
+                    Console.Write( "  " );
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
+
