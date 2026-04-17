@@ -6,7 +6,7 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
-namespace Scopos.BabelFish.Tests.OrionMatch.VirtualMatches {
+namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
 
     [TestClass]
     public class ListParentMatchChildrenTests : BaseTestClass {
