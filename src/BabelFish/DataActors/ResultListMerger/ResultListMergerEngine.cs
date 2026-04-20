@@ -135,10 +135,14 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 FieldName = "Aggregate",
                 Method = ResultFieldMethod.SCORE,
                 Source = new FieldSource() {
-                    Name = ResultEvent.KeyForResultCofScore( this.Container.MatchId, _mergeMethod.TopLevelEventname ),
+                    Name = _mergeMethod.TopLevelEventname,
                     ScoreFormat = "Events"
                 }
             } );
+
+            foreach (var additionalFields in _mergeMethod.AdditionalFields) {
+                rlf.Fields.Add( additionalFields );
+            }
 
             for (int i = this.MergedResultList.ResultListMembers.Count - 1; i >= 0; i--) {
                 var resultList = this.ResultListsMembers[i];
@@ -209,8 +213,12 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 } );
             }
 
+            foreach (var additionalColumn in _mergeMethod.AdditionalDisplayColumns) {
+                rlf.Format.Columns.Add( additionalColumn );
+            }
+
             rlf.Format.Columns.Add( new ResultListDisplayColumn() {
-                Header = "Aggregate",
+                Header = _mergeMethod.TopLevelHeaderText,
                 Body = "{Aggregate}",
                 BodyValues = new List<ResultListCellValue>() {
                         new ResultListCellValue() {
@@ -244,7 +252,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 source = TieBreakingRuleScoreSource.IX;
 
             rankingRule.Rules.Add( new TieBreakingRuleScore() {
-                EventName = ResultEvent.KeyForResultCofScore( this.Container.MatchId, _mergeMethod.TopLevelEventname ),
+                EventName = _mergeMethod.TopLevelEventname,
                 SortOrder = SortBy.DESCENDING,
                 Source = source,
                 Comment = "Auto generated default Tie Breaking Rule"
@@ -329,17 +337,21 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             }
 
             ResultList rl = new ResultList();
-            //NOTE: Normally a ResultList requires a COURSE OF FIRE definition, but in this case we are merging together Result Lists that may have different Course of Fire definitions, so we can't really assign a Course of Fire definition to this merged Result List.
-            // rl.EventName is the top level event name, which in the case of a Merged Result LIst is {MatchID}_{TopLevelEventName} where the TopLevelEventName is defined by the MergeMethod.
-            rl.EventName = ResultEvent.KeyForResultCofScore( Container.MatchId, _mergeMethod.TopLevelEventname ); // MergedResultList.ResultName;
+            // NOTE: Normally a ResultList requires a COURSE OF FIRE definition, but in this case we are merging together Result Lists that may have different Course of Fire definitions, so we can't really assign a Course of Fire definition to this merged Result List.
+            // rl.EventName is the same as the top level event name that the MergeMethod uses to calculate the merged score. Will be something like {MatchID}_{HumanReadableTopLevelEventName}.
+            rl.EventName = _mergeMethod.TopLevelEventname;
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
-            rl.Items.AddRange( _mergedResultEvents.Values );
+            List<ResultEvent> thePotentials = new List<ResultEvent>();
+            thePotentials.AddRange( _mergedResultEvents.Values );
 
             // NOTE The .merge() method below is what addes the top level event to each participant's .ResultCofScores dictionary.
 
             // And now we merge.
-            foreach (var re in rl.Items) {
-                _mergeMethod.Merge( re );
+            foreach (var re in thePotentials) {
+                if (_mergeMethod.Merge( re )) {
+                    //Add to the final Result List if the MergeMethod's .Merge() method returns true, which means this participant should be included in the merged results.
+                    rl.Items.Add( re );
+                }
             }
 
             //EKA Note: After merging, I'm thinking we should also rank it.

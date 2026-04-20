@@ -17,10 +17,11 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
 
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
-            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2026041417583776.2" ) );
+            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2025111112085043.2" ) ); // "1.1.2026041417583776.2" ) );
             Assert.IsTrue( getTournamentResponse.HasOkStatusCode );
             var tournament = getTournamentResponse.Tournament;
-            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Individual Sporter Results" );
+            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Expert Qualification" ); // "Individual Sporter Results" );
+            //((AverageMethodConfiguration)invRanking.Configuration).RequiredNumberOfScores = 2;
             var tournamentMerger = await ResultListMergerEngine.CreateAsync( invRanking );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
