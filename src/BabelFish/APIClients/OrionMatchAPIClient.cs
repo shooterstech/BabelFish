@@ -217,6 +217,13 @@ namespace Scopos.BabelFish.APIClients {
 
             return await PatchMatchChildAuthenticatedAsync( request );
         }
+
+        public async Task<PatchMatchChildAuthenticatedResponse> ApproveMatchChildAsync( MatchChild matchChild, UserAuthentication credentials ) {
+            matchChild.ApprovalStatus = ApprovalStatus.APPROVED;
+            var request = new PatchMatchChildAuthenticatedRequest( credentials, matchChild );
+
+            return await PatchMatchChildAuthenticatedAsync( request );
+        }
         #endregion
 
         #region Get Result List
