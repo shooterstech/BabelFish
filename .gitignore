@@ -12,3 +12,4 @@
 **/*.pdf
 **/App.configu.user
 **/CodexInstructions*/
+**/.dotnet
