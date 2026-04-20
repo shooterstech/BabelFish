@@ -1198,7 +1198,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return true;
 
             //Check if the score is zero
-            if (this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
+            var score = this.GetScore( this._resultListFormatted.ResultList.EventName, false );
+            if (score.IsZero) {
                 //If we get here, the score is zero.
 
                 if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL

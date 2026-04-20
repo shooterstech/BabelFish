@@ -713,6 +713,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>The default value is int.MaxValue, which means to show all children.</para>
         /// <para>Values of less than 0, are interpreted as being 0.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public int ShowNumberOfChildRows {
             get {
                 return _showNumberOfChildren;
@@ -757,6 +758,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Gets or sets the set of ResultStatus (e.g. INTERMEDIATE, UNOFFICIAL) to show when .ShownRows is called. 
         /// <para>When setting, if the HashSet is empty, then all ResultStatus will be included.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public HashSet<ResultStatus> ShowStatuses {
             get {
                 HashSet<ResultStatus> copy = new HashSet<ResultStatus>();
@@ -779,6 +781,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
         /// <para>The defautl value is true.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public bool ShowZeroScoresWithOFFICIAL {
             get; set;
         }
@@ -788,6 +791,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
         /// <para>The defautl value is true.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public bool ShowZeroScoresBeforeOFFICIAL {
             get; set;
         }
@@ -800,6 +804,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>This property only effects parent rows, it does not effect child rows.</para>
         /// <para>The default value is 3.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public int ShowRanks {
             get {
                 return _showRanks;
@@ -818,6 +823,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// relay will be shown. 
         /// <para>The default value is an empty string, which means to show all competitors from all relays.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public string ShowRelay {
             get {
                 return _showRelay;

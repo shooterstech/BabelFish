@@ -40,9 +40,11 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
 
             //await rlf.LoadSquaddingListAsync();
 
+            rlf.SetShowValuesToDefault();
             rlf.Engagable = false;
             rlf.ResolutionWidth = 1200;
-            rlf.SetShowValuesToDefault();
+            rlf.ShowZeroScoresBeforeOFFICIAL = true;
+            rlf.ShowZeroScoresWithOFFICIAL = true;
             rlf.RefreshAllRowsParticipantAttributeFields();
 
             CellValues tryCellValues, cellValues;

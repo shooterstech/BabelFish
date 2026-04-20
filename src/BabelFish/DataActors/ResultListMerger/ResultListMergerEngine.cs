@@ -314,7 +314,6 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         newResultEvent.ResultCofScores = new Dictionary<string, EventScore>();
                         newResultEvent.EventScores = new Dictionary<string, EventScore>();
 
-                        //This is from a Participant we previously found. 
                         //Add each of the EventScores to the mergedResultEvent under the ResultCofScores dictionary.
                         foreach (var es in mergingResultEvent.EventScores) {
                             eventName = es.Key;
@@ -331,10 +330,14 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             ResultList rl = new ResultList();
             //NOTE: Normally a ResultList requires a COURSE OF FIRE definition, but in this case we are merging together Result Lists that may have different Course of Fire definitions, so we can't really assign a Course of Fire definition to this merged Result List.
-            rl.EventName = MergedResultList.ResultName;
+            // rl.EventName is the top level event name, which in the case of a Merged Result LIst is {MatchID}_{TopLevelEventName} where the TopLevelEventName is defined by the MergeMethod.
+            rl.EventName = ResultEvent.KeyForResultCofScore( Container.MatchId, _mergeMethod.TopLevelEventname ); // MergedResultList.ResultName;
             //EAch ResultEvent instance that we created in the above for loop, now becomes the basis of the .Items array in our new merged Result List.
             rl.Items.AddRange( _mergedResultEvents.Values );
 
+            // NOTE The .merge() method below is what addes the top level event to each participant's .ResultCofScores dictionary.
+
+            // And now we merge.
             foreach (var re in rl.Items) {
                 _mergeMethod.Merge( re );
             }
