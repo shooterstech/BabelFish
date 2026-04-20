@@ -56,6 +56,18 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         }
 
         [TestMethod]
+        public async Task ListParentMatchChildrenPublicWithConvenienceOverloadReturnsChildren() {
+            var client = CreateClient();
+
+            var response = await client.ListParentMatchChildrenPublicAsync( ParentMatchId_Open );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            Assert.IsNotNull( response.MatchChildList );
+            Assert.IsTrue( response.MatchChildList.Items.Count > 0 );
+            Assert.IsTrue( response.MatchChildList.Items.All( x => x.ParentID.Equals( ParentMatchId_Open ) ) );
+        }
+
+        [TestMethod]
         public async Task ListParentMatchChildrenWithConvenienceOverloadReturnsChildren() {
             var client = CreateClient();
             var userAuthentication = await AuthenticateAsync();

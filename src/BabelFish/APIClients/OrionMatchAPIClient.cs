@@ -171,6 +171,30 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// List Parent Match Children API
         /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenPublicRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenPublicResponse> ListParentMatchChildrenPublicAsync( ListParentMatchChildrenPublicRequest requestParameters ) {
+            ListParentMatchChildrenPublicResponse response = new ListParentMatchChildrenPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenPublicResponse> ListParentMatchChildrenPublicAsync( MatchID parentMatchId ) {
+            var request = new ListParentMatchChildrenPublicRequest( parentMatchId );
+
+            return await ListParentMatchChildrenPublicAsync( request );
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
         /// <param name="requestParameters">ListParentMatchChildrenAuthenticatedRequest object</param>
         /// <returns>Match Child List data</returns>
         public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( ListParentMatchChildrenAuthenticatedRequest requestParameters ) {
@@ -191,6 +215,35 @@ namespace Scopos.BabelFish.APIClients {
             var request = new ListParentMatchChildrenAuthenticatedRequest( credentials, parentMatchId );
 
             return await ListParentMatchChildrenAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAbstractResponse> ListParentMatchChildrenAsync( MatchID parentMatchId, UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await ListParentMatchChildrenPublicAsync( parentMatchId );
+            } else {
+                return await ListParentMatchChildrenAuthenticatedAsync( parentMatchId, credentials );
+            }
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls.
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenAbstractRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAbstractResponse> ListParentMatchChildrenAsync( ListParentMatchChildrenAbstractRequest requestParameters ) {
+            if (requestParameters is ListParentMatchChildrenPublicRequest)
+                return await this.ListParentMatchChildrenPublicAsync( (ListParentMatchChildrenPublicRequest)requestParameters );
+            else if (requestParameters is ListParentMatchChildrenAuthenticatedRequest)
+                return await this.ListParentMatchChildrenAuthenticatedAsync( (ListParentMatchChildrenAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
 
         /// <summary>
