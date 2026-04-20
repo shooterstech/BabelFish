@@ -96,8 +96,6 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
             Assert.AreEqual( expectedOwnerId, response.MatchChild.AccountNumber );
             Assert.AreEqual( expectedChildName, response.MatchChild.Name );
             Assert.AreEqual( expectedChildName, response.MatchChild.MatchName );
-            Assert.AreEqual( response.MatchChild.MatchID.ToString(), response.MatchChild.MATCH_MatchID.ToString() );
-            Assert.AreEqual( $"{response.MatchChild.MatchID}:M", response.MatchChild.UniqueID );
             Assert.IsTrue( response.MatchChild.MatchID.VirtualMatchChild );
             Assert.IsTrue(
                 response.MatchChild.ApprovalStatus == ApprovalStatus.APPROVED

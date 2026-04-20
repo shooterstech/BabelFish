@@ -192,6 +192,31 @@ namespace Scopos.BabelFish.APIClients {
 
             return await ListParentMatchChildrenAuthenticatedAsync( request );
         }
+
+        /// <summary>
+        /// Patch Match Child API
+        /// </summary>
+        /// <param name="requestParameters">PatchMatchChildAuthenticatedRequest object</param>
+        /// <returns>Match Child data</returns>
+        public async Task<PatchMatchChildAuthenticatedResponse> PatchMatchChildAuthenticatedAsync( PatchMatchChildAuthenticatedRequest requestParameters ) {
+            PatchMatchChildAuthenticatedResponse response = new PatchMatchChildAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Match Child API
+        /// </summary>
+        /// <param name="matchChild"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child data</returns>
+        public async Task<PatchMatchChildAuthenticatedResponse> PatchMatchChildAuthenticatedAsync( MatchChild matchChild, UserAuthentication credentials ) {
+            var request = new PatchMatchChildAuthenticatedRequest( credentials, matchChild );
+
+            return await PatchMatchChildAuthenticatedAsync( request );
+        }
         #endregion
 
         #region Get Result List

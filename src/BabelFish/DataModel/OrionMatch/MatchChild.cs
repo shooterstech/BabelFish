@@ -26,18 +26,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public MatchID MatchID { get; set; } = MatchID.DEFAULT;
 
         /// <summary>
-        /// Duplicate of <see cref="MatchID"/> included by the API for DynamoDB lookup compatibility.
-        /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
-        public MatchID MATCH_MatchID { get; set; } = MatchID.DEFAULT;
-
-        /// <summary>
-        /// DynamoDB unique identifier for the match object.
-        /// </summary>
-        public string UniqueID { get; set; } = string.Empty;
-
-        /// <summary>
         /// MatchID of the parent match.
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
