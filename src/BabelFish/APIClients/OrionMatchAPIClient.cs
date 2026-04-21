@@ -1,4 +1,5 @@
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
@@ -748,6 +749,37 @@ namespace Scopos.BabelFish.APIClients {
             var request = new CreateTournamentAuthenticatedRequest( credentials, tournament );
 
             return await CreateTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Patch Tournament API
+        /// </summary>
+        /// <param name="requestParameters">PatchTournamentAuthenticatedRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<PatchTournamentAuthenticatedResponse> PatchTournamentAuthenticatedAsync( PatchTournamentAuthenticatedRequest requestParameters ) {
+            PatchTournamentAuthenticatedResponse response = new PatchTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Tournament API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="tournamentName"></param>
+        /// <param name="visibility"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Object</returns>
+        public async Task<PatchTournamentAuthenticatedResponse> PatchTournamentAuthenticatedAsync(
+            MatchID tournamentId,
+            string? tournamentName,
+            VisibilityOption? visibility,
+            UserAuthentication credentials ) {
+            var request = new PatchTournamentAuthenticatedRequest( credentials, tournamentId, tournamentName, visibility );
+
+            return await PatchTournamentAuthenticatedAsync( request );
         }
 
         /// <summary>
