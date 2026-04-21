@@ -211,8 +211,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>The preferred method of adding a new ResultListAbbr is by calling <see cref="AddResultList(ResultListAbbr)"/> which checks for duplicates before adding.</para>
         /// </summary>
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
-
-        public TeamCalculationType TeamCalculation { get; set; } = TeamCalculationType.SUM;
         #endregion
 
         #region Helper Properties

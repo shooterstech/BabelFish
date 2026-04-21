@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         public override async Task InitializeAsync() {
             var cof = await MergeConfiguration.GetCourseOfFireDefinitionAsync();
             _topLevelEvent = EventComposite.GrowEventTree( cof );
-            this.TopLevelEventname = _topLevelEvent.EventName;
+            this.TopLevelEventname = ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, this._topLevelEvent.EventName );
             this.ResultListMergerEngine.ResultListFormat = await MergeConfiguration.GetResultListFormatDefinitionAsync();
             this.ResultListMergerEngine.RankingRule = await MergeConfiguration.GetRankingRuleDefinitionAsync();
         }
@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         }
 
         /// <inheritdoc />
-        public override void Merge( ResultEvent re ) {
+        public override bool Merge( ResultEvent re ) {
 
             EventScore mergedEventScore = new EventScore();
             List<EventComposite> reentryEvents = _topLevelEvent.GetEvents( MergeConfiguration.EventType );
@@ -77,6 +77,16 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     }
                 }
                 re.EventScores.Add( _topLevelEvent.EventName, aggregate );
+            }
+
+            //return true to indicate this ResultEvent should be included with the final merged Result List
+            return true;
+        }
+
+        /// <inheritdoc />
+        public override string TopLevelHeaderText {
+            get {
+                return this._topLevelEvent.EventName;
             }
         }
     }
