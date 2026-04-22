@@ -145,7 +145,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultEvent.RemarkList = entry.RemarkList;
             resultEvent.OutOfCompetition = entry.OutOfCompetition;
             resultEvent.TeamMembers = new List<ResultEvent>();
-            foreach (var tm in participant.TeamMembers) {
+            foreach (var tm in entry.TeamMembers) {
                 CourseOfFireEntry teamMemberEntry;
                 if (tm.MatchParticipant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out teamMemberEntry )) {
                     resultEvent.TeamMembers.Add( await this.GenerateResultEntryAsync( teamMemberEntry ) );

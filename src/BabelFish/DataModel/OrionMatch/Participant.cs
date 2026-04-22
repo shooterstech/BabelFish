@@ -38,14 +38,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="cofStructure"></param>
         /// <returns></returns>
         /// <remarks>This method is intended to be used in the generation of <see cref="ResultCOF"/> or <see cref="ResultEvent"/> instances (which are both considered
-        /// 'compiled' data formats).</remarks>
+        /// 'compiled' data formats). Additionally, calling this method should be done within the scope of a <see cref="MatchProject"/>.</remarks>
         public async Task<Participant> CopyAsync( CourseOfFireStructure cofStructure ) {
             var copy = this.Clone(); //Using Clone is slow, but works
 
-            //TeamMembers are not included becausein the Seriailzied version of ResultEntry, Team Members have their own property, that's not under Participant.
-            if (copy is Team team)
-                team.TeamMembers = null;
+            if (this.MatchParticipant is null) {
+                throw new BackwardsPointerException( $"The backwards pointer MatchParticipant is null for participant {this.DisplayName}. This should never happen during normal operation as part of a MatchProject. If this Participant exists outside of a MatchProject, then you shouldn't be calling Copy()." );
+            }
 
+            // Set the read only TeamName property if this participant is an Individual and is associated with a team for this course of fire. This is needed as part of the generation of ResultCOF and ResultEvent data structures.
+            if (this is not Team
+                && this.MatchParticipant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )
+                && entry.Team is not null) {
+                copy.TeamName = entry.Team.TeamName;
+            }
             copy.AttributeValues = new List<AttributeValueDataPacketMatch>();
 
             // Populate the Participant Attribute Values specific to this Course of Fire. Which includes the attributes specific to the course of fire structure, and then the global attributes for the match.
@@ -67,10 +73,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return copy;
         }
 
+        /// <summary>
+        /// Method that gets called after System.Text.Json deserializes an instance of this class. Sets _ignoreEvents to false to allow events to fire after deserialization.
+        /// </summary>
         public void OnDeserialized() {
             _ignoreEvents = false;
         }
 
+        /// <summary>
+        /// Method that gets called before System.Text.Json deserializes an instance of this class. Sets _ignoreEvents to true to prevent events from firing during deserialization.
+        /// </summary>
         public void OnDeserializing() {
             _ignoreEvents = true;
         }
@@ -179,34 +191,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
-        /*
         /// <summary>
-        /// The <see cref="Team"/> that this Participant is a member of. A value of null
-        /// indicates that the Participant is not a member of any team. 
-        /// <para>Note, this is NOT the same as the Club property, which represents the hometown club the Participant represents.</para>
+        /// When serialized as an Individual and as part of a <see cref="ResultCOF"/> or <see cref="ResultEvent"/>, this property holds the name of the team that this
+        /// Participant is shooting with for that Course of Fire. An empty string if they are not associated with a Team.
+        /// <para>This property has no meaning outside of being serialized as part of a <see cref="ResultCOF"/> or <see cref="ResultEvent"/>.</para>
         /// </summary>
-        /// <remark>
-        /// Value is not serialized, as this is a pointer back to the container Team.
-        /// </remark>
-        [G_NS.JsonIgnore]
-        public Team? Team { get; set; } = null;
-        */
-
-        /// <summary>
-        /// Gets the name of the team associated with the current participant.
-        /// </summary>
-        /// <remarks>If no team is assigned, this property returns an empty string. Use this property to
-        /// retrieve the display name of the participant's team, if available.</remarks>
         [G_NS.JsonProperty( Order = 15 )]
         [DefaultValue( "" )]
-        public virtual string TeamName {
-            get {
-                return Team != null ? Team.TeamName : string.Empty;
-            }
-            set {
-                ; // an Individual doesn't have a team name, so the setter does nothing. For a Team, the TeamName is the same as the DisplayName, so the setter of TeamName sets the DisplayName.
-            }
-        }
+        public virtual string TeamName { get; set; }
 
         /*
          * JsonProperty Order values 16 .. 19 reserved for concrete classes

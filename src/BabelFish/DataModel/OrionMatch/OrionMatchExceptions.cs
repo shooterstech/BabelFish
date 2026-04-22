@@ -167,7 +167,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <para>Most likely would occur if an instance is deserialized outside of a <see cref="MatchProject"/> and
     /// the user then tries to perform an action requiring a MatchProject.</para>
     /// </summary>
-    public class BackwardsPointException : OrionMatchException {
+    public class BackwardsPointerException : OrionMatchException {
 
         private const string DEFAULT_MESSAGE = "The OrionMatch class instance does not have an expected value for a Backwards pointer to it's holder. Likely occured because the instance was created outside the scope of a MatchProject and the user tried to perform an operation requiring a MatchProject.";
 
@@ -175,7 +175,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Initializes a new instance of the BackwardsPointException class with a default error message indicating that the
         /// team is full.
         /// </summary>
-        public BackwardsPointException()
+        public BackwardsPointerException()
             : base( DEFAULT_MESSAGE ) {
             _logger.Error( DEFAULT_MESSAGE );
         }
@@ -187,7 +187,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>This constructor logs the default error message using the provided logger when the
         /// exception is instantiated.</remarks>
         /// <param name="logger">The logger used to record the error message when the exception is created.</param>
-        public BackwardsPointException( Logger logger )
+        public BackwardsPointerException( Logger logger )
             : base( DEFAULT_MESSAGE ) {
             logger.Error( DEFAULT_MESSAGE );
         }
@@ -196,7 +196,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Initializes a new instance of the BackwardsPointException class with a specified error message.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        public BackwardsPointException( string message )
+        public BackwardsPointerException( string message )
             : base( message ) {
             _logger.Error( message );
         }
@@ -207,7 +207,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="logger">The logger used to record the error message.</param>
-        public BackwardsPointException( string message, Logger logger )
+        public BackwardsPointerException( string message, Logger logger )
             : base( message ) {
             logger.Error( this, message );
         }
@@ -219,7 +219,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="message">The message that describes the error.</param>
         /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is
         /// specified.</param>
-        public BackwardsPointException( string message, Exception inner )
+        public BackwardsPointerException( string message, Exception inner )
             : base( message, inner ) {
             _logger.Error( message );
         }
@@ -234,7 +234,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is
         /// specified.</param>
         /// <param name="logger">The logger used to record the error message associated with this exception.</param>
-        public BackwardsPointException( string message, Exception inner, Logger logger )
+        public BackwardsPointerException( string message, Exception inner, Logger logger )
             : base( message, inner ) {
             logger.Error( this, message );
         }

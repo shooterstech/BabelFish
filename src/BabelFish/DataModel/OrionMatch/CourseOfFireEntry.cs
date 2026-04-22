@@ -59,6 +59,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>A null value means the participant is not currently assigned to any team.</para>
         /// </summary>
         public Team Team { get; set; }
+
+        public string TeamParticipantID {
+            get {
+                return Team?.MatchParticipant?.ParticipantID ?? string.Empty;
+            }
+        }
         #endregion
 
         #region Helper Properties
@@ -99,7 +105,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>This method requires this instance is properly associated with a <see cref="MatchProject"/></remarks>
         /// <param name="team">The team to join. </param>
         /// <exception cref="ArgumentNullException">Thrown if the team parameter is null.</exception>
-        /// <exception cref="BackwardsPointException">Thrown if the team or the current entry is not properly associated with a <see cref="MatchProject"/>,</exception>
+        /// <exception cref="BackwardsPointerException">Thrown if the team or the current entry is not properly associated with a <see cref="MatchProject"/>,</exception>
         /// <exception cref="TeamFullException">Thrown if the team already has the maximum number of members allowed for this Course of Fire.</exception>
         public void JoinTeam( Team team ) {
             if (team is null) {
@@ -108,23 +114,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             if (team.MatchParticipant is null) {
                 var msg = "Team does not have a backwards pointer to a MatchParticipant. This likely means either an error, or the Team was deserialized outside a MatchProject.";
-                throw new BackwardsPointException( msg );
+                throw new BackwardsPointerException( msg );
             }
 
             var courseOfFireStructure = this.CourseOfFireStructure;
             if (courseOfFireStructure is null) {
                 var msg = "CourseOfFireStructure is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
-                throw new BackwardsPointException( msg );
+                throw new BackwardsPointerException( msg );
             }
 
             if (this.MatchParticipant is null) {
                 var msg = "MatchParticipant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
-                throw new BackwardsPointException( msg );
+                throw new BackwardsPointerException( msg );
             }
 
             if (this.MatchParticipant.Participant is null) {
                 var msg = "Participant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
-                throw new BackwardsPointException( msg );
+                throw new BackwardsPointerException( msg );
             }
 
             //Leave any team the participant is currently on for this Course of Fire before joining the new team.
@@ -141,17 +147,57 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             teamEntry.TeamMembers.Add( this.MatchParticipant.Participant );
             this.Team = team;
 
-
             if (!_ignoreEvents) {
-                Team = team;
                 OnTeamJoined?.Invoke( this, new EventArgs<Team>( team ) );
             }
         }
 
+        /// <summary>
+        /// Removes the <see cref="Participant"/>, represented in this Entry from the team they are on for the same Course of Fire, if any.
+        /// If the participant is not currently on a team for this Course of Fire, this method does nothing.
+        /// </summary>
+        /// <exception cref="BackwardsPointerException"></exception>
         public void LeaveTeam() {
+
+            // If Team is null, then it means the participant is not currently on a team for this Course of Fire, so we can just return.
+            if (this.Team is null)
+                return;
+
+            var courseOfFireStructure = this.CourseOfFireStructure;
+            if (courseOfFireStructure is null) {
+                var msg = "CourseOfFireStructure is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointerException( msg );
+            }
+
+            if (Team.MatchParticipant is null) {
+                var msg = "Team.MatchParticipant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointerException( msg );
+            }
+
+            if (Team.MatchParticipant.Participant is null) {
+                var msg = "Team.MatchParticipant.Participant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointerException( msg );
+            }
+
+            if (this.MatchParticipant is null) {
+                var msg = "MatchParticipant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointerException( msg );
+            }
+
+            if (this.MatchParticipant.Participant is null) {
+                var msg = "Participant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointerException( msg );
+            }
+
+            // Find the CourseOfFireEntry for the passed in Team, that has the same CourseOfFireId as this entry.
+            // GetEntryByCourseOfFireId will create a new Entry if one does not exist.
+            var teamEntry = (CourseOfFireEntryTeam)Team.MatchParticipant.GetEntryByCourseOfFireId( CourseOfFireId );
+            teamEntry.TeamMembers.Remove( this.MatchParticipant.Participant );
+
+            var oldTeam = Team;
+            Team = null;
+
             if (!_ignoreEvents) {
-                var oldTeam = Team;
-                Team = null;
                 OnTeamLeft?.Invoke( this, new EventArgs<Team>( oldTeam ) );
             }
         }
@@ -211,7 +257,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Backwards pointer to the members of the team. 
         /// </summary>
-        public List<Participant> TeamMembers { get; set; }
+        public List<Participant> TeamMembers { get; set; } = new List<Participant>();
 
         //There is nothing additiional to track for Team entries, as Teams are not squadded (not yet at least). 
         //Team members are tracked as part of the Team Participant

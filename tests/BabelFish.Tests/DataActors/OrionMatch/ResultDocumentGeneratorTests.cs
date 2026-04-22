@@ -172,14 +172,14 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             /**** Team Result List Testing ****/
             var teamA = await project.CreateMatchParticipantAsync( "A Team" );
-            ((Team)teamA.Participant).TeamMembers.Add( participantJohn.Participant );
-            ((Team)teamA.Participant).TeamMembers.Add( participantJane.Participant );
-            ((Team)teamA.Participant).TeamMembers.Add( participantForrest.Participant );
+            participantJohn.GetEntryByCourseOfFireId( cofStructure.CourseOfFireId ).JoinTeam( (Team)teamA.Participant );
+            participantJane.GetEntryByCourseOfFireId( cofStructure.CourseOfFireId ).JoinTeam( (Team)teamA.Participant );
+            participantForrest.GetEntryByCourseOfFireId( cofStructure.CourseOfFireId ).JoinTeam( (Team)teamA.Participant );
 
             var teamB = await project.CreateMatchParticipantAsync( "B Team" );
-            ((Team)teamB.Participant).TeamMembers.Add( participantMorgan.Participant );
-            ((Team)teamB.Participant).TeamMembers.Add( participantKyle.Participant );
-            ((Team)teamB.Participant).TeamMembers.Add( participantEmily.Participant );
+            participantMorgan.GetEntryByCourseOfFireId( cofStructure.CourseOfFireId ).JoinTeam( (Team)teamB.Participant );
+            participantKyle.GetEntryByCourseOfFireId( cofStructure.CourseOfFireId ).JoinTeam( (Team)teamB.Participant );
+            participantEmily.GetEntryByCourseOfFireId( cofStructure.CourseOfFireId ).JoinTeam( (Team)teamB.Participant );
 
             var teamAll = resultLists.Find( rl => rl.ResultName == "Team - All" );
             Assert.IsNotNull( teamAll );
