@@ -6,7 +6,7 @@ namespace Scopos.BabelFish.Tests {
         public static BasicUserCredentials TestDev1Credentials = new BasicUserCredentials() {
             Username = "test_dev_1@shooterstech.net",
             Password = "abcd1234"
-        };
+        };//5a90fe66-17a6-4d92-9bfa-f3c7a05e2b95
 
         public static BasicUserCredentials TestDev3Credentials = new BasicUserCredentials() {
             Username = "test_dev_3@shooterstech.net",
