@@ -106,6 +106,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultEvent.MatchID = MatchProject.Match.MatchID;
             resultEvent.LocalDate = MatchProject.ShotMapper.GetLastShot( resultCOFID, false )?.TimeScored ?? DateTime.Today;
             resultEvent.Participant = await participant.CopyAsync( cofStructure );
+            //resultEvent.Participant.TeamName = entry.
             resultEvent.RemarkList = entry.RemarkList;
             resultEvent.ResultCOFID = resultCOFID;
             resultEvent.EventScores = await MatchProject.ShotMapper.GetEventScoresAsync( resultCOFID );
@@ -267,6 +268,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultEngine.CompareResultList = this.MatchProject.ResultListSlidingWindow.GetResultListToCompareAgainst( resultList );
 
             var projectorOfScores = ProjectorOfScoresFactory.Create( cofStructure.ProjectorOfScores, courseOfFireDefinition );
+            projectorOfScores.NumberOfTeamMembers = (uint)cofStructure.NumberOfTeamMembers;
             await resultEngine.SortAsync( projectorOfScores, true );
 
             resultList.Projected = (resultList.Status == ResultStatus.INTERMEDIATE) && !resultEngine.DisableScoreProjection && (cofStructure.ProjectorOfScores != ProjectorOfScoresType.NULL);

@@ -14,6 +14,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     public abstract class CourseOfFireEntry {
 
+        #region Private and Protected Fields
+        protected Logger _logger = LogManager.GetCurrentClassLogger();
+        protected bool _ignoreEvents = false;
+        #endregion
+
+        #region Events
+        public event EventHandler<EventArgs<Team>> OnTeamJoined;
+        public event EventHandler<EventArgs<Team>> OnTeamLeft;
+        #endregion
+
+        #region Data Model Properties
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public int CourseOfFireId { get; set; } = 0;
 
@@ -44,14 +55,116 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public bool OutOfCompetition { get; set; } = false;
 
         /// <summary>
+        /// This property is considered the source of truth for Team Membership.
+        /// <para>A null value means the participant is not currently assigned to any team.</para>
+        /// </summary>
+        public Team Team { get; set; }
+        #endregion
+
+        #region Helper Properties
+
+        /// <summary>
         /// Backwards pointer to the MatchParticipant that owns this CourseOfFireEntry. This is set when the CourseOfFireEntry is created using the <see cref="MatchParticipant.CreateEntry(int)"/> method, and should not be set manually.
         /// </summary>
         [G_NS.JsonIgnore]
         public MatchParticipant? MatchParticipant { get; internal set; } = null;
 
+        /// <summary>
+        /// Readonly helper property to return the CourseOfFireStructure for this CourseOfFireEntry.
+        /// <para>Returns null if the MatchParticipant, Project, or Match is null, or if the CourseOfFireStructure cannot be found.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public CourseOfFireStructure? CourseOfFireStructure {
+            get {
+                if (MatchParticipant is null
+                    || MatchParticipant.Project is null
+                    || MatchParticipant.Project.Match is null) {
+                    return null;
+                }
+                var match = MatchParticipant.Project.Match;
+                if (match.MatchStructure.TryGetCourseOfFireStructure( CourseOfFireId, out CourseOfFireStructure courseOfFireStructure )) {
+                    return courseOfFireStructure;
+                }
+
+                return null;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Adds the current participant to the specified team for the same Course of Fire, enforcing team size constraints.
+        /// </summary>
+        /// <remarks>This method requires this instance is properly associated with a <see cref="MatchProject"/></remarks>
+        /// <param name="team">The team to join. </param>
+        /// <exception cref="ArgumentNullException">Thrown if the team parameter is null.</exception>
+        /// <exception cref="BackwardsPointException">Thrown if the team or the current entry is not properly associated with a <see cref="MatchProject"/>,</exception>
+        /// <exception cref="TeamFullException">Thrown if the team already has the maximum number of members allowed for this Course of Fire.</exception>
+        public void JoinTeam( Team team ) {
+            if (team is null) {
+                throw new ArgumentNullException( nameof( team ) );
+            }
+
+            if (team.MatchParticipant is null) {
+                var msg = "Team does not have a backwards pointer to a MatchParticipant. This likely means either an error, or the Team was deserialized outside a MatchProject.";
+                throw new BackwardsPointException( msg );
+            }
+
+            var courseOfFireStructure = this.CourseOfFireStructure;
+            if (courseOfFireStructure is null) {
+                var msg = "CourseOfFireStructure is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointException( msg );
+            }
+
+            if (this.MatchParticipant is null) {
+                var msg = "MatchParticipant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointException( msg );
+            }
+
+            if (this.MatchParticipant.Participant is null) {
+                var msg = "Participant is null. This likely means either an error, or the CourseOfFireEntry was deserialized outside a MatchProject.";
+                throw new BackwardsPointException( msg );
+            }
+
+            //Leave any team the participant is currently on for this Course of Fire before joining the new team.
+            LeaveTeam();
+
+            // Find the CourseOfFireEntry for the passed in Team, that has the same CourseOfFireId as this entry.
+            // GetEntryByCourseOfFireId will create a new Entry if one does not exist.
+            var teamEntry = (CourseOfFireEntryTeam)team.MatchParticipant.GetEntryByCourseOfFireId( CourseOfFireId );
+            if (teamEntry.TeamMembers.Count >= courseOfFireStructure.MaxNumberOfTeamMembers) {
+                var msg = $"Team {team.TeamName} already has the maximum number of members for this Course of Fire. Max Team Size is {courseOfFireStructure.MaxNumberOfTeamMembers}.";
+                throw new TeamFullException( msg );
+            }
+
+            teamEntry.TeamMembers.Add( this.MatchParticipant.Participant );
+            this.Team = team;
+
+
+            if (!_ignoreEvents) {
+                Team = team;
+                OnTeamJoined?.Invoke( this, new EventArgs<Team>( team ) );
+            }
+        }
+
+        public void LeaveTeam() {
+            if (!_ignoreEvents) {
+                var oldTeam = Team;
+                Team = null;
+                OnTeamLeft?.Invoke( this, new EventArgs<Team>( oldTeam ) );
+            }
+        }
+
+        /// <summary>
+        /// Newtonsoft.json helper method to determine if the RemarkList property should be serialized. We only want to serialize it if it has at least one RemarkAction in it.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeRemarkList() {
             return RemarkList != null && RemarkList.Count > 0;
         }
+
+        #endregion
     }
 
     public class CourseOfFireEntryIndividual : CourseOfFireEntry {
@@ -94,6 +207,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public CourseOfFireEntryTeam() {
             ParticipantType = ParticipantType.TEAM;
         }
+
+        /// <summary>
+        /// Backwards pointer to the members of the team. 
+        /// </summary>
+        public List<Participant> TeamMembers { get; set; }
 
         //There is nothing additiional to track for Team entries, as Teams are not squadded (not yet at least). 
         //Team members are tracked as part of the Team Participant

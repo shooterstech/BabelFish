@@ -37,7 +37,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <param name="cofStructure"></param>
         /// <returns></returns>
-        /// <remarks>This method is intended to be used in the generation of <see cref="ResultCOF"/> or <see cref="ResultEvent"/> instances.</remarks>
+        /// <remarks>This method is intended to be used in the generation of <see cref="ResultCOF"/> or <see cref="ResultEvent"/> instances (which are both considered
+        /// 'compiled' data formats).</remarks>
         public async Task<Participant> CopyAsync( CourseOfFireStructure cofStructure ) {
             var copy = this.Clone(); //Using Clone is slow, but works
 
@@ -178,6 +179,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string Club { get; set; } = string.Empty;
 
+        /*
         /// <summary>
         /// The <see cref="Team"/> that this Participant is a member of. A value of null
         /// indicates that the Participant is not a member of any team. 
@@ -188,6 +190,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </remark>
         [G_NS.JsonIgnore]
         public Team? Team { get; set; } = null;
+        */
 
         /// <summary>
         /// Gets the name of the team associated with the current participant.
@@ -195,6 +198,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>If no team is assigned, this property returns an empty string. Use this property to
         /// retrieve the display name of the participant's team, if available.</remarks>
         [G_NS.JsonProperty( Order = 15 )]
+        [DefaultValue( "" )]
         public virtual string TeamName {
             get {
                 return Team != null ? Team.TeamName : string.Empty;

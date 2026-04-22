@@ -260,7 +260,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
                 X = left.X + right.X,
                 I = left.I + right.I,
                 D = (float)Math.Round( left.D + right.D, 1 ),
-                S = (float)Math.Round( left.S + right.S, 5 ),
+                S = (float)Math.Round( left.S + right.S, 2 ),
                 J = (float)Math.Round( left.J + right.J, 5 ),
                 K = (float)Math.Round( left.K + right.K, 5 ),
                 L = (float)Math.Round( left.L + right.L, 5 ),
@@ -318,25 +318,25 @@ namespace Scopos.BabelFish.DataModel.Athena {
             //The S is for speical sum
             switch (s) {
                 case ScoreComponent.I:
-                    this.S = (float)Math.Round( this.S + right.I, 5 );
+                    this.S = (float)Math.Round( this.S + right.I, 2 );
                     break;
                 case ScoreComponent.X:
-                    this.S = (float)Math.Round( this.S + right.X, 5 );
+                    this.S = (float)Math.Round( this.S + right.X, 2 );
                     break;
                 case ScoreComponent.D:
-                    this.S = (float)Math.Round( this.S + right.D, 5 );
+                    this.S = (float)Math.Round( this.S + right.D, 2 );
                     break;
                 case ScoreComponent.S:
-                    this.S = (float)Math.Round( this.S + right.S, 5 );
+                    this.S = (float)Math.Round( this.S + right.S, 2 );
                     break;
                 case ScoreComponent.J:
-                    this.S = (float)Math.Round( this.S + right.J, 5 );
+                    this.S = (float)Math.Round( this.S + right.J, 2 );
                     break;
                 case ScoreComponent.K:
-                    this.S = (float)Math.Round( this.S + right.K, 5 );
+                    this.S = (float)Math.Round( this.S + right.K, 2 );
                     break;
                 case ScoreComponent.L:
-                    this.S = (float)Math.Round( this.S + right.L, 5 );
+                    this.S = (float)Math.Round( this.S + right.L, 2 );
                     break;
             }
         }

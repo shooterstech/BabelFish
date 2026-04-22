@@ -59,11 +59,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Data Model Properties
+        /*
         /// <summary>
         /// The contributing team members. These are the Participants that will make up the score shot by the team. 
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
         public List<Participant> TeamMembers { get; set; }
+        */
 
         /// <summary>
         /// Returns the same value as DisplayName, but is intended to be used when the Participant is a Team. The setter does nothing, as the TeamName is always the same as DisplayName.

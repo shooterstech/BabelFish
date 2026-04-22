@@ -132,7 +132,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                     invEntry = (CourseOfFireEntryIndividual)entry;
                     var sequence = 1;
                     foreach (var stage in topLevelEvent.GetEvents( EventtType.STAGE )) {
-                        var numberOfShots = stage.GetAllSingulars().Count;
+                        var numberOfShots = stage.GetAllSingulars().Count - 2;
                         for (int shotNum = 1; shotNum <= numberOfShots; shotNum++) {
                             var shot = await Shot.SimulateAsync( cofStructure, invEntry, stage.EventName, sequence++ );
                             shotMapper.ReceiveShot( this, new EventArgs<Shot>( shot ) );
@@ -186,8 +186,9 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var teamAllResultList = await project.ResultGenerator.GenerateResultListAsync( teamAll, string.Empty );
             Assert.AreEqual( 2, teamAllResultList.Items.Count );
             teamAllResultList.SaveToFile( project.MatchObjectDirectory );
+            project.SaveToFile( project.ProjectDirectory );
 
-            Assert.IsTrue( teamAllResultList.Items[0].EventScores[teamAllResultList.EventName].Score.D >= teamAllResultList.Items[1].EventScores[teamAllResultList.EventName].Score.D );
+            Assert.IsTrue( teamAllResultList.Items[0].EventScores[teamAllResultList.EventName].Projected.D >= teamAllResultList.Items[1].EventScores[teamAllResultList.EventName].Projected.D );
 
             ResultListFormat resultListFormat = await teamAllResultList.GetResultListFormatDefinitionAsync();
             ResultListIntermediateFormatted rlif = new ResultListIntermediateFormatted( teamAllResultList, resultListFormat, null );
