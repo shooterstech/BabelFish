@@ -186,6 +186,8 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             var johnSmith = await project.CreateMatchParticipantAsync( "Smith", "John" );
             var janeDoe = await project.CreateMatchParticipantAsync( "Doe", "Jane" );
             var aTeam = await project.CreateMatchParticipantAsync( "Team A" );
+            johnSmith.Entries[0].JoinTeam( aTeam.Participant as Team );
+            janeDoe.Entries[0].JoinTeam( aTeam.Participant as Team );
 
             Assert.AreEqual( "MatchProjectSerializationTest.orion", project.GetFileName() );
 

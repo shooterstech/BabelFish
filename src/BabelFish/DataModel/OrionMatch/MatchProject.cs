@@ -55,12 +55,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //Load the Match.
                 matchProject.Match = await Match.LoadFromFileAsync( Path.Combine( matchProject.ProjectDirectory.FullName, matchProject.MatchFileName ) );
 
-                //Load the Participants
+                // Load the Participants. IN the process, populate a dictionary of the team membership, which we will use to re-set the Team membership for each Participant after loading them all.
+                var teamsByParticipantID = new Dictionary<string, Team>();
+
                 var participantDirectory = new DirectoryInfo( Path.Combine( matchProject.ProjectDirectory.FullName, MatchParticipant.FOLDER_NAME ) );
                 if (participantDirectory.Exists) {
                     foreach (var participantFile in participantDirectory.GetFiles()) {
-                        var participant = await MatchParticipant.LoadFromFileAsync( participantFile );
-                        matchProject.Participants.Add( participant );
+                        var matchParticipant = await MatchParticipant.LoadFromFileAsync( participantFile );
+                        matchProject.Participants.Add( matchParticipant );
+                        matchParticipant.Project = matchProject;
+
+                        foreach (var entry in matchParticipant.Entries) {
+                            if (entry is CourseOfFireEntryTeam teamEntry) {
+                                teamEntry.TeamMembers.Clear();
+                            }
+                        }
+                        if (matchParticipant.Participant is Team team) {
+                            teamsByParticipantID.Add( matchParticipant.ParticipantID, team );
+                        }
+                    }
+                }
+
+                //Loop through the Participants Entries and re-set the Team membership, which is necessary to correctly set the backwards pointers.
+                foreach (var participant in matchProject.Participants) {
+                    foreach (var entry in participant.Entries) {
+                        entry.OnDeserializing();
+                        entry.Team = null;
+                        if (!string.IsNullOrEmpty( entry.TeamParticipantID )
+                            && teamsByParticipantID.TryGetValue( entry.TeamParticipantID, out Team team )) {
+                            entry.JoinTeam( team );
+                        }
+                        entry.OnDeserialized();
                     }
                 }
 

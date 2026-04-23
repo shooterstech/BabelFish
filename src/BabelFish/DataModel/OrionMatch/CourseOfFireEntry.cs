@@ -12,11 +12,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <para> The preferred method for creating a new entry is to use the <see cref="MatchParticipant.CreateEntry(int)"/> method.
     /// Which will also set the backwards pointer <see cref="MatchParticipant"/></para>
     /// </summary>
-    public abstract class CourseOfFireEntry {
+    public abstract class CourseOfFireEntry :
+        G_STJ_SER.IJsonOnDeserialized,
+        G_STJ_SER.IJsonOnDeserializing {
 
         #region Private and Protected Fields
         protected Logger _logger = LogManager.GetCurrentClassLogger();
         protected bool _ignoreEvents = false;
+        #endregion
+
+        #region Constructors, Facory Methods, and Initialization Methods
+        /// <summary>
+        /// This method is called after deserialization with System.Text.Json and will disable event firing during deserialization.
+        /// </summary>
+        public void OnDeserialized() {
+            _ignoreEvents = false;
+        }
+
+        /// <summary>
+        /// Method is called before deserialization with System.Text.Json and will re-enable event firing after deserialization is complete.
+        /// </summary>
+        public void OnDeserializing() {
+            _ignoreEvents = true;
+        }
         #endregion
 
         #region Events
@@ -61,9 +79,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Team Team { get; set; }
 
         public string TeamParticipantID {
-            get {
-                return Team?.MatchParticipant?.ParticipantID ?? string.Empty;
-            }
+            get; set;
         }
         #endregion
 
@@ -146,6 +162,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             teamEntry.TeamMembers.Add( this.MatchParticipant.Participant );
             this.Team = team;
+            this.TeamParticipantID = Team.MatchParticipant.ParticipantID;
 
             if (!_ignoreEvents) {
                 OnTeamJoined?.Invoke( this, new EventArgs<Team>( team ) );
