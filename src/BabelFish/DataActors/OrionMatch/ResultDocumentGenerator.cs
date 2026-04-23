@@ -93,6 +93,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var resultCOFID = entry.ResultCofId;
             var matchParticipant = entry.MatchParticipant;
 
+            if (entry.MatchParticipant is null) {
+                throw new BackwardsPointerException( $"CourseOfFireEntry with course of fire ID {entry.CourseOfFireId} does not have a reference to its MatchParticipant. Likely occured because the entry was created outside of a MatchProject." );
+            }
+
             //Look up the Course of Fire Structure for this course of fire entry. If the course of fire structure, which should not happen can not be found, return false
             CourseOfFireStructure cofStructure;
             if (!MatchProject.Match.MatchStructure.TryGetCourseOfFireStructure( entry.CourseOfFireId, out cofStructure )) {

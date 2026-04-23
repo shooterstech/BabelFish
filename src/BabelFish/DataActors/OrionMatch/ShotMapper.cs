@@ -92,11 +92,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             logThread.Start();
         }
 
+        /// <summary>
+        /// Reads the MatchProject's athenaShots log file line by line, and for each line,
+        /// deserializes it into a Shot object and loads it into the ShotMapper using the LoadShot method.
+        /// <para>Expected to be called by the MatchProject during it's load from file.</para>
+        /// </summary>
         public void LoadFromFile() {
             var filePath = Path.Combine( MatchProject.ProjectDirectory.FullName, "athenaShots.json" );
             if (!File.Exists( filePath ))
                 return;
 
+            // Turn off writing to the athenaShots log file while we are loading in shots from the athenaShots log file to avoid us writing redundant shot updates
+            _initializing = true;
+
+            // Read the athenaShots log file line by line, and for each line, deserialize it into a Shot object and load it into the ShotMapper using the LoadShot method.
             foreach (var line in File.ReadLines( filePath )) {
                 if (string.IsNullOrWhiteSpace( line ))
                     continue;
@@ -108,6 +117,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     _logger.Error( ex, $"Failed to deserialize shot from line: {line}" );
                 }
             }
+
+            // Reenable writing to the athenaShots log file now that we have finished loading in shots from the athenaShots log file
+            _initializing = false;
         }
         #endregion
 
@@ -314,8 +326,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public async Task<Dictionary<string, EventScore>> GetEventScoresAsync( string resultCOFID ) {
 
-            //Todo, how to implement this method for teams?
-
             // Run GetShotsByEventNameAsync as a task that we will await later. Hopefully spending things up a bit.
             var shotsByEventNameTask = this.GetShotsByEventNameAsync( resultCOFID );
 
@@ -340,7 +350,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var shotsByEventName = await shotsByEventNameTask;
             var remarkList = entry.RemarkList;
 
+            // Calculate the Score for the standard Event Tree
             CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
+
+            foreach (var externalEvent in EventComposite.FindExternalEvents( cofDefinition )) {
+                CalculateScore( eventScores, shotsByEventName, externalEvent.Value, scoreFormatCollectionDefinition, scoreConfigName );
+            }
+
             CheckForRemarks( eventScores, entry );
             await CalculateEventStatusAsync( eventScores, entry );
             await CalculateEventAndStageStyleAsync( eventScores, entry, cofStructure );
@@ -390,6 +406,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             EventComposite eventComponent,
             ScoreFormatCollection scoreFormatCollectionDefinition,
             string scoreConfigName ) {
+
+            // Test if the score is already calculated for this event. This is to handle the case where an event is a child of multiple parent events (which would happen for an Event outside the Event Tree)
+            if (eventScores.TryGetValue( eventComponent.EventName, out var existingEventScore )) {
+                return existingEventScore.Score;
+            }
 
             if (eventComponent.EventType == EventtType.SINGULAR) {
                 //NOTE: As this is a shot, we dont' add it to the eventScores dictionary.
