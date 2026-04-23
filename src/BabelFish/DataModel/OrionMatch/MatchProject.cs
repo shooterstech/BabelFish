@@ -54,6 +54,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 var matchProject = G_STJ.JsonSerializer.Deserialize<MatchProject>( stream, Helpers.SerializerOptions.SystemTextJsonDeserializer );
                 matchProject.ProjectDirectory = fileInfo.Directory;
 
+                matchProject.ShotMapper = new ShotMapper( matchProject );
+                matchProject.ResultGenerator = new ResultDocumentGenerator( matchProject );
+                matchProject.ResultListSlidingWindow = new ResultListSlidingWindow( matchProject );
+
                 //Load the Match.
                 matchProject.Match = await Match.LoadFromFileAsync( Path.Combine( matchProject.ProjectDirectory.FullName, matchProject.MatchFileName ) );
 
@@ -93,6 +97,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     }
                 }
 
+                matchProject.ShotMapper.LoadFromFile();
                 return matchProject;
             }
         }

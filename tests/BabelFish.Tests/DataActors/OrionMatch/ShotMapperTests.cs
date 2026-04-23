@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading.Tasks;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -10,7 +11,8 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
         /// <summary>
         /// Tests that the ShotMapper correctly receives shots and can return them  via the GetShots() method,
-        /// based on the ResultCofId of the CourseOfFireEntryIndividual.
+        /// based on the ResultCofId of the CourseOfFireEntryIndividual. Then tests that the shots are correctly
+        /// serialized and deserialized when the MatchProject is saved to file and loaded back from file.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -24,7 +26,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
 
             var shotMapper = project.ShotMapper;
-            shotMapper.InMemoryOnly = true;
+            shotMapper.InMemoryOnly = false;
 
             //ShotMapper should be created when the MatchProject is created.
             Assert.IsNotNull( shotMapper );
@@ -34,52 +36,90 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var randomShotList = await shotMapper.GetShotsBySequenceAsync( Guid.NewGuid().ToString() );
             Assert.AreEqual( 0, randomShotList.Count );
 
+            Shot k1, k2, k3;
             var participant = await project.CreateMatchParticipantAsync( "Smith", "John" );
             CourseOfFireEntryIndividual invEntry;
-            if (participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
-                invEntry = (CourseOfFireEntryIndividual)entry;
-
-                var k1 = await Shot.SimulateAsync( cofStructure, invEntry, "Kneeling", 1 );
-                var k2 = await Shot.SimulateAsync( cofStructure, invEntry, "Kneeling", 2 );
-                var k3 = await Shot.SimulateAsync( cofStructure, invEntry, "Kneeling", 3 );
-
-                shotMapper.ReceiveShot( this, new EventArgs<Shot>( k1 ) );
-                shotMapper.ReceiveShot( this, new EventArgs<Shot>( k2 ) );
-                shotMapper.ReceiveShot( this, new EventArgs<Shot>( k3 ) );
-
-                var shotListBySequence = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId );
-                Assert.AreEqual( 3, shotListBySequence.Count );
-
-                // Tests that the sequence values are the same ones we used when we generated the shots.
-                Assert.AreEqual( k1.Sequence, shotListBySequence["1"].Sequence );
-                Assert.AreEqual( k2.Sequence, shotListBySequence["2"].Sequence );
-                Assert.AreEqual( k3.Sequence, shotListBySequence["3"].Sequence );
-
-                // Tests that the scores are the same.
-                Assert.AreEqual( k1.Score.D, shotListBySequence["1"].Score.D );
-                Assert.AreEqual( k2.Score.D, shotListBySequence["2"].Score.D );
-                Assert.AreEqual( k3.Score.D, shotListBySequence["3"].Score.D );
-
-                // Tests that the event names got mapped to the expected values.
-                Assert.AreEqual( "K1", shotListBySequence["1"].EventName );
-                Assert.AreEqual( "K2", shotListBySequence["2"].EventName );
-                Assert.AreEqual( "K3", shotListBySequence["3"].EventName );
-
-                // Tests that the GetLastShot() method returns the last shot.
-                var lastShot = shotMapper.GetLastShot( invEntry.ResultCofId );
-                Assert.IsNotNull( lastShot );
-                Assert.AreEqual( k3.Score.D, lastShot.Score.D );
-
-                var shotListByEventName = await shotMapper.GetShotsByEventNameAsync( invEntry.ResultCofId );
-                Assert.AreEqual( k1.Score.D, shotListByEventName["K1"].Score.D );
-                Assert.AreEqual( k2.Score.D, shotListByEventName["K2"].Score.D );
-                Assert.AreEqual( k3.Score.D, shotListByEventName["K3"].Score.D );
-                Assert.IsFalse( shotListByEventName.ContainsKey( "K4" ) );
-                Assert.IsFalse( shotListByEventName.ContainsKey( "P1" ) );
-                Assert.IsFalse( shotListByEventName.ContainsKey( "S1" ) );
-            } else {
+            if (!participant.TryGetEntryByCourseOfFireId( cofStructure.CourseOfFireId, out var entry )) {
                 Assert.Fail( $"Failed to get CourseOfFireEntryIndividual for participant {participant.Participant.DisplayName} and CourseOfFire {cofStructure.CourseOfFireId}" );
             }
+            invEntry = (CourseOfFireEntryIndividual)entry;
+
+            k1 = await Shot.SimulateAsync( cofStructure, invEntry, "Kneeling", 1 );
+            k2 = await Shot.SimulateAsync( cofStructure, invEntry, "Kneeling", 2 );
+            k3 = await Shot.SimulateAsync( cofStructure, invEntry, "Kneeling", 3 );
+
+            shotMapper.ReceiveShot( this, new EventArgs<Shot>( k1 ) );
+            shotMapper.ReceiveShot( this, new EventArgs<Shot>( k2 ) );
+            shotMapper.ReceiveShot( this, new EventArgs<Shot>( k3 ) );
+
+            var shotListBySequence = await shotMapper.GetShotsBySequenceAsync( invEntry.ResultCofId );
+            Assert.AreEqual( 3, shotListBySequence.Count );
+
+            // Tests that the sequence values are the same ones we used when we generated the shots.
+            Assert.AreEqual( k1.Sequence, shotListBySequence["1"].Sequence );
+            Assert.AreEqual( k2.Sequence, shotListBySequence["2"].Sequence );
+            Assert.AreEqual( k3.Sequence, shotListBySequence["3"].Sequence );
+
+            // Tests that the scores are the same.
+            Assert.AreEqual( k1.Score.D, shotListBySequence["1"].Score.D );
+            Assert.AreEqual( k2.Score.D, shotListBySequence["2"].Score.D );
+            Assert.AreEqual( k3.Score.D, shotListBySequence["3"].Score.D );
+
+            // Tests that the event names got mapped to the expected values.
+            Assert.AreEqual( "K1", shotListBySequence["1"].EventName );
+            Assert.AreEqual( "K2", shotListBySequence["2"].EventName );
+            Assert.AreEqual( "K3", shotListBySequence["3"].EventName );
+
+            // Tests that the GetLastShot() method returns the last shot.
+            var lastShot = shotMapper.GetLastShot( invEntry.ResultCofId );
+            Assert.IsNotNull( lastShot );
+            Assert.AreEqual( k3.Score.D, lastShot.Score.D );
+
+            var shotListByEventName = await shotMapper.GetShotsByEventNameAsync( invEntry.ResultCofId );
+            Assert.AreEqual( k1.Score.D, shotListByEventName["K1"].Score.D );
+            Assert.AreEqual( k2.Score.D, shotListByEventName["K2"].Score.D );
+            Assert.AreEqual( k3.Score.D, shotListByEventName["K3"].Score.D );
+            Assert.IsFalse( shotListByEventName.ContainsKey( "K4" ) );
+            Assert.IsFalse( shotListByEventName.ContainsKey( "P1" ) );
+            Assert.IsFalse( shotListByEventName.ContainsKey( "S1" ) );
+
+            // Serialize then deserialize the MatchProject, and then verify that the shots are still there and correct after deserialization.
+            project.SaveToFile();
+
+            var deserializedProject = await MatchProject.LoadFromFileAsync( Path.Combine( project.ProjectDirectory.ToString(), project.GetFileName() ) );
+            var deserializedShotMapper = deserializedProject.ShotMapper;
+            var deserializedInvEntry = (CourseOfFireEntryIndividual)deserializedProject.Participants[0].Entries[0];
+
+            var deserializedShotListBySequence = await deserializedShotMapper.GetShotsBySequenceAsync( deserializedInvEntry.ResultCofId );
+            Assert.AreEqual( 3, deserializedShotListBySequence.Count );
+
+            // Tests that the sequence values are the same ones we used when we generated the shots.
+            Assert.AreEqual( k1.Sequence, deserializedShotListBySequence["1"].Sequence );
+            Assert.AreEqual( k2.Sequence, deserializedShotListBySequence["2"].Sequence );
+            Assert.AreEqual( k3.Sequence, deserializedShotListBySequence["3"].Sequence );
+
+            // Tests that the scores are the same.
+            Assert.AreEqual( k1.Score.D, deserializedShotListBySequence["1"].Score.D );
+            Assert.AreEqual( k2.Score.D, deserializedShotListBySequence["2"].Score.D );
+            Assert.AreEqual( k3.Score.D, deserializedShotListBySequence["3"].Score.D );
+
+            // Tests that the event names got mapped to the expected values.
+            Assert.AreEqual( "K1", deserializedShotListBySequence["1"].EventName );
+            Assert.AreEqual( "K2", deserializedShotListBySequence["2"].EventName );
+            Assert.AreEqual( "K3", deserializedShotListBySequence["3"].EventName );
+
+            // Tests that the GetLastShot() method returns the last shot.
+            var deserializedLastShot = deserializedShotMapper.GetLastShot( invEntry.ResultCofId );
+            Assert.IsNotNull( deserializedLastShot );
+            Assert.AreEqual( k3.Score.D, deserializedLastShot.Score.D );
+
+            var deserializedShotListByEventName = await deserializedShotMapper.GetShotsByEventNameAsync( invEntry.ResultCofId );
+            Assert.AreEqual( k1.Score.D, deserializedShotListByEventName["K1"].Score.D );
+            Assert.AreEqual( k2.Score.D, deserializedShotListByEventName["K2"].Score.D );
+            Assert.AreEqual( k3.Score.D, deserializedShotListByEventName["K3"].Score.D );
+            Assert.IsFalse( deserializedShotListByEventName.ContainsKey( "K4" ) );
+            Assert.IsFalse( deserializedShotListByEventName.ContainsKey( "P1" ) );
+            Assert.IsFalse( deserializedShotListByEventName.ContainsKey( "S1" ) );
         }
 
         /// <summary>

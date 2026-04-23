@@ -91,6 +91,24 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             };
             logThread.Start();
         }
+
+        public void LoadFromFile() {
+            var filePath = Path.Combine( MatchProject.ProjectDirectory.FullName, "athenaShots.json" );
+            if (!File.Exists( filePath ))
+                return;
+
+            foreach (var line in File.ReadLines( filePath )) {
+                if (string.IsNullOrWhiteSpace( line ))
+                    continue;
+                try {
+                    var shot = System.Text.Json.JsonSerializer.Deserialize<Shot>( line, SerializerOptions.SystemTextJsonDeserializer );
+                    if (shot != null)
+                        LoadShot( shot );
+                } catch (Exception ex) {
+                    _logger.Error( ex, $"Failed to deserialize shot from line: {line}" );
+                }
+            }
+        }
         #endregion
 
         #region Events
