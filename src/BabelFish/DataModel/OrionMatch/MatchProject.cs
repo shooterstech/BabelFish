@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
@@ -15,6 +16,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         private bool _ignoreEvents = false;
         private string _projectName;
 
+        private ConcurrentDictionary<string, MatchParticipant> _participantsByParticipantID = new ConcurrentDictionary<string, MatchParticipant>();
         private ConcurrentDictionary<string, MatchParticipant> _participantsByResultCOFID = new ConcurrentDictionary<string, MatchParticipant>();
         #endregion
 
@@ -55,23 +57,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //Load the Match.
                 matchProject.Match = await Match.LoadFromFileAsync( Path.Combine( matchProject.ProjectDirectory.FullName, matchProject.MatchFileName ) );
 
-                // Load the Participants. IN the process, populate a dictionary of the team membership, which we will use to re-set the Team membership for each Participant after loading them all.
-                var teamsByParticipantID = new Dictionary<string, Team>();
-
+                // Load the Participants. 
                 var participantDirectory = new DirectoryInfo( Path.Combine( matchProject.ProjectDirectory.FullName, MatchParticipant.FOLDER_NAME ) );
                 if (participantDirectory.Exists) {
                     foreach (var participantFile in participantDirectory.GetFiles()) {
                         var matchParticipant = await MatchParticipant.LoadFromFileAsync( participantFile );
                         matchProject.Participants.Add( matchParticipant );
                         matchParticipant.Project = matchProject;
+                        matchProject.RegisterParticipantID( matchParticipant.ParticipantID, matchParticipant );
 
                         foreach (var entry in matchParticipant.Entries) {
                             if (entry is CourseOfFireEntryTeam teamEntry) {
                                 teamEntry.TeamMembers.Clear();
+                            } else if (entry is CourseOfFireEntryIndividual individualEntry) {
+                                matchProject.RegisterResultCOFID( individualEntry.ResultCofId, matchParticipant );
                             }
-                        }
-                        if (matchParticipant.Participant is Team team) {
-                            teamsByParticipantID.Add( matchParticipant.ParticipantID, team );
                         }
                     }
                 }
@@ -82,8 +82,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                         entry.OnDeserializing();
                         entry.Team = null;
                         if (!string.IsNullOrEmpty( entry.TeamParticipantID )
-                            && teamsByParticipantID.TryGetValue( entry.TeamParticipantID, out Team team )) {
-                            entry.JoinTeam( team );
+                            && matchProject.TryGetMatchParticipantByParticipantID( entry.TeamParticipantID, out MatchParticipant matchParticipant )) {
+                            if (matchParticipant.Participant is Team team) {
+                                entry.JoinTeam( team );
+                            } else {
+                                Debug.Fail( "Should of been a team participant, but wasn't. Data integrity issue." );
+                            }
                         }
                         entry.OnDeserialized();
                     }
@@ -210,10 +214,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             individual.GivenName = givenName;
 
             Participants.Add( mp );
+            RegisterParticipantID( mp.ParticipantID, mp );
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
                 var entry = (CourseOfFireEntryIndividual)mp.CreateEntry( cof.CourseOfFireId );
-                _participantsByResultCOFID.TryAdd( entry.ResultCofId, mp );
             }
 
             foreach (var attributeConfiguration in Match.MatchStructure.GlobalAttributes) {
@@ -233,6 +237,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return mp;
         }
 
+        internal void RegisterResultCOFID( string resultCOFID, MatchParticipant participant ) {
+            _participantsByResultCOFID.TryAdd( resultCOFID, participant );
+        }
+
+        internal void RegisterParticipantID( string participantID, MatchParticipant participant ) {
+            _participantsByParticipantID.TryAdd( participantID, participant );
+        }
+
         /// <summary>
         /// Creates a new <see cref="Team"/> participant for the match. Adding a <see cref="CourseOfFireEntryTeam"/> for that team.
         /// </summary>
@@ -248,6 +260,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             var team = (Team)mp.Participant;
             team.TeamName = teamName;
             Participants.Add( mp );
+            RegisterParticipantID( mp.ParticipantID, mp );
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
                 var entry = mp.CreateEntry( cof.CourseOfFireId );
@@ -300,6 +313,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             entry = null;
             return false;
+        }
+
+        public bool TryGetMatchParticipantByParticipantID( string participantID, out MatchParticipant participant ) {
+            return _participantsByParticipantID.TryGetValue( participantID, out participant );
         }
 
         /// <inheritdoc />

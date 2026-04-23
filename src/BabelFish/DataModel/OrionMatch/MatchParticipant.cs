@@ -191,6 +191,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 if (this.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
                     entry = new CourseOfFireEntryIndividual();
                     entry.EntryStatus = EntryStatus.NOT_ENTERED;
+                    this.Project.RegisterResultCOFID( (entry as CourseOfFireEntryIndividual).ResultCofId, this );
                 } else {
                     entry = new CourseOfFireEntryTeam();
                 }

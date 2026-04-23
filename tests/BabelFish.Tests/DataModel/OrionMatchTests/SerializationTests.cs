@@ -196,11 +196,16 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             project.SaveToFile();
             Assert.IsTrue( File.Exists( expectedFullFileName ), $"File does not exist: {expectedFullFileName}" );
 
-            var newProject = await MatchProject.LoadFromFileAsync( expectedFullFileName );
-            Assert.IsNotNull( newProject );
-            Assert.AreEqual( project.ProjectName, newProject.ProjectName );
-            Assert.AreEqual( project.Match.Name, newProject.Match.Name );
-            Assert.AreEqual( project.Participants.Count, newProject.Participants.Count );
+            var deserializedProject = await MatchProject.LoadFromFileAsync( expectedFullFileName );
+            Assert.IsNotNull( deserializedProject );
+            Assert.AreEqual( project.ProjectName, deserializedProject.ProjectName );
+            Assert.AreEqual( project.Match.Name, deserializedProject.Match.Name );
+            Assert.AreEqual( project.Participants.Count, deserializedProject.Participants.Count );
+            Assert.IsTrue( deserializedProject.TryGetMatchParticipantByParticipantID( johnSmith.ParticipantID, out var deserializedJohnSmith ) );
+            Assert.IsTrue( deserializedProject.TryGetMatchParticipantByParticipantID( janeDoe.ParticipantID, out var deserializedJaneDoe ) );
+            Assert.IsTrue( deserializedProject.TryGetMatchParticipantByParticipantID( aTeam.ParticipantID, out var deserializedATeam ) );
+            Assert.AreEqual( 2, ((CourseOfFireEntryTeam)deserializedATeam.Entries[0]).TeamMembers.Count );
+            Assert.AreEqual( deserializedATeam.Participant.DisplayName, deserializedJohnSmith.Entries[0].Team.TeamName );
         }
 
         /// <summary>
