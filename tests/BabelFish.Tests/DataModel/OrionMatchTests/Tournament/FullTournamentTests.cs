@@ -955,6 +955,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
             // Intention: verify PatchTournamentMember edge failure where OPEN-policy tournaments do not allow approval updates.
             var client = CreateClient();
             var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var matchAuthorizedUser = await AuthenticateAsync( Constants.TestDev11Credentials );
 
             MatchID? tournamentId = null;
             try {
@@ -966,12 +967,13 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                     showOnSearch: false,
                     memberPolicy: MemberPolicyOption.OPEN );
 
-                var addResponse = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1003, authorizedUser );
+                var addResponse = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1PatchJoin, matchAuthorizedUser );
                 Assert.AreEqual( HttpStatusCode.OK, addResponse.RestApiStatusCode );
+                Assert.AreEqual( ApprovalStatus.APPROVED, addResponse.TournamentMember.ApprovalStatus );
 
                 var patchRequest = new PatchTournamentMemberAuthenticatedRequest( authorizedUser ) {
                     TournamentId = tournamentId,
-                    MatchId = KnownPublicMatchOwner1003,
+                    MatchId = KnownPublicMatchOwner1PatchJoin,
                     ApprovalStatus = ApprovalStatus.REJECTED
                 };
 
@@ -980,6 +982,59 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 Assert.AreEqual( HttpStatusCode.BadRequest, response.RestApiStatusCode );
             } finally {
                 await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task AddTournamentMemberReturnsUnauthorizedForOpenPolicyWhenCallerOnlyHasTournamentSidePermission() {
+            // Intention: verify OPEN policy does not let the tournament owner add a match when they lack match-side join permission.
+            var client = CreateClient();
+            var tournamentOwnerUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    tournamentOwnerUser,
+                    UniqueName( "Full Tournament Add Open Unauthorized TournamentSideOnly" ),
+                    VisibilityOption.PUBLIC,
+                    showOnSearch: false,
+                    memberPolicy: MemberPolicyOption.OPEN,
+                    ownerId: TournamentOwnerId );
+
+                var response = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1003, tournamentOwnerUser );
+
+                Assert.AreEqual( HttpStatusCode.Unauthorized, response.RestApiStatusCode );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, tournamentOwnerUser );
+            }
+        }
+
+        [TestMethod]
+        public async Task AddTournamentMemberReturnsApprovedForOpenPolicyWhenCallerHasMatchSidePermission() {
+            // Intention: verify OPEN policy immediately approves a join request from the owner or authorized user of the member match.
+            var client = CreateClient();
+            var tournamentOwnerUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var matchAuthorizedUser = await AuthenticateAsync( Constants.TestDev11Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    tournamentOwnerUser,
+                    UniqueName( "Full Tournament Add Open Approved MatchSide" ),
+                    VisibilityOption.PUBLIC,
+                    showOnSearch: false,
+                    memberPolicy: MemberPolicyOption.OPEN,
+                    ownerId: TournamentOwnerId );
+
+                var response = await client.AddTournamentMemberAuthenticatedAsync( tournamentId, KnownPublicMatchOwner1PatchJoin, matchAuthorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+                Assert.AreEqual( KnownPublicMatchOwner1PatchJoin, response.TournamentMember.MatchID );
+                Assert.AreEqual( ApprovalStatus.APPROVED, response.TournamentMember.ApprovalStatus );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, tournamentOwnerUser );
             }
         }
 
