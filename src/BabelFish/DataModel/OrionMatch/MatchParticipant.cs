@@ -183,9 +183,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Creates a new CourseOfFireEntry for this MatchParticipant with the specified courseOfFireId, adds it to the Entries list, and returns it.
+        /// If an entry with the specified courseOfFireId already exists in the Entries list, that entry is returned instead and no new entry is created.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <returns></returns>
+        /// <exception cref="BackwardsPointerException"></exception>
+        /// <remarks>Must call this method within the context of a valid MatchProject.</remarks>
         public CourseOfFireEntry CreateEntry( int courseOfFireId ) {
             int currentEntryIndex = Entries.FindIndex( e => e.CourseOfFireId == courseOfFireId );
             if (currentEntryIndex == -1) {
+
+                if (this.Project is null) {
+                    throw new BackwardsPointerException( $"The MatchParticipant with ParticipantID {this.ParticipantID} does not have a reference to its parent MatchProject. This likely means that the MatchParticipant was created outside the scope of a MatchProject, and the Project property was never set." );
+                }
 
                 CourseOfFireEntry entry;
                 if (this.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
@@ -231,7 +243,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         public CourseOfFireEntry GetEntryByCourseOfFireId( int courseOfFireId ) {
             int currentEntryIndex = Entries.FindIndex( e => e.CourseOfFireId == courseOfFireId );
-            if (currentEntryIndex > 0) {
+            if (currentEntryIndex >= 0) {
                 return Entries[currentEntryIndex];
             } else {
                 return CreateEntry( courseOfFireId );

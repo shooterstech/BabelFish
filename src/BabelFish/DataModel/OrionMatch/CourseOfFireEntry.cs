@@ -23,14 +23,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Constructors, Facory Methods, and Initialization Methods
         /// <summary>
-        /// This method is called after deserialization with System.Text.Json and will disable event firing during deserialization.
+        /// This method is called after deserialization with System.Text.Json and will re-enable event firing for normal operations.
         /// </summary>
         public void OnDeserialized() {
             _ignoreEvents = false;
         }
 
         /// <summary>
-        /// Method is called before deserialization with System.Text.Json and will re-enable event firing after deserialization is complete.
+        /// Method is called before deserialization with System.Text.Json and will disable event firing during deserialization.
         /// </summary>
         public void OnDeserializing() {
             _ignoreEvents = true;
@@ -76,11 +76,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// This property is considered the source of truth for Team Membership.
         /// <para>A null value means the participant is not currently assigned to any team.</para>
         /// </summary>
-        public Team Team { get; set; }
+        public Team? Team { get; set; }
 
+        /// <summary>
+        /// TeamParticipantID is the ParticipantID of the Team that this entry's Participant is shooting for. This is used by the system to reestablish the
+        /// pointer to <see cref="Team"/> after deserialization. Users should not modify this field themselves. The system will set the value when joining a team,
+        /// and cleared (set to empty string) when leaving a team. 
+        /// </summary>
         public string TeamParticipantID {
             get; set;
-        }
+        } = string.Empty;
         #endregion
 
         #region Helper Properties
@@ -213,6 +218,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             var oldTeam = Team;
             Team = null;
+            TeamParticipantID = string.Empty;
 
             if (!_ignoreEvents) {
                 OnTeamLeft?.Invoke( this, new EventArgs<Team>( oldTeam ) );

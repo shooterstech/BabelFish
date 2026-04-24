@@ -58,7 +58,7 @@ namespace Scopos.BabelFish.Runtime {
         /// specified.</param>
         public ScoposException( string message, Exception inner )
             : base( message, inner ) {
-            _logger.Error( "Something bad happened!" );
+            _logger.Error( message );
         }
 
         /// <summary>

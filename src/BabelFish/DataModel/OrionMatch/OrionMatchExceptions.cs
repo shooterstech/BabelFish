@@ -65,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// specified.</param>
         public OrionMatchException( string message, Exception inner )
             : base( message, inner ) {
-            _logger.Error( DEFAULT_MESSAGE );
+            _logger.Error( message );
         }
 
         /// <summary>

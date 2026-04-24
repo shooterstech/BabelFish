@@ -137,7 +137,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             var courseOfFireDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
             var topLevelEvent = EventComposite.GrowEventTree( courseOfFireDefinition );
-            var teamMemberComparer = new CompareByRankingDirective( courseOfFireDefinition, RankingDirective.GetDefault( topLevelEvent.EventName, cofStructure.ScoreConfigName ) );
             var resultStatusCalculator = new ResultStatusCalculator( cofStructure );
 
             var participant = (Team)matchParticipant.Participant;
@@ -276,6 +275,9 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             await resultEngine.SortAsync( projectorOfScores, true );
 
             resultList.Projected = (resultList.Status == ResultStatus.INTERMEDIATE) && !resultEngine.DisableScoreProjection && (cofStructure.ProjectorOfScores != ProjectorOfScoresType.NULL);
+
+            // After sorting, need to push the completed ResultList to the sliding window, so that it can be used for comparison when the next ResultList is generated.
+            this.MatchProject.ResultListSlidingWindow.PushResultList( resultList );
 
             return resultList;
         }
