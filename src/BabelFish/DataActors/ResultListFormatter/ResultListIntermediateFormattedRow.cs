@@ -721,6 +721,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
+                        && !scoreToReturn.Projected.IsZero
                         && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
                         && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
