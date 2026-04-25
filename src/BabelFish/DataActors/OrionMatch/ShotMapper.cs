@@ -863,18 +863,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         }
 
         public void AddScoringSystem( Shot shot ) {
-            if (shot.Meta != null) {
-                var dict = (IDictionary<string, object>)shot.Meta;
-                if (dict.ContainsKey( "ESTSystem" )) {
-                    string estSystemName = dict["ESTSystem"]?.ToString();
-                    this.MatchProject.SetScoringSystem( ScoringSystem.EST, estSystemName );
-                } else if (dict.ContainsKey( "TargetReadingMachine" )) {
-                    string scoringSystemName = dict["TargetReadingMachine"]?.ToString();
-                    this.MatchProject.SetScoringSystem( ScoringSystem.TARGET_READING_MACHINE, scoringSystemName );
-                } else if (dict.ContainsKey( "Manual" )) {
-                    this.MatchProject.SetScoringSystem( ScoringSystem.MANUAL );
-                } else {
-                    this.MatchProject.SetScoringSystem( ScoringSystem.UNKNOWN );
+            var resultCofId = shot.ResultCOFID;
+            if (this.MatchProject.TryGetCourseOfFireEntryByResultCOFID( resultCofId, out var entry )) {
+
+                if (shot.Meta != null) {
+                    var dict = (IDictionary<string, object>)shot.Meta;
+                    if (dict.ContainsKey( "ESTSystem" )) {
+                        string estSystemName = dict["ESTSystem"]?.ToString();
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.EST, estSystemName );
+                    } else if (dict.ContainsKey( "TargetReadingMachine" )) {
+                        string scoringSystemName = dict["TargetReadingMachine"]?.ToString();
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.TARGET_READING_MACHINE, scoringSystemName );
+                    } else if (dict.ContainsKey( "Manual" )) {
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.MANUAL, null );
+                    } else {
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.UNKNOWN, null );
+                    }
                 }
             }
         }

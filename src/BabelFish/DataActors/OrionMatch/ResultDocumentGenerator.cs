@@ -21,6 +21,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Generates a compiled <see cref="ResultCOF"/> object for the given <see cref="CourseOfFireEntryIndividual"/> entry.
+        /// </summary>
+        /// <param name="entry">The course of fire entry for which to generate the result.</param>
+        /// <param name="generativeEvent">The event that triggered the generation of the result. For example "ShotDetected"</param>
+        /// <returns>The generated <see cref="ResultCOF"/> object.</returns>
         public async Task<ResultCOF> GenerateResultCOFAsync( CourseOfFireEntryIndividual entry, string generativeEvent ) {
 
             var resultCOF = new ResultCOF();
@@ -77,6 +83,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         }
 
+        /// <summary>
+        /// Overridden method to handle both individual and team CourseOfFireEntries. Generates a ResultEvent that may be used
+        /// to populate a ResultList.
+        /// <para>It is generally preferred to call <see cref="GenerateResultListAsync(ResultListAbbr, string)"/> directly.</para>
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<ResultEvent> GenerateResultEntryAsync( CourseOfFireEntry entry ) {
             if (entry is CourseOfFireEntryIndividual) {
                 return await GenerateResultEntryAsync( (CourseOfFireEntryIndividual)entry );
@@ -87,6 +101,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Asynchronously generates a new ResultEvent entry based on the specified individual course of fire entry for use in a ResultList.
+        /// <para>It is generally preferred to call <see cref="GenerateResultListAsync(ResultListAbbr, string)"/> directly.</para>
+        /// </summary>
+        /// <param name="entry">The individual course of fire entry containing participant and scoring information used to generate the
+        /// result event. Cannot be null and must reference a valid match participant.</param>
+        /// <returns>A ResultEvent object populated with data from the provided course of fire entry.</returns>
+        /// <exception cref="BackwardsPointerException">Thrown if the provided entry does not reference a valid match participant.</exception>
         public async Task<ResultEvent> GenerateResultEntryAsync( CourseOfFireEntryIndividual entry ) {
 
             var resultEvent = new ResultEvent();
@@ -124,6 +146,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         }
 
+        /// <summary>
+        /// Asynchronously generates a new ResultEvent entry based on the specified team course of fire entry for use in a ResultList.
+        /// <para>It is generally preferred to call <see cref="GenerateResultListAsync(ResultListAbbr, string)"/> directly.</para>
+        /// </summary>
+        /// <param name="entry">The team course of fire entry containing participant and scoring information used to generate the
+        /// result event. Cannot be null and must reference a valid match participant.</param>
+        /// <returns>A ResultEvent object populated with data from the provided course of fire entry.</returns>
+        /// <exception cref="BackwardsPointerException">Thrown if the provided entry does not reference a valid match participant.</exception>
         public async Task<ResultEvent> GenerateResultEntryAsync( CourseOfFireEntryTeam entry ) {
 
             var resultEvent = new ResultEvent();
@@ -196,12 +226,20 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             return resultEvent;
         }
 
+        /// <summary>
+        /// Generates a compiled ResultList object based on the passed in ResultListAbbr. This is the main method that should be called to generate result list.
+        /// </summary>
+        /// <param name="resultListAbbr">The abbreviated result list containing the necessary configuration information to generate the full result list.</param>
+        /// <param name="segmentGroupName">The name of the <see cref="SegmentGroup"/> that the <see cref="CourseOfFire"/> <see cref="RangeScript"/>
+        /// is currently on. Value is not required.</param>
+        /// <returns>A Task representing the asynchronous operation, with a ResultList object as the result.</returns>
+        /// <exception cref="CourseOfFireStructureNotFoundException">Thrown if the CourseOfFireStructure associated with the provided ResultListAbbr cannot be found within the MatchProject.</exception>"
         public async Task<ResultList> GenerateResultListAsync( ResultListAbbr resultListAbbr, string segmentGroupName ) {
 
             CourseOfFireStructure cofStructure;
             if (!this.MatchProject.Match.MatchStructure.TryGetCourseOfFireStructure( resultListAbbr.CourseOfFireId, out cofStructure )) {
-                _logger.Warn( $"Could not find course of fire structure for course of fire ID {resultListAbbr.CourseOfFireId} in match project {MatchProject.ProjectName} ({MatchProject.Match?.MatchID})" );
-                return null;
+                var msg = $"Could not find course of fire structure for course of fire ID {resultListAbbr.CourseOfFireId} in match project {MatchProject.ProjectName} ({MatchProject.Match?.MatchID})";
+                throw new CourseOfFireStructureNotFoundException( msg, _logger );
             }
 
             var courseOfFireDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
@@ -215,9 +253,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             metaData.MatchLocation = MatchProject.Match.Location.ToString();
             metaData.OwnerId = MatchProject.Match.OwnerId;
             metaData.ProjectionMadeBy = cofStructure.ProjectorOfScores.ToString();
-            metaData.ScoringSystems = new List<string>(); //TODO: Figure out how to populate this list
-            metaData.ScoringSystemType = ScoringSystem.UNKNOWN; //TODO: Figure out how to populate this
-            metaData.SegmentGroupName = segmentGroupName;
+            metaData.ScoringTechnology = cofStructure.MetaData.ScoringTechnology;
+            metaData.SegmentGroupName = string.IsNullOrEmpty( segmentGroupName ) ? string.Empty : segmentGroupName;
             metaData.StartDate = cofStructure.StartDate;
 
             resultList.Metadata[MatchProject.Match.MatchID] = metaData;
@@ -249,21 +286,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //For example, if the result list is INTERMEDIATE, then we want to make sure that the projected scores are used for sorting, and if it is OFFICIAL, then we want to make
             //sure that the actual scores are used for sorting.
             CalculateResultListStatus( resultList, cofStructure );
-
-            /*  The code from Orion  
-                var resultEngine = new ResultEngine( document, rankingRule );
-                var teamMemberComparer = new CompareByRankingDirective( CourseOfFireDefinition, RankingDirective.GetDefault( document.EventName, document.ScoreConfigName ) );
-                resultEngine.DisableScoreProjection = _disableScoreProjection;
-                resultEngine.CompareResultList = ResultListSlidingWindow.GetResultList( document.ResultName );
-                teamMemberComparer.ResultStatus = document.Status;
-                teamMemberComparer.Projected = document.Status == ResultStatus.INTERMEDIATE ? true : false;
-
-                var projectorOfScores = ProjectorOfScoresFactory.Create( match.ProjectorOfScores, CourseOfFireDefinition, teamMemberComparer );
-                projectorOfScores.NumberOfTeamMembers = (uint)match.NumberTeamMembers;
-                document.Metadata[match.MatchID.ToString()].ProjectionMadeBy = projectorOfScores.ProjectionMadeBy;
-
-                await resultEngine.SortAsync( projectorOfScores, true );
-            */
 
             var rankingRuleDefinition = await resultList.GetRankingRuleDefinitionAsync();
             var resultEngine = new ResultEngine( resultList, rankingRuleDefinition );

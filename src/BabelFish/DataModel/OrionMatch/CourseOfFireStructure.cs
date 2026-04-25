@@ -119,20 +119,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #region Data Model Properties
 
         /// <summary>
-        /// Unique identifier, usually incremented, within a <see cref="Match"/>
-        /// <para>The value of 0 is reserved and may not be used. </para>
-        /// </summary>
-        public int CourseOfFireId { get; set; } = 1;
-
-        /// <summary>
         /// Human readable name given to this CourseOfFireStruccture. It is generally best if it is unique
         /// within a <see cref="Match"/>, but not required.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public string CourseOfFireName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Unique identifier, usually incremented, within a <see cref="Match"/>
+        /// <para>The value of 0 is reserved and may not be used. </para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
+        public int CourseOfFireId { get; set; } = 1;
 
         /// <summary>
         /// The SetName of the <see cref="CourseOfFire"/> definition that this CourseOfFireStructure is based on.
         /// </summary>
+        [G_NS.JsonProperty( Order = 3 )]
         public SetName CourseOfFireDef { get; set; } = SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
@@ -140,6 +143,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        [G_NS.JsonProperty( Order = 4 )]
         public DateTime StartDate { get; set; }
 
         /// <summary>
@@ -147,6 +151,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        [G_NS.JsonProperty( Order = 5 )]
         public DateTime EndDate { get; set; }
 
         /// <summary>
@@ -156,6 +161,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>Unlike a Result List, a COF Structure can only be not-official or official (A result list may be future, intermediate,
         /// unofficial, or official). The designation of official means the Match Director has blessed the results and says everythign is done.
         /// </remarks>
+        [G_NS.JsonProperty( Order = 10 )]
         public bool Official {
             get {
                 if (DateTime.Today > EndDate) {
@@ -171,30 +177,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Human readable description for this Course of Fire.
         /// </summary>
+        [G_NS.JsonProperty( Order = 11 )]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Name of the ScoreConfig used in this match.
         /// </summary>
         /// <remarks>The name of the SCORE FORMAT COLLECTION is specified in the COUSE OF FIRE. </remarks>
+        [G_NS.JsonProperty( Order = 12 )]
         public string ScoreConfigName { get; set; }
 
         /// <summary>
         /// Name of the TargetCollection used in this Course of Fire.
         /// </summary>
         /// <remarks>The TARGET COLLECTION is specified in the COURSE OF FIRE. </remarks>
+        [G_NS.JsonProperty( Order = 13 )]
         public string TargetCollectionName { get; set; }
 
         /// <summary>
         /// Specifies the algorithm to use to project INTERMEDIATE score.
         /// The default value is AVERAGE_SHOT_FIRED which means it will use the <see cref="ProjectScoresByAverageShotFired"/> class.
         /// </summary>
+        [G_NS.JsonProperty( Order = 14 )]
         public ProjectorOfScoresType ProjectorOfScores { get; set; } = ProjectorOfScoresType.AVERAGE_SHOT_FIRED;
 
         /// <summary>
         /// Gets or sets the types of entries that can be recorded, which may include individual and team entries.
         /// </summary>
-        [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( Order = 15, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public EntryTypes TypesOfEntries { get; set; } = EntryTypes.INDIVIDUAL_AND_TEAM;
 
         /// <summary>
@@ -206,12 +216,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <see cref="AddAttributeConfigurationAsync(SetName)"/> method which adds the attribute to each
         /// exisitng entry in the match.</para>
         /// </summary>
+        [G_NS.JsonProperty( Order = 20 )]
         public List<AttributeConfiguration> Attributes { get; set; } = new List<AttributeConfiguration>();
 
         /// <summary>
         /// Gets or sets the collection of result events represented by abbreviated result lists.
         /// <para>The preferred method of adding a new ResultListAbbr is by calling <see cref="AddResultList(ResultListAbbr)"/> which checks for duplicates before adding.</para>
         /// </summary>
+        [G_NS.JsonProperty( Order = 21 )]
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
 
         /// <summary>
@@ -223,6 +235,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>NumberOfTeamMembers and MaxNumberOfTeamMembers differ in that MaxNumberOfTeamMembers is the number of
         /// participants that may be allowed to make up a team. Number of TeamMembers is the number of participants who's score
         /// counts towards the team total.</remarks>
+        [G_NS.JsonProperty( Order = 30 )]
         public int NumberOfTeamMembers {
             get {
                 return _numberOfTeamMembers;
@@ -247,6 +260,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>NumberOfTeamMembers and MaxNumberOfTeamMembers differ in that MaxNumberOfTeamMembers is the number of
         /// participants that may be allowed to make up a team. Number of TeamMembers is the number of participants who's score
         /// counts towards the team total.</remarks>
+        [G_NS.JsonProperty( Order = 31 )]
         public int MaxNumberOfTeamMembers {
             get { return _maxNumberOfTeamMembers; }
             set {
@@ -256,6 +270,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 _maxNumberOfTeamMembers = Math.Max( NumberOfTeamMembers, value );
             }
         }
+
+        /// <summary>
+        /// Data about how this Course of Fire was competed, such as the scoring systems in use.
+        /// <para>This is considered compiled data. Does not contain any configuration information.</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 32 )]
+        public CourseOfFireMetaData MetaData { get; set; } = new CourseOfFireMetaData();
         #endregion
 
         #region Helper Properties

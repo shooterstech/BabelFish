@@ -239,4 +239,82 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             logger.Error( this, message );
         }
     }
+
+    /// <summary>
+    /// Thrown when a CourseOfFireStrucutre could not be found in a <see cref="Match.MatchStructure"/>. Usually
+    /// caused when a course of fire id is referenced but was previousl deleted.
+    /// </summary>
+    public class CourseOfFireStructureNotFoundException : OrionMatchException {
+
+        private const string DEFAULT_MESSAGE = "The OrionMatch class instance does not have the asked for CourseOfFireStructure.";
+
+        /// <summary>
+        /// Initializes a new instance of the CourseOfFireStructureNotFoundException class with a default error message indicating that the
+        /// course of fire structure could not be found.
+        /// </summary>
+        public CourseOfFireStructureNotFoundException()
+            : base( DEFAULT_MESSAGE ) {
+            _logger.Error( DEFAULT_MESSAGE );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CourseOfFireStructureNotFoundException class with a specified logger and a default error
+        /// message.
+        /// </summary>
+        /// <remarks>This constructor logs the default error message using the provided logger when the
+        /// exception is instantiated.</remarks>
+        /// <param name="logger">The logger used to record the error message when the exception is created.</param>
+        public CourseOfFireStructureNotFoundException( Logger logger )
+            : base( DEFAULT_MESSAGE ) {
+            logger.Error( DEFAULT_MESSAGE );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CourseOfFireStructureNotFoundException class with a specified error message.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public CourseOfFireStructureNotFoundException( string message )
+            : base( message ) {
+            _logger.Error( message );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CourseOfFireStructureNotFoundException class with a specified error message and logs the error
+        /// using the provided logger.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="logger">The logger used to record the error message.</param>
+        public CourseOfFireStructureNotFoundException( string message, Logger logger )
+            : base( message ) {
+            logger.Error( this, message );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CourseOfFireStructureNotFoundException class with a specified error message and a reference to
+        /// the inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is
+        /// specified.</param>
+        public CourseOfFireStructureNotFoundException( string message, Exception inner )
+            : base( message, inner ) {
+            _logger.Error( message );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the CourseOfFireStructureNotFoundException class with a specified error message, a reference to the
+        /// inner exception that is the cause of this exception, and a logger for recording the error.
+        /// </summary>
+        /// <remarks>The error message is logged using the provided logger when the exception is
+        /// constructed.</remarks>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is
+        /// specified.</param>
+        /// <param name="logger">The logger used to record the error message associated with this exception.</param>
+        public CourseOfFireStructureNotFoundException( string message, Exception inner, Logger logger )
+            : base( message, inner ) {
+            logger.Error( this, message );
+        }
+
+    }
 }

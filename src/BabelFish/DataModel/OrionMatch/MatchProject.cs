@@ -327,27 +327,35 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 
-        public void SetScoringSystem( ScoringSystem scoringSystemType, string nameOfScoringSystem ) {
-#if DEBUG
-            // No-op placeholder
-            ;
-
-#else
-            throw new NotImplementedException( "SetScoringSystem() is not yet implemented. Need to figure out how to handle different scoring systems." );
-#endif
-
-
+        /// <summary>
+        /// In order to track that type of scoring systems in use in this competition, the user may call SetScoringTechnology()
+        /// to specify the scoring system for a particular course of fire. This method will update the specified CourseOffireStructure's
+        /// MetaData.ScoringTechnology property to include the specified scoring system type and name.
+        /// <para>This method is automatically used by <see cref="ShotMapper.LoadShot(Athena.Shot.Shot)"/>. Rarely would the
+        /// user need to call this method directly.</para>
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <param name="scoringSystemType"></param>
+        /// <param name="nameOfScoringSystem">The name of the scoring system to be added. For example, "Athena"</param>
+        public void SetScoringTechnology( int courseOfFireId, ScoringSystem scoringSystemType, string nameOfScoringSystem ) {
+            if (Match.MatchStructure.TryGetCourseOfFireStructure( courseOfFireId, out CourseOfFireStructure? cofStructure )) {
+                if (!cofStructure.MetaData.ScoringTechnology.ContainsKey( scoringSystemType )) {
+                    cofStructure.MetaData.ScoringTechnology[scoringSystemType] = new ConcurrentBag<string>();
+                }
+                if (!cofStructure.MetaData.ScoringTechnology[scoringSystemType].Contains( nameOfScoringSystem )) {
+                    cofStructure.MetaData.ScoringTechnology[scoringSystemType].Add( nameOfScoringSystem );
+                }
+            }
         }
-        public void SetScoringSystem( ScoringSystem scoringSystemType ) { //For use with Manual or Unknown scoring systems where we don't need to know the name of the scoring system, but we still want to be able to set it on the MatchProject.
-#if DEBUG
-            // No-op placeholder
-            ;
 
-#else
-            throw new NotImplementedException( "SetScoringSystem() is not yet implemented. Need to figure out how to handle different scoring systems." );
-#endif
-
-
+        /// <summary>
+        /// Sets the scoring technology for a particular course of fire without specifying a name.
+        /// This method will default the name of the scoring system to "Unknown".
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <param name="scoringSystemType"></param>
+        public void SetScoringTechnology( int courseOfFireId, ScoringSystem scoringSystemType ) {
+            this.SetScoringTechnology( courseOfFireId, scoringSystemType, "Unknown" );
         }
         #endregion
 
