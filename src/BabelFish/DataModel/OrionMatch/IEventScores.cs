@@ -48,6 +48,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime LastUpdated { get; set; }
 
         /// <summary>
+        /// Boolean indicating if this Participant is shooting out of competition for this Event (aka shooting for score only).
+        /// If true, their scores will be listed, but not ranked.
+        /// </summary>
+        bool OutOfCompetition { get; set; }
+
+        /// <summary>
         /// Returns the Status of the top level Event (Event Type Event).
         /// </summary>
         /// <returns></returns>

@@ -11,6 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
+        [Obsolete( "As of BabelFish 2.0 (Orion 3.0) there are no longer local matches. All matches are Virtual Matches." )]
         public const int SUBMATCHID_LOCAL = 0;
         public const int SUBMATCHID_VIRTUAL_PARENT = 1;
         public const int SUBMATCHID_MATCH_GROUP = 2;
@@ -27,7 +28,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             this._domainID = 1;
             this._componentID = club.AccountNumber;
             this._primaryMatchID = newPrimatchMatchID();
-            this._subMatchID = SUBMATCHID_LOCAL;
+            this._subMatchID = SUBMATCHID_VIRTUAL_PARENT;
         }
 
         /// <summary>

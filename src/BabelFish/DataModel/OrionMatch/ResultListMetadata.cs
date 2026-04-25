@@ -118,6 +118,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         [DefaultValue( ScoringSystem.UNKNOWN )]
+        [Obsolete( "Use ScoirngTechnology instead. Deprecated Apr 2026." )]
         public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
 
         /// <summary>
@@ -125,10 +126,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 13 )]
         [G_NS.JsonProperty( Order = 13 )]
+        [Obsolete( "Use ScoirngTechnology instead. Deprecated Apr 2026." )]
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
+        /// <summary>
+        /// The list of scoring systems type (e.g. EST) and name (e.g. Athena) used in the match.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
+        public ScoringTechnologyList ScoringTechnology { get; set; } = new ScoringTechnologyList();
+
+        /// <summary>
+        /// NewtonSoft.Json helper method to determine if ScoringSystems should be serialized. We want to only serialize it if there is data in it.
+        /// </summary>
+        /// <returns></returns>
         public bool ShouldSerializeScoringSystems() {
             return ScoringSystems != null && ScoringSystems.Count > 0;
+        }
+
+        /// <summary>
+        /// NewtonSoft.Json helper method to determine if ScoringTechnology should be serialized. We want to only serialize it if there is data in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeScoringTechnology() {
+            return ScoringTechnology != null && ScoringTechnology.Count > 0;
         }
 
         /// <summary>
@@ -137,8 +158,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14 )]
-        [DefaultValue( null )]
-        public string SquaddingListName { get; set; } = null;
+        [DefaultValue( "" )]
+        [Obsolete( "To look up the squadding list from this event, use the MatchID and CourseOfFireId (a property of the ResultList). Deprecated Apr 2026." )]
+        public string SquaddingListName { get; set; } = string.Empty;
+
+        /* EKA Note Apr 2026 Should we include CourseOfFireId ? */
 
         /// <summary>
         /// The time the reference result list was generated to calculate the RankDelta and ProjectedRankDelta

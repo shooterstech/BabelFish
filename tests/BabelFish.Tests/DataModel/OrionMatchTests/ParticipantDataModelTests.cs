@@ -72,6 +72,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             };
             //Displayname and DisplayNameShort are the same since its under 20 chracters.
             Assert.AreEqual( "Team A", team.DisplayName );
+            Assert.AreEqual( "Team A", team.TeamName );
             Assert.AreEqual( "Team A", team.GetDisplayNameShort() );
             Assert.IsTrue( team.DefaultDisplayName );
 
@@ -81,6 +82,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Displayname and DisplayNameShort are the same since its under 20 chracters.
             Assert.AreEqual( "Team Alpha", team.DisplayName );
+            Assert.AreEqual( "Team Alpha", team.TeamName );
             Assert.AreEqual( "Team Alpha", team.GetDisplayNameShort() );
             Assert.IsTrue( team.DefaultDisplayName );
 
@@ -90,6 +92,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Displayname and DisplayNameShort are the same since its under 20 chracters.
             Assert.AreEqual( "Team Alpha Bravo Charlie", team.DisplayName );
+            Assert.AreEqual( "Team Alpha Bravo Charlie", team.TeamName );
             Assert.AreEqual( "Team Alpha Bravo...", team.GetDisplayNameShort() );
             Assert.IsTrue( team.DefaultDisplayName );
 

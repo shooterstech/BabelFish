@@ -162,23 +162,48 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
+        #endregion
+
+        #region Helper Properties
+        /// <summary>
+        /// Helper property to indicate if this MatchParticipant is an Individual or a Team, based on the ParticipantType of the Participant property.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        public bool IsTeam {
+            get {
+                return Participant.ParticipantType == ParticipantType.TEAM;
+            }
+        }
+
         /// <summary>
         /// Backwards pointer to the project holding this MatchParticipant. 
         /// </summary>
         [G_NS.JsonIgnore]
         public MatchProject? Project { get; internal set; } = null;
-
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Creates a new CourseOfFireEntry for this MatchParticipant with the specified courseOfFireId, adds it to the Entries list, and returns it.
+        /// If an entry with the specified courseOfFireId already exists in the Entries list, that entry is returned instead and no new entry is created.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <returns></returns>
+        /// <exception cref="BackwardsPointerException"></exception>
+        /// <remarks>Must call this method within the context of a valid MatchProject.</remarks>
         public CourseOfFireEntry CreateEntry( int courseOfFireId ) {
             int currentEntryIndex = Entries.FindIndex( e => e.CourseOfFireId == courseOfFireId );
             if (currentEntryIndex == -1) {
+
+                if (this.Project is null) {
+                    throw new BackwardsPointerException( $"The MatchParticipant with ParticipantID {this.ParticipantID} does not have a reference to its parent MatchProject. This likely means that the MatchParticipant was created outside the scope of a MatchProject, and the Project property was never set." );
+                }
 
                 CourseOfFireEntry entry;
                 if (this.Participant.ParticipantType == ParticipantType.INDIVIDUAL) {
                     entry = new CourseOfFireEntryIndividual();
                     entry.EntryStatus = EntryStatus.NOT_ENTERED;
+                    this.Project.RegisterResultCOFID( (entry as CourseOfFireEntryIndividual).ResultCofId, this );
                 } else {
                     entry = new CourseOfFireEntryTeam();
                 }
@@ -193,7 +218,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Attempts to locate and return the CourseOfFireEntry in the Entries list with the specified courseOfFireId. Returns true if an entry with the specified courseOfFireId is found, and false otherwise.
+        /// Attempts to locate and return an existing CourseOfFireEntry in the Entries list with the specified courseOfFireId. Returns true if an entry with the specified courseOfFireId is found, and false otherwise.
         /// </summary>
         /// <param name="courseOfFireId"></param>
         /// <param name="entry"></param>
@@ -206,6 +231,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             } else {
                 entry = Entries[currentEntryIndex];
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to locate and return an existing CourseOfFireEntry in the Entries list with the specified courseOfFireId.
+        /// If an entry with the specified courseOfFireId is found, it is returned. If not, a new CourseOfFireEntry is created w
+        /// ith the specified courseOfFireId, added to the Entries list, and returned.
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <returns></returns>
+        public CourseOfFireEntry GetEntryByCourseOfFireId( int courseOfFireId ) {
+            int currentEntryIndex = Entries.FindIndex( e => e.CourseOfFireId == courseOfFireId );
+            if (currentEntryIndex >= 0) {
+                return Entries[currentEntryIndex];
+            } else {
+                return CreateEntry( courseOfFireId );
             }
         }
 

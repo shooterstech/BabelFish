@@ -909,7 +909,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Evaluates to true when the Participant is a team (and not an individual).
         /// </summary>
-        PARTICIPANT_IS_TEAM
+        PARTICIPANT_IS_TEAM,
+
+        /// <summary>
+        /// Evaluates to true when the Participant is competing for score only (aka out of competition).
+        /// </summary>
+        OUT_OF_COMPETITION
 
     }
 

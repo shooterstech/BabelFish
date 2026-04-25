@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
@@ -15,6 +16,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         private bool _ignoreEvents = false;
         private string _projectName;
 
+        private ConcurrentDictionary<string, MatchParticipant> _participantsByParticipantID = new ConcurrentDictionary<string, MatchParticipant>();
         private ConcurrentDictionary<string, MatchParticipant> _participantsByResultCOFID = new ConcurrentDictionary<string, MatchParticipant>();
         #endregion
 
@@ -38,6 +40,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             project.ShotMapper = new ShotMapper( project );
             project.ResultGenerator = new ResultDocumentGenerator( project );
+            project.ResultListSlidingWindow = new ResultListSlidingWindow( project );
 
             return project;
         }
@@ -51,18 +54,50 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 var matchProject = G_STJ.JsonSerializer.Deserialize<MatchProject>( stream, Helpers.SerializerOptions.SystemTextJsonDeserializer );
                 matchProject.ProjectDirectory = fileInfo.Directory;
 
+                matchProject.ShotMapper = new ShotMapper( matchProject );
+                matchProject.ResultGenerator = new ResultDocumentGenerator( matchProject );
+                matchProject.ResultListSlidingWindow = new ResultListSlidingWindow( matchProject );
+
                 //Load the Match.
                 matchProject.Match = await Match.LoadFromFileAsync( Path.Combine( matchProject.ProjectDirectory.FullName, matchProject.MatchFileName ) );
 
-                //Load the Participants
+                // Load the Participants. 
                 var participantDirectory = new DirectoryInfo( Path.Combine( matchProject.ProjectDirectory.FullName, MatchParticipant.FOLDER_NAME ) );
                 if (participantDirectory.Exists) {
                     foreach (var participantFile in participantDirectory.GetFiles()) {
-                        var participant = await MatchParticipant.LoadFromFileAsync( participantFile );
-                        matchProject.Participants.Add( participant );
+                        var matchParticipant = await MatchParticipant.LoadFromFileAsync( participantFile );
+                        matchProject.Participants.Add( matchParticipant );
+                        matchParticipant.Project = matchProject;
+                        matchProject.RegisterParticipantID( matchParticipant.ParticipantID, matchParticipant );
+
+                        foreach (var entry in matchParticipant.Entries) {
+                            if (entry is CourseOfFireEntryTeam teamEntry) {
+                                teamEntry.TeamMembers.Clear();
+                            } else if (entry is CourseOfFireEntryIndividual individualEntry) {
+                                matchProject.RegisterResultCOFID( individualEntry.ResultCofId, matchParticipant );
+                            }
+                        }
                     }
                 }
 
+                //Loop through the Participants Entries and re-set the Team membership, which is necessary to correctly set the backwards pointers.
+                foreach (var participant in matchProject.Participants) {
+                    foreach (var entry in participant.Entries) {
+                        entry.OnDeserializing();
+                        entry.Team = null;
+                        if (!string.IsNullOrEmpty( entry.TeamParticipantID )
+                            && matchProject.TryGetMatchParticipantByParticipantID( entry.TeamParticipantID, out MatchParticipant matchParticipant )) {
+                            if (matchParticipant.Participant is Team team) {
+                                entry.JoinTeam( team );
+                            } else {
+                                Debug.Fail( "Should of been a team participant, but wasn't. Data integrity issue." );
+                            }
+                        }
+                        entry.OnDeserialized();
+                    }
+                }
+
+                matchProject.ShotMapper.LoadFromFile();
                 return matchProject;
             }
         }
@@ -153,6 +188,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public ResultDocumentGenerator ResultGenerator { get; private set; }
 
         [G_NS.JsonIgnore]
+        public ResultListSlidingWindow ResultListSlidingWindow { get; private set; }
+
+        [G_NS.JsonIgnore]
         public DirectoryInfo MatchObjectDirectory {
             get {
                 return new DirectoryInfo( Path.Combine( ProjectDirectory.FullName, "MatchObjects" ) );
@@ -181,10 +219,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             individual.GivenName = givenName;
 
             Participants.Add( mp );
+            RegisterParticipantID( mp.ParticipantID, mp );
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
                 var entry = (CourseOfFireEntryIndividual)mp.CreateEntry( cof.CourseOfFireId );
-                _participantsByResultCOFID.TryAdd( entry.ResultCofId, mp );
             }
 
             foreach (var attributeConfiguration in Match.MatchStructure.GlobalAttributes) {
@@ -204,6 +242,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return mp;
         }
 
+        internal void RegisterResultCOFID( string resultCOFID, MatchParticipant participant ) {
+            _participantsByResultCOFID.TryAdd( resultCOFID, participant );
+        }
+
+        internal void RegisterParticipantID( string participantID, MatchParticipant participant ) {
+            _participantsByParticipantID.TryAdd( participantID, participant );
+        }
+
         /// <summary>
         /// Creates a new <see cref="Team"/> participant for the match. Adding a <see cref="CourseOfFireEntryTeam"/> for that team.
         /// </summary>
@@ -219,6 +265,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             var team = (Team)mp.Participant;
             team.TeamName = teamName;
             Participants.Add( mp );
+            RegisterParticipantID( mp.ParticipantID, mp );
 
             foreach (var cof in Match.MatchStructure.CoursesOfFire) {
                 var entry = mp.CreateEntry( cof.CourseOfFireId );
@@ -273,19 +320,42 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return false;
         }
 
+        public bool TryGetMatchParticipantByParticipantID( string participantID, out MatchParticipant participant ) {
+            return _participantsByParticipantID.TryGetValue( participantID, out participant );
+        }
+
         /// <inheritdoc />
         public Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) => throw new NotImplementedException();
 
-        public void SetScoringSystem( ScoringSystem scoringSystemType, string nameOfScoringSystem ) {
-#if DEBUG
-            // No-op placeholder
-            ;
+        /// <summary>
+        /// In order to track that type of scoring systems in use in this competition, the user may call SetScoringTechnology()
+        /// to specify the scoring system for a particular course of fire. This method will update the specified CourseOffireStructure's
+        /// MetaData.ScoringTechnology property to include the specified scoring system type and name.
+        /// <para>This method is automatically used by <see cref="ShotMapper.LoadShot(Athena.Shot.Shot)"/>. Rarely would the
+        /// user need to call this method directly.</para>
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <param name="scoringSystemType"></param>
+        /// <param name="nameOfScoringSystem">The name of the scoring system to be added. For example, "Athena"</param>
+        public void SetScoringTechnology( int courseOfFireId, ScoringSystem scoringSystemType, string nameOfScoringSystem ) {
+            if (Match.MatchStructure.TryGetCourseOfFireStructure( courseOfFireId, out CourseOfFireStructure? cofStructure )) {
+                if (!cofStructure.MetaData.ScoringTechnology.ContainsKey( scoringSystemType )) {
+                    cofStructure.MetaData.ScoringTechnology[scoringSystemType] = new ConcurrentBag<string>();
+                }
+                if (!cofStructure.MetaData.ScoringTechnology[scoringSystemType].Contains( nameOfScoringSystem )) {
+                    cofStructure.MetaData.ScoringTechnology[scoringSystemType].Add( nameOfScoringSystem );
+                }
+            }
+        }
 
-#else
-            throw new NotImplementedException( "SetScoringSystem() is not yet implemented. Need to figure out how to handle different scoring systems." );
-#endif
-
-
+        /// <summary>
+        /// Sets the scoring technology for a particular course of fire without specifying a name.
+        /// This method will default the name of the scoring system to "Unknown".
+        /// </summary>
+        /// <param name="courseOfFireId"></param>
+        /// <param name="scoringSystemType"></param>
+        public void SetScoringTechnology( int courseOfFireId, ScoringSystem scoringSystemType ) {
+            this.SetScoringTechnology( courseOfFireId, scoringSystemType, "Unknown" );
         }
         #endregion
 

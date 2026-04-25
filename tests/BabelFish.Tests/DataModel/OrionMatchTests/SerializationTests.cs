@@ -54,7 +54,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Let the Wizard do it's thing
             ResultListWizard wizard = new ResultListWizard( match );
-            var resultLists = await wizard.GenerateAsync( cofId );
+            var resultLists = await wizard.GenerateAsync( cof );
 
             //Add all the result lists so we have plenty to serialize and deserialize
             foreach (var resultList in resultLists)
@@ -186,6 +186,8 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             var johnSmith = await project.CreateMatchParticipantAsync( "Smith", "John" );
             var janeDoe = await project.CreateMatchParticipantAsync( "Doe", "Jane" );
             var aTeam = await project.CreateMatchParticipantAsync( "Team A" );
+            johnSmith.Entries[0].JoinTeam( aTeam.Participant as Team );
+            janeDoe.Entries[0].JoinTeam( aTeam.Participant as Team );
 
             Assert.AreEqual( "MatchProjectSerializationTest.orion", project.GetFileName() );
 
@@ -194,11 +196,16 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             project.SaveToFile();
             Assert.IsTrue( File.Exists( expectedFullFileName ), $"File does not exist: {expectedFullFileName}" );
 
-            var newProject = await MatchProject.LoadFromFileAsync( expectedFullFileName );
-            Assert.IsNotNull( newProject );
-            Assert.AreEqual( project.ProjectName, newProject.ProjectName );
-            Assert.AreEqual( project.Match.Name, newProject.Match.Name );
-            Assert.AreEqual( project.Participants.Count, newProject.Participants.Count );
+            var deserializedProject = await MatchProject.LoadFromFileAsync( expectedFullFileName );
+            Assert.IsNotNull( deserializedProject );
+            Assert.AreEqual( project.ProjectName, deserializedProject.ProjectName );
+            Assert.AreEqual( project.Match.Name, deserializedProject.Match.Name );
+            Assert.AreEqual( project.Participants.Count, deserializedProject.Participants.Count );
+            Assert.IsTrue( deserializedProject.TryGetMatchParticipantByParticipantID( johnSmith.ParticipantID, out var deserializedJohnSmith ) );
+            Assert.IsTrue( deserializedProject.TryGetMatchParticipantByParticipantID( janeDoe.ParticipantID, out var deserializedJaneDoe ) );
+            Assert.IsTrue( deserializedProject.TryGetMatchParticipantByParticipantID( aTeam.ParticipantID, out var deserializedATeam ) );
+            Assert.AreEqual( 2, ((CourseOfFireEntryTeam)deserializedATeam.Entries[0]).TeamMembers.Count );
+            Assert.AreEqual( deserializedATeam.Participant.DisplayName, deserializedJohnSmith.Entries[0].Team.TeamName );
         }
 
         /// <summary>
@@ -223,11 +230,11 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             ResultListWizard wizard = new ResultListWizard( match );
 
             //Add only the first two Result Lists, that's all we need for this unit test as we are only testing serialization.
-            var resultLists1 = await wizard.GenerateAsync( cof1.CourseOfFireId );
+            var resultLists1 = await wizard.GenerateAsync( cof1 );
             cof1.AddResultList( resultLists1.Find( x => x.ResultName == "Individual - All" ) );
             cof1.AddResultList( resultLists1.Find( x => x.ResultName == "Team - All" ) );
 
-            var resultLists2 = await wizard.GenerateAsync( cof2.CourseOfFireId );
+            var resultLists2 = await wizard.GenerateAsync( cof2 );
             cof2.AddResultList( resultLists2.Find( x => x.ResultName == "Individual - All" ) );
             cof2.AddResultList( resultLists2.Find( x => x.ResultName == "Team - All" ) );
 

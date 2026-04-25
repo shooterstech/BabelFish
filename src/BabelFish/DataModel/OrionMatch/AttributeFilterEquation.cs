@@ -8,6 +8,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// specifies the boolean logic of how multiple AttributeFilter instances are combined.
     ///
     /// </summary>
+    /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
     public class AttributeFilterEquation : AttributeFilter, IEquatable<AttributeFilterEquation>, IEqualityComparer<AttributeFilterEquation>, IFinishInitializationAsync {
 
         /// <summary>

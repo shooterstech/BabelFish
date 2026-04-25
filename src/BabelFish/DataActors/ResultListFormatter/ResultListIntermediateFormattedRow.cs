@@ -54,6 +54,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Status",
             "LastShot",         //Only avaliable on individual result lists
             "Remark",
+            "OutOfCompetition",
             "RankOrSquadding",  //Avaliable only with Squadding information
             "Squadding",        //Avaliable only with Squadding information
             "Relay",            //Avaliable only with Squadding information
@@ -495,6 +496,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeRemarkPtr( this._item, this._resultListFormatted );
 
                     return GetRemarks( this.LessThanLarge );
+
+                case "OutOfCompetition":
+                    if (_resultListFormatted.GetParticipantAttributeOutOfCompetitionPtr != null)
+                        return _resultListFormatted.GetParticipantAttributeOutOfCompetitionPtr( this._item, this._resultListFormatted );
+
+                    if (_resultEvent is null)
+                        return string.Empty;
+                    return _resultEvent.OutOfCompetition ? "OOC" : string.Empty;
 
                 case "Squadding":
                     if (_resultListFormatted.GetParticipantAttributeSquaddingPtr != null)

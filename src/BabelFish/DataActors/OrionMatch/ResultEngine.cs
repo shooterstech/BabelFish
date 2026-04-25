@@ -76,6 +76,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         public CourseOfFire CourseOfFire { get; private set; }
 
+        /// <summary>
+        /// The <see cref="RankingRule">RANKING RULE</see> definition to use to sort the ResultList. If not set during construction,
+        /// the ResultEngine will attempt to learn the correct RankingRule to use based on the ResultList's .RankingRuleDef property,
+        /// then the Course of Fire's Event.RankingRuleDef property, and if all else fails, it will generate a default RankingRule based on the EventName and ScoreConfigName."
+        /// </summary>
         public RankingRule RankingRule { get; private set; }
 
         /// <summary>
@@ -98,13 +103,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// Sorts the ResultLists's Items array using each participant's absolute score and the specified
         /// RankingRule definition.
         /// 
-        /// If the status of the ResultList is INTERMEDIATE then it also
+        /// <para>If the status of the ResultList is INTERMEDIATE then it also
         /// calculates Projected scores usiing the passed in ProjectorOfScores. It then calculates the projected 
-        /// rank based on the Projected Scores.
+        /// rank based on the Projected Scores.</para>
         /// 
-        /// In most cases, the ResultList.Items array remains sorted by absolute score. However, if the Status
+        /// <para>In most cases, the ResultList.Items array remains sorted by absolute score. However, if the Status
         /// is INTERMEDIATE and the parameter listAccordingToProjectedScores is true, then .Items is sorted
-        /// using the projected scores.
+        /// using the projected scores.</para>
+        ///
+        /// <para>The <see cref="ResultList.Status"/> should be set correctly prior to calling SortAsync(), as the
+        /// Status plays an important role in how the ResultList gets sorted.</para>
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ScoposException">
@@ -115,62 +123,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             await LearnDefaultRankingRuleAsync();
 
-            //Perform a ranking using absolute scores
-            foreach (var directive in this.RankingRule.RankingRules) {
-
-                List<ResultEvent> listToSort;
-                var appliesTo = directive.GetAppliesToStartAndCount( this.ResultList.Items.Count );
-                int start = appliesTo.Item1;
-                int count = appliesTo.Item2;
-                int rank = 0;
-                int rankOrder = 0;
-                ResultEvent lastResultEventSeen = null;
-
-                if (count > 0) {
-                    //Slice out the portion of the .Items list we are to sort
-                    listToSort = this.ResultList.Items.GetRange( start, count );
-
-                    var comparer = new CompareByRankingDirective( this.CourseOfFire, directive );
-                    comparer.ResultStatus = this.ResultList.Status;
-
-                    //Sort the list, which uses both the Ranking Directives .Rules and .ListOnly
-                    listToSort.Sort( comparer );
-
-                    //Assign the rank and rank order
-                    foreach (var resultEvent in listToSort) {
-                        if (lastResultEventSeen == null) {
-                            //First item in the list
-                            rank = start + 1;
-                            rankOrder = rank;
-                            resultEvent.Rank = rank;
-                            resultEvent.RankOrder = rankOrder;
-                        } else if (!comparer.Equals( resultEvent, lastResultEventSeen )) {
-                            //increment the rank order, and set it to equal the rank
-                            rankOrder++;
-                            rank = rankOrder;
-                            resultEvent.Rank = rank;
-                            resultEvent.RankOrder = rankOrder;
-                        } else {
-                            // increment the rank order, but keep the same value for rank
-                            rankOrder++;
-                            resultEvent.Rank = rank;
-                            resultEvent.RankOrder = rankOrder;
-                        }
-
-                        lastResultEventSeen = resultEvent;
-                    }
-
-                    //Apply the newly sorted Result Events back to the .Items array
-                    for (int index = start; index < start + count; index++) {
-                        this.ResultList.Items[index] = listToSort[index - start];
-                    }
-                }
-            }
+            var resultListToSort = this.ResultList.Items.ToList<IEventScores>();
+            Sort( resultListToSort, this.RankingRule, this.CourseOfFire, this.ResultList.Status );
+            this.ResultList.Items = resultListToSort.Cast<ResultEvent>().ToList();
 
             //Project scores and perform a ranking by Projected Score
             //if the result list's status is INTERMEDIATE (and not FUTURE, UNOFFICIAL, or OFFICIAL), and the user has not turned it off.
             if (this.ResultList.Status == ResultStatus.INTERMEDIATE && !DisableScoreProjection) {
-
 
                 //Project (predict) the scores of athlets at the end of the match.
 
@@ -283,6 +242,72 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     }
                 }
                 this.ResultList.Metadata.First().Value.CompareResultListLastUpdated = this.CompareResultList.LastUpdated;
+            }
+        }
+
+        public static void Sort( List<IEventScores> eventScoresList, RankingRule rankingRule, CourseOfFire courseOfFire, ResultStatus resultStatus = ResultStatus.OFFICIAL ) {
+
+
+            // The first sort is by Out of Competition, as these should always be listed last.
+            eventScoresList.Sort( CompareOutOfCompetition.Instance );
+
+            //Perform a ranking using absolute scores
+            foreach (var directive in rankingRule.RankingRules) {
+
+                List<IEventScores> listToSort;
+                int countInCompetition = eventScoresList.Count( item => !item.OutOfCompetition );
+                var appliesTo = directive.GetAppliesToStartAndCount( countInCompetition );
+                int start = appliesTo.Item1;
+                int count = appliesTo.Item2;
+                int rank = 0;
+                int rankOrder = 0;
+                IEventScores lastResultEventSeen = null;
+
+                if (count > 0) {
+                    //Slice out the portion of the .Items list we are to sort
+                    listToSort = eventScoresList.GetRange( start, count );
+
+                    var comparer = new CompareByRankingDirective( courseOfFire, directive );
+                    comparer.ResultStatus = resultStatus;
+
+                    //Sort the list, which uses both the Ranking Directives .Rules and .ListOnly
+                    listToSort.Sort( comparer );
+
+                    //Assign the rank and rank order
+                    foreach (var iEventScore in listToSort) {
+                        if (lastResultEventSeen == null) {
+                            //First item in the list
+                            rank = start + 1;
+                            rankOrder = rank;
+                            if (iEventScore is ResultEvent resultEvent) {
+                                resultEvent.Rank = rank;
+                                resultEvent.RankOrder = rankOrder;
+                            }
+                        } else if (!comparer.Equals( iEventScore, lastResultEventSeen )) {
+                            //increment the rank order, and set it to equal the rank
+                            rankOrder++;
+                            rank = rankOrder;
+                            if (iEventScore is ResultEvent resultEvent) {
+                                resultEvent.Rank = rank;
+                                resultEvent.RankOrder = rankOrder;
+                            }
+                        } else {
+                            // increment the rank order, but keep the same value for rank
+                            rankOrder++;
+                            if (iEventScore is ResultEvent resultEvent) {
+                                resultEvent.Rank = rank;
+                                resultEvent.RankOrder = rankOrder;
+                            }
+                        }
+
+                        lastResultEventSeen = iEventScore;
+                    }
+
+                    //Apply the newly sorted Result Events back to the .Items array
+                    for (int index = start; index < start + count; index++) {
+                        eventScoresList[index] = listToSort[index - start];
+                    }
+                }
             }
         }
 
