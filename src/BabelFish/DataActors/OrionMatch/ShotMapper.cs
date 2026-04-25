@@ -91,9 +91,39 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             };
             logThread.Start();
         }
+
+        /// <summary>
+        /// Reads the MatchProject's athenaShots log file line by line, and for each line,
+        /// deserializes it into a Shot object and loads it into the ShotMapper using the LoadShot method.
+        /// <para>Expected to be called by the MatchProject during it's load from file.</para>
+        /// </summary>
+        public void LoadFromFile() {
+            var filePath = Path.Combine( MatchProject.ProjectDirectory.FullName, "athenaShots.json" );
+            if (!File.Exists( filePath ))
+                return;
+
+            // Turn off writing to the athenaShots log file while we are loading in shots from the athenaShots log file to avoid us writing redundant shot updates
+            _initializing = true;
+
+            // Read the athenaShots log file line by line, and for each line, deserialize it into a Shot object and load it into the ShotMapper using the LoadShot method.
+            foreach (var line in File.ReadLines( filePath )) {
+                if (string.IsNullOrWhiteSpace( line ))
+                    continue;
+                try {
+                    var shot = System.Text.Json.JsonSerializer.Deserialize<Shot>( line, SerializerOptions.SystemTextJsonDeserializer );
+                    if (shot != null)
+                        LoadShot( shot );
+                } catch (Exception ex) {
+                    _logger.Error( ex, $"Failed to deserialize shot from line: {line}" );
+                }
+            }
+
+            // Reenable writing to the athenaShots log file now that we have finished loading in shots from the athenaShots log file
+            _initializing = false;
+        }
         #endregion
 
-        #region Event Handlers
+        #region Events
 
         EventHandler<EventArgs<Shot>> OnShotAdded;
         EventHandler<EventArgs<Shot>> OnShotUpdated;
@@ -149,6 +179,56 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         public void ReceiveShotList( object sender, ShotListReceivedEventArgs e ) {
             foreach (var shot in e.ShotList.Shots) {
                 LoadShot( shot );
+            }
+        }
+
+        public void ReceiveExternallyScoredShots( string resultCofId, List<Shot> completeShotList ) {
+
+            //Clear the shots that we currently have for this result COF ID, both in the _allShots and the _shotDictionary
+            if (_allShots.TryGetValue( resultCofId, out var shotsForResultCofId )) {
+                shotsForResultCofId.Clear();
+            }
+            if (_shotDictionary.TryGetValue( resultCofId, out var shotListForResultCofId )) {
+                shotListForResultCofId.Clear();
+            }
+
+            List<Shot> validatedShots = new List<Shot>();
+            HashSet<float> sequenceNumbers = new HashSet<float>();
+            foreach (var shot in completeShotList) {
+                if (shot.ResultCOFID != resultCofId) {
+                    var msg = $"Received shot with Result COF ID {shot.ResultCOFID} in ReceiveExternallyScoredShots for Result COF ID {resultCofId}. This should not happen, as all shots in the completeShotList should have the same Result COF ID as the one passed into the method.";
+                    Debug.Fail( msg );
+                    _logger.Error( msg );
+                    continue;
+                }
+
+                if (shot.Sequence <= 0) {
+                    var msg = $"Received shot with Sequence {shot.Sequence} in ReceiveExternallyScoredShots for Result COF ID {resultCofId}. This should not happen, as all shots in the completeShotList should have a Sequence greater than 0.";
+                    Debug.Fail( msg );
+                    _logger.Error( msg );
+                    continue;
+                } else if (sequenceNumbers.Contains( shot.Sequence )) {
+                    var msg = $"Received multiple shots with the same Sequence {shot.Sequence} in ReceiveExternallyScoredShots for Result COF ID {resultCofId}. This should not happen, as all shots in the completeShotList should have unique Sequence numbers.";
+                    Debug.Fail( msg );
+                    _logger.Error( msg );
+                    continue;
+                } else {
+                    sequenceNumbers.Add( shot.Sequence );
+                }
+
+                shot.AddAttribute( Shot.EXTERNALLY_SCORED );
+                validatedShots.Add( shot );
+            }
+
+            var mutex = _shotListMutexes.GetOrAdd( resultCofId, new object() );
+            lock (mutex) {
+                _shotDictionary[resultCofId] = validatedShots.OrderBy( o => o.Sequence ).ToList();
+            }
+
+            foreach (var shot in validatedShots) {
+                _allShots.GetOrAdd( resultCofId, new ConcurrentDictionary<float, ConcurrentDictionary<int, Shot>>() )
+                    .GetOrAdd( shot.Sequence, new ConcurrentDictionary<int, Shot>() )
+                    .AddOrUpdate( shot.Update, shot, ( updateNumber, existingShot ) => shot );
             }
         }
 
@@ -246,8 +326,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <returns></returns>
         public async Task<Dictionary<string, EventScore>> GetEventScoresAsync( string resultCOFID ) {
 
-            //Todo, how to implement this method for teams?
-
             // Run GetShotsByEventNameAsync as a task that we will await later. Hopefully spending things up a bit.
             var shotsByEventNameTask = this.GetShotsByEventNameAsync( resultCOFID );
 
@@ -272,7 +350,13 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var shotsByEventName = await shotsByEventNameTask;
             var remarkList = entry.RemarkList;
 
+            // Calculate the Score for the standard Event Tree
             CalculateScore( eventScores, shotsByEventName, topLevelEvent, scoreFormatCollectionDefinition, scoreConfigName );
+
+            foreach (var externalEvent in EventComposite.FindExternalEvents( cofDefinition )) {
+                CalculateScore( eventScores, shotsByEventName, externalEvent.Value, scoreFormatCollectionDefinition, scoreConfigName );
+            }
+
             CheckForRemarks( eventScores, entry );
             await CalculateEventStatusAsync( eventScores, entry );
             await CalculateEventAndStageStyleAsync( eventScores, entry, cofStructure );
@@ -322,6 +406,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             EventComposite eventComponent,
             ScoreFormatCollection scoreFormatCollectionDefinition,
             string scoreConfigName ) {
+
+            // Test if the score is already calculated for this event. This is to handle the case where an event is a child of multiple parent events (which would happen for an Event outside the Event Tree)
+            if (eventScores.TryGetValue( eventComponent.EventName, out var existingEventScore )) {
+                return existingEventScore.Score;
+            }
 
             if (eventComponent.EventType == EventtType.SINGULAR) {
                 //NOTE: As this is a shot, we dont' add it to the eventScores dictionary.
@@ -483,7 +572,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             var attrSetName = cofDefinition.RequiredAttributeDef;
 
             var attrValue = await entry.MatchParticipant.Participant.GetAttributeValueAsync( attrSetName, entry.CourseOfFireId );
-            var attrValueappellation = attrValue.AttributeValue.AttributeValueAppellation;
+            var attrValueappellation = attrValue?.AttributeValue.AttributeValueAppellation ?? string.Empty;
 
             foreach (var es in eventScores) {
                 var eventName = es.Key;
@@ -689,8 +778,8 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
              * re-queue the shot and wait for the next change to write. 
              */
 
-            while (!_threadsShouldDie) {
-                if (writeToLogQueue.TryDequeue( out var shot )) {
+            do {
+                while (writeToLogQueue.TryDequeue( out var shot )) {
                     try {
                         using (StreamWriter file = File.AppendText( _shotLogFile.FullName )) {
                             var shotSerialized = JsonConvert.SerializeObject( shot, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializerOneLine );
@@ -704,8 +793,11 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     }
                 }
 
-                Thread.Sleep( 100 );
-            }
+                if (!_threadsShouldDie) {
+                    Thread.Sleep( 100 );
+                }
+
+            } while (!_threadsShouldDie);
         }
 
         private void AddToAllShots( Shot shot ) {
@@ -771,11 +863,22 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         }
 
         public void AddScoringSystem( Shot shot ) {
-            if (shot.Meta != null) {
-                var dict = (IDictionary<string, object>)shot.Meta;
-                if (dict.ContainsKey( "ESTSystem" )) {
-                    string estSystemName = dict["ESTSystem"]?.ToString();
-                    this.MatchProject.SetScoringSystem( ScoringSystem.EST, estSystemName );
+            var resultCofId = shot.ResultCOFID;
+            if (this.MatchProject.TryGetCourseOfFireEntryByResultCOFID( resultCofId, out var entry )) {
+
+                if (shot.Meta != null) {
+                    var dict = (IDictionary<string, object>)shot.Meta;
+                    if (dict.ContainsKey( "ESTSystem" )) {
+                        string estSystemName = dict["ESTSystem"]?.ToString();
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.EST, estSystemName );
+                    } else if (dict.ContainsKey( "TargetReadingMachine" )) {
+                        string scoringSystemName = dict["TargetReadingMachine"]?.ToString();
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.TARGET_READING_MACHINE, scoringSystemName );
+                    } else if (dict.ContainsKey( "Manual" )) {
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.MANUAL, null );
+                    } else {
+                        this.MatchProject.SetScoringTechnology( entry.CourseOfFireId, ScoringSystem.UNKNOWN, null );
+                    }
                 }
             }
         }

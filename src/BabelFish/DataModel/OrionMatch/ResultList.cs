@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -16,7 +17,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IGetResultListFormatDefinition,
         IGetCourseOfFireDefinition,
         IGetRankingRuleDefinition,
-        IPublishTransactions {
+        IPublishTransactions,
+        ISaveToFile {
 
         #region Private Variables
         private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;
@@ -97,7 +99,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int CourseOfFireId { get; set; } = 1;
 
         /// <summary>
-        /// Indicates the completion status of this Result List. 
+        /// Readonly. Gets the completion status of this Result List. 
         /// If this is a Virtual Match, the overall Result List status is based on the composite statuses of each parent and child result list.
         /// </summary>
         /// <remarks>This value is calculated from .MetaData and is also serialzied.</remarks>
@@ -175,7 +177,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// The start date that the underlying event, in this Result List, started on.
+        /// Readonly. Gets the start date that the underlying event, in this Result List, started on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
         /// <remarks>This value is calculated from .MetaData and is also serialzied.</remarks>
@@ -197,7 +199,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// The end date that the underlying event, in this Result List, ended on.
+        /// Readonly. Gets the end date that the underlying event, in this Result List, ended on.
         /// In a Virtual Match, this value is the composite value of each parent and child match.
         /// </summary>
         /// <remarks>This value is calculated from .MetaData and is also serialzied.</remarks>
@@ -315,18 +317,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
 
         /// <summary>
-        /// UTC time that this Result List was updated.
+        /// Readonly. Gets the UTC time that this Result List was updated.
         /// </summary>
         [G_NS.JsonProperty( Order = 99 )]
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+        public DateTime LastUpdated {
+            get {
+                DateTime lastUpdated = DateTime.MinValue;
+                foreach (var meta in Metadata.Values) {
+                    if (meta.LastUpdated > lastUpdated)
+                        lastUpdated = meta.LastUpdated;
+                }
+                return lastUpdated;
+            }
+        }
 
         #region Helper Data Model Properties
 
         /// <summary>
-        /// If this is a local match, returns the local match id.
-        /// If this is from a virtual match, retur s the virtual match id.
+        /// Read only property, returning the MatchId of the Match this ResultList is from.
+        /// <para>If this is a local match, returns the local match id.
+        /// If this is from a virtual match, retur s the virtual match id.</para>
         /// </summary>
         /// <remarks>This value is not serialized.</remarks>
         [G_NS.JsonIgnore]
@@ -485,7 +497,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Facade property that returns the same as .ResultName
+        /// Readonly facade property that returns the same as .ResultName
         /// </summary>
         /// <remarks>Property is not serialized.</remarks>
         [G_NS.JsonIgnore]
@@ -518,6 +530,76 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             resultEvent = null;
             return false;
         }
+
+        /// <summary>
+        /// Checks for the unusual condition that the returned result list is ordered by projected rank, 
+        /// but the status is UNOFFICIAL or OFFICIAL. This could happen if a user turns Orion off, 
+        /// before having all scores turned in, and we're past the end date of the match.
+        /// </summary>
+        public void ReOrderIfOfficial() {
+
+            if (this.Projected &&
+                (this.Status == ResultStatus.UNOFFICIAL || this.Status == ResultStatus.OFFICIAL)) {
+                var sorter = new CompareResultByRank( CompareResultByRank.CompareMethod.RANK_ORDER, Scopos.BabelFish.Helpers.SortBy.ASCENDING );
+                this.Items.Sort( sorter );
+
+                this.Projected = false;
+            }
+        }
+
+        #region ISaveToFile Implementation
+        /// <inheritdoc />
+        public string GetFileName() {
+            return $"{ResultName} ({CourseOfFireId}).json";
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+
+            if (relativeDirectory == null)
+                throw new ArgumentNullException( nameof( relativeDirectory ) );
+
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+
+            var directoryPath = Path.GetDirectoryName( filePath );
+
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( filePath, json );
+
+            return filePath;
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
+        /// <inheritdoc />
+        public string GetRelativePath() {
+            return this.GetFileName();
+        }
+
+        /// <inheritdoc />
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
+        }
+
+        #endregion
 
         #endregion
     }

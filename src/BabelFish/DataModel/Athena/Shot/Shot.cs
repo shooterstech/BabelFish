@@ -25,8 +25,13 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
         public const string SHOT_ATTRIBUTE_EMPTY = "EMPTY";
         /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
         public const string SHOT_ATTRIBUTE_UNKNOWN_COORDINATES = "UNKNOWN COORDINATES";
-        /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
+        /// <summary>Shot Attribute to indicate the shot's location (and thus score) was changed by a human.</summary>
         public const string MANUALLY_MODIFIED = "MANUALLY MODIFIED";
+        /// <summary>
+        /// Shot attribute to indicate that the shot was scored by an external system, the most common being Orion's VIS system.
+        /// It also indicates that the shot is being persisted outside of ShotMapper and the Match Project.
+        /// </summary>
+        public const string EXTERNALLY_SCORED = "EXTERNALLY SCORED";
 
         /// <summary>
         /// Public constructor

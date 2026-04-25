@@ -108,7 +108,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The unique identifier that represents the score (result cof object) this Individual had in this match. 
         /// </summary>
-        [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults." )]
+        [Obsolete( "Replaced with MatchParticipant.Entries[i].ResultCofId with the BabelFish 2.0 datamodel. Deprecated April 2026" )]
+        [DefaultValue( "" )]
         public string ResultCOFID { get; set; } = string.Empty;
 
         #endregion

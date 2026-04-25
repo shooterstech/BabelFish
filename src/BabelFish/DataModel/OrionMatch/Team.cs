@@ -14,8 +14,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public const int CONCRETE_CLASS_ID = 2;
 
         #region Private and Protected Fields
-        private string _teamName = string.Empty;
         private bool _ignoreEvents = false;
+        private string _teamName = string.Empty;
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
@@ -26,7 +26,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Team() : base() {
             ConcreteClassId = CONCRETE_CLASS_ID;
             ParticipantType = ParticipantType.TEAM;
-            this.TeamMembers = new List<Participant>();
             this.TeamCaptains = new List<Individual>();
         }
 
@@ -36,9 +35,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// allow events to fire after deserialization.
         /// </summary>
         public void OnDeserialized() {
-            foreach (var tm in this.TeamMembers) {
-                tm.Team = this;
-            }
             _ignoreEvents = false;
         }
 
@@ -59,11 +55,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Data Model Properties
-        /// <summary>
-        /// The contributing team members. These are the Participants that will make up the score shot by the team. 
-        /// </summary>
-        [G_NS.JsonProperty( Order = 5 )]
-        public List<Participant> TeamMembers { get; set; }
 
         /// <summary>
         /// Returns the same value as DisplayName, but is intended to be used when the Participant is a Team. The setter does nothing, as the TeamName is always the same as DisplayName.
@@ -88,12 +79,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Methods
-        public void AddTeamMember( Participant participant ) {
-            this.TeamMembers.Add( participant );
-            participant.Team = this;
-            if (!_ignoreEvents)
-                OnTeamMemberAdded?.Invoke( this, new EventArgs<Participant>( participant ) );
-        }
 
         /// <inheritdoc />
         public override void SetDefaultDisplayName() {
