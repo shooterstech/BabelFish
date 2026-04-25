@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var calculationVariables = new IsCourseOfFireEventCalculationVariablesValid();
             var targetCollectionIndexes = new IsTargetCollectionIndexValid();
             var requiredAttrValue = new IsCourseOfFireRequiredAttributeValueValid();
-
+            var paperTargetLabels = new IsCourseOfFirePaperTargetLabelValid();
 
 
             if (!await tc.IsSatisfiedByAsync( candidate )) {
@@ -153,6 +153,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await requiredAttrValue.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( requiredAttrValue.Messages );
+            }
+
+            if (!await paperTargetLabels.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( paperTargetLabels.Messages );
             }
 
             return valid;
@@ -924,6 +929,65 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     valid = false;
                     Messages.Add( $"Each value for the RequiredAttributeDef singular field must specify an AttributeValueAppellation. However '{value.Name}' does not." );
                 }
+            }
+
+            return valid;
+        }
+    }
+
+    public class IsCourseOfFirePaperTargetLabelValid : CompositeSpecification<CourseOfFire> {
+
+        /// <inheritdoc/>
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+
+            Messages.Clear();
+            bool valid = true;
+
+            // At least one PaperTargetLabel is required if one more more RangeScripts is designed for paper.
+            // Or there are no RangeScripts. As this likely means the COF is for paper and not yet built out for range scripts.
+            bool hasPaperTargetRangeScript = candidate.RangeScripts.Any( rs => rs.DesignedForPaper ) || candidate.RangeScripts.Count == 0;
+
+            if (hasPaperTargetRangeScript && candidate.PaperTargetLabels.Count == 0) {
+                valid = false;
+                Messages.Add( "At least one PaperTargetLabel is required if one or more RangeScripts is designed for paper." );
+            }
+
+            var existingNames = new HashSet<string>();
+            var index = 0;
+            foreach (var ptl in candidate.PaperTargetLabels) {
+                // Each PaperTargetLabel must have a unique name.
+                if (string.IsNullOrEmpty( ptl.PaperTargetLabelName )) {
+                    valid = false;
+                    Messages.Add( $"The PaperTargetLabel at index {index} must have a name." );
+                } else if (!existingNames.Add( ptl.PaperTargetLabelName )) {
+                    valid = false;
+                    Messages.Add( $"Each PaperTargetLabel must have a unique name. The name '{ptl.PaperTargetLabelName}' is duplicated." );
+                }
+
+                // Shots per bull must be greater than 0.
+                if (ptl.ShotsPerBull <= 0) {
+                    valid = false;
+                    Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has ShotsPerBull value of {ptl.ShotsPerBull}. This must be greater than 0." );
+                }
+
+                var labelIndex = 0;
+                foreach (var label in ptl.Labels) {
+                    // Each BarcodeLabel must have a non empty StageLabel.
+                    if (string.IsNullOrEmpty( label.StageLabel )) {
+                        valid = false;
+                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with an empty LabelName." );
+                    }
+
+                    // Each BarcodeLabel must have a human readable TargetName
+                    if (string.IsNullOrEmpty( label.TargetName )) {
+                        valid = false;
+                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with an empty TargetName." );
+                    }
+
+                    labelIndex++;
+                }
+
+                index++;
             }
 
             return valid;

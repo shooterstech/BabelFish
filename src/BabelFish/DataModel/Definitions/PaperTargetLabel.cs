@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -13,6 +7,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// PaperTargetLabel is an option for a different type of target and shots per bull.
     /// </summary>
     public class PaperTargetLabel : IReconfigurableRulebookObject {
+
+        /// <summary>
+        ///  When a <see cref="CourseOfFire"/> RangeScripts are all designed only for ESTs (and not for paper),
+        ///  this default PaperTargetLabel, which does not specify
+        ///  any labels are to be printed, is returned. 
+        /// </summary>
+        public readonly static PaperTargetLabel NONE = new PaperTargetLabel() {
+            PaperTargetLabelName = "None",
+            ShotsPerBull = 1,
+            Labels = new List<BarcodeLabel>()
+        };
 
         /// <summary>
         /// Public constructor
@@ -41,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
 
         /// <inheritdoc/>
-        [JsonPropertyOrder ( 99 )]
+        [JsonPropertyOrder( 99 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

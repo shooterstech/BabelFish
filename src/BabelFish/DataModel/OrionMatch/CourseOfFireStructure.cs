@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Converters.Microsoft;
@@ -195,16 +196,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string TargetCollectionName { get; set; }
 
         /// <summary>
+        /// The name of the <see cref="PaperTargetLabel"/> to use for this Course of Fire. Value will drive
+        /// how barcode labels are printed and how many shots per aiming bull target reading machines are
+        /// expecting to find when shot on paper.
+        /// <para>Value is not required. If shooting on paper targets, the first <see cref="PaperTargetLabel"/>
+        /// listed in the <see cref="CourseOfFireDef"/> is used as the default.</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 14 )]
+        [DefaultValue( "" )]
+        public string PaperTargetLabelName { get; set; } = string.Empty;
+
+        /// <summary>
         /// Specifies the algorithm to use to project INTERMEDIATE score.
         /// The default value is AVERAGE_SHOT_FIRED which means it will use the <see cref="ProjectScoresByAverageShotFired"/> class.
         /// </summary>
-        [G_NS.JsonProperty( Order = 14 )]
+        [G_NS.JsonProperty( Order = 15 )]
         public ProjectorOfScoresType ProjectorOfScores { get; set; } = ProjectorOfScoresType.AVERAGE_SHOT_FIRED;
 
         /// <summary>
         /// Gets or sets the types of entries that can be recorded, which may include individual and team entries.
         /// </summary>
-        [G_NS.JsonProperty( Order = 15, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( Order = 16, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public EntryTypes TypesOfEntries { get; set; } = EntryTypes.INDIVIDUAL_AND_TEAM;
 
         /// <summary>
@@ -386,6 +398,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="args"></param>
         public void SegmentGroupCommandChanged( object sender, EventArgs<SegmentGroupCommand> args ) {
             this.DisableScoreProjection = args?.Value?.GetResultEngineDirectives().DisableScoreProjection ?? false;
+        }
+
+        /// <summary>
+        ///  Returns the <see cref="PaperTargetLabel"/> for this CourseOfFireStructure as specified by the PaperTargetLabelName property.
+        ///  If no PaperTargetLabelName is specified, it returns the first PaperTargetLabel listed in the CourseOfFire definition.
+        ///  If there are no PaperTargetLabels listed in the CourseOfFire definition, it returns a default PaperTargetLabel that
+        ///  does not specify any barcodes to be printed.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<PaperTargetLabel?> GetPaperTargetLabelAsync() {
+            var cofDef = await GetCourseOfFireDefinitionAsync();
+
+            // Try and find the PaperTargetLabel the user specified.
+            if (!string.IsNullOrEmpty( PaperTargetLabelName )) {
+                var label = cofDef.PaperTargetLabels.Find( x => x.PaperTargetLabelName == PaperTargetLabelName );
+                if (label != null) {
+                    return label;
+                }
+            }
+
+            //If not found, return the first one in the list.
+            if (cofDef.PaperTargetLabels.Count > 0) {
+                return cofDef.PaperTargetLabels[0];
+            }
+
+            // Finally return the default NONE, as this COF likely is designed for ESTs, and therefore would not have a PaperTargetLabel value.
+            return PaperTargetLabel.NONE;
         }
         #endregion
     }
