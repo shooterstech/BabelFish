@@ -702,6 +702,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (tryAndUseProjected
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
                 && scoreToReturn.Projected != null
+                && !scoreToReturn.Projected.IsZero
                 && scoreToReturn.Status == ResultStatus.INTERMEDIATE
                 && _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE) {
                 formattedScore += " ◎";

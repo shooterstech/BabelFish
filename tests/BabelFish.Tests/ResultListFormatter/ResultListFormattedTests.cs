@@ -450,7 +450,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.2038.2026012314125806.0" );
+            MatchID matchId = new MatchID( "1.1.2026042616021847.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
 
@@ -503,8 +503,8 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         [TestMethod]
         public async Task EriksPlayground2() {
 
-            var matchId = new MatchID( "1.5042.2026022609515391.0" );
-            var resultListName = "Team - Sporter";
+            var matchId = new MatchID( "1.1.2026042616021847.0" );
+            var resultListName = "Individual - All";
             var request = new GetResultListPublicRequest( matchId, resultListName );
             var resultListResponse = await matchClient.GetResultListPublicAsync( request );
 
@@ -518,9 +518,9 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             RLIF = new ResultListIntermediateFormatted( resultListToDisplay, resultListFormatDefinition, null );
             //RLIF.GetCompletionPercentageStringPtr = ResultList.CompletionPercentageFormatting;
             await RLIF.InitializeAsync();
-            RLIF.ResolutionWidth = 100; //Tell it, it is the smallest size screen
+            RLIF.ResolutionWidth = 1000; //Tell it, it is the smallest size screen
             RLIF.ShowNumberOfChildRows = 0;
-            RLIF.ShowNumberOfBodyRows = 3;
+            RLIF.ShowNumberOfBodyRows = 4;
             RLIF.ShowSupplementalInformation = false;
             RLIF.ShowZeroScoresWithOFFICIAL = false;
             RLIF.Engagable = true;
@@ -536,6 +536,26 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             RLIF.Clear();
             RLIF.RefreshResultList( resultListToDisplay );
             RLIF.AppendTokenizedResultList( resultListToDisplay );
+
+
+            CellValues tryCellValues, cellValues;
+            foreach (var cv in RLIF.GetShownHeaderRow()) {
+                Console.Write( $"{cv.Text}, " );
+            }
+            Console.WriteLine();
+
+            foreach (var row in RLIF.ShownRows) {
+                foreach (var multiLineRow in row) {
+                    foreach (var cv in multiLineRow.GetShownRow()) {
+                        Console.Write( $"{cv.Text}, " );
+                    }
+                    //Console.Write( " : " );
+                    //Console.Write( multiLineRow.GetParticipant().RemarkList.ToString() );
+                    //Console.Write( " : " );
+                    //Console.Write( string.Join( ", ", multiLineRow.GetClassList() ) );
+                    Console.WriteLine();
+                }
+            }
 
         }
     }
