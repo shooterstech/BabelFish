@@ -37,6 +37,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
+    [Obsolete("This feature is no longer in use as of 2026-04. Also not included on LicenseFiles")]
     public enum ClubLicenseCapability {
 
         /// <summary>

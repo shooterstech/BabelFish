@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -118,6 +119,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>A GroupByPriority value of 2 is the default value.</item>
         /// <item>A GroupByPriority value of 3 is the lowest priority.</item>
         /// </list>
+        /// <para>The default value is 2.</para>
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 16 )]
         [G_NS.JsonProperty( Order = 16 )]

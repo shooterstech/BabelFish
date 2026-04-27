@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -6,9 +7,12 @@ using Scopos.BabelFish.DataModel.Definitions;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
-    /// Describes the configuration of a standard ResultList, but does not include the participant scores. This is the abbreviated version of a ResultList,
-    /// and is used when retreiving a list of ResultLists for a match, such as with Get Match API call. The full ResultList, with participant scores, can be retreived with the Get Result List API calls.
-    /// <para>ResultListAbbr is used only to describe Result Lists from a single Course of Fire. It is not used to describe a Merged Result List.</para>
+    /// Describes the configuration for a <see cref="ResultList"/>, but does not include the list of participants or their scores. A ResultListAbbr includes data properties
+    /// for the result name, the top level event, the result list format, the ranking rule, and the attribute filter. These properties are used to determine how to filter
+    /// participants and display the results for a particular Result List.
+    ///
+    /// <para>The full ResultList (with participants and their scores) may be retreived with either using the <see cref="APIClients.OrionMatchAPIClient">Get Result List API calls</see> (if you are
+    /// access data remotely) or generated using the <see cref="ResultDocumentGenerator"/> class (if you have access to the <see cref="MatchProject"/>.</para>
     /// </summary>
     /// <remarks>
     /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
@@ -120,6 +124,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>For example, a Result List could show all the Sporter Air Rifle marksmen (excluding
         /// the Precision Air Rifle marksmen).</para>
         /// </summary>
+        /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
         [G_NS.JsonProperty( Order = 14 )]
         public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
 

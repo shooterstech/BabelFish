@@ -1,3 +1,4 @@
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
@@ -80,7 +81,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// stored in the re.ResultCofScores dictionary. 
         /// </summary>
         /// <param name="re"></param>
-        public abstract void Merge( ResultEvent re );
+        public abstract bool Merge( ResultEvent re );
 
         /// <summary>
         /// List of non-top level EventNames the merge method adds to each participant's ResultCofScores.
@@ -89,9 +90,40 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         public List<string> EventNames { get; protected set; } = new List<string>();
 
         /// <summary>
-        /// The top level event name that this merge methods adds to each participant's ResultCofScores.
-        /// This event name SHOULD NOTE be included in .EventNames.
+        /// The top level event name that this merge methods adds to each participant's ResultCofScores. The format will be similiar to
+        /// {MatchId}_{HumanReadableTopLevelEventName}.
+        /// <para>This event name SHOULD NOT be included in .EventNames.</para>
         /// </summary>
         public string TopLevelEventname { get; protected set; } = string.Empty;
+
+        /// <summary>
+        /// When <see cref="ResultListMergerEngine.AutoGenerateResultListFormat"/> method runs, it asks the MergeMethod for any additional
+        /// display columns that should be added to the ResultListFormat. This method returns those additional display columns (if any).
+        /// </summary>
+        public virtual List<ResultListDisplayColumn> AdditionalDisplayColumns {
+            get {
+                return new List<ResultListDisplayColumn>();
+            }
+        }
+
+        /// <summary>
+        /// When <see cref="ResultListMergerEngine.AutoGenerateResultListFormat"/> method runs, it asks the MergeMethod for any additional
+        /// ResultListFields that should be added to the ResultListFormat. This method returns those additional fields (if any).
+        /// </summary>
+        public virtual List<ResultListField> AdditionalFields {
+            get {
+                return new List<ResultListField>();
+            }
+        }
+
+        /// <summary>
+        /// When <see cref="ResultListMergerEngine.AutoGenerateResultListFormat"/> method runs, it asks the MergeMethod for the text
+        /// to use for the top level event score. This is that text.
+        /// </summary>
+        public virtual string TopLevelHeaderText {
+            get {
+                return "Aggregate";
+            }
+        }
     }
 }

@@ -42,5 +42,13 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// </summary>
         [G_NS.JsonProperty( Order = 13, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public int CountTopScores { get; set; } = 0;
+
+        /// <summary>
+        /// Parameter that sets how many scores the participant must have to be included in the average.
+        /// If they have fewer scores than this number, then they will not be included in the average and will not be ranked.
+        /// <para>A value of 1 (the default) means they only have to have 1 score to be included.</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public int RequiredNumberOfScores { get; set; } = 1;
     }
 }

@@ -54,6 +54,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Status",
             "LastShot",         //Only avaliable on individual result lists
             "Remark",
+            "OutOfCompetition",
             "RankOrSquadding",  //Avaliable only with Squadding information
             "Squadding",        //Avaliable only with Squadding information
             "Relay",            //Avaliable only with Squadding information
@@ -496,6 +497,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     return GetRemarks( this.LessThanLarge );
 
+                case "OutOfCompetition":
+                    if (_resultListFormatted.GetParticipantAttributeOutOfCompetitionPtr != null)
+                        return _resultListFormatted.GetParticipantAttributeOutOfCompetitionPtr( this._item, this._resultListFormatted );
+
+                    if (_resultEvent is null)
+                        return string.Empty;
+                    return _resultEvent.OutOfCompetition ? "OOC" : string.Empty;
+
                 case "Squadding":
                     if (_resultListFormatted.GetParticipantAttributeSquaddingPtr != null)
                         return _resultListFormatted.GetParticipantAttributeSquaddingPtr( this._item, this._resultListFormatted );
@@ -721,6 +730,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
+                        && !scoreToReturn.Projected.IsZero
                         && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
                         && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
@@ -1198,7 +1208,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return true;
 
             //Check if the score is zero
-            if (this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
+            var score = this.GetScore( this._resultListFormatted.ResultList.EventName, false );
+            if (score.IsZero) {
                 //If we get here, the score is zero.
 
                 if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL

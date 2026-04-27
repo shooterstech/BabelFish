@@ -20,12 +20,14 @@ All notable changes to BabelFish will be documented in this file.
 ## [1.12.4] - 2026-03-00
 ### Enhancements
 #### GetClubList
-- Added a list of ClubAuthorizationRoles the authenticated caller has to each returned Club.
+- Added a list of ClubAuthorizationRoles the authenticated caller has for each returned Club.
 #### ResultListIntermediateFormatted
 - Added 'Team' as a standard field name, displaying the Team Name that the participant is competing for.
 ### Bug Fixes
 #### ResultCOF
 - Added 'Visibility' as a property to ResultCOF
+#### Authentication
+- Fixed issue with automatically refreshing authentication tokens after 24 hours.
 
 
 ## [1.12.3] - 2026-03-03

@@ -118,7 +118,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
 
                 case ShowWhenCondition.MATCH_TYPE_LOCAL:
-                    answer = this.MatchID.LocalMatch;
+                    // Should we deprecated MATCH_TYPE_LOCAL to just be MATCH_TYPE_SINGLE_LOCATION or something like that?
+                    //As of BabelFish 2.0 / Orion 3.0 all matches are virtual matches. So a "Local Match" is one where there is only one location.
+                    if (RLF.ResultList is null) {
+                        answer = this.MatchID.LocalMatch;
+                    } else {
+                        answer = RLF.ResultList.Metadata.Count <= 1;
+                    }
                     break;
 
                 case ShowWhenCondition.MATCH_TYPE_TOURNAMENT:
@@ -126,7 +132,13 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     break;
 
                 case ShowWhenCondition.MATCH_TYPE_VIRTUAL:
-                    answer = this.MatchID.VirtualMatch;
+                    // Should we deprecated MATCH_TYPE_VIRTUAL to just be MATCH_TYPE_MULTIPLE_LOCATIONS or something like that?
+                    //As of BabelFish 2.0 / Orion 3.0 all matches are virtual matches. So a "Virtual Match" is one where there is more than one location.
+                    if (RLF.ResultList is null) {
+                        answer = this.MatchID.LocalMatch;
+                    } else {
+                        answer = RLF.ResultList.Metadata.Count > 1;
+                    }
                     break;
 
                 case ShowWhenCondition.SHOT_ON_EST:
@@ -281,6 +293,14 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         break;
                     }
                     answer = ((ResultEvent)participant).RemarkList.IsShowingParticipantRemark( ParticipantRemark.QUALIFIED );
+                    break;
+
+                case ShowWhenCondition.OUT_OF_COMPETITION:
+                    if (participant == null || participant.Participant == null || participant is not ResultEvent) {
+                        answer = false;
+                        break;
+                    }
+                    answer = ((ResultEvent)participant).OutOfCompetition;
                     break;
 
                 case ShowWhenCondition.PARTICIPANT_IS_INDIVIDUAL:

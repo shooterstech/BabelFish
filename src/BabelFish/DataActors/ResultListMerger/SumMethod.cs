@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <param name="configuration"></param>
         public SumMethod( ResultListMergerEngine tournamentMerger, SumMethodConfiguration configuration ) : base( tournamentMerger, configuration ) {
 
-            this.TopLevelEventname = "Aggregate";
+            this.TopLevelEventname = ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, "Aggregate" );
         }
 
         /// <inheritdoc />
@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         }
 
         /// <inheritdoc />
-        public override void Merge( ResultEvent re ) {
+        public override bool Merge( ResultEvent re ) {
 
             EventScore mergedEventScore = new EventScore();
 
@@ -72,7 +72,10 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 }
             }
 
-            re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, this.TopLevelEventname )] = mergedEventScore;
+            re.ResultCofScores[this.TopLevelEventname] = mergedEventScore;
+
+            //return true to indicate this ResultEvent should be included with the final merged Result List
+            return true;
         }
     }
 }

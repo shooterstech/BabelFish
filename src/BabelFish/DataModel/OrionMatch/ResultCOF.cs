@@ -238,6 +238,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (RemarkList != null && RemarkList.Count > 0);
         }
 
+        /// <inheritdoc/>
+        [G_STJ_SER.JsonPropertyOrder( 46 )]
+        [G_NS.JsonProperty( Order = 46 )]
+        public bool OutOfCompetition { get; set; }
+
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.

@@ -20,8 +20,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (filter is AttributeFilterAttributeValue)
                 return AttributeFilterCalculator.Passes( (AttributeFilterAttributeValue)filter, participant );
 
-            //else filter is AttributeFilterEquation
-            return AttributeFilterCalculator.Passes( (AttributeFilterEquation)filter, participant );
+            else if (filter is AttributeFilterEquation)
+                return AttributeFilterCalculator.Passes( (AttributeFilterEquation)filter, participant );
+
+            else
+                //If we get here then it is of type AttributeFilterNone, which always passes.
+                return true;
         }
 
         /// <summary>
