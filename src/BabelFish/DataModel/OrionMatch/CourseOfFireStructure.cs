@@ -407,7 +407,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ///  does not specify any barcodes to be printed.
         /// </summary>
         /// <returns></returns>
-        public async Task<PaperTargetLabel?> GetPaperTargetLabelAsync() {
+        public async Task<PaperTargetLabel> GetPaperTargetLabelAsync() {
             var cofDef = await GetCourseOfFireDefinitionAsync();
 
             // Try and find the PaperTargetLabel the user specified.

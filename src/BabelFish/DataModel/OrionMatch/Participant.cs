@@ -162,9 +162,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          */
 
         /// <summary>
-        /// A unique, human readable, value assigned to all Participants in a match.
-        /// 
-        /// In most cases the CompetitorNumber will be numeric, but it can also be alphabetical.
+        /// A unique, human readable, value assigned to Participants within a match. Also called "bib number."
+        ///
+        /// <para>In most cases CompetitorNumber are numeric, BabelFish however allows alphabetical competitor numbers as well.</para>
+        /// <para>The length of a Competitor Number must be 6 charcaters or less.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 10 )]
         [DefaultValue( "" )]

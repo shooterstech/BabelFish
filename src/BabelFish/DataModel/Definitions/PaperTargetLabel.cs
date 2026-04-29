@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -31,22 +30,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         ///  unique human readable name given to this PaperTargetLable, that also describes the type of target to be used with this option.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public string PaperTargetLabelName { get; set; } = string.Empty;
 
         /// <summary>
         /// The number of shots an athlete should fire per aiming bull and the number of shots the scoring algorithm is expecting to find.
         /// </summary>
         [DefaultValue( 1 )]
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public int ShotsPerBull { get; set; } = 1;
 
         /// <summary>
         /// List of BarcodeLabels that specify how barcode labels should be printed.
         /// </summary>
+        [G_NS.JsonProperty( Order = 10 )]
         public List<BarcodeLabel> Labels { get; set; }
 
 
         /// <inheritdoc/>
-        [JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 

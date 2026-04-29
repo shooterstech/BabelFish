@@ -978,10 +978,10 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with an empty LabelName." );
                     }
 
-                    // Each BarcodeLabel must have a human readable TargetName
-                    if (string.IsNullOrEmpty( label.TargetName )) {
+                    // If the LabelSize is OL385 (e.g. small barcode labels), the StageLabel may only be 1 character.
+                    if (label.LabelSize == BarcodeLabelSize.OL385 && label.StageLabel.Length > 1) {
                         valid = false;
-                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with an empty TargetName." );
+                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with a StageLabel longer than 1 character. Which is not allowed on small barcode labels (aka OL385)." );
                     }
 
                     labelIndex++;
