@@ -392,6 +392,9 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="untruncatedValue"></param>
         /// <returns></returns>
         public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
+            if (untruncatedValue is null)
+                return string.Empty;
+
             var trimmedValue = untruncatedValue.Trim();
 
 

@@ -1,4 +1,3 @@
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
@@ -7,22 +6,22 @@ using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
     [TestClass]
-	public class CourseOfFireValidationTests : BaseTestClass {
+    public class CourseOfFireValidationTests : BaseTestClass {
 
-		[TestMethod]
-		public async Task HappyPathCourseOfFireValid() {
+        [TestMethod]
+        public async Task HappyPathCourseOfFireValid() {
 
-			Initializer.UpdateLocalStoreDirectory( @"c:\temp" );
-			//var setName = SetName.Parse( "v1.0:cmp:Smallbore Rifle 3x20" );
-			var setName = SetName.Parse( "v1.0:cmp:High Power Rifle National Match Course" );
+            Initializer.UpdateLocalStoreDirectory( @"c:\temp" );
+            //var setName = SetName.Parse( "v1.0:cmp:Smallbore Rifle 3x20" );
+            var setName = SetName.Parse( "v1.0:cmp:High Power Rifle National Match Course" );
 
-			var candidate = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
+            var candidate = await DefinitionCache.GetCourseOfFireDefinitionAsync( setName );
 
             Assert.IsNotNull( candidate );
 
-			var validation = new IsCourseOfFireValid();
+            var validation = new IsCourseOfFireValid();
 
-			var valid = await validation.IsSatisfiedByAsync( candidate );
+            var valid = await validation.IsSatisfiedByAsync( candidate );
 
             Assert.IsTrue( valid, string.Join( ", ", validation.Messages ) );
         }
@@ -101,6 +100,35 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             var cofSpec = new IsCourseOfFireEventTreeValid();
             bool sat = await cofSpec.IsSatisfiedByAsync( definition );
             Assert.IsTrue( sat );
+        }
+
+        [TestMethod]
+        public async Task PaperTargetLabelsTests() {
+
+            var validation = new IsCourseOfFirePaperTargetLabelValid();
+
+            var candidate = new CourseOfFire();
+
+            // A default CourseOfFire should be valid, b/c the constructor should auto add NONE label to the PaperTargetLabels list.
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+
+            // If the NONE label is removed, the validation should fail.
+            candidate.PaperTargetLabels.Clear();
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
+
+            // This should fail for multiple reasons: 1) PaperTargetLabelName is empty, 2) ShotsPerBull is 0
+            candidate.PaperTargetLabels.Add( new PaperTargetLabel() {
+                PaperTargetLabelName = string.Empty,
+                ShotsPerBull = 0,
+                Labels = new List<BarcodeLabel>()
+            } );
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
+
+            //Correct it, and it should pass.
+            candidate.PaperTargetLabels[0].PaperTargetLabelName = "Test Label";
+            candidate.PaperTargetLabels[0].ShotsPerBull = 1;
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+
         }
     }
 }
