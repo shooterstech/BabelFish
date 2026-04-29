@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
-            PaperTargetLabels = new List<PaperTargetLabel>() { PaperTargetLabel.NONE };
+            PaperTargetLabels = new List<PaperTargetLabel>() { PaperTargetLabel.NONE.Clone() };
         }
 
         [OnDeserialized]

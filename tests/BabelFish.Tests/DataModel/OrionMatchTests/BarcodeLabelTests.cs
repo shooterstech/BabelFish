@@ -32,6 +32,10 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
         [TestMethod]
         public void PdfTest() {
+            // Cleanup any existing file from previous test runs.
+            var labelFileName = "c://temp//UnitTests//labels.pdf";
+            System.IO.File.Delete( labelFileName );
+
             List<BarcodeLabelEncoding> barcodes = new List<BarcodeLabelEncoding>();
             for (int i = 0; i < 15; i++) {
                 barcodes.Add( new BarcodeLabelEncoding {
@@ -79,7 +83,11 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
                     Series = 8
                 } );
             }
-            BarcodePdfGeneration.GenerateQrLabelPdf( "c://temp//labels.pdf", barcodes, 0, 0 );
+            BarcodePdfGeneration.GenerateQrLabelPdf( labelFileName, barcodes, 0, 0 );
+
+            Assert.IsTrue( System.IO.File.Exists( labelFileName ) );
+            //The file size is usually about 65kB.
+            Assert.IsTrue( new System.IO.FileInfo( labelFileName ).Length > 50000 && new System.IO.FileInfo( labelFileName ).Length < 80000 );
         }
     }
 }

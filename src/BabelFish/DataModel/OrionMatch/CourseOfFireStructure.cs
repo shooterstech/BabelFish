@@ -424,7 +424,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             // Finally return the default NONE, as this COF likely is designed for ESTs, and therefore would not have a PaperTargetLabel value.
-            return PaperTargetLabel.NONE;
+            return PaperTargetLabel.NONE.Clone();
         }
         #endregion
     }

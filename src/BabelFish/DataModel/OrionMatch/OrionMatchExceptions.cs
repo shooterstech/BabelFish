@@ -393,4 +393,81 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             logger.Error( this, message );
         }
     }
+
+    /// <summary>
+    /// Thrown when a user tries to set the StageLabel of a Participant to a value that is more than 2 characters long,
+    /// which is prohibited by the rules of the OrionMatch data model. The StageLabel property must be 0, 1, or 2 characters long.
+    /// </summary>
+    public class StageLabelTooLongException : OrionMatchException {
+        private const string DEFAULT_MESSAGE = "The StageLabel of a Participant must be 0, 1, or 2 characters long.";
+
+        /// <summary>
+        /// Initializes a new instance of the StageLabelTooLongException class with a default error message.
+        /// </summary>
+        /// <remarks>
+        /// This constructor logs the default error message when the exception is created.
+        /// Use this exception to indicate that a StageLabel exceeds the allowed length.
+        /// </remarks>
+        public StageLabelTooLongException()
+            : base( DEFAULT_MESSAGE ) {
+            _logger.Error( DEFAULT_MESSAGE );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the StageLabelTooLongException class with a default error message and
+        /// logs the error using the specified logger.
+        /// </summary>
+        /// <param name="logger">The logger used to record the error message when the exception is created. Cannot be null.</param>
+        public StageLabelTooLongException( Logger logger )
+            : base( DEFAULT_MESSAGE ) {
+            logger.Error( DEFAULT_MESSAGE );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the StageLabelTooLongException class with a specified error message.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        public StageLabelTooLongException( string message )
+            : base( message ) {
+            _logger.Error( message );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the StageLabelTooLongException class with a specified error message and
+        /// logs the error using the provided logger.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="logger">The logger used to record the error message.</param>
+        public StageLabelTooLongException( string message, Logger logger )
+            : base( message ) {
+            logger.Error( this, message );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the StageLabelTooLongException class with a specified error message and
+        /// a reference to the inner exception that is the cause of this exception.
+        /// </summary>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        public StageLabelTooLongException( string message, Exception inner )
+            : base( message, inner ) {
+            _logger.Error( message );
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the StageLabelTooLongException class with a specified error message,
+        /// a reference to the inner exception that is the cause of this exception, and a logger for error reporting.
+        /// </summary>
+        /// <remarks>
+        /// This constructor logs the error message using the provided logger. Use this overload
+        /// when you want to include both a custom error message and an inner exception for additional context.
+        /// </remarks>
+        /// <param name="message">The message that describes the error.</param>
+        /// <param name="inner">The exception that is the cause of the current exception, or a null reference if no inner exception is specified.</param>
+        /// <param name="logger">The logger used to record the error information.</param>
+        public StageLabelTooLongException( string message, Exception inner, Logger logger )
+            : base( message, inner ) {
+            logger.Error( this, message );
+        }
+    }
 }

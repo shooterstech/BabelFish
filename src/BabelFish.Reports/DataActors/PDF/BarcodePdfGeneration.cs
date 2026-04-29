@@ -59,7 +59,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                                 cellRow.ConstantItem( qrCodeDimension ).AlignMiddle().Padding( padding ).Image( qrBitmap ).FitArea();
 
                                 cellRow.RelativeItem().AlignLeft().AlignMiddle().Padding( 0 ).PaddingLeft( cellPadding * 2 ).Text( text => {
-                                    // Line 1 is the competitor's name, truncated to 15 characters to help fit on the label. This is to help the athlete know which label belongs to them.
+                                    // Line 1 is the competitor's name, truncated to 18 characters to help fit on the label. This is to help the athlete know which label belongs to them.
                                     text.Line( Helpers.StringFormatting.GetTruncatedString( barcode.DisplayName, maxCharacters ) ).FontSize( 8 );
 
                                     // Line 2 is the competitor number, stage label, series, and course of fire ID. This is to help the athlete know which label belongs to them and where they are shooting.
@@ -95,7 +95,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     Height = dimension,
                     Width = dimension,
                     Margin = 0,
-                    ErrorCorrection = ZXing.QrCode.Internal.ErrorCorrectionLevel.L
+                    ErrorCorrection = ZXing.QrCode.Internal.ErrorCorrectionLevel.M
                 }
             };
             var pixelData = writer.Write( text );

@@ -6,6 +6,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Private Variables
         string _competitorNumber = string.Empty;
+        string _stageLabel = string.Empty;
         #endregion
 
         #region Constructors, Factory Methods, and Initializers
@@ -67,7 +68,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// not valid integers.</exception>
         public static BarcodeLabelEncoding Decode( string encodedText ) {
             if (encodedText is null) {
-                throw new ArgumentNullException( "Encoded text must not be null." );
+                throw new ArgumentNullException( nameof( encodedText ) );
             }
             if (encodedText.Length != 12) {
                 throw new ArgumentException( "Encoded text must be exactly 12 characters long." );
@@ -122,20 +123,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>Competitor Numbers are allowed to be an empty string (although this is poor practice),
         /// but must not be more than 6 characters long.</para>
         /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown if the value is null.</exception>
+        /// <exception cref="CompetitorNumberTooLongException">Thrown if the value is more than 6 characters.</exception>
         public string CompetitorNumber {
             get {
                 return _competitorNumber;
             }
             set {
                 if (value is null) {
-                    throw new ArgumentNullException( "CompetitorNumber must not be null." );
+                    throw new ArgumentNullException( nameof( value ) );
                 }
 
-                if (value.Length > 6) {
+                var trimmed = value.Trim();
+                if (trimmed.Length > 6) {
                     throw new CompetitorNumberTooLongException( "CompetitorNumber must be a string of 6 characters or less." );
                 }
 
-                _competitorNumber = value.Trim();
+                _competitorNumber = trimmed;
             }
         }
 
@@ -150,7 +154,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// always a single character, but may be 2 characters. It is used to link the BarcodeLabel to a specific stage of the match, and is used in the mapping process of shots to events.
         /// <para>An empty string is allowed, but indicates that the BarcodeLabel is not linked to any specific stage.</para>
         /// </summary>
-        public string StageLabel { get; set; } = string.Empty;
+        /// <exception cref="ArgumentNullException">Thrown if the value is null.</exception>
+        /// <exception cref="StageLabelTooLongException">Thrown if the value is more than2 characters.</exception>
+        public string StageLabel {
+            get {
+                return _stageLabel;
+            }
+            set {
+                if (value is null) {
+                    throw new ArgumentNullException( nameof( value ) );
+                }
+
+                var trimmed = value.Trim();
+                if (trimmed.Length > 6) {
+                    throw new StageLabelTooLongException( "StageLabel must be a string of 6 characters or less." );
+                }
+
+                _stageLabel = trimmed;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the series index number. It is the series index within the stage (as labeld by the <see cref="StageLabel"/>. 

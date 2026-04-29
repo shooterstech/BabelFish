@@ -447,6 +447,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Assert.AreEqual( 1, rlf.ShownRows.Count );
         }
 
+        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
         public async Task EriksPlayground() {
 
@@ -500,6 +501,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             }
         }
 
+        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
         public async Task EriksPlayground2() {
 

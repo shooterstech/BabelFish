@@ -321,6 +321,9 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     if (seen.Contains( singular.StageLabel )) {
                         valid = false;
                         Messages.Add( $"Singular[{index}] has a StageLabel '{singular.StageLabel}' that is used more than once." );
+                    } else if (singular.StageLabel.Length > 2) {
+                        valid = false;
+                        Messages.Add( $"Singular[{index}] has a StageLabel '{singular.StageLabel}' that is longer than 2 characters. StageLabels must be 1 or 2 characters in length." );
                     } else {
                         seen.Add( singular.StageLabel );
                     }
@@ -975,13 +978,13 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     // Each BarcodeLabel must have a non empty StageLabel.
                     if (string.IsNullOrEmpty( label.StageLabel )) {
                         valid = false;
-                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with an empty LabelName." );
+                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a StageLabel with an empty name." );
                     }
 
-                    // If the LabelSize is OL385 (e.g. small barcode labels), the StageLabel may only be 1 character.
-                    if (label.LabelSize == BarcodeLabelSize.OL385 && label.StageLabel.Length > 1) {
+                    // The StageLabel may only be at most 2 character.
+                    if (label.StageLabel.Length > 2) {
                         valid = false;
-                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with a StageLabel longer than 1 character. Which is not allowed on small barcode labels (aka OL385)." );
+                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with a StageLabel longer than 2 character. StageLabels must be at most 2 characters, and are usually only 1 character." );
                     }
 
                     labelIndex++;

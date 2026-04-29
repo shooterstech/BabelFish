@@ -10,7 +10,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         ///  When a <see cref="CourseOfFire"/> RangeScripts are all designed only for ESTs (and not for paper),
         ///  this default PaperTargetLabel, which does not specify
-        ///  any labels are to be printed, is returned. 
+        ///  any labels are to be printed, is returned.
+        ///  <para>To use, it is best to Clone() the instance. </para>
         /// </summary>
         public readonly static PaperTargetLabel NONE = new PaperTargetLabel() {
             PaperTargetLabelName = "None",
