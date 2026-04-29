@@ -1,6 +1,6 @@
-using System.Drawing;
 using QuestPDF.Fluent;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using SkiaSharp;
 using ZXing.QrCode;
 
 namespace Scopos.BabelFish.DataActors.PDF {
@@ -87,7 +87,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
             } ).GeneratePdf( outputPath );
         }
 
-        // Helper to generate a QR code bitmap using ZXing.Net
+        // Helper to generate a QR code bitmap using ZXing.Net and SkiaSharp
         private static byte[] GenerateQrCodeBitmap( string text, int dimension ) {
             var writer = new ZXing.BarcodeWriterPixelData {
                 Format = ZXing.BarcodeFormat.QR_CODE,
@@ -100,16 +100,14 @@ namespace Scopos.BabelFish.DataActors.PDF {
             };
             var pixelData = writer.Write( text );
 
-            using (var bitmap = new Bitmap( pixelData.Width, pixelData.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb )) {
-                var bitmapData = bitmap.LockBits( new Rectangle( 0, 0, pixelData.Width, pixelData.Height ),
-                    System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb );
-                try {
-                    System.Runtime.InteropServices.Marshal.Copy( pixelData.Pixels, 0, bitmapData.Scan0, pixelData.Pixels.Length );
-                } finally {
-                    bitmap.UnlockBits( bitmapData );
-                }
-                using (var ms = new MemoryStream()) {
-                    bitmap.Save( ms, System.Drawing.Imaging.ImageFormat.Png );
+            using (var image = new SKBitmap( pixelData.Width, pixelData.Height, SKColorType.Bgra8888, SKAlphaType.Premul )) {
+                // Copy pixel data into SKBitmap
+                System.Runtime.InteropServices.Marshal.Copy( pixelData.Pixels, 0, image.GetPixels(), pixelData.Pixels.Length );
+
+                using (var ms = new MemoryStream())
+                using (var skImage = SKImage.FromBitmap( image ))
+                using (var data = skImage.Encode( SKEncodedImageFormat.Png, 100 )) {
+                    data.SaveTo( ms );
                     return ms.ToArray();
                 }
             }
