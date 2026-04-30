@@ -43,9 +43,9 @@ namespace Scopos.BabelFish.Responses {
     public enum MetaDataResponseType {
 
         /*
-         * When adding a new concrete class of MetaDataResponse, make sure to add a new entry in this enum with the same name as the 
-         * concrete class. Also make sure to update the MetaDataResponseConverter to handle deserializing into the new concrete class 
-         * when the "Type" property in the JSON matches the new enum entry.
+         * When adding a new concrete class of MetaDataResponse, make sure to add a new entry in this enum for the corresponding
+         * JSON "Type" value, and update the Description/EnumMember value to match that discriminator. Also make sure to update
+         * the MetaDataResponseConverter to handle deserializing the new "Type" value into the new concrete class.
          */
 
         /// <summary>
