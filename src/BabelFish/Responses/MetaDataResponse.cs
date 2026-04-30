@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Scopos.BabelFish.Responses {
 
     /// <summary>
-    /// A MetaDataResponse is common response object returned by Scopos' REST API call. It is returned off of the "MetaData" property on the response.
+    /// A MetaDataResponse is a common response object returned by a Scopos REST API call. It is returned off of the "MetaData" property on the response.
     /// Not all API calls return a MetaDataResponse, but when they do, the format of the
     /// MetaDataResponse is customized with a concrete class.
     /// </summary>
@@ -43,9 +43,9 @@ namespace Scopos.BabelFish.Responses {
     public enum MetaDataResponseType {
 
         /*
-         * When adding a new concrete class of MetaDataResponse, make sure to add a new entry in this enum with the same name as the 
-         * concrete class. Also make sure to update the MetaDataResponseConverter to handle deserializing into the new concrete class 
-         * when the "Type" property in the JSON matches the new enum entry.
+         * When adding a new concrete class of MetaDataResponse, make sure to add a new entry in this enum for the corresponding
+         * JSON "Type" value, and update the Description/EnumMember value to match that discriminator. Also make sure to update
+         * the MetaDataResponseConverter to handle deserializing the new "Type" value into the new concrete class.
          */
 
         /// <summary>
