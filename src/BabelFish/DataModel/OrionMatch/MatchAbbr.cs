@@ -115,6 +115,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The high level shooting style that this match was conducted under.
         /// </summary>
+        [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple Disciplines and Subdisciplines. This property will be replaced with ... something, not sure what yet." )]
         public string ShootingStyle { get; set; } = string.Empty;
 
         /// <summary>

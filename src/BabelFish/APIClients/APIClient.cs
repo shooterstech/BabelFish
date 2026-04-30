@@ -226,6 +226,12 @@ namespace Scopos.BabelFish.APIClients {
                             response.Permissions[resourcePermissions.Name] = parsedPermissions;
                         }
                     }
+
+                    G_STJ.JsonElement metaDataObject;
+                    if (response.Body.RootElement.TryGetProperty( "MetaData", out metaDataObject ) && metaDataObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        response.MetaData = G_STJ.JsonSerializer.Deserialize<MetaDataResponse>( metaDataObject, SerializerOptions.SystemTextJsonDeserializer );
+                    }
+
                 }
 
                 if (responseMessage.IsSuccessStatusCode) {
