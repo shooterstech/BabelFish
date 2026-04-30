@@ -5,7 +5,7 @@ using Scopos.BabelFish.Responses.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
     /// <summary>
-    /// System.Text.Json converter for the abstract class MetaDataResponse. This converter looks for the "Class" property in the JSON to determine which concrete subclass of MetaDataResponse to deserialize into.
+    /// System.Text.Json converter for the abstract class MetaDataResponse. This converter looks for the "Type" property in the JSON to determine which concrete subclass of MetaDataResponse to deserialize into.
     /// </summary>
     public class MetaDataResponseConverter : JsonConverter<MetaDataResponse> {
 
