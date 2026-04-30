@@ -9,21 +9,29 @@ namespace Scopos.BabelFish.Converters.Microsoft {
     /// </summary>
     public class MetaDataResponseConverter : JsonConverter<MetaDataResponse> {
 
+        private Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+
         /// <inheritdoc/>
         public override MetaDataResponse? Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
 
             using (JsonDocument doc = JsonDocument.ParseValue( ref reader )) {
-                JsonElement root = doc.RootElement;
+                try {
+                    JsonElement root = doc.RootElement;
 
-                if (root.TryGetProperty( "Type", out JsonElement classIdType )) {
-                    string classId = classIdType.GetString();
-                    switch (classId) {
-                        case "Match":
-                            return JsonSerializer.Deserialize<MatchDetailMetaData>( root.GetRawText(), options );
-                        case "Unknown":
-                        default:
-                            break;
+                    if (root.TryGetProperty( "Type", out JsonElement classIdType )) {
+                        string classId = classIdType.GetString();
+                        switch (classId) {
+                            case "Match":
+                                return JsonSerializer.Deserialize<MatchDetailMetaData>( root.GetRawText(), options );
+                            case "Unknown":
+                            default:
+                                // If the "Class" property is "Unknown" or any other unrecognized value, return an instance of MetaDataResponseUnknown, which is done below after the switch statement.
+                                break;
+                        }
                     }
+                } catch (Exception ex) {
+                    _logger.Error( ex, "Error deserializing MetaDataResponse" );
+                    // If there's an error during deserialization, return an instance of MetaDataResponseUnknown, which is done below after the catch block.
                 }
 
                 // If we can't determine the class type, return an instance of MetaDataResponseUnknown
