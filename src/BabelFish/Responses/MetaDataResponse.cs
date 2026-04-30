@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Scopos.BabelFish.Responses {
 
     /// <summary>
-    /// A MetaDataResponse is common response object returned by Scopos' REST API call. It is returned off of the "MetaData" property on the response.
+    /// A MetaDataResponse is a common response object returned by a Scopos REST API call. It is returned off of the "MetaData" property on the response.
     /// Not all API calls return a MetaDataResponse, but when they do, the format of the
     /// MetaDataResponse is customized with a concrete class.
     /// </summary>
