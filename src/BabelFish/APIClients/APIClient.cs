@@ -106,6 +106,7 @@ namespace Scopos.BabelFish.APIClients {
                 // response.MessageResponse = CloneMessageResponse( cachedResponse.MessageResponse );
                 response.Body = cachedResponse.Body;
                 response.Permissions = ClonePermissions( cachedResponse.Permissions );
+                response.MetaData = CloneMetaData( cachedResponse.MetaData );
                 response.TimeToRun = DateTime.Now - startTime;
                 response.InMemoryCachedResponse = true;
 
@@ -124,6 +125,7 @@ namespace Scopos.BabelFish.APIClients {
                     // response.MessageResponse = CloneMessageResponse( fileSystemReadResponse.Item2.MessageResponse );
                     response.Body = fileSystemReadResponse.Item2.Body;
                     response.Permissions = ClonePermissions( fileSystemReadResponse.Item2.Permissions );
+                    response.MetaData = CloneMetaData( fileSystemReadResponse.Item2.MetaData );
                     response.TimeToRun = DateTime.Now - startTime;
                     response.FileSystemCachedResponse = true;
 
@@ -226,6 +228,14 @@ namespace Scopos.BabelFish.APIClients {
                             response.Permissions[resourcePermissions.Name] = parsedPermissions;
                         }
                     }
+
+                    G_STJ.JsonElement metaDataObject;
+                    if (response.Body.RootElement.TryGetProperty( "MetaData", out metaDataObject ) && metaDataObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        var metaData = G_STJ.JsonSerializer.Deserialize<MetaDataResponse>( metaDataObject, SerializerOptions.SystemTextJsonDeserializer );
+                        if (metaData != null) {
+                            response.MetaData = metaData;
+                        }
+                    }
                 }
 
                 if (responseMessage.IsSuccessStatusCode) {
@@ -242,6 +252,7 @@ namespace Scopos.BabelFish.APIClients {
                             Request = request,
                             Body = response.Body,
                             Permissions = ClonePermissions( response.Permissions ),
+                            MetaData = CloneMetaData( response.MetaData ),
                             ValidUntil = response.GetCacheValueExpiryTime()
                         };
 
@@ -313,6 +324,19 @@ namespace Scopos.BabelFish.APIClients {
             }
 
             return clone;
+        }
+
+        /// <summary>
+        /// Clones the MetaDataResponse. If the source is null or of type MetaDataResponseUnknown, it returns a new instance of MetaDataResponseUnknown. Otherwise, it calls the Clone() method on the source.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static MetaDataResponse CloneMetaData( MetaDataResponse? source ) {
+            if (source == null || source is MetaDataResponseUnknown) {
+                return new MetaDataResponseUnknown();
+            }
+
+            return source.Clone();
         }
 
         private static DirectoryInfo? _localStorageDirectory { get; set; }

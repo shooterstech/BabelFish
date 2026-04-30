@@ -300,21 +300,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
          */
 
         /// <summary>
-        /// A list of MatchHtmlReports (e.g. pressrelease.html) that exist for this match.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 50 )]
-        [G_NS.JsonProperty( Order = 50 )]
-        public List<MatchHtmlReport> HtmlReports { get; set; } = new List<MatchHtmlReport>();
-
-        /// <summary>
-        /// Newtonsoft.json helper method, to determine if HtmlReports property should be serialized.
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeHtmlReports() {
-            return HtmlReports is not null && HtmlReports.Count > 0;
-        }
-
-        /// <summary>
         /// A list of authorized capabilities the caller has for this match. These values are 
         /// returned by the Rest API, but are not serialized. Instead 'AuthorizationList'
         /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.

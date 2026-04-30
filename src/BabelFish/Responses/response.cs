@@ -78,6 +78,15 @@ namespace Scopos.BabelFish.Responses {
         } = new MessageResponse();
 
         /// <summary>
+        /// Gets the metadata object associated with the response. Not all API calls return metadata,
+        /// but when they do, the format of the metadata is customized with a concrete class that extends <see cref="MetaDataResponse"/>.
+        /// </summary>
+        public MetaDataResponse MetaData {
+            get;
+            internal set;
+        } = new MetaDataResponseUnknown();
+
+        /// <summary>
         /// Gets or sets the data object returned by the Rest API Call.
         /// </summary>
         public T Value {
