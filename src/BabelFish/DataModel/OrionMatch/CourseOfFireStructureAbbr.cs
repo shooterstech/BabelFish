@@ -30,11 +30,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The date that this <see cref="CourseOfFireStructure"/> starts firing. 
         /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime StartDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// The date that this <see cref="CourseOfFireStructure"/> stops firing. 
         /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>
