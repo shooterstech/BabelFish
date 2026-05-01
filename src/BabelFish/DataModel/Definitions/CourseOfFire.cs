@@ -23,6 +23,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
+            PaperTargetLabels = new List<PaperTargetLabel>() { PaperTargetLabel.NONE.Clone() };
         }
 
         [OnDeserialized]
@@ -142,10 +143,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( 4.5 )]
         public float DefaultScoringDiameter { get; set; } = (float)4.5;
 
+
+        /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 42 )]
         [G_NS.JsonProperty( Order = 42, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [Obsolete( "Use RangeScriptType, which is part of a RangeScript, instead." )]
         public COFTypeOptions COFType { get; set; }
+
+        /// <summary>
+        /// List of available options for printing barcode labels for competitions shot on paper targets.
+        /// <para>A value is required if at least one <see cref="RangeScripts"/> has <see cref="RangeScript.DesignedForPaper"/> set to true.</para>
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 45 )]
+        [G_NS.JsonProperty( Order = 45 )]
+        public List<PaperTargetLabel> PaperTargetLabels { get; set; } = new List<PaperTargetLabel>();
 
         /// <inheritdoc />
         /// <exception cref="XApiKeyNotSetException" />

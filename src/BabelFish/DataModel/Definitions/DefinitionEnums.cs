@@ -140,7 +140,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SCORE //Score Component, e.g. I, D, X
     }
 
-    [Obsolete( "Use RangeScriptType instead." )]
+
+    /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
     public enum COFTypeOptions {
         COMPETITION,
         FORMALPRACTICE,
@@ -536,6 +537,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         USER_DEFINED_FIELD_3
     }
 
+
+    /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
     public enum RangeScriptType {
         /// <summary>
         /// Range Script is designed to be ran by a Range Officer. Usually with multiple 

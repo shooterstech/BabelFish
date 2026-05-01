@@ -182,6 +182,23 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Interface to recieve a complete list of shots for a given Result COF ID from an external source. This is intended to be used for
+        /// receiving shots from non-EST systems, such as manual entry or Orion's VIS.
+        ///
+        /// <para>The expectation is that the completeShotList passed into
+        /// this method is the complete and up to date list of shots for the given Result COF ID at the time of the call, and should replace any
+        /// existing shots for that Result COF ID that the ShotMapper currently has. The ShotMapper will validate that all shots in the
+        /// completeShotList have the same Result COF ID as the resultCofId parameter, and that all shots have a Sequence number greater than 0 and that
+        /// there are no duplicate Sequence numbers. If any shot in the completeShotList fails validation, it will be skipped and not added to the ShotMapper,
+        /// but the rest of the shots in the completeShotList will still be processed. Shots received through this method will be marked with
+        /// a custom attribute "EXTERNALLY_SCORED" to indicate that they were received from an external source and not through the normal EST shot receiving process.
+        /// </para>
+        /// <para>ShotMapper does not persist (save to file) Shots passed in via ReceiveExternallyScoredShots(). Caller is responsible for saving
+        /// these shots to persistant storage. </para>
+        /// </summary>
+        /// <param name="resultCofId"></param>
+        /// <param name="completeShotList"></param>
         public void ReceiveExternallyScoredShots( string resultCofId, List<Shot> completeShotList ) {
 
             //Clear the shots that we currently have for this result COF ID, both in the _allShots and the _shotDictionary

@@ -60,6 +60,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EventConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ListOfAttributeValueDataPackets() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.MergeConfigurationConverter() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.MetaDataResponseConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ParticipantConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.RelayConverter() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.ScoreAverageBaseConverter() );
