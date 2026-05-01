@@ -646,6 +646,21 @@ namespace Scopos.BabelFish.APIClients {
         }
         #endregion
 
+        #region List Matches
+        /// <summary>
+        /// Lists parent and child matches visible to the authenticated caller.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesAuthenticatedRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAuthenticatedResponse> ListMatchesAuthenticatedAsync( ListMatchesAuthenticatedRequest requestParameters ) {
+            ListMatchesAuthenticatedResponse response = new ListMatchesAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+        #endregion
+
         #region Match Participant List
         /// <summary>
         /// Requests a list of Match Participants for a specified match.
