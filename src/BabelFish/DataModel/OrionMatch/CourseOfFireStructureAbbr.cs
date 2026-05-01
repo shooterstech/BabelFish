@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The subdiscipline category for the <see cref="CourseOfFire"/> that this CourseOfFireStructure will fire (or has fired).
         /// <para>This value is defined by the COURSE OF FIRE.</para>
         /// </summary>
-        public string Subdiscipline { get; set; } = string.Empty;
+        public string SubDiscipline { get; set; } = string.Empty;
 
         /// <summary>
         /// The name of the score configuration for the <see cref="CourseOfFire"/> that this CourseOfFireStructure will fire (or has fired).
