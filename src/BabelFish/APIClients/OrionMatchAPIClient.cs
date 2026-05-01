@@ -648,6 +648,29 @@ namespace Scopos.BabelFish.APIClients {
 
         #region List Matches
         /// <summary>
+        /// Lists public parent and child matches.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesPublicRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesPublicResponse> ListMatchesPublicAsync( ListMatchesPublicRequest requestParameters ) {
+            ListMatchesPublicResponse response = new ListMatchesPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Lists public parent and child matches.
+        /// </summary>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesPublicResponse> ListMatchesPublicAsync() {
+            var request = new ListMatchesPublicRequest();
+
+            return await ListMatchesPublicAsync( request );
+        }
+
+        /// <summary>
         /// Lists parent and child matches visible to the authenticated caller.
         /// </summary>
         /// <param name="requestParameters">ListMatchesAuthenticatedRequest object</param>
@@ -658,6 +681,31 @@ namespace Scopos.BabelFish.APIClients {
             await this.CallAPIAsync( requestParameters, response );
 
             return response;
+        }
+
+        /// <summary>
+        /// Lists parent and child matches visible to the authenticated caller.
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAuthenticatedResponse> ListMatchesAuthenticatedAsync( UserAuthentication credentials ) {
+            var request = new ListMatchesAuthenticatedRequest( credentials );
+
+            return await ListMatchesAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Lists matches, selecting public or authenticated behavior based on the request type.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesAbstractRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAbstractResponse> ListMatchesAsync( ListMatchesAbstractRequest requestParameters ) {
+            if (requestParameters is ListMatchesPublicRequest)
+                return await this.ListMatchesPublicAsync( (ListMatchesPublicRequest)requestParameters );
+            else if (requestParameters is ListMatchesAuthenticatedRequest)
+                return await this.ListMatchesAuthenticatedAsync( (ListMatchesAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion
 

@@ -2,6 +2,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -12,6 +13,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
     public class ListMatchesTests : BaseTestClass {
 
         private static readonly MatchID ParentMatchId_Invite = new MatchID( "1.900.2026041417335579.1" );
+        private static readonly MatchID ParentMatchId_Open = new MatchID( "1.900.2026041417335581.1" );
         private const string OwnerId = "OrionAcct000007";
 
         private static OrionMatchAPIClient CreateClient() {
@@ -65,6 +67,25 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
             Assert.IsTrue( response.MatchList.TotalCount >= response.MatchList.Items.Count );
             Assert.IsTrue( response.MatchList.Items.Any( x => x.MatchID.Equals( ParentMatchId_Invite ) ) );
             Assert.IsTrue( response.MatchList.Items.Any( x => x.MatchID.Equals( createdChild.MatchID ) ) );
+        }
+
+        [TestMethod]
+        public async Task ListMatchesPublicReturnsKnownPublicParentMatch() {
+            var client = CreateClient();
+            var request = new ListMatchesPublicRequest() {
+                ParentMatchId = ParentMatchId_Open,
+                MatchTypeFilter = "PARENT",
+                Visibility = VisibilityOption.PUBLIC,
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            Assert.IsNotNull( response.MatchList );
+            Assert.IsTrue( response.MatchList.Items.Count > 0 );
+            Assert.IsTrue( response.MatchList.Items.Any( x => x.MatchID.Equals( ParentMatchId_Open ) ) );
         }
 
         [TestMethod]

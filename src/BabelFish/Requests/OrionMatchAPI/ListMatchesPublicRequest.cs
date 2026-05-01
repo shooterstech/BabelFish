@@ -1,14 +1,12 @@
-using Scopos.BabelFish.Runtime.Authentication;
-
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
-    public class ListMatchesAuthenticatedRequest : ListMatchesAbstractRequest {
+    public class ListMatchesPublicRequest : ListMatchesAbstractRequest {
 
-        public ListMatchesAuthenticatedRequest( UserAuthentication credentials ) : base( "ListMatches", credentials ) {
+        public ListMatchesPublicRequest() : base( "ListMatches" ) {
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            return new ListMatchesAuthenticatedRequest( Credentials ) {
+            return new ListMatchesPublicRequest() {
                 OwnerId = OwnerId,
                 Visibility = Visibility,
                 ShowOnSearch = ShowOnSearch,
