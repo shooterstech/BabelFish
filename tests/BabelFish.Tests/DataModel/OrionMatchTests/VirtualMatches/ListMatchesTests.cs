@@ -3,8 +3,10 @@ using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
@@ -24,6 +26,14 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
 
         private static string UniqueName( string prefix ) {
             return $"{prefix} {DateTime.UtcNow:yyyyMMddHHmmssfff}";
+        }
+
+        private static void AssertEveryMatchHasMatchingCourseOfFire( ListMatchesAbstractResponse response, Func<CourseOfFireStructureAbbr, bool> predicate ) {
+            Assert.IsNotNull( response.MatchList );
+            Assert.IsTrue( response.MatchList.Items.Count > 0 );
+            Assert.IsTrue(
+                response.MatchList.Items.All( x => x.CoursesOfFire.Any( predicate ) ),
+                "Expected every returned match to include at least one matching course of fire." );
         }
 
         private static async Task<UserAuthentication> AuthenticateAsync() {
@@ -56,7 +66,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
             var request = new ListMatchesAuthenticatedRequest( userAuthentication ) {
                 ParentMatchId = ParentMatchId_Invite,
                 OwnerId = OwnerId,
-                Limit = 25,
+                Limit = 200,
                 IgnoreInMemoryCache = true
             };
 
@@ -89,6 +99,90 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         }
 
         [TestMethod]
+        public async Task ListMatchesPublicDisciplineFilterReturnsOnlyMatchingCoursesOfFire() {
+            var client = CreateClient();
+            var request = new ListMatchesPublicRequest() {
+                Discipline = DisciplineType.RIFLE,
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            AssertEveryMatchHasMatchingCourseOfFire( response, cof => cof.Discipline == DisciplineType.RIFLE );
+        }
+
+        [TestMethod]
+        public async Task ListMatchesPublicCourseOfFireDefinitionFilterReturnsOnlyMatchingCoursesOfFire() {
+            var client = CreateClient();
+            var courseOfFireDefinition = SetName.Parse( "v1.0:usas:Air Pistol 60 Shots", true );
+            var request = new ListMatchesPublicRequest() {
+                MatchTypeFilter = "PARENT",
+                CourseOfFireDefinition = courseOfFireDefinition,
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            AssertEveryMatchHasMatchingCourseOfFire( response, cof => cof.CourseOfFireDef.Equals( courseOfFireDefinition ) );
+        }
+
+        [TestMethod]
+        public async Task ListMatchesPublicTargetCollectionFilterReturnsOnlyMatchingCoursesOfFire() {
+            var client = CreateClient();
+            var request = new ListMatchesPublicRequest() {
+                MatchTypeFilter = "PARENT",
+                TargetCollectionName = "10m Air Rifle",
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            AssertEveryMatchHasMatchingCourseOfFire( response, cof => cof.TargetCollectionName == "10m Air Rifle");
+        }
+
+        [TestMethod]
+        public async Task ListMatchesPublicHistoricalDateWindowReturnsMatchesWithinRequestedWindow() {
+            var client = CreateClient();
+            var startDate = new DateTime( 2022, 1, 1 );
+            var endDate = new DateTime( 2022, 12, 31 );
+            var request = new ListMatchesPublicRequest() {
+                StartDate = startDate,
+                EndDate = endDate,
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            Assert.IsNotNull( response.MatchList );
+            Assert.IsTrue( response.MatchList.Items.Count > 0 );
+            Assert.IsTrue( response.MatchList.Items.All( x => x.StartDate >= startDate ) );
+            Assert.IsTrue( response.MatchList.Items.All( x => x.EndDate <= endDate ) );
+        }
+
+        [TestMethod]
+        public async Task ListMatchesPublicInvalidMatchTypeReturnsBadRequest() {
+            var client = CreateClient();
+            var request = new ListMatchesPublicRequest() {
+                MatchTypeFilter = "BOTH",
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.BadRequest, response.RestApiStatusCode );
+            Assert.IsTrue( response.MessageResponse.Message.Any( x => x.Contains( "Invalid match-type", StringComparison.OrdinalIgnoreCase ) ) );
+        }
+
+        [TestMethod]
         public async Task ListMatchesAuthenticatedChildFilterReturnsCreatedChildAndNotParentMatch() {
             var client = CreateClient();
             var userAuthentication = await AuthenticateAsync();
@@ -100,7 +194,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
                 MatchTypeFilter = "child",
                 MemberPolicy = MemberPolicyOption.INVITE,
                 ApprovalStatus = createdChild.ApprovalStatus,
-                Limit = 25,
+                Limit = 200,
                 IgnoreInMemoryCache = true
             };
 

@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// The SetName of the <see cref="CourseOfFire"/> that this CourseOfFireStructure will fire (or has fired).
         /// This allows for easy access to the CourseOfFire information when working with a CourseOfFireStructureAbbr.
         /// </summary>
-        public SetName CourseOfFireRef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
 
         /// <summary>
         /// The date that this <see cref="CourseOfFireStructure"/> starts firing. 
@@ -78,7 +78,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc/>
         public Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
-            return DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireRef );
+            return DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
         }
     }
 }
