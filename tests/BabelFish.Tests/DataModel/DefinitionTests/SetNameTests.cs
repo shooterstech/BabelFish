@@ -65,20 +65,23 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         /// Tests that the parse method throws an exception if the passed in set name is not in the correct format and that the exception is of the correct type.
         /// </summary>
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
         public void BadSetNameFormatTwo() {
 
-            var setName = SetName.Parse( "not a real set name", true );
+            Assert.Throws<ArgumentException>( () => {
+
+                var setName = SetName.Parse( "not a real set name", true );
+            } );
         }
 
         /// <summary>
         /// Tests that the SetName.Parse method throws an ArgumentNullException when a null value is provided as input.
         /// </summary>
         [TestMethod]
-        [ExpectedException( typeof( ArgumentNullException ) )]
         public void BadSetNameFormatThree() {
 
-            var setName = SetName.Parse( null, true );
+            Assert.Throws<ArgumentNullException>( () => {
+                var setName = SetName.Parse( null, true );
+            } );
         }
 
         /// <summary>

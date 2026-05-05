@@ -168,7 +168,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 TournamentId = UnknownTournamentId()
             };
 
-            Assert.ThrowsException<ArgumentException>( () => {
+            Assert.Throws<ArgumentException>( () => {
                 _ = request.QueryParameters;
             } );
         }

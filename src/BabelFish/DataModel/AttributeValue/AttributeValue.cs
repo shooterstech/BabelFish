@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.Converters.Newtonsoft;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
@@ -236,19 +237,30 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// Caller is responsible for casting to the approrpirate .NET type.
         /// </summary>
         /// <param name="fieldName">Valid FieldName as defined in AttributeDefintion</param>
+        /// <param name="formatForSerialization">Indicates whether the value should be formatted for serialization.
+        /// Would normally only be true if being called from <see cref="AttributeValueDataPacketConverter"/></param>
         /// <returns>object to be type cast</returns>
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is a multi-value attribute.</exception>
-        public dynamic GetFieldValue( string fieldName ) {
+        public dynamic GetFieldValue( string fieldName, bool formatForSerialization = false ) {
             AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
             if (this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' in {SetName}", _logger );
             } else {
-                if (_attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].ContainsKey( fieldName ))
-                    return _attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName];
+                if (_attributeValues[KEY_FOR_SINGLE_ATTRIBUTES].ContainsKey( fieldName )) {
+                    if (formatForSerialization) {
+                        return attributeField.ValueForSerialization( _attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName] );
+                    } else {
+                        return _attributeValues[KEY_FOR_SINGLE_ATTRIBUTES][fieldName];
+                    }
+                }
             }
 
-            return attributeField.BaseGetDefaultValue();
+            if (formatForSerialization) {
+                return attributeField.ValueForSerialization( attributeField.BaseGetDefaultValue() );
+            } else {
+                return attributeField.BaseGetDefaultValue();
+            }
         }
 
         /// <summary>
@@ -258,31 +270,48 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// </summary>
         /// <param name="fieldName">Valid FieldName from GetAttributeDefintionFields()</param>
         /// <param name="fieldKey">Valid FieldKey string from GetFieldKeys()</param>
+        /// <param name="formatForSerialization">Indicates whether the value should be formatted for serialization.
+        /// Would normally only be true if being called from <see cref="AttributeValueDataPacketConverter"/></param>
         /// <returns>object to be Type cast; null object if not found</returns>
         /// <exception cref="AttributeValueException">Thrown when the passed in fieldName is unknown, or the Attribute is not a multi-value attribute.</exception>
-        public dynamic GetFieldValue( string fieldName, string fieldKey ) {
+        public dynamic GetFieldValue( string fieldName, string fieldKey, bool formatForSerialization = false ) {
             AttributeFieldBase attributeField = GetAttributeField( fieldName );
 
             if (!this.IsMultipleValue) {
                 throw new AttributeValueException( $"Querying a single value for a the multi-value '{fieldName}' with key '{fieldKey}' in {SetName}", _logger );
             } else {
-                if (_attributeValues.ContainsKey( fieldKey ) && _attributeValues[fieldKey].ContainsKey( fieldName ))
-                    return _attributeValues[fieldKey][fieldName];
+                if (_attributeValues.ContainsKey( fieldKey ) && _attributeValues[fieldKey].ContainsKey( fieldName )) {
+                    if (formatForSerialization) {
+                        return attributeField.ValueForSerialization( _attributeValues[fieldKey][fieldName] );
+                    } else {
+                        return _attributeValues[fieldKey][fieldName];
+                    }
+                }
             }
 
-            return attributeField.BaseGetDefaultValue();
+            if (formatForSerialization) {
+                return attributeField.ValueForSerialization( attributeField.BaseGetDefaultValue() );
+            } else {
+                return attributeField.BaseGetDefaultValue();
+            }
         }
 
         /// <summary>
         /// Special case for returning a field value when the Attribute is a Simple Attribute.
         /// </summary>
+        /// <param name="formatForSerialization">Indicates whether the value should be formatted for serialization.
+        /// Would normally only be true if being called from <see cref="AttributeValueDataPacketConverter"/></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Thrown when the Attribute is not a simple attribute.</exception>
-        public dynamic GetFieldValue() {
+        public dynamic GetFieldValue( bool formatForSerialization = false ) {
 
             if (this._definition.SimpleAttribute) {
                 var firstField = this._definition.Fields[0];
-                return this.GetFieldValue( firstField.FieldName );
+                if (formatForSerialization) {
+                    return firstField.ValueForSerialization( this.GetFieldValue( firstField.FieldName ) );
+                } else {
+                    return this.GetFieldValue( firstField.FieldName );
+                }
             }
 
             throw new ArgumentException( "Can not call .GetFieldValue() (without arguments) unless the Attribute is a Simple Attribute. " );

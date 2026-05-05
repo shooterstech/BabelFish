@@ -123,7 +123,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                         writer.WriteStartObject();
                         foreach (var field in value.AttributeValue.GetDefintionFields()) {
                             writer.WritePropertyName( field.FieldName );
-                            JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName, fieldKey ), options );
+                            JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName, fieldKey, true ), options );
                         }
                         writer.WriteEndObject();
                     }
@@ -134,7 +134,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 writer.WriteStartObject();
                 foreach (var field in value.AttributeValue.GetDefintionFields()) {
                     writer.WritePropertyName( field.FieldName );
-                    JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName ), options );
+                    JsonSerializer.Serialize( writer, value.AttributeValue.GetFieldValue( field.FieldName, true ), options );
                 }
                 writer.WriteEndObject();
             }

@@ -56,33 +56,41 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         }
 
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
         public void BadVersionString1() {
-            var v = new DefinitionVersion( "" );
+            Assert.Throws<ArgumentException>( () => {
+                var v = new DefinitionVersion( "" );
+            } );
         }
 
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
         public void BadVersionString2() {
-            var v = new DefinitionVersion( null );
+
+            Assert.Throws<ArgumentException>( () => {
+                var v = new DefinitionVersion( null );
+            } );
         }
 
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
         public void BadVersionString3() {
-            var v = new DefinitionVersion( "3.0" );
+
+            Assert.Throws<ArgumentException>( () => {
+                var v = new DefinitionVersion( "3.0" );
+            } );
         }
 
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
         public void BadVersionString4() {
-            var v = new DefinitionVersion( "0.0" );
+            Assert.Throws<ArgumentException>( () => {
+                var v = new DefinitionVersion( "0.0" );
+            } );
         }
 
         [TestMethod]
-        [ExpectedException( typeof( ArgumentException ) )]
         public void BadVersionString5() {
-            var v = new DefinitionVersion( "not a real version string" );
+
+            Assert.Throws<ArgumentException>( () => {
+                var v = new DefinitionVersion( "not a real version string" );
+            } );
         }
 
         [TestMethod]

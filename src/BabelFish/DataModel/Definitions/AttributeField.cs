@@ -60,7 +60,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public abstract class AttributeFieldBase : IReconfigurableRulebookObject {
 
-        protected Logger Logger = LogManager.GetCurrentClassLogger();
+        protected Logger _logger = LogManager.GetCurrentClassLogger();
 
         public AttributeFieldBase() {
             Required = false;
@@ -141,6 +141,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return $"'{FieldName}' of type {ValueType} KEY VALUE";
             else
                 return $"'{FieldName}' of type {ValueType}";
+        }
+
+        /// <summary>
+        /// When a AttributeValue is being serialized to be sent to the API, this function is called on each field value to allow for any necessary transformations before serialization.
+        /// For example, if the field is a date, this function could be used to convert the date into a string format that the API expects.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public virtual dynamic ValueForSerialization( dynamic value ) {
+            return value;
         }
 
         internal abstract dynamic DeserializeFromJsonElement( G_STJ.JsonElement value );

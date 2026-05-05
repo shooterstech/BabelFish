@@ -55,14 +55,13 @@ namespace Scopos.BabelFish.Tests.Authentication {
         /// Tests that an exception is thrown if the wrong password is used.
         /// </summary>
         [TestMethod]
-        [ExpectedException( typeof( Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException ) )]
         public async Task WrongPassword() {
-
-            //Should throw a NotAuthroizedException
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev7Credentials.Username,
-                "not the right password" );
-            await userAuthentication.InitializeAsync();
+            await Assert.ThrowsAsync<NotAuthorizedException>( async () => {
+                var userAuthentication = new UserAuthentication(
+                    Constants.TestDev7Credentials.Username,
+                    "not the right password" );
+                await userAuthentication.InitializeAsync();
+            } );
         }
 
         [TestMethod]
