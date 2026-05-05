@@ -41,17 +41,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         /// <summary>
-        /// When a List DateTime value is being serialized to be sent to the API, we need to convert it into a string format that the API expects.
+        /// When a List of DateTime value is being serialized to be sent to the API, we need to convert it into a string format that the API expects.
         /// This method handles that conversion, specifically to the "yyyy-MM-dd" format for dates.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
         public override dynamic ValueForSerialization( dynamic value ) {
-            // Convert the DateTime value into a string format that the API expects. Assuming the API expects dates in "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffffffK" format, we can do the following:
+            // Convert the DateTime value into a string format that the API expects. Assuming the API expects dates in yyyy-MM-dd format, we can do the following:
             if (value is List<DateTime> dateTimeValues) {
                 var serializedValues = new List<string>();
                 foreach (var dateTimeValue in dateTimeValues) {
-                    serializedValues.Add( dateTimeValue.ToString( DateTimeFormats.DATETIME_FORMAT ) );
+                    serializedValues.Add( dateTimeValue.ToString( DateTimeFormats.DATE_FORMAT ) );
                 }
                 return serializedValues;
             }

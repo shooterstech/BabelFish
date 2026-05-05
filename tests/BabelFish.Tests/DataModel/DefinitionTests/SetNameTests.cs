@@ -79,7 +79,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         [TestMethod]
         public void BadSetNameFormatThree() {
 
-            Assert.Throws<ArgumentException>( () => {
+            Assert.Throws<ArgumentNullException>( () => {
                 var setName = SetName.Parse( null, true );
             } );
         }
