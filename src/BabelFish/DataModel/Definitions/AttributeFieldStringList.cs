@@ -1,4 +1,4 @@
-﻿
+
 
 using System.ComponentModel;
 
@@ -39,13 +39,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     if (v.ValueKind == G_STJ.JsonValueKind.String) {
                         list.Add( v.GetString() );
                     } else {
-                        Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                        _logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
                         //Ignore adding anything to the list
                     }
                 }
                 return list;
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                _logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
                 return GetDefaultValue();
             }
         }

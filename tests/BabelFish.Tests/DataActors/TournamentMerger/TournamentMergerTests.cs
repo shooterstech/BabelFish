@@ -12,6 +12,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
     [TestClass]
     public class TournamentMergerTests : BaseTestClass {
 
+        [Ignore]
         [TestMethod]
         public async Task EriksPlayground() {
 

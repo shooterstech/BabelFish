@@ -1,4 +1,4 @@
-﻿
+
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class AttributeFieldDateTime : AttributeField<DateTime> {
 
@@ -15,19 +15,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-		[G_NS.JsonProperty( Order = 11 )]
-		public DateTime ? DefaultValue { get; set; } = null;
+        [G_NS.JsonProperty( Order = 11 )]
+        public DateTime? DefaultValue { get; set; } = null;
 
 
-		[G_NS.JsonProperty( Order = 12 )]
-		public AttributeValidationDateTime Validation = new AttributeValidationDateTime();
+        [G_NS.JsonProperty( Order = 12 )]
+        public AttributeValidationDateTime Validation = new AttributeValidationDateTime();
 
         internal override dynamic DeserializeFromJsonElement( G_STJ.JsonElement value ) {
             if (value.ValueKind == G_STJ.JsonValueKind.String) {
                 //EKA NOTE Jan 2025: May need a JsonSerializerOptions specifying a custom DateTiem format
                 return G_STJ.JsonSerializer.Deserialize<DateTime>( value );
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                _logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
                 return GetDefaultValue();
             }
         }
@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (DefaultValue == null)
                 return DateTime.UtcNow;
 
-            return (DateTime) DefaultValue;
+            return (DateTime)DefaultValue;
         }
 
         /// <inheritdoc />
@@ -46,6 +46,23 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return true;
 
             return Validation.ValidateFieldValue( value );
+        }
+
+        /// <summary>
+        /// When a DateTime value is being serialized to be sent to the API, we need to convert it into a string format that the API expects.
+        /// This method handles that conversion, specifically to the "yyyy-MM-ddTHH:mm:ss.ffffffK" format for dates.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override dynamic ValueForSerialization( dynamic value ) {
+            // Convert the DateTime value into a string format that the API expects. Assuming the API expects dates in "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'ffffffK" format, we can do the following:
+            if (value is DateTime dateTimeValue) {
+                return dateTimeValue.ToString( DateTimeFormats.DATETIME_FORMAT );
+            }
+
+            // We shouldn't ever get here, b/c the value should always be a DateTime instance. But if we do, we can log an error and return the value as-is.
+            _logger.Warn( $"Value for serialization is not a DateTime instance. Value: {value}. Returning value as-is." );
+            return value;
         }
     }
 

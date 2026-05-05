@@ -1,12 +1,8 @@
-﻿using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.Helpers;
+using Newtonsoft.Json.Converters;
 
 namespace Scopos.BabelFish.Converters.Newtonsoft {
 
-    public class DateConverter  : IsoDateTimeConverter {
+    public class DateConverter : IsoDateTimeConverter {
 
         public DateConverter() {
             base.DateTimeFormat = DateTimeFormats.DATE_FORMAT;

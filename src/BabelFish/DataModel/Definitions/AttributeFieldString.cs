@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (value.ValueKind == G_STJ.JsonValueKind.String) {
                 return value.GetString();
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                _logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
                 return GetDefaultValue();
             }
         }

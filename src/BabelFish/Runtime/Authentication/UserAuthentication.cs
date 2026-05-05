@@ -477,7 +477,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                 var getCredentialsForIdentityResponse = await identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
 
-                IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration;
+                IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration ?? DateTime.UtcNow;
                 AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId;
                 SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey;
                 SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
@@ -515,7 +515,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             int numberOfDays = 45;
 
             foreach (var deviceType in listDevicesResponse.Devices) {
-                if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).Value.TotalDays > numberOfDays) {
                     var device = new CognitoDevice( deviceType, this.CognitoUser );
                     await device.ForgetDeviceAsync();
                     count++;
@@ -526,7 +526,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 listDevicesResponse = await this.CognitoUser.ListDevicesV2Async( 60, listDevicesResponse.PaginationToken );
 
                 foreach (var deviceType in listDevicesResponse.Devices) {
-                    if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                    if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).Value.TotalDays > numberOfDays) {
                         var device = new CognitoDevice( deviceType, this.CognitoUser );
                         await device.ForgetDeviceAsync();
                         count++;

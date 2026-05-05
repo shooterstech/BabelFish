@@ -206,7 +206,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
 
             //Should throw an exception if only Longitude is specified (and not Latitude or Distance).
             request.Longitude = 11.234;
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>( async () => {
+            await Assert.ThrowsAsync<ArgumentNullException>( async () => {
                 var _1 = await client.GetMatchSearchPublicAsync( request );
             } );
 
@@ -214,7 +214,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
             //Should throw an exception if only Longitude and Latitude is specified (and not Distance).
             request.Longitude = 11.234;
             request.Latitude = 12.345;
-            await Assert.ThrowsExceptionAsync<ArgumentNullException>( async () => {
+            await Assert.ThrowsAsync<ArgumentNullException>( async () => {
                 var _2 = await client.GetMatchSearchPublicAsync( request );
             } );
 

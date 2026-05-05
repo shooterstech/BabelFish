@@ -171,7 +171,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
                setNameSocialMedia
             };
 
-            var socialMediaAttrValueToSet = await Scopos.BabelFish.DataModel.AttributeValue.AttributeValue.CreateAsync( setNameSocialMedia );
+            var socialMediaAttrValueToSet = await AttributeValue.CreateAsync( setNameSocialMedia );
             socialMediaAttrValueToSet.SetFieldValue( "ProfileName", "myFacebookAccount", "FACEBOOK" );
             socialMediaAttrValueToSet.SetFieldValue( "ProfileName", "myInstagramAccount", "INSTAGRAM" );
 
@@ -185,15 +185,15 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
                 AttributeValuesToUpdate = new List<AttributeValueDataPacket> { socialMediaDataPacketToSet }
             };
 
-            await client.SetAttributeValueAuthenticatedAsync( setSocialMediaRequest );
+            var setResponse = await client.SetAttributeValueAuthenticatedAsync( setSocialMediaRequest );
 
 
             //Now read the attribute value we just set, using the public API
             var taskResponse = client.GetAttributeValuePublicAsync( myAttributes, Constants.TestDev7UserId );
-            var response = taskResponse.Result;
+            var response = await taskResponse;
 
             //The overall status code for the call should be a 200 (OK).
-            Assert.AreEqual( System.Net.HttpStatusCode.OK, response.RestApiStatusCode );
+            Assert.IsTrue( response.HasOkStatusCode );
 
             //The returned data should have one AttriuteValueDataPacket.
             var attributeValueDataPackets = response.AttributeValues;

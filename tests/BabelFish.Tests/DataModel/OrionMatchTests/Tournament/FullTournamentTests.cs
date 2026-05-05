@@ -1049,7 +1049,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
                 ApprovalStatus = ApprovalStatus.UNKNOWN
             };
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>( () => {
+            Assert.Throws<ArgumentOutOfRangeException>( () => {
                 _ = patchRequest.QueryParameters;
             } );
         }

@@ -99,7 +99,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             var cofSpec = new IsCourseOfFireEventTreeValid();
             bool sat = await cofSpec.IsSatisfiedByAsync( definition );
-            Assert.IsTrue( sat );
+            Assert.IsTrue( sat, string.Join( ", ", cofSpec.Messages ) );
         }
 
         [TestMethod]
