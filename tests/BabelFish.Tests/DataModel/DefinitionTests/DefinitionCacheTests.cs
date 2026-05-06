@@ -324,10 +324,12 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
 
         [TestMethod]
         public async Task EriksPlayground() {
-            var setName = SetName.Parse( "v1.0:orion:Test Informal Practice Air Rifle" );
-            var definition = await DefinitionCache.GetDefinitionAsync( DefinitionType.COURSEOFFIRE, setName );
+            var setName = SetName.Parse( "v1.0:orion:Test Attribute" );
+            var definition = await DefinitionCache.GetDefinitionAsync( DefinitionType.ATTRIBUTE, setName );
+            var def2 = await DefinitionCache.GetAttributeDefinitionAsync( setName );
 
-            Assert.AreEqual( DefinitionType.COURSEOFFIRE, definition.Type );
+            Assert.AreEqual( DefinitionType.ATTRIBUTE, definition.Type );
+            Assert.AreEqual( DefinitionType.ATTRIBUTE, def2.Type );
         }
     }
 }
