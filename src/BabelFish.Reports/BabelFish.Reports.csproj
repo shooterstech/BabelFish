@@ -43,7 +43,8 @@
     <PackageReference Include="Svg.Skia" Version="4.6.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.0" />
-    <PackageReference Include="System.Text.Json" Version="10.0.0" />
+      <!-- May 2026 Upgrading System.Text.Json to 10.0.0 caused downstream issues, especially with Definition Composer. Intentionnally pinned to version 9.0.0 -->
+      <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
   </ItemGroup>

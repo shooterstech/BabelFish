@@ -129,6 +129,20 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             candidate.PaperTargetLabels[0].ShotsPerBull = 1;
             Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
 
+            //This should fail because a corresponding Singular doesn't exist with a StageLabel of "S"
+            candidate.PaperTargetLabels[0].Labels.Add( new BarcodeLabel() {
+                StageLabel = "S",
+                Series = new ValueSeries( "1" ),
+                LabelSize = BarcodeLabelSize.OL385
+            } );
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
+
+            // Now should pass as we have a Singular with a StageLabel of "S"
+            candidate.Singulars.Add( new Singular() {
+                StageLabel = "S",
+            } );
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+
         }
     }
 }
