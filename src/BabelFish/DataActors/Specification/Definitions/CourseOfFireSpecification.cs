@@ -958,8 +958,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             var singularLabels = new HashSet<string>();
             singularLabels.Add( string.Empty ); //Add the empty string as an acceptable value
-            foreach (var singular in candidate.Singulars)
-                singularLabels.Add( singular.StageLabel );
+            foreach (var singular in candidate.Singulars) {
+                if (singular.StageLabel is not null) {
+                    singularLabels.Add( singular.StageLabel );
+                }
+            }
 
             var existingNames = new HashSet<string>();
             var index = 0;
@@ -973,7 +976,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     Messages.Add( $"Each PaperTargetLabel must have a unique name. The name '{ptl.PaperTargetLabelName}' is duplicated." );
                 }
 
-                // Shots per bull must be greater than 0.
+                // Shots per bull must be greater than or equal to 0. Usually 0 is reserved for scorecards.
                 if (ptl.ShotsPerBull < 0) {
                     valid = false;
                     Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has ShotsPerBull value of {ptl.ShotsPerBull}. This must be greater than or equal to 0." );

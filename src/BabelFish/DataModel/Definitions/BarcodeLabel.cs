@@ -21,7 +21,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string StageLabel { get; set; } = string.Empty;
 
         /// <summary>
-        /// The series numbers to print on the barcode labels. Must be formated as a ValueSeries
+        /// The series numbers to print on the barcode labels. Must be formated as a ValueSeries.
+        /// <para>A value > 0 means the bar code label is specific to a series (this is the normal case).
+        /// A value of 0 means the bar code label is generic and can be used for any series.</para>
         /// </summary>
         [DefaultValue( "1" )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]

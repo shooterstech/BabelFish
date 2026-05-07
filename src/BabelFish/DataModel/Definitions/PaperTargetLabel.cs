@@ -36,6 +36,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// The number of shots an athlete should fire per aiming bull and the number of shots the scoring algorithm is expecting to find.
+        /// <para>Value must be greater than or equal to 0. A value of 0 is allowed and usually is reserved for scorecards.</para>
         /// </summary>
         [DefaultValue( 1 )]
         [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
