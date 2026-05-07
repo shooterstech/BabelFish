@@ -955,6 +955,15 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 Messages.Add( "At least one PaperTargetLabel is required if one or more RangeScripts is designed for paper." );
             }
 
+
+            var singularLabels = new HashSet<string>();
+            singularLabels.Add( string.Empty ); //Add the empty string as an acceptable value
+            foreach (var singular in candidate.Singulars) {
+                if (singular.StageLabel is not null) {
+                    singularLabels.Add( singular.StageLabel );
+                }
+            }
+
             var existingNames = new HashSet<string>();
             var index = 0;
             foreach (var ptl in candidate.PaperTargetLabels) {
@@ -967,24 +976,19 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     Messages.Add( $"Each PaperTargetLabel must have a unique name. The name '{ptl.PaperTargetLabelName}' is duplicated." );
                 }
 
-                // Shots per bull must be greater than 0.
-                if (ptl.ShotsPerBull <= 0) {
+                // Shots per bull must be greater than or equal to 0. Usually 0 is reserved for scorecards.
+                if (ptl.ShotsPerBull < 0) {
                     valid = false;
-                    Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has ShotsPerBull value of {ptl.ShotsPerBull}. This must be greater than 0." );
+                    Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has ShotsPerBull value of {ptl.ShotsPerBull}. This must be greater than or equal to 0." );
                 }
 
                 var labelIndex = 0;
                 foreach (var label in ptl.Labels) {
-                    // Each BarcodeLabel must have a non empty StageLabel.
-                    if (string.IsNullOrEmpty( label.StageLabel )) {
+                    // Each BarcodeLabel must have an empty string for a StageLabel, or a value found in a Singular.
+                    if (!singularLabels.Contains( label.StageLabel )) {
                         valid = false;
-                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a StageLabel with an empty name." );
-                    }
-
-                    // The StageLabel may only be at most 2 character.
-                    if (label.StageLabel.Length > 2) {
-                        valid = false;
-                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a BarcodeLabel with a StageLabel longer than 2 character. StageLabels must be at most 2 characters, and are usually only 1 character." );
+                        var validValues = string.Join( ", ", singularLabels.Select( s => $"'{s}'" ) );
+                        Messages.Add( $"The PaperTargetLabel '{ptl.PaperTargetLabelName}' has a StageLabel with a value not found in any Singular. The acceptable values are: {validValues}." );
                     }
 
                     labelIndex++;

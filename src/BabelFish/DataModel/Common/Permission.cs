@@ -16,8 +16,16 @@ namespace Scopos.BabelFish.DataModel.Common {
          *   from permissions
          */
 
-        public static readonly Permission CLUB_GET_DETAIL = new Permission( "club.get_detail", "Get club detail" );
+        public static readonly Permission DEFAULT = new Permission( "none", "A default permission that doesn't grant anything." );
+
+        public static readonly Permission CLUB_GET_DETAIL = new Permission( "club.get_detail", "Read general information about a club." );
+        public static readonly Permission CLUB_MANAGE_ADMIN = new Permission( "club.manage_admin", "Ability to specify a club member as an admin of the club. " );
+        public static readonly Permission CLUB_MANAGE_MEMBER = new Permission( "club.manage_member", "Ability to add, remove, update, or delete club members. Does not include assigning the admin role to a member." );
+        public static readonly Permission CLUB_MANAGE_TEAMS = new Permission( "club.manage_teams", "May view and edit Club Teams." );
+        public static readonly Permission CLUB_PAYER = new Permission( "club.payer", "May make payments to renew a Club's Orion licenses, subscriptions, and warrentees." );
         public static readonly Permission CLUB_READ_LICENSE = new Permission( "club.read_license", "Read a club license" );
+        public static readonly Permission CLUB_READ_TEAMS = new Permission( "club.read_teams", "May view Club Teams." );
+
         public static readonly Permission MATCH_CHILD_ACCEPT_INVITE = new Permission( "match_child.accept_invite", "Accept the invite to join a parent match as a child" );
         public static readonly Permission MATCH_CHILD_READ = new Permission( "match_child.read", "Read child match" );
         public static readonly Permission MATCH_PARENT_CREATE = new Permission( "match_parent.create", "Create parent match" );
@@ -25,7 +33,6 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission MATCH_PARENT_EDIT = new Permission( "match_parent.edit", "Modify parent match" );
         public static readonly Permission MATCH_PARENT_INVITE = new Permission( "match_parent.invite", "Invite others to join the parent match. This is equivalent to creating a child match of the parent." );
         public static readonly Permission MATCH_PARENT_READ = new Permission( "match_parent.read", "Read parent match" );
-        public static readonly Permission DEFAULT = new Permission( "none", "A default permission that doesn't grant anything." );
         public static readonly Permission TOURNAMENT_ADD_MEMBER = new Permission( "tournament.add_member", "Invite others to join a tournament" );
         public static readonly Permission TOURNAMENT_CREATE = new Permission( "tournament.create", "Create tournament" );
         public static readonly Permission TOURNAMENT_DELETE = new Permission( "tournament.delete", "Delete tournament" );

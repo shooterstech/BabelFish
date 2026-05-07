@@ -65,9 +65,9 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                         var nextObject = new JObject();
                         foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
                             if (!field.MultipleValues) {
-                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key );
+                                nextObject[field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key, true );
                             } else {
-                                nextObject[field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key ) );
+                                nextObject[field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, key, true ) );
                             }
                         }
                         ((JArray)o["AttributeValue"]).Add( nextObject );
@@ -76,9 +76,9 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                     o["AttributeValue"] = new JObject();
                     foreach (var field in attrValueDataPacket.AttributeValue.GetDefintionFields()) {
                         if (!field.MultipleValues) {
-                            o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName );
+                            o["AttributeValue"][field.FieldName] = attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, true );
                         } else {
-                            o["AttributeValue"][field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName ) );
+                            o["AttributeValue"][field.FieldName] = JArray.FromObject( attrValueDataPacket.AttributeValue.GetFieldValue( field.FieldName, true ) );
                         }
                     }
                 }

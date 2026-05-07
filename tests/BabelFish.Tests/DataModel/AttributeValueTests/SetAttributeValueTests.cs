@@ -73,6 +73,8 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
             var setResponse = taskSetResponse.Result;
             //Check that the response was successful.
             Assert.AreEqual( System.Net.HttpStatusCode.OK, setResponse.RestApiStatusCode );
+            var testAttrSetResponse = setResponse.SetAttributeValues.Find( x => x.AttributeValue.Equals( setNameTestAttriubte ) );
+            Assert.AreEqual( "200", testAttrSetResponse.StatusCode, string.Join( ",", testAttrSetResponse.Message ) );
 
             //Now, for testing, re-get the attribute value and check it's values.
             //Will use a GetAttributeValueAuthenticatedRequest objectin this unit test, so I can set ReturnDefaultvalues to true (it is by default false).

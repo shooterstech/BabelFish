@@ -1,4 +1,4 @@
-﻿
+
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class AttributeFieldFloatList : AttributeField<List<float>> {
 
@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 //EKA NOTE Jan 2025: May need a JsonSerializerOptions specifying a custom DateTiem format
                 return G_STJ.JsonSerializer.Deserialize<List<float>>( value );
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                _logger.Error( $"Got passed an unexpected JsonElement of type {value.ValueKind}." );
                 return GetDefaultValue();
             }
         }
