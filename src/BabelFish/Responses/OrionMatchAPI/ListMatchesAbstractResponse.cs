@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
                 nextRequest.Token = Value.MatchList.NextToken;
                 return nextRequest;
             } else {
-                throw new ArgumentException( $"Parameter Request is of unexpected type ${Request.GetType()}." );
+                throw new ArgumentException( $"Parameter Request is of unexpected type {Request.GetType()}." );
             }
         }
 
