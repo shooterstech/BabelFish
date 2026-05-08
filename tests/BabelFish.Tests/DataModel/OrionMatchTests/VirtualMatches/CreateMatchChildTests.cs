@@ -120,7 +120,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         }
 
         [TestMethod]
-        public async Task CreateMatchChildForInvitePolicyWhenCallerHasOwnerPermissionOnlyReturnsForbidden() {
+        public async Task CreateMatchChildForInvitePolicyWhenCallerHasOwnerPermissionOnlyReturnsUnauthorized() {
             // Intention: verify INVITE policy rejects a caller who lacks parent match permission even when they have owner-id permission.
             var client = CreateClient();
             var userAuthentication = await AuthenticateAsync();
@@ -188,7 +188,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         }
 
         [TestMethod]
-        public async Task CreateMatchChildForRequestPolicyWhenCallerHasNoPermissionsReturnsForbidden() {
+        public async Task CreateMatchChildForRequestPolicyWhenCallerHasNoPermissionsReturnsUnauthorized() {
             // Intention: verify REQUEST policy rejects a caller who lacks both parent match permission and owner-id permission.
             var client = CreateClient();
             var userAuthentication = await AuthenticateAsyncNoPermissions();
@@ -205,7 +205,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         }
 
         [TestMethod]
-        public async Task CreateMatchChildForOpenPolicyWhenCallerHasNoPermissionsReturnsForbidden() {
+        public async Task CreateMatchChildForOpenPolicyWhenCallerHasNoPermissionsReturnsUnauthorized() {
             // Intention: verify OPEN policy rejects a caller who lacks both parent match permission and owner-id permission.
             var client = CreateClient();
             var userAuthentication = await AuthenticateAsyncNoPermissions();
@@ -248,7 +248,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
             var userAuthentication = CreateUninitializedAuthentication();
             MatchID nullParentMatchId = null!;
 
-            Assert.ThrowsException<ArgumentNullException>( () => {
+            Assert.Throws<ArgumentNullException>( () => {
                 _ = new CreateMatchChildAuthenticatedRequest(
                     userAuthentication,
                     nullParentMatchId,
@@ -268,7 +268,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
                 " ",
                 UniqueName( "BabelFish API Child Blank Owner Test" ) );
 
-            Assert.ThrowsException<ArgumentNullException>( () => {
+            Assert.Throws<ArgumentNullException>( () => {
                 _ = request.QueryParameters;
             } );
         }
@@ -284,7 +284,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
                 OwnerId,
                 " " );
 
-            Assert.ThrowsException<ArgumentNullException>( () => {
+            Assert.Throws<ArgumentNullException>( () => {
                 _ = request.QueryParameters;
             } );
         }

@@ -192,7 +192,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
 
             var request = new PatchMatchChildAuthenticatedRequest( userAuthentication, matchChild );
 
-            Assert.ThrowsException<ArgumentNullException>( () => {
+            Assert.Throws<ArgumentNullException>( () => {
                 _ = request.RelativePath;
             } );
         }
@@ -206,7 +206,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
 
             var request = new PatchMatchChildAuthenticatedRequest( userAuthentication, matchChild );
 
-            Assert.ThrowsException<ArgumentNullException>( () => {
+            Assert.Throws<ArgumentNullException>( () => {
                 _ = request.RelativePath;
             } );
         }
