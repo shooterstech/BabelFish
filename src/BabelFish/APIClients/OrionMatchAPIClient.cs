@@ -244,7 +244,7 @@ namespace Scopos.BabelFish.APIClients {
             else if (requestParameters is ListParentMatchChildrenAuthenticatedRequest)
                 return await this.ListParentMatchChildrenAuthenticatedAsync( (ListParentMatchChildrenAuthenticatedRequest)requestParameters );
             else
-                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
         }
 
         /// <summary>
