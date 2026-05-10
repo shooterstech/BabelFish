@@ -37,5 +37,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return this.DisplayName.GetHashCode();
             }
         }
+
+
+        /// <inheritdoc />
+        public override ulong CalculateChecksum() {
+            var combined = $"{DisplayName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var attributeValue in AttributeValues) {
+                hash ^= attributeValue.CalculateChecksum();
+            }
+
+            foreach (var teamMember in TeamMembers) {
+                hash ^= teamMember.CalculateChecksum();
+            }
+
+            foreach (var teamCaptain in TeamCaptains) {
+                hash ^= teamCaptain.CalculateChecksum();
+            }
+
+            return hash;
+        }
     }
 }

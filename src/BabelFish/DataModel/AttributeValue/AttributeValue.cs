@@ -1,11 +1,12 @@
 using System.Text.Json;
+using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
-    public class AttributeValue {
+    public class AttributeValue : ICheckSum {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -433,5 +434,26 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public override string ToString() {
             return $"{this.SetName} Attribute Value";
         }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            StringBuilder combined = new StringBuilder();
+            foreach (var attr in attributeValues) {
+                combined.Append( attr.Key );
+                foreach (var field in attr.Value) {
+                    combined.Append( field.Key );
+                    combined.Append( field.Value );
+                }
+            }
+
+            return Helpers.Common.Md5ToUlong( combined.ToString() );
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level object.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
     }
 }

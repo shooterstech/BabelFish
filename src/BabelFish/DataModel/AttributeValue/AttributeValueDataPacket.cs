@@ -1,3 +1,4 @@
+using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -9,7 +10,10 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// <seealso cref="AttributeDef"/> that defines the data, as well as the value <seealso cref="AttributeValue"/>
     /// </summary>
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
-    public abstract class AttributeValueDataPacket : IDeserializableAbstractClass, IGetAttributeDefinition {
+    public abstract class AttributeValueDataPacket :
+        IDeserializableAbstractClass,
+        IGetAttributeDefinition,
+        ICheckSum {
 
         public const int CONCRETE_CLASS_ID = 1;
 
@@ -80,5 +84,23 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// the Concrete class.
         /// </summary>
         public int ConcreteClassId { get; set; }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{AttributeDef}|{Visibility}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            if (AttributeValue is not null) {
+                hash ^= AttributeValue.CalculateChecksum();
+            }
+            return hash;
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
     }
 }

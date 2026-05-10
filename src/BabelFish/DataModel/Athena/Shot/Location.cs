@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+using BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataModel.Athena.Shot
-{
+namespace Scopos.BabelFish.DataModel.Athena.Shot {
     /// <summary>
     /// Represents the cartisian coordiantes of a shot.
     /// </summary>
 	[Serializable]
-	public class Location
-    {
+    public class Location : ICheckSum {
         /// <summary>
         /// The X cartesian coordinate, measured in mm
         /// </summary>
@@ -37,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <returns></returns>
         public double GetRadius() {
-            return Math.Sqrt(GetRadiusSquared());
+            return Math.Sqrt( GetRadiusSquared() );
         }
 
         /// <summary>
@@ -55,8 +48,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
             return (X).ToString( "0.00" );
         }
 
-        public string GetYToString() { 
-            return (Y).ToString( "0.00" ); 
+        public string GetYToString() {
+            return (Y).ToString( "0.00" );
         }
 
         /// <summary>
@@ -65,7 +58,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <returns></returns>
         public double GetAngle() {
             var xAbs = Math.Abs( X );
-            var yAbs = Math.Abs( Y );   
+            var yAbs = Math.Abs( Y );
 
             //Edge case of very near center of target
             if (xAbs < .0001 && yAbs < .0001)
@@ -80,14 +73,14 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
                 return (3d * Math.PI / 2.0d);
 
             //Edge case of Y is very near 0 and X is positive
-            if (yAbs < .0001 && X  > 0)
+            if (yAbs < .0001 && X > 0)
                 return 0;
 
             //Edge case of X is very near 0 and X is negative
             if (yAbs < .0001 && X < 0)
                 return Math.PI;
 
-            if (( X > 0 && Y > 0)
+            if ((X > 0 && Y > 0)
                 || (X < 0 && Y > 0))
                 return Math.Atan2( Y, X );
 
@@ -105,6 +98,20 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
 		public override string ToString() {
             return $"({GetXToString()}, {GetYToString()})";
         }
-	}
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var hash = (ulong)(1024 * this.X);
+            hash = hash << 32 | (uint)(1024 * this.Y);
+            return hash;
+        }
+    }
 
 }
