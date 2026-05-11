@@ -315,7 +315,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var combined = $"{Name}|{OwnerId}|{CourseOfFireDef}|{ScoreConfigName}|{TargetCollectionName}|{Location}|{MatchType}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Visibility}|{JSONVersion}";
+            var combined = $"{Name}|{MatchID}|{OwnerId}|{CourseOfFireDef}|{ScoreConfigName}|{TargetCollectionName}|{Location}|{MatchType}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Visibility}|{JSONVersion}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             return hash;

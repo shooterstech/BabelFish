@@ -71,13 +71,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string Creator { get; set; }
 
         /// <inheritdoc />
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
         public string CheckSum { get; set; }
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var combined = $"{MatchID}|{MatchName}|{ParentID}|{ParticipantID}|{UserID}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Creator}";
+            var combined = $"{MatchID}|{MatchName}|{ParticipantID}|{UserID}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Creator}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             if (Participant is not null) {
