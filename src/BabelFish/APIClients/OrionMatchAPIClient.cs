@@ -141,6 +141,143 @@ namespace Scopos.BabelFish.APIClients {
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
+
+        /// <summary>
+        /// Create Match Child API
+        /// </summary>
+        /// <param name="requestParameters">CreateMatchChildAuthenticatedRequest object</param>
+        /// <returns>Match Child data</returns>
+        public async Task<CreateMatchChildAuthenticatedResponse> CreateMatchChildAuthenticatedAsync( CreateMatchChildAuthenticatedRequest requestParameters ) {
+            CreateMatchChildAuthenticatedResponse response = new CreateMatchChildAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Create Match Child API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="ownerId"></param>
+        /// <param name="name"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child data</returns>
+        public async Task<CreateMatchChildAuthenticatedResponse> CreateMatchChildAuthenticatedAsync( MatchID parentMatchId, string ownerId, string name, UserAuthentication credentials ) {
+            var request = new CreateMatchChildAuthenticatedRequest( credentials, parentMatchId, ownerId, name );
+
+            return await CreateMatchChildAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenPublicRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenPublicResponse> ListParentMatchChildrenPublicAsync( ListParentMatchChildrenPublicRequest requestParameters ) {
+            ListParentMatchChildrenPublicResponse response = new ListParentMatchChildrenPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenPublicResponse> ListParentMatchChildrenPublicAsync( MatchID parentMatchId ) {
+            var request = new ListParentMatchChildrenPublicRequest( parentMatchId );
+
+            return await ListParentMatchChildrenPublicAsync( request );
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenAuthenticatedRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( ListParentMatchChildrenAuthenticatedRequest requestParameters ) {
+            ListParentMatchChildrenAuthenticatedResponse response = new ListParentMatchChildrenAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( MatchID parentMatchId, UserAuthentication credentials ) {
+            var request = new ListParentMatchChildrenAuthenticatedRequest( credentials, parentMatchId );
+
+            return await ListParentMatchChildrenAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAbstractResponse> ListParentMatchChildrenAsync( MatchID parentMatchId, UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await ListParentMatchChildrenPublicAsync( parentMatchId );
+            } else {
+                return await ListParentMatchChildrenAuthenticatedAsync( parentMatchId, credentials );
+            }
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls.
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenAbstractRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAbstractResponse> ListParentMatchChildrenAsync( ListParentMatchChildrenAbstractRequest requestParameters ) {
+            if (requestParameters is ListParentMatchChildrenPublicRequest)
+                return await this.ListParentMatchChildrenPublicAsync( (ListParentMatchChildrenPublicRequest)requestParameters );
+            else if (requestParameters is ListParentMatchChildrenAuthenticatedRequest)
+                return await this.ListParentMatchChildrenAuthenticatedAsync( (ListParentMatchChildrenAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+        }
+
+        /// <summary>
+        /// Patch Match Child API
+        /// </summary>
+        /// <param name="requestParameters">PatchMatchChildAuthenticatedRequest object</param>
+        /// <returns>Match Child data</returns>
+        public async Task<PatchMatchChildAuthenticatedResponse> PatchMatchChildAuthenticatedAsync( PatchMatchChildAuthenticatedRequest requestParameters ) {
+            PatchMatchChildAuthenticatedResponse response = new PatchMatchChildAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Match Child API
+        /// </summary>
+        /// <param name="matchChild"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child data</returns>
+        public async Task<PatchMatchChildAuthenticatedResponse> PatchMatchChildAuthenticatedAsync( MatchChild matchChild, UserAuthentication credentials ) {
+            var request = new PatchMatchChildAuthenticatedRequest( credentials, matchChild );
+
+            return await PatchMatchChildAuthenticatedAsync( request );
+        }
+
+        public async Task<PatchMatchChildAuthenticatedResponse> ApproveMatchChildAsync( MatchChild matchChild, UserAuthentication credentials ) {
+            matchChild.ApprovalStatus = ApprovalStatus.APPROVED;
+            var request = new PatchMatchChildAuthenticatedRequest( credentials, matchChild );
+
+            return await PatchMatchChildAuthenticatedAsync( request );
+        }
         #endregion
 
         #region Get Result List
@@ -505,6 +642,69 @@ namespace Scopos.BabelFish.APIClients {
                 return await this.GetMatchSearchAuthenticatedAsync( (MatchSearchAuthenticatedRequest)requestParameters );
             else
                 //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
+        #endregion
+
+        #region List Matches
+        /// <summary>
+        /// Lists public parent and child matches.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesPublicRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesPublicResponse> ListMatchesPublicAsync( ListMatchesPublicRequest requestParameters ) {
+            ListMatchesPublicResponse response = new ListMatchesPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Lists public parent and child matches.
+        /// </summary>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesPublicResponse> ListMatchesPublicAsync() {
+            var request = new ListMatchesPublicRequest();
+
+            return await ListMatchesPublicAsync( request );
+        }
+
+        /// <summary>
+        /// Lists parent and child matches visible to the authenticated caller.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesAuthenticatedRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAuthenticatedResponse> ListMatchesAuthenticatedAsync( ListMatchesAuthenticatedRequest requestParameters ) {
+            ListMatchesAuthenticatedResponse response = new ListMatchesAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Lists parent and child matches visible to the authenticated caller.
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAuthenticatedResponse> ListMatchesAuthenticatedAsync( UserAuthentication credentials ) {
+            var request = new ListMatchesAuthenticatedRequest( credentials );
+
+            return await ListMatchesAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Lists matches, selecting public or authenticated behavior based on the request type.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesAbstractRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAbstractResponse> ListMatchesAsync( ListMatchesAbstractRequest requestParameters ) {
+            if (requestParameters is ListMatchesPublicRequest)
+                return await this.ListMatchesPublicAsync( (ListMatchesPublicRequest)requestParameters );
+            else if (requestParameters is ListMatchesAuthenticatedRequest)
+                return await this.ListMatchesAuthenticatedAsync( (ListMatchesAuthenticatedRequest)requestParameters );
+            else
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion

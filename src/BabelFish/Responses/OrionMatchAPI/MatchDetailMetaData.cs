@@ -19,9 +19,9 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         }
 
         /// <summary>
-        /// Contains a list of MatchAbbr objects, each representing a Tournament that this Match is a member of.
+        /// Contains a list of Tournament objects representing the tournaments that this match is a member of.
         /// </summary>
-        public List<MatchAbbr> Tournaments { get; set; } = new List<MatchAbbr>();
+        public List<Tournament> Tournaments { get; set; } = new List<Tournament>();
 
         /// <summary>
         /// A list of MatchHtmlReports (e.g. pressrelease.html) that exist for this match.
