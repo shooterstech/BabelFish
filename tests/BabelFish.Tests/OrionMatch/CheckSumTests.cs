@@ -117,8 +117,11 @@ namespace BabelFish.Tests.OrionMatch {
                 checksums.Add( checksum );
             }
 
+            var stopWatch = System.Diagnostics.Stopwatch.StartNew();
             var currentCheckSumToCheckAgainst = resultList.CalculateChecksum();
+            stopWatch.Stop();
             Console.WriteLine( currentCheckSumToCheckAgainst );
+            Console.WriteLine( stopWatch.ElapsedMilliseconds );
 
             // Changing the CompetitorNumber of the first ResultEvent should change the checksum of the entire ResultList.
             resultList.Items[0].Participant.CompetitorNumber = "999";
