@@ -7,7 +7,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Result COF format for (JSONVersion) "2022-04-09"
     /// </summary>
     [Serializable]
-    public class ResultCOF : IEventScoreProjection {
+    public class ResultCOF :
+        IEventScoreProjection,
+        ICheckSum {
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
 
@@ -336,6 +338,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return true;
 
             return false;
+        }
+
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{ResultCOFID}|{OwnerId}|{Status}|{Visibility}|{MatchID}|{MatchName}|{MatchLocation}|{ParentID}|{MatchType}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}|{FiringPointNumber}|{Creator}|{CourseOfFireDef}|{ScoreConfigName}|{TargetCollectionName}|{DefaultTargetDefinition}|{UserID}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            hash ^= Participant.CalculateChecksum();
+
+            if (EventScores is not null) {
+                foreach (var es in EventScores) {
+                    hash ^= es.Value.CalculateChecksum();
+                }
+            }
+
+            if (Shots is not null) {
+                foreach (var es in Shots) {
+                    hash ^= es.Value.CalculateChecksum();
+                }
+            }
+
+            if (ResultCofScores is not null) {
+                foreach (var rCof in ResultCofScores) {
+                    hash ^= rCof.Value.CalculateChecksum();
+                }
+            }
+
+            return hash;
         }
 
     }

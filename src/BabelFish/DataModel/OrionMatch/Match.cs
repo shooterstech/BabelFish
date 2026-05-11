@@ -7,7 +7,7 @@ using Scopos.BabelFish.DataModel.Common;
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
-    public class Match {
+    public class Match : ICheckSum {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -308,6 +308,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foo.Append( "MatchDetail for " );
             foo.Append( Name );
             return foo.ToString();
+        }
+
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{Name}|{OwnerId}|{CourseOfFireDef}|{ScoreConfigName}|{TargetCollectionName}|{Location}|{MatchType}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Visibility}|{JSONVersion}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            return hash;
         }
     }
 }

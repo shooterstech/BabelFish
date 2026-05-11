@@ -1,4 +1,4 @@
-namespace BabelFish.DataModel.OrionMatch {
+namespace Scopos.BabelFish.DataModel.OrionMatch {
     public interface ICheckSum {
 
         /// <summary>

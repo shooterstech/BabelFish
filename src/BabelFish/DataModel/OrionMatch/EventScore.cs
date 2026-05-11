@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using BabelFish.DataModel.OrionMatch;
 
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {

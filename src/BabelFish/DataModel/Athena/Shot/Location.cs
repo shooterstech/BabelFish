@@ -1,4 +1,4 @@
-using BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot {
     /// <summary>

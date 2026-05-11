@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -290,7 +289,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var combine = $"{MatchID}|{Rank}|{RankOrder}|{RankDelta}|{ProjectedRank}|{ProjectedRankOrder}|{LocalDate.ToString( "o" )}";
+            var combine = $"{MatchID}|{Rank}|{RankOrder}|{RankDelta}|{ProjectedRank}|{ProjectedRankOrder}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}";
             var hash = Helpers.Common.Md5ToUlong( combine );
 
             hash ^= Participant.CalculateChecksum();

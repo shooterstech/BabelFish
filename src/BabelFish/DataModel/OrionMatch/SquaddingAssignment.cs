@@ -3,7 +3,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Abstract class representing the complete squadding assignment for one participant (athlete or team).
     /// </summary>
-    public abstract class SquaddingAssignment {
+    public abstract class SquaddingAssignment : ICheckSum {
 
         /*
          * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
@@ -33,9 +33,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public abstract string ToString( bool useAbbreviation );
 
-		public override string ToString() {
-			return this.ToString( false );
-		}
+        public override string ToString() {
+            return this.ToString( false );
+        }
 
-	}
+        /// <inheritdoc />
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public virtual ulong CalculateChecksum() {
+            return Helpers.Common.Md5ToUlong( this.ToString( true ) );
+        }
+    }
 }

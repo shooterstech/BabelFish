@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Dynamic;
 using System.Runtime.Serialization;
-using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;

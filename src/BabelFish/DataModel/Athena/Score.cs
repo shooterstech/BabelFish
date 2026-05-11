@@ -1,6 +1,6 @@
 using System.ComponentModel;
-using BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Athena {
     [Serializable]
