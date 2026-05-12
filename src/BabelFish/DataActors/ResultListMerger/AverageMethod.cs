@@ -32,7 +32,9 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <inheritdoc />
         public override bool Merge( ResultEvent re ) {
 
-            EventScore mergedEventScore = new EventScore();
+            EventScore summedEventScore = new EventScore();
+            EventScore averagedEventScore = new EventScore();
+            EventScore highEventScore = new EventScore();
             int count = 0;
 
             List<EventScore> listOfScores = new List<EventScore>();
@@ -66,25 +68,34 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             for (int i = 0; i < takeTheseNumberOfScores; i++) {
                 var eventScore = listOfScores[i];
 
-                mergedEventScore.Score += eventScore.Score;
+                summedEventScore.Score += eventScore.Score;
                 count++;
 
                 if (eventScore.Projected != null) {
                     if (eventScore.Projected.IsZero) {
-                        mergedEventScore.Projected += eventScore.Score;
+                        summedEventScore.Projected += eventScore.Score;
                     } else {
-                        mergedEventScore.Projected += eventScore.Projected;
+                        summedEventScore.Projected += eventScore.Projected;
                     }
                 }
             }
 
-            //Calculate the average
-            mergedEventScore.Score /= count;
-            mergedEventScore.Projected /= count;
+            //Calculate the average, if we have at least 1 score to average
+            if (count > 0) {
+                averagedEventScore.Score = summedEventScore.Score / count;
+                averagedEventScore.Projected = summedEventScore.Projected / count;
+            }
 
-            re.ResultCofScores[this.TopLevelEventname] = mergedEventScore;
+            //Set the average score (which is the top level score for this MergeMethod) on the ResultEvent
+            re.ResultCofScores[this.TopLevelEventname] = averagedEventScore;
+
+            // Set the high score event if the configuration says to include it and there is at least one score to include and that score isn't zero
             if (MergeConfiguration.AddHighScoreEvent && listOfScores.Count > 0 && !listOfScores[0].Score.IsZero) {
-                re.EventScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, HIGH_EVENT_SCORE_NAME )] = listOfScores[0];
+                highEventScore = listOfScores[0].Clone();
+                // The next two lines are added to aid in debugging. They don't have to be here, but it is helpful to have the EventName and ScoreFormatted properties set on the highEventScore for debugging purposes.
+                highEventScore.EventName = HIGH_EVENT_SCORE_NAME;
+                highEventScore.ScoreFormatted = StringFormatting.FormatScore( "{d}", highEventScore.Score );
+                re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, HIGH_EVENT_SCORE_NAME )] = highEventScore;
             }
 
             // Return a value indicating if this ResultEvent should be included with the final merged Result List
