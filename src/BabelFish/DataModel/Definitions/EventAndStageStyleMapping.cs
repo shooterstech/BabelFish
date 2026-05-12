@@ -124,8 +124,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.SetDefaultValues();
 
             this.DefaultMapping = new EventAndStageStyleMappingObj();
-            this.DefaultMapping.DefaultStageStyleDef = Definitions.SetName.DEFAULT;
-            this.DefaultMapping.DefaultEventStyleDef = Definitions.SetName.DEFAULT;
+            this.DefaultMapping.DefaultStageStyleDef = new SetName();
+            this.DefaultMapping.DefaultEventStyleDef = new SetName();
             this.Mappings = new List<EventAndStageStyleMappingObj>();
 
             return true;

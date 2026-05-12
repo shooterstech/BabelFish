@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// String formatted as a SetName. The STAGE STYLE definition to use in this mapping.
         /// </summary>
         [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
-        public SetName StageStyleDef { get; set; } = Definitions.SetName.DEFAULT;
+        public SetName StageStyleDef { get; set; } = new SetName();
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 100 )]

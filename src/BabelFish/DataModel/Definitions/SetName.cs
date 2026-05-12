@@ -17,18 +17,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class SetName : IEquatable<SetName>, IEquatable<HierarchicalName> {
 
 
-        private int _majorVersion = 0;
+        private int _majorVersion = 1;
         private int _minorVersion = 0;
-        private string _nameSpace = "";
-        private string _properName = "";
+        private string _nameSpace = "orion";
+        private string _properName = "Default";
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private static ConcurrentDictionary<string, SetName> _cache = new ConcurrentDictionary<string, SetName>();
-        public static readonly SetName DEFAULT = SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
-        /// Default constructor. Should only be used in conjunction with a TryParse method.
-        /// <para>The most common way to construct a SetName is to use the SetName.Parse() static method.</para>
+        /// Default constructor. Sets the value to v1.0:orion:Default.
+        /// <para>In general, it is best to use the SetName.Parse() static method to construct a SetName.</para>
         /// <example>
         /// <code>
         /// var setName = SetName.Parse( "v1.0:orion:Default", false);
@@ -75,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 _logger.Error( msg );
                 if (throwExceptionOnError)
                     throw new ArgumentNullException( nameof( setName ), msg );
-                return DEFAULT;
+                return new SetName();
             }
 
             //Look up in cache first
@@ -104,7 +103,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 if (throwExceptionOnError)
                     throw new ArgumentException( msg, ex );
 
-                return DEFAULT;
+                return new SetName();
             }
         }
 
@@ -122,7 +121,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             } catch (Exception ex) {
                 var msg = $"Unable to parse the SetName string '{setName}'";
                 _logger.Error( msg );
-                sn = SetName.DEFAULT;
+                sn = new SetName();
                 return false;
             }
 
@@ -379,7 +378,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="sn">The SetName instance to convert. If null, the default string representation is returned.</param>
         public static implicit operator string( SetName sn ) {
             if (sn is null)
-                return SetName.DEFAULT.ToString();
+                return "v1.0:orion:Default";
             else
                 return sn.ToString();
 

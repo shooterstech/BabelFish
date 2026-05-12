@@ -1,4 +1,5 @@
 using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
@@ -9,6 +10,9 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
     public class SumMethod : MergeMethod {
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
+
+        public static string HIGH_EVENT_SCORE_NAME = "High Score";
+        public static string AVERAGE_EVENT_SCORE_NAME = "Average";
 
         /// <summary>
         /// Constructor
@@ -36,7 +40,10 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <inheritdoc />
         public override bool Merge( ResultEvent re ) {
 
-            EventScore mergedEventScore = new EventScore();
+            EventScore summedEventScore = new EventScore();
+            EventScore averagedEventScore = new EventScore();
+            EventScore highEventScore = new EventScore();
+            int count = 0;
 
             List<EventScore> listOfScores = new List<EventScore>();
             foreach (var resultListMember in ResultListMergerEngine.ResultListsMembers) {
@@ -61,21 +68,125 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             //Sum the scores
             for (int i = 0; i < takeTheseNumberOfScores; i++) {
                 var eventScore = listOfScores[i];
-                mergedEventScore.Score += eventScore.Score;
+
+                summedEventScore.Score += eventScore.Score;
+                count++;
 
                 if (eventScore.Projected != null) {
                     if (eventScore.Projected.IsZero) {
-                        mergedEventScore.Projected += eventScore.Score;
+                        summedEventScore.Projected += eventScore.Score;
                     } else {
-                        mergedEventScore.Projected += eventScore.Projected;
+                        summedEventScore.Projected += eventScore.Projected;
                     }
                 }
             }
 
-            re.ResultCofScores[this.TopLevelEventname] = mergedEventScore;
+            //Calculate the average, if we have at least 1 score to average.
+            if (count > 0) {
+                averagedEventScore.Score = summedEventScore.Score / count;
+                averagedEventScore.Projected = summedEventScore.Projected / count;
+            }
+
+            //Set the summed score (which is the top level score for this MergeMethod) on the ResultEvent
+            re.ResultCofScores[this.TopLevelEventname] = summedEventScore;
+
+            // Set the high score event if the configuration says to include it and there is at least one score to include and that score isn't zero
+            if (MergeConfiguration.IncludeHighScoreEvent && listOfScores.Count > 0 && !listOfScores[0].Score.IsZero) {
+                highEventScore = new EventScore( listOfScores[0] );
+                // The next two lines are added to aid in debugging. They don't have to be here, but it is helpful to have the EventName and ScoreFormatted properties set on the highEventScore for debugging purposes.
+                highEventScore.EventName = HIGH_EVENT_SCORE_NAME;
+                highEventScore.ScoreFormatted = StringFormatting.FormatScore( "{d}", highEventScore.Score );
+                re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, HIGH_EVENT_SCORE_NAME )] = highEventScore;
+            }
+
+            if (MergeConfiguration.IncludeAverageScoreEvent) {
+                // The next two lines are added to aid in debugging. They don't have to be here, but it is helpful to have the EventName and ScoreFormatted properties set on the averageEventScore for debugging purposes.
+                averagedEventScore.EventName = AVERAGE_EVENT_SCORE_NAME;
+                averagedEventScore.ScoreFormatted = StringFormatting.FormatScore( "{d}", averagedEventScore.Score );
+                re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, AVERAGE_EVENT_SCORE_NAME )] = averagedEventScore;
+            }
 
             //return true to indicate this ResultEvent should be included with the final merged Result List
             return true;
+        }
+
+        /// <inheritdoc />
+        public override List<ResultListField> AdditionalFields {
+            get {
+                List<ResultListField> additionalFields = base.AdditionalFields;
+
+                if (MergeConfiguration.IncludeHighScoreEvent) {
+                    additionalFields.Add( new ResultListField() {
+                        FieldName = HIGH_EVENT_SCORE_NAME,
+                        Method = ResultFieldMethod.SCORE,
+                        Source = new FieldSource() {
+                            Name = ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, HIGH_EVENT_SCORE_NAME ),
+                            ScoreFormat = "Events"
+                        }
+                    } );
+                }
+
+                if (MergeConfiguration.IncludeAverageScoreEvent) {
+                    additionalFields.Add( new ResultListField() {
+                        FieldName = AVERAGE_EVENT_SCORE_NAME,
+                        Method = ResultFieldMethod.SCORE,
+                        Source = new FieldSource() {
+                            Name = ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, AVERAGE_EVENT_SCORE_NAME ),
+                            ScoreFormat = "Events"
+                        }
+                    } );
+                }
+
+                return additionalFields;
+            }
+        }
+
+        /// <inheritdoc />
+        public override List<ResultListDisplayColumn> AdditionalDisplayColumns {
+            get {
+                List<ResultListDisplayColumn> additionalColumns = base.AdditionalDisplayColumns;
+
+                if (MergeConfiguration.IncludeHighScoreEvent) {
+                    additionalColumns.Add( new ResultListDisplayColumn() {
+                        Header = HIGH_EVENT_SCORE_NAME,
+                        Body = $"{{{HIGH_EVENT_SCORE_NAME}}}",
+                        BodyValues = new List<ResultListCellValue>() {
+                            new ResultListCellValue() {
+                                Text = $"{{{HIGH_EVENT_SCORE_NAME}}}"
+                            }
+                        },
+                        ClassSet = new List<ClassSet>() { new ClassSet() {
+                            Name = "rlf-col-event",
+                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
+                        }}
+                    } );
+                }
+
+                if (MergeConfiguration.IncludeAverageScoreEvent) {
+                    additionalColumns.Add( new ResultListDisplayColumn() {
+                        Header = AVERAGE_EVENT_SCORE_NAME,
+                        Body = $"{{{AVERAGE_EVENT_SCORE_NAME}}}",
+                        BodyValues = new List<ResultListCellValue>() {
+                            new ResultListCellValue() {
+                                Text = $"{{{AVERAGE_EVENT_SCORE_NAME}}}"
+                            }
+                        },
+                        ClassSet = new List<ClassSet>() { new ClassSet() {
+                            Name = "rlf-col-event",
+                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
+                        }}
+                    } );
+                }
+
+                return additionalColumns;
+            }
+        }
+
+        /// <inheritdoc />
+        public override string TopLevelHeaderText {
+            get {
+                return "Aggregate";
+            }
         }
     }
 }

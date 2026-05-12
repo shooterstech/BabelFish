@@ -155,7 +155,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 13 )]
         [G_NS.JsonProperty( Order = 13 )]
         [DefaultValue( "" )]
-        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
+        public SetName ResultListFormatDef { get; set; } = new SetName();
 
         /// <summary>
         /// The recommended Ranking Rules defintion to use when displaying a ranking list for this Event.
@@ -167,7 +167,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 14 )]
         [DefaultValue( "" )]
         [Obsolete( "Use RankingRuleMapping instead." )]
-        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
+        public SetName RankingRuleDef { get; set; } = new SetName();
 
         /// <summary>
         /// A mapping of RankingRuleDef to use to sort scores from this Event, based on the ScoreConfigName.

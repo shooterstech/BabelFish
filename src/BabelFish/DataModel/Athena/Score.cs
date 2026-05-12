@@ -25,6 +25,30 @@ namespace Scopos.BabelFish.DataModel.Athena {
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Score class by copying the values from an existing Score instance.
+        /// </summary>
+        /// <remarks>Use this constructor to create a deep copy of an existing Score object. All
+        /// properties are copied from the specified instance.</remarks>
+        /// <param name="other">The Score instance to copy values from. Cannot be null.</param>
+        public Score( Score? other ) {
+            if (other is null) {
+                // If the other Score is null, we will just initialize this Score with default values (which are all 0).
+                return;
+            }
+
+            // Perform a deep copy of the properties from the other Score instance to this new instance.
+            s = other.s;
+            X = other.X;
+            D = other.D;
+            I = other.I;
+            S = other.S;
+            J = other.J;
+            K = other.K;
+            L = other.L;
+            NumShotsFired = other.NumShotsFired;
+        }
+
         #endregion
 
         #region Data Model Properties

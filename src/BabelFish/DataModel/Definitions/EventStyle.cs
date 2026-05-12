@@ -116,16 +116,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             base.SetDefaultValues();
 
             StageStyles = new List<SetName>();
-            StageStyles.Add( Definitions.SetName.DEFAULT );
+            StageStyles.Add( new SetName() );
             SimpleCOFs = new List<SimpleCOF>();
 
             var sCof = new SimpleCOF() {
-                CourseOfFireDef = Definitions.SetName.DEFAULT,
+                CourseOfFireDef = new SetName(),
                 ScoreFormat = "Events"
             };
             sCof.Components = new List<SimpleCOFComponent>();
             sCof.Components.Add( new SimpleCOFComponent() {
-                StageStyleDef = Definitions.SetName.DEFAULT,
+                StageStyleDef = new SetName(),
                 ScoreComponent = ScoreComponent.I
             } );
             SimpleCOFs.Add( sCof );

@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
 
             _logger.Error( $"Couldn't parse the incoming SetName value '{setNameString}'." );
 
-            return SetName.DEFAULT;
+            return new SetName();
         }
     }
 }

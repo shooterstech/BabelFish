@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
             _logger.Error( $"Couldn't parse the incoming SetName value '{setNameString}'." );
 
-            return SetName.DEFAULT;
+            return new SetName();
         }
 
         /// <inheritdoc />
@@ -42,7 +42,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
             _logger.Error( $"Couldn't parse the incoming SetName value '{setNameString}'." );
 
-            return SetName.DEFAULT;
+            return new SetName();
 
         }
 

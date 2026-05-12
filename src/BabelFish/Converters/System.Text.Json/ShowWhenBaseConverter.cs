@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                         return JsonSerializer.Deserialize<ShowWhenSegmentGroup>( root.GetRawText(), options );
                     default:
                         //If we get here, it is probable because of ill-formed json
-                        return ShowWhenVariable.ALWAYS_SHOW.Clone();
+                        return ShowWhenVariable.CreateAlwaysShow();
                 }
             }
         }

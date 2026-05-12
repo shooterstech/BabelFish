@@ -13,24 +13,30 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class ShowWhenVariable : ShowWhenBase {
 
         /// <summary>
-        /// Common ShowWhenVariable that evaluates to always showing.
-        /// </summary>
-        public static readonly ShowWhenVariable ALWAYS_SHOW = new ShowWhenVariable() {
-            Condition = ShowWhenCondition.TRUE
-        };
-
-        /// <summary>
-        /// Common ShowWhenVariable that evaluates to never showing.
-        /// </summary>
-        public static readonly ShowWhenVariable NEVER_SHOW = new ShowWhenVariable() {
-            Condition = ShowWhenCondition.FALSE
-        };
-
-        /// <summary>
         /// Public constructor.
         /// </summary>
         public ShowWhenVariable() {
             Operation = ShowWhenOperation.VARIABLE;
+        }
+
+        /// <summary>
+        /// Factory method to create a ShowWhenVariable that always evaluates to true.
+        /// </summary>
+        /// <returns></returns>
+        public static ShowWhenVariable CreateAlwaysShow() {
+            return new ShowWhenVariable() {
+                Condition = ShowWhenCondition.TRUE
+            };
+        }
+
+        /// <summary>
+        /// Factory method to create a ShowWhenVariable that always evaluates to false.
+        /// </summary>
+        /// <returns></returns>
+        public static ShowWhenVariable CreateNeverShow() {
+            return new ShowWhenVariable() {
+                Condition = ShowWhenCondition.FALSE
+            };
         }
 
         /// <summary>

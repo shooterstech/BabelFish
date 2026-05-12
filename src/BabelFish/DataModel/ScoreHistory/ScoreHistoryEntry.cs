@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// String formatted as a SetName, representing the CourseOfFire Definition shot for this ScoreHistoryEntry
         /// This field may be an empty string if the object is a member of a ScoreHistoryEventStyleEntry's .StageScores list
         /// </summary>
-        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         /// <summary>
         /// NOTE: Current this field is TypeOfMatch, but it will soon be renmaed int eh API

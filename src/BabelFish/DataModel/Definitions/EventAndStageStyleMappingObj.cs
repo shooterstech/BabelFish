@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Default" )]
-        public SetName DefaultEventStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName DefaultEventStyleDef { get; set; } = new SetName();
 
         /// <summary>
         /// The EventAppellation specific mappings to use for EVENT STYLES.
@@ -68,7 +68,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( "v1.0:orion:Default" )]
-        public SetName DefaultStageStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName DefaultStageStyleDef { get; set; } = new SetName();
 
         /// <summary>
         /// The EventAppellation specific mappings to use for STAGE STYLES.

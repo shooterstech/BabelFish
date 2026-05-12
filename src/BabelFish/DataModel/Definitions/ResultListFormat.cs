@@ -130,7 +130,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                         foreach (var cl in col.ClassList) {
                             var cs = new ClassSet();
                             cs.Name = cl;
-                            cs.ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                            cs.ShowWhen = ShowWhenVariable.CreateAlwaysShow();
                             col.ClassSet.Add( cs );
                             updateHappened |= true;
                         }
@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                             case "Rk":
                                 col.ClassSet.Add( new ClassSet() {
                                     Name = "rol-col-rank",
-                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                                 } );
                                 updateHappened |= true;
                                 break;
@@ -151,7 +151,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                             case "Kneeling":
                                 col.ClassSet.Add( new ClassSet() {
                                     Name = "rol-col-stage",
-                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                                 } );
                                 updateHappened |= true;
                                 break;
@@ -160,7 +160,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                             case "Participant":
                                 col.ClassSet.Add( new ClassSet() {
                                     Name = "rol-col-participant",
-                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                                 } );
                                 updateHappened |= true;
                                 break;
@@ -168,14 +168,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                             case "DFL":
                                 col.ClassSet.Add( new ClassSet() {
                                     Name = "rol-col-gap",
-                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                                 } );
                                 updateHappened |= true;
                                 break;
                             default:
                                 col.ClassSet.Add( new ClassSet() {
                                     Name = "rol-col-event",
-                                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                                 } );
                                 updateHappened |= true;
                                 break;
@@ -313,7 +313,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Body = "{RankOrSquadding} {RankDelta}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-rank",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }}
             } );
 
@@ -323,7 +323,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 BodyLinkTo = LinkToOption.PublicProfile,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }}
             } );
 
@@ -332,7 +332,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Body = "{LastShot}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-shot",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }},
                 ShowWhen = new ShowWhenEquation() {
                     Boolean = ShowWhenBoolean.AND,
@@ -356,7 +356,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Child = "{Empty}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-matchinfo",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }},
                 ShowWhen = new ShowWhenEquation() {
                     Boolean = ShowWhenBoolean.AND,
@@ -380,9 +380,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 BodyLinkTo = LinkToOption.ResultCOF,
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-event",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }},
-                ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                ShowWhen = ShowWhenVariable.CreateAlwaysShow()
             } );
 
             this.Format.Columns.Add( new ResultListDisplayColumn() {
@@ -390,7 +390,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Body = "{Gap}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-gap",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }},
                 ShowWhen = new ShowWhenEquation() {
                     Boolean = ShowWhenBoolean.AND,
@@ -410,7 +410,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 Body = "{Remark}",
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-matchinfo",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }},
                 ShowWhen = new ShowWhenEquation() {
                     Boolean = ShowWhenBoolean.AND,
@@ -451,7 +451,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     foreach (var cl in partition.ClassList) {
                         partition.ClassSet.Add( new ClassSet() {
                             Name = cl,
-                            ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                         } );
                         updateHappened |= true;
                     }
@@ -472,7 +472,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 if (partition.ClassSet.Count == 0) {
                     partition.ClassSet.Add( new ClassSet() {
                         Name = defaultCssName,
-                        ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                        ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                     } );
                     updateHappened |= true;
                 }

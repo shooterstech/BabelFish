@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// the SetName, formatted as a string, of the Attribute definition.
         /// </summary>
-        public SetName AttributeDef { get; set; } = SetName.DEFAULT;
+        public SetName AttributeDef { get; set; } = new SetName();
 
         /// <summary>
         /// Property that contains the value.

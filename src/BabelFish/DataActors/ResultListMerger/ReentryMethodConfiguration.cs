@@ -38,19 +38,19 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// expected to be composed from.
         /// </summary>
         [G_NS.JsonProperty( Order = 12 )]
-        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         /// <summary>
         /// The SetName of the RANKING RULE definition that should be used to rank the merged results.
         /// </summary>
         [G_NS.JsonProperty( Order = 13 )]
-        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
+        public SetName RankingRuleDef { get; set; } = new SetName();
 
         /// <summary>
         /// The SetName of the RESULT LIST FORMAT definition that should be used to format the merged results.
         /// </summary>
         [G_NS.JsonProperty( Order = 14 )]
-        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
+        public SetName ResultListFormatDef { get; set; } = new SetName();
 
         /// <inheritdoc />
         /// <exception cref="ArgumentNullException">Thrown if the value for CourseOfFireDef 

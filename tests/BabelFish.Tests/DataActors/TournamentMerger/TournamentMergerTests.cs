@@ -29,7 +29,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             Assert.IsNotNull( mergedResultList );
 
             ResultEngine re = new ResultEngine( mergedResultList, tournamentMerger.RankingRule );
-            var fakeCof = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.DEFAULT );
+            var fakeCof = await DefinitionCache.GetCourseOfFireDefinitionAsync( new SetName() );
             ProjectorOfScores projectorOfScores = new ProjectScoresByNull( fakeCof );
             await re.SortAsync( projectorOfScores, false );
             Assert.IsNotNull( mergedResultList );
@@ -74,9 +74,9 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
 
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
-            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2025100211025190.2" ) );
+            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2026051120003076.2" ) );
             var tournament = getTournamentResponse.Tournament;
-            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Individual Rankings" );
+            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Demo Sum Merged Result List" );
             var tournamentMerger = await ResultListMergerEngine.CreateAsync( invRanking );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
@@ -113,9 +113,6 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
 
                     Console.Write( $"{cell.Text}, " );
                 }
-                Console.Write( " : " );
-                Console.Write( row.GetRemarks( true ) );
-                Console.Write( " : " );
                 Console.Write( string.Join( ", ", row.GetClassList() ) );
                 Console.WriteLine();
             }

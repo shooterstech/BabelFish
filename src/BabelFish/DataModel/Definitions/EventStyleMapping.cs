@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The default EVENT STYLE to use, if no mapping could be found. 
         /// </summary>
         [JsonPropertyOrder( 1 )]
-        public SetName DefaultDef { get; set; } = SetName.DEFAULT;
+        public SetName DefaultDef { get; set; } = new SetName();
 
         /// <summary>
         /// The Event's appellation (name) to use when looking up the mapping. Event appellations are usually common across (printed) rulebooks that have different courses of fire.

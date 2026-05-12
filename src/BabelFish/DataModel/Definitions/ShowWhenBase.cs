@@ -12,6 +12,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public abstract class ShowWhenBase : IReconfigurableRulebookObject {
 
         /// <summary>
+        /// Public constructor.
+        /// </summary>
+        public ShowWhenBase() {
+
+        }
+
+        /// <summary>
         /// Concret class identifier. 
         /// </summary>
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]

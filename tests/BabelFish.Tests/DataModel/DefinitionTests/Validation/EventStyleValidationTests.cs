@@ -72,7 +72,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             //A empty string should fail
             eventStyle.EventStyles.Clear();
-            eventStyle.EventStyles.Add( SetName.DEFAULT );
+            eventStyle.EventStyles.Add( new SetName() );
             valid = await validation.IsSatisfiedByAsync( eventStyle );
             Assert.IsFalse( valid );
             Assert.IsTrue( validation.Messages.Count > 0 );
@@ -114,7 +114,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             //A empty string should fail
             eventStyle.RelatedEventStyles.Clear();
-            eventStyle.RelatedEventStyles.Add( SetName.DEFAULT );
+            eventStyle.RelatedEventStyles.Add( new SetName() );
             valid = await validation.IsSatisfiedByAsync( eventStyle );
             Assert.IsFalse( valid );
             Assert.IsTrue( validation.Messages.Count > 0 );
@@ -151,7 +151,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             //A empty string should fail
             eventStyle.StageStyles.Clear();
-            eventStyle.StageStyles.Add( SetName.DEFAULT );
+            eventStyle.StageStyles.Add( new SetName() );
             valid = await validation.IsSatisfiedByAsync( eventStyle );
             Assert.IsFalse( valid );
             Assert.IsTrue( validation.Messages.Count > 0 );
@@ -209,7 +209,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             //A Component with an empthy string for the stage style, should fail
             eventStyle = eventStyleOrig.Clone();
-            eventStyle.SimpleCOFs[0].Components[0].StageStyleDef = SetName.DEFAULT;
+            eventStyle.SimpleCOFs[0].Components[0].StageStyleDef = new SetName();
             valid = await validation.IsSatisfiedByAsync( eventStyle );
             Assert.IsFalse( valid );
             Assert.IsTrue( validation.Messages.Count > 0 );
