@@ -103,13 +103,19 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        public string CheckSum { get; set; } = string.Empty;
 
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var hash = (ulong)(1024 * this.X);
-            hash = hash << 32 | (uint)(1024 * this.Y);
+            var hash = (ulong)(4096 * this.X);
+            if (this.X < 0)
+                hash |= 0x8000000000000000;
+
+            hash = hash << 32 | (uint)(4096 * this.Y);
+            if (this.Y < 0)
+                hash |= 0x8000000000000000;
+
             return hash;
         }
     }

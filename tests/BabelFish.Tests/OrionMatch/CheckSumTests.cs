@@ -32,7 +32,7 @@ namespace BabelFish.Tests.OrionMatch {
             };
             var shot2 = shot1.Clone();
 
-            //Without chaning any properties, the checksums should be the same
+            //Without changing any properties, the checksums should be the same
             Assert.AreEqual( shot1.CalculateChecksum(), shot2.CalculateChecksum(), "Identical shots should have the same checksum." );
             Console.WriteLine( shot1.CalculateChecksum() );
             Console.WriteLine( shot2.CalculateChecksum() );

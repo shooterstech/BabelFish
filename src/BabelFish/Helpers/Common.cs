@@ -7,8 +7,6 @@ namespace Scopos.BabelFish.Helpers {
     /// </summary>
     public static class Common {
 
-        private static MD5 _mD5 = MD5.Create();
-
         /// <summary>
         /// Returns the Levenshtein Distance between two strings.
         /// </summary>
@@ -832,8 +830,9 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="input"></param>
         /// <returns></returns>
         public static ulong Md5ToUlong( string input ) {
+            MD5 mD5 = MD5.Create();
             byte[] bytes = Encoding.UTF8.GetBytes( input );
-            byte[] hash = _mD5.ComputeHash( bytes );
+            byte[] hash = mD5.ComputeHash( bytes );
 
             // Take the first 8 bytes and convert to ulong
             return BitConverter.ToUInt64( hash, 0 );

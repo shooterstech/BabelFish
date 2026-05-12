@@ -439,11 +439,15 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <inheritdoc />
         public ulong CalculateChecksum() {
             StringBuilder combined = new StringBuilder();
-            foreach (var attr in attributeValues) {
-                combined.Append( attr.Key );
-                foreach (var field in attr.Value) {
-                    combined.Append( field.Key );
-                    combined.Append( field.Value );
+
+            // In order to ensure that the same AttributeValue always has the same CheckSum, we need to order the keys when we combine them into a string for hashing.
+            var topLevelKeys = attributeValues.Keys.OrderBy( x => x );
+            foreach (var topLevelKey in topLevelKeys) {
+                combined.Append( topLevelKey );
+                var fieldKeys = attributeValues[topLevelKey].Keys.OrderBy( x => x );
+                foreach (var fieldKey in fieldKeys) {
+                    combined.Append( fieldKey );
+                    combined.Append( attributeValues[topLevelKey][fieldKey] );
                 }
             }
 
@@ -454,6 +458,6 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level object.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        public string CheckSum { get; set; } = string.Empty;
     }
 }

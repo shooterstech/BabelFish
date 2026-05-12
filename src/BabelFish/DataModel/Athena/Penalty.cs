@@ -1,9 +1,11 @@
+using Scopos.BabelFish.DataModel.OrionMatch;
+
 namespace Scopos.BabelFish.DataModel.Athena {
     /// <summary>
     /// Describes a Penalty that is applied to a shot, athlete, team, etc
     /// </summary>
     [Serializable]
-    public class Penalty {
+    public class Penalty : ICheckSum {
 
         private float penalty = 0;
 
@@ -53,13 +55,15 @@ namespace Scopos.BabelFish.DataModel.Athena {
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        public string CheckSum { get; set; } = string.Empty;
 
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var combined = $"{RuleNumber}|{Description}|{PenaltyPoints}|{JuryMember}|{PenaltyID}";
-            return Helpers.Common.Md5ToUlong( combined );
+            var combined = $"{RuleNumber}|{Description}|{JuryMember}|{PenaltyID}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+            hash ^= (ulong)(4048 * PenaltyPoints);
+            return hash;
         }
     }
 }

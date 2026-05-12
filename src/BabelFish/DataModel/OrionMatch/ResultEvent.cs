@@ -268,7 +268,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        public string CheckSum { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public bool CurrentlyCompetingOrRecentlyDone() {
@@ -300,12 +300,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             }
 
-            if (Shots is not null) {
-                foreach (var es in Shots) {
-                    hash ^= es.Value.CalculateChecksum();
-                }
-            }
-
             if (ResultCofScores is not null) {
                 foreach (var rCof in ResultCofScores) {
                     hash ^= rCof.Value.CalculateChecksum();
@@ -317,6 +311,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     hash ^= tm.CalculateChecksum();
                 }
             }
+
+            // NOTE: We are purposefully not including Shots in the checksum calculation, as this property is not included in the REST API response for ResultEvents.
 
             return hash;
         }

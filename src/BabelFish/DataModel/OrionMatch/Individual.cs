@@ -98,6 +98,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foreach (var attributeValue in AttributeValues) {
                 hash ^= attributeValue.CalculateChecksum();
             }
+
+            hash ^= RemarkList.CalculateChecksum();
+
             return hash;
         }
     }

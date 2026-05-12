@@ -445,7 +445,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            StringBuilder combined = new StringBuilder( $"{ResultCOFID}|{EventName}|{Sequence}|{Update}|{TargetSetName}|{FiringPoint}|{StageLabel}|{Privacy}" );
+            StringBuilder combined = new StringBuilder( $"{ResultCOFID}|{EventName}|{Update}|{TargetSetName}|{FiringPoint}|{StageLabel}|{Privacy}" );
 
             if (Attributes is not null && Attributes.Count > 0) {
                 foreach (var a in Attributes)
@@ -453,6 +453,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
             }
             var hash = Helpers.Common.Md5ToUlong( combined.ToString() );
 
+            hash ^= (ulong)(4048 * Sequence);
             hash ^= Score.CalculateChecksum();
             hash ^= Location.CalculateChecksum();
             foreach (var p in Penalties) {

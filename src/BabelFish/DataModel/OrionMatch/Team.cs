@@ -56,6 +56,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 hash ^= teamCaptain.CalculateChecksum();
             }
 
+            hash ^= RemarkList.CalculateChecksum();
+
             return hash;
         }
     }
