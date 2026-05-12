@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             var validation = new IsEventAndStageStyleMappingValid();
 
-            definition.DefaultMapping.StageStyleMappings[0].StageStyleDef = SetName.DEFAULT;
+            definition.DefaultMapping.StageStyleMappings[0].StageStyleDef = new SetName();
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
         }
@@ -154,7 +154,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
 
             var validation = new IsEventAndStageStyleMappingValid();
 
-            definition.DefaultMapping.EventStyleMappings[0].EventStyleDef = SetName.DEFAULT;
+            definition.DefaultMapping.EventStyleMappings[0].EventStyleDef = new SetName();
             Assert.IsFalse( await validation.IsSatisfiedByAsync( definition ) );
             Assert.AreEqual( 1, validation.Messages.Count );
         }

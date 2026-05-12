@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <summary>
         /// The SetName of the AttributeValue that was sent and we have a response about how successful the set-ing went.
         /// </summary>
-        public SetName AttributeValue { get; set; } = SetName.DEFAULT;
+        public SetName AttributeValue { get; set; } = new SetName();
 
         public string StatusCode { get; set; } = string.Empty;
 

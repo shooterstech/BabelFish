@@ -29,7 +29,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             Assert.IsNotNull( mergedResultList );
 
             ResultEngine re = new ResultEngine( mergedResultList, tournamentMerger.RankingRule );
-            var fakeCof = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.DEFAULT );
+            var fakeCof = await DefinitionCache.GetCourseOfFireDefinitionAsync( new SetName() );
             ProjectorOfScores projectorOfScores = new ProjectScoresByNull( fakeCof );
             await re.SortAsync( projectorOfScores, false );
             Assert.IsNotNull( mergedResultList );

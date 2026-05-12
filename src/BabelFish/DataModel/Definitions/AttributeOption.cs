@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The attribute definition associated with this option. This property contains the detailed configuration
         /// of the attribute, including its name, type, and other relevant settings.
         /// </summary>
-        public SetName AttributeDef { get; set; } = SetName.DEFAULT;
+        public SetName AttributeDef { get; set; } = new SetName();
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 99 )]

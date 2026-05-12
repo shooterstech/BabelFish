@@ -266,13 +266,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the RANKING RULE definition used to rank this result list.
         /// </summary>
         [G_NS.JsonProperty( Order = 20 )]
-        public SetName RankingRuleDef { get; set; } = SetName.DEFAULT;
+        public SetName RankingRuleDef { get; set; } = new SetName();
 
         /// <summary>
         /// The SetName of the Course of Fire
         /// </summary>
         [G_NS.JsonProperty( Order = 21 )]
-        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         /// <summary>
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION definition to format scores.
@@ -285,7 +285,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the RESULT LIST FORMAT definition to use when displaying this result list.
         /// </summary>
         [G_NS.JsonProperty( Order = 23 )]
-        public SetName ResultListFormatDef { get; set; } = SetName.DEFAULT;
+        public SetName ResultListFormatDef { get; set; } = new SetName();
 
         /// <summary>
         /// An AttributeFilter describes how a This ResultList will be filtered. That is to say, of the

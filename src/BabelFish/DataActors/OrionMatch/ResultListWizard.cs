@@ -67,7 +67,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             // If any bin does not have a AttributeConfiguration, add in the default. By doing this, none of the
             // Forloops below will get skipped.
-            var defaultAttributeValue = await AttributeValue.CreateAsync( SetName.DEFAULT );
+            var defaultAttributeValue = await AttributeValue.CreateAsync( new SetName() );
             if (attributeBins[1].Count == 0)
                 attributeBins[1].Add( await AttributeConfiguration.CreateAsync( defaultAttributeValue ) );
             if (attributeBins[2].Count == 0)

@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
 
             //empty string should fail
-            stageStyle.ScoreFormatCollectionDef = SetName.DEFAULT;
+            stageStyle.ScoreFormatCollectionDef = new SetName();
             Assert.IsFalse( await validation.IsSatisfiedByAsync( stageStyle ) );
         }
 

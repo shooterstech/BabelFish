@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataActors.Definitions {
         /// <returns></returns>
         public SetName GetEventStyleDef( string attributeValueAppellation, string targetCollectionName, EventStyleMapping eventStyleMapping ) {
             // this is the worst case, nothing else matches circumstance
-            SetName eventStyleMappingToReturn = SetName.DEFAULT;
+            SetName eventStyleMappingToReturn = new SetName();
 
             //Next to the worst case, take the value from .DefaultDef if it exists
             if (!eventStyleMapping.DefaultDef.IsDefault)
@@ -81,7 +81,7 @@ namespace Scopos.BabelFish.DataActors.Definitions {
         /// <returns></returns>
         public SetName GetStageStyleDef( string attributeValueAppellation, string targetCollectionName, StageStyleMapping stageStyleMapping ) {
             // this is the worst case, nothing else matches circumstance
-            SetName stageStyleMappingToReturn = SetName.DEFAULT;
+            SetName stageStyleMappingToReturn = new SetName();
 
             //Next to the worst case, take the value from .DefaultDef if it exists
             if (!stageStyleMapping.DefaultDef.IsDefault)

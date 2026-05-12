@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 3 )]
         [G_NS.JsonProperty( Order = 3 )]
-        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 99 )]

@@ -101,14 +101,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// this is the SetName of that EventStyle
         /// </summary>
         [G_NS.JsonProperty( Order = 12 )]
-        public SetName EventStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName EventStyleDef { get; set; } = new SetName();
 
         /// <summary>
         /// If this Event matches with a defined StageStyle
         /// this is the SetName of that StageStyle
         /// </summary>
         [G_NS.JsonProperty( Order = 13 )]
-        public SetName StageStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName StageStyleDef { get; set; } = new SetName();
 
         /// <summary>
         /// The number of shots the athletes has fired in this Event.

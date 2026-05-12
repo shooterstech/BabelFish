@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A SetName is a unique identifier for a Defintion file within a definition type. It has three parts, the version number, namespace, and propername.
         /// </summary>
         [G_NS.JsonProperty( Order = 4 )]
-        public SetName SetName { get; set; } = SetName.DEFAULT;
+        public SetName SetName { get; set; } = new SetName();
 
         /// <summary>
         /// The precise version number of this Definition. Note, the version number listed in the SetName is often 

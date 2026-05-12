@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
-        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         /// <summary>
         /// This property is needed for  a Telerick binding to work, but it is not intended to be used directly. It is just a string representation of the CourseOfFireDef property.
@@ -113,7 +113,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// objects .StageStyles list. 
         /// </summary>
         [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        public SetName StageStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName StageStyleDef { get; set; } = new SetName();
 
         /// <summary>
         /// The number of shots that are fired for this stage of a event.

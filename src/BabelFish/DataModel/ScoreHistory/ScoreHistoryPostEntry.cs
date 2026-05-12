@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
             this.NumShots = numberOfShots;
         }
 
-        public SetName StageStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName StageStyleDef { get; set; } = new SetName();
 
         public Score Score { get; set; }
 
@@ -40,7 +40,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         public MatchID MatchID { get; set; } = MatchID.DEFAULT;
 
-        public SetName CourseOfFireDef { get; set; } = SetName.DEFAULT;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
@@ -54,7 +54,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
         public string MatchLocation { get; set; } = string.Empty;
 
-        public SetName EventStyleDef { get; set; } = SetName.DEFAULT;
+        public SetName EventStyleDef { get; set; } = new SetName();
 
         public List<PostStageStyleScore> StageScores { get; set; } = new List<PostStageStyleScore>();
 
