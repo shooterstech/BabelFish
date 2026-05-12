@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Responses.ClubsAPI;
-using Scopos.BabelFish.Runtime;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
@@ -41,19 +35,20 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
+        /// GetClubList (this authenticated version) returns a list of clubs (aka Orion Accounts) the logged in
+        /// user is associated with as an Admin / member / etc.
         /// Generally this ia a parameterless call.
         /// </summary>
         public async Task<GetClubListAuthenticatedResponse> GetClubListAuthenticatedAsync( UserAuthentication credentials ) {
 
             var request = new GetClubListAuthenticatedRequest( credentials );
 
-            return await GetClubListAuthenticatedAsync(request);
+            return await GetClubListAuthenticatedAsync( request );
         }
 
         /// <summary>
-        /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
-        /// Generally this ia a parameterless call, but may also include a Token value, with the list of clubs is too large
+        /// GetClubList (this authenticated versino) returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
+        /// Generally this ia a parameterless call, but may also include a Token value, with the list of clubs is too large.
         /// to return in a single response. 
         /// </summary>
         /// <param name="request"></param>
@@ -67,8 +62,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
-        /// Generally this ia a parameterless call.
+        /// GetClubList (this public version) returns a list of clubs (aka Orion Accounts) based on the passed in search parameters.
         /// </summary>
         /// <param name="currentlyShooting">If true, limits the returned list of clubs, to only the clubs that are currently shooting</param>
         public async Task<GetClubListPublicResponse> GetClubListPublicAsync(
@@ -80,7 +74,7 @@ namespace Scopos.BabelFish.APIClients {
             GetClubListPublicRequest.SearchParameterState athenaForClubs = GetClubListPublicRequest.SearchParameterState.IGNORE,
             GetClubListPublicRequest.SearchParameterState currentlyShooting = GetClubListPublicRequest.SearchParameterState.IGNORE ) {
 
-            var request = new GetClubListPublicRequest( );
+            var request = new GetClubListPublicRequest();
             request.ShowAll = currentlyShooting;
             request.EnabledRezults = currentlyShooting;
             request.ActiveLicense = currentlyShooting;
@@ -93,9 +87,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
-        /// GetClubList returns a list of clubs (aka Orion Accounts) the logged in user is associated with as an Admin / member / etc.
-        /// Generally this ia a parameterless call, but may also include a Token value, with the list of clubs is too large
-        /// to return in a single response. 
+        /// GetClubList (this public version) returns a list of clubs (aka Orion Accounts) based on the passed in search parameters.
         /// </summary>
         /// <param name="request"></param>
         public async Task<GetClubListPublicResponse> GetClubListPublicAsync( GetClubListPublicRequest request ) {
@@ -161,61 +153,54 @@ namespace Scopos.BabelFish.APIClients {
             return await GetClubDetailPublicAsync( request );
         }
 
-        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync(GetCoachAssignmentAuthenticatedRequest request)
-        {
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync( GetCoachAssignmentAuthenticatedRequest request ) {
 
-            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+            var response = new CoachAssignmentCRUDAuthenticatedResponse( request );
 
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
-
-            return response;
-        }
-
-        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync(int licenseNumber, UserAuthentication credentials)
-        {
-
-            var request = new GetCoachAssignmentAuthenticatedRequest(licenseNumber, credentials);
-
-            return await GetCoachAssignmentAuthenticatedAsync(request);
-        }
-
-        public async Task<CoachAssignmentCRUDAuthenticatedResponse> CreateCoachAssignmentAuthenticatedAsync(CreateCoachAssignmentAuthenticatedRequest request)
-        {
-
-            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
-
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }
 
-        public async Task<CoachAssignmentCRUDAuthenticatedResponse> DeleteCoachAssignmentAuthenticatedAsync(DeleteCoachAssignmentAuthenticatedRequest request)
-        {
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> GetCoachAssignmentAuthenticatedAsync( int licenseNumber, UserAuthentication credentials ) {
 
-            var response = new CoachAssignmentCRUDAuthenticatedResponse(request);
+            var request = new GetCoachAssignmentAuthenticatedRequest( licenseNumber, credentials );
 
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+            return await GetCoachAssignmentAuthenticatedAsync( request );
+        }
+
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> CreateCoachAssignmentAuthenticatedAsync( CreateCoachAssignmentAuthenticatedRequest request ) {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
 
             return response;
         }
 
-        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync(GetCoachClubListPublicRequest request)
-        {
-            var response = new GetCoachClubListPublicResponse(request);
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+        public async Task<CoachAssignmentCRUDAuthenticatedResponse> DeleteCoachAssignmentAuthenticatedAsync( DeleteCoachAssignmentAuthenticatedRequest request ) {
+
+            var response = new CoachAssignmentCRUDAuthenticatedResponse( request );
+
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+
             return response;
         }
 
-        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync(string userId)
-        {
-            var request = new GetCoachClubListPublicRequest(userId);
-            return await GetCoachClubListPublicAsync(request);
+        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync( GetCoachClubListPublicRequest request ) {
+            var response = new GetCoachClubListPublicResponse( request );
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
+            return response;
         }
 
-        public async Task<GetCoachClubListAuthenticatedResponse> GetCoachClubListAuthenticatedAsync(GetCoachClubListAuthenticatedRequest request)
-        {
-            var response = new GetCoachClubListAuthenticatedResponse(request);
-            await this.CallAPIAsync(request, response).ConfigureAwait(false);
+        public async Task<GetCoachClubListPublicResponse> GetCoachClubListPublicAsync( string userId ) {
+            var request = new GetCoachClubListPublicRequest( userId );
+            return await GetCoachClubListPublicAsync( request );
+        }
+
+        public async Task<GetCoachClubListAuthenticatedResponse> GetCoachClubListAuthenticatedAsync( GetCoachClubListAuthenticatedRequest request ) {
+            var response = new GetCoachClubListAuthenticatedResponse( request );
+            await this.CallAPIAsync( request, response ).ConfigureAwait( false );
             return response;
         }
 

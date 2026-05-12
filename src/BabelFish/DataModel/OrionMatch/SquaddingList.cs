@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -57,48 +58,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime EndDate { get; set; } = DateTime.Today;
 
         /// <summary>
-        /// Formatted as a string, the date and time this squadding list was last updated.
-        /// Use GetLastUpdated() to return this value as a DateTime object.
-        /// </summary>
-        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        [G_NS.JsonProperty( Order = 6 )]
-        public DateTime LastUpdated { get; set; }
-
-        /// <summary>
         /// Formatted as a string, the Match ID that this squadding list is from.
         /// Use GetMatchID() to return the value as a MatchID object.
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
-        public string MatchID { get; set; }
+        public MatchID MatchID { get; set; }
 
-        /// <summary>
-        /// The Match ID that this squadding list is from.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="FormatException">Thrown if unable to parse the property MatchID into a MatchID object.</exception>
-        public MatchID GetMatchID() {
-            try {
-                return new MatchID( MatchID );
-            } catch (Exception ex) {
-                //Probable either a FormatException or a NullValueException
-                var msg = $"Can not parse MatchID values of '{MatchID}'. Received error {ex}.";
-                logger.Error( msg, ex );
-                throw new FormatException( msg );
+        /// <inheritdoc/>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
             }
-        }
-
-        /// <summary>
-        /// If this squadding list a Virtual Match, this is the Parent ID of the match. If this is a local match, then this 
-        /// value will be the same as MatchID.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 8 )]
-        public string ParentID { get; set; }
-
-        public MatchID GetParentID() {
-            //NOTE that I am using the GetMatchID value to calculate the value for ParentID. This *should* be the
-            //same as the ParentID property.
-            return GetMatchID().GetParentMatchID();
         }
 
         /// <summary>
@@ -111,7 +83,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Set name of the Result List Format definition to use when displaying this squadding list.
         /// </summary>
         [JsonPropertyOrder( 10 )]
-        public string ResultListFormatDef { get; set; } = string.Empty;
+        public SetName ResultListFormatDef { get; set; } = new SetName();
 
         /// <summary>
         /// List of SquaddingAssignments (e.g. Individuals and where and when they will shoot). 
@@ -157,6 +129,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
 		[G_NS.JsonProperty( Order = 25 )]
         public List<RelayInformation> RelayInformation { get; set; }
+
+        /// <summary>
+        /// The Version string of the JSON document.
+        /// Version 2022-04-09 represents ResultCOF in a dictionary format
+        /// Version < 2022 represent ResultCOF in a tree format
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 98 )]
+        [G_NS.JsonProperty( Order = 98 )]
+        public string JSONVersion { get; set; } = Helpers.Common.DATA_MODEL_VERSION;
+
+        /// <summary>
+        /// UTC time the match data was last updated.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 99 )]
+        [G_NS.JsonProperty( Order = 99 )]
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// Newtonsoft helper method to determine if the property .RelayInformation is serialized.

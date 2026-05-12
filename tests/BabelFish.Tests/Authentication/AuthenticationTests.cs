@@ -55,14 +55,13 @@ namespace Scopos.BabelFish.Tests.Authentication {
         /// Tests that an exception is thrown if the wrong password is used.
         /// </summary>
         [TestMethod]
-        [ExpectedException( typeof( Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException ) )]
         public async Task WrongPassword() {
-
-            //Should throw a NotAuthroizedException
-            var userAuthentication = new UserAuthentication(
-                Constants.TestDev7Credentials.Username,
-                "not the right password" );
-            await userAuthentication.InitializeAsync();
+            await Assert.ThrowsAsync<NotAuthorizedException>( async () => {
+                var userAuthentication = new UserAuthentication(
+                    Constants.TestDev7Credentials.Username,
+                    "not the right password" );
+                await userAuthentication.InitializeAsync();
+            } );
         }
 
         [TestMethod]
@@ -73,10 +72,12 @@ namespace Scopos.BabelFish.Tests.Authentication {
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
             await userAuthenticationInit.InitializeAsync();
+            var userId = await userAuthenticationInit.GetUserIdAsync();
 
             //Use the above token to generate a new UserAuthentication and log in with them.
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
+                userId,
                 userAuthenticationInit.RefreshToken,
                 userAuthenticationInit.AccessToken,
                 userAuthenticationInit.IdToken,
@@ -96,21 +97,18 @@ namespace Scopos.BabelFish.Tests.Authentication {
             userAuthentication.OnRefreshTokensSuccessful += onSuccessHandler;
             userAuthentication.OnRefreshTokensFailed += onFailureHandler;
 
-            //Passing true forces the tokens to refresh, regardless of Expiration time. Inreal life, one would not need to call .RefreshToken normally, let alone eith true.
+            //Passing true forces the tokens to refresh, regardless of Expiration time. Inreal life, one would not need to call .RefreshToken normally, let alone with true.
             await userAuthentication.RefreshTokensAsync( true );
 
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.Email ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.RefreshToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.AccessToken ) );
             Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.IdToken ) );
-            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceKey ) );
-            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceGroupKey ) );
-            //Assert.IsFalse( string.IsNullOrEmpty( userAuthentication.DeviceName ) );
             Assert.IsNotNull( userAuthentication.CognitoUser );
-            //Assert.IsNotNull( userAuthentication.CognitoUser.Device );
 
             //Check that the access Id tokens did indeed refresh.
             //QUESTION: Are the supposed to all get refreshed ? 
+            Assert.AreEqual( userAuthenticationInit.RefreshToken, userAuthentication.RefreshToken );
             Assert.AreNotEqual( userAuthenticationInit.AccessToken, userAuthentication.AccessToken );
 
             Assert.AreEqual( 1, onSuccessCount );

@@ -4,6 +4,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Describes an Event in a Match that has one or more Result Lists associated with it.
     /// </summary>
     [Serializable]
+    [Obsolete( "ResultEventAbbr is deprecated as of BabelFish 2.0. CourseOfFireSturctures now use a list of ResultListAbbr" )]
     public class ResultEventAbbr {
 
         /// <summary>

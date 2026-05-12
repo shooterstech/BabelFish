@@ -14,8 +14,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public override async Task<ResultListFormat> GenerateAsync( IRLIFList irlitList ) {
 
             ResultListFormat rlf = new ResultListFormat();
-            rlf.SetName = "v1.0:dynamic:Essential Data File";
-            rlf.ScoreFormatCollectionDef = "v1.0:orion:Minimal Score Formats";
+            rlf.SetName = SetName.Parse( "v1.0:dynamic:Essential Data File" );
+            rlf.ScoreFormatCollectionDef = SetName.Parse( "v1.0:orion:Minimal Score Formats" );
             rlf.HierarchicalName = "dynamic:Essential Data File";
             rlf.Version = "1.0";
             var scoreFormatCollection = await rlf.GetScoreFormatCollectionDefinitionAsync();
@@ -206,10 +206,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     // Define the ResultListField with the ATTRIBUTE method.
                     var field = new ResultListField();
-                    field.FieldName = attributeValue.AttributeDef;
+                    field.FieldName = attributeValue.AttributeDef.ToString();
                     field.Method = ResultFieldMethod.ATTRIBUTE;
                     field.Source = new FieldSource() {
-                        Name = attributeValue.AttributeDef
+                        Name = attributeValue.AttributeDef.ToString()
                     };
                     rlf.Fields.Add( field );
 
@@ -228,8 +228,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
             }
 
-            if (includeScores && irlitList is ResultList rl && SetName.TryParse( resultList.CourseOfFireDef, out SetName courseOfFireSetName )) {
-                var courseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( courseOfFireSetName );
+            if (includeScores && irlitList is ResultList rl) {
+                var courseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( resultList.CourseOfFireDef );
                 var scoreformat = await courseOfFire.GetScoreFormatCollectionDefinitionAsync();
                 var topLevelEvent = EventComposite.GrowEventTree( courseOfFire );
                 var listOfEvents = topLevelEvent.GetEvents( true, true, true, true, true, false, true );

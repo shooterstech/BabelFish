@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataModel.Common;
+
 
 namespace Scopos.BabelFish.Helpers {
 
@@ -40,6 +38,19 @@ namespace Scopos.BabelFish.Helpers {
             return attribute == null ? value.ToString() : attribute.Description;
         }
 
+        public static string MemberValue( Enum value ) {
+            var type = value.GetType();
+            var name = Enum.GetName( type, value );
+
+            if (name == null)
+                return value.ToString();
+
+            var field = type.GetField( name );
+            var attr = field?.GetCustomAttribute<EnumMemberAttribute>();
+
+            return attr?.Value ?? name;
+        }
+
         /*
          * To use the above method on an enum, need to declare the enum like the following
          * public enum MyEnum {
@@ -60,13 +71,39 @@ namespace Scopos.BabelFish.Helpers {
             foreach (var field in typeof( T ).GetFields()) {
                 var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
                 if (attr != null) {
-                    if (attr.Description == value) {
+                    if (string.Equals(attr.Description, value, StringComparison.OrdinalIgnoreCase)) {
                         returnEnum = (T)field.GetValue( null );
                         break;
                     }
                 }
             }
             return returnEnum;
+        }
+
+        /// <summary>
+        /// Attempts to parse the passed in string into an enum of type <T> by matching the string to the Description attribute of the enum values. Returns true if a match is found, false otherwise.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value">The string value to match against the Description attributes of the enum values.</param>
+        /// <param name="result">The resulting enum value if a match is found.</param>
+        /// <returns>True if a match is found, false otherwise.</returns>
+        public static bool TryParseEnumByDescription<T>( this string value, out T result ) {
+            result = default( T );
+
+            if (string.IsNullOrEmpty( value )) {
+                return false;
+            }
+
+            foreach (var field in typeof( T ).GetFields()) {
+                var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
+                if (attr != null) {
+                    if (string.Equals(attr.Description, value, StringComparison.OrdinalIgnoreCase)) {
+                        result = (T)field.GetValue( null );
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -83,6 +120,49 @@ namespace Scopos.BabelFish.Helpers {
                     hash = hash * 31 + Convert.ToInt32( e );
                 }
                 return hash;
+            }
+        }
+
+        /// <summary>
+        /// Helper method to parse a string into a VisibilityOption enum. Defaults to PRIVATE if no match is found.
+        /// <para>Expected values include: "Public", "Internal", "Protected", "Private" (case insensitive)</para>
+        /// </summary>
+        /// <param name="visibilityOptionStr"></param>
+        /// <returns></returns>
+        public static VisibilityOption ParseVisibilityOption( string visibilityOptionStr ) {
+            switch (visibilityOptionStr) {
+                case "Public":
+                case "PUBLIC":
+                    return VisibilityOption.PUBLIC;
+                case "Internal":
+                case "INTERNAL":
+                    return VisibilityOption.INTERNAL;
+                case "Protected":
+                case "PROTECTED":
+                    return VisibilityOption.PROTECTED;
+                case "Private":
+                case "PRIVATE":
+                default:
+                    return VisibilityOption.PRIVATE;
+            }
+        }
+
+        /// <summary>
+        /// Helper method to parse an integer into a Visibility Option enum. Defaults to PRIVATE if no match is made.
+        /// </summary>
+        /// <param name="visibilityOption"></param>
+        /// <returns></returns>
+        public static VisibilityOption ParseVisibilityOption( int visibilityOption ) {
+            switch (visibilityOption) {
+                case 4:
+                    return VisibilityOption.PUBLIC;
+                case 3:
+                    return VisibilityOption.INTERNAL;
+                case 2:
+                    return VisibilityOption.PROTECTED;
+                case 1:
+                default:
+                    return VisibilityOption.PRIVATE;
             }
         }
     }

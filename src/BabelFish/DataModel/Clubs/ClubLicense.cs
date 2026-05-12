@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
-using Scopos.BabelFish.DataModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using NLog;
 using Scopos.BabelFish.Helpers;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>

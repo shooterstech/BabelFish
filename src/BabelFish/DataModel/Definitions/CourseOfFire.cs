@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -24,13 +18,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public class CourseOfFire : Definition, IGetTargetCollectionDefinition, IGetScoreFormatCollectionDefinition, IGetEventAndStageStyleMapping, IGetAttributeDefinition {
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public CourseOfFire() : base() {
             Type = DefinitionType.COURSEOFFIRE;
+            PaperTargetLabels = new List<PaperTargetLabel>() { PaperTargetLabel.NONE.Clone() };
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
         }
 
         /// <summary>
@@ -68,9 +66,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Required.
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 24 )]
-        [G_NS.JsonProperty( Order = 24, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "v1.0:orion:Air Rifle" )]
-        public string TargetCollectionDef { get; set; } = "v1.0:orion:Air Rifle";
+        [G_NS.JsonProperty( Order = 24 )]
+        public SetName TargetCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Air Rifle" );
 
         /// <summary>
         /// The name of the Target Collection to use as the default when creating a new Course of Fire. 
@@ -85,9 +82,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Formatted as a SetName, the ScoreFormatCollectionDef to use to display results to athletes and spectators. 
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 26 )]
-        [G_NS.JsonProperty( Order = 26, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
-        public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
+        [G_NS.JsonProperty( Order = 26 )]
+        public SetName ScoreFormatCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The default ScoreConfig to use, within the ScoreFormatCollection. 
@@ -101,26 +97,35 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The default Event and Stage Style Mapping file to use. 
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 28 )]
-        [G_NS.JsonProperty( Order = 28, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "v1.0:orion:Default" )]
-        public string DefaultEventAndStageStyleMappingDef { get; set; } = "v1.0:orion:Default";
+        [G_NS.JsonProperty( Order = 28 )]
+        public SetName DefaultEventAndStageStyleMappingDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
-        /// The default Attribute Value to use to determine a user's Attribute Value Appellation when shooting this course of fire.
+        /// Formatted as a SetName, the default Attribute definition that specifies a required Attribute that must be used to determine a participant's Attribute Value Appellation,
+        /// and with it their EVENT STYLE and STAGE STYLE when shooting this course of fire.
+        /// <para>Specifying the default value of v1.0:orion:Default, means there are no required attributes for this COF. </para>
+        /// <para>The specified ATTRIBUTE must be a simple apptribute with closed field values, each of which must specify an Attribute Value Appellation.</para>
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 29 )]
-        [G_NS.JsonProperty( Order = 29, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [DefaultValue( "" )]
-		public string DefaultAttributeDef { get; set; } = string.Empty;
+        [G_NS.JsonProperty( Order = 29 )]
+        public SetName RequiredAttributeDef { get; set; } = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( "v1.0:orion:Default" );
 
+        /// <summary>
+        /// Newtonsoft helper method to determine whether to serialize the DefaultAttributeDef property. We don't want to serialize it if it's set to the default value, which means there are no required attributes for this COF.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeDefaultAttributeDef() {
+            // Don't serialize if the value is null or empty string, which means there are no required attributes for this COF.
+            return RequiredAttributeDef.ToString() != "v1.0:orion:Default";
+        }
 
-		/// <summary>
-		/// The default Result Engine Compare Type to use when calculating Rank Deltas. 
-		/// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 30 )]
-		[G_NS.JsonProperty( Order = 30, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-		[DefaultValue( ResultEngineCompareType.WINDOW_1_MINUTE )]
-		public ResultEngineCompareType DefaultCompareType { get; set; } = ResultEngineCompareType.WINDOW_1_MINUTE;
+        /// <summary>
+        /// The default Result Engine Compare Type to use when calculating Rank Deltas. 
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 32 )]
+        [G_NS.JsonProperty( Order = 30, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( ResultEngineCompareType.WINDOW_1_MINUTE )]
+        public ResultEngineCompareType DefaultCompareType { get; set; } = ResultEngineCompareType.WINDOW_1_MINUTE;
 
         /// <summary>
         /// The default expected diameter of the bullet shot at the target.
@@ -138,18 +143,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( 4.5 )]
         public float DefaultScoringDiameter { get; set; } = (float)4.5;
 
+
+        /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 42 )]
         [G_NS.JsonProperty( Order = 42, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-        [Obsolete("Use RangeScriptType, which is part of a RangeScript, instead.")]
         public COFTypeOptions COFType { get; set; }
+
+        /// <summary>
+        /// List of available options for printing barcode labels for competitions shot on paper targets.
+        /// <para>A value is required if at least one <see cref="RangeScripts"/> has <see cref="RangeScript.DesignedForPaper"/> set to true.</para>
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 45 )]
+        [G_NS.JsonProperty( Order = 45 )]
+        public List<PaperTargetLabel> PaperTargetLabels { get; set; } = new List<PaperTargetLabel>();
 
         /// <inheritdoc />
         /// <exception cref="XApiKeyNotSetException" />
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public async Task<TargetCollection> GetTargetCollectionDefinitionAsync() {
-            SetName targetCollectionDef = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( TargetCollectionDef );
-            return await DefinitionCache.GetTargetCollectionDefinitionAsync( targetCollectionDef );
+            return await DefinitionCache.GetTargetCollectionDefinitionAsync( TargetCollectionDef );
         }
 
         /// <inheritdoc />
@@ -158,8 +171,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
 
-            SetName scoreFormatCollectionSetName = Scopos.BabelFish.DataModel.Definitions.SetName.Parse( ScoreFormatCollectionDef );
-            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionDef );
         }
 
         /// <inheritdoc />
@@ -169,26 +181,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ScoposAPIException" />
         public async Task<EventAndStageStyleMapping> GetEventAndStageStyleMappingDefinitionAsync() {
 
-            SetName eventAndStageStyleMappingSetName = Definitions.SetName.Parse( DefaultEventAndStageStyleMappingDef );
-            return await DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync( eventAndStageStyleMappingSetName );
+            return await DefinitionCache.GetEventAndStageStyleMappingDefinitionAsync( DefaultEventAndStageStyleMappingDef );
         }
 
 
         /// <inheritdoc />
         /// <remarks>
-        /// Returns the ATTRIBUTE definition from .DefaultAttributeDef
-        /// <para>It is a best practice to check for null or empty string on .DefaultAttributeDef before calling this method.</para>
+        /// Returns the ATTRIBUTE definition from RequiredAttributeDef.
         /// </remarks>
         /// <exception cref="XApiKeyNotSetException" />
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public async Task<Attribute> GetAttributeDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( DefaultAttributeDef ))
-                throw new ArgumentNullException( $"The value for .DefaultSttributeDef is empty. Which is allowed." );
-
-            var setName = Definitions.SetName.Parse(  DefaultAttributeDef );
-            return await DefinitionCache.GetAttributeDefinitionAsync( setName );
+            return await DefinitionCache.GetAttributeDefinitionAsync( this.RequiredAttributeDef );
         }
 
         /// <summary>
@@ -203,16 +208,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc />
         public override async Task<bool> GetMeetsSpecificationAsync() {
-			var validation = new IsCourseOfFireValid();
+            var validation = new IsCourseOfFireValid();
 
-			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-			SpecificationMessages = validation.Messages;
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
 
-			return meetsSpecification;
-		}
+            return meetsSpecification;
+        }
 
-		public override bool ConvertValues() {
-			base.ConvertValues();
+        public override bool ConvertValues() {
+            base.ConvertValues();
 
             foreach (var rs in this.RangeScripts) {
                 foreach (var sg in rs.SegmentGroups) {
@@ -220,7 +225,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     sg.DefaultCommand.Parent = rs.DefaultCommand;
                     sg.DefaultSegment.Parent = rs.DefaultSegment;
 
-                    foreach( var c  in sg.Commands ) {
+                    foreach (var c in sg.Commands) {
                         c.Parent = sg.DefaultCommand;
                     }
 
@@ -231,24 +236,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             foreach (var e in this.Events) {
-                if ( e.EventType == EventtType.STAGE && e.TargetCollectionIndex < 0 ) {
+                if (e.EventType == EventtType.STAGE && e.TargetCollectionIndex < 0) {
                     e.TargetCollectionIndex = 0;
                 }
             }
 
             return true;
-		}
+        }
 
-		/// <inheritdoc />
-		public override bool SetDefaultValues() {
+        /// <inheritdoc />
+        public override bool SetDefaultValues() {
             base.SetDefaultValues();
 
             var topLvelEvent = new EventExplicit() {
                 EventName = "Individual",
                 EventType = EventtType.EVENT,
                 EventStyleMapping = new EventStyleMapping(),
-                ResultListFormatDef = "v1.0:orion:Default Individual",
-                RankingRuleMapping = new RankingRuleMapping( "v1.0:orion:Generic Qualification" )
+                ResultListFormatDef = Definitions.SetName.Parse( "v1.0:orion:Default Individual" ),
+                RankingRuleMapping = new RankingRuleMapping( Definitions.SetName.Parse( "v1.0:orion:Generic Qualification" ) )
             };
             topLvelEvent.Children.Add( "ChildStage" );
 
@@ -256,8 +261,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventName = "Stage Event",
                 EventType = EventtType.STAGE,
                 StageStyleMapping = new StageStyleMapping(),
-                ResultListFormatDef = "v1.0:orion:Default Individual",
-                RankingRuleMapping = new RankingRuleMapping( "v1.0:orion:Generic Qualification" )
+                ResultListFormatDef = Definitions.SetName.Parse( "v1.0:orion:Default Individual" ),
+                RankingRuleMapping = new RankingRuleMapping( Definitions.SetName.Parse( "v1.0:orion:Generic Qualification" ) )
             };
             stageEvent.Children.Add( "String Event" );
 

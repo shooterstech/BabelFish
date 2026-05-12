@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json;
-using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
         public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
-        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Key is the timeout in seconds.
@@ -103,13 +103,11 @@ namespace Scopos.BabelFish.APIClients {
                 //We'll assume everythning will go A-OK ;) 
                 response.RestApiStatusCode = HttpStatusCode.OK;
                 response.OverallStatusCode = RequestStatusCode.OK;
-
-                //response.MessageResponse = cachedResponse.MessageResponse.Copy();
-                //response.MessageResponse.Message.Add( "In memory cached response" );
-                //var stopWatch = Stopwatch.StartNew();
+                // response.MessageResponse = CloneMessageResponse( cachedResponse.MessageResponse );
                 response.Body = cachedResponse.Body;
+                response.Permissions = ClonePermissions( cachedResponse.Permissions );
+                response.MetaData = CloneMetaData( cachedResponse.MetaData );
                 response.TimeToRun = DateTime.Now - startTime;
-                //stopWatch.Stop();
                 response.InMemoryCachedResponse = true;
 
                 _logger.Info( $"Returning a in-memory cached Response for {request}." );
@@ -124,8 +122,10 @@ namespace Scopos.BabelFish.APIClients {
                 if (fileSystemReadResponse.Item1) {
                     response.RestApiStatusCode = HttpStatusCode.OK;
                     response.OverallStatusCode = RequestStatusCode.OK;
-                    //response.MessageResponse.Message.Add( "Read from file system response" );
+                    // response.MessageResponse = CloneMessageResponse( fileSystemReadResponse.Item2.MessageResponse );
                     response.Body = fileSystemReadResponse.Item2.Body;
+                    response.Permissions = ClonePermissions( fileSystemReadResponse.Item2.Permissions );
+                    response.MetaData = CloneMetaData( fileSystemReadResponse.Item2.MetaData );
                     response.TimeToRun = DateTime.Now - startTime;
                     response.FileSystemCachedResponse = true;
 
@@ -193,7 +193,7 @@ namespace Scopos.BabelFish.APIClients {
                 using (StreamReader sr = new StreamReader( s )) {
                     /*
                      * EKA Note Jan 2025: There are faster ways of parsing the stream into an object. However, by capturing the json (which slows things down)
-                     * it makes troubleshooting much easier. Any by saving the JsonDocument in .Body, makes reusing response in a cache easier.
+                     * it makes troubleshooting much easier. And by saving the JsonDocument in .Body, makes reusing response in a cache easier.
                      */
                     jsonAsString = sr.ReadToEnd();
                     //var stopWatch = Stopwatch.StartNew();
@@ -208,6 +208,34 @@ namespace Scopos.BabelFish.APIClients {
                             response.MessageResponse.Message.Add( message.GetString() );
                         }
                     }
+
+                    G_STJ.JsonElement permissionsObject;
+                    if (response.Body.RootElement.TryGetProperty( "Permissions", out permissionsObject ) && permissionsObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        foreach (var resourcePermissions in permissionsObject.EnumerateObject()) {
+                            if (resourcePermissions.Value.ValueKind != G_STJ.JsonValueKind.Array) {
+                                continue;
+                            }
+
+                            var parsedPermissions = new HashSet<Permission>();
+                            foreach (var permission in resourcePermissions.Value.EnumerateArray()) {
+                                if (permission.ValueKind != G_STJ.JsonValueKind.String) {
+                                    continue;
+                                }
+
+                                parsedPermissions.Add( Permission.Parse( permission.GetString(), false ) );
+                            }
+
+                            response.Permissions[resourcePermissions.Name] = parsedPermissions;
+                        }
+                    }
+
+                    G_STJ.JsonElement metaDataObject;
+                    if (response.Body.RootElement.TryGetProperty( "MetaData", out metaDataObject ) && metaDataObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        var metaData = G_STJ.JsonSerializer.Deserialize<MetaDataResponse>( metaDataObject, SerializerOptions.SystemTextJsonDeserializer );
+                        if (metaData != null) {
+                            response.MetaData = metaData;
+                        }
+                    }
                 }
 
                 if (responseMessage.IsSuccessStatusCode) {
@@ -220,9 +248,11 @@ namespace Scopos.BabelFish.APIClients {
                         cachedResponse = new ResponseIntermediateObject() {
                             RestApiStatusCode = response.RestApiStatusCode,
                             OverallStatusCode = RequestStatusCode.OK,
-                            //MessageResponse = response.MessageResponse.Copy(),
+                            // MessageResponse = CloneMessageResponse( response.MessageResponse ),
                             Request = request,
                             Body = response.Body,
+                            Permissions = ClonePermissions( response.Permissions ),
+                            MetaData = CloneMetaData( response.MetaData ),
                             ValidUntil = response.GetCacheValueExpiryTime()
                         };
 
@@ -270,7 +300,46 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
-        private static DirectoryInfo? _localStorageDirectory = null;
+        private static MessageResponse CloneMessageResponse( MessageResponse? source ) { //currently MessageResponse caching is commented out
+            var clone = new MessageResponse();
+
+            if (source?.Message != null) {
+                clone.Message.AddRange( source.Message );
+            }
+
+            return clone;
+        }
+
+        private static Dictionary<string, HashSet<Permission>> ClonePermissions( Dictionary<string, HashSet<Permission>>? source ) {
+            var clone = new Dictionary<string, HashSet<Permission>>();
+
+            if (source == null) {
+                return clone;
+            }
+
+            foreach (var entry in source) {
+                clone[entry.Key] = entry.Value == null
+                    ? new HashSet<Permission>()
+                    : new HashSet<Permission>( entry.Value );
+            }
+
+            return clone;
+        }
+
+        /// <summary>
+        /// Clones the MetaDataResponse. If the source is null or of type MetaDataResponseUnknown, it returns a new instance of MetaDataResponseUnknown. Otherwise, it calls the Clone() method on the source.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static MetaDataResponse CloneMetaData( MetaDataResponse? source ) {
+            if (source == null || source is MetaDataResponseUnknown) {
+                return new MetaDataResponseUnknown();
+            }
+
+            return source.Clone();
+        }
+
+        private static DirectoryInfo? _localStorageDirectory { get; set; }
 
         /// <summary>
         /// The directory that BabelFish may use to read and store cached responses. 

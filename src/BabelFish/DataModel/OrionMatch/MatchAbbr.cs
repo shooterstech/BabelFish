@@ -11,13 +11,35 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// (or similiar ) API call.
     /// </summary>
     [Serializable]
-    public class MatchAbbr {
+    public class MatchAbbr :
+        G_STJ_SER.IJsonOnDeserialized,
+        G_STJ_SER.IJsonOnDeserializing {
 
         /// <summary>
         /// Public constructor.
         /// </summary>
         public MatchAbbr() {
 
+        }
+
+        /// <summary>
+        /// This method is called after deserialization with System.Text.Json. 
+        /// </summary>
+        public void OnDeserialized() {
+            if (CoursesOfFire is null) {
+                CoursesOfFire = new List<CourseOfFireStructureAbbr>();
+            }
+
+            foreach (var cof in CoursesOfFire) {
+                cof.Match = this;
+            }
+        }
+
+        /// <summary>
+        /// Method is called before deserialization with System.Text.Json.
+        /// </summary>
+        public void OnDeserializing() {
+            ; // Nothing to do
         }
 
         /// <summary>
@@ -109,13 +131,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// A list of scoring systems used in this match.
         /// </summary>
-        [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple EVENT STYLES. This property will be replaced with ... something, not sure what yet." )]
+        [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple EVENT STYLES. This property is being replaced with CoursesOfFire[i].ScoreConfigName and CoursesOfFire[i].TargetCollectionName." )]
         public List<string> ScoringSystems { get; set; } = new List<string>();
 
         /// <summary>
         /// The high level shooting style that this match was conducted under.
         /// </summary>
+        [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple Disciplines and Subdisciplines. This property is being replaced with CoursesOfFire[i].Discipline and CoursesOfFire[i].Subdiscipline." )]
         public string ShootingStyle { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The list of (reference) <see cref="CourseOfFireStructure"/> that will be competed as part of this match.        /// 
+        /// <para>Not all <see cref="MatchAbbr"/>will include a list of CourseOfFireStructureAbbr. For example, when the reference Match is a <see cref="Tournament"/>
+        /// a list of CourseOfFireStructureAbbr will not be included.</para>
+        /// </summary>
+        public List<CourseOfFireStructureAbbr> CoursesOfFire { get; set; } = new List<CourseOfFireStructureAbbr>();
 
         /// <summary>
         /// Returns a boolean indicating if the match is scheduled to take place in the future. Is based off of the match's .StartDate

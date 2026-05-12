@@ -15,6 +15,13 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
         private const int MIX_TARGET_EVENT = -1;
 
+        /// <summary>
+        /// Cache that GrowEventTree uses to store previously generated Event Trees, so that if the same Course of Fire is used again, it can return the cached value instead of regenerating the tree.
+        /// </summary>
+        private static ConcurrentDictionary<SetName, EventComposite> _eventTreeCache = new ConcurrentDictionary<SetName, EventComposite>();
+
+        private static ConcurrentDictionary<SetName, Dictionary<string, EventComposite>> _externalEventCache = new ConcurrentDictionary<SetName, Dictionary<string, EventComposite>>();
+
         public EventComposite() {
             this.Children = new List<EventComposite>();
             this.Parent = null;
@@ -53,7 +60,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public StageStyleMapping StageStyleMapping { get; private set; }
 
-        public string ResultListFormatDef { get; private set; }
+        public SetName ResultListFormatDef { get; private set; }
 
         public RankingRuleMapping RankingRuleMapping { get; set; } = new RankingRuleMapping();
 
@@ -66,6 +73,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// For a singularity, which doesn't have children it will be an empty string ""
         /// </summary>
         public EventCalculation Calculation { get; private set; } = EventCalculation.NONE;
+
+        public List<CalculationVariable> CalculationVariables { get; set; } = new List<CalculationVariable>();
 
         public bool HasChildren {
             get {
@@ -230,26 +239,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return hash;
         }
 
-        private static ConcurrentDictionary<string, EventComposite> _eventCompositeCache = new ConcurrentDictionary<string, EventComposite>();
-
         /// <summary>
         /// Generates the Event tree as defined by the passed in Course of Fire definition. 
-        /// the EventComposite that is passed back, is the top level Event in the tree.
+        /// The EventComposite that is passed back, is the top level Event in the tree.
+        /// <para>External Events are those that are defiend outside of the Event Tree. To identify these
+        /// events use <see cref="FindExternalEvents(CourseOfFire)"/></para>
         /// </summary>
         /// <remarks>
-        /// WARNING: GrowEventTree uses a cache, which is usually fine. However, if you are running the CourseOfFirespecification, it is a 
+        /// WARNING: GrowEventTree uses a cache, which is usually fine. However, if you are running the CourseOfFireSpecification, it is a 
         /// best practice to clear the cache before re-running GrowEventTree().
         /// </remarks>
         /// 
         /// <param name="cofRef"></param>
-        /// <returns></returns>
+        /// <returns>The top level EventComposite representing the Event tree.</returns>
         /// <exception cref="ScoposException"></exception>
         public static EventComposite GrowEventTree( CourseOfFire cofRef ) {
 
             //Because growing the event tree can take time, and its an operation that's often repeated, we will try
             //and store cache copies of it and return the cached value first, before growing a new one.
             EventComposite ec;
-            if (_eventCompositeCache.TryGetValue( cofRef.SetName, out ec )) {
+            if (_eventTreeCache.TryGetValue( cofRef.SetName, out ec )) {
                 return ec;
             }
 
@@ -284,6 +293,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 EventStyleMapping = topLevelEvent.EventStyleMapping,
                 ScoreFormat = topLevelEvent.ScoreFormat,
                 Calculation = topLevelEvent.Calculation,
+                CalculationVariables = topLevelEvent.CalculationVariables,
                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                 RankingRuleMapping = topLevelEvent.RankingRuleMapping,
                 TargetCollectionIndex = MIX_TARGET_EVENT
@@ -292,19 +302,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             GrowChildren( listOfEvents, cofRef.Singulars, top, 0 );
 
             //Store in cache, so we can use later
-            _eventCompositeCache.TryAdd( cofRef.SetName, top );
+            _eventTreeCache.TryAdd( cofRef.SetName, top );
 
             return top;
         }
 
         /// <summary>
-        /// Generates a Dictionary of all External Events to the Event Tree.
-        /// Key is the EventName, Value is the EventComposite.
+        /// Generates a Dictionary of all External Events to the Event Tree. An external event is one that is defined in the CourseOfFire, but is not a part of the standard Event Tree.
+        /// <para>To find events in the standard Event Tree use <see cref="GrowEventTree(CourseOfFire)"/></para>
         /// </summary>
         /// <param name="cof"></param>
-        /// <returns></returns>
+        /// <returns>Dictionary of all External Events defined by the CourseOfFire. Key is the EventName, Value is the EventComposite.</returns>
+        /// 
+        /// <remarks>
+        /// WARNING: FindExternalEvents uses a cache, which is usually fine. However, if you are running the CourseOfFireSpecification, it is a 
+        /// best practice to clear the cache before re-running FindExternalEvents().
+        /// </remarks>
         public static Dictionary<string, EventComposite> FindExternalEvents( CourseOfFire cof ) {
-            Dictionary<string, EventComposite> dictionary = new Dictionary<string, EventComposite>();
+            Dictionary<string, EventComposite> dictionary;
+
+            //Because finding external events can take time, and its an operation that's often repeated, we will try
+            //and store cache copies of it and return the cached value first, before growing a new one.
+            if (_externalEventCache.TryGetValue( cof.SetName, out dictionary )) {
+                return dictionary;
+            }
+            dictionary = new Dictionary<string, EventComposite>();
 
             var listOfEvents = new List<Event>();
             foreach (var origEvent in cof.Events) {
@@ -321,12 +343,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                     EventStyleMapping = e.EventStyleMapping,
                     ScoreFormat = e.ScoreFormat,
                     Calculation = e.Calculation,
+                    CalculationVariables = e.CalculationVariables,
                     ResultListFormatDef = e.ResultListFormatDef,
                     RankingRuleMapping = e.RankingRuleMapping
                 };
 
                 dictionary.Add( e.EventName, eventComposite );
             }
+
+            _externalEventCache.TryAdd( cof.SetName, dictionary );
 
             return dictionary;
         }
@@ -437,7 +462,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return false;
             }
 
-            var targetCollectionSetName = SetName.Parse( cofDefinition.TargetCollectionDef );
+            var targetCollectionSetName = cofDefinition.TargetCollectionDef;
             if (DefinitionCache.TryGetTargetCollectionDefinition( targetCollectionSetName, out var targetCollectionDefinition )) {
                 var targetCollection = targetCollectionDefinition.GetTargetCollection( targetCollectionName );
                 if (TargetCollectionIndex >= 0 && TargetCollectionIndex < targetCollection.TargetDefs.Count) {
@@ -479,7 +504,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         public static void ClearCache() {
-            _eventCompositeCache.Clear();
+            _eventTreeCache.Clear();
+            _externalEventCache.Clear();
         }
     }
 }

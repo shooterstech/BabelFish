@@ -5,6 +5,7 @@ using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataActors.ResultListFormatter.UserProfile;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
@@ -446,10 +447,11 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Assert.AreEqual( 1, rlf.ShownRows.Count );
         }
 
+        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
         public async Task EriksPlayground() {
 
-            MatchID matchId = new MatchID( "1.2038.2026012314125806.0" );
+            MatchID matchId = new MatchID( "1.1.2026042616021847.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
 
@@ -497,6 +499,66 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
                     Console.WriteLine();
                 }
             }
+        }
+
+        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
+        [TestMethod]
+        public async Task EriksPlayground2() {
+
+            var matchId = new MatchID( "1.1.2026042616021847.0" );
+            var resultListName = "Individual - All";
+            var request = new GetResultListPublicRequest( matchId, resultListName );
+            var resultListResponse = await matchClient.GetResultListPublicAsync( request );
+
+            var resultList = resultListResponse.ResultList;
+            //resultList.ReSortIfOfficial();
+            var resultListToDisplay = resultList;
+            ResultListIntermediateFormatted? RLIF = null;
+
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultListToDisplay );
+            var resultListFormatDefinition = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
+            RLIF = new ResultListIntermediateFormatted( resultListToDisplay, resultListFormatDefinition, null );
+            //RLIF.GetCompletionPercentageStringPtr = ResultList.CompletionPercentageFormatting;
+            await RLIF.InitializeAsync();
+            RLIF.ResolutionWidth = 1000; //Tell it, it is the smallest size screen
+            RLIF.ShowNumberOfChildRows = 0;
+            RLIF.ShowNumberOfBodyRows = 4;
+            RLIF.ShowSupplementalInformation = false;
+            RLIF.ShowZeroScoresWithOFFICIAL = false;
+            RLIF.Engagable = true;
+            RLIF.ShowRanks = 0;
+            RLIF.RefreshAllRowsParticipantAttributeFields();
+
+
+            var request2 = new GetResultListPublicRequest( matchId, resultListName );
+            var resultListResponse2 = await matchClient.GetResultListPublicAsync( request2 );
+
+            var resultList2 = resultListResponse2.ResultList;
+            resultListToDisplay = resultList2;
+            RLIF.Clear();
+            RLIF.RefreshResultList( resultListToDisplay );
+            RLIF.AppendTokenizedResultList( resultListToDisplay );
+
+
+            CellValues tryCellValues, cellValues;
+            foreach (var cv in RLIF.GetShownHeaderRow()) {
+                Console.Write( $"{cv.Text}, " );
+            }
+            Console.WriteLine();
+
+            foreach (var row in RLIF.ShownRows) {
+                foreach (var multiLineRow in row) {
+                    foreach (var cv in multiLineRow.GetShownRow()) {
+                        Console.Write( $"{cv.Text}, " );
+                    }
+                    //Console.Write( " : " );
+                    //Console.Write( multiLineRow.GetParticipant().RemarkList.ToString() );
+                    //Console.Write( " : " );
+                    //Console.Write( string.Join( ", ", multiLineRow.GetClassList() ) );
+                    Console.WriteLine();
+                }
+            }
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿
+
 namespace Scopos.BabelFish.DataModel.Definitions {
     public class AttributeFieldDate : AttributeField<DateTime> {
 
@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         [G_NS.JsonProperty( Order = 11 )]
-        public DateTime ? DefaultValue { get; set; } = null;
+        public DateTime? DefaultValue { get; set; } = null;
 
         [G_NS.JsonProperty( Order = 12 )]
         public AttributeValidationDate Validation { get; set; } = null;
@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 //EKA NOTE Jan 2025: May need a JsonSerializerOptions specifying a custom DateTiem format
                 return G_STJ.JsonSerializer.Deserialize<DateTime>( value );
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                _logger.Error( $"Got passed an unexpected JsonElement of type {value.ValueKind}." );
                 return GetDefaultValue();
             }
         }
@@ -37,14 +37,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (DefaultValue == null)
                 return DateTime.Today;
 
-            return (DateTime) DefaultValue;
+            return (DateTime)DefaultValue;
         }
 
         public override bool ValidateFieldValue( DateTime value ) {
             if (Validation == null)
                 return true;
 
-            return Validation.ValidateFieldValue( value ); 
+            return Validation.ValidateFieldValue( value );
+        }
+
+        /// <summary>
+        /// When a DateTime value is being serialized to be sent to the API, we need to convert it into a string format that the API expects.
+        /// This method handles that conversion, specifically to the "yyyy-MM-dd" format for dates.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public override dynamic ValueForSerialization( dynamic value ) {
+            // Convert the DateTime value into a string format that the API expects. Assuming the API expects dates in "yyyy-MM-dd" format, we can do the following:
+            if (value is DateTime dateTimeValue) {
+                return dateTimeValue.ToString( DateTimeFormats.DATE_FORMAT );
+            }
+
+            // We shouldn't ever get here, b/c the value should always be a DateTime instance. But if we do, we can log an error and return the value as-is.
+            _logger.Warn( $"Value for serialization is not a DateTime instance. Value: {value}. Returning value as-is." );
+            return value;
         }
     }
 
@@ -59,7 +76,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         [G_NS.JsonProperty( Order = 3 )]
-        public DateTime ? MinValue { get; set; } = null;
+        public DateTime? MinValue { get; set; } = null;
 
         /// <summary>
         /// The maximum value
@@ -67,7 +84,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
         [G_NS.JsonProperty( Order = 4 )]
-        public DateTime ? MaxValue { get; set; } = null;
+        public DateTime? MaxValue { get; set; } = null;
 
         /// <inheritdoc />
         public override bool ValidateFieldValue( DateTime value ) {

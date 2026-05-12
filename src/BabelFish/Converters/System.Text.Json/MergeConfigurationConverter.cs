@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.DataActors.Tournaments;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
     public class MergeConfigurationConverter : JsonConverter<MergeConfiguration> {
@@ -15,11 +12,14 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 if (root.TryGetProperty( "Method", out JsonElement methodValue )) {
 
                     switch (methodValue.ToString()) {
-                        case SumMethod.IDENTIFIER:
+                        case "SUM":
+                        case "Sum":
                             return JsonSerializer.Deserialize<SumMethodConfiguration>( root.GetRawText(), options );
-                        case AverageMethod.IDENTIFIER:
+                        case "AVERAGE":
+                        case "Average":
                             return JsonSerializer.Deserialize<AverageMethodConfiguration>( root.GetRawText(), options );
-                        case ReentryMethod.IDENTIFIER:
+                        case "REENTRY":
+                        case "Reentry":
                             var foo = JsonSerializer.Deserialize<ReentryMethodConfiguration>( root.GetRawText(), options );
                             return foo;
                         default:

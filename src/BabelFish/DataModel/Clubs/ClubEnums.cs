@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
 
 
 namespace Scopos.BabelFish.DataModel.Clubs {
@@ -41,6 +37,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
+    [Obsolete("This feature is no longer in use as of 2026-04. Also not included on LicenseFiles")]
     public enum ClubLicenseCapability {
 
         /// <summary>
@@ -77,30 +74,30 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// Standard Orion for Clubs license.
         /// </summary>
-        [Description( "Individual" )]
-        [EnumMember( Value = "INDIVIDUAL" )] 
+        [Description( "INDIVIDUAL" )]
+        [EnumMember( Value = "INDIVIDUAL" )]
         INDIVIDUAL,
 
         /// <summary>
         /// Limited functionality Orion for Clubs Home license.
         /// </summary>
-        [Description( "Home" )]
-        [EnumMember( Value = "HOME" )] 
+        [Description( "HOME" )]
+        [EnumMember( Value = "HOME" )]
         HOME,
 
         /// <summary>
         /// Site license for Orion for Clubs.
         /// </summary>
-        [Description( "Site" )]
-        [EnumMember( Value = "SITE" )] 
+        [Description( "SITE" )]
+        [EnumMember( Value = "SITE" )]
         SITE,
 
         /// <summary>
         /// Temporary Orion for Clubs license.
         /// </summary>
-        [Description( "Temporary" )]
-        [EnumMember( Value = "TEMPORARY" )] 
-        TEMPORARY 
+        [Description( "TEMPORARY" )]
+        [EnumMember( Value = "TEMPORARY" )]
+        TEMPORARY
     };
 
     public enum ClubOptions {

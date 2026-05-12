@@ -1,16 +1,33 @@
 using System.ComponentModel;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
-    /// Result COF format for (JSONVersion) "2022-04-09"
+    /// A ResultCOF is considered a 'compiled' data structure. It contains data for a given Course of Fire fired within a Match.
+    /// This includes the Event Scores and Shots, as well as metadata about the match and participant who fired the scores..
     /// </summary>
     [Serializable]
-    public class ResultCOF : IEventScoreProjection {
-        //Key is the Singular Event Name, Value is the Shot
-        private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
+    public class ResultCOF :
+        IEventScoreProjection,
+        ISaveToFile {
 
+        #region Private Variables
+        //Key is the Singular Event Name, Value is the Shot
+        private Dictionary<string, Athena.Shot.Shot> _shotsByEventName = null;
+
+        #endregion
+
+        #region Constructors, Initialization, and Factory Methods
+
+        #endregion
+
+        #region Events
+
+        #endregion
+
+        #region Data Model Properties
         /// <summary>
         /// GUID assigned to this result
         /// </summary>
@@ -55,6 +72,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
+        [Obsolete( "Being removed because it was never used in practice. Deprecated April 2026" )]
         public string LiveTopic { get; set; } = string.Empty;
 
         /// <summary>
@@ -72,7 +90,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 8 )]
         [G_NS.JsonProperty( Order = 8 )]
-        public string MatchID { get; set; } = string.Empty;
+        public MatchID MatchID { get; set; } = MatchID.DEFAULT;
+
+        public int CourseOfFireId { get; set; } = 1;
 
         /// <summary>
         /// Human readable name of the match.
@@ -89,12 +109,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string MatchLocation { get; set; } = "";
 
         /// <summary>
-        /// Unique ID for the parent of this match, if this is a Virtual Match. If this is not a
+        /// Read only unique ID for the parent of this match, if this is a Virtual Match. If this is not a
         /// Virtual Match, then it will be the same value as MatchID.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 11 )]
-        [G_NS.JsonProperty( Order = 11 )]
-        public string ParentID { get; set; } = string.Empty;
+        [G_NS.JsonIgnore]
+        public MatchID ParentID {
+            get {
+                return this.MatchID.GetParentMatchID();
+            }
+        }
 
 
         [G_STJ_SER.JsonPropertyOrder( 12 )]
@@ -113,11 +136,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
         /// <summary>
-        /// The Firing Point Label of the current match, this is a string because it could not be a number
+        /// The Firing Point Number that this Result COF was shot on. 
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 14 )]
         [G_NS.JsonProperty( Order = 14 )]
+        [Obsolete( "This field is being renamed to SquaddingAssignment, as FiringPointNumber is not an accurate description for all disciplines." )]
         public string FiringPointNumber { get; set; } = "0";
+
+        /// <summary>
+        /// The SquaddingAssignment (e.g. firing point number, squad number, etc.) that this Result COF was shot on.
+        /// <para>Value is null if it is not known.</para>
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
+        public SquaddingAssignment? SquaddingAssignment { get; set; } = null;
 
         /// <summary>
         /// String holding the software (Orion Scoring System) and Version number of the software.
@@ -142,7 +174,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ScoreConfigName { get; set; }
 
         /// <summary>
-        /// Name of the TargetCollection used in this match.
+        /// Name of the TargetCollection used in firing this Result Course of Fire. The <see cref="TargetCollection">TARGET COLLECTION</see>
+        /// is defined within the <see cref="CourseOfFire">COURSE OF FIRE</see>.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 22 )]
         [G_NS.JsonProperty( Order = 22 )]
@@ -154,15 +187,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 23 )]
         [G_NS.JsonProperty( Order = 23 )]
+        [Obsolete( "This field is no longer used. The default target definition should be specified in the Course of Fire definition." )]
         public string DefaultTargetDefinition { get; set; }
 
 
         /// <summary>
-        /// The GUID of the orion app user who shot this score. Is blank if not known.
+        /// Read only UUID of the Scopos account user who shot this score. Is blank if not known.
+        /// <para>This value is the same as <see cref="Participant.UserID"/>.</para>
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 30 )]
         [G_NS.JsonProperty( Order = 30 )]
-        public string UserID { get; set; } = string.Empty;
+        public string UserID {
+            get {
+                if (Participant is null && Participant is Individual inv)
+                    return inv?.UserID ?? string.Empty;
+
+                return string.Empty;
+            }
+        }
 
         /// <summary>
         /// Data on the person or team who shot this score.
@@ -179,6 +221,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 40 )]
         public Dictionary<string, EventScore> EventScores { get; set; } = new Dictionary<string, EventScore>();
 
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 45 )]
+        [G_NS.JsonProperty( Order = 45 )]
+        public RemarkList RemarkList { get; set; }
+
+        /// <summary>
+        /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
+        }
+
+        /// <inheritdoc/>
+        [G_STJ_SER.JsonPropertyOrder( 46 )]
+        [G_NS.JsonProperty( Order = 46 )]
+        public bool OutOfCompetition { get; set; }
+
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
         /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
@@ -194,28 +258,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 51 )]
         public Athena.Shot.Shot? LastShot { get; set; } = null;
 
-
         /// <inheritdoc />
-        public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
-            if (shotsByEventName != null)
-                return shotsByEventName;
-
-            shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
-
-            foreach (var t in Shots.Values)
-                if (!string.IsNullOrEmpty( t.EventName ))
-                    shotsByEventName.Add( t.EventName, t );
-
-            return shotsByEventName;
-        }
-
-        /// <inheritdoc />
+        [G_STJ_SER.JsonPropertyOrder( 55 )]
+        [G_NS.JsonProperty( Order = 55 )]
         public Dictionary<string, EventScore> ResultCofScores { get; set; } = null;
-
-        public bool ShouldSerializeResultCofScores() {
-            return this.ResultCofScores is not null
-                && this.ResultCofScores.Count > 0;
-        }
 
         /// <summary>
         /// Describes how to display shot graphics and (text) scores to spectators, during a Live event.
@@ -280,8 +326,47 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Obsolete( "Use OwnerId instead." )]
         public string AccountNumber { get; set; } = string.Empty;
 
+        #endregion
+
+        #region Helper Properties
+
+        #endregion
+
+        #region Methods
         /// <inheritdoc />
-		public override string ToString() {
+        public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
+            if (_shotsByEventName != null)
+                return _shotsByEventName;
+
+            _shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
+
+            foreach (var t in Shots.Values)
+                if (!string.IsNullOrEmpty( t.EventName ))
+                    _shotsByEventName.Add( t.EventName, t );
+
+            return _shotsByEventName;
+        }
+
+        /// <summary>
+        /// Newtownsoft helper method to determine if ResultCofScores should be serialized. We only want to serialize it if it is not null, and if it has at least one score in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeResultCofScores() {
+            return this.ResultCofScores is not null
+                && this.ResultCofScores.Count > 0;
+        }
+
+        /// <summary>
+        /// Newtonsoft.json helper method to determine if SquaddingAssignment should be serialized.
+        /// We only want to serialize it if it is not null, and if it is not "Not Yet Squadded", which is the default value when we don't know the squadding assignment.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeSquaddingAssignment() {
+            return SquaddingAssignment is not null && !SquaddingAssignment.NotYetSquadded;
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
             StringBuilder foo = new StringBuilder();
             foo.Append( "ResultCOF for " );
             foo.Append( Participant.DisplayName );
@@ -337,6 +422,61 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return false;
         }
+
+        #region ISaveToFile Methods
+        /// <inheritdoc />
+        public string GetFileName() {
+            return $"{ResultCOFID}.json";
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+
+            if (relativeDirectory == null)
+                throw new ArgumentNullException( nameof( relativeDirectory ) );
+
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+
+            var directoryPath = Path.GetDirectoryName( filePath );
+
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( filePath, json );
+
+            return filePath;
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
+        /// <inheritdoc />
+        public string GetRelativePath() {
+            return this.GetFileName();
+        }
+
+        /// <inheritdoc />
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
+        }
+        #endregion
+
+        #endregion
 
     }
 }

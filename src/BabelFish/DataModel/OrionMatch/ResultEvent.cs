@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    
+
     /// <summary>
     /// A ResultEvent represents the score one participant earned in an Event. ResultEvents often contain the score
     /// not just for the top level Event, but for the children as well.
@@ -33,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        public string MatchID { get; set; }
+        public MatchID MatchID { get; set; } = MatchID.DEFAULT;
 
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
@@ -103,9 +100,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         /// <remarks>Squadding Assignmetn is not a part of the REST API response for GetResultList. It is included here to allow the Result
         /// List Formatter access to squadding information, so it may display it on a formatted result list.</remarks>
-        [G_NS.JsonIgnore ]
-        [G_STJ_SER.JsonIgnore ]
-		public SquaddingAssignment SquaddingAssignment { get; set; }
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public SquaddingAssignment SquaddingAssignment { get; set; }
 
 
         /// <inheritdoc />
@@ -145,7 +142,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public Dictionary<string, EventScore> ResultCofScores { get; set; }
 
         public bool ShouldSerializeResultCOFScores() {
-            return (ResultCofScores != null && ResultCofScores.Count > 0 );
+            return (ResultCofScores != null && ResultCofScores.Count > 0);
         }
 
         /// <summary>
@@ -155,7 +152,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="matchId"></param>
         /// <param name="eventName"></param>
         /// <returns></returns>
-        public static string KeyForResultCofScore(string matchId, string eventName ) {
+        public static string KeyForResultCofScore( string matchId, string eventName ) {
             return $"{matchId}: {eventName}";
         }
 
@@ -204,7 +201,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (string.IsNullOrEmpty( _topLevelEventName )) {
                 if (this.EventScores is not null) {
                     foreach (var es in this.EventScores.Values) {
-                        if (es.EventType == "EVENT") {
+                        if (es.EventType == Definitions.EventtType.EVENT) {
                             _topLevelEventName = es.EventName;
                             return es.Status;
                         }
@@ -213,19 +210,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
                 //EKA NOTE: Should we check .EventScores.ResultCofScores ? 
 
-            } else if ( this.EventScores.TryGetValue( _topLevelEventName, out EventScore es)) {
+            } else if (this.EventScores.TryGetValue( _topLevelEventName, out EventScore es )) {
                 return es.Status;
             }
-            
-            return ResultStatus.OFFICIAL;
-        }    
 
-		/// <summary>
-		/// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
-		/// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 21 )]
+            return ResultStatus.OFFICIAL;
+        }
+
+        /// <summary>
+        /// If this is a team score, the TeamMembers will be the scores of the team members. If this is an Individual value will be null.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 21 )]
         [G_NS.JsonProperty( Order = 21 )]
-        public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
+        public List<ResultEvent>? TeamMembers { get; set; }
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize TeamMembers when the list has something in it.
@@ -234,6 +231,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         public bool ShouldSerializeTeamMembers() {
             return (TeamMembers != null && TeamMembers.Count > 0);
+        }
+
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 25 )]
+        [G_NS.JsonProperty( Order = 25 )]
+        public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        /// <inheritdoc/>
+        [G_STJ_SER.JsonPropertyOrder( 26 )]
+        [G_NS.JsonProperty( Order = 26 )]
+        public bool OutOfCompetition { get; set; }
+
+        /// <summary>
+        /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
         }
 
         /// <inheritdoc />
@@ -251,8 +270,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
-        public Athena.Shot.Shot? GetLastCompetitionShot()
-        {
+        public Athena.Shot.Shot? GetLastCompetitionShot() {
             Athena.Shot.Shot lastShot = null;
 
             if (Shots != null) {
@@ -263,21 +281,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             }
             return lastShot;
-		}
+        }
 
-		/// <inheritdoc />
-		public bool CurrentlyCompetingOrRecentlyDone() {
-			if (GetStatus() == ResultStatus.INTERMEDIATE)
-				return true;
+        /// <inheritdoc />
+        public bool CurrentlyCompetingOrRecentlyDone() {
+            if (GetStatus() == ResultStatus.INTERMEDIATE)
+                return true;
 
-			if (LastShot != null && ((DateTime.UtcNow - LastShot.TimeScored.ToUniversalTime()).TotalMinutes < 5.0))
-				return true;
+            if (LastShot != null && ((DateTime.UtcNow - LastShot.TimeScored.ToUniversalTime()).TotalMinutes < 5.0))
+                return true;
 
-			return false;
-		}
+            return false;
+        }
 
-		/// <inheritdoc />
-		public override string ToString() {
+        /// <inheritdoc />
+        public override string ToString() {
             return $"ResultEvent for {this.Participant.DisplayName}";
         }
     }

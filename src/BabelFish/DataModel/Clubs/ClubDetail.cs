@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text;
-using Scopos.BabelFish.DataModel;
-using Scopos.BabelFish.DataModel.Common;
-using NLog;
-using Scopos.BabelFish.Helpers;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataModel.Clubs
-{
+namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
@@ -62,7 +54,7 @@ namespace Scopos.BabelFish.DataModel.Clubs
             get {
                 return $"OrionAcct{AccountNumber:D6}";
             }
-        } 
+        }
 
         /// <summary>
         /// The list of people who are Administrators for this club.
@@ -81,7 +73,7 @@ namespace Scopos.BabelFish.DataModel.Clubs
         /// The phone number of the club. May in fact be the phone number of the club's administrator.
         /// </summary>
         [DefaultValue( "" )]
-        [Obsolete("Soon to be replaced with v1.0:orion:Phone Number")]
+        [Obsolete( "Soon to be replaced with v1.0:orion:Phone Number" )]
         public string Phone { get; set; } = string.Empty;
 
         /// <summary>
@@ -130,12 +122,24 @@ namespace Scopos.BabelFish.DataModel.Clubs
         /// </summary>
         public string ApiKey { get; set; } = string.Empty;
 
+        /// <remarks>
+        /// Should not be returned as part of the REST API response, in either public or authenticated calls.
+        /// </remarks>
         public string ApiKeyId { get; set; } = string.Empty;
 
+        /// <remarks>
+        /// Should not be returned as part of the REST API response, in either public or authenticated calls.
+        /// </remarks>
         public string AWSAccessKeyId { get; set; } = string.Empty;
 
+        /// <remarks>
+        /// Should not be returned as part of the REST API response, in either public or authenticated calls.
+        /// </remarks>
         public string AWSSecretAccessKey { get; set; } = string.Empty;
 
+        /// <remarks>
+        /// Should not be returned as part of the REST API response, in either public or authenticated calls.
+        /// </remarks>
         public string AWSRegion { get; set; } = string.Empty;
 
         /// <summary>

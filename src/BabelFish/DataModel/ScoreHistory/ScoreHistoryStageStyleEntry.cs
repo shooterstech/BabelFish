@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
@@ -18,17 +16,16 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// <summary>
         /// String, formatted as a SetName, representing the Stage Style this ScoreHistryEntry represents
         /// </summary>
-        public string StageStyleDef { get; set; }
+        public SetName StageStyleDef { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             StringBuilder foo = new StringBuilder();
-            foo.Append("StageStyle: ");
-            foo.Append(base.StartDate.ToString("MM/dd/yyyy"));
-            foo.Append(" - ");
-            foo.Append(base.UserId);
-            foo.Append(" - ");
-            foo.Append(StageStyleDef );
+            foo.Append( "StageStyle: " );
+            foo.Append( base.StartDate.ToString( "MM/dd/yyyy" ) );
+            foo.Append( " - " );
+            foo.Append( base.UserId );
+            foo.Append( " - " );
+            foo.Append( StageStyleDef );
             return foo.ToString();
         }
     }
