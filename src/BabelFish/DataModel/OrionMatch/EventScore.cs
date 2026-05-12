@@ -17,7 +17,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Constructors, Factory Methods, Initialization
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
         public EventScore() {
+        }
+
+        /// <summary>
+        /// Copy constructor. Creates a new instance of EventScore by copying all data model properties from an existing instance.
+        /// </summary>
+        /// <param name="other">The EventScore instance to copy from.</param>
+        public EventScore( EventScore other ) {
+            // Data Model Properties
+            this.EventName = other.EventName;
+            this.ScoreFormatted = other.ScoreFormatted;
+            this.Score = new Athena.Score( other.Score );
+            this.Projected = new Athena.Score( other.Projected );
+            this.EventType = other.EventType;
+            this.Status = other.Status;
+            this.EventStyleDef = other.EventStyleDef;
+            this.StageStyleDef = other.StageStyleDef;
+            this.NumShotsFired = other.NumShotsFired;
+
+            // Helper Properties
+            this.MatchId = other.MatchId;
+            this.Participant = other.Participant;
         }
 
         #endregion

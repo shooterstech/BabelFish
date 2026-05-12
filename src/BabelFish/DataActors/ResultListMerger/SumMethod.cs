@@ -87,12 +87,12 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 averagedEventScore.Projected = summedEventScore.Projected / count;
             }
 
-            //Set the summed score (which his the top level score for this MergeMethod) on the ResultEvent
+            //Set the summed score (which is the top level score for this MergeMethod) on the ResultEvent
             re.ResultCofScores[this.TopLevelEventname] = summedEventScore;
 
             // Set the high score event if the configuration says to include it and there is at least one score to include and that score isn't zero
             if (MergeConfiguration.IncludeHighScoreEvent && listOfScores.Count > 0 && !listOfScores[0].Score.IsZero) {
-                highEventScore = listOfScores[0].Clone();
+                highEventScore = new EventScore( listOfScores[0] );
                 // The next two lines are added to aid in debugging. They don't have to be here, but it is helpful to have the EventName and ScoreFormatted properties set on the highEventScore for debugging purposes.
                 highEventScore.EventName = HIGH_EVENT_SCORE_NAME;
                 highEventScore.ScoreFormatted = StringFormatting.FormatScore( "{d}", highEventScore.Score );
@@ -106,7 +106,6 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 re.ResultCofScores[ResultEvent.KeyForResultCofScore( ResultListMergerEngine.Container.MatchId, AVERAGE_EVENT_SCORE_NAME )] = averagedEventScore;
             }
 
-            var temp = averagedEventScore.ToString();
             //return true to indicate this ResultEvent should be included with the final merged Result List
             return true;
         }
@@ -127,7 +126,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     } );
                 }
 
-                if (MergeConfiguration.IncludeHighScoreEvent) {
+                if (MergeConfiguration.IncludeAverageScoreEvent) {
                     additionalFields.Add( new ResultListField() {
                         FieldName = AVERAGE_EVENT_SCORE_NAME,
                         Method = ResultFieldMethod.SCORE,
@@ -145,10 +144,10 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <inheritdoc />
         public override List<ResultListDisplayColumn> AdditionalDisplayColumns {
             get {
-                List<ResultListDisplayColumn> additionalColummsn = base.AdditionalDisplayColumns;
+                List<ResultListDisplayColumn> additionalColumns = base.AdditionalDisplayColumns;
 
                 if (MergeConfiguration.IncludeHighScoreEvent) {
-                    additionalColummsn.Add( new ResultListDisplayColumn() {
+                    additionalColumns.Add( new ResultListDisplayColumn() {
                         Header = HIGH_EVENT_SCORE_NAME,
                         Body = $"{{{HIGH_EVENT_SCORE_NAME}}}",
                         BodyValues = new List<ResultListCellValue>() {
@@ -158,13 +157,13 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         },
                         ClassSet = new List<ClassSet>() { new ClassSet() {
                             Name = "rlf-col-event",
-                            ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                         }}
                     } );
                 }
 
                 if (MergeConfiguration.IncludeAverageScoreEvent) {
-                    additionalColummsn.Add( new ResultListDisplayColumn() {
+                    additionalColumns.Add( new ResultListDisplayColumn() {
                         Header = AVERAGE_EVENT_SCORE_NAME,
                         Body = $"{{{AVERAGE_EVENT_SCORE_NAME}}}",
                         BodyValues = new List<ResultListCellValue>() {
@@ -174,12 +173,12 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         },
                         ClassSet = new List<ClassSet>() { new ClassSet() {
                             Name = "rlf-col-event",
-                            ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                         }}
                     } );
                 }
 
-                return additionalColummsn;
+                return additionalColumns;
             }
         }
 

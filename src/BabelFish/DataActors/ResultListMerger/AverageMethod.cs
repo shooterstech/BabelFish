@@ -91,7 +91,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             // Set the high score event if the configuration says to include it and there is at least one score to include and that score isn't zero
             if (MergeConfiguration.AddHighScoreEvent && listOfScores.Count > 0 && !listOfScores[0].Score.IsZero) {
-                highEventScore = listOfScores[0].Clone();
+                highEventScore = new EventScore( listOfScores[0] );
                 // The next two lines are added to aid in debugging. They don't have to be here, but it is helpful to have the EventName and ScoreFormatted properties set on the highEventScore for debugging purposes.
                 highEventScore.EventName = HIGH_EVENT_SCORE_NAME;
                 highEventScore.ScoreFormatted = StringFormatting.FormatScore( "{d}", highEventScore.Score );
@@ -137,7 +137,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         },
                         ClassSet = new List<ClassSet>() { new ClassSet() {
                             Name = "rlf-col-event",
-                            ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                         }}
                     } );
                 }

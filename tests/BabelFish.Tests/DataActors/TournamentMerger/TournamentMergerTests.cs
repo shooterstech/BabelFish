@@ -76,7 +76,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
 
             var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2026051120003076.2" ) );
             var tournament = getTournamentResponse.Tournament;
-            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Demo Avg Merged Result List" );
+            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Demo Sum Merged Result List" );
             var tournamentMerger = await ResultListMergerEngine.CreateAsync( invRanking );
 
             var mergedResultList = await tournamentMerger.MergeAsync();

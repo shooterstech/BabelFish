@@ -171,7 +171,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 },
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-rank",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }}
             } );
 
@@ -187,7 +187,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 },
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-participant",
-                    ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                    ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }}
             } );
 
@@ -205,7 +205,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     },
                     ClassSet = new List<ClassSet>() { new ClassSet() {
                         Name = "rlf-col-event",
-                        ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                        ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                     }},
                     ShowWhen = new ShowWhenVariable() {
                         Condition = ShowWhenCondition.DIMENSION_LARGE
@@ -227,7 +227,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     },
                 ClassSet = new List<ClassSet>() { new ClassSet() {
                         Name = "rlf-col-event",
-                        ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone()
+                        ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                     }}
             } );
 

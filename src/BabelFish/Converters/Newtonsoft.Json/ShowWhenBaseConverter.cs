@@ -37,7 +37,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                     return JsonConvert.DeserializeObject<ShowWhenSegmentGroup>( jo.ToString(), SpecifiedSubclassConversion );
                 default:
                     //If we get here, it is probable because of ill-formed json
-                    return ShowWhenVariable.ALWAYS_SHOW.Clone();
+                    return ShowWhenVariable.CreateAlwaysShow();
             }
         }
 
