@@ -295,7 +295,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// the Precision Air Rifle marksmen).</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 24 )]
-        public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
+        public AttributeFilter AttributeFilter { get; set; } = new AttributeFilterNone();
 
         /// <inheritdoc />
         [G_NS.JsonProperty( Order = 25 )]

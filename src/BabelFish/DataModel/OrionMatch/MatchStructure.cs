@@ -15,7 +15,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IMergedResultListContainer,
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserializing,
-        G_STJ_SER.IJsonOnDeserialized {
+        G_STJ_SER.IJsonOnDeserialized,
+        ICheckSum {
 
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
@@ -140,6 +141,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return Match?.MatchProject ?? null;
             }
         }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
         #endregion
 
         #region Methods
@@ -248,6 +256,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return mrl;
         }
 
+        /// <inheritdoc/>
+        public ulong CalculateChecksum() {
+            ulong hash = 0;
+
+            foreach (var cof in CoursesOfFire) {
+                hash ^= cof.CalculateChecksum();
+            }
+
+            foreach (var globalAttribute in GlobalAttributes) {
+                hash ^= globalAttribute.CalculateChecksum();
+            }
+
+            foreach (var mrl in MergedResultLists) {
+                hash ^= mrl.CalculateChecksum();
+            }
+
+            return hash;
+        }
         #endregion
     }
 }

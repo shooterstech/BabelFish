@@ -12,9 +12,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.AttributeFilterConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeFilterConverter ) )]
-    public abstract class AttributeFilter : IFinishInitializationAsync {
-
-        public static readonly AttributeFilter DEFAULT = new AttributeFilterNone();
+    public abstract class AttributeFilter :
+        IFinishInitializationAsync,
+        ICheckSum {
 
         /// <summary>
         /// Concret class identifier. 
@@ -45,7 +45,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public abstract int Count { get; }
 
         /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
         public abstract Task FinishInitializationAsync();
+
+        /// <inheritdoc />
+        public abstract ulong CalculateChecksum();
 
     }
 
@@ -78,6 +87,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public override async Task FinishInitializationAsync() {
             //Do nothing, since this filter has no attribute values to initialize.
             ;
+        }
+
+        /// <inheritdoc />
+        public override ulong CalculateChecksum() {
+            // Using a random value for the checksum of the default filter, since it has no arguments and thus no properties to calculate a checksum from.
+            return 0x7F3A9C12D4B8E067;
         }
     }
 }

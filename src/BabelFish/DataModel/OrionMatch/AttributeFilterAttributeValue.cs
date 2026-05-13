@@ -7,7 +7,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// condition where the participant must have (or must not have) specific <seealso cref="AttributeValue.AttributeValue"/> field values.
     /// </summary>
     /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
-    public class AttributeFilterAttributeValue : AttributeFilter, IEquatable<AttributeFilterAttributeValue>, IEqualityComparer<AttributeFilterAttributeValue>, IFinishInitializationAsync {
+    public class AttributeFilterAttributeValue :
+        AttributeFilter,
+        IEquatable<AttributeFilterAttributeValue>,
+        IEqualityComparer<AttributeFilterAttributeValue>,
+        IFinishInitializationAsync {
 
         /// <summary>
         /// Constructor.
@@ -50,6 +54,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc/>
         [G_NS.JsonIgnore]
         public override int Count => 1;
+
+        /// <inheritdoc/>
+        public override ulong CalculateChecksum() {
+            var combined = $"{Operation}|{FilterRule}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var val in this.Values) {
+                hash ^= val.CalculateChecksum();
+            }
+
+            return hash;
+        }
 
         /// <summary>
         /// Returns a hash code unique ideifying this AttributeFiler. Incorporating the Operation, Boolean, and </summary>

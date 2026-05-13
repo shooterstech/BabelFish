@@ -21,7 +21,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultListAbbr :
         IEquatable<ResultListAbbr>,
         IEqualityComparer<ResultListAbbr>,
-        IFinishInitializationAsync {
+        IFinishInitializationAsync,
+        ICheckSum {
 
         #region Private and Protected Fields
         private bool _ignoreEvents = false;
@@ -126,7 +127,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <remarks>To test if a Participant passes the AttributeFilter, use the static <see cref="AttributeFilterCalculator.Passes(AttributeFilter, MatchParticipant)"/> method.</remarks>
         [G_NS.JsonProperty( Order = 14 )]
-        public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
+        public AttributeFilter AttributeFilter { get; set; } = new AttributeFilterNone();
 
         /// <summary>
         /// Newtonsoft.json helper method, to determine if AttributeFilters should be serialized.
@@ -156,6 +157,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             [UserDefinedFieldNames.USER_DEFINED_FIELD_3] = string.Empty,
         };
 
+        #endregion
+
+        #region Helper Properties
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        #endregion
+
+        #region Methods 
+
         /// <summary>
         /// Newtonsoft.json helper method, to determine if UserDefinedText should be serialized.
         /// </summary>
@@ -168,9 +183,32 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )));
         }
 
-        #endregion
+        public ulong CalculateChecksum() {
+            StringBuilder combined = new StringBuilder( $"{ResultName}|{Primary}|{Team}|{ResultListFormatDef}|{RankingRuleDef}|{ScoreConfigName}" );
 
-        #region Methods 
+            if (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_1, out string text1 ) && !string.IsNullOrEmpty( text1 )) {
+                combined.Append( $"|{text1}" );
+            } else {
+                combined.Append( $"|none" );
+            }
+
+            if (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_2, out string text2 ) && !string.IsNullOrEmpty( text2 )) {
+                combined.Append( $"|{text2}" );
+            } else {
+                combined.Append( $"|none" );
+            }
+
+            if (UserDefinedText.TryGetValue( UserDefinedFieldNames.USER_DEFINED_FIELD_3, out string text3 ) && !string.IsNullOrEmpty( text3 )) {
+                combined.Append( $"|{text3}" );
+            } else {
+                combined.Append( $"|none" );
+            }
+
+            var hash = Helpers.Common.Md5ToUlong( combined.ToString() );
+
+            hash ^= AttributeFilter.CalculateChecksum();
+            return hash;
+        }
 
         /// <summary>
         /// Returns a hash code that unique defines the structure of the Result List.</summary>

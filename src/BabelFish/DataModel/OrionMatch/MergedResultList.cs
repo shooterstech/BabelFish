@@ -11,7 +11,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class MergedResultList :
         IGetScoreFormatCollectionDefinition,
         G_STJ_SER.IJsonOnDeserialized,
-        G_STJ_SER.IJsonOnDeserializing {
+        G_STJ_SER.IJsonOnDeserializing,
+        ICheckSum {
 
         #region Private Variables
         private bool _ignoreEvents = false;
@@ -129,6 +130,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonIgnore]
         public IMergedResultListContainer Container { get; internal set; }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
         #endregion
 
         #region Methods
@@ -164,6 +171,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <exception cref="ScoposAPIException" />
         public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( this.Configuration.ScoreFormatCollectionDef );
+        }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{ResultName}|{MergedId}|{Method}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            hash ^= Configuration.CalculateChecksum();
+
+            foreach (var member in ResultListMembers) {
+                hash ^= member.CalculateChecksum();
+            }
+            return hash;
         }
 
         #endregion

@@ -42,6 +42,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override int Count => Arguments.Sum( arg => arg.Count );
 
+
+        /// <inheritdoc/>
+        public override ulong CalculateChecksum() {
+            var combined = $"{Operation}|{Boolean}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var arg in this.Arguments) {
+                hash ^= arg.CalculateChecksum();
+            }
+
+            return hash;
+        }
+
         /// <inheritdoc/>
         public override string ToString() {
             return string.Join( $" {Boolean} ", Arguments );

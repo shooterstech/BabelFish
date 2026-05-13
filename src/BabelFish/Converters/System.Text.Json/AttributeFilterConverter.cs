@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     case "NONE":
                     default:
                         //If we get here, it is probable because of ill-formed json
-                        return AttributeFilter.DEFAULT;
+                        return new AttributeFilterNone();
                 }
             }
         }
