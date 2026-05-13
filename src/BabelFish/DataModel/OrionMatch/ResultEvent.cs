@@ -7,7 +7,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// A ResultEvent represents the score one participant earned in an Event. ResultEvents often contain the score
     /// not just for the top level Event, but for the children as well.
     /// </summary>
-    public class ResultEvent : IEventScoreProjection, IRLIFItem {
+    public class ResultEvent :
+        IEventScoreProjection,
+        IRLIFItem,
+        ICheckSum {
 
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
@@ -284,6 +287,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+        /// <inheritdoc />
         public bool CurrentlyCompetingOrRecentlyDone() {
             if (GetStatus() == ResultStatus.INTERMEDIATE)
                 return true;
@@ -297,6 +306,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return $"ResultEvent for {this.Participant.DisplayName}";
+        }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combine = $"{MatchID}|{Rank}|{RankOrder}|{RankDelta}|{ProjectedRank}|{ProjectedRankOrder}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}";
+            var hash = Helpers.Common.Md5ToUlong( combine );
+
+            hash ^= Participant.CalculateChecksum();
+
+            if (EventScores is not null) {
+                foreach (var es in EventScores) {
+                    hash ^= es.Value.CalculateChecksum();
+                }
+            }
+
+            if (ResultCofScores is not null) {
+                foreach (var rCof in ResultCofScores) {
+                    hash ^= rCof.Value.CalculateChecksum();
+                }
+            }
+
+            if (TeamMembers is not null) {
+                foreach (var tm in TeamMembers) {
+                    hash ^= tm.CalculateChecksum();
+                }
+            }
+
+            // NOTE: We are purposefully not including Shots in the checksum calculation, as this property is not included in the REST API response for ResultEvents.
+
+            return hash;
         }
     }
 }

@@ -1,23 +1,34 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-
-## [2.1.0-alpha] - 2026-03-00
-** Alpha build, not intended for outside of Scopos use **
-** Contains breaking changes **
+## [2.0] - In Development Now, Expected Summer 2026
+### Breaking Changes
+** Contains many breaking changes **
+- SetNames that were previously represented as strings are now represented as SetName objects.
+- MatchIds that were previously represented as strings are now represented as MatchID objects.
+- Datas and Times that were previously represented as strings are now represented as DateTime objects.
+- The Tournament class is renamed to the ResultListMerger class.
 ### Enhancements
-#### SetName References
-- All SetName references (e.g. TargetDef) have been changed from a string to SetName object.
-- When a SetName in JSON is deserialized, if it can not be parsed or the value is null, the SetName 1.0:orion:Default is returned.
-#### AttributeFilter
-- Added a series of classes, derived from the abstract class AttributeFilter, that specify conditions in which a Participant passes or doesn't pass. Intended to be used to filter a list of Participants for inclusion on a Result List. For example, list all the Participants in a match that are shooting Sporter air rifle.
-- Added the AttributeFilterCalculator that tests if a Participant meets the filter's specifications.
-#### CourseOfFire
-- Added property for RequiredAttributeDef and deprecated DefaultAttributeDef, which will specify which, if any, ATTRIBUTE is required when the COURSE OF FIRE is added to an Orion Match. 
-- Added specification to check that RequiredAttributeDef is a simple attribute, of type string, and each field value specifies an Attribute Value Appelation.
+#### Match
+- Matches may now have multiple Courses of Fire (1.x version allowed only one), each of which is defined in a new class CourseOFFireStructure.
+- Multiple properties within the Match class are now deprecated, as they previously existed when only one Course of Fire was allowed. These deprecated properties will remain for backwards compatibility for at least 1 year after release. They will however point to the first (and default) CourseOfFireStructure.
+- ResultListWizard data actor class is added to generated suggested ResultListAbbr (configuration data for a ResultList) based on a CourseOfFireStructure.
+- AttributeFilterCalculator data actor class is added to filter Participants (both Individuals and Teams) based on their AttributeValues.
+#### MatchProject
+- Added the MatchProject class which is the Top level class that is a container for all data related to an Orion Match (data file). This includes the Match object itself, as well as the Participants, and raw score data. Also includes data actors to help manage the Match data, such as the ShotMapper, ResultDocumentGenerator, ResultListSlidingWindow.
+- MatchProject includes serialization and deserialization methods to save to and read from files.
+- The new ShotMapper data actor stores shot data from ESTs (and other sources) and maps the shots to Events defined by the COURSE OF FIRE.
+- The new ResultDocumentGenerator data actor compiles Participant and Shot data into both (individual) ResultCOF and ResultList instances.
+- The new ResultListSlidingWinow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
+#### RULEBOOK Definition
+- Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
 
+## [1.12.5] - 2026-05-14
+### Enhancements
+#### ICheckSum
+- Added the ICheckSum interface to calculate a checksum value for high level documents. Intended to check difference in instances between local copy and a server's copy. Implemented in many DataModel/OrionMatch classes including Match, ResultList, ResultCOF, and SquaddingList.
 
-## [1.12.4] - 2026-03-00
+## [1.12.4] - 2026-03-20
 ### Enhancements
 #### GetClubList
 - Added a list of ClubAuthorizationRoles the authenticated caller has for each returned Club.
@@ -29,7 +40,6 @@ All notable changes to BabelFish will be documented in this file.
 #### Authentication
 - Fixed issue with automatically refreshing authentication tokens after 24 hours.
 
-
 ## [1.12.3] - 2026-03-03
 ### Enhancements
 #### ProjectScoresByAverageShotFired
@@ -37,14 +47,12 @@ All notable changes to BabelFish will be documented in this file.
 ### Bug Fixes
 - Fixed issue with TargetAnalysis that was calling an async method in a non-async function.
 
-
 ## [1.12.2] - 2026-02-20
 ### Enhancements
 #### MatchSearchPublicRequest
 - Added ability to search for matches based on the owner of the match (aka Orion Club).
 #### ResultListIntermediateFormattedRow
 - Updated the return value for an Attribute to be the Field's Name (previously was the Field's Value).
-
 
 ### Bug Fixes
 #### MatchAbbr
@@ -67,7 +75,6 @@ All notable changes to BabelFish will be documented in this file.
 - Abstracted the FactoryAsync method to work with either ResultLists or SquaddingList objects.
 - The GenerateExcel method now returns a byte[].
 - When instantiating a new instance, the default behavior is to create an Excel file with two worksheets. The first uses the standard RESULT LIST FORMAT. The second worksheet uses the new dynamically gnerated essential data format RESULT LIST FORMAT.
-
 
 ### Bug Fixes
 #### SquaddingLists

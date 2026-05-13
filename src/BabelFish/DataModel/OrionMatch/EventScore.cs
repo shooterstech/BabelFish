@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.Definitions;
 
 
@@ -10,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// EventScore format for (JSONVersion) "2022-04-09"
     /// </summary>
     [Serializable]
-    public class EventScore {
+    public class EventScore : ICheckSum {
 
         #region Private Variables
 
@@ -122,20 +123,42 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #region Helper Properties
 
         /// <summary>
-        /// A Temporary field that's needed by the TournamentMerger
+        /// A Temporary field that's needed by the <see cref="ResultListMergerEngine"/>.
         /// </summary>
         [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
         public MatchID MatchId { get; set; } = MatchID.DEFAULT;
 
         /// <summary>
-        /// A Temporary field that's needed by the TournamentMerger
+        /// A Temporary field that's needed by the <see cref="ResultListMergerEngine"/>.
         /// </summary>
         [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
         public Participant? Participant { get; set; } = null;
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
 
         #endregion
 
         #region Public Methods
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{Status}|{EventType}|{EventName}|{NumShotsFired}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            if (Score is not null)
+                hash ^= Score.CalculateChecksum();
+
+            if (Projected is not null)
+                hash ^= Projected.CalculateChecksum();
+
+            return hash;
+        }
+
         /// <summary>
         /// Returns a string that represents the current object, including the event name and the formatted score.
         /// </summary>
@@ -167,10 +190,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Newtonsoft.json helper method to determine whether the StageStyleDef property should be serialized. We only want to
         /// serialize it if it's not the default value, as otherwise it doesn't add any information and just takes up space in the JSON.
         /// </summary>
-        /// <returns></returns>
         public bool ShouldSerializeStageStyleDef() {
             return !this.StageStyleDef.IsDefault;
         }
+
         #endregion
     }
 }

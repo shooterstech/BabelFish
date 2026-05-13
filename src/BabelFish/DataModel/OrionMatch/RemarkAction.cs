@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Amazon.Auth.AccessControlPolicy;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Object that holds the RemarkName and Reason for a remark, if needed.
     /// This is mostly notation on the participants status within a match.
     /// </summary>
     [Serializable]
-    public class RemarkAction {
+    public class RemarkAction : ICheckSum {
         /// <summary>
         /// this would be the name of the remark being given, DNS, DSQ, Eliminated, etc.
         /// </summary>
@@ -30,7 +25,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 3 )]
         public string Reason { get; set; } = string.Empty;
 
-
+        /// <summary>
+        /// The UTC time that this remark was applied.
+        /// </summary>
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         [G_NS.JsonProperty( Order = 4 )]
@@ -46,6 +43,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return $"{ParticipantRemark.Description()} {Visibility.Description()}";
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{ParticipantRemark}|{Visibility}|{Reason}|{AppliedAt.ToString( Helpers.DateTimeFormats.DATETIME_FORMAT )}|{ActionId}";
+
+            return Helpers.Common.Md5ToUlong( combined );
         }
     }
 }

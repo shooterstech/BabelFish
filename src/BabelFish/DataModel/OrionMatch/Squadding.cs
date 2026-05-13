@@ -4,7 +4,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// REST API Response Object class representing a Participant and their squadding assignment in a Match's event.
     /// It is the Item in a SquaddingList.
     /// </summary>
-    public class Squadding : IRLIFItem {
+    public class Squadding :
+        IRLIFItem,
+        ICheckSum {
 
         /// <summary>
         /// Constructor
@@ -24,6 +26,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return $"Squadding for {Participant.DisplayName}: {SquaddingAssignment}";
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var hash = this.Participant.CalculateChecksum();
+            hash ^= this.SquaddingAssignment.CalculateChecksum();
+
+            return hash;
         }
     }
 }

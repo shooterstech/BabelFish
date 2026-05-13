@@ -5,6 +5,12 @@ using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+
+    /// <summary>
+    /// Top level class that is a container for all data related to an Orion Match (data file). This includes the Match object itself, as well as the Participants, raw score data and more.
+    /// Also includes data actors to help manage the <see cref="Match"/> data, such as the <see cref="ShotMapper"/>, <see cref="ResultDocumentGenerator"/>,
+    /// and <see cref="ResultListSlidingWindow"/>.
+    /// </summary>
     public class MatchProject :
         ISaveToFile,
         IResultListFetcher,

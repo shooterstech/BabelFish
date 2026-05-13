@@ -18,6 +18,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserialized,
         G_STJ_SER.IJsonOnDeserializing,
+        ICheckSum,
         IEquatable<Match> {
 
         #region Private and Protected Fields
@@ -482,7 +483,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #endregion
 
+        #region Helper Properties
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
+
+        #endregion
+
         #region Methods
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{Name}|{MatchID}|{OwnerId}|{CourseOfFireDef}|{ScoreConfigName}|{TargetCollectionName}|{Location}|{MatchType}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Visibility}|{JSONVersion}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            return hash;
+        }
 
         /// <inheritdoc />
         public override string ToString() {
@@ -612,7 +627,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return json;
         }
-
         #endregion
     }
 }

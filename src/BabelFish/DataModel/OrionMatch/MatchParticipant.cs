@@ -13,7 +13,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ISaveToFile,
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserializing,
-        G_STJ_SER.IJsonOnDeserialized {
+        G_STJ_SER.IJsonOnDeserialized,
+        ICheckSum {
 
         /// <summary>
         /// The Folder name, with respect to the MatchProject's root directory, that MatchParticipant instances are stored in.
@@ -113,6 +114,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 3 )]
         public string ParticipantID { get; set; } = Scopos.BabelFish.Helpers.Common.GenerateUniqueId();
 
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime LocalDate { get; set; }
+
         /// <summary>
         /// UUID formatted Scopos Account user id.
         /// <para>If missing or an empty string, likely means this Participant is either a Team, or is an Individual but does not have a Scopos Account.</para>
@@ -180,6 +185,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonIgnore]
         public MatchProject? Project { get; internal set; } = null;
+
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
         #endregion
 
         #region Methods
@@ -248,6 +256,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             } else {
                 return CreateEntry( courseOfFireId );
             }
+        }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{MatchID}|{MatchName}|{ParticipantID}|{UserID}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Creator}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            if (Participant is not null) {
+                hash ^= Participant.CalculateChecksum();
+            }
+
+            return hash;
         }
 
         /// <inheritdoc/>
@@ -355,4 +375,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #endregion
     }
+
 }
