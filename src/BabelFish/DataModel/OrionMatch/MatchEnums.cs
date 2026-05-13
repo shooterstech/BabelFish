@@ -650,7 +650,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Three dots (...) show when we don't want to show un-updated information.
         /// </summary>
-        ELLIPSES
+        ELLIPSES,
+
+        /// <summary>
+        /// Out of competition. Used when a Participant is competing for score only.
+        /// </summary>
+        OUT_OF_COMPETITION
     };
 
     /// <summary>

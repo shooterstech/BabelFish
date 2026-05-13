@@ -45,13 +45,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The UTC time this IEventScore was last updated.
         /// </summary>
-        public DateTime LastUpdated { get; set; }
+        DateTime LastUpdated { get; set; }
 
         /// <summary>
-        /// Boolean indicating if this Participant is shooting out of competition for this Event (aka shooting for score only).
-        /// If true, their scores will be listed, but not ranked.
+        /// Gets or sets the collection of <see cref="RemarkAction"/> associated with the current entity.
         /// </summary>
-        bool OutOfCompetition { get; set; }
+        RemarkList RemarkList { get; set; }
+
+        /// <summary>
+        /// Helper property returning true if the RemarkList is showing the ParticipantRemark.OUT_OF_COMPETITION remark, which indicates that the participant is shooting out of competition (for score only).
+        /// </summary>
+        bool OutOfCompetition { get; }
 
         /// <summary>
         /// Returns the Status of the top level Event (Event Type Event).

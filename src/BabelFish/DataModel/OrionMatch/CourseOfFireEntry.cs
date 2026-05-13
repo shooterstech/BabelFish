@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
@@ -66,13 +64,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public RemarkList RemarkList { get; set; } = new RemarkList();
 
         /// <summary>
-        /// Gets or sets a boolean indicating whether the Participant is shooting out of competition for this Course of Fire (aka shooting for score only).
-        /// Their scores will be listed, but not ranked. 
-        /// </summary>
-        [DefaultValue( false )]
-        public bool OutOfCompetition { get; set; } = false;
-
-        /// <summary>
         /// This property is considered the source of truth for Team Membership.
         /// <para>A null value means the participant is not currently assigned to any team.</para>
         /// </summary>
@@ -117,6 +108,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Helper property that gets or sets a boolean indicating whether the Participant is shooting out of competition for this Course of Fire (aka shooting for score only).
+        /// Their scores will be listed, but not ranked.
+        /// <para>The value is determined by the presence of the OUT_OF_COMPETITION remark in the RemarkList.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool OutOfCompetition {
+            get {
+                return RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION );
+            }
+            set {
+                if (!_ignoreEvents) {
+
+                    if (value && !RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION )) {
+                        // If the participant is being marked as out of competition, but does not already have an Out of Competition remark, add one.
+                        RemarkList.AddShowParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION, "Entry marked as OutOfCompetition", 0 );
+
+                    } else if (!value && RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION )) {
+                        // If the participant is being marked as not out of competition, but does have an Out of Competition remark, remove it.
+                        RemarkList.HideParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION );
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Methods

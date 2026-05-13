@@ -1,3 +1,5 @@
+using Scopos.BabelFish.DataModel.Definitions;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Object that holds the RemarkName and Reason for a remark, if needed.
@@ -35,7 +37,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// RemarkActions that are added through CommandAutomationRemark must have a unique identifier 
-        /// (to identify what automation added it). 
+        /// (to identify what automation added it) which is called ActionId.
+        /// <para>During the conduct of a <see cref="RangeScript"/> some <see cref="SegmentGroupCommand"/> may apply
+        /// multiple RemarkActions to multiple Participants. If the RangeCommand needs to be reversed (
+        /// for example the RangeOfficer hit NextCommand too soon) then all RemarkActions with the same ActionId can be identified and reversed.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
         public int ActionId { get; set; } = 0;
@@ -54,7 +59,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var combined = $"{ParticipantRemark}|{Visibility}|{Reason}|{AppliedAt.ToString( Helpers.DateTimeFormats.DATETIME_FORMAT )}|{ActionId}";
+            var combined = $"{ParticipantRemark}|{Visibility}|{Reason}|{AppliedAt.ToString( DateTimeFormats.DATETIME_FORMAT )}|{ActionId}";
 
             return Helpers.Common.Md5ToUlong( combined );
         }

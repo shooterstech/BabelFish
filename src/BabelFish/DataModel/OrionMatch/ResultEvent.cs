@@ -12,14 +12,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IRLIFItem,
         ICheckSum {
 
+        #region Private Fields
         //Key is the Singular Event Name, Value is the Shot
-        private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
+        private Dictionary<string, Athena.Shot.Shot> _shotsByEventName = null;
 
+        //Cached copy of the name of the top level event.
+        private string _topLevelEventName = "";
+        #endregion
+
+        #region Constructors, Factory Methods, and Initialization
         public ResultEvent() {
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
         }
+        #endregion
 
+        #region Data Model Properties
         /// <summary>
         /// Data on the person or team who shot this score.
         /// </summary>
@@ -100,41 +108,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 9 )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
-        /// <inheritdoc />
-        /// <remarks>Squadding Assignmetn is not a part of the REST API response for GetResultList. It is included here to allow the Result
-        /// List Formatter access to squadding information, so it may display it on a formatted result list.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public SquaddingAssignment SquaddingAssignment { get; set; }
-
-
-        /// <inheritdoc />
-		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
-            if (TeamMembers == null) {
-                return new List<IEventScoreProjection>();
-            }
-
-            return TeamMembers.ToList<IEventScoreProjection>();
-        }
-
-        /// <inheritdoc />
-        public void SetTeamMembersFromIEventScoreProjection( List<IEventScoreProjection> teamMembers ) {
-
-            if (TeamMembers == null)
-                TeamMembers = new List<ResultEvent>();
-
-            TeamMembers.Clear();
-
-            foreach (var tm in teamMembers) {
-                TeamMembers.Add( (ResultEvent)tm );
-            }
-        }
-
-        /// <inheritdoc />
-        public void ProjectScores( ProjectorOfScores ps ) {
-            ps.ProjectEventScores( this );
-        }
-
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         public Dictionary<string, EventScore> EventScores { get; set; }
@@ -143,32 +116,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 12 )]
         [G_NS.JsonProperty( Order = 12 )]
         public Dictionary<string, EventScore> ResultCofScores { get; set; }
-
-        public bool ShouldSerializeResultCOFScores() {
-            return (ResultCofScores != null && ResultCofScores.Count > 0);
-        }
-
-        /// <summary>
-        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
-        /// match has to be unique, and each matchId is unique, then the key too will be unique.
-        /// </summary>
-        /// <param name="matchId"></param>
-        /// <param name="eventName"></param>
-        /// <returns></returns>
-        public static string KeyForResultCofScore( string matchId, string eventName ) {
-            return $"{matchId}: {eventName}";
-        }
-
-        /// <summary>
-        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
-        /// match has to be unique, and each matchId is unique, then the key too will be unique.
-        /// </summary>
-        /// <param name="matchId"></param>
-        /// <param name="eventName"></param>
-        /// <returns></returns>
-        public static string KeyForResultCofScore( MatchID matchId, string eventName ) {
-            return $"{matchId}: {eventName}";
-        }
 
         /// <summary>
         /// Scores for each Singular Event (usually a Shot).
@@ -196,8 +143,106 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         //returned json (as would be the case for Orion 2.23 or before)
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
-        //Cached copy of the name of the top level event.
-        private string _topLevelEventName = "";
+        /// <summary>
+        /// If this is a team score, the TeamMembers will be the scores of the team members. If this is an Individual value will be null.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 21 )]
+        [G_NS.JsonProperty( Order = 21 )]
+        public List<ResultEvent>? TeamMembers { get; set; }
+
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 25 )]
+        [G_NS.JsonProperty( Order = 25 )]
+        public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        #endregion
+
+        #region Helper Properties
+
+        /// <inheritdoc />
+        /// <remarks>Squadding Assignmetn is not a part of the REST API response for GetResultList. It is included here to allow the Result
+        /// List Formatter access to squadding information, so it may display it on a formatted result list.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public SquaddingAssignment SquaddingAssignment { get; set; }
+
+        /// <summary>
+        /// Helper property to easily check if this participant is shooting out of competition (for score only). This is determined by checking if the RemarkList contains a ParticipantRemark of OUT_OF_COMPETITION.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool OutOfCompetition {
+            get {
+                return RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION );
+            }
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+        #endregion
+
+        #region Methods
+
+        /// <inheritdoc />
+        public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
+            if (TeamMembers == null) {
+                return new List<IEventScoreProjection>();
+            }
+
+            return TeamMembers.ToList<IEventScoreProjection>();
+        }
+
+        /// <inheritdoc />
+        public void SetTeamMembersFromIEventScoreProjection( List<IEventScoreProjection> teamMembers ) {
+
+            if (TeamMembers == null)
+                TeamMembers = new List<ResultEvent>();
+
+            TeamMembers.Clear();
+
+            foreach (var tm in teamMembers) {
+                TeamMembers.Add( (ResultEvent)tm );
+            }
+        }
+
+        /// <inheritdoc />
+        public void ProjectScores( ProjectorOfScores ps ) {
+            ps.ProjectEventScores( this );
+        }
+
+        public bool ShouldSerializeResultCOFScores() {
+            return (ResultCofScores != null && ResultCofScores.Count > 0);
+        }
+
+        /// <summary>
+        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
+        /// match has to be unique, and each matchId is unique, then the key too will be unique.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        public static string KeyForResultCofScore( string matchId, string eventName ) {
+            return $"{matchId}: {eventName}";
+        }
+
+        /// <summary>
+        /// The idea of this name scheme for the key is to use matchId as a namespace. Since each event name within a
+        /// match has to be unique, and each matchId is unique, then the key too will be unique.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="eventName"></param>
+        /// <returns></returns>
+        public static string KeyForResultCofScore( MatchID matchId, string eventName ) {
+            return $"{matchId}: {eventName}";
+        }
 
         /// <inheritdoc />
 		public ResultStatus GetStatus() {
@@ -221,13 +266,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// If this is a team score, the TeamMembers will be the scores of the team members. If this is an Individual value will be null.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 21 )]
-        [G_NS.JsonProperty( Order = 21 )]
-        public List<ResultEvent>? TeamMembers { get; set; }
-
-        /// <summary>
         /// A Newtonsoft Conditional Property to only serialize TeamMembers when the list has something in it.
         /// https://www.newtonsoft.com/json/help/html/ConditionalProperties.htm
         /// </summary>
@@ -235,20 +273,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public bool ShouldSerializeTeamMembers() {
             return (TeamMembers != null && TeamMembers.Count > 0);
         }
-
-
-        /// <summary>
-        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
-        /// </summary>
-        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
-        [G_STJ_SER.JsonPropertyOrder( 25 )]
-        [G_NS.JsonProperty( Order = 25 )]
-        public RemarkList RemarkList { get; set; } = new RemarkList();
-
-        /// <inheritdoc/>
-        [G_STJ_SER.JsonPropertyOrder( 26 )]
-        [G_NS.JsonProperty( Order = 26 )]
-        public bool OutOfCompetition { get; set; }
 
         /// <summary>
         /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
@@ -260,16 +284,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
-            if (shotsByEventName != null)
-                return shotsByEventName;
+            if (_shotsByEventName != null)
+                return _shotsByEventName;
 
-            shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
+            _shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
 
             foreach (var t in Shots.Values)
                 if (!string.IsNullOrEmpty( t.EventName ))
-                    shotsByEventName.Add( t.EventName, t );
+                    _shotsByEventName.Add( t.EventName, t );
 
-            return shotsByEventName;
+            return _shotsByEventName;
         }
 
         /// <inheritdoc />
@@ -285,12 +309,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
             return lastShot;
         }
-
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public bool CurrentlyCompetingOrRecentlyDone() {
@@ -338,5 +356,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return hash;
         }
+
+        #endregion
     }
 }

@@ -137,7 +137,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultEvent.ResultCOFID = resultCOFID;
             resultEvent.EventScores = await MatchProject.ShotMapper.GetEventScoresAsync( resultCOFID );
             resultEvent.LastShot = MatchProject.ShotMapper.GetLastShot( resultCOFID, true );
-            resultEvent.OutOfCompetition = entry.OutOfCompetition;
 
             // NOTE: Not setting Shots or SquaddingAssignment, as this is not part of a serialized ResultList.
             // NOTE: Do not need to project scores, as GenerateResultListAsync() will do so instead.
@@ -176,7 +175,6 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultEvent.MatchID = MatchProject.Match.MatchID;
             resultEvent.Participant = await participant.CopyAsync( cofStructure );
             resultEvent.RemarkList = entry.RemarkList;
-            resultEvent.OutOfCompetition = entry.OutOfCompetition;
             resultEvent.TeamMembers = new List<ResultEvent>();
             foreach (var tm in entry.TeamMembers) {
                 CourseOfFireEntry teamMemberEntry;

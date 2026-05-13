@@ -14,10 +14,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     ParticipantRemark.DSQ,
                     ParticipantRemark.DNS,
                     ParticipantRemark.DNF,
+                    ParticipantRemark.OUT_OF_COMPETITION,
                     ParticipantRemark.FIRST,
                     ParticipantRemark.SECOND,
                     ParticipantRemark.THIRD,
                     ParticipantRemark.ELIMINATED,
+                    ParticipantRemark.QUALIFIED,
                     ParticipantRemark.ELLIPSES,
                     ParticipantRemark.BUBBLE,
                     ParticipantRemark.LEADER};
@@ -37,8 +39,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this RemarkList is already shwoing a ParticipantRemark of type remark,
         /// then two Remarks are added, one SHOW and one HIDE (which keeps the balance of showing 1 or 0).
         /// </summary>
-        /// <param name="remark"></param>
-        /// <param name="reason"></param>
+        /// <param name="remark">The <see cref="ParticipantRemark"/> to add.</param>
+        /// <param name="reason">The reason for adding the remark.</param>
+        /// <param name="actionId">The action ID (also called an automation id) associated with the remark. When RemarkAction is
+        /// added via a <see cref="CommandAutomationRemark"/>, this ID is used to track the automation that added it. May typically
+        /// be 0 otherwise.</param>
 		public void AddShowParticipantRemark( ParticipantRemark remark, string reason = "", int actionId = 0 ) {
             bool hasRemarkAlready = this.IsShowingParticipantRemark( remark );
 
@@ -67,7 +72,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// is added to hide it. If the RemarkList is not showing a ParticpantRemark of type remark,
         /// then no RemarkAction is added.
         /// </summary>
-        /// <param name="remark"></param>
+        /// <param name="remark">The <see cref="ParticipantRemark"/> to hide.</param>
+        /// <param name="reason">The reason for adding the remark.</param>
+        /// <param name="actionId">The action ID (also called an automation id) associated with the remark. When RemarkAction is
+        /// added via a <see cref="CommandAutomationRemark"/>, this ID is used to track the automation that added it. May typically
+        /// be 0 otherwise.</param>
         public void HideParticipantRemark( ParticipantRemark remark, string reason = "", int actionId = 0 ) {
             if (this.IsShowingParticipantRemark( remark )) {
                 var remarkAction = new RemarkAction() {
@@ -82,13 +91,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Removes all RemarkAction items in this RemarkList that have a
-        /// command automation id equal to the passed in automationId.
+        /// command ActionId equal to the passed in value.
         /// </summary>
-        /// <param name="automationId"></param>
-        public void RemoveAutomationRemark( int automationId ) {
+        /// <param name="actionId"></param>
+        public void RemoveAutomationRemark( int actionId ) {
             List<RemarkAction> remarksToRemove = new List<RemarkAction>();
             foreach (var ra in this) {
-                if (ra.ActionId == automationId) {
+                if (ra.ActionId == actionId) {
                     remarksToRemove.Add( ra );
                 }
             }
