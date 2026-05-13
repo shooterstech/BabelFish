@@ -214,6 +214,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return "DNF";
             if (this.IsShowingParticipantRemark( ParticipantRemark.DNS ))
                 return "DNS";
+            if (this.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION )) {
+                if (!useAbbreviations) {
+                    return "Guest";
+                } else {
+                    return "OOC";
+                }
+            }
             if (this.IsShowingParticipantRemark( ParticipantRemark.FIRST ))
                 if (!useAbbreviations) {
                     return "FIRST";
