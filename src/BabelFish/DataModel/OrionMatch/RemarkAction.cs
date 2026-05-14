@@ -54,7 +54,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
-            var combined = $"{ParticipantRemark}|{Visibility}|{Reason}|{AppliedAt.ToString( Helpers.DateTimeFormats.DATETIME_FORMAT )}|{ActionId}";
+            // Note that we are not including AppliedAt in the checksum because it doesn't seem to be persisting correctly, so when Orion opens the document it always sets to UTC NOW. Which his different on each open.
+            var combined = $"{ParticipantRemark}|{Visibility}|{Reason}|{ActionId}";
 
             return Helpers.Common.Md5ToUlong( combined );
         }

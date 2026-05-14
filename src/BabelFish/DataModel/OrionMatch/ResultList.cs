@@ -451,7 +451,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns>A ulong containing the calculated checksum value for the object.</returns>
         public ulong CalculateChecksum() {
-            string combined = $"{MatchName}|{ResultName}|{EventName}|{ParentID}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Team}|{Projected}|{RankingRuleDef}|{CourseOfFireDef}|{ResultListFormatDef}";
+            string combined = $"{MatchName}|{ResultName}|{EventName}|{ParentID}|{Status}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Team}|{Projected}|{RankingRuleDef}|{CourseOfFireDef}|{ResultListFormatDef}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             // We are safe to not care about the order of the items, since if any item is re-arranged, the SortOrder property (within the item) is updated and thus their CalculateCheckSum will change.

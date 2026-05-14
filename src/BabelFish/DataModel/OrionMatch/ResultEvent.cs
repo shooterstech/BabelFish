@@ -312,7 +312,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
             }
 
-            // NOTE: We are purposefully not including Shots in the checksum calculation, as this property is not included in the REST API response for ResultEvents.
+            if (LastShot is not null) {
+                hash ^= LastShot.CalculateChecksum();
+            }
+
+            // NOTE: We are purposefully not including the Shots property in the checksum calculation, as this property is not included in the REST API response for ResultEvents.
 
             return hash;
         }
