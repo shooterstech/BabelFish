@@ -9,8 +9,14 @@ namespace BabelFish.Tests.DataActors.PDF {
     [TestClass]
     public class ResultListPdfTests : BaseTestClass {
 
+        private readonly string _filePath = "c:\\temp\\hello.pdf";
+
         [TestMethod]
         public async Task GenerateResultListPDFTest() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new OrionMatchAPIClient();
 
@@ -35,12 +41,18 @@ namespace BabelFish.Tests.DataActors.PDF {
             //pdf.RLIF.ShowRelay = "2";
             //pdf.RLIF.ShowRanks = 3;
 
-            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, _filePath );
+
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
 
         }
 
         [TestMethod]
         public async Task GenerateSquaddingtListPDFTest() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new OrionMatchAPIClient();
 
@@ -58,12 +70,17 @@ namespace BabelFish.Tests.DataActors.PDF {
             pdf.RLIF.ShowRelay = "1";
             pdf.SubTitle = "Relay 1";
 
-            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, _filePath );
 
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
         }
 
         [TestMethod]
         public async Task GenerateResultCOFPDFTest() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new OrionMatchAPIClient();
 
@@ -75,12 +92,18 @@ namespace BabelFish.Tests.DataActors.PDF {
             var pdf = new ResultCOFPdf( resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.STAGE );
             await pdf.InitializeAsync();
 
-            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, _filePath );
+
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
 
         }
 
         [TestMethod]
         public async Task GenerateMergedAthleteCOFPDFTest() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new OrionMatchAPIClient();
 
@@ -99,11 +122,17 @@ namespace BabelFish.Tests.DataActors.PDF {
                 documentsToPrint.Add( resultCof );
             }
 
-            await AthleteCOFPdf.GeneratePdfs( documentsToPrint, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES, PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            await AthleteCOFPdf.GeneratePdfs( documentsToPrint, Scopos.BabelFish.DataModel.Definitions.EventtType.SERIES, PageSizes.Letter, _filePath );
+
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
         }
 
         [TestMethod]
         public async Task GenerateAthleteCofPdfTest() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new OrionMatchAPIClient();
 
@@ -132,13 +161,18 @@ namespace BabelFish.Tests.DataActors.PDF {
             var pdfSeries = new AthleteCOFPdf( resultCof, Scopos.BabelFish.DataModel.Definitions.EventtType.STAGE );
             //pdfSeries.DemographicText = "{CompetitorNumber} {Club} {Country}";
             await pdfSeries.InitializeAsync();
-            pdfSeries.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
-            //pdfSeries.GeneratePdf( PageSizes.Letter, null );
+            pdfSeries.GeneratePdf( PageSizes.Letter, _filePath );
+
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
 
         }
 
         [TestMethod]
         public async Task TestClubQRCodePDF() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new ClubsAPIClient();
             var getClubResonse = await client.GetClubDetailPublicAsync( "OrionAcct002022" );
@@ -147,11 +181,17 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             var pdf = new ClubQRCodePDF( clubDetail );
             await pdf.InitializeAsync();
-            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, _filePath );
+
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
         }
 
         [TestMethod]
         public async Task TestMatchQRCodePDF() {
+
+            // Delete the output file if it already exists, so the test will fail if the PDF generation doesn't create a new file.
+            if (System.IO.File.Exists( _filePath ))
+                System.IO.File.Delete( _filePath );
 
             var client = new OrionMatchAPIClient();
             var matchId = new MatchID( "1.1.2025081316001310.1" );
@@ -161,7 +201,9 @@ namespace BabelFish.Tests.DataActors.PDF {
 
             var pdf = new MatchQRCodePDF( matchDetail );
             await pdf.InitializeAsync();
-            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
+            pdf.GeneratePdf( PageSizes.Letter, _filePath );
+
+            Assert.IsTrue( System.IO.File.Exists( _filePath ) );
         }
     }
 }
