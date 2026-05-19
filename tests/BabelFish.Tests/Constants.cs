@@ -47,9 +47,12 @@ namespace Scopos.BabelFish.Tests {
     }
 
     public class BasicUserCredentials {
-        public string Username { get; set;}
-        public string Password { get; set;}
-        public string DeviceKey { get;  set;}
-        public string DeviceGroupKey { get; set;}
+        /// <summary>
+        /// In this context, same as the user's email address.
+        /// </summary>
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string DeviceKey { get; set; }
+        public string DeviceGroupKey { get; set; }
     }
 }

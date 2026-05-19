@@ -7,17 +7,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <para>Generally the best way to test if a RemarkList includes a specific <see cref="RemarkAction"/> is to use the IsShowingParticipantRemark() method.</para>
     /// </summary>
     [Serializable]
-    public class RemarkList : List<RemarkAction> {
+    public class RemarkList : List<RemarkAction>, ICheckSum {
         //public List<Remark> remarks = new List<Remark>();
 
         public readonly List<ParticipantRemark> PriorityOfRemarks = new List<ParticipantRemark>() {
                     ParticipantRemark.DSQ,
                     ParticipantRemark.DNS,
                     ParticipantRemark.DNF,
+                    ParticipantRemark.OUT_OF_COMPETITION,
                     ParticipantRemark.FIRST,
                     ParticipantRemark.SECOND,
                     ParticipantRemark.THIRD,
                     ParticipantRemark.ELIMINATED,
+                    ParticipantRemark.QUALIFIED,
                     ParticipantRemark.ELLIPSES,
                     ParticipantRemark.BUBBLE,
                     ParticipantRemark.LEADER};
@@ -37,8 +39,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this RemarkList is already shwoing a ParticipantRemark of type remark,
         /// then two Remarks are added, one SHOW and one HIDE (which keeps the balance of showing 1 or 0).
         /// </summary>
-        /// <param name="remark"></param>
-        /// <param name="reason"></param>
+        /// <param name="remark">The <see cref="ParticipantRemark"/> to add.</param>
+        /// <param name="reason">The reason for adding the remark.</param>
+        /// <param name="actionId">The action ID (also called an automation id) associated with the remark. When RemarkAction is
+        /// added via a <see cref="CommandAutomationRemark"/>, this ID is used to track the automation that added it. May typically
+        /// be 0 otherwise.</param>
 		public void AddShowParticipantRemark( ParticipantRemark remark, string reason = "", int actionId = 0 ) {
             bool hasRemarkAlready = this.IsShowingParticipantRemark( remark );
 
@@ -67,7 +72,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// is added to hide it. If the RemarkList is not showing a ParticpantRemark of type remark,
         /// then no RemarkAction is added.
         /// </summary>
-        /// <param name="remark"></param>
+        /// <param name="remark">The <see cref="ParticipantRemark"/> to hide.</param>
+        /// <param name="reason">The reason for adding the remark.</param>
+        /// <param name="actionId">The action ID (also called an automation id) associated with the remark. When RemarkAction is
+        /// added via a <see cref="CommandAutomationRemark"/>, this ID is used to track the automation that added it. May typically
+        /// be 0 otherwise.</param>
         public void HideParticipantRemark( ParticipantRemark remark, string reason = "", int actionId = 0 ) {
             if (this.IsShowingParticipantRemark( remark )) {
                 var remarkAction = new RemarkAction() {
@@ -82,13 +91,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// Removes all RemarkAction items in this RemarkList that have a
-        /// command automation id equal to the passed in automationId.
+        /// command ActionId equal to the passed in value.
         /// </summary>
-        /// <param name="automationId"></param>
-        public void RemoveAutomationRemark( int automationId ) {
+        /// <param name="actionId"></param>
+        public void RemoveAutomationRemark( int actionId ) {
             List<RemarkAction> remarksToRemove = new List<RemarkAction>();
             foreach (var ra in this) {
-                if (ra.ActionId == automationId) {
+                if (ra.ActionId == actionId) {
                     remarksToRemove.Add( ra );
                 }
             }
@@ -205,6 +214,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 return "DNF";
             if (this.IsShowingParticipantRemark( ParticipantRemark.DNS ))
                 return "DNS";
+            if (this.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION )) {
+                if (!useAbbreviations) {
+                    return "Guest";
+                } else {
+                    return "OOC";
+                }
+            }
             if (this.IsShowingParticipantRemark( ParticipantRemark.FIRST ))
                 if (!useAbbreviations) {
                     return "FIRST";
@@ -267,6 +283,23 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 }
 
             return "";
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            ulong hash = 0;
+            foreach (var action in this) {
+                hash ^= action.CalculateChecksum();
+            }
+
+            return hash;
         }
     }
 }

@@ -18,7 +18,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IGetCourseOfFireDefinition,
         IGetRankingRuleDefinition,
         IPublishTransactions,
-        ISaveToFile {
+        ISaveToFile,
+        ICheckSum {
 
         #region Private Variables
         private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;
@@ -294,7 +295,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// the Precision Air Rifle marksmen).</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 24 )]
-        public AttributeFilter AttributeFilter { get; set; } = AttributeFilter.DEFAULT;
+        public AttributeFilter AttributeFilter { get; set; } = new AttributeFilterNone();
 
         /// <inheritdoc />
         [G_NS.JsonProperty( Order = 25 )]
@@ -309,6 +310,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 30 )]
         public List<ResultEvent> Items { get; set; } = new List<ResultEvent>();
+
+        [G_NS.JsonProperty( Order = 97 )]
+        public string CheckSum { get; set; } = string.Empty;
 
         /// <summary>
         /// When serialized, this is the BableFish version string that the data model of this ResultList instance adheres to.
@@ -375,6 +379,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
+        /// <summary>
+        /// Readonly facade property that returns the same as .ResultName
+        /// </summary>
+        /// <remarks>Property is not serialized.</remarks>
+        [G_NS.JsonIgnore]
+        public string Name {
+            get {
+                return this.ResultName;
+            }
+        }
+
         #endregion
 
         #region Deprecated Data Model Properties
@@ -408,6 +423,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultListID { get; set; } = string.Empty;
 
         #endregion
+
 
         #endregion
 
@@ -497,14 +513,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
-        /// Readonly facade property that returns the same as .ResultName
+        /// Calculates a checksum value that represents the current state of the object's properties, excluding the
+        /// LastUpdated and CheckSum properties.
+        /// <para>After an object is deserialized, this method can be used to verify the integrity of the deserialized data by comparing
+        /// the calculated value against the stored CheckSum.</para>
         /// </summary>
-        /// <remarks>Property is not serialized.</remarks>
-        [G_NS.JsonIgnore]
-        public string Name {
-            get {
-                return this.ResultName;
+        /// <returns>A ulong containing the calculated checksum value for the object.</returns>
+        public ulong CalculateChecksum() {
+            string combined = $"{MatchName}|{ResultName}|{EventName}|{ParentID}|{Status}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Team}|{Projected}|{RankingRuleDef}|{CourseOfFireDef}|{ResultListFormatDef}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            // We are safe to not care about the order of the items, since if any item is re-arranged, the SortOrder property (within the item) is updated and thus their CalculateCheckSum will change.
+            foreach (var item in this.Items) {
+                hash ^= item.CalculateChecksum();
             }
+            return hash;
         }
 
         /// <inheritdoc />

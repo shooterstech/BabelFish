@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
     /// Which property is used to display the score for a given Event is determined by a <see cref="ScoreFormatCollection"/> ScoreFormatDefinition associated with the Event's EventType.
     /// </para>
     /// </summary>
-    public class Score {
+    public class Score : ICheckSum {
 
         #region Private Variables
         private float s = float.NaN;
@@ -130,6 +130,11 @@ namespace Scopos.BabelFish.DataModel.Athena {
         [G_NS.JsonIgnore]
         public int NumShotsFired { get; set; } = 0;
 
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
         #endregion
 
         #region Methods
@@ -184,6 +189,20 @@ namespace Scopos.BabelFish.DataModel.Athena {
             J = 0;
             K = 0;
             L = 0;
+        }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+
+            ulong hash = (ulong)(16 * this.D);
+            hash = hash << 8 | (uint)this.I;
+            hash = hash << 4 | (uint)this.X;
+            hash = ((ulong)hash << 8) | (uint)(16 * this.S);
+
+            var hash2 = (ulong)(256 * this.J);
+            hash2 = hash2 << 8 | (ulong)(256 * this.K);
+            hash2 = hash2 << 8 | (ulong)(256 * this.L);
+            return hash ^ hash2;
         }
 
         /// <summary>
@@ -266,6 +285,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
         #endregion
 
         #region Operator Overloads
+
         /// <summary>
         /// Operator overload for adding two scores together.
         /// <para>Each score component is added individually.</para>

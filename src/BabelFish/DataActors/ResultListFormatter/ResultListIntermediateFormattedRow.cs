@@ -503,7 +503,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     if (_resultEvent is null)
                         return string.Empty;
-                    return _resultEvent.OutOfCompetition ? "OOC" : string.Empty;
+
+                    return _resultEvent.RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION ) ? "OOC" : string.Empty;
 
                 case "Squadding":
                     if (_resultListFormatted.GetParticipantAttributeSquaddingPtr != null)

@@ -93,5 +93,14 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             return await DefinitionCache.GetResultListFormatDefinitionAsync( ResultListFormatDef );
         }
+
+        #region Methods
+
+        public override ulong CalculateChecksum() {
+            var combined = $"{Method}|{EventType}|{CourseOfFireDef}|{RankingRuleDef}|{ResultListFormatDef}";
+            return Helpers.Common.Md5ToUlong( combined );
+        }
+
+        #endregion 
     }
 }

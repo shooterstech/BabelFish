@@ -51,7 +51,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Gets called when a Participant is added to the TeamMembers list. The event handler is passed the Participant that was added to the TeamMembers list.
         /// </summary>
-        public EventHandler<EventArgs<Participant>> OnTeamMemberAdded;
+        public event EventHandler<EventArgs<Participant>> OnTeamMemberAdded;
         #endregion
 
         #region Data Model Properties
@@ -92,6 +92,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             get {
                 return this.DisplayName.GetHashCode();
             }
+        }
+
+
+        /// <inheritdoc />
+        public override ulong CalculateChecksum() {
+            var combined = $"{DisplayName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var attributeValue in AttributeValues) {
+                hash ^= attributeValue.CalculateChecksum();
+            }
+
+            foreach (var teamCaptain in TeamCaptains) {
+                hash ^= teamCaptain.CalculateChecksum();
+            }
+
+            hash ^= RemarkList.CalculateChecksum();
+
+            return hash;
         }
     }
 }

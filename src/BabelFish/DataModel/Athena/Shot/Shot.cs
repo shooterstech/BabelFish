@@ -8,7 +8,10 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot {
     [Serializable]
-    public class Shot : IEquatable<Shot>, IPenalty {
+    public class Shot :
+        IEquatable<Shot>,
+        IPenalty,
+        ICheckSum {
 
         float bulletDiameter = 0;
         float scoringDiameter = 0;
@@ -71,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
 
         public Location Location { get; set; }
 
-        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime TimeScored { get; set; }
 
@@ -139,7 +142,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
             return (ScoringDiameter != BulletDiameter);
         }
 
-        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
+        public Score Score { get; set; }
 
         public string TargetSetName { get; set; }
 
@@ -207,7 +210,8 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
         /// <summary>
         /// EventName is only set when the shot is part of a Result COF .Shots dictionary
         /// </summary>
-        public string EventName { get; set; }
+        [DefaultValue( "" )]
+        public string EventName { get; set; } = string.Empty;
 
         /// <summary>
         /// Newtonsoft helper method.
@@ -449,6 +453,33 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
                 sum += p.PenaltyPoints;
 
             return sum;
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            StringBuilder combined = new StringBuilder( $"{ResultCOFID}|{EventName}|{Update}|{TargetSetName}|{FiringPoint}|{StageLabel}|{Privacy}" );
+
+            if (Attributes is not null && Attributes.Count > 0) {
+                foreach (var a in Attributes)
+                    combined.Append( $"|{a}" );
+            }
+            var hash = Helpers.Common.Md5ToUlong( combined.ToString() );
+
+            hash ^= (ulong)(4048 * Sequence);
+            hash ^= Score.CalculateChecksum();
+            hash ^= Location.CalculateChecksum();
+            foreach (var p in Penalties) {
+                hash ^= p.CalculateChecksum();
+            }
+
+            return hash;
         }
 
         public static async Task<Shot> SimulateAsync( CourseOfFireStructure cofStructure, CourseOfFireEntryIndividual participant, string eventStageName, int sequence ) {

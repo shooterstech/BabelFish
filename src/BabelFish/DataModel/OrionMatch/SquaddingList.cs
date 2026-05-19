@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -9,7 +8,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Response object for a request of Squadding Assignments for a specified match and squadding event name.
     /// </summary>
-    public class SquaddingList : ITokenItems<Squadding>, IRLIFList, IPublishTransactions {
+    public class SquaddingList :
+        ITokenItems<Squadding>,
+        IRLIFList,
+        IPublishTransactions,
+        ICheckSum {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -80,9 +83,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string Creator { get; set; } = string.Empty;
 
         /// <summary>
-        /// Set name of the Result List Format definition to use when displaying this squadding list.
+        /// Set name of the <see cref="ResultListFormat">RESULT LIST FORMAT</see> definition to use when displaying this SquaddingList.
         /// </summary>
-        [JsonPropertyOrder( 10 )]
+        [G_NS.JsonProperty( Order = 10 )]
         public SetName ResultListFormatDef { get; set; } = new SetName();
 
         /// <summary>
@@ -98,7 +101,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [DefaultValue( "" )]
-        [JsonConverter( typeof( NextTokenConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( NextTokenConverter ) )]
         [G_NS.JsonProperty( Order = 21 )]
         public string NextToken { get; set; } = string.Empty;
 
@@ -280,6 +283,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public override string ToString() {
             return $"SquaddingList with {Items.Count} items";
+        }
+
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{EventName}|{MatchName}|{OwnerId}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{MatchID}|{Creator}|{ResultListFormatDef}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var item in this.Items) {
+                hash ^= item.CalculateChecksum();
+            }
+
+            return hash;
         }
     }
 }

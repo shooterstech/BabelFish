@@ -41,5 +41,14 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// </summary>
         [G_NS.JsonProperty( Order = 13, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public int CountTopScores { get; set; } = 0;
+
+        #region Methods
+
+        public override ulong CalculateChecksum() {
+            var combined = $"{Method}|{IncludeHighScoreEvent}|{IncludeAverageScoreEvent}|{CountTopScores}";
+            return Helpers.Common.Md5ToUlong( combined );
+        }
+
+        #endregion 
     }
 }

@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
                 case "EQUATION":
                     return JsonConvert.DeserializeObject<AttributeFilterEquation>( jo.ToString(), SpecifiedSubclassConversion );
                 case "NONE":
-                    return AttributeFilter.DEFAULT;
+                    return new AttributeFilterNone();
                 default:
                     //If we get here, it is probable because of ill-formed json
                     return new AttributeFilterAttributeValue();

@@ -851,7 +851,19 @@ namespace Scopos.BabelFish.Helpers {
             return new string( result );
         }
 
+        /// <summary>
+        /// Uses MD5 to hash the input string and then converts the first 8 bytes of the hash to a ulong. This can be used to create a unique
+        /// identifier for a string, such as a username or email address, without storing the original string in plaintext.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static ulong Md5ToUlong( string input ) {
+            MD5 mD5 = MD5.Create();
+            byte[] bytes = Encoding.UTF8.GetBytes( input );
+            byte[] hash = mD5.ComputeHash( bytes );
 
-
+            // Take the first 8 bytes and convert to ulong
+            return BitConverter.ToUInt64( hash, 0 );
+        }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Amazon.Auth.AccessControlPolicy;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -9,7 +6,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// This is mostly notation on the participants status within a match.
     /// </summary>
     [Serializable]
-    public class RemarkAction {
+    public class RemarkAction : ICheckSum {
         /// <summary>
         /// this would be the name of the remark being given, DNS, DSQ, Eliminated, etc.
         /// </summary>
@@ -30,7 +27,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 3 )]
         public string Reason { get; set; } = string.Empty;
 
-
+        /// <summary>
+        /// The UTC time that this remark was applied.
+        /// </summary>
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         [G_NS.JsonProperty( Order = 4 )]
@@ -38,7 +37,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// RemarkActions that are added through CommandAutomationRemark must have a unique identifier 
-        /// (to identify what automation added it). 
+        /// (to identify what automation added it) which is called ActionId.
+        /// <para>During the conduct of a <see cref="RangeScript"/> some <see cref="SegmentGroupCommand"/> may apply
+        /// multiple RemarkActions to multiple Participants. If the RangeCommand needs to be reversed (
+        /// for example the RangeOfficer hit NextCommand too soon) then all RemarkActions with the same ActionId can be identified and reversed.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
         public int ActionId { get; set; } = 0;
@@ -46,6 +48,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return $"{ParticipantRemark.Description()} {Visibility.Description()}";
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            // Note that we are not including AppliedAt in the checksum because it doesn't seem to be persisting correctly, so when Orion opens the document it always sets to UTC NOW. Which his different on each open.
+            var combined = $"{ParticipantRemark}|{Visibility}|{Reason}|{ActionId}";
+
+            return Helpers.Common.Md5ToUlong( combined );
         }
     }
 }

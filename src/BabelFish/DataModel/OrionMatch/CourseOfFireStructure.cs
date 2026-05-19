@@ -17,7 +17,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IFinishInitializationAsync,
         IGetCourseOfFireDefinition,
         G_STJ_SER.IJsonOnDeserializing,
-        G_STJ_SER.IJsonOnDeserialized {
+        G_STJ_SER.IJsonOnDeserialized,
+        ICheckSum {
 
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
@@ -303,6 +304,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonIgnore]
         public bool DisableScoreProjection { get; internal set; } = false;
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
         #endregion
 
         #region Methods
@@ -424,7 +431,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             // Finally return the default NONE, as this COF likely is designed for ESTs, and therefore would not have a PaperTargetLabel value.
-            return PaperTargetLabel.NONE.Clone();
+            return PaperTargetLabel.CreateNoneLabel();
+        }
+
+        /// <inheritdoc />
+        public override string ToString() {
+            return this.CourseOfFireName;
+        }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{CourseOfFireName}|{CourseOfFireId}|{CourseOfFireDef}|{StartDate.ToString( DateTimeFormats.DATETIME_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATETIME_FORMAT )}|{Official}|{Description}|{ScoreConfigName}|{TargetCollectionName}|{PaperTargetLabelName}|{ProjectorOfScores}|{TypesOfEntries}|{NumberOfTeamMembers}|{MaxNumberOfTeamMembers}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var ac in Attributes) {
+                hash ^= ac.CalculateChecksum();
+            }
+
+            foreach (var rl in ResultLists) {
+                hash ^= rl.CalculateChecksum();
+            }
+            return hash;
         }
         #endregion
     }

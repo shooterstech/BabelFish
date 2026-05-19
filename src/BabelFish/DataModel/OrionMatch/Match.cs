@@ -18,6 +18,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserialized,
         G_STJ_SER.IJsonOnDeserializing,
+        G_STJ_SER.IJsonOnSerializing,
+        ICheckSum,
         IEquatable<Match> {
 
         #region Private and Protected Fields
@@ -72,14 +74,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             _ignoreEvents = false;
             this.MatchStructure.Match = this;
+
+            if (this.CheckSum != CalculateChecksum().ToString()) {
+                _logger.Error( $"Checksum mismatch for Match {MatchID}. Calculated Checksum: {CalculateChecksum()}, Checksum in data: {this.CheckSum}. This may indicate that the data was modified after it was last saved, or that there was an error during serialization or deserialization." );
+            }
         }
 
         /// <summary>
         /// Method is called before deserialization with System.Text.Json.
         /// </summary>
         public void OnDeserializing() {
-
             _ignoreEvents = true;
+        }
+
+        /// <summary>
+        /// Method is called before serialization with System.Text.Json.
+        /// </summary>
+        public void OnSerializing() {
+            // Calculate and set the checksum before serialization, so that the checksum is included in the serialized data and can be used to verify data integrity when deserializing.
+            this.CheckSum = CalculateChecksum().ToString();
         }
 
         /// <summary>
@@ -263,13 +276,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 21 )]
         public List<Contact> MatchContacts { get; set; } = new List<Contact>();
 
-
-        #region BabelFish 2.0 / Orion 3.0 DataModel
-        /*
-         * The properties in this region are new with the release of BabelFish 2.0 and Orion version 3.0, 
-         * and are not populated in older versions of the software. They are largely related to the new 
-         * feature of supporting multiple Courses of Fire within a Match, and the new Match Structure that supports that feature. 
-         */
         /// <summary>
         /// 
         /// </summary>
@@ -277,56 +283,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonPropertyOrder( 30 )]
         [G_NS.JsonProperty( Order = 30 )]
         public MatchStructure MatchStructure { get; set; }
-        #endregion
-
-        /// <summary>
-        /// The names of the scoring system used to score shots within this match. For example, "Orion Scoring System."
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 40 )]
-        [G_NS.JsonProperty( Order = 40 )]
-        public List<string> ScoringSystems { get; set; } = new List<string>();
-
-        /// <summary>
-        /// Newtonsoft.json helper method, to determine if ScoreSystems property should be serialized.
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeScoringSystems() {
-            return ScoringSystems != null && ScoringSystems.Count > 0;
-        }
-
-        /// <summary>
-        /// The type of scoring system used in this match, such as PAPER_TARGER or EST.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 41 )]
-        [G_NS.JsonProperty( Order = 41 )]
-        [DefaultValue( ScoringSystem.UNKNOWN )]
-        public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
-
-        #region Move To Seperate Objects
-        /*
-         * The properties in this region are important as part of the REST API return Get Match Detail(),
-         * however they do not belong as part of the Match object itsefl. Think they should be moved to a 
-         * new object that is returned as part of the Get Match Detail() API call.
-         */
-
-        /// <summary>
-        /// A list of authorized capabilities the caller has for this match. These values are 
-        /// returned by the Rest API, but are not serialized. Instead 'AuthorizationList'
-        /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 51 )]
-        [G_NS.JsonProperty( Order = 51 )]
-        [Obsolete( "Will be replaced with the Permissions list, which is returned in parrallel to GetMatchDetail API call. Deprecated March 2026." )]
-        public List<MatchAuthorizationCapability> Authorization { get; set; } = new List<MatchAuthorizationCapability>();
-
-        /// <summary>
-        /// NewtonSoft helper method to determine if Authoirazation should be serialized.
-        /// </summary>
-        /// <returns></returns>
-        public bool ShouldSerializeAuthorization() {
-            return Authorization is not null && Authorization.Count > 0;
-        }
-        #endregion
 
         /// <summary>
         /// The orion account or at home account who owns this match.
@@ -357,6 +313,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 99 )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
+        #region Deprecated Properties for Backwards Compatibility with Older Versions of the API
         /*
          * The properties in this region are deprecated, and should not be used anymore. They are only kept here for backward compatibility with older versions of the API, and to avoid breaking changes. They will eventually be removed in a future version, but for now they are marked as Obsolete.
          */
@@ -444,21 +401,63 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             "Deprecated December 2025." )]
         public string SharedKey { get; set; } = String.Empty;
 
-        /*
-         * EKA Note November 2025
-         * Removed as a property, because Role Authorization is saved instead to the MatchParticipant object. No need to replicate that data here.
-         *
         /// <summary>
-        /// A list of Authorization roles participants in the match have.
-        /// This list is sent to the Cloud, but is never seen as part of the Rest API. Instead
-        /// the Rest API sends back a list of Authorizations the caller has in the match, with 
-        /// the Property 'Authorization'.
-        ///
-        /// This list is only ever uploaded to the cloud. It is never (or at least should never) be
-        /// sent back as part of an API request. 
-        /// </summary>G_STJ_SER.G_STJ_SER.JsonPropertyOrder
-        public List<MatchAuthorization> AuthorizationList { get; set; } = new List<MatchAuthorization>();
-        */
+        /// The names of the scoring system used to score shots within this match. For example, "Orion Scoring System."
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 40 )]
+        [G_NS.JsonProperty( Order = 40 )]
+        [Obsolete( "Replaced with CourseOfFireStructure.MetaData.ScoringTechnology, as each Course of Fire can have its own scoring system. Deprecated May 2026." )]
+        public List<string> ScoringSystems { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Newtonsoft.json helper method, to determine if ScoreSystems property should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeScoringSystems() {
+            return ScoringSystems != null && ScoringSystems.Count > 0;
+        }
+
+        /// <summary>
+        /// The type of scoring system used in this match, such as PAPER_TARGER or EST.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 41 )]
+        [G_NS.JsonProperty( Order = 41 )]
+        [DefaultValue( ScoringSystem.UNKNOWN )]
+        [Obsolete( "Replaced with CourseOfFireStructure.MetaData.ScoringTechnology, as each Course of Fire can have its own scoring system. Deprecated May 2026." )]
+        public ScoringSystem ScoringSystemType { get; set; } = ScoringSystem.UNKNOWN;
+
+        #endregion
+
+
+        #region Move To Seperate Objects
+        /*
+         * The properties in this region are important as part of the REST API return Get Match Detail(),
+         * however they do not belong as part of the Match object itsefl. Think they should be moved to a 
+         * new object that is returned as part of the Get Match Detail() API call.
+         */
+
+        /// <summary>
+        /// A list of authorized capabilities the caller has for this match. These values are 
+        /// returned by the Rest API, but are not serialized. Instead 'AuthorizationList'
+        /// is sent, and the list of Authorizations is derved using it and the caller's identificaiton.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 51 )]
+        [G_NS.JsonProperty( Order = 51 )]
+        [Obsolete( "Will be replaced with the Permissions list, which is returned in parrallel to GetMatchDetail API call. Deprecated March 2026." )]
+        public List<MatchAuthorizationCapability> Authorization { get; set; } = new List<MatchAuthorizationCapability>();
+
+        /// <summary>
+        /// NewtonSoft helper method to determine if Authoirazation should be serialized.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeAuthorization() {
+            return Authorization is not null && Authorization.Count > 0;
+        }
+        #endregion
+
+        #endregion
+
+        #region Helper Properties
 
         /// <summary>
         /// Helper function that indicates if this Match is currently going on. Which is 
@@ -480,9 +479,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public MatchProject? MatchProject { get; internal set; }
 
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
+
         #endregion
 
         #region Methods
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{Name}|{MatchID}|{OwnerId}|{Location}|{MatchType}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{MemberPolicy}|{Visibility}|{JSONVersion}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            hash ^= MatchStructure.CalculateChecksum();
+
+            return hash;
+        }
 
         /// <inheritdoc />
         public override string ToString() {
@@ -612,7 +624,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return json;
         }
-
         #endregion
     }
 }

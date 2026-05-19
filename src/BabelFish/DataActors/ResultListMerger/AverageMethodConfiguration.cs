@@ -24,6 +24,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             this.Method = DataModel.OrionMatch.MergeMethodType.AVERAGE;
         }
 
+        #region Data Model Properties
         /// <summary>
         /// If true, an event representing each participants high score will be included.
         /// </summary>
@@ -50,5 +51,15 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// </summary>
         [G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public int RequiredNumberOfScores { get; set; } = 1;
+        #endregion
+
+        #region Methods
+
+        public override ulong CalculateChecksum() {
+            var combined = $"{Method}|{AddHighScoreEvent}|{ExcludeDNFFromAverage}|{CountTopScores}|{RequiredNumberOfScores}";
+            return Helpers.Common.Md5ToUlong( combined );
+        }
+
+        #endregion 
     }
 }

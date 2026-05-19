@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataModel.Athena
-{
-	/// <summary>
-	/// Describes a Penalty that is applied to a shot, athlete, team, etc
-	/// </summary>
+namespace Scopos.BabelFish.DataModel.Athena {
+    /// <summary>
+    /// Describes a Penalty that is applied to a shot, athlete, team, etc
+    /// </summary>
     [Serializable]
-	public class Penalty
-    {
+    public class Penalty : ICheckSum {
 
         private float penalty = 0;
 
         /// <summary>
         /// Public constructor
         /// </summary>
-        public Penalty()
-        {
+        public Penalty() {
         }
 
         /// <summary>
@@ -37,18 +30,13 @@ namespace Scopos.BabelFish.DataModel.Athena
         /// Must be a value greather than or equal to 0.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if attempting to set penalties to a value less than zero.</exception>"
-        public float PenaltyPoints
-        {
+        public float PenaltyPoints {
             get { return penalty; }
-            set
-            {
-                if (value >= 0)
-                {
+            set {
+                if (value >= 0) {
                     penalty = value;
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException($"Penalty points must be greather than or equal to zero. Instead received {value}.");
+                } else {
+                    throw new ArgumentOutOfRangeException( $"Penalty points must be greather than or equal to zero. Instead received {value}." );
                 }
             }
         }
@@ -62,5 +50,20 @@ namespace Scopos.BabelFish.DataModel.Athena
         /// GUID formatted string, the unique ID of the penalty.
         /// </summary>
         public string PenaltyID { get; set; }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{RuleNumber}|{Description}|{JuryMember}|{PenaltyID}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+            hash ^= (ulong)(4048 * PenaltyPoints);
+            return hash;
+        }
     }
 }

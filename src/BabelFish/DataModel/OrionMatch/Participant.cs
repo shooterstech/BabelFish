@@ -13,7 +13,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
     public abstract class Participant :
         G_STJ_SER.IJsonOnDeserializing,
-        G_STJ_SER.IJsonOnDeserialized {
+        G_STJ_SER.IJsonOnDeserialized,
+        ICheckSum {
 
         /// <summary>
         /// The expected maximum length of the DisplayNameShort property. This is not a hard limit, but by convention DisplayNameShorts should be 20 characters or less. DisplayName may be any length.
@@ -438,5 +439,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public abstract int UniqueMergeId { get; }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public abstract ulong CalculateChecksum();
     }
 }

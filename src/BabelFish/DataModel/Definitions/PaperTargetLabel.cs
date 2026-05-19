@@ -8,24 +8,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     public class PaperTargetLabel : IReconfigurableRulebookObject {
 
         /// <summary>
-        ///  When a <see cref="CourseOfFire"/> RangeScripts are all designed only for ESTs (and not for paper),
-        ///  this default PaperTargetLabel, which does not specify
-        ///  any labels are to be printed, is returned.
-        ///  <para>To use, it is best to Clone() the instance. </para>
-        /// </summary>
-        public readonly static PaperTargetLabel NONE = new PaperTargetLabel() {
-            PaperTargetLabelName = "None",
-            ShotsPerBull = 1,
-            Labels = new List<BarcodeLabel>()
-        };
-
-        /// <summary>
         /// Public constructor
         /// </summary>
         public PaperTargetLabel() {
             PaperTargetLabelName = "";
             Labels = new List<BarcodeLabel>();
             ShotsPerBull = 1;
+        }
+
+        /// <summary>
+        ///  When a <see cref="CourseOfFire"/> RangeScripts are all designed only for ESTs (and not for paper),
+        ///  this method creates a default PaperTargetLabel, which does not specify
+        ///  any labels are to be printed.
+        /// </summary>
+        public static PaperTargetLabel CreateNoneLabel() {
+            return new PaperTargetLabel() {
+                PaperTargetLabelName = "None",
+                ShotsPerBull = 1,
+                Labels = new List<BarcodeLabel>()
+            };
         }
 
         /// <summary>

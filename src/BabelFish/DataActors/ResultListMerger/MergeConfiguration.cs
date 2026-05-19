@@ -8,8 +8,11 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
     /// Abstract class describing the configuration (or properties) that a Merge Method to use while merging result lists.
     /// <para>Most of the properties are concrete class specific.</para>
     /// </summary>
-    public abstract class MergeConfiguration : IGetScoreFormatCollectionDefinition {
+    public abstract class MergeConfiguration :
+        IGetScoreFormatCollectionDefinition,
+        ICheckSum {
 
+        #region Data Model Properties
         /// <summary>
         /// Concrete class identifier. Its value will be the same value as the cooresponding
         /// MergeMethod class' .Method.
@@ -29,6 +32,20 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         [G_NS.JsonProperty( Order = 3 )]
         public string ScoreConfigName { get; set; } = "Decimal";
 
+        #endregion
+
+        #region Helper Properties
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        #endregion
+
+        #region Methods
+
         /// <inheritdoc />
         /// <exception cref="XApiKeyNotSetException" />
         /// <exception cref="DefinitionNotFoundException" />
@@ -37,5 +54,10 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( ScoreFormatCollectionDef );
         }
+
+        /// <inheritdoc />
+        public abstract ulong CalculateChecksum();
+
+        #endregion
     }
 }
