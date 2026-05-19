@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel;
-using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text.Json;
 
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
-    public class MatchParticipant : IParticipant {
+    public class MatchParticipant :
+        IParticipant,
+        ICheckSum {
 
         public MatchParticipant() {
             Participant = new Individual();
@@ -26,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 RoleList = new List<MatchParticipantRole>();
 
             if (MatchParticipantResults == null)
-                MatchParticipantResults= new List<MatchParticipantResult>();
+                MatchParticipantResults = new List<MatchParticipantResult>();
         }
 
 
@@ -46,7 +40,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string UserID { get; set; }
 
-        public string LocalDate { get; set; }
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime LocalDate { get; set; }
 
         public Participant Participant { get; set; }
 
@@ -69,9 +65,24 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public DateTime LastUpdated { get; set; }
 
-		/// <summary>
-		/// String holding the software (Orion Scoring System) and Version number of the software.
-		/// </summary>
-		public string Creator { get; set; }
-	}
+        /// <summary>
+        /// String holding the software (Orion Scoring System) and Version number of the software.
+        /// </summary>
+        public string Creator { get; set; }
+
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{MatchID}|{MatchName}|{ParticipantID}|{UserID}|{LocalDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Creator}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            if (Participant is not null) {
+                hash ^= Participant.CalculateChecksum();
+            }
+
+            return hash;
+        }
+    }
 }

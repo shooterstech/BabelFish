@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -16,7 +9,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// EventScore format for (JSONVersion) "2022-04-09"
     /// </summary>
     [Serializable]
-    public class EventScore {
+    public class EventScore : ICheckSum {
 
         public EventScore() {
         }
@@ -40,7 +33,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// If this Event matches with a defined EventStyle
         /// this is the SetName of that EventStyle
         /// </summary>
-        [DefaultValue("")]
+        [DefaultValue( "" )]
         public string EventStyleDef { get; set; } = string.Empty;
 
         /// <summary>
@@ -88,12 +81,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A Temporary field that's needed by the TournamentMerger
         /// </summary>
         [G_NS.JsonIgnore]
-        public string MatchId {  get; set; } = string.Empty;
+        public string MatchId { get; set; } = string.Empty;
 
         /// <summary>
         /// A Temporary field that's needed by the TournamentMerger
         /// </summary>
         [G_NS.JsonIgnore]
-        public Participant ? Participant { get; set; } = null;
+        public Participant? Participant { get; set; } = null;
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{Status}|{EventType}|{EventName}|{NumShotsFired}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            if (Score is not null)
+                hash ^= Score.CalculateChecksum();
+
+            if (Projected is not null)
+                hash ^= Projected.CalculateChecksum();
+
+            return hash;
+        }
     }
 }

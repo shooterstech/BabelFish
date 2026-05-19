@@ -243,9 +243,9 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     var fileName = $"{ResultCOF.MatchID}_{ResultCOF.ResultCOFID}_{EventName}";
                     dynamic seriesName;
                     if (!string.IsNullOrEmpty( _scoreFormatted )) {
-                        seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName};;Aggregate: {_scoreFormatted}";
+                        seriesName = $@"{ResultCOF.Participant.DisplayName};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName};;Aggregate: {_scoreFormatted}";
                     } else {
-                        seriesName = $@"{ResultCOF.Participant.DisplayNameShort};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName}";
+                        seriesName = $@"{ResultCOF.Participant.DisplayName};;{StringFormatting.ConvertOrdinalsToLowerCase( ResultCOF.MatchName )};;Series: {EventName}";
                     }
 
                     var match = Match;

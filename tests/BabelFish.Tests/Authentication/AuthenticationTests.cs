@@ -77,6 +77,7 @@ namespace Scopos.BabelFish.Tests.Authentication {
             //Use the above token to generate a new UserAuthentication and log in with them.
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
+                Constants.TestDev7UserId,
                 userAuthenticationInit.RefreshToken,
                 userAuthenticationInit.AccessToken,
                 userAuthenticationInit.IdToken,

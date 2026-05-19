@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
@@ -82,17 +76,32 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The unique identifier that represents the score (result cof object) this Individual had in this match. 
         /// </summary>
-        [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults.")]
-        public string ResultCOFID { get; set;} = string.Empty;
+        [Obsolete( "Currently Orion only supports one Course of Fire per match. Once Orion supports multiple Courses of Fire this property will be removed and replaced with MatchParticipant.MatchParticipantResults." )]
+        public string ResultCOFID { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public override int UniqueMergeId {
             get {
                 if (!string.IsNullOrEmpty( UserID ))
                     return this.UserID.GetHashCode();
-                else 
+                else
                     return this.DisplayName.ToUpper().Trim().GetHashCode();
             }
+        }
+
+
+        /// <inheritdoc />
+        public override ulong CalculateChecksum() {
+            var combined = $"{DisplayName}|{GivenName}|{MiddleName}|{FamilyName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var attributeValue in AttributeValues) {
+                hash ^= attributeValue.CalculateChecksum();
+            }
+
+            hash ^= RemarkList.CalculateChecksum();
+
+            return hash;
         }
     }
 }

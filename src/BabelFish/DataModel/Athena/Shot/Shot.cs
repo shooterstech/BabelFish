@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using Scopos.BabelFish.DataModel.Athena;
-using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using System.ComponentModel;
 using System.Dynamic;
-using Scopos.BabelFish.DataModel.OrionMatch;
+using System.Runtime.Serialization;
+using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataModel.Athena.Shot
-{
-	[Serializable]
-	public class Shot : IEquatable<Shot>, IPenalty
-    {
+namespace Scopos.BabelFish.DataModel.Athena.Shot {
+    [Serializable]
+    public class Shot :
+        IEquatable<Shot>,
+        IPenalty,
+        ICheckSum {
 
         float bulletDiameter = 0;
         float scoringDiameter = 0;
@@ -51,34 +46,29 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <param name="context"></param>
         [OnDeserialized]
-        internal void OnDeserialized(StreamingContext context)
-        {
+        internal void OnDeserialized( StreamingContext context ) {
             //Providate default values if they were not read during deserialization
 
-            if (UpdateLog == null)
-            {
+            if (UpdateLog == null) {
                 UpdateLog = new List<ShotLog>();
             }
 
-            if (Attributes == null)
-            {
+            if (Attributes == null) {
                 Attributes = new List<string>();
             }
 
-            if (Score == null)
-            {
+            if (Score == null) {
                 Score = new Score();
             }
 
-            if (Penalties == null)
-            {
+            if (Penalties == null) {
                 Penalties = new List<Penalty>();
             }
         }
 
         public Location Location { get; set; }
 
-        [G_STJ_SER.JsonConverter( typeof( Scopos.BabelFish.Converters.Microsoft.ScoposDateTimeConverter ) )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime TimeScored { get; set; }
 
@@ -92,10 +82,10 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
         /// When getting, if the value is not set, the value of Scoring Diamter is instead returned. If Scoring Diamter is not set, then 4.5 is returned.
         /// </summary>
-        public float BulletDiameter { 
+        public float BulletDiameter {
             get {
-                if (bulletDiameter > 0 )
-                    return bulletDiameter; 
+                if (bulletDiameter > 0)
+                    return bulletDiameter;
 
                 if (scoringDiameter > 0)
                     return scoringDiameter;
@@ -107,34 +97,34 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
                 if ((value >= 4.0f && value <= 15.0f) || value == 0)
                     bulletDiameter = value;
 
-                else 
+                else
                     throw new ArgumentException( $"Can not set BulletDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
             }
         }
 
-		/// <summary>
-		/// The diamter to use when scoring this shot against the scoring rings. Measured in mm.
-		/// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
-		/// When getting, if the value is not set, the value of Bullet Diamter is instead returned. If Bullet Diamter is not set, then 4.5 is returned.
-		/// </summary>
-		public float ScoringDiameter {
-			get {
-				if (scoringDiameter > 0)
-					return scoringDiameter;
+        /// <summary>
+        /// The diamter to use when scoring this shot against the scoring rings. Measured in mm.
+        /// Value values are 4.0 to 15.0. A value of 0 is considered the reset to default condition.
+        /// When getting, if the value is not set, the value of Bullet Diamter is instead returned. If Bullet Diamter is not set, then 4.5 is returned.
+        /// </summary>
+        public float ScoringDiameter {
+            get {
+                if (scoringDiameter > 0)
+                    return scoringDiameter;
 
-				if (bulletDiameter > 0)
-					return bulletDiameter;
+                if (bulletDiameter > 0)
+                    return bulletDiameter;
 
-				return 4.5f;
-			}
+                return 4.5f;
+            }
 
-			set {
-				if ((value >= 4.0f && value <= 15.0f) || value == 0)
-					scoringDiameter = value;
+            set {
+                if ((value >= 4.0f && value <= 15.0f) || value == 0)
+                    scoringDiameter = value;
 
-                else 
-				    throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
-			}
+                else
+                    throw new ArgumentException( $"Can not set ScoringDiameter to requested value '{value}', it is outside the allowed range of 4.0mm to 15.0mm." );
+            }
         }
 
         /// <summary>
@@ -146,7 +136,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
             return (ScoringDiameter != BulletDiameter);
         }
 
-        public Scopos.BabelFish.DataModel.Athena.Score Score { get; set; }
+        public Score Score { get; set; }
 
         public string TargetSetName { get; set; }
 
@@ -177,7 +167,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// An in order numbering of the shot, for the Result COF. 
         /// Valid values are greater than zero (but not zero). Typically stored as integers.
         /// </summary>
-        [DefaultValue(-9999)]
+        [DefaultValue( -9999 )]
         public float Sequence { get; set; }
 
         /// <summary>
@@ -195,20 +185,21 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <summary>
         /// Additional information about the shot. Format is dependent of the type of EST system used to score the shot.
         /// </summary>
-		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DynamicConverter ) ) ]
-		public ExpandoObject Meta { get; set; }
+		[G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.DynamicConverter ) )]
+        public ExpandoObject Meta { get; set; }
 
         /// <summary>
         /// EventName is only set when the shot is part of a Result COF .Shots dictionary
         /// </summary>
-        public string EventName { get; set; }
+        [DefaultValue( "" )]
+        public string EventName { get; set; } = string.Empty;
 
         /// <summary>
         /// Newtonsoft helper method.
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeEventName() {
-            return ! string.IsNullOrEmpty( EventName );
+            return !string.IsNullOrEmpty( EventName );
         }
 
         /// <summary>
@@ -221,7 +212,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerialiaeScoreFormatted() {
-            return ! string.IsNullOrEmpty( ScoreFormatted );
+            return !string.IsNullOrEmpty( ScoreFormatted );
         }
 
         /// <summary>
@@ -230,21 +221,17 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <exception cref="KeyNotFoundException">Thrown if the x and y coorediantes can not be read from the shot's Meta values.</exception>
         /// <returns></returns>
-        public Tuple<float, float> GetVerificationImageAimingBullCoordinates()
-        {
-            try
-            {
+        public Tuple<float, float> GetVerificationImageAimingBullCoordinates() {
+            try {
                 var meta = (IDictionary<string, object>)Meta;
 
-				float x = Convert.ToSingle( meta["VerImgBullXCoor"] );
+                float x = Convert.ToSingle( meta["VerImgBullXCoor"] );
                 float y = Convert.ToSingle( meta["VerImgBullYCoor"] );
-                Tuple<float, float> coordinates = new Tuple<float, float>(x, y);
+                Tuple<float, float> coordinates = new Tuple<float, float>( x, y );
 
                 return coordinates;
-            }
-            catch (Exception e)
-            {
-                var knf = new KeyNotFoundException("Unable to read the X and Y coorediantes of the aiming bull from the Shot's Meta data.", e);
+            } catch (Exception e) {
+                var knf = new KeyNotFoundException( "Unable to read the X and Y coorediantes of the aiming bull from the Shot's Meta data.", e );
                 throw knf;
             }
         }
@@ -255,15 +242,12 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public float GetVerificationImageDPMM()
-        {
+        public float GetVerificationImageDPMM() {
             try {
-				var meta = (IDictionary<string, object>)Meta;
-				return Convert.ToSingle( meta["VerImgDPMM"] );
-            }
-            catch (Exception e)
-            {
-				var knf = new KeyNotFoundException("Unable to read the DPMM value from the Shot's Meta data.", e);
+                var meta = (IDictionary<string, object>)Meta;
+                return Convert.ToSingle( meta["VerImgDPMM"] );
+            } catch (Exception e) {
+                var knf = new KeyNotFoundException( "Unable to read the DPMM value from the Shot's Meta data.", e );
                 throw knf;
             }
         }
@@ -273,14 +257,11 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// Measured in degrees (not radians)
         /// </summary>
         /// <returns></returns>
-        public float GetVerificationImageRotation()
-        {
+        public float GetVerificationImageRotation() {
             try {
-				var meta = (IDictionary<string, object>)Meta;
-				return Convert.ToSingle( meta["VerImgRotation"] );
-            }
-            catch (Exception e)
-            {
+                var meta = (IDictionary<string, object>)Meta;
+                return Convert.ToSingle( meta["VerImgRotation"] );
+            } catch (Exception e) {
                 //If the VerImgRotation tag is not there, just assume there isn't any rotation
                 return 0;
             }
@@ -325,7 +306,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeUpdateLog() {
-            return (UpdateLog != null && UpdateLog.Count > 0);                
+            return (UpdateLog != null && UpdateLog.Count > 0);
         }
 
         /// <summary>
@@ -338,21 +319,18 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeValidationPhoto() {
-            return ! string.IsNullOrEmpty( ValidationPhoto );
+            return !string.IsNullOrEmpty( ValidationPhoto );
         }
 
-        public bool Equals(Shot other)
-        {
+        public bool Equals( Shot other ) {
             return this.GetHashCode() == other.GetHashCode();
         }
 
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return $"{this.ResultCOFID}-{this.Sequence}-{this.Update}".GetHashCode();
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals( object obj ) {
             return this.GetHashCode() == obj.GetHashCode();
         }
 
@@ -362,11 +340,9 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
-        public bool IsADeletedShot
-        {
-            get
-            {
-                return this.Attributes.Contains("DELETED");
+        public bool IsADeletedShot {
+            get {
+                return this.Attributes.Contains( "DELETED" );
             }
         }
 
@@ -376,11 +352,9 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// </summary>
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
-        public bool IsASighter
-        {
-            get
-            {
-                return this.Attributes.Contains("SIGHTER");
+        public bool IsASighter {
+            get {
+                return this.Attributes.Contains( "SIGHTER" );
             }
         }
 
@@ -398,31 +372,26 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
             return (Penalties != null && Penalties.Count > 0);
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             var sighter = IsASighter ? " SS" : "";
             var deleted = IsADeletedShot ? " DEL" : "";
             var updated = Update > 0 ? " UP" : "";
-            return $"{Score.D.ToString("F1")} {ResultCOFID.Substring(0, 4)}: {StageLabel}-{Sequence}{sighter}{deleted}{updated}";
+            return $"{Score.D.ToString( "F1" )} {ResultCOFID.Substring( 0, 4 )}: {StageLabel}-{Sequence}{sighter}{deleted}{updated}";
         }
 
         /// <inheritdoc/>
-        public void AddPenalty(Penalty penalty)
-        {
-            Penalties.Add(penalty);
+        public void AddPenalty( Penalty penalty ) {
+            Penalties.Add( penalty );
         }
 
         /// <inheritdoc/>
-        public bool HasPenalty(Penalty penalty)
-        {
-            return Penalties.Contains(penalty);
+        public bool HasPenalty( Penalty penalty ) {
+            return Penalties.Contains( penalty );
         }
 
         /// <inheritdoc/>
-        public bool HasPenalty(string penaltyID)
-        {
-            foreach (var p in Penalties)
-            {
+        public bool HasPenalty( string penaltyID ) {
+            foreach (var p in Penalties) {
                 if (p.PenaltyID == penaltyID)
                     return true;
             }
@@ -431,46 +400,67 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         }
 
         /// <inheritdoc/>
-        public void RemovePenalty(Penalty penalty)
-        {
-            Penalties.Remove(penalty);
+        public void RemovePenalty( Penalty penalty ) {
+            Penalties.Remove( penalty );
         }
 
         /// <inheritdoc/>
-        public void RemovePenalty(string penaltyID)
-        {
+        public void RemovePenalty( string penaltyID ) {
             Penalty penaltyToRemove = null;
             foreach (var p in Penalties)
-                if (p.PenaltyID == penaltyID)
-                {
+                if (p.PenaltyID == penaltyID) {
                     penaltyToRemove = p;
                     break;
                 }
 
             if (penaltyToRemove != null)
-                Penalties.Remove(penaltyToRemove);
+                Penalties.Remove( penaltyToRemove );
         }
 
         /// <inheritdoc/>
-        public List<Penalty> GetPenalties()
-        {
+        public List<Penalty> GetPenalties() {
             return Penalties;
         }
 
         /// <inheritdoc/>
-        public void SetPenalties(List<Penalty> penalties)
-        {
+        public void SetPenalties( List<Penalty> penalties ) {
             Penalties = penalties;
         }
 
         /// <inheritdoc/>
-        public float GetSumPenaltyPoints()
-        {
+        public float GetSumPenaltyPoints() {
             float sum = 0;
             foreach (var p in Penalties)
                 sum += p.PenaltyPoints;
 
             return sum;
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            StringBuilder combined = new StringBuilder( $"{ResultCOFID}|{EventName}|{Update}|{TargetSetName}|{FiringPoint}|{StageLabel}|{Privacy}" );
+
+            if (Attributes is not null && Attributes.Count > 0) {
+                foreach (var a in Attributes)
+                    combined.Append( $"|{a}" );
+            }
+            var hash = Helpers.Common.Md5ToUlong( combined.ToString() );
+
+            hash ^= (ulong)(4048 * Sequence);
+            hash ^= Score.CalculateChecksum();
+            hash ^= Location.CalculateChecksum();
+            foreach (var p in Penalties) {
+                hash ^= p.CalculateChecksum();
+            }
+
+            return hash;
         }
     }
 }

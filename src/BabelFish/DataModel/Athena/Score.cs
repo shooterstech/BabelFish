@@ -1,9 +1,10 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Athena {
     [Serializable]
-    public class Score {
+    public class Score : ICheckSum {
 
         private float s = float.NaN;
         public Score() {
@@ -122,7 +123,7 @@ namespace Scopos.BabelFish.DataModel.Athena {
         public static Score operator /( Score left, int right ) {
             //EKA QUESTION: Oct 2025: Should the devide operator return a Score or an AveragedScore ? 
 
-            if ( left is null || left.IsZero || right == 0 )
+            if (left is null || left.IsZero || right == 0)
                 return new Score();
 
             return new Score {
@@ -172,9 +173,9 @@ namespace Scopos.BabelFish.DataModel.Athena {
             }
         }
 
-		public override string ToString() {
-			return ToString( ScoreComponent.D );
-		}
+        public override string ToString() {
+            return ToString( ScoreComponent.D );
+        }
 
         public string ToString( ScoreComponent scoreComponent ) {
 
@@ -182,9 +183,9 @@ namespace Scopos.BabelFish.DataModel.Athena {
                 case ScoreComponent.D:
                 default:
                     return this.D.ToString( "F1" );
-				case ScoreComponent.I:
-					return this.I.ToString();
-				case ScoreComponent.X:
+                case ScoreComponent.I:
+                    return this.I.ToString();
+                case ScoreComponent.X:
                     return this.X.ToString();
                 case ScoreComponent.S:
                     return this.S.ToString( "F1" );
@@ -210,24 +211,45 @@ namespace Scopos.BabelFish.DataModel.Athena {
 
         public float GetScoreComponentScore( ScoreComponent scoreComponent ) {
 
-			switch (scoreComponent) {
-				case ScoreComponent.D:
-				default:
-					return this.D;
-				case ScoreComponent.I:
-					return this.I;
-				case ScoreComponent.X:
-					return this.X;
-				case ScoreComponent.S:
-					return this.S;
-				case ScoreComponent.J:
-					return this.J;
-				case ScoreComponent.K:
-					return this.K;
-				case ScoreComponent.L:
-					return this.L;
-			}
+            switch (scoreComponent) {
+                case ScoreComponent.D:
+                default:
+                    return this.D;
+                case ScoreComponent.I:
+                    return this.I;
+                case ScoreComponent.X:
+                    return this.X;
+                case ScoreComponent.S:
+                    return this.S;
+                case ScoreComponent.J:
+                    return this.J;
+                case ScoreComponent.K:
+                    return this.K;
+                case ScoreComponent.L:
+                    return this.L;
+            }
 
-		}
-	}
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+
+            ulong hash = (ulong)(16 * this.D);
+            hash = hash << 8 | (uint)this.I;
+            hash = hash << 4 | (uint)this.X;
+            hash = ((ulong)hash << 8) | (uint)(16 * this.S);
+
+            var hash2 = (ulong)(256 * this.J);
+            hash2 = hash2 << 8 | (ulong)(256 * this.K);
+            hash2 = hash2 << 8 | (ulong)(256 * this.L);
+            return hash ^ hash2;
+        }
+    }
 }

@@ -10,7 +10,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ParticipantConverter ) )]
-    public abstract class Participant : IDeserializableAbstractClass {
+    public abstract class Participant :
+        IDeserializableAbstractClass,
+        ICheckSum {
 
         /*
          * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/
@@ -169,5 +171,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public abstract int UniqueMergeId { get; }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+
+
+        /// <inheritdoc />
+        public abstract ulong CalculateChecksum();
     }
 }

@@ -1,11 +1,12 @@
 using System.Text.Json;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
     [Serializable]
-    public class AttributeValue {
+    public class AttributeValue : ICheckSum {
 
         private Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -433,5 +434,30 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         public override string ToString() {
             return $"{this.SetName} Attribute Value";
         }
+
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            StringBuilder combined = new StringBuilder();
+
+            // In order to ensure that the same AttributeValue always has the same CheckSum, we need to order the keys when we combine them into a string for hashing.
+            var topLevelKeys = attributeValues.Keys.OrderBy( x => x );
+            foreach (var topLevelKey in topLevelKeys) {
+                combined.Append( topLevelKey );
+                var fieldKeys = attributeValues[topLevelKey].Keys.OrderBy( x => x );
+                foreach (var fieldKey in fieldKeys) {
+                    combined.Append( fieldKey );
+                    combined.Append( attributeValues[topLevelKey][fieldKey] );
+                }
+            }
+
+            return Helpers.Common.Md5ToUlong( combined.ToString() );
+        }
+
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level object.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
     }
 }

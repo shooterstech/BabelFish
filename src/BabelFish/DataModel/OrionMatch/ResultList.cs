@@ -4,7 +4,13 @@ using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
-    public class ResultList : ITokenItems<ResultEvent>, IRLIFList, IGetResultListFormatDefinition, IGetCourseOfFireDefinition, IGetRankingRuleDefinition, IPublishTransactions {
+    public class ResultList : ITokenItems<ResultEvent>,
+        IRLIFList,
+        IGetResultListFormatDefinition,
+        IGetCourseOfFireDefinition,
+        IGetRankingRuleDefinition,
+        IPublishTransactions,
+        ICheckSum {
 
         private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;
 
@@ -306,6 +312,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 41 )]
         public string JSONVersion { get; set; } = string.Empty;
 
+        [G_NS.JsonProperty( Order = 42 )]
+        public string CheckSum { get; set; } = string.Empty;
+
         #region ITokenItems implementation
         /// <inheritdoc />
         [DefaultValue( "" )]
@@ -431,6 +440,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc />
         public override string ToString() {
             return $"ResultList for {ResultName}";
+        }
+
+
+        /// <summary>
+        /// Calculates a checksum value that represents the current state of the object's properties, excluding the
+        /// LastUpdated and CheckSum properties.
+        /// <para>After an object is deserialized, this method can be used to verify the integrity of the deserialized data by comparing
+        /// the calculated value against the stored CheckSum.</para>
+        /// </summary>
+        /// <returns>A ulong containing the calculated checksum value for the object.</returns>
+        public ulong CalculateChecksum() {
+            string combined = $"{MatchName}|{ResultName}|{EventName}|{ParentID}|{Status}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Team}|{Projected}|{RankingRuleDef}|{CourseOfFireDef}|{ResultListFormatDef}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            // We are safe to not care about the order of the items, since if any item is re-arranged, the SortOrder property (within the item) is updated and thus their CalculateCheckSum will change.
+            foreach (var item in this.Items) {
+                hash ^= item.CalculateChecksum();
+            }
+            return hash;
         }
 
         /// <summary>

@@ -1,7 +1,34 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [1.12.4] - 2026-03-00
+## [2.0] - In Development Now, Expected Summer 2026
+### Breaking Changes
+** Contains many breaking changes **
+- SetNames that were previously represented as strings are now represented as SetName objects.
+- MatchIds that were previously represented as strings are now represented as MatchID objects.
+- Datas and Times that were previously represented as strings are now represented as DateTime objects.
+- The Tournament class is renamed to the ResultListMerger class.
+### Enhancements
+#### Match
+- Matches may now have multiple Courses of Fire (1.x version allowed only one), each of which is defined in a new class CourseOFFireStructure.
+- Multiple properties within the Match class are now deprecated, as they previously existed when only one Course of Fire was allowed. These deprecated properties will remain for backwards compatibility for at least 1 year after release. They will however point to the first (and default) CourseOfFireStructure.
+- ResultListWizard data actor class is added to generated suggested ResultListAbbr (configuration data for a ResultList) based on a CourseOfFireStructure.
+- AttributeFilterCalculator data actor class is added to filter Participants (both Individuals and Teams) based on their AttributeValues.
+#### MatchProject
+- Added the MatchProject class which is the Top level class that is a container for all data related to an Orion Match (data file). This includes the Match object itself, as well as the Participants, and raw score data. Also includes data actors to help manage the Match data, such as the ShotMapper, ResultDocumentGenerator, ResultListSlidingWindow.
+- MatchProject includes serialization and deserialization methods to save to and read from files.
+- The new ShotMapper data actor stores shot data from ESTs (and other sources) and maps the shots to Events defined by the COURSE OF FIRE.
+- The new ResultDocumentGenerator data actor compiles Participant and Shot data into both (individual) ResultCOF and ResultList instances.
+- The new ResultListSlidingWinow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
+#### RULEBOOK Definition
+- Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
+
+## [1.12.5] - 2026-05-14
+### Enhancements
+#### ICheckSum
+- Added the ICheckSum interface to calculate a checksum value for high level documents. Intended to check difference in instances between local copy and a server's copy. Implemented in many DataModel/OrionMatch classes including Match, ResultList, ResultCOF, and SquaddingList.
+
+## [1.12.4] - 2026-03-20
 ### Enhancements
 #### GetClubList
 - Added a list of ClubAuthorizationRoles the authenticated caller has for each returned Club.
