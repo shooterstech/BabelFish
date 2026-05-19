@@ -118,7 +118,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     }
                 } catch (Exception ex) {
                     _logger.Error( ex, "Error loading logo image for PDF footer" );
-                    Debug.Assert( false, "Error loading logo image for PDF footer, Scopos.BabelFish.Reports.Resources.Images.scopos_logo.png" );
+                    Debug.Assert( false, "Error loading logo image for PDF footer, Scopos.BabelFish.Resources.Images.scopos_logo.png" );
                 }
 
                 if (IncludeProjectedScoreIndicatorInFooter) {

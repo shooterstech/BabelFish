@@ -15,13 +15,17 @@ All notable changes to BabelFish will be documented in this file.
 - ResultListWizard data actor class is added to generated suggested ResultListAbbr (configuration data for a ResultList) based on a CourseOfFireStructure.
 - AttributeFilterCalculator data actor class is added to filter Participants (both Individuals and Teams) based on their AttributeValues.
 #### MatchProject
-- Added the MatchProject class which is the Top level class that is a container for all data related to an Orion Match (data file). This includes the Match object itself, as well as the Participants, and raw score data. Also includes data actors to help manage the Match data, such as the ShotMapper, ResultDocumentGenerator, ResultListSlidingWindow.
+- Added the MatchProject class which is the Top level class that is a container for all data related to an Orion Match (data file). This includes the Match object itself, as well as the Participants, and raw score data. Also includes a Result Engine (data actors) to interpret definition files and help manage the Match data, such as the ShotMapper, ResultDocumentGenerator, ResultListSlidingWindow.
 - MatchProject includes serialization and deserialization methods to save to and read from files.
 - The new ShotMapper data actor stores shot data from ESTs (and other sources) and maps the shots to Events defined by the COURSE OF FIRE.
 - The new ResultDocumentGenerator data actor compiles Participant and Shot data into both (individual) ResultCOF and ResultList instances.
-- The new ResultListSlidingWinow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
+- The new ResultListSlidingWindow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
 #### RULEBOOK Definition
 - Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
+#### Tournament API Calls
+A Tournament is a group of Matches. Once a Tournament is created "Merged Result Lists" may be added combining scores from accross multiple Result Lists from the member Matches.
+- Added API calls to create, read, and update Tournaments, this includes Merged Result Lists within a Tournament.
+- Added Tournament permissions to allow "Invite Only" (only the creator of a Tournament may add members), "Request to Join" (any Match may ask to join but the creator of the Tournament must approve), and "Open" (anyone may join without approval) policies.
 
 ## [1.12.5] - 2026-05-14
 ### Enhancements

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using NLog;
 using QuestPDF.Fluent;
@@ -80,13 +81,13 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 } );
 
 
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Reports.Resources.Images.scopos_owl_transparent_orange.png" )) {
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_owl_transparent_orange.png" )) {
+                    Debug.Assert( stream is not null, "Could not find embedded resource for header image." );
 
                     row.ConstantItem( 3.0f, Unit.Centimetre )
                    .AspectRatio( 1 )
                    .Padding( 1 )
                    .Image( stream );
-
                 }
 
             } );
