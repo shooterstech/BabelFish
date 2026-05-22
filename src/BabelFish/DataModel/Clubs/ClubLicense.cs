@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-
-using NLog;
-using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.DataModel.Common;
+using Version = Scopos.BabelFish.DataModel.Common.Version;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
@@ -110,7 +103,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                     logger.Error( msg, ex );
                 }
             }
-        } 
+        }
 
         public DateTime GetDownloadDate() {
             return downloadDate;
@@ -128,6 +121,18 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <inheritdoc />
         [JsonIgnore]
         public bool NewRecord { get; set; }
+
+        /// <summary>
+        /// The last time that this instance of Orion checked in, this is the version of Orion it was running.
+        /// </summary>
+        public Version FirmwareVersion { get; set; } = Version.Parse( "1.0.0.0" );
+
+        /// <summary>
+        /// The date and time that this instance of Orion last checked in.
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        public DateTime FirmwareDate { get; set; } = DateTime.MinValue;
 
         public override string ToString() {
             return $"Sublicense {SubLicense}";

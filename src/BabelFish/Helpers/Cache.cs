@@ -1,7 +1,4 @@
-﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Scopos.BabelFish.Helpers {
 
@@ -16,7 +13,7 @@ namespace Scopos.BabelFish.Helpers {
         private readonly TimeSpan _expiration;
         private readonly ConcurrentDictionary<TKey, CacheEntry> _store = new();
 
-        public Cache( ) {
+        public Cache() {
             _expiration = TimeSpan.FromSeconds( 60 );
         }
 
@@ -47,6 +44,12 @@ namespace Scopos.BabelFish.Helpers {
             public CacheEntry( TValue value, DateTime timestamp ) {
                 Value = value;
                 Timestamp = timestamp;
+            }
+        }
+
+        public int Count {
+            get {
+                return _store.Count;
             }
         }
     }
