@@ -61,54 +61,6 @@ namespace Scopos.BabelFish.Tests.APIClients.ScoposDataClientTests {
         }
 
         [TestMethod]
-        public void GetOrionServiceProductionLevel() {
-            var client = new ScoposDataClient( APIStage.BETA );
-
-            ApplicationName service = ApplicationName.ORION;
-            ReleasePhase level = ReleasePhase.PRODUCTION;
-            var response = client.GetVersionPublicAsync( service, level );
-
-            var result = response.Result;
-            Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
-            Assert.AreEqual( 1, result.VersionList.Count );
-            Assert.AreEqual( service, result.VersionList[0].Service );
-        }
-
-        [TestMethod]
-        public void GetAthenaServiceAlphaLevel() {
-            var client = new ScoposDataClient( APIStage.BETA );
-
-            ApplicationName service = ApplicationName.ATHENA;
-            ReleasePhase level = ReleasePhase.ALPHA;
-            var response = client.GetVersionPublicAsync( service, level );
-
-            var result = response.Result;
-            Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
-            Assert.AreEqual( 1, result.VersionList.Count );
-            Assert.AreEqual( service, result.VersionList[0].Service );
-        }
-
-        [TestMethod]
-        public void GetMultipleServicesProductionLevel() {
-            var client = new ScoposDataClient( APIStage.BETA );
-
-            GetVersionPublicRequest request = new GetVersionPublicRequest() {
-                Services = new List<ApplicationName>() { ApplicationName.ORION, ApplicationName.ATHENA },
-                Level = ReleasePhase.PRODUCTION
-            };
-
-            var response = client.GetVersionPublicAsync( request );
-
-            var result = response.Result;
-            Assert.IsNotNull( result );
-            Assert.AreEqual( HttpStatusCode.OK, result.RestApiStatusCode, $"Expecting and OK status code, instead received {result.RestApiStatusCode}." );
-            Assert.AreEqual( result.VersionList.Count, 2 );
-            Assert.IsTrue( result.VersionList.Any( x => x.Service == ApplicationName.ATHENA ) );
-        }
-
-        [TestMethod]
         public void GetCupsOfCoffeeConsumedWithRequestObject() {
             var client = new ScoposDataClient( APIStage.BETA );
 

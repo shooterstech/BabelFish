@@ -33,10 +33,10 @@ namespace Scopos.BabelFish.APIClients {
 
 
         /// <summary>
-        /// GetVersion API for multiple services
+        /// GetRelease API for multiple services
         /// </summary>
-        /// <param name="requestParameters">GetVersionRequest object</param>
-        /// <returns>List<VersionInfo> object</returns>
+        /// <param name="requestParameters">GetReleasePublicRequest object</param>
+        /// <returns>GetReleasePublicResponse object</returns>
         public async Task<GetReleasePublicResponse> GetReleasePublicAsync( GetReleasePublicRequest requestParameters ) {
 
             GetReleasePublicResponse response = new GetReleasePublicResponse( requestParameters );
