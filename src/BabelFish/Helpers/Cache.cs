@@ -9,7 +9,7 @@ namespace Scopos.BabelFish.Helpers {
     /// <remarks>This code was patially written by AI.</remarks>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class Cache<TKey, TValue> {
+    public class Cache<TKey, TValue> : IClearCache {
         private readonly TimeSpan _expiration;
         private readonly ConcurrentDictionary<TKey, CacheEntry> _store = new();
 
@@ -35,6 +35,19 @@ namespace Scopos.BabelFish.Helpers {
 
             value = default!;
             return false;
+        }
+
+        /// <summary>
+        /// Removes the passed in key and its value from the cache.
+        /// </summary>
+        /// <param name="key"></param>
+        public void RemoveValue( TKey key ) {
+            _store.TryRemove( key, out _ );
+        }
+
+        /// <inheritdoc />
+        public void ClearCache() {
+            _store.Clear();
         }
 
         private class CacheEntry {

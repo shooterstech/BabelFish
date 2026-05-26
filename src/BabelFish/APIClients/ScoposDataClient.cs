@@ -1,6 +1,6 @@
-﻿using Scopos.BabelFish.Requests.ScoposData;
-using Scopos.BabelFish.Responses.ScoposData;
 using Scopos.BabelFish.DataModel.ScoposData;
+using Scopos.BabelFish.Requests.ScoposData;
+using Scopos.BabelFish.Responses.ScoposData;
 
 namespace Scopos.BabelFish.APIClients {
     public class ScoposDataClient : APIClient<ScoposDataClient> {
@@ -37,44 +37,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetVersionRequest object</param>
         /// <returns>List<VersionInfo> object</returns>
-        [Obsolete( "GetVersion is deprecated. Use GetRelease instead.")]
-        public async Task<GetVersionPublicResponse> GetVersionPublicAsync( GetVersionPublicRequest requestParameters ) {
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( GetReleasePublicRequest requestParameters ) {
 
-            GetVersionPublicResponse response = new GetVersionPublicResponse( requestParameters );
+            GetReleasePublicResponse response = new GetReleasePublicResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
-
-            return response;
-        }
-
-        /// <summary>
-        /// GetVersion API for one service
-        /// </summary>
-        /// <param name="service">VersionService enum</param>
-        /// <param name="level">VersionLevel enum</param>
-        /// <returns>List<VersionInfo> object</returns>
-        [Obsolete( "GetVersion is deprecated. Use GetRelease instead." )]
-        public async Task<GetVersionPublicResponse> GetVersionPublicAsync(ApplicationName service, ReleasePhase level ) {
-            GetVersionPublicRequest requestParameters = new GetVersionPublicRequest() {
-                Services = new List<ApplicationName>() { service },
-                Level = level
-            };
-
-            return await GetVersionPublicAsync( requestParameters ).ConfigureAwait( false );
-        }
-
-
-        /// <summary>
-        /// GetVersion API for multiple services
-        /// </summary>
-        /// <param name="requestParameters">GetVersionRequest object</param>
-        /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(GetReleasePublicRequest requestParameters)
-        {
-
-            GetReleasePublicResponse response = new GetReleasePublicResponse(requestParameters);
-
-            await this.CallAPIAsync(requestParameters, response).ConfigureAwait(false);
 
             return response;
         }
@@ -99,10 +66,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="service">VersionService enum</param>
         /// <param name="level">VersionLevel enum</param>
         /// <returns>List<VersionInfo> object</returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName, DataModel.Common.Version thingVersion )
-        {
-            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
-            {
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName, DataModel.Common.Version thingVersion ) {
+            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest() {
                 ReleasePhase = releasePhase,
                 ThingName = thingName,
                 ThingVersion = thingVersion
@@ -119,17 +84,15 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="thingName"></param>
         /// <param name="thingVersion"></param>
         /// <returns></returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase, List<string> ApplicationItems, string thingName, DataModel.Common.Version thingVersion)
-        {
-            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
-            {
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, List<string> ApplicationItems, string thingName, DataModel.Common.Version thingVersion ) {
+            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest() {
                 ReleasePhase = releasePhase,
                 ApplicationItems = ApplicationItems,
                 ThingName = thingName,
                 ThingVersion = thingVersion
             };
 
-            return await GetReleasePublicAsync(requestParameters).ConfigureAwait(false);
+            return await GetReleasePublicAsync( requestParameters ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -142,10 +105,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="AthenaEulaAccepted"></param>
         /// <param name="OwnerID"></param>
         /// <returns></returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase,  string thingName, DataModel.Common.Version thingVersion, bool OrionEulaAccepted, bool AthenaEulaAccepted, string OwnerID)
-        {
-            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
-            {
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, string thingName, DataModel.Common.Version thingVersion, bool OrionEulaAccepted, bool AthenaEulaAccepted, string OwnerID ) {
+            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest() {
                 ReleasePhase = releasePhase,
                 ThingName = thingName,
                 ThingVersion = thingVersion,
@@ -154,7 +115,7 @@ namespace Scopos.BabelFish.APIClients {
                 OwnerID = OwnerID
             };
 
-            return await GetReleasePublicAsync(requestParameters).ConfigureAwait(false);
+            return await GetReleasePublicAsync( requestParameters ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -168,10 +129,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="AthenaEulaAccepted"></param>
         /// <param name="OwnerID"></param>
         /// <returns></returns>
-        public async Task<GetReleasePublicResponse> GetReleasePublicAsync(ReleasePhase releasePhase, List<string> ApplicationItems, string thingName, DataModel.Common.Version thingVersion, bool OrionEulaAccepted, bool AthenaEulaAccepted, string OwnerID)
-        {
-            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest()
-            {
+        public async Task<GetReleasePublicResponse> GetReleasePublicAsync( ReleasePhase releasePhase, List<string> ApplicationItems, string thingName, DataModel.Common.Version thingVersion, bool OrionEulaAccepted, bool AthenaEulaAccepted, string OwnerID ) {
+            GetReleasePublicRequest requestParameters = new GetReleasePublicRequest() {
                 ReleasePhase = releasePhase,
                 ApplicationItems = ApplicationItems,
                 ThingName = thingName,
@@ -181,7 +140,7 @@ namespace Scopos.BabelFish.APIClients {
                 OwnerID = OwnerID
             };
 
-            return await GetReleasePublicAsync(requestParameters).ConfigureAwait(false);
+            return await GetReleasePublicAsync( requestParameters ).ConfigureAwait( false );
         }
 
         /// <summary>
@@ -202,7 +161,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Calls the https://api.orionscoringsystem.com/coffee api request
         /// </summary>
         /// <returns></returns>
-        public async Task<GetCupsOfCoffeePublicResponse> GetCuposOfCoffeePublicAsync(  ) {
+        public async Task<GetCupsOfCoffeePublicResponse> GetCuposOfCoffeePublicAsync() {
 
             GetCupsOfCoffeePublicRequest requestParameters = new GetCupsOfCoffeePublicRequest();
 
