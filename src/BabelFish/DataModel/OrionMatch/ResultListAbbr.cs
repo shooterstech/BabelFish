@@ -7,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
     /// Describes the configuration of a ResultList.
     /// </summary>
-    public class ResultListAbbr {
+    public class ResultListAbbr : ICheckSum {
 
         /// <summary>
         /// Default public constructor
@@ -109,6 +109,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /*
          * EKA Note Jan 2026: Will need a list of filtering attribute values.
          */
+
+        /// <inheritdoc />
+        [G_NS.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{ResultName}|{Primary}|{Team}|{Status}|{ResultListFormatDef}|{RankingRuleDef}|{ScoreConfigName}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            return hash;
+        }
 
     }
 }

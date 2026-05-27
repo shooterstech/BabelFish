@@ -318,6 +318,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             var combined = $"{Name}|{MatchID}|{OwnerId}|{CourseOfFireDef}|{ScoreConfigName}|{TargetCollectionName}|{Location}|{MatchType}|{StartDate.ToString( DateTimeFormats.DATE_FORMAT )}|{EndDate.ToString( DateTimeFormats.DATE_FORMAT )}|{Visibility}|{JSONVersion}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
+            foreach (var re in this.ResultEvents) {
+                hash ^= re.CalculateChecksum();
+            }
+
             return hash;
         }
     }
