@@ -6,38 +6,42 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
     public enum ClubAuthorizationRole {
         /*
-         * These values should align with the enum values defined in the sql table orion_account_authorization, role column.
-         * Use Proper case to be considtent with the Role names for Match Authorization.
+         * These values should align with the values defined in the sql 'role' table.
+         * Prepend each value with 'Club' to avoid confusion with match and global roles in the system.
          */
 
         /// <summary>
         /// Can do everything a Manager can plus assign the Admin role to other Club members.
         /// </summary>
-        [Description( "Admin" )]
-        [EnumMember( Value = "Admin" )]
+        [Description( "Club Admin" )]
+        [EnumMember( Value = "Club Admin" )]
         ADMIN,
 
-        [Description( "Manager" )]
-        [EnumMember( Value = "Manager" )]
+        [Description( "Club Manager" )]
+        [EnumMember( Value = "Club Manager" )]
         MANAGER,
 
-        [Description( "Member" )]
-        [EnumMember( Value = "Member" )]
+        [Description( "Club Member" )]
+        [EnumMember( Value = "Club Member" )]
         MEMBER,
 
-        [Description( "Coach" )]
-        [EnumMember( Value = "Coach" )]
+        [Description( "Club Coach" )]
+        [EnumMember( Value = "Club Coach" )]
         COACH,
 
-        [Description( "Payer" )]
-        [EnumMember( Value = "Payer" )]
-        PAYER
+        [Description( "Club Payer" )]
+        [EnumMember( Value = "Club Payer" )]
+        PAYER,
+
+        [Description( "Club Technical Officer" )]
+        [EnumMember( Value = "Club Technical Officer" )]
+        TECHNICAL_OFFICER
     }
 
     /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
-    [Obsolete("This feature is no longer in use as of 2026-04. Also not included on LicenseFiles")]
+    [Obsolete( "This feature is no longer in use as of 2026-04. Also not included on LicenseFiles" )]
     public enum ClubLicenseCapability {
 
         /// <summary>
