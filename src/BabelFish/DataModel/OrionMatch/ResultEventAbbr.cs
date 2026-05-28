@@ -4,7 +4,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Describes an Event in a Match that has one or more Result Lists associated with it.
     /// </summary>
     [Serializable]
-    public class ResultEventAbbr {
+    public class ResultEventAbbr : ICheckSum {
 
         /// <summary>
         /// Default public constructor
@@ -31,5 +31,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 4 )]
         public List<ResultListAbbr> ResultLists { get; set; } = new List<ResultListAbbr>();
+
+        /// <inheritdoc />
+        [G_NS.JsonIgnore]
+        public string CheckSum { get; set; }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{EventName}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            foreach (var item in ResultLists) {
+                hash = hash ^ item.CalculateChecksum();
+            }
+            return hash;
+        }
     }
 }
