@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -8,18 +7,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
-    public class ClubDetail : IObjectRelationalMapper {
+    public class ClubDetail {
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private DateTime memberSince = DateTime.Today;
 
         public ClubDetail() {
-            NewRecord = true;
         }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
-            NewRecord = false; //If this object is being deserialized, we can assume it is an existing club.
             if (AdministratorList == null)
                 AdministratorList = new List<Contact>();
             if (Notes == null)
@@ -160,9 +157,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
 
         /// <inheritdoc />
-        [JsonIgnore]
-        public bool NewRecord { get; set; }
-
         public override string ToString() {
             return $"{Name} {OwnerId}";
         }
