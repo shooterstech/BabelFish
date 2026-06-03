@@ -115,6 +115,17 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public string URLPath { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets the visibility of this club's team page on rezults.scopos.net. It is the responsibility of a
+        /// Club's administrators or manager to set this value appropriately.
+        /// <para>If PRIVATE, the team page will not be visible to the public.</para>
+        /// <para>If PUBLIC, the team page will likely be visible to the public. In order to be visility, the Club must
+        /// have a valid Orion for Clubs license. Check <see cref="IsPublicUrlPageVisible"/> to learn if the Club
+        /// passes these tests.</para>
+        /// </summary>
+        [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
+
+        /// <summary>
         /// The x-api-key for use by this Club.
         /// </summary>
         public string ApiKey { get; set; } = string.Empty;
@@ -155,6 +166,15 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public List<ClubOptions> Options { get; set; } = new List<ClubOptions> { };
 
         public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
+
+        /// <summary>
+        /// Returns true if this club's team page should be visible to the public. This is true if the club has set its
+        /// Visibility to PUBLIC and has at least one valid Orion for Clubs license.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPublicUrlPageVisible() {
+            return Visibility == VisibilityOption.PUBLIC && LicenseList.Any( l => (l.LicenseType == ClubLicenseType.INDIVIDUAL || l.LicenseType == ClubLicenseType.SITE) && l.ExpirationDate >= DateTime.Today );
+        }
 
         /// <inheritdoc />
         public override string ToString() {

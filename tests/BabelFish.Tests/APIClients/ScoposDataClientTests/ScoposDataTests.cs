@@ -61,6 +61,37 @@ namespace Scopos.BabelFish.Tests.APIClients.ScoposDataClientTests {
         }
 
         [TestMethod]
+        public async Task GetProductionVersionTests() {
+            var client = new ScoposDataClient();
+
+            var defaultVersionOnError = Version.Parse( "1.0.0" );
+            // As of June 2026, we expect Orion to be at least version 2.25.0, and Athena to be at least 1.12.0. If we are getting the default version, or versions that are too old, then something is likely wrong with the API or our parsing of the response.
+            var minimumOrionExpectedVersion = Version.Parse( "2.25.0" );
+            var minimumAthenaExpectedVersion = Version.Parse( "1.12.0" );
+
+            // Ask for the production version for Orion. This will also populate the cache, so subsequent calls should be faster and return the same value.
+            var firstCallTimer = System.Diagnostics.Stopwatch.StartNew();
+            var orionVersion = await client.GetProductionVersionAsync( ApplicationName.ORION );
+            firstCallTimer.Stop();
+
+            Assert.IsNotNull( orionVersion );
+            Assert.IsTrue( orionVersion > defaultVersionOnError, $"Expecting the version to be greater than {defaultVersionOnError}, instead received {orionVersion}." );
+            Assert.IsTrue( orionVersion >= minimumOrionExpectedVersion, $"Expecting the version to be at least {minimumOrionExpectedVersion}, instead received {orionVersion}." );
+
+            // Ask for the production version for Athena. This should be pulled from cache if the API is working correctly, and should be much faster than the first call.
+            var secondCallTimer = System.Diagnostics.Stopwatch.StartNew();
+            var athenaVersion = await client.GetProductionVersionAsync( ApplicationName.ATHENA );
+            secondCallTimer.Stop();
+
+            Assert.IsNotNull( athenaVersion );
+            Assert.IsTrue( athenaVersion > defaultVersionOnError, $"Expecting the version to be greater than {defaultVersionOnError}, instead received {athenaVersion}." );
+            Assert.IsTrue( athenaVersion >= minimumAthenaExpectedVersion, $"Expecting the version to be at least {minimumAthenaExpectedVersion}, instead received {athenaVersion}." );
+
+            //Since values are cached, the second call should be much faster.
+            Assert.IsTrue( firstCallTimer.ElapsedMilliseconds > 100 * secondCallTimer.ElapsedMilliseconds, $"Expecting the second call to be faster than the first call, but the first call took {firstCallTimer.ElapsedMilliseconds} ms and the second call took {secondCallTimer.ElapsedMilliseconds} ms." );
+        }
+
+        [TestMethod]
         public void GetCupsOfCoffeeConsumedWithRequestObject() {
             var client = new ScoposDataClient( APIStage.BETA );
 

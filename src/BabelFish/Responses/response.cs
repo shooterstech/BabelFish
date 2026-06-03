@@ -47,10 +47,10 @@ namespace Scopos.BabelFish.Responses {
         /// Returns the time that the response object is considered out of date and
         /// should not longer be used in a cached response. 
         /// 
-        /// To enable cache for a API call two things needs to happen. First the concrete
+        /// <para>To enable cache for a API call two things needs to happen. First the concrete
         /// APIClient needs to enabled caching response by setting .IgnoreLocalCache to false.
         /// Second, each request object must enable it by overridding GetCacheValueExpiryTime
-        /// to a value in the future.
+        /// to a value in the future.</para>
         /// </summary>
         /// <returns></returns>
         protected internal virtual DateTime GetCacheValueExpiryTime() {
