@@ -75,12 +75,12 @@ namespace Scopos.BabelFish.APIClients {
             GetClubListPublicRequest.SearchParameterState currentlyShooting = GetClubListPublicRequest.SearchParameterState.IGNORE ) {
 
             var request = new GetClubListPublicRequest();
-            request.ShowAll = currentlyShooting;
-            request.EnabledRezults = currentlyShooting;
-            request.ActiveLicense = currentlyShooting;
-            request.OrionForClubs = currentlyShooting;
-            request.OrionAtHome = currentlyShooting;
-            request.AthenaForClubs = currentlyShooting;
+            request.ShowAll = showAll;
+            request.EnabledRezults = enabledRezults;
+            request.ActiveLicense = activeLicense;
+            request.OrionForClubs = orionForClubs;
+            request.OrionAtHome = orionAtHome;
+            request.AthenaForClubs = athenaForClubs;
             request.CurrentlyShooting = currentlyShooting;
 
             return await GetClubListPublicAsync( request );

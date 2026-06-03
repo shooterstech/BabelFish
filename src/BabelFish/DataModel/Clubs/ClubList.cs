@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
-namespace  Scopos.BabelFish.DataModel.Clubs {
+namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// A list of Orion Club accounts. Only abbreviated data about the club is returned.
     /// </summary>
@@ -17,7 +14,7 @@ namespace  Scopos.BabelFish.DataModel.Clubs {
         }
 
         [OnDeserialized]
-        internal void OnDeserialized(StreamingContext context) {
+        internal void OnDeserialized( StreamingContext context ) {
             if (Items == null)
                 Items = new List<ClubAbbr>();
         }
@@ -28,7 +25,7 @@ namespace  Scopos.BabelFish.DataModel.Clubs {
         public List<ClubAbbr> Items { get; set; }
 
         /// <inheritdoc />
-        [JsonConverter(typeof(NextTokenConverter))]
+        [JsonConverter( typeof( NextTokenConverter ) )]
         public string NextToken { get; set; } = string.Empty;
 
         /// <inheritdoc />

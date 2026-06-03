@@ -5,7 +5,7 @@ using Scopos.BabelFish.DataActors.PDF;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
-namespace BabelFish.Tests.DataActors.PDF {
+namespace Scopos.BabelFish.Tests.DataActors.PDF {
     [TestClass]
     public class ResultListPdfTests : BaseTestClass {
 
