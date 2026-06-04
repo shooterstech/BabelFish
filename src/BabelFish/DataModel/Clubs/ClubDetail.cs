@@ -126,6 +126,13 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         /// <summary>
+        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
+
+        /// <summary>
         /// The x-api-key for use by this Club.
         /// </summary>
         public string ApiKey { get; set; } = string.Empty;
