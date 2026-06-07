@@ -44,6 +44,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
         #region Methods
 
+        /// <inheritdoc />
         public override ulong CalculateChecksum() {
             var combined = $"{Method}|{IncludeHighScoreEvent}|{IncludeAverageScoreEvent}|{CountTopScores}";
             return Helpers.Common.Md5ToUlong( combined );

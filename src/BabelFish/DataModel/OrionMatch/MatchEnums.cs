@@ -4,6 +4,13 @@ using Scopos.BabelFish.DataActors.ResultListMerger;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
+    /*
+     * NOTE: When adding a new enum it is generally wise to add the enum to the 
+     * SerializerOptins.InitSystemTextJsonSerializer() method, so the enum value gets 
+     * serialized and deserialized as a string instead of an int. This makes it easier to 
+     * read and debug when looking at raw json, and also prevents issues with deserializing if the enum values change in the future.
+     */
+
     /// <summary>
     /// Concrete class id for a <seealso cref="AttributeFilter"/>. 
     /// </summary>
@@ -53,6 +60,22 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /*
          * Need to add comparison operators >, >=, <, <=
          */
+    }
+
+    public enum CountMergeMethodSortOption {
+        /// <summary>
+        /// Sort participants by their display name A-Z.
+        /// </summary>
+        [Description( "Alphabetical" )]
+        [EnumMember( Value = "Alphabetical" )]
+        ALPHABETICAL,
+
+        /// <summary>
+        /// Sort participants by the number of Result List Members they participated in. Then sorty by their Display Name.
+        /// </summary>
+        [Description( "Count" )]
+        [EnumMember( Value = "Count" )]
+        COUNT
     }
 
     /// <summary>
@@ -110,7 +133,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [Description( "Reentry" )]
         [EnumMember( Value = "Reentry" )]
-        REENTRY
+        REENTRY,
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="CountMethod"/>
+        /// </summary>
+        [Description( "Count" )]
+        [EnumMember( Value = "Count" )]
+        COUNT
     }
 
     /// <summary>
