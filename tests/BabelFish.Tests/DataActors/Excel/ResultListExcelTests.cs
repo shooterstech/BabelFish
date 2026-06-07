@@ -4,7 +4,7 @@ using Scopos.BabelFish.DataActors.Excel;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
-namespace BabelFish.Tests.DataActors.Excel {
+namespace Scopos.BabelFish.Tests.DataActors.Excel {
     [TestClass]
     public class ResultListExcelTests : BaseTestClass {
         [TestMethod]

@@ -8,7 +8,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Score = Scopos.BabelFish.DataModel.Athena.Score;
 
-namespace BabelFish.Tests.OrionMatch {
+namespace Scopos.BabelFish.Tests.OrionMatch {
 
     [TestClass]
     public class CheckSumTests : BaseTestClass {

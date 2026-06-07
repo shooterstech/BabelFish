@@ -1,26 +1,19 @@
-using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
-using Scopos.BabelFish.DataModel.Common;
 using Version = Scopos.BabelFish.DataModel.Common.Version;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Describes an Orion license an Orion user may have.
     /// </summary>
-    public class ClubLicense : IObjectRelationalMapper {
+    public class ClubLicense {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
-        private DateTime expirationDate = DateTime.Today;
-        private DateTime downloadDate = DateTime.Today;
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         public ClubLicense() {
-            NewRecord = true;
         }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
-            NewRecord = false; //If this object is being deserialized, we can assume it is an existing record.
             if (Notes == null)
                 Notes = new List<string>();
             if (Capabilities == null)
@@ -34,34 +27,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public string SubLicense { get; set; } = "A";
 
         /// <summary>
-        /// The date this license expires. Formatted as yyyy-MM-dd. 
-        /// To Get/Set ExpriationDate as a DateTime object use GetExpirationDate() or SetExpriationDate()
+        /// The date this license expires.
+        /// <para>By default, this is set to one year from the date of license generation, but it can be set to any date.</para>
         /// </summary>
-        /// <example>2001-01-01</example>
-        public string ExpirationDate {
-            get {
-                return expirationDate.ToString( DateTimeFormats.DATE_FORMAT );
-            }
-            set {
-                try {
-                    //Test if we can parse the input without throwing an error.
-                    var parsedDate = DateTime.ParseExact( value, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-                    //If the input can be parsed, we can go ahead and set the value.
-                    expirationDate = parsedDate;
-                } catch (Exception ex) {
-                    var msg = $"Unable to parse the input Date {value}.";
-                    logger.Error( msg, ex );
-                }
-            }
-        }
-
-        public DateTime GetExpirationDate() {
-            return expirationDate;
-        }
-
-        public void SetExpirationDate( DateTime expirationDate ) {
-            this.expirationDate = expirationDate;
-        }
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime ExpirationDate { get; set; } = DateTime.Today.AddYears( 1 );
 
         /// <summary>
         /// The type of license this is.
@@ -74,53 +45,39 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public string LicenseFile { get; set; } = string.Empty;
 
         /// <summary>
+        /// Indicates that the customer wishes the license to be renewed when it expires. This is only a preference and does not guarantee renewal.
+        /// If false, the license will not be renewed and will expire on the ExpirationDate. 
+        /// </summary>
+        public bool Renew { get; set; } = true;
+
+        /// <summary>
         /// Notes the Shooter's Tech support team took pertaining to this license.
         /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        [Obsolete( "Replaced with ScoposNoteService" )]
         public List<string> Notes { get; set; } = new List<string>();
 
         /// <summary>
         /// A short, 6 to 8 character random code the existing user may use to install this sub license. It is valid once and then only until the download date.
         /// </summary>
         /// <example>ABCDEFG</example>
+        [Obsolete( "No longer used with BabelFish 2.0 / Orion 3.0" )]
         public string DownloadCode { get; set; } = string.Empty;
 
         /// <summary>
-        /// The date that the DownloadCode is valid until. Formatted as yyyy-MM-dd
+        /// The date that the DownloadCode is valid until. 
         /// </summary>
-        /// <example>2001-01-01</example>
-        public string DownloadDate {
-            get {
-                return downloadDate.ToString( DateTimeFormats.DATE_FORMAT );
-            }
-            set {
-                try {
-                    //Test if we can parse the input without throwing an error.
-                    var parsedDate = DateTime.ParseExact( value, DateTimeFormats.DATE_FORMAT, CultureInfo.InvariantCulture );
-                    //If the input can be parsed, we can go ahead and set the value.
-                    downloadDate = parsedDate;
-                } catch (Exception ex) {
-                    var msg = $"Unable to parse the input Date {value}.";
-                    logger.Error( msg, ex );
-                }
-            }
-        }
-
-        public DateTime GetDownloadDate() {
-            return downloadDate;
-        }
-
-        public void SetDownloadDate( DateTime downloadDate ) {
-            this.downloadDate = downloadDate;
-        }
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        [Obsolete( "No longer used with BabelFish 2.0 / Orion 3.0" )]
+        public DateTime DownloadDate { get; set; } = DateTime.Today;
 
         /// <summary>
         /// The list of capabilities this license includes.
         /// </summary>
+        [Obsolete( "No longer used with BabelFish 2.0 / Orion 3.0" )]
         public List<ClubLicenseCapability> Capabilities { get; set; } = new List<ClubLicenseCapability>();
-
-        /// <inheritdoc />
-        [JsonIgnore]
-        public bool NewRecord { get; set; }
 
         /// <summary>
         /// The last time that this instance of Orion checked in, this is the version of Orion it was running.

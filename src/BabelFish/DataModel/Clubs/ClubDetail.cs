@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -8,18 +7,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
-    public class ClubDetail : IObjectRelationalMapper {
+    public class ClubDetail {
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private DateTime memberSince = DateTime.Today;
 
         public ClubDetail() {
-            NewRecord = true;
         }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
-            NewRecord = false; //If this object is being deserialized, we can assume it is an existing club.
             if (AdministratorList == null)
                 AdministratorList = new List<Contact>();
             if (Notes == null)
@@ -118,6 +115,24 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public string URLPath { get; set; } = string.Empty;
 
         /// <summary>
+        /// Gets or sets the visibility of this club's team page on rezults.scopos.net. It is the responsibility of a
+        /// Club's administrators or manager to set this value appropriately.
+        /// <para>If PRIVATE, the team page will not be visible to the public.</para>
+        /// <para>If PUBLIC, the team page will likely be visible to the public. In order to be visility, the Club must
+        /// have a valid Orion for Clubs license. Check <see cref="IsPublicUrlPageVisible"/> to learn if the Club
+        /// passes these tests.</para>
+        /// </summary>
+        [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
+
+        /// <summary>
+        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
+
+        /// <summary>
         /// The x-api-key for use by this Club.
         /// </summary>
         public string ApiKey { get; set; } = string.Empty;
@@ -159,10 +174,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
 
-        /// <inheritdoc />
-        [JsonIgnore]
-        public bool NewRecord { get; set; }
+        /// <summary>
+        /// Returns true if this club's team page should be visible to the public. This is true if the club has set its
+        /// Visibility to PUBLIC and has at least one valid Orion for Clubs license.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPublicUrlPageVisible() {
+            return Visibility == VisibilityOption.PUBLIC && LicenseList.Any( l => (l.LicenseType == ClubLicenseType.INDIVIDUAL || l.LicenseType == ClubLicenseType.SITE) && l.ExpirationDate >= DateTime.Today );
+        }
 
+        /// <inheritdoc />
         public override string ToString() {
             return $"{Name} {OwnerId}";
         }

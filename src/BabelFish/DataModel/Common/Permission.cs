@@ -22,6 +22,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_MANAGE_ADMIN = new Permission( "club.manage_admin", "Ability to specify a club member as an admin of the club. " );
         public static readonly Permission CLUB_MANAGE_MEMBER = new Permission( "club.manage_member", "Ability to add, remove, update, or delete club members. Does not include assigning the admin role to a member." );
         public static readonly Permission CLUB_MANAGE_TEAMS = new Permission( "club.manage_teams", "May view and edit Club Teams." );
+        public static readonly Permission CLUB_MANAGE_CLUB_PAGE = new Permission( "club.manage_club_page", "Ability to manage the Club's page on Rezults. Including enabling or disabling its visibility." );
         public static readonly Permission CLUB_PAYER = new Permission( "club.payer", "May make payments to renew a Club's Orion licenses, subscriptions, and warrentees." );
         public static readonly Permission CLUB_READ_LICENSE = new Permission( "club.read_license", "Read a club license" );
         public static readonly Permission CLUB_READ_TEAMS = new Permission( "club.read_teams", "May view Club Teams." );
