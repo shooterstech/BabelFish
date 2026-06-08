@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         public MergeMethodType Method { get; protected set; }
 
         /// <summary>
-        /// The SCORE FORMAT COLLECTION definition to us while displaying scores for this MergedResultList
+        /// The SCORE FORMAT COLLECTION definition to use while displaying scores for this MergedResultList
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
         public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION, , while displaying scores for this MergedResultList
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        public string ScoreConfigName { get; set; } = "Decimal";
+        public virtual string ScoreConfigName { get; set; } = "Decimal";
 
         #endregion
 

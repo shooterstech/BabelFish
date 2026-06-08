@@ -136,11 +136,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         REENTRY,
 
         /// <summary>
-        /// Concrete class identifier for <see cref="CountMethod"/>
+        /// Concrete class identifier for <see cref="ParticipationCountMethod"/>
         /// </summary>
-        [Description( "Count" )]
-        [EnumMember( Value = "Count" )]
-        COUNT
+        [Description( "Event Count" )]
+        [EnumMember( Value = "Event Count" )]
+        EVENT_COUNT
     }
 
     /// <summary>
