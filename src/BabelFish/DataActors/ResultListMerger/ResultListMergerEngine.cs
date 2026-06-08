@@ -97,6 +97,9 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             }
         }
 
+        /// <summary>
+        /// The MergedResultList instance that this engine is merging the Result List Members for.
+        /// </summary>
         public MergedResultList MergedResultList { get; private set; }
 
         /// <summary>

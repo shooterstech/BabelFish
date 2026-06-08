@@ -39,7 +39,11 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// </summary>
         public override string ScoreConfigName { get => FieldSource.SCORE_CONFIG_NAME_SCORE_FORMATTED; set => base.ScoreConfigName = value; }
 
-        public override
+        /// <summary>
+        /// Overridden to always return v1.0:orion:Standard Score Formats. This value is held constant because the 
+        /// </summary>
+        public override SetName ScoreFormatCollectionDef { get => SetName.Parse( "v1.0:orion:Standard Score Formats" ); set => base.ScoreFormatCollectionDef = value; }
+
         #endregion
 
         #region Methods

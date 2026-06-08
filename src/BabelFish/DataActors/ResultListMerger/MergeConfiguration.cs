@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// The SCORE FORMAT COLLECTION definition to use while displaying scores for this MergedResultList
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
+        public virtual SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION, , while displaying scores for this MergedResultList

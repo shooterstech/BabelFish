@@ -57,6 +57,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 case MergeMethodType.REENTRY:
                     mrl.Configuration = new ReentryMethodConfiguration();
                     break;
+                case MergeMethodType.EVENT_COUNT:
+                    mrl.Configuration = new ParticipationCountMethodConfiguration();
+                    break;
+                default:
+                    throw new ArgumentException( $"Unsupported MergeMethodType: {mergeMethodType}" );
             }
 
             return mrl;
@@ -151,7 +156,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             var resultListMember = new ResultListMember();
-            resultListMember.MatchId = this.Container.MatchId;
+            resultListMember.MatchId = resultList.MatchId;
             resultListMember.CourseOfFireId = resultList.CourseOfFireId;
             resultListMember.ResultName = resultList.ResultName;
             resultListMember.HeaderName = resultList.EventName;

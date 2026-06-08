@@ -73,6 +73,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             return true;
         }
 
+        /// <inheritdoc />
         public override RankingRule GenerateRankingRule() {
             var rr = new RankingRule();
             rr.SetDefaultValues();
@@ -122,7 +123,6 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             return rr;
         }
-
 
         #endregion
     }

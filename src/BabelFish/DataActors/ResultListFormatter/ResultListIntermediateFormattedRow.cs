@@ -684,7 +684,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
 
             // Check for the special use case where the user is asking for  the ScoreFormatted value of the EventScore.
-            if (source.ScoreConfigName == FieldSource.SCORE_FORMATTED_SCORE_CONFIG_NAME) {
+            if (source.ScoreConfigName == FieldSource.SCORE_CONFIG_NAME_SCORE_FORMATTED) {
                 var eventScore = GetEventScore( eventName );
                 if (!string.IsNullOrEmpty( eventScore.ScoreFormatted )) {
                     return eventScore.ScoreFormatted;

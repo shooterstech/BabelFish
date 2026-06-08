@@ -74,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public void OnDeserialized() {
             foreach (var rl in ResultLists) {
-                rl.CourseOfFireId = this.CourseOfFireId;
+                rl.CourseOfFireStructure = this;
                 rl.AttributeFilter.UpdateCourseOfFireId( this.CourseOfFireId );
             }
             _ignoreEvents = false;
@@ -329,7 +329,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (existingResultList == null) {
                 ResultLists.Add( resultList );
 
-                resultList.CourseOfFireId = this.CourseOfFireId;
+                resultList.CourseOfFireStructure = this;
                 resultList.AttributeFilter.UpdateCourseOfFireId( this.CourseOfFireId );
 
                 if (!_ignoreEvents) {

@@ -59,19 +59,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string ResultName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Each Match may contain multiple Courses of Fire, and each Course of Fire may have multiple Result Lists. This is the unique idtifier to the Course of Fire that this Result List is associated with.
-        /// <para>Most Matches only contain one Course of Fire (prior to Orion 3.0 (and BabelFish 2.0) Orion only supported 1 coruse of fire in a match). 1 is the starting index. </para>
-        /// <para>A value of 0 would indicate that this is a Merged Result List. But since ResultListAbbr
-        /// should not be used to described a Merged Result List, the value should always be >= 1. </para>
-        /// </summary>
-        /// <remarks>Value is not serialized. Instead, value is set either by
-        /// <see cref="CourseOfFireStructure.OnDeserialized"/> or <see cref="CourseOfFireStructure.AddResultList(ResultListAbbr)"/>.</remarks>
-        [G_STJ_SER.JsonPropertyOrder( 2 )]
-        [G_NS.JsonProperty( Order = 2 )]
-        [G_NS.JsonIgnore]
-        public int CourseOfFireId { get; internal set; } = 1;
-
-        /// <summary>
         /// The Event Name, as defined in the COURSE OF FIRE definiton, that's the top level event for this ResultList.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 3 )]
@@ -160,6 +147,34 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Helper Properties
+
+        /// <remarks>Value is not serialized. Instead, value is set either by
+        /// <see cref="CourseOfFireStructure.OnDeserialized"/> or <see cref="CourseOfFireStructure.AddResultList(ResultListAbbr)"/>.</remarks>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public CourseOfFireStructure? CourseOfFireStructure { get; internal set; }
+
+        /// <summary>
+        /// Each Match may contain multiple Courses of Fire, and each Course of Fire may have multiple Result Lists. This is the unique idtifier to the Course of Fire that this Result List is associated with.
+        /// <para>Most Matches only contain one Course of Fire (prior to Orion 3.0 (and BabelFish 2.0) Orion only supported 1 coruse of fire in a match). 1 is the starting index. </para>
+        /// <para>A value of 0 would indicate that this is a Merged Result List. But since ResultListAbbr
+        /// should not be used to described a Merged Result List, the value should always be >= 1. </para>
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public int CourseOfFireId {
+            get {
+                return this.CourseOfFireStructure?.CourseOfFireId ?? 1;
+            }
+        }
+
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public MatchID MatchId {
+            get {
+                return this.CourseOfFireStructure?.MatchStructure?.MatchId ?? MatchID.DEFAULT.Clone();
+            }
+        }
 
         /// <inheritdoc />
         /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
