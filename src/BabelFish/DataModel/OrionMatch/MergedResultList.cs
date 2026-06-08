@@ -16,6 +16,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Private Variables
         private bool _ignoreEvents = false;
+        private int _uniqueHeaderSuffixCounter = 1;
         #endregion
 
         #region Constructors
@@ -160,6 +161,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             resultListMember.CourseOfFireId = resultList.CourseOfFireId;
             resultListMember.ResultName = resultList.ResultName;
             resultListMember.HeaderName = resultList.EventName;
+
+            // HeaderName has to be unique. If it isn't unique add a suffix to make it unique. This is a simple approach, but it should work for most cases. If there are more than 10 duplicates, it will start to get a little messy, but that seems unlikely.
+            if (this.ResultListMembers.Any( rlm => rlm.HeaderName == resultListMember.HeaderName )) {
+                resultListMember.HeaderName = $"{resultListMember.HeaderName} {_uniqueHeaderSuffixCounter++}";
+            }
 
             this.ResultListMembers.Add( resultListMember );
 

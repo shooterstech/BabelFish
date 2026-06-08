@@ -157,7 +157,8 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                 Method = ResultFieldMethod.SCORE,
                 Source = new FieldSource() {
                     Name = _mergeMethod.TopLevelEventname,
-                    ScoreFormat = "Events"
+                    ScoreFormat = "Events",
+                    ScoreConfigName = MergedResultList.Configuration.ScoreConfigName
                 }
             } );
 
@@ -176,7 +177,8 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     Method = ResultFieldMethod.SCORE,
                     Source = new FieldSource() {
                         Name = key,
-                        ScoreFormat = "Events"
+                        ScoreFormat = "Events",
+                        ScoreConfigName = MergedResultList.Configuration.ScoreConfigName
                     }
                 } );
             }

@@ -50,7 +50,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// <inheritdoc />
         public override string TopLevelHeaderText {
             get {
-                return "Event Count";
+                return COUNT_EVENT_SCORE_NAME;
             }
         }
 
@@ -64,13 +64,18 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             int count = 0;
             foreach (var resultListMember in ResultListMergerEngine.ResultListsMembers) {
                 var key = ResultEvent.KeyForResultCofScore( resultListMember.MatchID, resultListMember.EventName );
-                if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore ) && eventScore.Score != null) {
+                if (re.ResultCofScores.TryGetValue( key, out EventScore eventScore )
+                    && eventScore.Score != null
+                    && !eventScore.Score.IsZero) {
                     count++;
                 }
             }
             countEventScore.Score.I = count;
+            countEventScore.ScoreFormatted = $"{count} Events";
             re.ResultCofScores[TopLevelEventname] = countEventScore;
-            return true;
+
+            // Return a value indicating if this Result Event should be included with the final merged Result List
+            return count >= MergeConfiguration.RequiredNumberOfScores;
         }
 
         /// <inheritdoc />
@@ -103,7 +108,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     rankingRule.Rules.Add( new TieBreakingRuleScore() {
                         SortOrder = SortBy.DESCENDING,
                         Method = TieBreakingRuleMethod.SCORE,
-                        EventName = COUNT_EVENT_SCORE_NAME
+                        EventName = this.TopLevelEventname
                     } );
 
                     rankingRule.Rules.Add( new TieBreakingRuleParticipantAttribute() {
