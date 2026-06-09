@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
@@ -148,10 +149,15 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                     break;
 
                 default:
-                    var msg = $"Unrecognized MergeMethod '{mrl.Method}.'";
+                    // If we get here, then there is likely a programming error, or an old Nuget package that isn't updated to reflect new MergeMethodTypes.
+                    // To avoid throwing an exception, will treat this as a ParticipationCountMethod, but will log an error and throw a debug assert to get developers attention.
+                    var msg = $"Unrecognized MergeMethod '{mrl.Method},' to avoid throwing an error converting to an EVENT_COUNT.";
                     _logger.Error( msg );
+                    Debug.Fail( msg );
 
-                    throw new ArgumentException( msg );
+                    var config = new ParticipationCountMethodConfiguration();
+                    mm = new ParticipationCountMethod( resultListMerger, config );
+                    break;
             }
 
             await mm.InitializeAsync();
@@ -172,7 +178,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// RankingRule based on the MergeConfiguration's properties.
         /// </summary>
         /// <returns></returns>
-        public virtual RankingRule GenerateRankingRule() {
+        public virtual RankingRule? GenerateRankingRule() {
             return null;
         }
 
@@ -183,7 +189,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         /// ResultListFormat based on the MergeConfiguration's properties.
         /// </summary>
         /// <returns></returns>
-        public virtual ResultListFormat GenerateResultListFormat() {
+        public virtual ResultListFormat? GenerateResultListFormat() {
             return null;
         }
 

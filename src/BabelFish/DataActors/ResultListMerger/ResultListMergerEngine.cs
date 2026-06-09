@@ -19,6 +19,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
         private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private static OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
+        private int _dynamicColumnIndex = 0;
 
         /// <summary>
         /// Dictionary of all the participants (teams or athletes) that competed in at least one of the
@@ -184,19 +185,21 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             }
 
             rlf.Format.Columns.Clear();
-            rlf.Format.Columns.Add( new ResultListDisplayColumn() {
-                Header = "Rank",
-                Body = "{Rank} {RankDelta}",
-                BodyValues = new List<ResultListCellValue>() {
+            if (MergedResultList.Configuration.IncludeRankColumn) {
+                rlf.Format.Columns.Add( new ResultListDisplayColumn() {
+                    Header = "Rank",
+                    Body = "{Rank} {RankDelta}",
+                    BodyValues = new List<ResultListCellValue>() {
                     new ResultListCellValue() {
                         Text = "{Rank} {RankDelta}"
                     }
                 },
-                ClassSet = new List<ClassSet>() { new ClassSet() {
+                    ClassSet = new List<ClassSet>() { new ClassSet() {
                     Name = "rlf-col-rank",
                     ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                 }}
-            } );
+                } );
+            }
 
             rlf.Format.Columns.Add( new ResultListDisplayColumn() {
                 Header = "Participant",
@@ -220,19 +223,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
             // Determine the ShowWhen condition for the event columns based on the number of dynamic columns we have (which is based on the number of
             // Result List Members plus any additional columns from the MergeMethod). The more dynamic columns we have, the more likely we are to
             // want to hide them on smaller screens, so we set the ShowWhen condition accordingly.
-            ShowWhenCondition showWhenConditionForEventColumns = ShowWhenCondition.TRUE;
-            var dynamicColumnCount = this.ResultListsMembers.Count + additionalColumns.Count;
-
-            if (dynamicColumnCount <= 1) {
-                // If there is only one dynamic column, it is safe to show on medium size screens and up, so we set the ShowWhen condition to DIMENSION_MEDIUM.
-                showWhenConditionForEventColumns = ShowWhenCondition.DIMENSION_MEDIUM;
-            } else if (dynamicColumnCount == 4) {
-                // If there are four dynamic columns, then we want to hide the event columns on medium size screens, and show on large size screens and up, so we set the ShowWhen condition to DIMENSION_LARGE.
-                showWhenConditionForEventColumns = ShowWhenCondition.DIMENSION_LARGE;
-            } else {
-                // If there are five or more dynamic columns, then we want to hide the event columns on smaller screens, so we set the ShowWhen condition to DIMENSION_EXTRA_LARGE.
-                showWhenConditionForEventColumns = ShowWhenCondition.DIMENSION_EXTRA_LARGE;
-            }
+            _dynamicColumnIndex = additionalColumns.Count;
 
             for (int i = 0; i < this.ResultListsMembers.Count; i++) {
                 var resultList = this.ResultListsMembers[i];
@@ -251,7 +242,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         ShowWhen = ShowWhenVariable.CreateAlwaysShow()
                     }},
                     ShowWhen = new ShowWhenVariable() {
-                        Condition = showWhenConditionForEventColumns
+                        Condition = GetNextDynamicColumnShowWhen()
                     }
                 } );
             }
@@ -276,6 +267,25 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
             this.ResultListFormat = rlf;
 
+        }
+
+        internal ShowWhenCondition GetNextDynamicColumnShowWhen() {
+            switch (_dynamicColumnIndex++) {
+                case 0:
+                    return ShowWhenCondition.DIMENSION_SMALL;
+                case 1:
+                case 2:
+                case 3:
+                    return ShowWhenCondition.DIMENSION_MEDIUM;
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                    return ShowWhenCondition.DIMENSION_LARGE;
+                default:
+                    return ShowWhenCondition.DIMENSION_EXTRA_LARGE;
+            }
         }
 
         /// <summary>

@@ -79,7 +79,7 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         }
 
         /// <inheritdoc />
-        public override RankingRule GenerateRankingRule() {
+        public override RankingRule? GenerateRankingRule() {
             var rr = new RankingRule();
             rr.SetDefaultValues();
             var rankingRule = rr.RankingRules[0];

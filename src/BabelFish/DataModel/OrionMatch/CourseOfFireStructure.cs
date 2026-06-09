@@ -296,12 +296,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Readonly, backwares pointer to the MatchStructure that holds this CourseOfFireStructure.
         /// </summary>
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public MatchStructure MatchStructure { get; internal set; }
 
         /// <summary>
         /// REadonly, runtime property to temporairly disable score projection. 
         /// </summary>
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public bool DisableScoreProjection { get; internal set; } = false;
 

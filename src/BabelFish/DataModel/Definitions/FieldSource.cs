@@ -31,7 +31,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// When the ResultField.Method == Score and ScoreConfigName is not empty (the default),
         /// it overrides the ScoreConfigName to use. The default ScoreConfigName is specififed
         /// by the ScoreConfigDefault property in the RESULT LIST FORMAT definition.
-        /// <para>The value <see cref="SCORE_FORMATTED_SCORE_CONFIG_NAME"/> (ScoreFormatted) is
+        /// <para>The value <see cref="SCORE_CONFIG_NAME_SCORE_FORMATTED"/> (ScoreFormatted) is
         /// a special value that indicates the <see cref="EventScore.ScoreFormatted"/> value
         /// of the <see cref="EventScore"/> should instead be used. This remains true regardless
         /// of the value of ScoreFormat.</para>

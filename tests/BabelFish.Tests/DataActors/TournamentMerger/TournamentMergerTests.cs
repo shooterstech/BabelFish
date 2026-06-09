@@ -111,7 +111,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             //await rlf.LoadSquaddingListAsync();
 
             rlf.Engagable = false;
-            rlf.ResolutionWidth = 1200;
+            rlf.ResolutionWidth = 800;
             rlf.SetShowValuesToDefault();
             rlf.RefreshAllRowsParticipantAttributeFields();
 

@@ -2,13 +2,23 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataActors.ResultListMerger {
+
+    /// <summary>
+    /// Concrete class implementation of a MergeConfiguration that is used by the <see cref="ParticipationCountMethod"/>.
+    /// </summary>
     public class ParticipationCountMethodConfiguration : MergeConfiguration {
 
         #region Constructors, factory methods, and initializations
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public ParticipationCountMethodConfiguration() : base() {
 
-            this.Method = DataModel.OrionMatch.MergeMethodType.EVENT_COUNT;
+            this.Method = MergeMethodType.EVENT_COUNT;
+
+            // The Count method emphasizes participation, not scores, so there is no need to show a rank column.
+            this.IncludeRankColumn = false;
         }
 
         #endregion

@@ -114,6 +114,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     public enum MergeMethodType {
 
+        /*
+         * NOTE: When adding a new MergeMethodType, be sure to also add a case for it in the MergeConfigurationConverter class, so that it can be properly deserialized from json.
+         * NOTE: You will also likely have to update the pydantic models in the REST API repository to reflect the new MergeMethodType.
+         */
+
         /// <summary>
         /// Concrete class identifier for <see cref="SumMethod"/>
         /// </summary>

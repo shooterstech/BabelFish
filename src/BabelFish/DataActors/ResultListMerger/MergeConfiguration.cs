@@ -36,6 +36,14 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
 
         #region Helper Properties
 
+        /// <summary>
+        /// Configuration option used by the <see cref="ResultListMergerEngine.AutoGenerateResultListFormat"/> to determine whether to include the rank column in the auto-generated Result List Format.
+        /// </summary>
+        /// <remarks>This property is internal and not serialized, as its a property of the <see cref="MergeConfiguration"/> class.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        internal bool IncludeRankColumn { get; set; } = true;
+
         /// <inheritdoc />
         /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
         [G_NS.JsonIgnore]

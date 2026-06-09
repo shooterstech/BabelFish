@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -15,6 +16,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ICheckSum {
 
         #region Private Variables
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
         private bool _ignoreEvents = false;
         private int _uniqueHeaderSuffixCounter = 1;
         #endregion
@@ -62,7 +64,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     mrl.Configuration = new ParticipationCountMethodConfiguration();
                     break;
                 default:
-                    throw new ArgumentException( $"Unsupported MergeMethodType: {mergeMethodType}" );
+                    // If we get here, then there is likely a programming error, or an old Nuget package that isn't updated to reflect new MergeMethodTypes.
+                    // To avoid throwing an exception, will treat this as a ParticipationCountMethod, but will log an error and throw a debug assert to get developers attention.
+                    var msg = $"Unsupported MergeMethodType: {mergeMethodType}. Modifying the Method to EVENT_COUNT to avoid throwing an exception.";
+                    _logger.Error( msg );
+                    Debug.Fail( msg );
+
+                    mrl.Method = MergeMethodType.EVENT_COUNT;
+                    mrl.Configuration = new ParticipationCountMethodConfiguration();
+                    break;
             }
 
             return mrl;
@@ -150,10 +160,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <param name="resultList"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">Thrown when the ResultListAbbr is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when the ResultListAbbr does not have a valid MatchId.</exception>
         public async Task<ResultListMember> AddResultListMemberAsync( ResultListAbbr? resultList ) {
             if (resultList is null) {
                 throw new ArgumentNullException( nameof( resultList ) );
+            }
+
+            if (resultList.MatchId.IsDefault) {
+                throw new ArgumentException( $"ResultListAbbr '{resultList.ResultName}' must have a valid MatchId. Received: {resultList.MatchId}" );
             }
 
             var resultListMember = new ResultListMember();
@@ -163,8 +178,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             resultListMember.HeaderName = resultList.EventName;
 
             // HeaderName has to be unique. If it isn't unique add a suffix to make it unique. This is a simple approach, but it should work for most cases. If there are more than 10 duplicates, it will start to get a little messy, but that seems unlikely.
-            if (this.ResultListMembers.Any( rlm => rlm.HeaderName == resultListMember.HeaderName )) {
-                resultListMember.HeaderName = $"{resultListMember.HeaderName} {_uniqueHeaderSuffixCounter++}";
+            var baseHeaderName = resultListMember.HeaderName;
+            while (this.ResultListMembers.Any( rlm => rlm.HeaderName == resultListMember.HeaderName )) {
+                resultListMember.HeaderName = $"{baseHeaderName} {_uniqueHeaderSuffixCounter++}";
             }
 
             this.ResultListMembers.Add( resultListMember );
