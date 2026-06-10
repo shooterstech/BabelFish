@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -7,28 +7,26 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
-    public class ClubDetail {
+    public class ClubDetail : IJsonOnDeserialized {
 
+        #region Private and Protected Fields
         private static Logger _logger = LogManager.GetCurrentClassLogger();
-        private DateTime memberSince = DateTime.Today;
+        private DateTime _memberSince = DateTime.Today;
+        #endregion 
 
+        #region Constructors, Factory Methods, and Initialization
         public ClubDetail() {
         }
 
-        [OnDeserialized]
-        internal void OnDeserialized( StreamingContext context ) {
-            if (AdministratorList == null)
-                AdministratorList = new List<Contact>();
-            if (Notes == null)
-                Notes = new List<string>();
-            if (LicenseList == null)
-                LicenseList = new List<ClubLicense>();
-            if (Options == null)
-                Options = new List<ClubOptions>();
-            if (NamespaceList == null)
-                NamespaceList = new List<NamespaceDetail>();
+        public void OnDeserialized() {
+            // Set the backwards pointer for each Address List
+            foreach (var address in AddressList) {
+                address.Club = this;
+            }
         }
+        #endregion
 
+        #region Data Property Members
         /// <summary>
         /// The orion account number, usually 4 digits.
         /// </summary>
@@ -72,6 +70,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [DefaultValue( "" )]
         [Obsolete( "Soon to be replaced with v1.0:orion:Phone Number" )]
         public string Phone { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Street addresses associated with this club. This may include the club's physical location, mailing address, or the address of the club's administrator.
+        /// <para>Unless you are a deserializer, the expected way to add a new ClubAddress is use <see cref="ClubAddress.CreateAsync(ClubDetail)"/></para>
+        /// </summary>
+        public List<ClubAddress> AddressList { get; set; } = new List<ClubAddress>();
 
         /// <summary>
         /// The city and state (and maybe country) where the club is from.
@@ -124,14 +128,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
-
-        /// <summary>
-        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
-        /// </summary>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
-
         /// <summary>
         /// The x-api-key for use by this Club.
         /// </summary>
@@ -174,6 +170,18 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
 
+        #endregion
+
+        #region Helper Properties
+        /// <summary>
+        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Returns true if this club's team page should be visible to the public. This is true if the club has set its
         /// Visibility to PUBLIC and has at least one valid Orion for Clubs license.
@@ -187,5 +195,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public override string ToString() {
             return $"{Name} {OwnerId}";
         }
+        #endregion
     }
 }
