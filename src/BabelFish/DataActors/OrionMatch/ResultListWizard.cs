@@ -97,7 +97,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                     ScoreConfigName = cofStructure.ScoreConfigName,
-                    CourseOfFireId = cofStructure.CourseOfFireId
+                    CourseOfFireStructure = cofStructure
                 } );
 
                 //Level 1
@@ -117,7 +117,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                 RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                 ScoreConfigName = cofStructure.ScoreConfigName,
-                                CourseOfFireId = cofStructure.CourseOfFireId,
+                                CourseOfFireStructure = cofStructure,
                                 AttributeFilter = await AttributeFilterAttributeValue.CreateAsync( attrValue1, this.Match.Visibility )
                             } );
                         }
@@ -140,7 +140,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                         RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                         ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                         ScoreConfigName = cofStructure.ScoreConfigName,
-                                        CourseOfFireId = cofStructure.CourseOfFireId,
+                                        CourseOfFireStructure = cofStructure,
                                         AttributeFilter = new AttributeFilterEquation() {
                                             Boolean = ShowWhenBoolean.AND,
                                             Arguments = new List<AttributeFilter>() {
@@ -158,7 +158,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                         RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                         ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                         ScoreConfigName = cofStructure.ScoreConfigName,
-                                        CourseOfFireId = cofStructure.CourseOfFireId,
+                                        CourseOfFireStructure = cofStructure,
                                         AttributeFilter = new AttributeFilterEquation() {
                                             Boolean = ShowWhenBoolean.AND,
                                             Arguments = new List<AttributeFilter>() {
@@ -186,7 +186,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                 RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                 ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                 ScoreConfigName = cofStructure.ScoreConfigName,
-                                                CourseOfFireId = cofStructure.CourseOfFireId,
+                                                CourseOfFireStructure = cofStructure,
                                                 AttributeFilter = new AttributeFilterEquation() {
                                                     Boolean = ShowWhenBoolean.AND,
                                                     Arguments = new List<AttributeFilter>() {
@@ -203,7 +203,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
-                                                    CourseOfFireId = cofStructure.CourseOfFireId,
+                                                    CourseOfFireStructure = cofStructure,
                                                     AttributeFilter = new AttributeFilterEquation() {
                                                         Boolean = ShowWhenBoolean.AND,
                                                         Arguments = new List<AttributeFilter>() {
@@ -222,7 +222,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
-                                                    CourseOfFireId = cofStructure.CourseOfFireId,
+                                                    CourseOfFireStructure = cofStructure,
                                                     AttributeFilter = new AttributeFilterEquation() {
                                                         Boolean = ShowWhenBoolean.AND,
                                                         Arguments = new List<AttributeFilter>() {
@@ -242,7 +242,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                                                     RankingRuleDef = topLevelEvent.RankingRuleMapping.GetRankingRuleDef( cofStructure.ScoreConfigName ),
                                                     ResultListFormatDef = topLevelEvent.ResultListFormatDef,
                                                     ScoreConfigName = cofStructure.ScoreConfigName,
-                                                    CourseOfFireId = cofStructure.CourseOfFireId,
+                                                    CourseOfFireStructure = cofStructure,
                                                     AttributeFilter = new AttributeFilterEquation() {
                                                         Boolean = ShowWhenBoolean.AND,
                                                         Arguments = new List<AttributeFilter>() {

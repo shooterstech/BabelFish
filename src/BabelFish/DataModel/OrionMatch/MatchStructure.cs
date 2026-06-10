@@ -49,6 +49,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 mrl.Container = this;
             }
 
+            foreach (var cof in CoursesOfFire) {
+                cof.MatchStructure = this;
+            }
+
             _ignoreEvents = false;
         }
 

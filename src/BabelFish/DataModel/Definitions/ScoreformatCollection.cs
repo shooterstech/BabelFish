@@ -1,37 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
-using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
-	/// <summary>
-	/// <para>A SCORE FORMAT COLLECTION defines a set of Score Config. Each Score Config consists of one or more Score Format key value pairs where the 
-	/// key is the name of the Score Format and the value is a Score Format string. Each SCORE FORMAT COLLECTION may be used for any number of COURSE OF FIRE 
-	/// scripts during competitions or practice. Each Score Format name included in the SCORE FORMAT COLLECTION may be used in the COURSE OF FIRE script 
-	/// Event or Singular Definition Objects (under ScoreFormat).</para>
-	/// 
-	/// <para>A SCORE FORMAT COLLECTION may contain any number of ScoreConfigs, but each ScoreConfig must contain the same number of Score Format key value pairs.
+    /// <summary>
+    /// <para>A SCORE FORMAT COLLECTION defines a set of Score Config. Each Score Config consists of one or more Score Format key value pairs where the 
+    /// key is the name of the Score Format and the value is a Score Format string. Each SCORE FORMAT COLLECTION may be used for any number of COURSE OF FIRE 
+    /// scripts during competitions or practice. Each Score Format name included in the SCORE FORMAT COLLECTION may be used in the COURSE OF FIRE script 
+    /// Event or Singular Definition Objects (under ScoreFormat).</para>
+    /// 
+    /// <para>A SCORE FORMAT COLLECTION may contain any number of ScoreConfigs, but each ScoreConfig must contain the same number of Score Format key value pairs.
     /// The Score Format keys must be the same across all ScoreConfigs.</para>
-	/// </summary>
-	[Serializable]
-    public class ScoreFormatCollection : Definition
-    {
-        
+    /// </summary>
+    [Serializable]
+    public class ScoreFormatCollection : Definition {
+
         public ScoreFormatCollection() : base() {
             Type = DefinitionType.SCOREFORMATCOLLECTION;
         }
 
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
 
             if (ScoreConfigs == null)
                 ScoreConfigs = new List<ScoreConfig>();
@@ -79,8 +70,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         public List<string> GetScoreConfigNames() {
             List<string> names = new List<string>();
-            foreach( var sc in ScoreConfigs) {
-                names.Add(sc.ScoreConfigName);
+            foreach (var sc in ScoreConfigs) {
+                names.Add( sc.ScoreConfigName );
             }
 
             return names;
@@ -95,14 +86,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return false;
         }
 
-		/// <inheritdoc />
-		public override async Task<bool> GetMeetsSpecificationAsync() {
+        /// <inheritdoc />
+        public override async Task<bool> GetMeetsSpecificationAsync() {
             var validation = new IsScoreFormatCollectionValid();
 
-			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-			SpecificationMessages = validation.Messages;
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
 
-			return meetsSpecification;
-		}
-	}
+            return meetsSpecification;
+        }
+    }
 }

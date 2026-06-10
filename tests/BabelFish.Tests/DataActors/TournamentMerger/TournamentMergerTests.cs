@@ -74,9 +74,23 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
 
             OrionMatchAPIClient _apiClient = new OrionMatchAPIClient();
 
-            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2026051120003076.2" ) );
+            var getTournamentResponse = await _apiClient.GetTournamentPublicAsync( new MatchID( "1.1.2026040108492188.2" ) );
             var tournament = getTournamentResponse.Tournament;
-            var invRanking = tournament.MergedResultLists.First( x => x.ResultName == "Demo Sum Merged Result List" );
+            var invRanking = await tournament.AddMergedResultListAsync( "Individual Participants", MergeMethodType.EVENT_COUNT );
+
+            //var invRanking = await MergedResultList.CreateAsync( tournament, "Individual Participants", MergeMethodType.EVENT_COUNT );
+            ((ParticipationCountMethodConfiguration)invRanking.Configuration).SortBy = CountMergeMethodSortOption.COUNT;
+
+            foreach (var matchAbbr in tournament.TournamentMembers) {
+                var matchResponse = await _apiClient.GetMatchPublicAsync( matchAbbr.MatchID );
+                var match = matchResponse.Match;
+                foreach (var resultListAbbr in match.MatchStructure.CoursesOfFire[0].ResultLists) {
+                    if (resultListAbbr.ResultName == "Individual - All") {
+                        await invRanking.AddResultListMemberAsync( resultListAbbr );
+                    }
+                }
+            }
+
             var tournamentMerger = await ResultListMergerEngine.CreateAsync( invRanking );
 
             var mergedResultList = await tournamentMerger.MergeAsync();
@@ -97,7 +111,7 @@ namespace Scopos.BabelFish.Tests.DataActors.TournamentMerger {
             //await rlf.LoadSquaddingListAsync();
 
             rlf.Engagable = false;
-            rlf.ResolutionWidth = 1200;
+            rlf.ResolutionWidth = 800;
             rlf.SetShowValuesToDefault();
             rlf.RefreshAllRowsParticipantAttributeFields();
 

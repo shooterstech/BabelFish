@@ -22,6 +22,9 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                         case "Reentry":
                             var foo = JsonSerializer.Deserialize<ReentryMethodConfiguration>( root.GetRawText(), options );
                             return foo;
+                        case "Event Count":
+                        case "EVENT_COUNT":
+                            return JsonSerializer.Deserialize<ParticipationCountMethodConfiguration>( root.GetRawText(), options );
                         default:
                             break;
                     }

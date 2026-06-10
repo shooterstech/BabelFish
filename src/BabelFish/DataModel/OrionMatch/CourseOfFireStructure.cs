@@ -74,7 +74,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public void OnDeserialized() {
             foreach (var rl in ResultLists) {
-                rl.CourseOfFireId = this.CourseOfFireId;
+                rl.CourseOfFireStructure = this;
                 rl.AttributeFilter.UpdateCourseOfFireId( this.CourseOfFireId );
             }
             _ignoreEvents = false;
@@ -296,12 +296,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Readonly, backwares pointer to the MatchStructure that holds this CourseOfFireStructure.
         /// </summary>
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public MatchStructure MatchStructure { get; internal set; }
 
         /// <summary>
         /// REadonly, runtime property to temporairly disable score projection. 
         /// </summary>
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public bool DisableScoreProjection { get; internal set; } = false;
 
@@ -329,7 +331,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             if (existingResultList == null) {
                 ResultLists.Add( resultList );
 
-                resultList.CourseOfFireId = this.CourseOfFireId;
+                resultList.CourseOfFireStructure = this;
                 resultList.AttributeFilter.UpdateCourseOfFireId( this.CourseOfFireId );
 
                 if (!_ignoreEvents) {

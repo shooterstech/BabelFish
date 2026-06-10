@@ -21,20 +21,28 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         public MergeMethodType Method { get; protected set; }
 
         /// <summary>
-        /// The SCORE FORMAT COLLECTION definition to us while displaying scores for this MergedResultList
+        /// The SCORE FORMAT COLLECTION definition to use while displaying scores for this MergedResultList
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        public SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
+        public virtual SetName ScoreFormatCollectionDef { get; set; } = SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// The ScoreConfigName to use, within the SCORE FORMAT COLLECTION, , while displaying scores for this MergedResultList
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        public string ScoreConfigName { get; set; } = "Decimal";
+        public virtual string ScoreConfigName { get; set; } = "Decimal";
 
         #endregion
 
         #region Helper Properties
+
+        /// <summary>
+        /// Configuration option used by the <see cref="ResultListMergerEngine.AutoGenerateResultListFormat"/> to determine whether to include the rank column in the auto-generated Result List Format.
+        /// </summary>
+        /// <remarks>This property is internal and not serialized, as its a property of the <see cref="MergeConfiguration"/> class.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        internal bool IncludeRankColumn { get; set; } = true;
 
         /// <inheritdoc />
         /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>

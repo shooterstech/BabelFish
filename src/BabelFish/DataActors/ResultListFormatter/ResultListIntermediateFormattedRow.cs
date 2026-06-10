@@ -680,13 +680,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
              */
 
+            var eventName = (string)source.Name;
+
+
+            // Check for the special use case where the user is asking for  the ScoreFormatted value of the EventScore.
+            if (source.ScoreConfigName == FieldSource.SCORE_CONFIG_NAME_SCORE_FORMATTED) {
+                var eventScore = GetEventScore( eventName );
+                if (!string.IsNullOrEmpty( eventScore.ScoreFormatted )) {
+                    return eventScore.ScoreFormatted;
+                }
+
+                // If the value of ScoreFormatted is null or empty (which I think should not happen), we will fall back to calculating the formatted score ourselves using the Score and the ScoreFormat.
+            }
+
             //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
             if (tryAndUseProjected &&
                 _resultListFormatted.ResultList is not null
                 && (_resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL))
                 tryAndUseProjected = false;
 
-            var eventName = (string)source.Name;
+
             Score score = GetScore( eventName, tryAndUseProjected );
             string scoreFormat = string.Empty;
             if (string.IsNullOrEmpty( source.ScoreConfigName ))
@@ -710,6 +723,19 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
 
             return formattedScore;
+        }
+
+        private EventScore GetEventScore( string eventName ) {
+            if (_resultEvent is not null) {
+                if (_resultEvent.EventScores != null && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )) {
+                    return scoreToReturn;
+                }
+                if (_resultEvent.ResultCofScores != null && _resultEvent.ResultCofScores.TryGetValue( eventName, out EventScore cofScoreToReturn )) {
+                    return cofScoreToReturn;
+                }
+            }
+
+            return new EventScore();
         }
 
         public Score GetScore( string eventName, bool tryAndUseProjected = false ) {

@@ -157,7 +157,9 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         },
                         ClassSet = new List<ClassSet>() { new ClassSet() {
                             Name = "rlf-col-event",
-                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
+                            ShowWhen =  new ShowWhenVariable() {
+                                Condition = ShowWhenCondition.DIMENSION_MEDIUM
+                            }
                         }}
                     } );
                 }
@@ -173,7 +175,9 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
                         },
                         ClassSet = new List<ClassSet>() { new ClassSet() {
                             Name = "rlf-col-event",
-                            ShowWhen = ShowWhenVariable.CreateAlwaysShow()
+                            ShowWhen =  new ShowWhenVariable() {
+                                Condition = ShowWhenCondition.DIMENSION_MEDIUM
+                            }
                         }}
                     } );
                 }
