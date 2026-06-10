@@ -272,12 +272,12 @@ namespace Scopos.BabelFish.DataActors.ResultListMerger {
         internal ShowWhenCondition GetNextDynamicColumnShowWhen() {
             switch (_dynamicColumnIndex++) {
                 case 0:
-                    return ShowWhenCondition.DIMENSION_SMALL;
                 case 1:
+                    return ShowWhenCondition.DIMENSION_SMALL;
                 case 2:
                 case 3:
-                    return ShowWhenCondition.DIMENSION_MEDIUM;
                 case 4:
+                    return ShowWhenCondition.DIMENSION_MEDIUM;
                 case 5:
                 case 6:
                 case 7:
