@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
