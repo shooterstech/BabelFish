@@ -7,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Represents a street address assigned to an Orion Account (also known as a Club).
     /// </summary>
-    public class ClubAddress : ICheckSum {
+    public class ClubAddress : ICheckSum, IOnCloned {
 
         #region Private and Public Fields
         private string _countryCode = "USA";
@@ -42,6 +42,17 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
             return clubAddress;
         }
+
+        /// <summary>
+        /// Sets the Club property on the cloned instance to match the source instance. This ensures that when a ClubAddress is cloned, it remains associated with the same ClubDetail as the original.
+        /// </summary>
+        /// <param name="source">The original object that was cloned.</param>
+        public void OnCloned( object source ) {
+
+            if (source is ClubAddress sourceAddress) {
+                this.Club = sourceAddress.Club;
+            }
+        }
         #endregion
 
         #region Data Model Properties
@@ -55,10 +66,17 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public int AddressId { get; set; } = 0;
 
         /// <summary>
+        /// Human readable label for this address, such as "Main Office" or "Warehouse". This is optional and can be used to help identify the purpose of the address.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2 )]
+        [MaxLength( 45 )]
+        public string AddressLabel { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the recipient name associated with this address.
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        [Required]
+        [MaxLength( 128 )]
         public string RecipientName { get; set; } = string.Empty;
 
         /// <summary>
@@ -66,12 +84,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 4 )]
         [Required]
+        [MaxLength( 128 )]
         public string Street1 { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the optional second street address line (for suite, unit, apartment, etc.).
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
+        [MaxLength( 128 )]
         public string? Street2 { get; set; }
 
         /// <summary>
@@ -79,6 +99,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 6 )]
         [Required]
+        [MaxLength( 64 )]
         public string City { get; set; } = string.Empty;
 
         /// <summary>
@@ -86,6 +107,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
         [Required]
+        [MaxLength( 64 )]
         public string State { get; set; } = string.Empty;
 
         /// <summary>
@@ -93,23 +115,24 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 8 )]
         [Required]
+        [MaxLength( 20 )]
         public string PostalCode { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the 3-character country code, or an empty string.
+        /// Gets or sets the 3-character country code.
+        /// <para>When setting this property, the value is automatically trimmed and converted to uppercase. If the value exceeds 3 characters, it will be truncated.</para>
         /// </summary>
-        /// <exception cref="ArgumentException">
-        /// Thrown when the value is not empty and not exactly 3 characters long.
-        /// </exception>
         [G_NS.JsonProperty( Order = 9 )]
         [Required]
+        [MaxLength( 3 )]
         public string CountryCode {
             get => _countryCode;
             set {
                 var code = value ?? string.Empty;
+                code = code.Trim().ToUpper();
 
-                if (code.Length != 0 && code.Length != 3)
-                    throw new ArgumentException( "CountryCode must be empty or exactly 3 characters.", nameof( value ) );
+                if (code.Length > 3)
+                    code = code.Substring( 0, 3 );
 
                 _countryCode = code;
             }
