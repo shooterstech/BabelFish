@@ -31,16 +31,21 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <param name="club">The club to associate with the new address.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created <see cref="ClubAddress"/>.</returns>
-        public static async Task<ClubAddress> CreateAsync( ClubDetail club ) {
-            // Although this method is currently synchronous in its implementation, it is defined as async to allow for future enhancements
+        /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="club"/> is null.</exception>
+        public static Task<ClubAddress> CreateAsync( ClubDetail club ) {
+            // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
             // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
-            // By marking it Async now, we can avoid breaking changes in the future if such enhancements are needed.
+            // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
+
+            if (club is null)
+                throw new ArgumentNullException( nameof( club ), "ClubDetail cannot be null when creating a ClubAddress." );
 
             ClubAddress clubAddress = new ClubAddress();
             clubAddress.Club = club;
+            clubAddress.Club.AddressList ??= new List<ClubAddress>();
             clubAddress.Club.AddressList.Add( clubAddress );
 
-            return clubAddress;
+            return Task.FromResult( clubAddress );
         }
 
         /// <summary>
@@ -236,12 +241,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        public string CheckSum { get; set; } = string.Empty;
         #endregion
 
         #region Methods
         /// <summary>
-        /// Returns a string that represents the current Club ADdress. This is useful for debugging and logging purposes.
+        /// Returns a string that represents the current Club Address. This is useful for debugging and logging purposes.
         /// </summary>
         public override string ToString() {
             return $"Club Address {Street1} for {Club?.Name ?? "Unknown Club"} (ID: {AddressId})";

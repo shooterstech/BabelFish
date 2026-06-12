@@ -19,8 +19,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         }
 
         public void OnDeserialized() {
+            AddressList ??= new List<ClubAddress>();
+            AdministratorList ??= new List<Contact>();
+            Options ??= new List<ClubOptions>();
+            NamespaceList ??= new List<NamespaceDetail>();
+
             // Set the backwards pointer for each Address List
             foreach (var address in AddressList) {
+                if (address == null) continue;
                 address.Club = this;
             }
         }
