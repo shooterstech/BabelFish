@@ -66,17 +66,18 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public int AddressId { get; set; } = 0;
 
         /// <summary>
-        /// Human readable label for this address, such as "Main Office" or "Warehouse". This is optional and can be used to help identify the purpose of the address.
+        /// Human readable label for this address, such as "Main Office" or "Warehouse". Does not have to be unique. May be used to help identify the purpose of the address.
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        [MaxLength( 45 )]
+        [Required]
+        [StringLength( 45, MinimumLength = 3 )]
         public string AddressLabel { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the recipient name associated with this address.
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        [MaxLength( 128 )]
+        [StringLength( 128, MinimumLength = 3 )]
         public string RecipientName { get; set; } = string.Empty;
 
         /// <summary>
@@ -84,14 +85,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 4 )]
         [Required]
-        [MaxLength( 128 )]
+        [StringLength( 128, MinimumLength = 3 )]
         public string Street1 { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the optional second street address line (for suite, unit, apartment, etc.).
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
-        [MaxLength( 128 )]
+        [StringLength( 128, MinimumLength = 3 )]
         public string? Street2 { get; set; }
 
         /// <summary>
@@ -99,7 +100,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 6 )]
         [Required]
-        [MaxLength( 64 )]
+        [StringLength( 64, MinimumLength = 3 )]
         public string City { get; set; } = string.Empty;
 
         /// <summary>
@@ -107,7 +108,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
         [Required]
-        [MaxLength( 64 )]
+        [StringLength( 64, MinimumLength = 3 )]
         public string State { get; set; } = string.Empty;
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 8 )]
         [Required]
-        [MaxLength( 20 )]
+        [StringLength( 20, MinimumLength = 3 )]
         public string PostalCode { get; set; } = string.Empty;
 
         /// <summary>
@@ -124,7 +125,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 9 )]
         [Required]
-        [MaxLength( 3 )]
+        [StringLength( 3, MinimumLength = 3 )]
         public string CountryCode {
             get => _countryCode;
             set {
