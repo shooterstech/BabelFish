@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_PAYER = new Permission( "club.payer", "May make payments to renew a Club's Orion licenses, subscriptions, and warrentees." );
         public static readonly Permission CLUB_READ_LICENSE = new Permission( "club.read_license", "Read a club license" );
         public static readonly Permission CLUB_READ_TEAMS = new Permission( "club.read_teams", "May view Club Teams." );
+        public static readonly Permission CLUB_MANAGE_SETTINGS = new Permission( "club.manage_settings", "Ability to manage club settings including a Club's contact information." );
 
         public static readonly Permission MATCH_CHILD_ACCEPT_INVITE = new Permission( "match_child.accept_invite", "Accept the invite to join a parent match as a child" );
         public static readonly Permission MATCH_CHILD_READ = new Permission( "match_child.read", "Read child match" );
