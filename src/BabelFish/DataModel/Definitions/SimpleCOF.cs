@@ -106,13 +106,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// A SimpleCOFComponent is one Stage make up of a SimpleCOF. 
     /// </summary>
-    public class SimpleCOFComponent : IGetStageStyleDefinition, IReconfigurableRulebookObject {
+    public class SimpleCOFComponent :
+        IGetStageStyleDefinition,
+        IReconfigurableRulebookObject,
+        G_STJ_SER.IJsonOnDeserialized {
+
+        /// <summary>
+        /// Public constructor
+        /// </summary>
+        public SimpleCOFComponent() { }
+
+        public void OnDeserialized() {
+            // This is here for backward compatibility. It allows the StageStyle property to be used if StageStyleDef is not set. 
+            if ((this.StageStyleDef is null || this.StageStyleDef.IsDefault) && !this.StageStyle.IsDefault) {
+                this.StageStyleDef = this.StageStyle;
+            }
+        }
+
 
         /// <summary>
         /// SetName of a StageStyle to include. Value must be a memember of the parent EventStyle
         /// objects .StageStyles list. 
         /// </summary>
-        [G_NS.JsonProperty( Order = 1, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( Order = 1 )]
         public SetName StageStyleDef { get; set; } = new SetName();
 
         /// <summary>
@@ -128,6 +144,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( ScoreComponent.S )]
         public ScoreComponent ScoreComponent { get; set; } = ScoreComponent.S;
+
+        [G_NS.JsonProperty( Order = 99 )]
+        [Obsolete( "Use StageStyleDef instead. This property is only here for backward compatibility and will be removed in a future version. June 2026." )]
+        public SetName StageStyle { get; set; } = new SetName();
 
         /// <inheritdoc/>
         [G_NS.JsonProperty( Order = 100 )]
