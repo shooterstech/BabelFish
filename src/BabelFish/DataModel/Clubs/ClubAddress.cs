@@ -13,7 +13,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         private string _countryCode = "USA";
         private VisibilityOption _visibility = VisibilityOption.PUBLIC;
         private bool _isMailing = false;
-        private bool _isPhysical;
+        private bool _isPhysical = false;
+        private bool _isRange = false;
         #endregion
 
         #region Constructors, Factory Methods, and Initialization
@@ -80,9 +81,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// Gets or sets the recipient name associated with this address.
+        /// <para>Value is not required and can be left empty if not applicable.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 3 )]
-        [StringLength( 128, MinimumLength = 3 )]
         public string RecipientName { get; set; } = string.Empty;
 
         /// <summary>
@@ -95,9 +96,10 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// Gets or sets the optional second street address line (for suite, unit, apartment, etc.).
+        /// <para>Value is not required and can be left empty if not applicable.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 5 )]
-        [StringLength( 128, MinimumLength = 3 )]
+        [StringLength( 128, MinimumLength = 0 )]
         public string? Street2 { get; set; }
 
         /// <summary>
@@ -113,7 +115,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
         [Required]
-        [StringLength( 64, MinimumLength = 3 )]
+        [StringLength( 64, MinimumLength = 2 )]
         public string State { get; set; } = string.Empty;
 
         /// <summary>
@@ -121,7 +123,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [G_NS.JsonProperty( Order = 8 )]
         [Required]
-        [StringLength( 20, MinimumLength = 3 )]
+        [StringLength( 20, MinimumLength = 5 )]
         public string PostalCode { get; set; } = string.Empty;
 
         /// <summary>
@@ -209,6 +211,33 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
                         // Direct field assignment avoids setter re-entry
                         address._isPhysical = false;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this address is the primary range address for the club.
+        /// <para>When set to <c>true</c>, all other addresses in <see cref="ClubDetail.AddressList"/> are set to <c>false</c>. Only one
+        /// ClubAddress can be the primary range address at a time.</para>
+        /// <para>A Club does not have to designate a primary range address.</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 12 )]
+        public bool IsRange {
+            get => _isRange;
+            set {
+                if (_isRange == value)
+                    return;
+
+                _isRange = value;
+
+                if (value && Club?.AddressList != null) {
+                    foreach (var address in Club.AddressList) {
+                        if (address == null || ReferenceEquals( address, this ))
+                            continue;
+
+                        // Direct field assignment avoids setter re-entry
+                        address._isRange = false;
                     }
                 }
             }
