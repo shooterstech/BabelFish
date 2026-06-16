@@ -16,6 +16,19 @@ namespace Scopos.BabelFish.Requests.ScoposData {
 
         public string FileName { get; set; } = "";
 
+        public string ContentType {
+            get {
+                var extension = System.IO.Path.GetExtension( FileName ).ToLowerInvariant();
+
+                return extension switch {
+                    ".jpg" => "image/jpeg",
+                    ".jpeg" => "image/jpeg",
+                    ".png" => "image/png",
+                    _ => "application/octet-stream"
+                };
+            }
+        }
+
         public string AltText { get; set; } = "";
 
         public string PrimaryKey { get; set; } = "";
@@ -47,7 +60,7 @@ namespace Scopos.BabelFish.Requests.ScoposData {
         public override HttpContent PostContent {
             get {
                 var content = new ByteArrayContent( ImageBytes );
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue( "image/jpeg" );
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue( ContentType );
                 return content;
             }
         }
