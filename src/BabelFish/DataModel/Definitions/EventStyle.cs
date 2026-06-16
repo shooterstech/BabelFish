@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
@@ -26,8 +26,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
 
             //Don't initialize EventStyles or StageStyles, since one of these values as to be null.
         }
@@ -38,7 +38,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
-        public List<string>? EventStyles { get; set; } = new List<string> ();
+        public List<string>? EventStyles { get; set; } = new List<string>();
 
         /// <summary>
         /// An ordered list of STAGE STYLEs that comprise the EVENT STYLE. Each STAGE STYLE is listed by its SetName.
@@ -55,18 +55,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 13 )]
         public List<string> RelatedEventStyles { get; set; } = new List<string>();
 
-		/// <summary>
-		/// The SCORE FORMAT COLLECTION to use when displaying scores for this EVENT STYLE.
-		/// Each SimpleCOFComponent specifies the Score Config Name.
-		/// <para>The default value is "v1.0:orion:Standard Score Formats"
-		/// </para>
-		/// </summary>
-		/// <remarks>
-		/// There is an argument to be made that we should also include a SCORE FORMAT COLLECTION to use
-		/// when displaying average scores over time.</remarks>
-		[G_STJ_SER.JsonPropertyOrder( 14 )]
-		[G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-		[DefaultValue( "v1.0:orion:Standard Score Formats" )]
+        /// <summary>
+        /// The SCORE FORMAT COLLECTION to use when displaying scores for this EVENT STYLE.
+        /// Each SimpleCOFComponent specifies the Score Config Name.
+        /// <para>The default value is "v1.0:orion:Standard Score Formats"
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// There is an argument to be made that we should also include a SCORE FORMAT COLLECTION to use
+        /// when displaying average scores over time.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [DefaultValue( "v1.0:orion:Standard Score Formats" )]
         public string ScoreFormatCollectionDef { get; set; } = "v1.0:orion:Standard Score Formats";
 
         /// <summary>
@@ -84,14 +84,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 16 )]
         public List<SimpleCOF> SimpleCOFs { get; set; } = new List<SimpleCOF>();
 
-		/// <inheritdoc />
-		public override async Task<bool> GetMeetsSpecificationAsync() {
-			var validation = new IsEventStyleValid();
+        /// <inheritdoc />
+        public override async Task<bool> GetMeetsSpecificationAsync() {
+            var validation = new IsEventStyleValid();
 
-			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-			SpecificationMessages = validation.Messages;
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
 
-			return meetsSpecification;
+            return meetsSpecification;
         }
 
         /// <summary>
@@ -126,22 +126,22 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             };
             sCof.Components = new List<SimpleCOFComponent>();
             sCof.Components.Add( new SimpleCOFComponent() {
-                StageStyleDef = "v1.0:orion:Default",
+                StageStyleDef = Definitions.SetName.Parse( "v1.0:orion:Default" ),
                 ScoreComponent = ScoreComponent.I
             } );
             SimpleCOFs.Add( sCof );
 
             return true;
-		}
+        }
 
-		/// <inheritdoc />
-		/// <exception cref="XApiKeyNotSetException" />
-		/// <exception cref="DefinitionNotFoundException" />
-		/// <exception cref="ScoposAPIException" />
-		public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
+        /// <inheritdoc />
+        /// <exception cref="XApiKeyNotSetException" />
+        /// <exception cref="DefinitionNotFoundException" />
+        /// <exception cref="ScoposAPIException" />
+        public async Task<ScoreFormatCollection> GetScoreFormatCollectionDefinitionAsync() {
 
-			SetName scoreFormatCollectionSetName = Definitions.SetName.Parse( ScoreFormatCollectionDef );
-			return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
-		}
-	}
+            SetName scoreFormatCollectionSetName = Definitions.SetName.Parse( ScoreFormatCollectionDef );
+            return await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( scoreFormatCollectionSetName );
+        }
+    }
 }
