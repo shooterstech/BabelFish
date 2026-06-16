@@ -1,6 +1,7 @@
 ﻿using Scopos.BabelFish.Requests.ScoposData;
 using Scopos.BabelFish.Responses.ScoposData;
 using Scopos.BabelFish.DataModel.ScoposData;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
     public class ScoposDataClient : APIClient<ScoposDataClient> {
@@ -211,6 +212,36 @@ namespace Scopos.BabelFish.APIClients {
             await this.CallAPIAsync( requestParameters, response );
 
             return response;
+        }
+
+        /// <summary>
+        /// Patch Moderate Image API.
+        /// </summary>
+        /// <param name="requestParameters">PatchModerateImageAuthenticatedRequest object</param>
+        /// <returns>Image Object</returns>
+        public async Task<PatchModerateImageAuthenticatedResponse> PatchModerateImageAuthenticatedAsync(
+            PatchModerateImageAuthenticatedRequest requestParameters ) {
+
+            PatchModerateImageAuthenticatedResponse response = new PatchModerateImageAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Moderate Image API.
+        /// </summary>
+        /// <param name="s3Key">The S3 key of the image to resize and moderate.</param>
+        /// <param name="credentials">User credentials for the authenticated call.</param>
+        /// <returns>Image Object</returns>
+        public async Task<PatchModerateImageAuthenticatedResponse> PatchModerateImageAuthenticatedAsync(
+            string s3Key,
+            UserAuthentication credentials ) {
+
+            var requestParameters = new PatchModerateImageAuthenticatedRequest( credentials, s3Key );
+
+            return await PatchModerateImageAuthenticatedAsync( requestParameters ).ConfigureAwait( false );
         }
 
     }
