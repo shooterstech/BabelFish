@@ -198,7 +198,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (participant == null || participant.Participant == null) {
                         foreach (var p in this.RLF.RLIFList.GetAsIRLItemsList()) {
                             if (p is ResultEvent re && re.RemarkList.HasAnyShownParticipantRemark) {
-                                answer = true;
+                                return true;
                             }
                         }
                         answer = false;

@@ -449,9 +449,9 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
         [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
-        public async Task EriksPlayground() {
+        public async Task EriksSquaddingListPlayground() {
 
-            MatchID matchId = new MatchID( "1.1.2026042616021847.0" );
+            MatchID matchId = new MatchID( "1.1.2026061609303732.0" );
             var matchDetailResponse = await matchClient.GetMatchPublicAsync( matchId );
             var match = matchDetailResponse.Match;
 
@@ -466,7 +466,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             Assert.IsNotNull( rlf );
 
             rlf.Engagable = false;
-            rlf.ResolutionWidth = int.MaxValue;
+            rlf.ResolutionWidth = 1570; // int.MaxValue;
             /*
             rlf.ShowNumberOfChildRows = 5;
             rlf.ShowRanks = 3;
@@ -503,9 +503,9 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
 
         [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
-        public async Task EriksPlayground2() {
+        public async Task EriksResultListPlayground2() {
 
-            var matchId = new MatchID( "1.1.2026042616021847.0" );
+            var matchId = new MatchID( "1.1.2026061609303732.0" );
             var resultListName = "Individual - All";
             var request = new GetResultListPublicRequest( matchId, resultListName );
             var resultListResponse = await matchClient.GetResultListPublicAsync( request );
@@ -520,10 +520,10 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             RLIF = new ResultListIntermediateFormatted( resultListToDisplay, resultListFormatDefinition, null );
             //RLIF.GetCompletionPercentageStringPtr = ResultList.CompletionPercentageFormatting;
             await RLIF.InitializeAsync();
-            RLIF.ResolutionWidth = 1000; //Tell it, it is the smallest size screen
+            RLIF.ResolutionWidth = 1570; // int.MaxValue;
             RLIF.ShowNumberOfChildRows = 0;
-            RLIF.ShowNumberOfBodyRows = 4;
-            RLIF.ShowSupplementalInformation = false;
+            RLIF.ShowNumberOfBodyRows = int.MaxValue;
+            RLIF.ShowSupplementalInformation = true;
             RLIF.ShowZeroScoresWithOFFICIAL = false;
             RLIF.Engagable = true;
             RLIF.ShowRanks = 0;
