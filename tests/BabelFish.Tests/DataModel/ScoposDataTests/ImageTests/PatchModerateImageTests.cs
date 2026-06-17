@@ -36,7 +36,7 @@ namespace Scopos.BabelFish.Tests.DataModel.ScoposDataTests.ImageTests {
                 Caption = "A local test image",
                 FileName = "walkingdead.jpg",
                 AltText = "Local test image",
-                PrimaryKey = "LOCAL_TEST_PRIMARY_KEY",
+                Key = "LOCAL_TEST_PRIMARY_KEY",
                 SubKey = "LOCAL_TEST_SUB_KEY",
                 GroupKey = "LOCAL_TEST_GROUP_KEY"
             };
@@ -51,7 +51,7 @@ namespace Scopos.BabelFish.Tests.DataModel.ScoposDataTests.ImageTests {
             Assert.AreEqual( "images/OrionAcct000001/walkingdead.jpg", response.Image.S3Key );
             Assert.AreEqual( request.Caption, response.Image.Caption );
             Assert.AreEqual( request.AltText, response.Image.AltText );
-            Assert.AreEqual( request.PrimaryKey, response.Image.Key );
+            Assert.AreEqual( request.Key, response.Image.Key );
             Assert.AreEqual( request.SubKey, response.Image.SubKey );
             Assert.AreEqual( request.GroupKey, response.Image.GroupKey );
             Assert.AreEqual( Constants.TestDev7UserId, response.Image.UserId );
