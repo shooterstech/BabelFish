@@ -1,4 +1,5 @@
-﻿using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.ScoposData {
@@ -12,22 +13,22 @@ namespace Scopos.BabelFish.Requests.ScoposData {
 
         public byte[] ImageBytes { get; set; } = Array.Empty<byte>();
 
-        public string Caption { get; set; } = "";
-
-        public string FileName { get; set; } = "";
-
         public string ContentType {
             get {
-                var extension = System.IO.Path.GetExtension( FileName ).ToLowerInvariant();
 
-                return extension switch {
-                    ".jpg" => "image/jpeg",
-                    ".jpeg" => "image/jpeg",
-                    ".png" => "image/png",
+                return FileType switch {
+                    ImageFileType.JPEG => "image/jpeg",
+                    ImageFileType.PNG => "image/png",
                     _ => "application/octet-stream"
                 };
             }
         }
+
+        public ImageFileType FileType { get; set; } = ImageFileType.JPEG;
+
+        public ImageCategory ImageCategory { get; set; } = ImageCategory.CLUB;
+
+        public string Caption { get; set; } = "";
 
         public string AltText { get; set; } = "";
 
@@ -35,7 +36,7 @@ namespace Scopos.BabelFish.Requests.ScoposData {
 
         public string SubKey { get; set; } = "";
 
-        public string GroupKey { get; set; } = "";
+        public ImageGroupKeyType GroupKey { get; set; } = ImageGroupKeyType.HEADER;
 
         /// <inheritdoc />
         public override string RelativePath {
@@ -47,11 +48,12 @@ namespace Scopos.BabelFish.Requests.ScoposData {
             get {
                 return new Dictionary<string, List<string>>() {
                     { "caption", new List<string>() { Caption } },
-                    { "file-name", new List<string>() { FileName } },
                     { "alt-text", new List<string>() { AltText } },
+                    { "file-type", new List<string>() { FileType.Description() } },
+                    { "image-category", new List<string>() { ImageCategory.Description() } },
                     { "primary-key", new List<string>() { PrimaryKey } },
                     { "sub-key", new List<string>() { SubKey } },
-                    { "group-key", new List<string>() { GroupKey } }
+                    { "group-key", new List<string>() { GroupKey.Description() } }
                 };
             }
         }
