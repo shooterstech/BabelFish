@@ -1,8 +1,10 @@
-﻿using System.IO;
+using System.IO;
 using System.Net;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.ScoposData;
 using Scopos.BabelFish.Runtime.Authentication;
+using System.Threading.Tasks;
+
 
 namespace Scopos.BabelFish.Tests.DataModel.ScoposDataTests.ImageTests {
     [TestClass]
