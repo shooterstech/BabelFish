@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
 
+    /* 
+     * When adding new enums, it is usually best to update Helpers.SerializationOptions.cs
+     */
+
     public enum ClubAuthorizationRole {
         /*
          * These values should align with the values defined in the sql 'role' table.
@@ -80,9 +84,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// Club's Twitter profile link
         /// </summary>
-        [Description( "Twitter" )]
-        [EnumMember( Value = "Twitter" )]
-        TWITTER,
+        [Description( "X" )]
+        [EnumMember( Value = "X" )]
+        X,
 
         /// <summary>
         /// Club's TikTok profile link
@@ -127,25 +131,11 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         REDDIT,
 
         /// <summary>
-        /// Club's Discord server link
-        /// </summary>
-        [Description( "Discord" )]
-        [EnumMember( Value = "Discord" )]
-        DISCORD,
-
-        /// <summary>
         /// Club's WhatsApp contact number
         /// </summary>
         [Description( "WhatsApp" )]
         [EnumMember( Value = "WhatsApp" )]
-        WHATS_APP,
-
-        /// <summary>
-        /// Club's Tumblr profile link
-        /// </summary>
-        [Description( "Tumblr" )]
-        [EnumMember( Value = "Tumblr" )]
-        TUMBLR
+        WHATS_APP
     }
 
     /// <summary>

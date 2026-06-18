@@ -1,10 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Represents a contact method for a Club (aka Orion Account). Such as their phone number, email address, or social media link. 
     /// </summary>
-    public class ClubContact : IOnCloned {
+    public class ClubContact : IOnCloned, IValidatableObject {
 
         #region Private and Protected Fields
 
@@ -24,9 +25,11 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// This method ensures that the new ClubContact is properly linked to the club's contact list.
         /// </summary>
         /// <param name="club">The club to associate with the new contact.</param>
+        /// <param name="contactType">The type of contact information (e.g., phone number, email, etc.).</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created <see cref="ClubContact"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="club"/> is null.</exception>
-        public static Task<ClubContact> CreateAsync( ClubDetail club ) {
+        /// <exception cref="InvalidOperationException">Thrown when the provided <paramref name="club"/> already has a contact of the same <paramref name="contactType"/>.</exception>
+        public static Task<ClubContact> CreateAsync( ClubDetail club, ClubContactType contactType ) {
             // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
             // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
             // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
@@ -34,8 +37,13 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             if (club is null)
                 throw new ArgumentNullException( nameof( club ), "ClubDetail cannot be null when creating a ClubContact." );
 
+            // Throw an error if the ClubDetail already has a contact of the same type. This prevents duplicate contact types for a single club.
+            if (club.ContactList != null && club.ContactList.Any( c => c.ContactType == contactType ))
+                throw new InvalidOperationException( $"A contact of type {contactType} already exists for this club." );
+
             ClubContact clubContact = new ClubContact();
             clubContact.Club = club;
+            clubContact.ContactType = contactType;
             clubContact.Club.ContactList ??= new List<ClubContact>();
             clubContact.Club.ContactList.Add( clubContact );
 
@@ -66,12 +74,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The actual contact information (e.g., the phone number or email address).
         /// <para>An empty string value means the contact information is not provided.</para>
         /// </summary>
+        /// <remarks>This property is validated based on the <see cref="ContactType"/>, via the IValidatableObject interface in the <see cref="Validate(ValidationContext)"/> method.
+        /// For example, if the contact type is EMAIL, the value must be a valid email address.</remarks>
         public string ContactValue { get; set; } = string.Empty;
 
         /// <summary>
-        /// Indicates whether the contact information is visible to the public or private to the club. The default value is PRIVATE.
+        /// Indicates whether the contact information is visible to the public or private to the club. The default value is PUBLIC.
         /// </summary>
-        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
+        public VisibilityOption Visibility { get; set; } = VisibilityOption.PUBLIC;
 
         #endregion
 
@@ -82,6 +92,31 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
         public ClubDetail Club { get; set; }
+
+        /// <summary>
+        /// Returns sameple placeholder text for the contact value based on the contact type.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string Placeholder {
+            get {
+                switch (this.ContactType) {
+                    case ClubContactType.PHONE_NUMBER:
+                        return "+1 (703) 596-0099";
+                    case ClubContactType.EMAIL:
+                        return "support@scopos.tech";
+                    case ClubContactType.WEBSITE:
+                        return "https://rezults.scopos.tech/";
+                    case ClubContactType.FACEBOOK:
+                        return "scoposrezults";
+                    case ClubContactType.INSTAGRAM:
+                        return "scopos.rezults";
+                    default:
+                        // Default placeholder for social media or other contact types
+                        return "scopos";
+                }
+            }
+        }
         #endregion
 
         #region Methods
@@ -93,65 +128,52 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_STJ_SER.JsonIgnore]
         public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
 
+
+
         /// <summary>
-        /// Validates the contact information based on the specified contact type. Returns a <see cref="ClubContactValidation"/> object indicating whether the contact information is valid and providing a message if it is not.
+        /// Implements the IValidatableObject interface. Validates the contact information based on the specified contact type. 
         /// </summary>
         /// <returns></returns>
-        public ClubContactValidation Validate() {
-            ClubContactValidation validation = new ClubContactValidation();
+        public IEnumerable<ValidationResult> Validate( ValidationContext validationContext ) {
 
-            //An empty string is considered valid, as it indicates that the contact information is not provided. Validation is only performed when a value is present.
+            // If the ContactValue is null or whitespace, we consider it valid (as it means no contact information is provided).
             if (string.IsNullOrWhiteSpace( ContactValue )) {
-                validation.IsValid = true;
-                validation.Message = string.Empty;
-                return validation;
-            }
+                ContactValue = string.Empty;
+            } else {
 
-            switch (ContactType) {
-                case ClubContactType.PHONE_NUMBER:
-                    // Simple phone number validation (can be improved with regex)
-                    if (!System.Text.RegularExpressions.Regex.IsMatch( ContactValue, @"^\+?[0-9\s\-()]+$" )) {
-                        validation.IsValid = false;
-                        validation.Message = "Invalid phone number format.";
-                        return validation;
-                    }
-                    break;
-                case ClubContactType.EMAIL:
-                    // Simple email validation (can be improved with regex)
-                    if (!System.Text.RegularExpressions.Regex.IsMatch( ContactValue, @"^[^@\s]+@[^@\s]+\.[^@\s]+$" )) {
-                        validation.IsValid = false;
-                        validation.Message = "Invalid email address format.";
-                        return validation;
-                    }
-                    break;
-                default:
-                    // For all other contact types, we will assume they are URLs and validate accordingly.
-                    // Simple URL validation (can be improved with regex)
-                    if (!Uri.TryCreate( ContactValue, UriKind.Absolute, out Uri? uriResult ) ||
-                        (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps)) {
-                        validation.IsValid = false;
-                        validation.Message = $"Invalid URL format for {ContactType.Description()}.";
-                        return validation;
-                    }
-                    break;
+                switch (ContactType) {
+                    case ClubContactType.PHONE_NUMBER:
+                        // Simple phone number validation (can be improved with regex)
+                        if (!System.Text.RegularExpressions.Regex.IsMatch( ContactValue, @"^\+?[0-9\s\-()]+$" )) {
+                            yield return new ValidationResult( "Invalid phone number format.", new[] { nameof( ContactValue ) } );
+                        }
+                        break;
+                    case ClubContactType.EMAIL:
+                        // Simple email validation (can be improved with regex)
+                        if (!System.Text.RegularExpressions.Regex.IsMatch( ContactValue, @"^[^@\s]+@[^@\s]+\.[^@\s]+$" )) {
+                            yield return new ValidationResult( "Invalid email format.", new[] { nameof( ContactValue ) } );
+                        }
+                        break;
+                    case ClubContactType.WEBSITE:
+                        // For all other contact types, we will assume they are URLs and validate accordingly.
+                        // Simple URL validation (can be improved with regex)
+                        string contactValueToValidate = ContactValue;
+
+                        // Normalize the value for validation: prepend "https://" if the value does not contain "://"
+                        if (!contactValueToValidate.Contains( "://", StringComparison.OrdinalIgnoreCase )) {
+                            contactValueToValidate = "https://" + contactValueToValidate;
+                        }
+
+                        if (!Uri.TryCreate( contactValueToValidate, UriKind.Absolute, out Uri? uriResult ) || string.IsNullOrWhiteSpace( uriResult.Host )) {
+                            yield return new ValidationResult( $"Invalid URL format for {ContactType.Description()}.", new[] { nameof( ContactValue ) } );
+                        }
+                        break;
+                    default:
+                        // For any other contact types (which would be the social media addresses), we will not perform any specific validation.
+                        break;
+                }
             }
-            // If all checks pass
-            validation.IsValid = true;
-            return validation;
         }
         #endregion
-    }
-
-    public class ClubContactValidation {
-        /// <summary>
-        /// Indicates whether the contact information is valid according to the validation rules for the specified contact type.
-        /// </summary>
-        public bool IsValid { get; set; }
-
-        /// <summary>
-        /// Provides a message describing the validation result. If the contact information is invalid, this message will contain details about why it is invalid.
-        /// Value is an empty string if the contact information is valid.
-        /// </summary>
-        public string Message { get; set; } = string.Empty;
     }
 }
