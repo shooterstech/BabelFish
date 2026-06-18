@@ -1,4 +1,3 @@
-using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.ScoposData;
 

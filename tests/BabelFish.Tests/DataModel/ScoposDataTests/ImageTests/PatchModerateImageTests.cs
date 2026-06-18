@@ -1,9 +1,10 @@
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Requests.ScoposData;
 using Scopos.BabelFish.Runtime.Authentication;
-using System.Threading.Tasks;
 
 
 namespace Scopos.BabelFish.Tests.DataModel.ScoposDataTests.ImageTests {
@@ -33,12 +34,13 @@ namespace Scopos.BabelFish.Tests.DataModel.ScoposDataTests.ImageTests {
 
             var request = new PatchModerateImageAuthenticatedRequest( userAuthentication ) {
                 ImageBytes = File.ReadAllBytes( imagePath ),
+                FileType = ImageFileType.JPEG,
                 Caption = "A local test image",
-                FileName = "walkingdead.jpg",
                 AltText = "Local test image",
-                Key = "LOCAL_TEST_PRIMARY_KEY",
-                SubKey = "LOCAL_TEST_SUB_KEY",
-                GroupKey = "LOCAL_TEST_GROUP_KEY"
+                ImageCategory = ImageCategory.CLUB,
+                Key = "15", // License Number
+                SubKey = "", // Should be left empty for CLUB images.
+                GroupKey = ImageGroupKeyType.BULK
             };
 
             var client = new ScoposDataClient( APIStage.PRODUCTION );
