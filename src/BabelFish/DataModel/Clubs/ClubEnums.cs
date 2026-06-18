@@ -39,6 +39,116 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     }
 
     /// <summary>
+    /// Defines the types of contact information that can be associated with a Club (aka Orion Account).
+    /// </summary>
+    public enum ClubContactType {
+        /// <summary>
+        /// Primary contact number for the club
+        /// </summary>
+        [Description( "Phone Number" )]
+        [EnumMember( Value = "Phone Number" )]
+        PHONE_NUMBER,
+
+        /// <summary>
+        /// Primary contact email for the club
+        /// </summary>
+        [Description( "Email" )]
+        [EnumMember( Value = "Email" )]
+        EMAIL,
+
+        /// <summary>
+        /// Club's external website link
+        /// </summary>
+        [Description( "Website" )]
+        [EnumMember( Value = "Website" )]
+        WEBSITE,
+
+        /// <summary>
+        /// Club's Facebook page link
+        /// </summary>
+        [Description( "Facebook" )]
+        [EnumMember( Value = "Facebook" )]
+        FACEBOOK,
+
+        /// <summary>
+        /// Club's Instagram profile link
+        /// </summary>
+        [Description( "Instagram" )]
+        [EnumMember( Value = "Instagram" )]
+        INSTAGRAM,
+
+        /// <summary>
+        /// Club's Twitter profile link
+        /// </summary>
+        [Description( "Twitter" )]
+        [EnumMember( Value = "Twitter" )]
+        TWITTER,
+
+        /// <summary>
+        /// Club's TikTok profile link
+        /// </summary>
+        [Description( "TikTok" )]
+        [EnumMember( Value = "TikTok" )]
+        TIKTOK,
+
+        /// <summary>
+        /// Club's YouTube channel link
+        /// </summary>
+        [Description( "YouTube" )]
+        [EnumMember( Value = "YouTube" )]
+        YOU_TUBE,
+
+        /// <summary>
+        /// Club's LinkedIn profile link
+        /// </summary>
+        [Description( "LinkedIn" )]
+        [EnumMember( Value = "LinkedIn" )]
+        LINKEDIN,
+
+        /// <summary>
+        /// Club's Snapchat profile link
+        /// </summary>
+        [Description( "Snapchat" )]
+        [EnumMember( Value = "Snapchat" )]
+        SNAPCHAT,
+
+        /// <summary>
+        /// Club's Pinterest profile link
+        /// </summary>
+        [Description( "Pinterest" )]
+        [EnumMember( Value = "Pinterest" )]
+        PINTEREST,
+
+        /// <summary>
+        /// Club's Reddit profile link
+        /// </summary>
+        [Description( "Reddit" )]
+        [EnumMember( Value = "Reddit" )]
+        REDDIT,
+
+        /// <summary>
+        /// Club's Discord server link
+        /// </summary>
+        [Description( "Discord" )]
+        [EnumMember( Value = "Discord" )]
+        DISCORD,
+
+        /// <summary>
+        /// Club's WhatsApp contact number
+        /// </summary>
+        [Description( "WhatsApp" )]
+        [EnumMember( Value = "WhatsApp" )]
+        WHATS_APP,
+
+        /// <summary>
+        /// Club's Tumblr profile link
+        /// </summary>
+        [Description( "Tumblr" )]
+        [EnumMember( Value = "Tumblr" )]
+        TUMBLR
+    }
+
+    /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
     [Obsolete( "This feature is no longer in use as of 2026-04. Also not included on LicenseFiles" )]
