@@ -1,4 +1,5 @@
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Runtime.Authentication;
 
@@ -16,6 +17,99 @@ namespace Scopos.BabelFish.Requests.ScoposData {
             HttpMethod = new HttpMethod( "PATCH" );
             RequiresCredentials = true;
             SubDomain = APISubDomain.INTERNAL;
+        }
+
+        /// <summary>
+        /// Convenience constructor for uploading a Club image. Sets the value of ImageCategory to Club, and the Key to the (parameter) license number in string form.
+        /// </summary>
+        /// <param name="licenseNumber">The license number of the club.</param>
+        /// <param name="groupKey">The group key for the image.</param>
+        /// <param name="credentials">The user credentials for authentication.</param>
+        public PatchModerateImageAuthenticatedRequest( int licenseNumber, ImageGroupKeyType groupKey, UserAuthentication credentials ) : base( "PatchModerateImage", credentials ) {
+            HttpMethod = new HttpMethod( "PATCH" );
+            RequiresCredentials = true;
+            SubDomain = APISubDomain.INTERNAL;
+
+            ImageCategory = ImageCategory.CLUB;
+            Key = licenseNumber.ToString();
+            SubKey = string.Empty; // SubKey is not used for Match images, so it should be left empty.
+            GroupKey = groupKey;
+        }
+
+        /// <summary>
+        /// Convenience constructor for uploading a User image. Sets the value of ImageCategory to User, and the Key to the (parameter) user ID in string form.
+        /// </summary>
+        /// <param name="userId">The UUID formatted user ID of the user who owns the image.</param>
+        /// <param name="groupKey">The group key for the image.</param>
+        /// <param name="credentials">The user credentials for authentication.</param>
+        public PatchModerateImageAuthenticatedRequest( string userId, ImageGroupKeyType groupKey, UserAuthentication credentials ) : base( "PatchModerateImage", credentials ) {
+            HttpMethod = new HttpMethod( "PATCH" );
+            RequiresCredentials = true;
+            SubDomain = APISubDomain.INTERNAL;
+
+            ImageCategory = ImageCategory.USER;
+            Key = userId;
+            SubKey = string.Empty; // SubKey is not used for Match images, so it should be left empty.
+            GroupKey = groupKey;
+        }
+
+        /// <summary>
+        /// Convenience constructor for uploading a Match image. Sets the value of ImageCategory to Match, and the Key to the (parameter) match ID in string form.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="groupKey">The group key for the image.</param>
+        /// <param name="credentials"></param>
+        public PatchModerateImageAuthenticatedRequest( MatchID matchId, ImageGroupKeyType groupKey, UserAuthentication credentials ) : base( "PatchModerateImage", credentials ) {
+            HttpMethod = new HttpMethod( "PATCH" );
+            RequiresCredentials = true;
+            SubDomain = APISubDomain.INTERNAL;
+
+            ImageCategory = ImageCategory.MATCH;
+            Key = matchId.ToString();
+            SubKey = string.Empty; // SubKey is not used for Match images, so it should be left empty.
+            GroupKey = groupKey;
+        }
+
+        /// <summary>
+        /// Convenience constructor for uploading a League team image. Sets the value of ImageCategory to LEAGUE, and the Key to the (parameter)
+        /// league ID in string form, and the SubKey to the (parameter) team ID in string form.
+        /// </summary>
+        /// <param name="leagueId">The ID of the league.</param>
+        /// <param name="teamId">The ID of the team.</param>
+        /// <param name="groupKey">The group key for the image.</param>
+        /// <param name="credentials">The user credentials for authentication.</param>
+        /// <exception cref="ArgumentException">Thrown when the Bulk group key is used for a League team image.</exception>
+        public PatchModerateImageAuthenticatedRequest( MatchID leagueId, int teamId, ImageGroupKeyType groupKey, UserAuthentication credentials ) : base( "PatchModerateImage", credentials ) {
+            HttpMethod = new HttpMethod( "PATCH" );
+            RequiresCredentials = true;
+            SubDomain = APISubDomain.INTERNAL;
+
+            if (groupKey == ImageGroupKeyType.BULK) {
+                throw new ArgumentException( $"The Bulk group key is not supported for uploading images for League teams. Please use Header or Profile as the group key for League images." );
+            }
+
+            ImageCategory = ImageCategory.LEAGUE;
+            Key = leagueId.ToString();
+            SubKey = teamId.ToString();
+            GroupKey = groupKey;
+        }
+
+        /// <summary>
+        /// Convenience constructor for uploading a League game image. Sets the value of ImageCategory to LEAGUE, GroupKey to Bulk, the Key to the (parameter)
+        /// league ID in string form, and the SubKey to the (parameter) game ID in string form.
+        /// </summary>
+        /// <param name="leagueId">The Match ID of the league.</param>
+        /// <param name="gameId">The Match ID of the game.</param>
+        /// <param name="credentials">The user credentials for authentication.</param>
+        public PatchModerateImageAuthenticatedRequest( MatchID leagueId, MatchID gameId, UserAuthentication credentials ) : base( "PatchModerateImage", credentials ) {
+            HttpMethod = new HttpMethod( "PATCH" );
+            RequiresCredentials = true;
+            SubDomain = APISubDomain.INTERNAL;
+
+            ImageCategory = ImageCategory.LEAGUE;
+            Key = leagueId.ToString();
+            SubKey = gameId.ToString();
+            GroupKey = ImageGroupKeyType.BULK;
         }
 
         /// <summary>
