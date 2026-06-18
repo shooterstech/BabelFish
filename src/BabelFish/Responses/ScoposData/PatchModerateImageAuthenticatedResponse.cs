@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.ScoposData;
 using Scopos.BabelFish.Requests.ScoposData;
 
 namespace Scopos.BabelFish.Responses.ScoposData {
@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.Responses.ScoposData {
         /// <summary>
         /// Facade function that returns the same as this.Value.Image.
         /// </summary>
-        public Image Image {
+        public ScoposImage Image {
             get { return Value.Image; }
         }
     }
