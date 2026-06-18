@@ -5,6 +5,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
+using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
 
