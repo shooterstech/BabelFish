@@ -68,6 +68,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// The type of contact information (e.g., phone number, email, etc.).
         /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 1 )]
+        [G_NS.JsonProperty( Order = 1 )]
         public ClubContactType ContactType { get; set; }
 
         /// <summary>
@@ -76,12 +78,23 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <remarks>This property is validated based on the <see cref="ContactType"/>, via the IValidatableObject interface in the <see cref="Validate(ValidationContext)"/> method.
         /// For example, if the contact type is EMAIL, the value must be a valid email address.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 2 )]
+        [G_NS.JsonProperty( Order = 2 )]
         public string ContactValue { get; set; } = string.Empty;
 
         /// <summary>
         /// Indicates whether the contact information is visible to the public or private to the club. The default value is PUBLIC.
         /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PUBLIC;
+
+        /// <summary>
+        /// Gets or sets the date and time this address was last updated.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 13 )]
+        [G_NS.JsonProperty( Order = 13 )]
+        public DateTime LastUpdated { get; set; }
 
         #endregion
 
