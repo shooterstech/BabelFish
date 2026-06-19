@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var hierarchicalName = new IsDefinitionHierarchicalNameValid();
             var commonName = new IsDefiniitonCommonNameValid();
             var description = new IsDefiniitonDescriptionValid();
-            var subdiscipline = new IsDefiniitonSubdisciplineValid();
+            var subdiscipline = new IsDefiniitonSubdisciplineValid() { SubdisciplineIsRequired = true };
             var tags = new IsDefiniitonTagsValid();
             var comment = new IsCommentValid();
             var owner = new IsDefiniitonOwnerValid();
