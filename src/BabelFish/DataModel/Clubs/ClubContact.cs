@@ -117,6 +117,108 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                 }
             }
         }
+
+        /// <summary>
+        /// The value to display for read only purposes. Will usually be the same as ContactValue, but for website URLs we will remove the "https://" or "http://" prefix to make it cleaner when displayed.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string DisplayValue {
+            get {
+                if (this.ContactType == ClubContactType.WEBSITE && !string.IsNullOrWhiteSpace( ContactValue )) {
+#if NETSTANDARD2_1
+                    // Remove "https://" or "http://" prefix for cleaner display of website URLs
+                    return ContactValue.Replace( "https://", "", StringComparison.OrdinalIgnoreCase )
+                                       .Replace( "http://", "", StringComparison.OrdinalIgnoreCase );
+#else
+                    // Remove "https://" or "http://" prefix for cleaner display of website URLs
+                    return ContactValue.Replace( "https://", "" )
+                                       .Replace( "http://", "" );
+#endif
+                }
+
+                return ContactValue;
+            }
+        }
+
+        /// <summary>
+        /// Helper property, returns true if the ContactValue is known (i.e., not null or whitespace), false otherwise.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool HasValue {
+            get {
+                return !string.IsNullOrWhiteSpace( ContactValue );
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the ContactType is one that we can represent as a URL link (e.g., WEBSITE, FACEBOOK, INSTAGRAM) and the ContactValue is known, false otherwise.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool HasUrlPath {
+            get {
+                if (string.IsNullOrWhiteSpace( ContactValue )) {
+                    return false;
+                }
+
+                switch (this.ContactType) {
+                    case ClubContactType.EMAIL:
+                    case ClubContactType.WEBSITE:
+                    case ClubContactType.FACEBOOK:
+                    case ClubContactType.INSTAGRAM:
+                    case ClubContactType.X:
+                    case ClubContactType.TIKTOK:
+                    case ClubContactType.YOU_TUBE:
+                    case ClubContactType.LINKEDIN:
+                    case ClubContactType.SNAPCHAT:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the url path to use for this contact when the ContactType is one that we can represent as a URL link (e.g., WEBSITE, FACEBOOK, INSTAGRAM).
+        /// For example, if the ContactType is FACEBOOK and the ContactValue is "scoposrezults", this property will return "https://www.facebook.com/scoposrezults".
+        /// If the ContactType is not a URL type, this property will return empty string.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string UrlPath {
+            get {
+                if (!HasUrlPath || string.IsNullOrWhiteSpace( ContactValue )) {
+                    return string.Empty;
+                }
+
+                switch (this.ContactType) {
+                    case ClubContactType.WEBSITE:
+                        // For website contact type, we will assume the ContactValue is already a full URL and return it as is.
+                        return ContactValue;
+                    case ClubContactType.EMAIL:
+                        // For email contact type, we will return a "mailto:" link.
+                        return $"mailto:{ContactValue}";
+                    case ClubContactType.FACEBOOK:
+                        return $"https://www.facebook.com/{ContactValue}";
+                    case ClubContactType.INSTAGRAM:
+                        return $"https://www.instagram.com/{ContactValue}";
+                    case ClubContactType.X:
+                        return $"https://x.com/{ContactValue}";
+                    case ClubContactType.TIKTOK:
+                        return $"https://www.tiktok.com/@{ContactValue}";
+                    case ClubContactType.YOU_TUBE:
+                        return $"https://www.youtube.com/@{ContactValue}";
+                    case ClubContactType.LINKEDIN:
+                        return $"https://www.linkedin.com/company/{ContactValue}";
+                    case ClubContactType.SNAPCHAT:
+                        return $"https://www.snapchat.com/add/{ContactValue}";
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
         #endregion
 
         #region Methods
@@ -159,13 +261,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                         // Simple URL validation (can be improved with regex)
                         string contactValueToValidate = ContactValue;
 
-                        // Normalize the value for validation: prepend "https://" if the value does not contain "://"
-                        if (!contactValueToValidate.Contains( "://", StringComparison.OrdinalIgnoreCase )) {
-                            contactValueToValidate = "https://" + contactValueToValidate;
-                        }
-
+                        // The value must start with "https://" or "http://" but the error message will only mention "https://" to encourage secure URLs. We will allow "http://" for validation purposes.
                         if (!Uri.TryCreate( contactValueToValidate, UriKind.Absolute, out Uri? uriResult ) || string.IsNullOrWhiteSpace( uriResult.Host )) {
-                            yield return new ValidationResult( $"Invalid URL format for {ContactType.Description()}.", new[] { nameof( ContactValue ) } );
+                            yield return new ValidationResult( $"Invalid URL format for {ContactType.Description()}. Value must start with https://", new[] { nameof( ContactValue ) } );
                         }
                         break;
                     default:
