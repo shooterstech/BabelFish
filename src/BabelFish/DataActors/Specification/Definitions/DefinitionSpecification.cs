@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 
 /*
@@ -29,7 +26,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             }
 
             HierarchicalName hierarchicalName;
-            if (! HierarchicalName.TryParse( candidate.HierarchicalName, out hierarchicalName )) {
+            if (!HierarchicalName.TryParse( candidate.HierarchicalName, out hierarchicalName )) {
                 Messages.Add( $"HierarchicalName value '{candidate.HierarchicalName}' is not a correctly formatted HierarchicalName." );
                 return false;
             }
@@ -56,7 +53,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             try {
                 DefinitionVersion dv = new DefinitionVersion( candidate.Version );
-            } catch ( ArgumentException ae ) {
+            } catch (ArgumentException ae) {
                 Messages.Add( $"The value for Version '{candidate.Version}' is not in the expected format." );
                 return false;
             }
@@ -120,7 +117,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             //First check the value of Owner is not an empty string or null;
             var vm = DefinitionValidationHelper.IsValidNonEmptyString( "Owner", candidate.Owner );
-            if ( ! vm.Valid ) {
+            if (!vm.Valid) {
                 Messages.Add( vm.Message );
                 return false;
             }
@@ -141,7 +138,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 return false;
             }
 
-            foreach( var ownedNamespace in clubDetail.NamespaceList ) {
+            foreach (var ownedNamespace in clubDetail.NamespaceList) {
                 if (ownedNamespace.Namespace == hierarchicalName.Namespace) {
                     return true;
                 }
@@ -158,13 +155,23 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
     /// </summary>
     public class IsDefiniitonSubdisciplineValid : CompositeSpecification<Definition> {
 
+        /// <summary>
+        /// Indicates whether the Subdiscipline property is required to be non-null and non-empty. If false, the Subdiscipline property may be null or an empty string.
+        /// </summary>
+        public bool SubdisciplineIsRequired { get; set; } = false;
+
         /// <inheritdoc />
         public override async Task<bool> IsSatisfiedByAsync( Definition candidate ) {
             Messages.Clear();
 
             //Value can just not be null. Will check for null, and instead of returning an error, will just set to an empty string.
-            if (candidate.Subdiscipline == null)
+            if (string.IsNullOrWhiteSpace( candidate.Subdiscipline ))
                 candidate.Subdiscipline = string.Empty;
+
+            if (SubdisciplineIsRequired && candidate.Subdiscipline.Length <= 3) {
+                Messages.Add( $"The Subdiscipline property is required to be non-null and at least 3 characters." );
+                return false;
+            }
 
             return true;
         }
@@ -180,12 +187,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             Messages.Clear();
 
             //Value can just not be null or empty list. Will check for null, and instead of returning an error, will just remove the offending values.
-            if (candidate.Tags.Contains( null ) || candidate.Tags.Contains( string.Empty ) ) {
+            if (candidate.Tags.Contains( null ) || candidate.Tags.Contains( string.Empty )) {
                 List<string> newTags = new List<string>();
-                foreach (var tag in candidate.Tags ) 
-                {
-                    if ( ! string.IsNullOrEmpty( tag ) )
-                    newTags.Add( tag );
+                foreach (var tag in candidate.Tags) {
+                    if (!string.IsNullOrEmpty( tag ))
+                        newTags.Add( tag );
                 }
                 candidate.Tags = newTags;
             }

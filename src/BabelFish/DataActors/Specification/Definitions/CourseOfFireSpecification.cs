@@ -15,7 +15,8 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var hierarchicalName = new IsDefinitionHierarchicalNameValid();
             var commonName = new IsDefiniitonCommonNameValid();
             var description = new IsDefiniitonDescriptionValid();
-            var subdiscipline = new IsDefiniitonSubdisciplineValid();
+            // On a CourseOfFire, the Subdiscipline is required. So set the property to true.
+            var subdiscipline = new IsDefiniitonSubdisciplineValid() { SubdisciplineIsRequired = true };
             var tags = new IsDefiniitonTagsValid();
             var comment = new IsCommentValid();
             var owner = new IsDefiniitonOwnerValid();

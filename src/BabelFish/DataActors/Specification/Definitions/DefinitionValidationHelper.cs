@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -26,12 +22,17 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
             if (string.IsNullOrEmpty( setNameUnderTest )) {
                 var message = $"{propertyName} is required and may not be null or an empty string.";
-                return new ValidationModel( false, message ) ;
+                return new ValidationModel( false, message );
             }
 
             SetName setName;
-            if (! SetName.TryParse( setNameUnderTest, out setName )) {
+            if (!SetName.TryParse( setNameUnderTest, out setName )) {
                 var message = $"{propertyName} value '{setNameUnderTest}' is not a correctly formatted SetName.";
+                return new ValidationModel( false, message );
+            }
+
+            if (setName.IsDefault) {
+                var message = $"{propertyName} is required and may not be the default SetName value ('v1.0:orion:Default').";
                 return new ValidationModel( false, message );
             }
 
@@ -40,13 +41,18 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 return new ValidationModel( false, message );
             }
 
-            return new ValidationModel( true, string.Empty ) ;
+            return new ValidationModel( true, string.Empty );
         }
 
         public static async Task<ValidationModel> IsValidSetNameAndExistsAsync( string propertyName, SetName setNameUnderTest, DefinitionType definitionType ) {
 
-            if ( setNameUnderTest is null ) {
+            if (setNameUnderTest is null) {
                 var message = $"{propertyName} is required and may not be null or an empty string.";
+                return new ValidationModel( false, message );
+            }
+
+            if (setNameUnderTest.IsDefault) {
+                var message = $"{propertyName} is required and may not be the default SetName value ('v1.0:orion:Default').";
                 return new ValidationModel( false, message );
             }
 
@@ -69,7 +75,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         /// <exception cref="ScoposAPIException">Thrown if there was a communication or server error.</exception>
         private static async Task<bool> IsValidDefinitionAsync( SetName setName, DefinitionType definitionType ) {
 
-            
+
             var response = await definitionAPIClient.GetDefinitionVersionPublicAsync( definitionType, setName );
 
             if (response.RestApiStatusCode == System.Net.HttpStatusCode.NotFound)
@@ -80,7 +86,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             }
 
             var sd = response.SparseDefinition;
-            return ! sd.Discontinued;
+            return !sd.Discontinued;
         }
     }
 

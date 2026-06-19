@@ -61,7 +61,8 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             var client = new DefinitionAPIClient();
             var setName = SetName.Parse( "v1.0:ntparc:Three-Position Sporter Air Rifle" );
 
-            var eventStyle = (await client.GetEventStyleDefinitionAsync( setName )).Value;
+            // Get the event style from the cache, then make a copy of it, as we will be modifying it in the tests below.
+            var eventStyle = (await DefinitionCache.GetEventStyleDefinitionAsync( setName )).Clone();
 
             var validation = new IsEventStyleEventStylesValid();
 
