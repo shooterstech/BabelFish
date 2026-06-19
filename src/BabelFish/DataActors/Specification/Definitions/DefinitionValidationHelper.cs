@@ -47,7 +47,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
         public static async Task<ValidationModel> IsValidSetNameAndExistsAsync( string propertyName, SetName setNameUnderTest, DefinitionType definitionType ) {
 
             if (setNameUnderTest is null) {
-                var message = $"{propertyName} is required and may not be null or an empty string.";
+                var message = $"{propertyName} is required and may not be null";
                 return new ValidationModel( false, message );
             }
 

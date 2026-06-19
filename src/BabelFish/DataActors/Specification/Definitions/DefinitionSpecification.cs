@@ -168,7 +168,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (string.IsNullOrWhiteSpace( candidate.Subdiscipline ))
                 candidate.Subdiscipline = string.Empty;
 
-            if (SubdisciplineIsRequired && candidate.Subdiscipline.Length <= 3) {
+            if (SubdisciplineIsRequired && candidate.Subdiscipline.Length < 3) {
                 Messages.Add( $"The Subdiscipline property is required to be non-null and at least 3 characters." );
                 return false;
             }
