@@ -85,7 +85,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// The list of contact methods for this club. This may include phone numbers, email addresses, and social media links.
-        /// <para>Unless you are a deserializer, the expected way to add a new ClubContact is use <see cref="ClubContact.CreateAsync(ClubDetail)"/></para>  
+        /// <para>Unless you are a deserializer, the expected way to add a new ClubContact is use <see cref="ClubContact.CreateAsync(ClubDetail, ClubContactType)"/></para>  
         /// </summary>
         public List<ClubContact> ContactList { get; set; } = new List<ClubContact>();
 
@@ -96,7 +96,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <param name="contact">The contact found, or null if not found.</param>
         /// <returns>True if a contact of the specified type is found, false otherwise.</returns>
         public bool TryGetContact( ClubContactType contactType, out ClubContact? contact ) {
-            contact = ContactList.FirstOrDefault( c => c.ContactType == contactType );
+            if (this.ContactList is null) {
+                contact = null;
+                return false;
+            }
+
+            contact = this.ContactList.FirstOrDefault( c => c.ContactType == contactType );
             return contact != null;
         }
 

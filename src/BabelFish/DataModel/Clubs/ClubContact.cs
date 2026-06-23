@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     public class ClubContact : IOnCloned, IValidatableObject {
 
         #region Private and Protected Fields
-
+        private string _contactValue = string.Empty;
         #endregion
 
         #region Constructors, Factory Methods, and Initialization
@@ -80,7 +80,18 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// For example, if the contact type is EMAIL, the value must be a valid email address.</remarks>
         [G_STJ_SER.JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        public string ContactValue { get; set; } = string.Empty;
+        public string ContactValue {
+            get {
+                return this._contactValue;
+            }
+            set {
+                if (string.IsNullOrWhiteSpace( value )) {
+                    this._contactValue = string.Empty;
+                } else {
+                    this._contactValue = value.Trim();
+                }
+            }
+        }
 
         /// <summary>
         /// Indicates whether the contact information is visible to the public or private to the club. The default value is PUBLIC.
@@ -90,7 +101,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PUBLIC;
 
         /// <summary>
-        /// Gets or sets the date and time this address was last updated.
+        /// Gets or sets the date and time this ClubContACT was last updated.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 13 )]
         [G_NS.JsonProperty( Order = 13 )]
@@ -100,14 +111,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         #region Helper Properties
         /// <summary>
-        /// Backwards reference to the ClubDetail that this contact belongs to. This property is set when the ClubContact is created using the <see cref="CreateAsync(ClubDetail)"/> method.
+        /// Backwards reference to the ClubDetail that this contact belongs to. This property is set when the ClubContact is created using the <see cref="CreateAsync(ClubDetail, ClubContactType)"/> method.
         /// </summary>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
         public ClubDetail Club { get; set; }
 
         /// <summary>
-        /// Returns sameple placeholder text for the contact value based on the contact type.
+        /// Returns sample placeholder text for the contact value based on the contact type.
         /// </summary>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
@@ -253,7 +264,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
             // If the ContactValue is null or whitespace, we consider it valid (as it means no contact information is provided).
             if (string.IsNullOrWhiteSpace( ContactValue )) {
-                ContactValue = string.Empty;
+                ;
             } else {
 
                 switch (ContactType) {
@@ -275,7 +286,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                         string contactValueToValidate = ContactValue;
 
                         // The value must start with "https://" or "http://" but the error message will only mention "https://" to encourage secure URLs. We will allow "http://" for validation purposes.
-                        if (!Uri.TryCreate( contactValueToValidate, UriKind.Absolute, out Uri? uriResult ) || string.IsNullOrWhiteSpace( uriResult.Host )) {
+                        if (!Uri.TryCreate( contactValueToValidate, UriKind.Absolute, out Uri? uriResult )
+                            || (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps)
+                            || string.IsNullOrWhiteSpace( uriResult.Host )) {
                             yield return new ValidationResult( $"Invalid URL format for {ContactType.Description()}. Value must start with https://", new[] { nameof( ContactValue ) } );
                         }
                         break;
