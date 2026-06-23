@@ -265,9 +265,16 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The location of the match.
         /// </summary>
+        [Obsolete( "Starting with BabelFish 2.0 (Orion version 3.0), Matches will use ClubAddress " +
+            "Deprecated June 2026." )]
         [G_STJ_SER.JsonPropertyOrder( 20 )]
         [G_NS.JsonProperty( Order = 20 )]
         public Location Location { get; set; } = new Location();
+
+        /// <summary>
+        /// The address of the club hosting the match.
+        /// </summary>
+        public ClubAddress ClubAddress { get; set; } = new ClubAddress();
 
         /// <summary>
         /// Contact information for the match administrators.
