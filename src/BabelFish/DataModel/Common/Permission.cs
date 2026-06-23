@@ -18,7 +18,9 @@ namespace Scopos.BabelFish.DataModel.Common {
 
         public static readonly Permission DEFAULT = new Permission( "none", "A default permission that doesn't grant anything." );
 
+        [Obsolete( "Replaced with CLUB_READ_PRIVATE_SETTINGS" )]
         public static readonly Permission CLUB_GET_DETAIL = new Permission( "club.get_detail", "Read general information about a club." );
+
         public static readonly Permission CLUB_MANAGE_ADMIN = new Permission( "club.manage_admin", "Ability to specify a club member as an admin of the club. " );
         public static readonly Permission CLUB_MANAGE_MEMBER = new Permission( "club.manage_member", "Ability to add, remove, update, or delete club members. Does not include assigning the admin role to a member." );
         public static readonly Permission CLUB_MANAGE_TEAMS = new Permission( "club.manage_teams", "May view and edit Club Teams." );
@@ -27,6 +29,8 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_READ_LICENSE = new Permission( "club.read_license", "Read a club license" );
         public static readonly Permission CLUB_READ_TEAMS = new Permission( "club.read_teams", "May view Club Teams." );
         public static readonly Permission CLUB_MANAGE_SETTINGS = new Permission( "club.manage_settings", "Ability to manage club settings including a Club's contact information." );
+        public static readonly Permission CLUB_READ_PUBLIC_SETTINGS = new Permission( "club.read_public_settings", "Ability to read a Club's settings that are marked with Public visibility." );
+        public static readonly Permission CLUB_READ_PRIVATE_SETTINGS = new Permission( "club.read_private_settings", "Ability to read a Club's settings that are marked with Private visibility." );
 
         public static readonly Permission MATCH_CHILD_ACCEPT_INVITE = new Permission( "match_child.accept_invite", "Accept the invite to join a parent match as a child" );
         public static readonly Permission MATCH_CHILD_READ = new Permission( "match_child.read", "Read child match" );
