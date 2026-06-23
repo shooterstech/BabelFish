@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace Scopos.BabelFish.DataModel.Clubs {
 
     /* 
-     * When adding new enums, it is usually best to update Helpers.SerializationOptions.cs
+     * When adding new enums, it is usually best to update Helpers/SerializationOptions.cs
      */
 
     public enum ClubAuthorizationRole {
