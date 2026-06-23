@@ -67,14 +67,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The email address of the club. May in fact be the email address of the administrator.
         /// </summary>
         [DefaultValue( "" )]
-        [Obsolete( "Soon to be replaced with v1.0:orion:Email Address" )]
+        [Obsolete( "Replaced with ContactList. June 2026." )]
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
         /// The phone number of the club. May in fact be the phone number of the club's administrator.
         /// </summary>
         [DefaultValue( "" )]
-        [Obsolete( "Soon to be replaced with v1.0:orion:Phone Number" )]
+        [Obsolete( "Replaced with ContactList. June 2026." )]
         public string Phone { get; set; } = string.Empty;
 
         /// <summary>
@@ -84,28 +84,51 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public List<ClubAddress> AddressList { get; set; } = new List<ClubAddress>();
 
         /// <summary>
+        /// The list of contact methods for this club. This may include phone numbers, email addresses, and social media links.
+        /// <para>Unless you are a deserializer, the expected way to add a new ClubContact is use <see cref="ClubContact.CreateAsync(ClubDetail, ClubContactType)"/></para>  
+        /// </summary>
+        public List<ClubContact> ContactList { get; set; } = new List<ClubContact>();
+
+        /// <summary>
+        /// Tries to get a contact from the ContactList by its ClubContactType (e.g., phone number, email, etc.). Returns true if found, false otherwise.
+        /// </summary>
+        /// <param name="contactType">The type of contact to search for.</param>
+        /// <param name="contact">The contact found, or null if not found.</param>
+        /// <returns>True if a contact of the specified type is found, false otherwise.</returns>
+        public bool TryGetContact( ClubContactType contactType, out ClubContact? contact ) {
+            if (this.ContactList is null) {
+                contact = null;
+                return false;
+            }
+
+            contact = this.ContactList.FirstOrDefault( c => c.ContactType == contactType );
+            return contact != null;
+        }
+
+        /// <summary>
         /// The city and state (and maybe country) where the club is from.
         /// </summary>
         /// <example>Axtell, NE</example>
         [DefaultValue( "" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string Hometown { get; set; } = string.Empty;
 
-        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string Street1 { get; set; }
 
-        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string Street2 { get; set; }
 
-        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string City { get; set; } = string.Empty;
 
-        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string State { get; set; } = string.Empty;
 
-        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string PostalCode { get; set; } = string.Empty;
 
-        [Obsolete( "Soon to be replaced with v1.0:orion:Address" )]
+        [Obsolete( "Replaced with AddressList. June 2026." )]
         public string Country { get; set; } = string.Empty;
 
         /// <summary>
