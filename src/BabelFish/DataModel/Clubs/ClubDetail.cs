@@ -74,6 +74,11 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         }
 
         /// <summary>
+        /// Specifies if this is a INDIVIDUAL, HOME, or SITE license. This is used to determine what features are available to the club.
+        /// </summary>
+        public ClubLicenseType LicenseType { get; set; } = ClubLicenseType.INDIVIDUAL;
+
+        /// <summary>
         /// The list of people who are Administrators for this club.
         /// </summary>
         [DefaultValue( "" )]

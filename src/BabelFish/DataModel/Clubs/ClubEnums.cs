@@ -141,7 +141,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
-    [Obsolete( "This feature is no longer in use as of 2026-04. Also not included on LicenseFiles" )]
+    [Obsolete( "This feature is no longer in use as of 2026-04. Maintained for backward compatibility with older Orion software." )]
     public enum ClubLicenseCapability {
 
         /// <summary>
@@ -170,9 +170,19 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [Description( "Privileged" )]
         [EnumMember( Value = "PRIVILEGED" )]
-        PRIVILEGED
+        PRIVILEGED,
+
+        ORION_V1,
+
+        ORION_HOME,
+
+        ORION_VS
     };
 
+    /// <summary>
+    /// Specifies the type of Orion Account (aka Club) license.
+    /// </summary>
+    /// <remarks>Value gets store to the orion_account sql table.</remarks>
     public enum ClubLicenseType {
 
         /// <summary>
@@ -199,6 +209,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// Temporary Orion for Clubs license.
         /// </summary>
+        [Obsolete( "This license type is no longer in use as of 2026-04." )]
         [Description( "TEMPORARY" )]
         [EnumMember( Value = "TEMPORARY" )]
         TEMPORARY
