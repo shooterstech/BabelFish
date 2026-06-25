@@ -16,38 +16,153 @@ namespace Scopos.BabelFish.DataModel.Common {
          *   from permissions
          */
 
+        /// <summary>
+        /// A default permission that doesn't grant anything.
+        /// </summary>
         public static readonly Permission DEFAULT = new Permission( "none", "A default permission that doesn't grant anything." );
 
+        /// <summary>
+        /// Read general information about a club.
+        /// </summary>
         [Obsolete( "Replaced with CLUB_READ_PRIVATE_SETTINGS" )]
         public static readonly Permission CLUB_GET_DETAIL = new Permission( "club.get_detail", "Read general information about a club." );
 
+        /// <summary>
+        /// Effectively the owner of the Orion Account (aka Club). Ability to specify a club member as an admin of the club.
+        /// </summary>
         public static readonly Permission CLUB_MANAGE_ADMIN = new Permission( "club.manage_admin", "Ability to specify a club member as an admin of the club. " );
+
+        /// <summary>
+        /// Ability to add, remove, update, or delete club members. Does not include assigning the admin role to a member.
+        /// </summary>
         public static readonly Permission CLUB_MANAGE_MEMBER = new Permission( "club.manage_member", "Ability to add, remove, update, or delete club members. Does not include assigning the admin role to a member." );
+
+        /// <summary>
+        /// May view and edit Club Teams.
+        /// </summary>
         public static readonly Permission CLUB_MANAGE_TEAMS = new Permission( "club.manage_teams", "May view and edit Club Teams." );
+
+        /// <summary>
+        /// Ability to manage the Club's page on Rezults. Including enabling or disabling its visibility.
+        /// </summary>
         public static readonly Permission CLUB_MANAGE_CLUB_PAGE = new Permission( "club.manage_club_page", "Ability to manage the Club's page on Rezults. Including enabling or disabling its visibility." );
+
+        /// <summary>
+        /// May make payments to renew a Club's Orion licenses, subscriptions, and warrentees.
+        /// </summary>
         public static readonly Permission CLUB_PAYER = new Permission( "club.payer", "May make payments to renew a Club's Orion licenses, subscriptions, and warrentees." );
+
+        /// <summary>
+        /// Read a club license
+        /// </summary>
         public static readonly Permission CLUB_READ_LICENSE = new Permission( "club.read_license", "Read a club license" );
+
+        /// <summary>
+        /// May view Club Teams.
+        /// </summary>
         public static readonly Permission CLUB_READ_TEAMS = new Permission( "club.read_teams", "May view Club Teams." );
+
+        /// <summary>
+        /// Ability to manage club settings including a Club's contact information.
+        /// </summary>
         public static readonly Permission CLUB_MANAGE_SETTINGS = new Permission( "club.manage_settings", "Ability to manage club settings including a Club's contact information." );
+
+        /// <summary>
+        /// Ability to read a Club's settings that are marked with Public visibility.
+        /// </summary>
         public static readonly Permission CLUB_READ_PUBLIC_SETTINGS = new Permission( "club.read_public_settings", "Ability to read a Club's settings that are marked with Public visibility." );
+
+        /// <summary>
+        /// Ability to read a Club's settings that are marked with Protected visibility.
+        /// </summary>
+        public static readonly Permission CLUB_READ_PROTECTED_SETTINGS = new Permission( "club.read_protected_settings", "Ability to read a Club's settings that are marked with Protected visibility." );
+
+        /// <summary>
+        /// Ability to read a Club's settings that are marked with Private visibility.
+        /// </summary>
+        /// <remarks>This Permission is effectively not used anywhere. It is defined for future use.</remarks>
         public static readonly Permission CLUB_READ_PRIVATE_SETTINGS = new Permission( "club.read_private_settings", "Ability to read a Club's settings that are marked with Private visibility." );
 
+        /// <summary>
+        /// Accept the invite to join a parent match as a child
+        /// </summary>
         public static readonly Permission MATCH_CHILD_ACCEPT_INVITE = new Permission( "match_child.accept_invite", "Accept the invite to join a parent match as a child" );
+
+        /// <summary>
+        /// Read child match
+        /// </summary>
         public static readonly Permission MATCH_CHILD_READ = new Permission( "match_child.read", "Read child match" );
+
+        /// <summary>
+        /// Create parent match
+        /// </summary>
         public static readonly Permission MATCH_PARENT_CREATE = new Permission( "match_parent.create", "Create parent match" );
+
+        /// <summary>
+        /// Delete parent match
+        /// </summary>
         public static readonly Permission MATCH_PARENT_DELETE = new Permission( "match_parent.delete", "Delete parent match" );
+
+        /// <summary>
+        /// Modify parent match
+        /// </summary>
         public static readonly Permission MATCH_PARENT_EDIT = new Permission( "match_parent.edit", "Modify parent match" );
+
+        /// <summary>
+        /// Invite others to join the parent match. This is equivalent to creating a child match of the parent.
+        /// </summary>
         public static readonly Permission MATCH_PARENT_INVITE = new Permission( "match_parent.invite", "Invite others to join the parent match. This is equivalent to creating a child match of the parent." );
+
+        /// <summary>
+        /// Read parent match
+        /// </summary>
         public static readonly Permission MATCH_PARENT_READ = new Permission( "match_parent.read", "Read parent match" );
+
+        /// <summary>
+        /// Invite others to join a tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_ADD_MEMBER = new Permission( "tournament.add_member", "Invite others to join a tournament" );
+
+        /// <summary>
+        /// Create tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_CREATE = new Permission( "tournament.create", "Create tournament" );
+
+        /// <summary>
+        /// Delete tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_DELETE = new Permission( "tournament.delete", "Delete tournament" );
+
+        /// <summary>
+        /// Modify tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_EDIT = new Permission( "tournament.edit", "Modify tournament" );
+
+        /// <summary>
+        /// Request to join any tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_JOIN = new Permission( "tournament.join", "Request to join any tournament" );
+
+        /// <summary>
+        /// Leave a tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_LEAVE = new Permission( "tournament.leave", "leave a tournament" );
+
+        /// <summary>
+        /// Permission to read a tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_READ = new Permission( "tournament.read", "Permission to read a tournament" );
+
+        /// <summary>
+        /// Remove a member from the tournament
+        /// </summary>
         public static readonly Permission TOURNAMENT_REMOVE_MEMBER = new Permission( "tournament.remove_member", "Remove a member from the tournament" );
+
+        /// <summary>
+        /// Create and manage merged result lists for the match
+        /// </summary>
         public static readonly Permission CREATE_MERGED_RESULTLIST = new Permission( "match.create_merged_resultlist", "Create and manage merged result lists for the match" );
+
         /// <summary>
         /// Default constructor. Purposefully made private.
         /// To crate a new instance, use the constructor that takes in a permission name, or use the static Parse instances defined in this class.

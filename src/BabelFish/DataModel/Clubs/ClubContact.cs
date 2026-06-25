@@ -9,6 +9,21 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         #region Private and Protected Fields
         private string _contactValue = string.Empty;
+        private VisibilityOption _visibility = VisibilityOption.PUBLIC;
+
+
+        /// <summary>
+        /// Helper property to return the list of valid values for <see cref="Visibility"/>.
+        /// <list type="bullet">
+        /// <item>
+        /// <description>PROTECTED: May be seen by Club Members.</description>
+        /// </item>
+        /// <item>
+        /// <description>PUBLIC: May be seen by anyone.</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        public static readonly List<VisibilityOption> VisibilityOptions = new List<VisibilityOption>() { VisibilityOption.PROTECTED, VisibilityOption.PUBLIC };
         #endregion
 
         #region Constructors, Factory Methods, and Initialization
@@ -93,12 +108,22 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             }
         }
 
+
         /// <summary>
-        /// Indicates whether the contact information is visible to the public or private to the club. The default value is PUBLIC.
+        /// Gets or sets the visibility level that controls who can view this address.
+        /// The set value must be contained in <see cref="VisibilityOptions"/>. If not, the most restrictive option (the first in the list) will be used instead.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 3 )]
         [G_NS.JsonProperty( Order = 3 )]
-        public VisibilityOption Visibility { get; set; } = VisibilityOption.PUBLIC;
+        public VisibilityOption Visibility {
+            get => _visibility;
+            set {
+                if (!VisibilityOptions.Contains( value ))
+                    _visibility = VisibilityOptions[0];
+
+                _visibility = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the date and time this ClubContACT was last updated.
@@ -135,6 +160,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                         return "scoposrezults";
                     case ClubContactType.INSTAGRAM:
                         return "scopos.rezults";
+                    case ClubContactType.YOU_TUBE:
+                        return "@ScoposRezults";
                     default:
                         // Default placeholder for social media or other contact types
                         return "scopos";
@@ -231,9 +258,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                     case ClubContactType.X:
                         return $"https://x.com/{ContactValue}";
                     case ClubContactType.TIKTOK:
-                        return $"https://www.tiktok.com/@{ContactValue}";
+                        return $"https://www.tiktok.com/{ContactValue}";
                     case ClubContactType.YOU_TUBE:
-                        return $"https://www.youtube.com/@{ContactValue}";
+                        return $"https://www.youtube.com/{ContactValue}";
                     case ClubContactType.LINKEDIN:
                         return $"https://www.linkedin.com/company/{ContactValue}";
                     case ClubContactType.SNAPCHAT:
@@ -246,15 +273,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
-        /// </summary>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
-
-
 
         /// <summary>
         /// Implements the IValidatableObject interface. Validates the contact information based on the specified contact type. 
@@ -290,6 +308,18 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                             || (uriResult.Scheme != Uri.UriSchemeHttp && uriResult.Scheme != Uri.UriSchemeHttps)
                             || string.IsNullOrWhiteSpace( uriResult.Host )) {
                             yield return new ValidationResult( $"Invalid URL format for {ContactType.Description()}. Value must start with https://", new[] { nameof( ContactValue ) } );
+                        }
+                        break;
+                    case ClubContactType.YOU_TUBE:
+                        // For YouTube validation, the channel name must start with an @, e.g., "@ScoposRezults". If it does not, we will return a validation error.
+                        if (!ContactValue.StartsWith( "@", StringComparison.Ordinal )) {
+                            yield return new ValidationResult( $"Invalid YouTube channel name format. Value must start with @, for example @ScoposRezults.", new[] { nameof( ContactValue ) } );
+                        }
+                        break;
+                    case ClubContactType.TIKTOK:
+                        // For TikTok validation, the channel name must start with an @, e.g., "@ScoposRezults". If it does not, we will return a validation error.
+                        if (!ContactValue.StartsWith( "@", StringComparison.Ordinal )) {
+                            yield return new ValidationResult( $"Invalid TikTok channel name format. Value must start with @, for example @ScoposRezults.", new[] { nameof( ContactValue ) } );
                         }
                         break;
                     default:

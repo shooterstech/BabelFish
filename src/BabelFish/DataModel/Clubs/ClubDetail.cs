@@ -12,6 +12,22 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #region Private and Protected Fields
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private DateTime _memberSince = DateTime.Today;
+        private VisibilityOption _visibility = VisibilityOption.PUBLIC;
+
+        /// <summary>
+        /// Helper property to return the list of valid values for <see cref="Visibility"/>.
+        /// <list type="bullet">
+        /// <item>
+        /// <description>PROTECTED: May be seen by Club Members.</description>
+        /// </item>
+        /// <item>
+        /// <description>PUBLIC: May be seen by anyone.</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public static readonly List<VisibilityOption> VisibilityOptions = new List<VisibilityOption>() { VisibilityOption.PROTECTED, VisibilityOption.PUBLIC };
         #endregion 
 
         #region Constructors, Factory Methods, and Initialization
@@ -106,12 +122,29 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         }
 
         /// <summary>
-        /// The city and state (and maybe country) where the club is from.
+        /// Returns the hometown of the club, which is determined by the first address in the AddressList that has IsRange set to true.
+        /// If no such address exists, it will return the first physical address. If neither exists, it will return an empty string.
         /// </summary>
         /// <example>Axtell, NE</example>
         [DefaultValue( "" )]
-        [Obsolete( "Replaced with AddressList. June 2026." )]
-        public string Hometown { get; set; } = string.Empty;
+        public string Hometown {
+            get {
+                // Find the ClubAddress with IsRange set to true.
+                var rangeAddress = AddressList.FirstOrDefault( a => a.IsRange );
+                if (rangeAddress != null) {
+                    return StringFormatting.Hometown( rangeAddress.City, rangeAddress.State, rangeAddress.CountryCode );
+                }
+
+                // If no range address is found, find the first physical address.
+                var physicalAddress = AddressList.FirstOrDefault( a => a.IsPhysical );
+                if (physicalAddress != null) {
+                    return StringFormatting.Hometown( physicalAddress.City, physicalAddress.State, physicalAddress.CountryCode );
+                }
+
+                // While it would be unusual, a Club is not required to have any addresses, so if none are found, return an empty string.
+                return string.Empty;
+            }
+        }
 
         [Obsolete( "Replaced with AddressList. June 2026." )]
         public string Street1 { get; set; }
@@ -147,25 +180,36 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [DefaultValue( "" )]
         public string URLPath { get; set; } = string.Empty;
 
+
         /// <summary>
-        /// Gets or sets the visibility of this club's team page on rezults.scopos.net. It is the responsibility of a
-        /// Club's administrators or manager to set this value appropriately.
-        /// <para>If PRIVATE, the team page will not be visible to the public.</para>
-        /// <para>If PUBLIC, the team page will likely be visible to the public. In order to be visility, the Club must
-        /// have a valid Orion for Clubs license. Check <see cref="IsPublicUrlPageVisible"/> to learn if the Club
-        /// passes these tests.</para>
+        /// Gets or sets the visibility level that controls who can view this address.
+        /// The set value must be contained in <see cref="VisibilityOptions"/>. If not, the most restrictive option (the first in the list) will be used instead.
         /// </summary>
-        [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
-        public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
+        [G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
+        public VisibilityOption Visibility {
+            get => _visibility;
+            set {
+                if (!VisibilityOptions.Contains( value ))
+                    _visibility = VisibilityOptions[0];
+
+                _visibility = value;
+            }
+        }
+
         /// <summary>
         /// The x-api-key for use by this Club.
+        /// <para>As of June 2026 returns a fake placeholder value.</para>
         /// </summary>
-        public string ApiKey { get; set; } = string.Empty;
+        [Obsolete( "No longer used as of Orion version 2.25.7" )]
+        public string ApiKey { get { return "1234567890ABCDEFG"; } }
 
         /// <remarks>
         /// Should not be returned as part of the REST API response, in either public or authenticated calls.
+        /// <para>As of June 2026 returns a fake placeholder value.</para>
         /// </remarks>
-        public string ApiKeyId { get; set; } = string.Empty;
+        [Obsolete( "No longer used as of Orion version 2.25.7" )]
+        public string ApiKeyId { get { return "1234567890ABCDEFG"; } }
 
         /// <remarks>
         /// Should not be returned as part of the REST API response, in either public or authenticated calls.
@@ -202,12 +246,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #endregion
 
         #region Helper Properties
-        /// <summary>
-        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
-        /// </summary>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
+
         #endregion
 
         #region Methods
@@ -218,6 +257,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <returns></returns>
         public bool IsPublicUrlPageVisible() {
             return Visibility == VisibilityOption.PUBLIC && LicenseList.Any( l => (l.LicenseType == ClubLicenseType.INDIVIDUAL || l.LicenseType == ClubLicenseType.SITE) && l.ExpirationDate >= DateTime.Today );
+        }
+
+        /// <summary>
+        /// Returns true if Club Members, Admins, and Managers should be able to see the Club page page even if the club has not set its Visibility to PUBLIC.
+        /// This is true if the club has at least one valid Orion for Clubs license.
+        /// <para>Would be false if all of their licenses have expired, or this is a Orion at Home account.</para>
+        /// </summary>
+        /// <returns></returns>
+        public bool IsProtectedUrlPageVisible() {
+            return LicenseList.Any( l => (l.LicenseType == ClubLicenseType.INDIVIDUAL || l.LicenseType == ClubLicenseType.SITE) && l.ExpirationDate >= DateTime.Today );
         }
 
         /// <inheritdoc />
