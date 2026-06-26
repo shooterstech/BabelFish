@@ -346,13 +346,13 @@ namespace Scopos.BabelFish.Helpers {
             } else {
                 if (!string.IsNullOrWhiteSpace( region )) {
                     if (!string.IsNullOrWhiteSpace( city )) {
-                        return "{city}, {country}";
+                        return $"{city}, {country}";
                     } else {
-                        return "{state}, {country}";
+                        return $"{region}, {country}";
                     }
                 } else {
                     if (!string.IsNullOrWhiteSpace( city )) {
-                        return "{city}, {country}";
+                        return $"{city}, {country}";
                     } else {
                         return country;
                     }
