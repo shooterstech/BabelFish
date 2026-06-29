@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
@@ -45,6 +46,18 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                 if (address == null) continue;
                 address.Club = this;
             }
+
+            // Set the backwards pointer for each Contact List
+            foreach (var contact in ContactList) {
+                if (contact == null) continue;
+                contact.Club = this;
+            }
+
+            // Set the backwards pointer for each License List
+            foreach (var license in LicenseList) {
+                if (license == null) continue;
+                license.Club = this;
+            }
         }
         #endregion
 
@@ -54,6 +67,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>1234</example>
         [DefaultValue( 0 )]
+        [Range( 0, 999999, ErrorMessage = "AccountNumber must be between 0 and 999999." )]
         public int AccountNumber { get; set; }
 
         /// <summary>
@@ -61,6 +75,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>Northeast High School</example>
         [DefaultValue( "" )]
+        [Required]
+        [StringLength( 128, ErrorMessage = "Name cannot be longer than 128 characters." )]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
@@ -76,7 +92,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// Specifies if this is a INDIVIDUAL, HOME, or SITE license. This is used to determine what features are available to the club.
         /// </summary>
-        public ClubLicenseType LicenseType { get; set; } = ClubLicenseType.INDIVIDUAL;
+        public ClubLicenseType AccountType { get; set; } = ClubLicenseType.INDIVIDUAL;
 
         /// <summary>
         /// The list of people who are Administrators for this club.
@@ -183,6 +199,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]
+        [Required]
+        [StringLength( 45, ErrorMessage = "URLPath cannot be longer than 45 characters." )]
         public string URLPath { get; set; } = string.Empty;
 
 
@@ -237,7 +255,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public List<string> Notes { get; set; } = new List<string>();
 
         /// <summary>
-        /// The list of Orion Licenses this Club has. Most Clubs will have exactly one license. 
+        /// The list of Orion Licenses this Club has. Most Clubs will have exactly one license. Orion at Home accounts can have exactly one.
         /// </summary>
         public List<ClubLicense> LicenseList { get; set; } = new List<ClubLicense>();
 
@@ -251,6 +269,40 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #endregion
 
         #region Helper Properties
+
+        /// <summary>
+        /// Helper property to determine if this club may add another license. This is true if the club has no licenses or if the club has an Individual license. It is false if the club has a Site or Home license.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool MayAddLicense {
+            get {
+                // Site Licenses and Home Licenses can only have one license. Individual Licenses can have multiple licenses.
+                if (this.AccountType == ClubLicenseType.SITE || this.AccountType == ClubLicenseType.HOME) {
+                    return LicenseList.Count < 1;
+                }
+
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// The list of roles that may be assigned to members of this Orion Account. The list of roles that is returned
+        /// depends on the AccountType. For SITE and INDIVIDUAL accounts, all roles except HOME_USER are available. For HOME accounts,
+        /// only the HOME_USER role is available. If the AccountType is not set to a valid value, an empty list is returned.
+        /// </summary>
+        /// <returns></returns>
+        public List<ClubAuthorizationRole> GetApplicableAuthorizationRoles() {
+            if (this.AccountType == ClubLicenseType.INDIVIDUAL || this.AccountType == ClubLicenseType.SITE) {
+                return new List<ClubAuthorizationRole>() { ClubAuthorizationRole.ADMIN, ClubAuthorizationRole.MANAGER, ClubAuthorizationRole.MEMBER, ClubAuthorizationRole.COACH, ClubAuthorizationRole.TECHNICAL_OFFICER, ClubAuthorizationRole.PAYER };
+            } else if (this.AccountType == ClubLicenseType.HOME) {
+                return new List<ClubAuthorizationRole>() { ClubAuthorizationRole.HOME_USER };
+            } else {
+                // Would only get here if the AccountType is the deprecated ClubLicenseType.TEMPORARY or if the AccountType is not set to a valid value. In either case, return an empty list.
+                _logger.Warn( $"GetApplicableAuthorizationRoles() called for club {this.OwnerId} with unknown AccountType {this.AccountType}. Returning HOME_USER role." );
+                return new List<ClubAuthorizationRole>();
+            }
+        }
 
         #endregion
 

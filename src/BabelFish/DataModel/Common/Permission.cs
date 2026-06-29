@@ -48,6 +48,11 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_MANAGE_CLUB_PAGE = new Permission( "club.manage_club_page", "Ability to manage the Club's page on Rezults. Including enabling or disabling its visibility." );
 
         /// <summary>
+        /// Ability to view and manage the Club's Athena Range remotely.
+        /// </summary>
+        public static readonly Permission CLUB_MANAGE_RANGE = new Permission( "club.manage_range", "Ability to view and manage the Club's Athena Range remotely." );
+
+        /// <summary>
         /// May make payments to renew a Club's Orion licenses, subscriptions, and warrentees.
         /// </summary>
         public static readonly Permission CLUB_PAYER = new Permission( "club.payer", "May make payments to renew a Club's Orion licenses, subscriptions, and warrentees." );

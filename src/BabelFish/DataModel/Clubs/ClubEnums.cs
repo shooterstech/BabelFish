@@ -8,6 +8,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
      * When adding new enums, it is usually best to update Helpers/SerializationOptions.cs
      */
 
+    /// <summary>
+    /// Defines the roles that can be assigned to members of a Club (aka Orion Account). The roles are used to
+    /// control access to various features and permissions within the system. This enum defines
+    /// roles for both Orion for Clubs and Orion at Home users. To get a list of roles that are specific to the
+    /// Club use <see cref="ClubDetail.GetApplicableAuthorizationRoles"/>.
+    /// </summary>
     public enum ClubAuthorizationRole {
         /*
          * These values should align with the values defined in the sql 'role' table.
@@ -39,7 +45,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         [Description( "Club Technical Officer" )]
         [EnumMember( Value = "Club Technical Officer" )]
-        TECHNICAL_OFFICER
+        TECHNICAL_OFFICER,
+
+        /// <summary>
+        /// Specific role for the owner of an Orion at Home account. This role is not used for Orion for Clubs accounts.
+        /// </summary>
+        [Description( "Club Home" )]
+        [EnumMember( Value = "Club Home" )]
+        HOME_USER,
     }
 
     /// <summary>

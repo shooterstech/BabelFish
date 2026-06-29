@@ -21,6 +21,57 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         }
 
         /// <summary>
+        /// This is the preferred method for creating a new ClubLicense instance. It ensures that the license is properly
+        /// associated with the provided ClubDetail and that the club has not exceeded its license limit.
+        /// </summary>
+        /// <param name="club"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static Task<ClubLicense> CreateAsync( ClubDetail club ) {
+            // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
+            // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
+            // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
+
+            if (club is null)
+                throw new ArgumentNullException( nameof( club ), "ClubDetail cannot be null when creating a ClubAddress." );
+
+            if (!club.MayAddLicense)
+                throw new InvalidOperationException( "The club has reached its license limit and cannot add more licenses." );
+
+            ClubLicense clubLicense = new ClubLicense();
+            var nextSubLicenseLetter = (char)('A' + club.LicenseList.Count);
+            clubLicense.Club = club;
+            clubLicense.LicenseType = club.AccountType;
+            clubLicense.SubLicense = nextSubLicenseLetter.ToString();
+
+            if (club.LicenseList.Count == 0) {
+                // If this is the first license being created for the club, assign default capabilities and expiration date.
+                clubLicense.Capabilities = new List<ClubLicenseCapability>() { ClubLicenseCapability.VIS_SCANNER };
+                clubLicense.ExpirationDate = DateTime.Today.AddDays( 365 );
+            } else {
+                // If there are existing licenses, copy the capabilities and expiration date from the first license.
+                clubLicense.Capabilities = club.LicenseList.First().Capabilities;
+                clubLicense.ExpirationDate = club.LicenseList.First().ExpirationDate;
+            }
+            club.LicenseList ??= new List<ClubLicense>();
+            club.LicenseList.Add( clubLicense );
+
+            return Task.FromResult( clubLicense );
+        }
+
+        /// <summary>
+        /// Sets the Club property on the cloned instance to match the source instance. This ensures that when a ClubAddress is cloned, it remains associated with the same ClubDetail as the original.
+        /// </summary>
+        /// <param name="source">The original object that was cloned.</param>
+        public void OnCloned( object source ) {
+
+            if (source is ClubAddress sourceAddress) {
+                this.Club = sourceAddress.Club;
+            }
+        }
+
+        /// <summary>
         /// Typically a single character, uniquely identifying a single license an Orion Club owns.
         /// </summary>
         /// <example>A</example>
@@ -37,6 +88,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// The type of license this is.
         /// </summary>
+        [Obsolete( "No longer used. As of BabelFish 2.0 the LicenseType is now a property of ClubDetail (Jun 2026). May be removed with the sql column is also removed." )]
         public ClubLicenseType LicenseType { get; set; } = ClubLicenseType.INDIVIDUAL;
 
         /// <summary>
@@ -90,6 +142,13 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime FirmwareDate { get; set; } = DateTime.MinValue;
+
+        /// <summary>
+        /// Backwards pointer to the owning ClubDetail. This is not serialized in the API response, but is provided for ease of use in client applications.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public ClubDetail? Club { get; set; }
 
         public override string ToString() {
             return $"Sublicense {SubLicense}";
