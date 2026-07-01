@@ -20,6 +20,8 @@ All notable changes to BabelFish will be documented in this file.
 - The new ShotMapper data actor stores shot data from ESTs (and other sources) and maps the shots to Events defined by the COURSE OF FIRE.
 - The new ResultDocumentGenerator data actor compiles Participant and Shot data into both (individual) ResultCOF and ResultList instances.
 - The new ResultListSlidingWindow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
+#### Club
+- ClubDetail now has a list of ClubAddress and ClubContact instances. Independent VisibilityOptions may be set to each of these.
 #### RULEBOOK Definition
 - Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
 #### Tournament API Calls
