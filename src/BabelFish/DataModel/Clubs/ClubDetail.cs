@@ -231,7 +231,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// Should not be returned as part of the REST API response, in either public or authenticated calls.
         /// <para>As of June 2026 returns a fake placeholder value.</para>
         /// </remarks>
-        [Obsolete( "No longer used as of Orion version 2.25.7" )]
+        [Obsolete( "No longer used as of Orion version 2.25.7 / June 2026" )]
         public string ApiKeyId { get { return "1234567890ABCDEFG"; } }
 
         /// <remarks>
@@ -247,6 +247,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <remarks>
         /// Should not be returned as part of the REST API response, in either public or authenticated calls.
         /// </remarks>
+        [Obsolete( "No longer used as of June 2026" )]
         public string AWSRegion { get; set; } = string.Empty;
 
         /// <summary>
