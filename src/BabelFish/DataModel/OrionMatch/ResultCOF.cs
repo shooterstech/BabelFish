@@ -164,7 +164,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 20 )]
         [G_NS.JsonProperty( Order = 20 )]
-        public string CourseOfFireDef { get; set; } = string.Empty;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
 
         /// <summary>
         /// SetName of the ScoreConfig used in this match.
