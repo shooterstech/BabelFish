@@ -253,6 +253,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// A list of notes, written by the Shooter's Tech support team pertaining to this Orion Club.
         /// </summary>
+        [Obsolete( "No longer used as of June 2026" )]
         public List<string> Notes { get; set; } = new List<string>();
 
         /// <summary>
@@ -263,8 +264,13 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// A list of optional services this club has subscribed to.
         /// </summary>
+        [Obsolete( "No longer used as of June 2026" )]
         public List<ClubOptions> Options { get; set; } = new List<ClubOptions> { };
 
+        /// <summary>
+        /// If the club is authroized to composed Definition files, this is the list of namespaces that the club has been authorized to use.
+        /// If the club is not authorized to compose Definition files, this list will be empty.
+        /// </summary>
         public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
 
         #endregion

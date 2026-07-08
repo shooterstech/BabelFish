@@ -57,15 +57,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>Martin McMartin</example>
         [DefaultValue( "" )]
+        [Obsolete( "No longer used as of BabelFish 2.0, June 2026." )]
         public string Administrator { get; set; } = String.Empty;
-
-
-        //[DefaultValue( new List<ClubAuthorizationRole>() )] // eh? why mad?
-        /// <summary>
-        /// List of roles you as the caller have in this club, only shown on auth call response.
-        /// </summary>
-        [DefaultValue( "" )]
-        public List<ClubAuthorizationRole> Roles { get; set; } = new List<ClubAuthorizationRole>();
 
         /// <summary>
         /// The email address of the club. May in fact be the email address of the administrator.
