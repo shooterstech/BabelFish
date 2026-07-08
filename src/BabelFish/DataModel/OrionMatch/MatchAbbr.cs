@@ -140,6 +140,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple Disciplines and Subdisciplines. This property is being replaced with CoursesOfFire[i].Discipline and CoursesOfFire[i].Subdiscipline." )]
         public string ShootingStyle { get; set; } = string.Empty;
 
+        public string DisplayDiscipline { get; set;} = string.Empty;
+        public string DisplaySubdiscipline { get; set;} = string.Empty;
+
         /// <summary>
         /// The list of (reference) <see cref="CourseOfFireStructure"/> that will be competed as part of this match.        /// 
         /// <para>Not all <see cref="MatchAbbr"/>will include a list of CourseOfFireStructureAbbr. For example, when the reference Match is a <see cref="Tournament"/>
