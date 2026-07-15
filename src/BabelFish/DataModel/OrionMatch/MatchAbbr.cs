@@ -140,8 +140,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Obsolete( "Starting with Orion 3.0 matches may have multiple courses of fire and thus multiple Disciplines and Subdisciplines. This property is being replaced with CoursesOfFire[i].Discipline and CoursesOfFire[i].Subdiscipline." )]
         public string ShootingStyle { get; set; } = string.Empty;
 
-        public string DisplayDiscipline { get; set;} = string.Empty;
-        public string DisplaySubdiscipline { get; set;} = string.Empty;
+        /// <summary>
+        /// The shooting discipline that this match was conducted under. For example Rifle , Pistol, Shotgun, etc. This is a high level classification of the match.
+        /// </summary>
+        /// <remarks>
+        /// Field may be deprecated in the future. As the Discipline is really a property of the CourseOfFireStructure and not the match itself. A match may have multiple courses of fire with different disciplines.
+        /// </remarks>
+        public string DisplayDiscipline { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The shooting subdiscipline that this match was conducted under. For example, for Rifle the subdiscipline might be High Power, Smallbore, Air Rifle, etc. This is a more specific classification of the match.
+        /// </summary>
+        /// <remarks>
+        /// Field may be deprecated in the future. As the Subdiscipline is really a property of the CourseOfFireStructure and not the match itself. A match may have multiple courses of fire with different subdisciplines.
+        /// </remarks>
+        public string DisplaySubdiscipline { get; set; } = string.Empty;
 
         /// <summary>
         /// The list of (reference) <see cref="CourseOfFireStructure"/> that will be competed as part of this match.        /// 
