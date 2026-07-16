@@ -1,0 +1,15 @@
+{
+    "LambdaName": "PatchMatchChild",
+    "Payload": {
+        "username": "26f32227-d428-41f6-b224-beed7b6e8850",
+        "params": {
+            "match-id": "1.900.2026041417335579.1",
+            "child-match-id": "1.900.2026041417335579.1001",
+            "MatchID": "1.900.2026041417335579.1001",
+            "ParentID": "1.900.2026041417335579.1",
+            "Name": "REST API Child Match Patch Test"
+        },
+        "stage": "production"
+    },
+    "APIFormat": true
+}

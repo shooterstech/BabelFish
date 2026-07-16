@@ -25,6 +25,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
             newRequest.Longitude = Longitude;
             newRequest.Latitude = Latitude;
             newRequest.OwnerId = OwnerId;
+            newRequest.IncludesClub = IncludesClub;
             newRequest.Token = Token;
             newRequest.Distance = Distance;
             newRequest.Limit = Limit;

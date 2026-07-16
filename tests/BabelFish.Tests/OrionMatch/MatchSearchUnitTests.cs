@@ -199,6 +199,22 @@ namespace Scopos.BabelFish.Tests.OrionMatch {
         }
 
         [TestMethod]
+        public async Task MatchSearchIncludesClub() {
+
+            //Conducting test in production since the development database doesn't always have entries in it.
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+
+            var request = new MatchSearchPublicRequest() {
+                IncludesClub = 3197
+            };
+
+            var matchSearchResponse = await client.GetMatchSearchPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, matchSearchResponse.RestApiStatusCode );
+            Assert.IsTrue( matchSearchResponse.MatchSearchList.Items.Count > 0 );
+        }
+
+        [TestMethod]
         public async Task ThrowsExceptionWithIncompleteLocationSearch() {
             var client = new OrionMatchAPIClient();
             var request = new MatchSearchPublicRequest();

@@ -67,6 +67,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// </summary>
         public string? OwnerId { get; set; } = string.Empty;
 
+        /// <summary>
+        /// An optional Orion license number for a club. Filters matches to only those containing an official or athlete 
+        /// associated with the club. If null or 0, all matches will be returned. 
+        /// </summary>
+        public int IncludesClub { get; set; } = 0;
+
         /// <inheritdoc />
         public string Token { get; set; } = string.Empty;
 
@@ -92,6 +98,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 parameterList.Add( "longitude", new List<string>() { Longitude != null ? Longitude.ToString() : "" } );
                 parameterList.Add( "latitude", new List<string>() { Latitude != null ? Latitude.ToString() : "" } );
                 parameterList.Add( "owner-id", new List<string>() { OwnerId != null ? OwnerId.ToString() : "" } );
+                parameterList.Add( "includes-club", new List<string>() { IncludesClub.ToString() } );
                 parameterList.Add( "limit", new List<string>() { Limit.ToString() } );
                 if (!string.IsNullOrEmpty( Token ))
                     parameterList.Add( "token", new List<string>() { Token } );

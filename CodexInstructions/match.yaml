@@ -1,0 +1,66 @@
+{
+ "AccountNumber": "OrionAcct000007",
+ "UniqueID": "1.900.2026041417335581.1:M",
+ "AttributeNames": [
+ ],
+ "CheckSum": "39787F20D21F4ADD058429CE75A15209",
+ "CourseOfFireDef": "",
+ "EndDate": "2027-04-14",
+ "JSONVersion": "2.0.0",
+ "LastUpdated": "2026-04-15T21:33:55.7956079Z",
+ "Location": {
+  "PostalCode": "",
+  "Region": ""
+ },
+ "MatchContacts": [
+ ],
+ "MatchID": "1.900.2026041417335581.1",
+ "MatchStructure": {
+  "CoursesOfFire": [
+   {
+    "Attributes": [
+     {
+      "AttributeDef": "v1.0:ntparc:Three-Position Air Rifle Type",
+      "AttributeValue": {
+       "Three-Position Air Rifle Type": "Sporter"
+      },
+      "ConcreteClassId": 3,
+      "Constant": false,
+      "CourseOfFireId": 1,
+      "Type": "Config",
+      "Visibility": "Public"
+     }
+    ],
+    "CourseOfFireDef": "v3.0:ntparc:Three-Position Air Rifle 3x10",
+    "CourseOfFireId": 1,
+    "CourseOfFireName": "3x10 Air Rifle",
+    "Description": "",
+    "EndDate": "2026-04-14",
+    "ResultLists": [
+    ],
+    "ScoreConfigName": "Integer",
+    "StartDate": "2026-04-14",
+    "TargetCollectionName": "10m Air Rifle",
+    "TypesOfEntries": "IndividualAndTeam"
+   }
+  ],
+  "GlobalAttributes": [
+  ],
+  "MergedResultLists": [
+  ]
+ },
+ "MatchType": "Local Match",
+ "MATCH_MatchID": "1.900.2026041417335581.1",
+ "MemberPolicy": "OPEN",
+ "Name": "Match OPEN member policy Test",
+ "OwnerId": "OrionAcct000007",
+ "ParentID": "1.900.2026041417335581.1",
+ "ResultEvents": [
+ ],
+ "ResultURL": "",
+ "SharedKey": "",
+ "SquaddingEvents": [
+ ],
+ "StartDate": "2026-04-14",
+ "Visibility": "Public"
+}

@@ -14,7 +14,13 @@ namespace Scopos.BabelFish.Tests {
             //Initialize the system, without pre-poulating the Definitino Cache (which avoids unnecessary API calls).
             Initializer.Initialize( xApiKey, false );
             //add EPPlus license, was unable to add it to app.config
-            ExcelPackage.License.SetCommercial( excelPackageLicense );
+            if (excelPackageLicense != null) {
+                ExcelPackage.License.SetCommercial(excelPackageLicense);
+            }
+            else {
+                //print no license found
+                Console.WriteLine("No excel package license found, excel tests will fail");
+            }
 
             DefinitionAPIClient.LocalStoreDirectory = new System.IO.DirectoryInfo( @"C:\temp" );
 
