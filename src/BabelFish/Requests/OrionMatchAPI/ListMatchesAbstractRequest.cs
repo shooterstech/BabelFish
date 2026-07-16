@@ -27,6 +27,11 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public string OwnerId { get; set; } = string.Empty;
 
         /// <summary>
+        /// Optional Orion license number for a club to include in the match search.
+        /// </summary>
+        public int IncludesClub { get; set; } = 0;
+
+        /// <summary>
         /// Optional filter to only return matches with the specified visibility.
         /// </summary>
         public VisibilityOption? Visibility { get; set; } = null;
@@ -114,6 +119,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 if (!string.IsNullOrWhiteSpace( OwnerId )) {
                     parameterList.Add( "owner-id", new List<string> { OwnerId } );
+                }
+
+                if (IncludesClub > 0) {
+                    parameterList.Add( "includes-club", new List<string> { IncludesClub.ToString() } );
                 }
 
                 if (Visibility.HasValue) {

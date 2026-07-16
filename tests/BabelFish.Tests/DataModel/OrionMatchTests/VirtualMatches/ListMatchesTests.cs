@@ -99,6 +99,22 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         }
 
         [TestMethod]
+        public async Task ListMatchesPublicIncludesClubReturnsMatches() {
+            var client = CreateClient();
+            var request = new ListMatchesPublicRequest() {
+                IncludesClub = 3197,
+                Limit = 10,
+                IgnoreInMemoryCache = true
+            };
+
+            var response = await client.ListMatchesPublicAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            Assert.IsNotNull( response.MatchList );
+            Assert.IsTrue( response.MatchList.Items.Count > 0 );
+        }
+
+        [TestMethod]
         public async Task ListMatchesPublicDisciplineFilterReturnsOnlyMatchingCoursesOfFire() {
             var client = CreateClient();
             var request = new ListMatchesPublicRequest() {
