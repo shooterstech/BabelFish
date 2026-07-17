@@ -920,6 +920,100 @@ namespace Scopos.BabelFish.APIClients {
 
         }
 
+        /// <summary>
+        /// Generate Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GenerateRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateRangeReportAuthenticatedAsync( GenerateRangeReportAuthenticatedRequest requestParameters ) {
+            GenerateRangeReportAuthenticatedResponse response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultListName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultListName,
+            UserAuthentication credentials ) {
+            var request = new GenerateRangeReportAuthenticatedRequest( matchId, resultListName, credentials );
+
+            return await GenerateRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync( GetRangeReportAuthenticatedRequest requestParameters ) {
+            GetRangeReportAuthenticatedResponse response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultName,
+            UserAuthentication credentials ) {
+            var request = new GetRangeReportAuthenticatedRequest( matchId, resultName, credentials );
+
+            return await GetRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Patch Range Report API
+        /// </summary>
+        /// <param name="requestParameters">PatchRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchRangeReportAuthenticatedAsync( PatchRangeReportAuthenticatedRequest requestParameters ) {
+            PatchRangeReportAuthenticatedResponse response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="published"></param>
+        /// <param name="formattedHtml"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultName,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials ) {
+            var request = new PatchRangeReportAuthenticatedRequest( matchId, resultName, credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml
+            };
+
+            return await PatchRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
         #endregion
 
         #region Tournament API Calls
