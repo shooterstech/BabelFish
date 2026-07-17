@@ -136,7 +136,7 @@ namespace Scopos.BabelFish.Tests.DataActors.PDF {
 
             var client = new OrionMatchAPIClient();
 
-            var resultCofId = "0f814586-3513-411a-8229-914d4608db05"; // sim air rifle
+            var resultCofId = "e7864548-e8c8-492b-8eb6-d6a81d49bde2"; // sim air rifle
             //var resultCofId = "5486e765-73db-4973-b97e-5c423e9395dc"; // air pistol
             //var resultCofId = "57b49cc3-db5d-4384-90eb-5be05d617664"; // Test scores
             //var resultCofId = "0c9a775a-6390-4cb4-91f3-9724b699b5a9"; // Hit Miss
