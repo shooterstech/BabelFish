@@ -38,16 +38,18 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         /// <inheritdoc />
         public override string RelativePath {
-            get { return "/range-reporter"; }
-        }
-
-        /// <inheritdoc />
-        public override Dictionary<string, List<string>> QueryParameters {
             get {
                 if (MatchId == null) {
                     throw new ArgumentNullException( nameof( MatchId ), "The match id must be set to generate a range report." );
                 }
 
+                return $"/range-reporter/{MatchId}";
+            }
+        }
+
+        /// <inheritdoc />
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
                 if (string.IsNullOrWhiteSpace( ResultListName )) {
                     throw new ArgumentNullException( nameof( ResultListName ), "The result list name must be set to generate a range report." );
                 }
@@ -57,8 +59,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 }
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>> {
-                    { "match-id", new List<string> { MatchId.ToString() } },
-                    { "result-list-name", new List<string> { ResultListName } },
+                    { "result-name", new List<string> { ResultListName } },
                     { "course-of-fire-id", new List<string> { CourseOfFireId.ToString() } }
                 };
 

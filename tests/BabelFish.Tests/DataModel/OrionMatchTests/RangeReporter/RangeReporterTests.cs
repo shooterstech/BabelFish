@@ -12,8 +12,8 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
     [TestClass]
     public class RangeReporterTests : BaseTestClass {
 
-        private static readonly MatchID KnownRangeReporterMatchId = new MatchID( "1.1.2021020310584218.1" );
-        private const string KnownRangeReporterResultName = "Individual - Precision";
+        private static readonly MatchID KnownRangeReporterMatchId = new MatchID("1.1.2021020310584218.1");
+        private const string KnownRangeReporterResultName = "Individual - All";
 
         private static UserAuthentication CreateAuthentication() {
             return new UserAuthentication( "range-reporter@example.com", "password" );
@@ -43,10 +43,10 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             var queryParameters = request.QueryParameters;
 
             Assert.AreEqual( HttpMethod.Post, request.HttpMethod );
-            Assert.AreEqual( "/range-reporter", request.RelativePath );
+            Assert.AreEqual( "/range-reporter/1.2063.2026043009084183.0", request.RelativePath );
             Assert.AreEqual( APISubDomain.AUTHAPI, request.SubDomain );
-            Assert.AreEqual( "1.2063.2026043009084183.0", queryParameters["match-id"].Single() );
-            Assert.AreEqual( "Individual - Precision", queryParameters["result-list-name"].Single() );
+            Assert.IsFalse( queryParameters.ContainsKey( "match-id" ) );
+            Assert.AreEqual( "Individual - Precision", queryParameters["result-name"].Single() );
             Assert.AreEqual( "1", queryParameters["course-of-fire-id"].Single() );
             Assert.AreEqual( "numshots", queryParameters["milestone-strategy"].Single() );
             Assert.AreEqual( "10,20,30", queryParameters["shot-milestones"].Single() );
