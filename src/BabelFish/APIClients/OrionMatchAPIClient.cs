@@ -952,6 +952,33 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// Get Range Report API
         /// </summary>
+        /// <param name="requestParameters">GetRangeReportPublicRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportPublicResponse> GetRangeReportPublicAsync( GetRangeReportPublicRequest requestParameters ) {
+            GetRangeReportPublicResponse response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportPublicResponse> GetRangeReportPublicAsync(
+            MatchID matchId,
+            string resultName ) {
+            var request = new GetRangeReportPublicRequest( matchId, resultName );
+
+            return await GetRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
         /// <param name="requestParameters">GetRangeReportAuthenticatedRequest object</param>
         /// <returns>RangeReport object</returns>
         public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync( GetRangeReportAuthenticatedRequest requestParameters ) {
@@ -976,6 +1003,39 @@ namespace Scopos.BabelFish.APIClients {
             var request = new GetRangeReportAuthenticatedRequest( matchId, resultName, credentials );
 
             return await GetRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAbstractResponse> GetRangeReportAsync(
+            MatchID matchId,
+            string resultName,
+            UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetRangeReportPublicAsync( matchId, resultName ).ConfigureAwait( false );
+            } else {
+                return await GetRangeReportAuthenticatedAsync( matchId, resultName, credentials ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls.
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportAbstractRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAbstractResponse> GetRangeReportAsync( GetRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetRangeReportPublicRequest)
+                return await this.GetRangeReportPublicAsync( (GetRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            else if (requestParameters is GetRangeReportAuthenticatedRequest)
+                return await this.GetRangeReportAuthenticatedAsync( (GetRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
         }
 
         /// <summary>

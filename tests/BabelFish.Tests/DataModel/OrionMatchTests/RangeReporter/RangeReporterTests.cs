@@ -72,6 +72,24 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         }
 
         [TestMethod]
+        public void GetRangeReportPublicRequestBuildsExpectedApiContract() {
+            var request = new GetRangeReportPublicRequest(
+                new MatchID( "1.2063.2026043009084183.0" ),
+                "Individual - Precision" );
+
+            var queryParameters = request.QueryParameters;
+            var factoryRequest = GetRangeReportAbstractRequest.Factory(
+                new MatchID( "1.2063.2026043009084183.0" ),
+                "Individual - Precision" );
+
+            Assert.AreEqual( HttpMethod.Get, request.HttpMethod );
+            Assert.AreEqual( "/range-reporter/1.2063.2026043009084183.0", request.RelativePath );
+            Assert.AreEqual( APISubDomain.API, request.SubDomain );
+            Assert.AreEqual( "Individual - Precision", queryParameters["result-name"].Single() );
+            Assert.IsInstanceOfType( factoryRequest, typeof( GetRangeReportPublicRequest ) );
+        }
+
+        [TestMethod]
         public void PatchRangeReportRequestBuildsExpectedApiContract() {
             var request = new PatchRangeReportAuthenticatedRequest(
                 new MatchID( "1.2063.2026043009084183.0" ),
@@ -189,6 +207,22 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                 KnownRangeReporterMatchId,
                 KnownRangeReporterResultName,
                 credentials );
+
+            Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+            Assert.AreEqual( KnownRangeReporterMatchId.ToString(), response.RangeReport.MatchId );
+            Assert.AreEqual( KnownRangeReporterResultName, response.RangeReport.ResultListName );
+            Assert.IsNotNull( response.RangeReport.Paragraphs );
+            Assert.IsFalse( string.IsNullOrWhiteSpace( response.RangeReport.FormattedHtml ) );
+        }
+
+        [TestMethod]
+        public async Task GetRangeReportPublicReturnsReport() {
+            var client = new OrionMatchAPIClient();
+            var request = new GetRangeReportPublicRequest(
+                KnownRangeReporterMatchId,
+                KnownRangeReporterResultName );
+
+            var response = await client.GetRangeReportPublicAsync( request );
 
             Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
             Assert.AreEqual( KnownRangeReporterMatchId.ToString(), response.RangeReport.MatchId );
