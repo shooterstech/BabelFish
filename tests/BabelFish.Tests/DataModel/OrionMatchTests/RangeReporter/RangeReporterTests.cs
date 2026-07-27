@@ -189,13 +189,25 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             var response = await client.GenerateRangeReportAuthenticatedAsync( request );
 
             Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
-            Assert.AreEqual( "Dry run RangeReporter placeholder", response.RangeReport.Headline );
-            Assert.AreEqual( KnownRangeReporterMatchId.ToString(), response.RangeReport.MatchId );
-            Assert.AreEqual( KnownRangeReporterResultName, response.RangeReport.ResultListName );
-            Assert.AreEqual( 1, response.RangeReport.CourseOfFireId );
-            Assert.IsFalse( response.RangeReport.Published );
-            Assert.AreEqual( false, response.RangeReport.AiGenerated );
-            Assert.IsTrue( response.RangeReport.FormattedHtml.Contains( "Dry run RangeReporter placeholder" ) );
+            Assert.AreEqual( RangeReportStatus.QUEUED, response.RangeReport.GenerationStatus );
+
+            //sleep 3 seconds
+            await Task.Delay( 7000 );
+
+            //GetRangeReport the report to verify it was created
+            var getResponse = await client.GetRangeReportAuthenticatedAsync(
+                KnownRangeReporterMatchId,
+                KnownRangeReporterResultName,
+                credentials );
+
+            Assert.AreEqual( HttpStatusCode.OK, getResponse.RestApiStatusCode );
+            Assert.AreEqual( RangeReportStatus.COMPLETED, getResponse.RangeReport.GenerationStatus );
+            Assert.AreEqual( KnownRangeReporterMatchId.ToString(), getResponse.RangeReport.MatchId );
+            Assert.AreEqual( KnownRangeReporterResultName, getResponse.RangeReport.ResultListName );
+            Assert.AreEqual( 1, getResponse.RangeReport.CourseOfFireId );
+            Assert.IsFalse( getResponse.RangeReport.Published );
+            Assert.AreEqual( false, getResponse.RangeReport.AiGenerated );
+            Assert.IsTrue( getResponse.RangeReport.FormattedHtml.Contains( "Dry run RangeReporter placeholder" ) );
         }
 
         [TestMethod]

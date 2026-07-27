@@ -30,8 +30,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public int? TokensRemaining { get; set; }
 
-        public bool? AiGenerated { get; set; }
+        public bool? AiGenerated { get; set; } = true;
 
-        public string FormattedHtml { get; set; } = string.Empty;
+        public string? FormattedHtml { get; set; }
+
+        public string? GenerationJobId { get; set; }
+
+        public RangeReportStatus GenerationStatus { get; set; } = RangeReportStatus.UNKNOWN;
+
+        public string? GenerationError { get; set; }
     }
 }
