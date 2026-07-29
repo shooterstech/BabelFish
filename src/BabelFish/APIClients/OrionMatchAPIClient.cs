@@ -610,6 +610,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
         /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
         /// </remarks>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
             MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
@@ -623,6 +624,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchAuthenticatedResponse> GetMatchSearchAuthenticatedAsync( MatchSearchAuthenticatedRequest requestParameters ) {
             MatchSearchAuthenticatedResponse response = new MatchSearchAuthenticatedResponse( requestParameters );
 
@@ -635,6 +637,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
         /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
         /// </remarks>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchAbstractResponse> GetMatchSearchAsync( MatchSearchAbstractRequest requestParameters ) {
             if (requestParameters is MatchSearchPublicRequest)
                 return await this.GetMatchSearchPublicAsync( (MatchSearchPublicRequest)requestParameters );

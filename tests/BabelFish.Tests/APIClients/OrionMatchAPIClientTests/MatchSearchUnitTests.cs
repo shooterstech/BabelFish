@@ -165,7 +165,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
             double? longitude = null;
             double? latitude = null;
             var shootingStyle = "";
-            string ownerId = "OrionAccount000015";
+            string ownerId = "OrionAccount000016";
             var request = new MatchSearchPublicRequest() {
                 Distance = distance,
                 //StartDate = startDate, // Leaving these as default, it should just tbe the last year. will check in the asserts
@@ -223,6 +223,34 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
             request.Latitude = 12.345;
             request.Distance = 500;
             var _3 = await client.GetMatchSearchPublicAsync( request );
+        }
+
+        [TestMethod]
+        public async Task ListMatchWithIncludeAwayMatches() {
+            var client = new OrionMatchAPIClient();
+            var excludeAwayMatchesRequest = new ListMatchesPublicRequest() {
+                IncludeAwayMatches = false,
+                OwnerId = "OrionAccount000008"
+            };
+
+            var excludeAwayMatchesResponse = await client.ListMatchesPublicAsync( excludeAwayMatchesRequest );
+
+            var includeAwayMatchesRequest = new ListMatchesPublicRequest() {
+                IncludeAwayMatches = true,
+                OwnerId = "OrionAccount000008"
+            };
+
+            var includeAwayMatchesResponse = await client.ListMatchesPublicAsync( includeAwayMatchesRequest );
+
+            Assert.IsTrue( excludeAwayMatchesResponse.MatchList.Items.Count < includeAwayMatchesResponse.MatchList.Items.Count, "Expected more matches when including away matches." );
+
+            // Test that at least one match returned by the includeAwayMatchesResponse is not owned by the specified ownerId, indicating that away matches are included.
+            bool foundAwayMatch = false;
+            foreach (var match in includeAwayMatchesResponse.MatchList.Items) {
+                if (match.OwnerId != excludeAwayMatchesRequest.OwnerId)
+                    foundAwayMatch = true;
+            }
+            Assert.IsTrue( foundAwayMatch, "Expected at least one match not owned by the specified ownerId when including away matches." );
         }
     }
 }
