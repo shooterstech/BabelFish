@@ -109,7 +109,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                         Console.WriteLine( name );
                     */
 
-                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_logo.png" )) {
+                    using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Reports.Resources.Images.scopos_logo.png" )) {
                         row.RelativeItem( 1 )
                         .AlignCenter()
                         .Padding( 1 )
