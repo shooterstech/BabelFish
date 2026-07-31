@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     column.Item().Text( StringFormatting.SpanOfDates( TournamentDetail.StartDate, TournamentDetail.EndDate ) ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Reports.Resources.Images.scopos_owl_transparent_orange.png" )) {
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_owl_transparent_orange.png" )) {
                     Debug.Assert( stream is not null, "Could not find embedded resource for header image." );
 
                     row.ConstantItem( 3.0f, Unit.Centimetre )
