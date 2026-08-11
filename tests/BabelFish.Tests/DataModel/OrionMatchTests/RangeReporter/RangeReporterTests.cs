@@ -122,6 +122,112 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         }
 
         [TestMethod]
+        public void SendRangeReportEmailRequestBuildsExpectedApiContract() {
+            var request = new SendRangeReportEmailAuthenticatedRequest(
+                new MatchID( "1.2063.2026043009084183.0" ),
+                new List<string> {
+                    "Individual - Sporter",
+                    "Individual - Precision",
+                    "Team - Precision"
+                },
+                CreateAuthentication() ) {
+                DryRun = true
+            };
+
+            var queryParameters = request.QueryParameters;
+
+            Assert.AreEqual( HttpMethod.Post, request.HttpMethod );
+            Assert.AreEqual( "/range-reporter/1.2063.2026043009084183.0/email", request.RelativePath );
+            Assert.AreEqual( APISubDomain.AUTHAPI, request.SubDomain );
+            CollectionAssert.AreEqual(
+                new List<string> {
+                    "Individual - Sporter",
+                    "Individual - Precision",
+                    "Team - Precision"
+                },
+                queryParameters["result-name"] );
+            Assert.AreEqual( "True", queryParameters["dry-run"].Single() );
+        }
+
+        [TestMethod]
+        public void SendRangeReportEmailRequestRequiresResultName() {
+            var request = new SendRangeReportEmailAuthenticatedRequest(
+                new MatchID( "1.2063.2026043009084183.0" ),
+                new List<string>(),
+                CreateAuthentication() );
+
+            Assert.Throws<ArgumentException>( () => {
+                _ = request.QueryParameters;
+            } );
+        }
+
+        [TestMethod]
+        public void RangeReportEmailWrapperDeserializesApiResponse() {
+            var json = """
+            {
+                "EmailsSent": 17,
+                "EmailsSkipped": 3,
+                "EmailHtml": "<html><body><h1>Range Report</h1></body></html>"
+            }
+            """;
+
+            var wrapper = G_STJ.JsonSerializer.Deserialize<RangeReportEmailWrapper>( json, SerializerOptions.SystemTextJsonDeserializer );
+
+            Assert.IsNotNull( wrapper );
+            Assert.AreEqual( 17, wrapper.EmailsSent );
+            Assert.AreEqual( 3, wrapper.EmailsSkipped );
+            Assert.AreEqual( "<html><body><h1>Range Report</h1></body></html>", wrapper.EmailHtml );
+        }
+
+        [TestMethod]
+        public void OrionMatchClientExposesSendRangeReportEmailAuthenticatedCalls() {
+            var methods = typeof( OrionMatchAPIClient )
+                .GetMethods()
+                .Where( method => method.Name == nameof( OrionMatchAPIClient.SendRangeReportEmailAuthenticatedAsync ) )
+                .ToList();
+
+            Assert.AreEqual( 2, methods.Count );
+            Assert.IsTrue( methods.Any( method =>
+                method.GetParameters().Length == 1
+                && method.GetParameters()[0].ParameterType == typeof( SendRangeReportEmailAuthenticatedRequest ) ) );
+            Assert.IsTrue( methods.Any( method =>
+                method.GetParameters().Length == 4
+                && method.GetParameters()[0].ParameterType == typeof( MatchID )
+                && method.GetParameters()[1].ParameterType == typeof( IEnumerable<string> )
+                && method.GetParameters()[2].ParameterType == typeof( UserAuthentication )
+                && method.GetParameters()[3].ParameterType == typeof( bool ) ) );
+        }
+
+        [TestMethod]
+        public async Task SendRangeReportEmailCanOnlySucceedOnce() {
+            var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
+            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var request = new SendRangeReportEmailAuthenticatedRequest(
+                new MatchID( "1.1.2026063010495573.1" ),
+                new List<string> {
+                    "Individual - Sporter",
+                    "Individual - Precision",
+                    "Team - Precision"
+                },
+                credentials ) {
+                DryRun = true
+            };
+
+            var firstResponse = await client.SendRangeReportEmailAuthenticatedAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.OK, firstResponse.RestApiStatusCode );
+            Assert.IsTrue( firstResponse.RangeReportEmail.EmailsSent > 0 );
+            Assert.IsTrue( firstResponse.RangeReportEmail.EmailsSkipped >= 0 );
+            Assert.IsFalse( string.IsNullOrWhiteSpace( firstResponse.RangeReportEmail.EmailHtml ) );
+
+            var secondResponse = await client.SendRangeReportEmailAuthenticatedAsync( request );
+
+            Assert.AreEqual( HttpStatusCode.BadRequest, secondResponse.RestApiStatusCode );
+            Assert.IsTrue( secondResponse.MessageResponse.Message.Any( message =>
+                message.Contains( "Only one Range Report email can be sent for a match." ) ) );
+        }
+
+        [TestMethod]
         public void RangeReportWrapperDeserializesApiResponse() {
             var json = """
             {

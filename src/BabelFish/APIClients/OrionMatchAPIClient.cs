@@ -1074,6 +1074,39 @@ namespace Scopos.BabelFish.APIClients {
             return await PatchRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
         }
 
+        /// <summary>
+        /// Send Range Report Email API
+        /// </summary>
+        /// <param name="requestParameters">SendRangeReportEmailAuthenticatedRequest object</param>
+        /// <returns>RangeReporter email result</returns>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync( SendRangeReportEmailAuthenticatedRequest requestParameters ) {
+            var response = new SendRangeReportEmailAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Send Range Report Email API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultNames"></param>
+        /// <param name="credentials"></param>
+        /// <param name="dryRun">If true, build the email without sending it.</param>
+        /// <returns>RangeReporter email result</returns>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync(
+            MatchID matchId,
+            IEnumerable<string> resultNames,
+            UserAuthentication credentials,
+            bool dryRun = false ) {
+            var request = new SendRangeReportEmailAuthenticatedRequest( matchId, resultNames, credentials ) {
+                DryRun = dryRun
+            };
+
+            return await SendRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
         #endregion
 
         #region Tournament API Calls
