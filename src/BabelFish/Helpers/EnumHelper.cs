@@ -66,12 +66,37 @@ namespace Scopos.BabelFish.Helpers {
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static T ParseEnumByDescription<T>( this string value ) {
-            T returnEnum = default( T );
+        public static T ParseEnumByDescription<T>( string value ) where T : struct, Enum {
+            T returnEnum = default;
             foreach (var field in typeof( T ).GetFields()) {
                 var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
                 if (attr != null) {
-                    if (string.Equals(attr.Description, value, StringComparison.OrdinalIgnoreCase)) {
+                    if (string.Equals( attr.Description, value, StringComparison.OrdinalIgnoreCase )) {
+                        returnEnum = (T)field.GetValue( null );
+                        break;
+                    }
+                }
+            }
+            return returnEnum;
+        }
+
+        /// <summary>
+        /// Retrieve <T>Enum matching Description text, with a default value if no match is found
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value">The string value to match against the Description attributes of the enum values.</param>
+        /// <param name="defaultValue">The default enum value to return if no match is found.</param>
+        /// <returns>The matching enum value if found; otherwise, the default value.</returns>
+        public static T ParseEnumByDescription<T>( string? value, T defaultValue ) where T : struct, Enum {
+            T returnEnum = defaultValue;
+            if (string.IsNullOrEmpty( value )) {
+                return returnEnum;
+            }
+
+            foreach (var field in typeof( T ).GetFields()) {
+                var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
+                if (attr != null) {
+                    if (string.Equals( attr.Description, value, StringComparison.OrdinalIgnoreCase )) {
                         returnEnum = (T)field.GetValue( null );
                         break;
                     }
@@ -87,7 +112,7 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="value">The string value to match against the Description attributes of the enum values.</param>
         /// <param name="result">The resulting enum value if a match is found.</param>
         /// <returns>True if a match is found, false otherwise.</returns>
-        public static bool TryParseEnumByDescription<T>( this string value, out T result ) {
+        public static bool TryParseEnumByDescription<T>( string value, out T result ) where T : struct, Enum {
             result = default( T );
 
             if (string.IsNullOrEmpty( value )) {
@@ -97,7 +122,7 @@ namespace Scopos.BabelFish.Helpers {
             foreach (var field in typeof( T ).GetFields()) {
                 var attr = Attribute.GetCustomAttribute( field, typeof( DescriptionAttribute ) ) as DescriptionAttribute;
                 if (attr != null) {
-                    if (string.Equals(attr.Description, value, StringComparison.OrdinalIgnoreCase)) {
+                    if (string.Equals( attr.Description, value, StringComparison.OrdinalIgnoreCase )) {
                         result = (T)field.GetValue( null );
                         return true;
                     }

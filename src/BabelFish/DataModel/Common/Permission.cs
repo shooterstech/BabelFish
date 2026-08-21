@@ -73,6 +73,11 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_MANAGE_SETTINGS = new Permission( "club.manage_settings", "Ability to manage club settings including a Club's contact information." );
 
         /// <summary>
+        /// May register the Club or Members of the Club into a Match.
+        /// </summary>
+        public static readonly Permission CLUB_MANAGE_MATCH_REGISTRATIONS = new Permission( "club.manage_match_registrations", "May register the Club or Members of the Club into a Match." );
+
+        /// <summary>
         /// Ability to read a Club's settings that are marked with Public visibility.
         /// </summary>
         public static readonly Permission CLUB_READ_PUBLIC_SETTINGS = new Permission( "club.read_public_settings", "Ability to read a Club's settings that are marked with Public visibility." );

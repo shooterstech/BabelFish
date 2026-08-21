@@ -18,16 +18,31 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="startDate"></param>
         /// <param name="endDate"></param>
         /// <returns></returns>
-        public static string SpanOfDates( DateTime startDate, DateTime endDate ) {
-            if (startDate == endDate)
-                return startDate.ToString( "ddd, dd MMM yyyy" );
-            else if (startDate.Year == endDate.Year
-                && startDate.Month == endDate.Month)
-                return $"{startDate.ToString( "dd" )} - {endDate.ToString( "dd MMM yyyy" )}";
-            else if (startDate.Year == endDate.Year)
-                return $"{startDate.ToString( "dd MMM" )} - {endDate.ToString( "dd MMM yy" )}";
+        public static string SpanOfDates( DateTime? startDate, DateTime? endDate ) {
+            // Check if the user passed in any null value. Do our best to deal with it if they did.
+            if (startDate is null || endDate is null) {
+                if (startDate is not null)
+                    return SingleDate( startDate );
+                else if (endDate is not null)
+                    return SingleDate( endDate );
+                else
+                    return "Unknown";
+            }
+
+            // Convert to non-nullable DateTime for easier comparison
+            var startDateNotNull = (DateTime)startDate;
+            var endDateNotNull = (DateTime)endDate;
+
+            // Now we can safely format.
+            if (startDateNotNull == endDateNotNull)
+                return SingleDate( startDate );
+            else if (startDateNotNull.Year == endDateNotNull.Year
+                && startDateNotNull.Month == endDateNotNull.Month)
+                return $"{startDateNotNull.ToString( "dd" )} - {endDateNotNull.ToString( "dd MMM yyyy" )}";
+            else if (startDateNotNull.Year == endDateNotNull.Year)
+                return $"{startDateNotNull.ToString( "dd MMM" )} - {endDateNotNull.ToString( "dd MMM yyyy" )}";
             else
-                return $"{startDate.ToString( "MM/dd/yy" )} - {endDate.ToString( "MM/dd/yy" )}";
+                return $"{startDateNotNull.ToString( "MM/dd/yy" )} - {endDateNotNull.ToString( "MM/dd/yy" )}";
 
         }
 
@@ -60,12 +75,16 @@ namespace Scopos.BabelFish.Helpers {
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string SingleDate( DateTime date ) {
-            return date.ToString( "ddd, dd MMM yyyy" );
+        public static string SingleDate( DateTime? date ) {
+            if (date is null)
+                return "Unknown";
+            return date.Value.ToString( "ddd, dd MMM yyyy" );
         }
 
-        public static string SingleDateTime( DateTime date ) {
-            return date.ToString( "dd MMM yyyy HH:mm" );
+        public static string SingleDateTime( DateTime? date ) {
+            if (date is null)
+                return "Unknown";
+            return date.Value.ToString( "dd MMM yyyy HH:mm" );
         }
 
         /// Formats the passed in DateTime string into a standard method of displaying dates.
