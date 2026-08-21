@@ -5,6 +5,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
     /// Abstract request class for asking SCOPOS' REST API to do a search for matches.
     /// <para>Callers can do a search by location, date, and club owner of the match.</para>
     /// </summary>
+    [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
     public abstract class MatchSearchAbstractRequest : Request, ITokenRequest {
 
         public MatchSearchAbstractRequest( string operationId ) : base( operationId ) {

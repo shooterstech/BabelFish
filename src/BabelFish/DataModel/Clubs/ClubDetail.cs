@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
@@ -8,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
-    public class ClubDetail : IJsonOnDeserialized {
+    public class ClubDetail : G_STJ_SER.IJsonOnDeserialized {
 
         #region Private and Protected Fields
         private static Logger _logger = LogManager.GetCurrentClassLogger();
@@ -290,6 +289,35 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                 }
 
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// Helper property to determine the expiration date of this club's list of Orion licenses.
+        /// Home licenses do not expire, so this will return DateTime.MaxValue. If the club has no licenses, this will return DateTime.MinValue.
+        /// Otherwise, it will return the expiration date of the license that expires furthest in the future.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public DateTime ExpirationDate {
+            get {
+                // If the AccountType is HOME their is no expiration date, so return DateTime.MaxValue.
+                if (this.AccountType == ClubLicenseType.HOME) {
+                    return DateTime.MaxValue;
+                }
+
+                // If we get here, the AccountType is SITE or INDIVIDUAL
+
+                // If they do not have any licenses, return DateTime.MinValue.
+                if (LicenseList.Count == 0) {
+                    return DateTime.MinValue;
+                }
+
+                // All licenses where Renew is true, should have the same expiration date.
+                // This should be enforced when the license is created.
+
+                // The expiration date is the expiration date furthest in the future.
+                return LicenseList.Max( l => l.ExpirationDate );
             }
         }
 

@@ -103,6 +103,22 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public bool Renew { get; set; } = true;
 
         /// <summary>
+        /// A license is considered cancelled, if renew if false and the ExpirationDate on this license is less than the calculated ExpirationDate on the owning ClubDetail.
+        /// Which should be any license that was not set to renew, the last time the Club paid for their renewal licenses. 
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool Cancelled {
+            get {
+                // If Club is null, we cannot determine if the license is cancelled. The next best thing is if Renew is true, the license is not cancelled. If Renew is false and the ExpirationDate is in the past, we consider it cancelled.
+                if (Club == null)
+                    return Renew && ExpirationDate < DateTime.Today;
+
+                return (!Renew && ExpirationDate < Club?.ExpirationDate);
+            }
+        }
+
+        /// <summary>
         /// Notes the Shooter's Tech support team took pertaining to this license.
         /// </summary>
         [G_NS.JsonIgnore]

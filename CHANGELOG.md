@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [2.0] - In Development Now, Expected Summer 2026
+## [2.1] - In Development Now, Expected Summer 2026
 ### Breaking Changes
 ** Contains many breaking changes **
 - SetNames that were previously represented as strings are now represented as SetName objects.
@@ -24,6 +24,9 @@ All notable changes to BabelFish will be documented in this file.
 - ClubDetail now has a list of ClubAddress and ClubContact instances. Independent VisibilityOptions may be set to each of these.
 #### RULEBOOK Definition
 - Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
+#### Match API Calls
+- Deprecated MatchSearch API calls replaced them with ListMatches.
+- Added option in ListMatches to include away matches -- matches that members of the club competed in but not hosted directly by the specified club.
 #### Tournament API Calls
 A Tournament is a group of Matches. Once a Tournament is created "Merged Result Lists" may be added combining scores from accross multiple Result Lists from the member Matches.
 - Added API calls to create, read, and update Tournaments, this includes Merged Result Lists within a Tournament.

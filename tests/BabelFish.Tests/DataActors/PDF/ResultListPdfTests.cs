@@ -205,5 +205,19 @@ namespace Scopos.BabelFish.Tests.DataActors.PDF {
 
             Assert.IsTrue( System.IO.File.Exists( _filePath ) );
         }
+
+        [TestMethod]
+        public async Task TestTournamentQRCodePDF() {
+
+            var client = new OrionMatchAPIClient();
+            var TournamentId = new MatchID("1.1.2026063017471611.2");
+            var getTournamentResponse = await client.GetTournamentPublicAsync(TournamentId);
+
+            var tournamentDetail = getTournamentResponse.Tournament;
+
+            var pdf = new TournamentQRCodePDF(tournamentDetail);
+            await pdf.InitializeAsync();
+            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf");
+        }
     }
 }
