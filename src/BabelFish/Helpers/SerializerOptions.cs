@@ -141,6 +141,7 @@ namespace Scopos.BabelFish.Helpers {
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ParticipantRemark>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ParticipantType>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ProjectorOfScoresType>() );
+                    SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<RangeReportStatus>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<ResultStatus>() );
                     SystemTextJsonDeserializer.Converters.Add( new G_BF_STJ_CONV.EnumConverterByDescription<SquaddingAssignmentType>() );
 

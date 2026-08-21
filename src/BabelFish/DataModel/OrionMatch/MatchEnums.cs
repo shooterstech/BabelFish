@@ -801,4 +801,27 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [EnumMember( Value = "DELETED" )]
         DELETED
     }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum RangeReportStatus {
+        [Description( "UNKNOWN" )]
+        [EnumMember( Value = "UNKNOWN" )]
+        UNKNOWN,
+
+        [Description( "QUEUED" )]
+        [EnumMember( Value = "QUEUED" )]
+        QUEUED,
+
+        [Description( "IN_PROGRESS" )]
+        [EnumMember( Value = "IN_PROGRESS" )]
+        IN_PROGRESS,
+
+        [Description( "COMPLETED" )]
+        [EnumMember( Value = "COMPLETED" )]
+        COMPLETED,
+
+        [Description( "FAILED" )]
+        [EnumMember( Value = "FAILED" )]
+        FAILED
+    }
 }
