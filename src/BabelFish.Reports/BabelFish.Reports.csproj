@@ -7,9 +7,9 @@
     <!-- Update for only breaking changes (e.g. changes that cause the compiler to error) -->
     <AssemblyVersion>2.0.0</AssemblyVersion>
     <!-- Update with each build -->
-    <FileVersion>2.1.3-beta.3</FileVersion>
+    <FileVersion>2.1.4-beta.3</FileVersion>
     <!-- Updaet with each release, may use -alpha, -beta -->
-    <Version>2.1.3-beta.3</Version>
+    <Version>2.1.4-beta.3</Version>
     <PackageId>Scopos.BabelFish.Reports</PackageId>
     <Authors>Scopos LLC</Authors>
     <Company>Scopos LLC</Company>
@@ -24,6 +24,7 @@
     <PackageProjectUrl>https://github.com/shooterstech/BabelFish</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/shooterstech/BabelFish</RepositoryUrl>
+    <!-- BabelFish.Core and BabelFish.Reports should share the same root namespace of Scopos.BabelFish -->
     <RootNamespace>Scopos.BabelFish</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
