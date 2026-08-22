@@ -185,6 +185,16 @@ namespace Scopos.BabelFish.Requests {
             }
         }
 
+        /// <summary>
+        /// Only applicable to non httpMethod.GET calls. This is the HTTP content to send with the request.
+        /// Defaults to PostParameters for existing string based request bodies.
+        /// </summary>
+        public virtual HttpContent PostContent {
+            get {
+                return PostParameters;
+            }
+        }
+
         public override string ToString() {
             return $"{OperationId} request";
         }
