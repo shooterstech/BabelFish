@@ -1,0 +1,15 @@
+﻿{
+  "servers": {
+    "telerik-blazor-mcp": {
+      "type": "stdio",
+      "command": "dnx",
+      "args": [
+        "Telerik.Blazor.MCP",
+        "--yes"
+      ],
+      "env": {
+        "TELERIK_LICENSE_PATH": "C:\\Users\\Jacob\\AppData\\Roaming\\Telerik\\telerik-license.txt"
+      }
+    }
+  }
+}
