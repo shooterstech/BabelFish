@@ -111,10 +111,15 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
                 if (attributeValueAsJsonElement.TryGetProperty( fieldName, out temp )) {
                     dynamic fieldValue = field.DeserializeFromJsonElement( temp );
 
-                    if (_definition.MultipleValues) {
-                        this.SetFieldValue( fieldName, fieldValue, keyFieldValue );
-                    } else {
-                        this.SetFieldValue( fieldName, fieldValue );
+                    try {
+                        if (_definition.MultipleValues) {
+                            this.SetFieldValue( fieldName, fieldValue, keyFieldValue );
+                        } else {
+                            this.SetFieldValue( fieldName, fieldValue );
+                        }
+                    } catch (AttributeValueValidationException avve) {
+                        // In theory, the API shouldn't return a value that is invalid, but if it does, our strategy is to keep the default value (which is set when the AttributeValue is created) and log the error.
+                        _logger.Error( $"Error setting field value for {fieldName} with value {fieldValue}. Exception: {avve.Message}" );
                     }
                 }
                 //If the fieldName is not part of what we are deserializing, then the startegy is to set the value
