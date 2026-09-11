@@ -501,23 +501,22 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             }
         }
 
-        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
+        //[Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
         public async Task EriksResultListPlayground2() {
 
-            var matchId = new MatchID( "1.1.2026061609303732.0" );
-            var resultListName = "Individual - All";
+            var matchId = new MatchID( "1.1.2026083111253658.1" );
+            var resultListName = "Individual - Precision";
             var request = new GetResultListPublicRequest( matchId, resultListName );
             var resultListResponse = await matchClient.GetResultListPublicAsync( request );
 
             var resultList = resultListResponse.ResultList;
-            //resultList.ReSortIfOfficial();
-            var resultListToDisplay = resultList;
+            resultList.ReOrderIfOfficial();
             ResultListIntermediateFormatted? RLIF = null;
 
-            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultListToDisplay );
+            var resultListFormatSetName = await ResultListFormatFactory.FACTORY.GetResultListFormatSetNameAsync( resultList );
             var resultListFormatDefinition = await DefinitionCache.GetResultListFormatDefinitionAsync( resultListFormatSetName );
-            RLIF = new ResultListIntermediateFormatted( resultListToDisplay, resultListFormatDefinition, null );
+            RLIF = new ResultListIntermediateFormatted( resultList, resultListFormatDefinition, null );
             //RLIF.GetCompletionPercentageStringPtr = ResultList.CompletionPercentageFormatting;
             await RLIF.InitializeAsync();
             RLIF.ResolutionWidth = 1570; // int.MaxValue;
@@ -530,16 +529,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             RLIF.RefreshAllRowsParticipantAttributeFields();
 
 
-            var request2 = new GetResultListPublicRequest( matchId, resultListName );
-            var resultListResponse2 = await matchClient.GetResultListPublicAsync( request2 );
-
-            var resultList2 = resultListResponse2.ResultList;
-            resultListToDisplay = resultList2;
-            RLIF.Clear();
-            RLIF.RefreshResultList( resultListToDisplay );
-            RLIF.AppendTokenizedResultList( resultListToDisplay );
-
-
+            Console.WriteLine( $"Match: {matchId}, ResultList: {resultListName}, Status: {resultList.Status}" );
             CellValues tryCellValues, cellValues;
             foreach (var cv in RLIF.GetShownHeaderRow()) {
                 Console.Write( $"{cv.Text}, " );

@@ -25,6 +25,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
         }
+
+        public void OnDeserialized() {
+            EventScores ??= new Dictionary<string, EventScore>();
+            Shots ??= new Dictionary<string, Athena.Shot.Shot>();
+            ResultCofScores ??= new Dictionary<string, EventScore>();
+
+            // Populate the backward pointers for EventScores and ResultCofScores
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+
+            foreach (var rCof in ResultCofScores) {
+                rCof.Value.ParentEventScores = this;
+            }
+        }
         #endregion
 
         #region Data Model Properties
@@ -139,9 +154,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
         [G_NS.JsonProperty( Order = 15 )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        //EKA NOTE Nov 2025: Choosing to use .UtcNow instead of .MinValue. The idea is, if LastUpdated is not a part of the REST API
-        //returned json (as would be the case for Orion 2.23 or before)
-        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
+        // EKA NOTE Nov 2025: Choosing to use .MinValue. The idea is, if LastUpdated is not a part of the REST API
+        // returned json (as would be the case for Orion 2.23 or before), then we really don't know when the last update was.
+        public DateTime LastUpdated { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// If this is a team score, the TeamMembers will be the scores of the team members. If this is an Individual value will be null.
@@ -251,7 +266,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                     foreach (var es in this.EventScores.Values) {
                         if (es.EventType == Definitions.EventtType.EVENT) {
                             _topLevelEventName = es.EventName;
-                            return es.Status;
+                            return CalculateStatusBasedOnTimeout( es.Status );
                         }
                     }
                 }
@@ -259,10 +274,28 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //EKA NOTE: Should we check .EventScores.ResultCofScores ? 
 
             } else if (this.EventScores.TryGetValue( _topLevelEventName, out EventScore es )) {
-                return es.Status;
+                return CalculateStatusBasedOnTimeout( es.Status );
             }
 
             return ResultStatus.OFFICIAL;
+        }
+
+        private ResultStatus CalculateStatusBasedOnTimeout( ResultStatus status ) {
+            if (status == ResultStatus.INTERMEDIATE && (DateTime.UtcNow - LastUpdated) > ResultStatusCalculator.INTERMEDIATE_STATUS_TIMEOUT)
+                return ResultStatus.UNOFFICIAL;
+            return status;
+        }
+
+        /// <inheritdoc />
+        public void PopulateEventScoreBackwardPointers() {
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+            if (ResultCofScores is not null) {
+                foreach (var rCof in ResultCofScores) {
+                    rCof.Value.ParentEventScores = this;
+                }
+            }
         }
 
         /// <summary>

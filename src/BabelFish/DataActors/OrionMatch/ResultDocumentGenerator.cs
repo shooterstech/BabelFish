@@ -137,6 +137,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             resultEvent.ResultCOFID = resultCOFID;
             resultEvent.EventScores = await MatchProject.ShotMapper.GetEventScoresAsync( resultCOFID );
             resultEvent.LastShot = MatchProject.ShotMapper.GetLastShot( resultCOFID, true );
+            resultEvent.PopulateEventScoreBackwardPointers();
 
             // NOTE: Not setting Shots or SquaddingAssignment, as this is not part of a serialized ResultList.
             // NOTE: Do not need to project scores, as GenerateResultListAsync() will do so instead.
@@ -192,7 +193,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
             // Calculate the score and status for the team events.
             foreach (var @event in topLevelEvent.GetEvents( true, true, true, true, true, false, true )) {
-                resultEvent.EventScores[@event.EventName] = new EventScore();
+                resultEvent.EventScores[@event.EventName] = new EventScore( resultEvent );
                 resultStatusCalculator.ClearEventScores();
                 // Sums the scores of the contributing team members.
                 for (int i = 0; i < Math.Min( cofStructure.NumberOfTeamMembers, resultEvent.TeamMembers.Count( item => !item.OutOfCompetition ) ); i++) {

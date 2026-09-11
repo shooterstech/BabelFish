@@ -160,6 +160,15 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public DateTime FirmwareDate { get; set; } = DateTime.MinValue;
 
         /// <summary>
+        /// The date that the Club Admins last received an email about renewing this license. This is used to prevent sending multiple renewal emails in a short period of time.
+        /// <para>If the value is null or DateTime.MinValue.Date then it means we either don't know when the last one was sent, or it has never been sent.</para>
+        /// <para>The value is purposefully a date, and not a date time instance.</para>
+        /// </summary>
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime? LastLicenseRenewalEmail { get; set; } = DateTime.MinValue.Date;
+
+        /// <summary>
         /// Backwards pointer to the owning ClubDetail. This is not serialized in the API response, but is provided for ease of use in client applications.
         /// </summary>
         [G_NS.JsonIgnore]
