@@ -4,6 +4,12 @@ using Scopos.BabelFish.DataModel.OrionMatch;
 namespace Scopos.BabelFish.DataActors.OrionMatch {
     public class ResultStatusCalculator {
 
+        /// <summary>
+        /// The length of time to wait before considering an INTERMEDIATE result to be stale and should instead be considered UNOFFICIAL.
+        /// <para>Currently set to 2 hours.</para>
+        /// </summary>
+        public static readonly TimeSpan INTERMEDIATE_STATUS_TIMEOUT = new TimeSpan( 2, 0, 0 );
+
         private List<IEventScores> _eventScores = new List<IEventScores>();
 
         public ResultStatusCalculator( CourseOfFireStructure courseOfFire ) {
@@ -41,7 +47,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             foreach (IEventScores item in _eventScores) {
                 if (item.EventScores.TryGetValue( eventName, out eventScore )) {
                     allAreFuture &= (eventScore.Status == ResultStatus.FUTURE);
-                    oneIsIntermediate |= (eventScore.Status == ResultStatus.INTERMEDIATE);
+                    oneIsIntermediate |= (eventScore.Status == ResultStatus.INTERMEDIATE && (DateTime.UtcNow - item.LastUpdated) <= INTERMEDIATE_STATUS_TIMEOUT);
                     oneIsUnofficial |= (eventScore.Status == ResultStatus.UNOFFICIAL);
                 }
             }

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -34,7 +35,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         private ResultStatus localStatus = ResultStatus.FUTURE;
 
         /// <summary>
-        /// FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
+        /// Returns the status of the ResultList. The status is determined in party by the EndDate, and LastUpdated properties.
+        /// Possible values are FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4, DefaultValueHandling = G_NS.DefaultValueHandling.Populate )]
@@ -43,6 +45,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             get {
                 if (EndDate < DateTime.Today) {
                     localStatus = ResultStatus.OFFICIAL;
+                    return localStatus;
+                } else if (localStatus == ResultStatus.INTERMEDIATE && (DateTime.UtcNow - LastUpdated) > ResultStatusCalculator.INTERMEDIATE_STATUS_TIMEOUT) {
+                    localStatus = ResultStatus.UNOFFICIAL;
                     return localStatus;
                 } else {
                     return localStatus;
