@@ -610,6 +610,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
         /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
         /// </remarks>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
             MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
@@ -623,6 +624,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchAuthenticatedResponse> GetMatchSearchAuthenticatedAsync( MatchSearchAuthenticatedRequest requestParameters ) {
             MatchSearchAuthenticatedResponse response = new MatchSearchAuthenticatedResponse( requestParameters );
 
@@ -635,6 +637,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
         /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
         /// </remarks>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchAbstractResponse> GetMatchSearchAsync( MatchSearchAbstractRequest requestParameters ) {
             if (requestParameters is MatchSearchPublicRequest)
                 return await this.GetMatchSearchPublicAsync( (MatchSearchPublicRequest)requestParameters );
@@ -918,6 +921,193 @@ namespace Scopos.BabelFish.APIClients {
 
             return response;
 
+        }
+
+        /// <summary>
+        /// Generate Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GenerateRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateRangeReportAuthenticatedAsync( GenerateRangeReportAuthenticatedRequest requestParameters ) {
+            GenerateRangeReportAuthenticatedResponse response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultListName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultListName,
+            UserAuthentication credentials ) {
+            var request = new GenerateRangeReportAuthenticatedRequest( matchId, resultListName, credentials );
+
+            return await GenerateRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportPublicRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportPublicResponse> GetRangeReportPublicAsync( GetRangeReportPublicRequest requestParameters ) {
+            GetRangeReportPublicResponse response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportPublicResponse> GetRangeReportPublicAsync(
+            MatchID matchId,
+            string resultName ) {
+            var request = new GetRangeReportPublicRequest( matchId, resultName );
+
+            return await GetRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync( GetRangeReportAuthenticatedRequest requestParameters ) {
+            GetRangeReportAuthenticatedResponse response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultName,
+            UserAuthentication credentials ) {
+            var request = new GetRangeReportAuthenticatedRequest( matchId, resultName, credentials );
+
+            return await GetRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAbstractResponse> GetRangeReportAsync(
+            MatchID matchId,
+            string resultName,
+            UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetRangeReportPublicAsync( matchId, resultName ).ConfigureAwait( false );
+            } else {
+                return await GetRangeReportAuthenticatedAsync( matchId, resultName, credentials ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls.
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportAbstractRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAbstractResponse> GetRangeReportAsync( GetRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetRangeReportPublicRequest)
+                return await this.GetRangeReportPublicAsync( (GetRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            else if (requestParameters is GetRangeReportAuthenticatedRequest)
+                return await this.GetRangeReportAuthenticatedAsync( (GetRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+        }
+
+        /// <summary>
+        /// Patch Range Report API
+        /// </summary>
+        /// <param name="requestParameters">PatchRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchRangeReportAuthenticatedAsync( PatchRangeReportAuthenticatedRequest requestParameters ) {
+            PatchRangeReportAuthenticatedResponse response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="published"></param>
+        /// <param name="formattedHtml"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultName,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials ) {
+            var request = new PatchRangeReportAuthenticatedRequest( matchId, resultName, credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml
+            };
+
+            return await PatchRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Send Range Report Email API
+        /// </summary>
+        /// <param name="requestParameters">SendRangeReportEmailAuthenticatedRequest object</param>
+        /// <returns>RangeReporter email result</returns>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync( SendRangeReportEmailAuthenticatedRequest requestParameters ) {
+            var response = new SendRangeReportEmailAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Send Range Report Email API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultNames"></param>
+        /// <param name="credentials"></param>
+        /// <param name="dryRun">If true, build the email without sending it.</param>
+        /// <returns>RangeReporter email result</returns>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync(
+            MatchID matchId,
+            IEnumerable<string> resultNames,
+            UserAuthentication credentials,
+            bool dryRun = false ) {
+            var request = new SendRangeReportEmailAuthenticatedRequest( matchId, resultNames, credentials ) {
+                DryRun = dryRun
+            };
+
+            return await SendRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
         }
 
         #endregion

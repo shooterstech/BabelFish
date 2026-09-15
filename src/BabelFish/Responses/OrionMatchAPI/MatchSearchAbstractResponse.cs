@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
+    [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
     public abstract class MatchSearchAbstractResponse : Response<MatchSearchWrapper>, ITokenResponse<MatchSearchAbstractRequest> {
 
-        public MatchSearchAbstractResponse() : base () {
+        public MatchSearchAbstractResponse() : base() {
 
         }
 
@@ -36,13 +33,13 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             } else {
                 throw new ArgumentException( $"Parameter Request is of unexpected type ${Request.GetType()}." );
             }
-		}
+        }
 
-		/// <inheritdoc />
-		public bool HasMoreItems {
-			get {
-				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.MatchSearchList.NextToken );
-			}
-		}
-	}
+        /// <inheritdoc />
+        public bool HasMoreItems {
+            get {
+                return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.MatchSearchList.NextToken );
+            }
+        }
+    }
 }

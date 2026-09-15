@@ -143,7 +143,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
             var response = await client.ListMatchesPublicAsync( request );
 
             Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
-            AssertEveryMatchHasMatchingCourseOfFire( response, cof => cof.TargetCollectionName == "10m Air Rifle");
+            AssertEveryMatchHasMatchingCourseOfFire( response, cof => cof.TargetCollectionName == "10m Air Rifle" );
         }
 
         [TestMethod]

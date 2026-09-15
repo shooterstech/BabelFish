@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 
 namespace Scopos.BabelFish.DataModel.Common {
     /// <summary>
@@ -22,22 +19,27 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// </summary>
         /// <example>Martin Martie McMartin</example>
         [DefaultValue( "" )]
-        public string Name { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
 
         /// <summary>
-        /// The email address for this person.
+        /// The full URL Path to their public page on Rezults. For example https://rezults.com/z/erik/
+        /// </summary>
+        public string AccountUrl { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The primary email address for this person.
         /// </summary>
         [DefaultValue( "" )]
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
-        /// The phone number for this person.
+        /// The primary phone number for this person.
         /// </summary>
         [DefaultValue( "" )]
         public string Phone { get; set; } = string.Empty;
 
         public override string ToString() {
-            return Name;
+            return DisplayName;
         }
     }
 }

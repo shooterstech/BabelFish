@@ -1,7 +1,6 @@
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests.OrionMatchAPI {
@@ -25,6 +24,19 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// Optional filter to only return matches owned by the specified owner id.
         /// </summary>
         public string OwnerId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Optional boolean to include Matches that Club Members of <see cref="OwnerId"/> competed in even if these Matches are not owned by <see cref="OwnerId"/>.
+        /// This is only applicable if <see cref="OwnerId"/> is specified. If <see cref="OwnerId"/> is not specified, this parameter is ignored. Default is false.
+        /// </summary>
+        /// <remarks>
+        /// <para>Club Members are designated by the Club Admin or Club Manager on Rezults. To update Club Members, have the Club Admin or Club Manager log into
+        /// Rezults and visit their <see href="https://rezults.scopos.tech/club/my-clubs/">My Clubs</see> page.</para>
+        /// <para>Athletes who are Club Members of <see cref="OwnerId"/> will be included if they have a <see href="https://support.scopos.tech/index.html?scopos-accounts.html">Scopos Account</see>
+        /// and their scores are <see href="https://support.scopos.tech/index.html?link-athletes-to-their-scopos-accounts.html">linked</see> within the Orion Match. 
+        /// </para>
+        /// </remarks>
+        public bool IncludeAwayMatches { get; set; } = false;
 
         /// <summary>
         /// Optional filter to only return matches with the specified visibility.
@@ -114,6 +126,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 if (!string.IsNullOrWhiteSpace( OwnerId )) {
                     parameterList.Add( "owner-id", new List<string> { OwnerId } );
+                }
+
+                if (IncludeAwayMatches && !string.IsNullOrWhiteSpace( OwnerId )) {
+                    parameterList.Add( "include-away-matches", new List<string> { IncludeAwayMatches.ToString() } );
                 }
 
                 if (Visibility.HasValue) {

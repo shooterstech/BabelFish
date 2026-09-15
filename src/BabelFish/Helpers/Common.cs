@@ -7,7 +7,7 @@ namespace Scopos.BabelFish.Helpers {
     /// </summary>
     public static class Common {
 
-        public static readonly string DATA_MODEL_VERSION = "2.0.0";
+        public static readonly string DATA_MODEL_VERSION = "2.1.0";
 
         /// <summary>
         /// Returns the Levenshtein Distance between two strings.
@@ -838,7 +838,7 @@ namespace Scopos.BabelFish.Helpers {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var buffer = new byte[bytes];
 #if NETSTANDARD2_1
-            RandomNumberGenerator.Fill(buffer);
+            RandomNumberGenerator.Fill( buffer );
 #else
             using (var rng = RandomNumberGenerator.Create()) {
                 rng.GetBytes( buffer );

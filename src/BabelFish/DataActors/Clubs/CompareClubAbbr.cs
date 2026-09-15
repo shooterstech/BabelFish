@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.Helpers;
-using Scopos.BabelFish.Helpers.Extensions;
-using System.Text;
 using Scopos.BabelFish.DataModel.Clubs;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
-namespace Scopos.BabelFish.DataActors.Clubs
-{
-    public class CompareClubAbbr : IComparer<ClubAbbr>
-    {
-        public enum CompareMethod
-        {
+namespace Scopos.BabelFish.DataActors.Clubs {
+    public class CompareClubAbbr : IComparer<ClubAbbr> {
+        public enum CompareMethod {
 
             /// <summary>
             /// Sort by AccountNumber
@@ -29,8 +21,7 @@ namespace Scopos.BabelFish.DataActors.Clubs
             IS_SHOOTING
         };
 
-        public CompareClubAbbr(CompareMethod compareMethod, SortBy sortBy)
-        {
+        public CompareClubAbbr( CompareMethod compareMethod, SortBy sortBy ) {
             Method = compareMethod;
             SortBy = sortBy;
         }
@@ -40,33 +31,31 @@ namespace Scopos.BabelFish.DataActors.Clubs
         public SortBy SortBy { get; private set; }
 
         /// <inheritdoc/>
-        public int Compare(ClubAbbr x, ClubAbbr y)
-        {
+        public int Compare( ClubAbbr x, ClubAbbr y ) {
 
             int compare = 0;
             Individual X, Y;
 
-            switch (Method)
-            {
+            switch (Method) {
 
                 case CompareMethod.ACCOUNT_NUMBER:
 
-                    compare = x.AccountNumber.CompareTo(y.AccountNumber);
+                    compare = x.AccountNumber.CompareTo( y.AccountNumber );
 
                     break;
 
                 case CompareMethod.NAME:
 
-                    compare = x.Name.CompareTo(y.Name);
+                    compare = x.Name.CompareTo( y.Name );
 
                     break;
 
                 case CompareMethod.IS_SHOOTING:
 
-                    compare = x.IsCurrentlyShooting.CompareTo(y.IsCurrentlyShooting);
+                    compare = x.IsCurrentlyShooting.CompareTo( y.IsCurrentlyShooting );
 
                     if (compare == 0)
-                        compare = x.Name.CompareTo(y.Name);
+                        compare = x.Name.CompareTo( y.Name );
                     else
                         return -1 * compare;
 

@@ -15,6 +15,20 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         private bool _isMailing = false;
         private bool _isPhysical = false;
         private bool _isRange = false;
+
+
+        /// <summary>
+        /// Helper property to return the list of valid values for <see cref="Visibility"/>.
+        /// <list type="bullet">
+        /// <item>
+        /// <description>PROTECTED: May be seen by Club Members.</description>
+        /// </item>
+        /// <item>
+        /// <description>PUBLIC: May be seen by anyone.</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        public static readonly List<VisibilityOption> VisibilityOptions = new List<VisibilityOption>() { VisibilityOption.PROTECTED, VisibilityOption.PUBLIC };
         #endregion
 
         #region Constructors, Factory Methods, and Initialization
@@ -148,15 +162,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// Gets or sets the visibility level that controls who can view this address.
-        /// If <see cref="VisibilityOptions"/> is null or empty, any defined <see cref="VisibilityOption"/> value is allowed.
-        /// Otherwise, the value must be contained in <see cref="VisibilityOptions"/>.
+        /// The set value must be contained in <see cref="VisibilityOptions"/>. If not, the most restrictive option (the first in the list) will be used instead.
         /// </summary>
         [G_NS.JsonProperty( Order = 10 )]
         public VisibilityOption Visibility {
             get => _visibility;
             set {
-                if (VisibilityOptions != null && VisibilityOptions.Count > 0 && !VisibilityOptions.Contains( value ))
-                    throw new ArgumentOutOfRangeException( nameof( value ), "Visibility must be one of the allowed VisibilityOptions values." );
+                if (!VisibilityOptions.Contains( value ))
+                    _visibility = VisibilityOptions[0];
 
                 _visibility = value;
             }
@@ -258,13 +271,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
         public ClubDetail? Club { get; set; }
-
-        /// <summary>
-        /// Helper property to return the list of valid VisibilityOption values. This is not returned as part of the REST API response, but is provided for ease of use in client applications.
-        /// </summary>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public static List<VisibilityOption> VisibilityOptions { get; private set; } = new List<VisibilityOption>() { VisibilityOption.PRIVATE, VisibilityOption.PUBLIC };
 
         /// <inheritdoc />
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>

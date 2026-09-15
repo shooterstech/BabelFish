@@ -8,6 +8,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public override Request Copy() {
             return new ListMatchesPublicRequest() {
                 OwnerId = OwnerId,
+                IncludeAwayMatches = IncludeAwayMatches,
                 Visibility = Visibility,
                 ShowOnSearch = ShowOnSearch,
                 StartDate = StartDate,

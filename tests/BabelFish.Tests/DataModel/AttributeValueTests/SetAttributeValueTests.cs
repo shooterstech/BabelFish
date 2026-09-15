@@ -112,7 +112,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
             await userAuthentication.InitializeAsync();
 
             //The Test Attribute defines an attribute meant for testing. Do you like the name I gave it? I came up with it myself.
-            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Address" );
+            var setNameTestAttriubte = SetName.Parse( "v1.0:orion:Pronouns" );
 
             List<SetName> myAttributes = new List<SetName>()
             {
