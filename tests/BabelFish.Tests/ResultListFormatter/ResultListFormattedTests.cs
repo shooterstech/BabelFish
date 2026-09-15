@@ -501,7 +501,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             }
         }
 
-        //[Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
+        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
         public async Task EriksResultListPlayground2() {
 
