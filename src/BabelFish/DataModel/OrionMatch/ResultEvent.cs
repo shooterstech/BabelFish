@@ -10,7 +10,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultEvent :
         IEventScoreProjection,
         IRLIFItem,
-        ICheckSum {
+        ICheckSum,
+        G_STJ_SER.IJsonOnDeserialized {
 
         #region Private Fields
         //Key is the Singular Event Name, Value is the Shot
@@ -26,6 +27,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             TeamMembers = null;
         }
 
+        /// <summary>
+        /// System.Text.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
         public void OnDeserialized() {
             EventScores ??= new Dictionary<string, EventScore>();
             Shots ??= new Dictionary<string, Athena.Shot.Shot>();
@@ -40,6 +44,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 rCof.Value.ParentEventScores = this;
             }
         }
+
+        /// <summary>
+        /// Newtonsoft.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
+        /// <param name="context"></param>
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized( System.Runtime.Serialization.StreamingContext context ) => OnDeserialized();
         #endregion
 
         #region Data Model Properties

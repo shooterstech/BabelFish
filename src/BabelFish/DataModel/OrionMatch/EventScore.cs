@@ -94,7 +94,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// The status of this Result COF. It is generally best to call <see cref="GetStatus()"/> instead of reading the value from
-        /// .Status, as the status may be updated if the last updated time is more than a two hours old.
+        /// .Status, as the status may be updated if the last updated time is more than two hours old.
         /// <list type="bullet">
         /// <item>FUTURE</item>
         /// <item>INTERMEDIATE</item>
