@@ -2,6 +2,12 @@ using Shot = Scopos.BabelFish.DataModel.Athena.Shot.Shot;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
+    /// <summary>
+    /// Interface to describe an object that contains the scores (see properties <see cref="EventScores"/> and <see cref="ResultCofScores"/>
+    /// that are a dictionary of <see cref="EventScore"/>) and shots (see properties <see cref="Shots"/> that is a dictionary of <see cref="Shot"/>)
+    /// fired by a participant.
+    /// <para>Known implementations include <see cref="ResultEvent"/> and <see cref="ResultCOF"/>.</para>
+    /// </summary>
     public interface IEventScores : IParticipant {
 
         /// <summary>
@@ -44,6 +50,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <summary>
         /// The UTC time this IEventScore was last updated.
+        /// <para>Implementations should set the default value to DateTime.MinValue to indicate we don't know when the EventScore was last updated.
+        /// Which also means when an EventScore is generated LastUpdated should be set to UtcNow.</para>
         /// </summary>
         DateTime LastUpdated { get; set; }
 
@@ -70,5 +78,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns></returns>
         bool CurrentlyCompetingOrRecentlyDone();
+
+        /// <summary>
+        /// Populates the <see cref="EventScore.ParentEventScores"/> (backwards pointer) property of each EventScore in the <see cref="EventScores"/> and <see cref="ResultCofScores"/> dictionaries.
+        /// </summary>
+        void PopulateEventScoreBackwardPointers();
     }
 }

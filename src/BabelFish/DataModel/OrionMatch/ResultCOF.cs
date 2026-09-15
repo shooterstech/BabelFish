@@ -12,7 +12,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultCOF :
         IEventScoreProjection,
         ISaveToFile,
-        ICheckSum {
+        ICheckSum,
+        G_STJ_SER.IJsonOnDeserialized {
 
         #region Private Variables
         //Key is the Singular Event Name, Value is the Shot
@@ -22,6 +23,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Constructors, Initialization, and Factory Methods
 
+        /// <summary>
+        /// System.Text.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
+        public void OnDeserialized() {
+            EventScores ??= new Dictionary<string, EventScore>();
+            Shots ??= new Dictionary<string, Athena.Shot.Shot>();
+            ResultCofScores ??= new Dictionary<string, EventScore>();
+
+            // Populate the backward pointers for EventScores and ResultCofScores
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+
+            foreach (var rCof in ResultCofScores) {
+                rCof.Value.ParentEventScores = this;
+            }
+        }
+
+        /// <summary>
+        /// Newtonsoft.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
+        /// <param name="context"></param>
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized( System.Runtime.Serialization.StreamingContext context ) => OnDeserialized();
         #endregion
 
         #region Events
@@ -364,6 +389,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         public bool ShouldSerializeSquaddingAssignment() {
             return SquaddingAssignment is not null && !SquaddingAssignment.NotYetSquadded;
+        }
+
+        /// <inheritdoc />
+        public void PopulateEventScoreBackwardPointers() {
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+            if (ResultCofScores is not null) {
+                foreach (var rCof in ResultCofScores) {
+                    rCof.Value.ParentEventScores = this;
+                }
+            }
         }
 
         /// <inheritdoc />
