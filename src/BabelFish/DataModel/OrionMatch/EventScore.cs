@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.ResultListMerger;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -19,9 +20,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Constructors, Factory Methods, Initialization
         /// <summary>
-        /// Public constructor.
+        /// Public constructor. Unless you are a deserializer, you should probably use the constructor that takes an IEventScoreProjection as a parameter.
         /// </summary>
         public EventScore() {
+        }
+
+        /// <summary>
+        /// Public constructor. Creates a new instance of EventScore and sets the ParentEventScores property to the provided IEventScoreProjection.
+        /// </summary>
+        /// <param name="parent"></param>
+        public EventScore( IEventScoreProjection parent ) {
+            this.ParentEventScores = parent;
         }
 
         /// <summary>
@@ -84,8 +93,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public EventtType EventType { get; set; } = EventtType.NONE;
 
         /// <summary>
-        /// The status of this Result COF. It is generally best to call .GetStatus() instead of reading the value from
-        /// .Status, as the status may be updated if the last updated time is more than an hour old.
+        /// The status of this Result COF. It is generally best to call <see cref="GetStatus()"/> instead of reading the value from
+        /// .Status, as the status may be updated if the last updated time is more than a two hours old.
         /// <list type="bullet">
         /// <item>FUTURE</item>
         /// <item>INTERMEDIATE</item>
@@ -140,7 +149,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        public string CheckSum { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Backwards pointer to the parent IEventScores that this EventScore is part of.
+        /// Which will currently (Sept 2026) would either be a <see cref="ResultCOF"/> or <see cref="ResultEvent"/>.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public IEventScores? ParentEventScores { get; set; } = null;
 
         #endregion
 
@@ -157,6 +174,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 hash ^= Projected.CalculateChecksum();
 
             return hash;
+        }
+
+        /// <summary>
+        /// Returns the calculated ResultStatus value. This calculation is based on the current Status value and the last updated time of the parent IEventScores.
+        /// If the last updated time is more than <see cref="ResultStatusCalculator.INTERMEDIATE_STATUS_TIMEOUT"/> (two hours old),
+        /// the status will be changed from INTERMEDIATE to UNOFFICIAL.
+        /// </summary>
+        /// <returns>The calculated ResultStatus value.</returns>
+        public ResultStatus GetStatus() {
+            var lastUpdated = ParentEventScores?.LastUpdated ?? DateTime.MinValue;
+            if (Status == ResultStatus.FUTURE)
+                return ResultStatus.FUTURE;
+
+            if (Status == ResultStatus.INTERMEDIATE && (DateTime.UtcNow - lastUpdated) <= ResultStatusCalculator.INTERMEDIATE_STATUS_TIMEOUT)
+                return ResultStatus.INTERMEDIATE;
+
+            if (Status == ResultStatus.UNOFFICIAL || Status == ResultStatus.INTERMEDIATE)
+                return ResultStatus.UNOFFICIAL;
+
+            return ResultStatus.OFFICIAL;
         }
 
         /// <summary>

@@ -12,7 +12,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultCOF :
         IEventScoreProjection,
         ISaveToFile,
-        ICheckSum {
+        ICheckSum,
+        G_STJ_SER.IJsonOnDeserialized {
 
         #region Private Variables
         //Key is the Singular Event Name, Value is the Shot
@@ -22,6 +23,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Constructors, Initialization, and Factory Methods
 
+        public void OnDeserialized() {
+            EventScores ??= new Dictionary<string, EventScore>();
+            Shots ??= new Dictionary<string, Athena.Shot.Shot>();
+            ResultCofScores ??= new Dictionary<string, EventScore>();
+
+            // Populate the backward pointers for EventScores and ResultCofScores
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+
+            foreach (var rCof in ResultCofScores) {
+                rCof.Value.ParentEventScores = this;
+            }
+        }
         #endregion
 
         #region Events
@@ -364,6 +379,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <returns></returns>
         public bool ShouldSerializeSquaddingAssignment() {
             return SquaddingAssignment is not null && !SquaddingAssignment.NotYetSquadded;
+        }
+
+        /// <inheritdoc />
+        public void PopulateEventScoreBackwardPointers() {
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+            if (ResultCofScores is not null) {
+                foreach (var rCof in ResultCofScores) {
+                    rCof.Value.ParentEventScores = this;
+                }
+            }
         }
 
         /// <inheritdoc />

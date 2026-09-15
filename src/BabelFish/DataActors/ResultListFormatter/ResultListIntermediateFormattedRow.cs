@@ -903,7 +903,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             if (_resultEvent.EventScores is not null
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore eventScore )) {
-                switch (eventScore.Status) {
+                switch (GetStatus()) {
                     case ResultStatus.FUTURE:
                         return 0;
                     case ResultStatus.UNOFFICIAL:
