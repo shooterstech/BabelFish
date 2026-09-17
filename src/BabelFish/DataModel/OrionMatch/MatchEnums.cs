@@ -803,6 +803,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     }
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum RangeReportKind {
+        [Description( "MATCH" )]
+        [EnumMember( Value = "MATCH" )]
+        MATCH,
+
+        [Description( "LEAGUE_GAME" )]
+        [EnumMember( Value = "LEAGUE_GAME" )]
+        LEAGUE_GAME
+    }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum RangeReportStatus {
         [Description( "UNKNOWN" )]
         [EnumMember( Value = "UNKNOWN" )]

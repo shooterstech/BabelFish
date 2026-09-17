@@ -1,5 +1,17 @@
+using Scopos.BabelFish.DataModel.Definitions;
+
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class RangeReport {
+
+        public RangeReportKind ReportKind { get; set; } = RangeReportKind.MATCH;
+
+        public MatchID? LeagueId { get; set; }
+
+        public MatchID? CanonicalLeagueId { get; set; }
+
+        public string? LeagueName { get; set; }
+
+        public List<string> LeagueTeamNames { get; set; } = new List<string>();
 
         public string Headline { get; set; } = string.Empty;
 
@@ -15,12 +27,18 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public int CourseOfFireId { get; set; } = 1;
 
+        [Obsolete( "MilestoneStrategy is no longer returned by the RangeReporter API." )]
         public string MilestoneStrategy { get; set; } = string.Empty;
 
         public List<int>? ShotMilestoneCounts { get; set; }
 
+        public int? MilestoneCount { get; set; }
+
         public int? ExpectedShots { get; set; }
 
+        public ScoreComponent? ScoreComponent { get; set; }
+
+        [Obsolete( "SnapshotOrderBy is no longer returned by the RangeReporter API." )]
         public string SnapshotOrderBy { get; set; } = string.Empty;
 
         public List<string> UserContext { get; set; } = new List<string>();

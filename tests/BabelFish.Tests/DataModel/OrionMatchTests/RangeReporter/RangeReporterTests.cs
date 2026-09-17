@@ -32,10 +32,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                 "Individual - Precision",
                 CreateAuthentication() ) {
                 CourseOfFireId = 1,
-                MilestoneStrategy = "numshots",
                 ShotMilestoneCounts = new List<int> { 10, 20, 30 },
-                ExpectedShots = 60,
-                SnapshotOrderBy = "Event",
                 UserContext = new List<string> { "State championship", "Personal best" },
                 DryRun = true
             };
@@ -48,10 +45,10 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             Assert.IsFalse( queryParameters.ContainsKey( "match-id" ) );
             Assert.AreEqual( "Individual - Precision", queryParameters["result-name"].Single() );
             Assert.AreEqual( "1", queryParameters["course-of-fire-id"].Single() );
-            Assert.AreEqual( "numshots", queryParameters["milestone-strategy"].Single() );
             Assert.AreEqual( "10,20,30", queryParameters["shot-milestones"].Single() );
-            Assert.AreEqual( "60", queryParameters["expected-shots"].Single() );
-            Assert.AreEqual( "Event", queryParameters["snapshot-order-by"].Single() );
+            Assert.IsFalse( queryParameters.ContainsKey( "milestone-strategy" ) );
+            Assert.IsFalse( queryParameters.ContainsKey( "expected-shots" ) );
+            Assert.IsFalse( queryParameters.ContainsKey( "snapshot-order-by" ) );
             CollectionAssert.AreEqual( new List<string> { "State championship", "Personal best" }, queryParameters["user-context"] );
             Assert.AreEqual( "True", queryParameters["dry-run"].Single() );
         }
@@ -199,7 +196,9 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         }
 
         [TestMethod]
-        public async Task SendRangeReportEmailCanOnlySucceedOnce() {
+        [TestCategory( "Integration" )]
+        [Ignore( "Calls the live production API. The offline request tests cover email safety." )]
+        public async Task SendRangeReportEmailDryRunCanBeRepeated() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
             var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
             var request = new SendRangeReportEmailAuthenticatedRequest(
@@ -213,6 +212,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                 DryRun = true
             };
 
+            Assert.AreEqual( "True", request.QueryParameters["dry-run"].Single() );
             var firstResponse = await client.SendRangeReportEmailAuthenticatedAsync( request );
 
             Assert.AreEqual( HttpStatusCode.OK, firstResponse.RestApiStatusCode );
@@ -222,9 +222,8 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
 
             var secondResponse = await client.SendRangeReportEmailAuthenticatedAsync( request );
 
-            Assert.AreEqual( HttpStatusCode.BadRequest, secondResponse.RestApiStatusCode );
-            Assert.IsTrue( secondResponse.MessageResponse.Message.Any( message =>
-                message.Contains( "Only one Range Report email can be sent for a match." ) ) );
+            Assert.AreEqual( HttpStatusCode.OK, secondResponse.RestApiStatusCode );
+            Assert.IsTrue( secondResponse.RangeReportEmail.EmailsSent > 0 );
         }
 
         [TestMethod]
@@ -232,6 +231,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             var json = """
             {
                 "RangeReport": {
+                    "ReportKind": "MATCH",
                     "Headline": "Patched RangeReporter Press Release",
                     "Paragraphs": [
                         "Updated by PatchRangeReport local test."
@@ -241,10 +241,10 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                     "LicenseNumber": 2063,
                     "ResultListName": "Individual - Precision",
                     "CourseOfFireId": 1,
-                    "MilestoneStrategy": "numshots",
                     "ShotMilestoneCounts": [10, 20, 30],
+                    "MilestoneCount": 3,
                     "ExpectedShots": 60,
-                    "SnapshotOrderBy": "Event",
+                    "ScoreComponent": "D",
                     "UserContext": [
                         "State championship"
                     ],
@@ -260,16 +260,17 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             var wrapper = G_STJ.JsonSerializer.Deserialize<RangeReportWrapper>( json, SerializerOptions.SystemTextJsonDeserializer );
 
             Assert.IsNotNull( wrapper );
+            Assert.AreEqual( RangeReportKind.MATCH, wrapper.RangeReport.ReportKind );
             Assert.AreEqual( "Patched RangeReporter Press Release", wrapper.RangeReport.Headline );
             Assert.IsTrue( wrapper.RangeReport.Published );
             Assert.AreEqual( "1.2063.2026043009084183.0", wrapper.RangeReport.MatchId );
             Assert.AreEqual( 2063, wrapper.RangeReport.LicenseNumber );
             Assert.AreEqual( "Individual - Precision", wrapper.RangeReport.ResultListName );
             Assert.AreEqual( 1, wrapper.RangeReport.CourseOfFireId );
-            Assert.AreEqual( "numshots", wrapper.RangeReport.MilestoneStrategy );
             CollectionAssert.AreEqual( new List<int> { 10, 20, 30 }, wrapper.RangeReport.ShotMilestoneCounts );
+            Assert.AreEqual( 3, wrapper.RangeReport.MilestoneCount );
             Assert.AreEqual( 60, wrapper.RangeReport.ExpectedShots );
-            Assert.AreEqual( "Event", wrapper.RangeReport.SnapshotOrderBy );
+            Assert.AreEqual( "D", wrapper.RangeReport.ScoreComponent?.ToString() );
             CollectionAssert.AreEqual( new List<string> { "State championship" }, wrapper.RangeReport.UserContext );
             Assert.AreEqual( 4, wrapper.RangeReport.TokensRemaining );
             Assert.AreEqual( true, wrapper.RangeReport.AiGenerated );

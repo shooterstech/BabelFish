@@ -8,6 +8,10 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             Request = request;
         }
 
+        public SendRangeReportEmailAuthenticatedResponse( SendLeagueRangeReportEmailAuthenticatedRequest request ) : base() {
+            Request = request;
+        }
+
         /// <summary>
         /// Facade returning the RangeReporter email result.
         /// </summary>
