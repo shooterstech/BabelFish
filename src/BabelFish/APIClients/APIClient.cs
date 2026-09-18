@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using Scopos.BabelFish.DataModel.Common;
@@ -140,6 +141,9 @@ namespace Scopos.BabelFish.APIClients {
 
             try {
 
+                // Perform any pre-call validation or action items on the request object.
+                await request.PreRequestMethod();
+
                 HttpResponseMessage responseMessage = new HttpResponseMessage();
 
                 HttpRequestMessage requestMessage;
@@ -260,11 +264,12 @@ namespace Scopos.BabelFish.APIClients {
                     }
                 } else {
                     var msg = $"API error with: {responseMessage.ReasonPhrase}";
-                    _logger.Error( msg );
-                    _logger.Debug( jsonAsString );
                     response.RestApiStatusCode = responseMessage.StatusCode;
                     response.OverallStatusCode = RequestStatusCode.RestApiServerError;
                     response.ExceptionMessage = msg;
+
+                    LogErrorAndAssert( null, msg );
+                    _logger.Debug( jsonAsString );
                 }
 
             } catch (JsonException je) {
@@ -273,9 +278,9 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = je.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                _logger.Fatal( je, $"JsonException: {je.Message}" );
-                _logger.Debug( jsonAsString );
 
+                LogErrorAndAssert( je, $"JsonException: {je.Message}" );
+                _logger.Debug( jsonAsString );
             } catch (TaskCanceledException tce) {
                 //This is a timeout exception. The request took longer than allowed (which is set by _tiemOut, or 15s).
                 //Likely a network issue of some sort. Up to including firewall blocking request, or Internet is down.
@@ -284,9 +289,17 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = tce.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                _logger.Fatal( tce, "API Call timed out: {failmsg}", tce.Message );
 
+                LogErrorAndAssert( tce, $"API Call timed out: {tce.Message}" );
+            } catch (APIRequestParameterException re) {
+                // Usually thrown by a concrete Request object, when the parameters are not valid, incomplete, or missing. This is usually a programming error, and should be fixed in the code.
+                response.RestApiStatusCode = HttpStatusCode.InternalServerError;
+                response.OverallStatusCode = RequestStatusCode.ParameterError;
+                response.ExceptionMessage = re.Message;
+                response.Json = jsonAsString;
+                response.TimeToRun = DateTime.Now - startTime;
+
+                LogErrorAndAssert( re, $"Request parameters are invalid: {re.Message}" );
             } catch (Exception ex) {
 
                 //Keep NotFound exceptions, otherwise replace with internal server error
@@ -294,10 +307,20 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = ex.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                _logger.Fatal( ex, $"API Call failed: {ex.Message}" );
+
+
+                LogErrorAndAssert( ex, $"API Call failed: {ex.Message}" );
                 _logger.Debug( jsonAsString );
             }
+        }
+
+        private void LogErrorAndAssert( Exception? ex, string msg ) {
+            if (ex == null) {
+                _logger.Fatal( msg );
+            } else {
+                _logger.Fatal( ex, msg );
+            }
+            Debug.Assert( false, msg );
         }
 
         private static MessageResponse CloneMessageResponse( MessageResponse? source ) { //currently MessageResponse caching is commented out

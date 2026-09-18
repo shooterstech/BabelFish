@@ -217,19 +217,5 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
-        /// <summary>
-        /// Calls the internal image moderation API request.
-        /// </summary>
-        /// <param name="requestParameters"></param>
-        /// <returns></returns>
-        public async Task<PatchModerateImageAuthenticatedResponse> PatchModerateImageAuthenticatedAsync( PatchModerateImageAuthenticatedRequest requestParameters ) {
-
-            PatchModerateImageAuthenticatedResponse response = new PatchModerateImageAuthenticatedResponse( requestParameters );
-
-            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
-
-            return response;
-        }
-
     }
 }

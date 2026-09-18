@@ -42,11 +42,18 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         MATCH,
 
         /// <summary>
-        /// A League image is an image associated with a league, such as a logo or a header image for the League.
+        /// A League Team image is an image associated with a league team, such as the team's logo or team photo.
         /// </summary>
-        [Description( "League" )]
-        [EnumMember( Value = "League" )]
-        LEAGUE,
+        [Description( "League Team" )]
+        [EnumMember( Value = "League Team" )]
+        LEAGUE_TEAM,
+
+        /// <summary>
+        /// A League Game image is an image associated with a specific game within a league.
+        /// </summary>
+        [Description( "League Game" )]
+        [EnumMember( Value = "League Game" )]
+        LEAGUE_GAME,
 
         /// <summary>
         /// A User image is an image associated with a user profile (aka Scopos Account), such as a profile picture or a cover photo.
@@ -116,6 +123,7 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// </summary>
         [Description( "New" )]
         [EnumMember( Value = "New" )]
+        [Obsolete( "Do we even need this? " )]
         NEW,
 
         /// <summary>
