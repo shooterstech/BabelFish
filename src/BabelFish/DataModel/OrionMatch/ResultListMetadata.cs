@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         private ResultStatus localStatus = ResultStatus.FUTURE;
 
         /// <summary>
-        /// Returns the status of the ResultList. The status is determined in party by the EndDate, and LastUpdated properties.
+        /// Returns the status of the ResultList. The status is determined in part by the EndDate, and LastUpdated properties.
         /// Possible values are FUTURE, INTERMEDIATE, UNOFFICIAL, OFFICIAL
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
