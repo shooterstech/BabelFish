@@ -3,28 +3,32 @@ using System.Net;
 using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.ScoposData;
+using Scopos.BabelFish.Requests.ImageAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 
 namespace Scopos.BabelFish.Tests.APIClients.ImageClientTests {
     [TestClass]
-    public class PatchModerateImageTests : BaseTestClass {
-        private static byte[] LoadImageBytesFromResource( string fileName ) {
-            /* 
-             * In order for this code to work, the image file must be added to the project as an embedded resource.
-             * Check the properties of the image file in Visual Studio and ensure that "Build Action" is set to "Embedded Resource".
-             */
-
-            var assembly = typeof( PatchModerateImageTests ).Assembly;
+    public class UploadImageTests : BaseTestClass {
+        private static FileInfo GetImageFileInfoFromResource( string fileName ) {
+            var assembly = typeof( UploadImageTests ).Assembly;
             var resourceName = $"Scopos.BabelFish.Tests.Resources.Images.{fileName}";
 
             using var stream = assembly.GetManifestResourceStream( resourceName )
-                ?? throw new FileNotFoundException(
-                    $"Embedded resource not found: {resourceName}" );
+                ?? throw new FileNotFoundException( $"Embedded resource not found: {resourceName}" );
 
-            using var memoryStream = new MemoryStream();
-            stream.CopyTo( memoryStream );
-            return memoryStream.ToArray();
+            var tempDirectory = Path.Combine( Path.GetTempPath(), "BabelFish.Tests", "Images" );
+            Directory.CreateDirectory( tempDirectory );
+
+            var tempFilePath = Path.Combine(
+                tempDirectory,
+                Path.GetFileName( fileName ) );
+
+            using (var fileStream = new FileStream( tempFilePath, FileMode.Create, FileAccess.Write, FileShare.None )) {
+                stream.CopyTo( fileStream );
+            }
+
+            return new FileInfo( tempFilePath );
         }
 
         [TestMethod]
@@ -35,18 +39,17 @@ namespace Scopos.BabelFish.Tests.APIClients.ImageClientTests {
             await userAuthentication.InitializeAsync();
 
             var request = new UploadImageAuthenticatedRequest( userAuthentication ) {
-                ImageBytes = LoadImageBytesFromResource( "Milton Farrow.jpg" ),
-                FileType = ImageFileType.JPEG,
                 Caption = "A local test image",
                 AltText = "Local test image",
                 ImageCategory = ImageCategory.CLUB,
                 PrimaryKey = "15", // License Number
                 SubKey = "", // Should be left empty for CLUB images.
-                GroupKey = ImageGroupKeyType.BULK
+                GroupKey = ImageGroupKeyType.BULK,
+                ImageFile = GetImageFileInfoFromResource( "Milton Farrow.jpg" )
             };
 
             var client = new ImageClient();
-            var response = await client.PatchModerateImageAuthenticatedAsync( request );
+            var response = await client.UploadImageAuthenticatedAsync( request );
 
             Assert.IsNotNull( response );
             Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode, $"Expecting an OK status code, instead received {response.RestApiStatusCode} with overall status {response.OverallStatusCode}, and message {response.ExceptionMessage}." );

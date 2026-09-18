@@ -119,7 +119,7 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         /// <summary>
         /// References the image file to upload. The file should be in a supported image format (JPEG or PNG). The file path should be valid and accessible by the application.
         /// </summary>
-        public FileInfo ImageFile { get; set; } = new FileInfo( "" );
+        public FileInfo? ImageFile { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the category of the image.
@@ -166,6 +166,8 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         /// </summary>
         public string SubKey { get; set; } = "";
 
+        internal string S3Key { get; set; } = "";
+
         /// <summary>
         /// ImageGroupKey helps to categorize images based on their intended use within Rezults. It specifies where the image is
         /// meant to be displayed, such as in headers, profiles, or as part of a bulk collection of images.
@@ -180,13 +182,18 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         /// <inheritdoc />
         public override Dictionary<string, List<string>> QueryParameters {
             get {
+                if (string.IsNullOrWhiteSpace( S3Key )) {
+                    throw new APIRequestParameterException( $"The S3Key property must be set to a valid S3 key for the uploaded image. Usually this value is returned by the GetPresignedUrlRequest." );
+                }
+
                 return new Dictionary<string, List<string>>() {
                     { "caption", new List<string>() { Caption } },
                     { "alt-text", new List<string>() { AltText } },
                     { "image-category", new List<string>() { ImageCategory.Description() } },
                     { "primary-key", new List<string>() { PrimaryKey } },
                     { "sub-key", new List<string>() { SubKey } },
-                    { "group-key", new List<string>() { GroupKey.Description() } }
+                    { "group-key", new List<string>() { GroupKey.Description() } },
+                    { "s3-key", new List<string>() { S3Key} }
                 };
             }
         }
@@ -212,10 +219,11 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
             var presignedUrlRequest = new GetPresignedUrlRequest( ImageFile, this.Credentials );
             var presignedUrlResponse = await _imageClient.GetPresignedUrlAsync( presignedUrlRequest );
             if (!presignedUrlResponse.HasOkStatusCode) {
-                throw new APIRequestParameterException( $"Failed to get a presigned URL for the image upload. Status code: {presignedUrlResponse.StatusCode}, Message: {presignedUrlResponse.Message}" );
+                throw new APIRequestParameterException( $"Failed to get a presigned URL for the image upload. Status code: {presignedUrlResponse.OverallStatusCode}, Message: {presignedUrlResponse.ExceptionMessage}" );
             }
 
             string presignedUrl = presignedUrlResponse.PresignedUrl.Url;
+            this.S3Key = presignedUrlResponse.PresignedUrl.S3Key;
 
             // Create the content
             using var content = new ByteArrayContent( bytes );

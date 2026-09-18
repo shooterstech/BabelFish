@@ -26,18 +26,24 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         }
 
         public override string RelativePath {
-            get { return $"/image/presign-url"; }
+            get { return "/image/presign-url"; }
         }
 
         /// <summary>
         /// References the image file to upload. The file should be in a supported image format (JPEG or PNG). The file path should be valid and accessible by the application.
         /// </summary>
-        public FileInfo ImageFile { get; set; } = new FileInfo( "" );
+        public FileInfo? ImageFile { get; set; } = null;
 
         public override Dictionary<string, List<string>> QueryParameters {
             get {
+
+                // Check that the ImageFile is valid and exists.
+                if (ImageFile == null || !ImageFile.Exists) {
+                    throw new APIRequestParameterException( $"The ImageFile property must be set to a valid file path that exists. Currently: {ImageFile?.FullName}" );
+                }
+
                 return new Dictionary<string, List<string>>() {
-                    { "fileName", new List<string>() { ImageFile.Name } }
+                    { "filename", new List<string>() { ImageFile.Name } }
                 };
             }
         }

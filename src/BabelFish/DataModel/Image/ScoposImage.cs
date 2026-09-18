@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.DataModel.Image {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
-        public int ImageId { get; set; } = 0;
+        public string ImageId { get; set; } = string.Empty;
 
         /// <summary>
         /// The caption for the image. This is a user-friendly description of the image that can be displayed in the UI.

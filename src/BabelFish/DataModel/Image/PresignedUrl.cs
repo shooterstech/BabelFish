@@ -3,8 +3,10 @@ namespace Scopos.BabelFish.DataModel.Image {
 
         public string Url { get; set; } = string.Empty;
 
+        public string S3Key { get; set; } = string.Empty;
+
         public override string ToString() {
-            return Url;
+            return S3Key;
         }
     }
 }

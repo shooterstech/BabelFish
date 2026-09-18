@@ -92,6 +92,10 @@ namespace Scopos.BabelFish.APIClients {
 
 
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass, new() {
+
+            // Perform any pre-call validation or action items on the request object.
+            await request.PreRequestMethodAsync();
+
             // Get Uri for call
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
@@ -140,9 +144,6 @@ namespace Scopos.BabelFish.APIClients {
             string jsonAsString = "";
 
             try {
-
-                // Perform any pre-call validation or action items on the request object.
-                await request.PreRequestMethod();
 
                 HttpResponseMessage responseMessage = new HttpResponseMessage();
 
@@ -307,7 +308,6 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = ex.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-
 
                 LogErrorAndAssert( ex, $"API Call failed: {ex.Message}" );
                 _logger.Debug( jsonAsString );
