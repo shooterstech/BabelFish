@@ -262,18 +262,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int GetHashCode( ResultListAbbr obj ) => obj.GetHashCode();
 
         #endregion
-
-        /// <inheritdoc />
-        [G_NS.JsonIgnore]
-        public string CheckSum { get; set; }
-
-        /// <inheritdoc />
-        public ulong CalculateChecksum() {
-            var combined = $"{ResultName}|{Primary}|{Team}|{Status}|{ResultListFormatDef}|{RankingRuleDef}|{ScoreConfigName}";
-            var hash = Helpers.Common.Md5ToUlong( combined );
-
-            return hash;
-        }
-
     }
 }
