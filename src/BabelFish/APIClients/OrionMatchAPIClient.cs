@@ -143,6 +143,31 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Post Match Parent API
+        /// </summary>
+        /// <param name="requestParameters">PostMatchParentAuthenticatedRequest object</param>
+        /// <returns>Uploaded parent match data</returns>
+        public async Task<PostMatchParentAuthenticatedResponse> PostMatchParentAuthenticatedAsync( PostMatchParentAuthenticatedRequest requestParameters ) {
+            PostMatchParentAuthenticatedResponse response = new PostMatchParentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Post Match Parent API
+        /// </summary>
+        /// <param name="match"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Uploaded parent match data</returns>
+        public async Task<PostMatchParentAuthenticatedResponse> PostMatchParentAuthenticatedAsync( Match match, UserAuthentication credentials ) {
+            var request = new PostMatchParentAuthenticatedRequest( credentials, match );
+
+            return await PostMatchParentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
         /// Create Match Child API
         /// </summary>
         /// <param name="requestParameters">CreateMatchChildAuthenticatedRequest object</param>
