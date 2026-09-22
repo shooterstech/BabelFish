@@ -810,7 +810,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [Description( "LEAGUE_GAME" )]
         [EnumMember( Value = "LEAGUE_GAME" )]
-        LEAGUE_GAME
+        LEAGUE_GAME,
+
+        [Description( "LEAGUE_RECAP" )]
+        [EnumMember( Value = "LEAGUE_RECAP" )]
+        LEAGUE_RECAP
     }
 
     [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]

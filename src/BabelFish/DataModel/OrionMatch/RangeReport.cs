@@ -7,6 +7,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public MatchID? LeagueId { get; set; }
 
+        /// <summary>
+        /// League calendar week represented by a league recap report.
+        /// </summary>
+        public int? Week { get; set; }
+
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime? StartDate { get; set; }
+
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
+        public DateTime? EndDate { get; set; }
+
         public MatchID? CanonicalLeagueId { get; set; }
 
         public string? LeagueName { get; set; }
@@ -49,6 +62,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int? TokensRemaining { get; set; }
 
         public bool? AiGenerated { get; set; } = true;
+
+        public bool? DryRun { get; set; }
 
         public string? FormattedHtml { get; set; }
 

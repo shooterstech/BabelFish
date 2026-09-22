@@ -10,5 +10,9 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         public GetRangeReportAuthenticatedResponse( GetLeagueRangeReportAuthenticatedRequest request ) : base() {
             this.Request = request;
         }
+
+        public GetRangeReportAuthenticatedResponse( GetLeagueRecapRangeReportAuthenticatedRequest request ) : base() {
+            this.Request = request;
+        }
     }
 }
