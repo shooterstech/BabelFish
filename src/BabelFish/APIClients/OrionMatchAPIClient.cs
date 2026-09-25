@@ -1262,10 +1262,12 @@ namespace Scopos.BabelFish.APIClients {
             MatchID matchId,
             UserAuthentication credentials,
             bool dryRun = false,
-            string? resultName = null ) {
+            string? resultName = null,
+            bool includeRecap = false ) {
             var request = new SendLeagueRangeReportEmailAuthenticatedRequest( leagueId, matchId, credentials ) {
                 DryRun = dryRun,
-                ResultName = resultName
+                ResultName = resultName,
+                IncludeRecap = includeRecap
             };
 
             return await SendLeagueRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );

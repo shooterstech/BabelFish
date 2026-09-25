@@ -32,6 +32,9 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// </summary>
         public bool DryRun { get; set; }
 
+        /// <summary>Append the published weekly recap for the game's scheduled week.</summary>
+        public bool IncludeRecap { get; set; }
+
         public override string RelativePath {
             get {
                 if (LeagueId == null) {
@@ -49,6 +52,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public override Dictionary<string, List<string>> QueryParameters {
             get {
                 var parameterList = new Dictionary<string, List<string>>();
+
+                if (IncludeRecap) {
+                    parameterList.Add( "include-recap", new List<string> { IncludeRecap.ToString() } );
+                }
 
                 if (!string.IsNullOrWhiteSpace( ResultName )) {
                     parameterList.Add( "result-name", new List<string> { ResultName } );

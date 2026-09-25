@@ -147,6 +147,12 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             Assert.AreEqual( APISubDomain.AUTHAPI, request.SubDomain );
             Assert.AreEqual( "True", queryParameters["dry-run"].Single() );
             Assert.IsFalse( queryParameters.ContainsKey( "result-name" ) );
+            Assert.IsFalse( request.IncludeRecap );
+            Assert.IsFalse( queryParameters.ContainsKey( "include-recap" ) );
+            request.IncludeRecap = true;
+            Assert.AreEqual( "True", request.QueryParameters["include-recap"].Single() );
+            request.IncludeRecap = false;
+            Assert.IsFalse( request.QueryParameters.ContainsKey( "include-recap" ) );
         }
 
         [TestMethod]
