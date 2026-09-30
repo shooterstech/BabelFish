@@ -104,10 +104,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 hash ^= attributeValue.CalculateChecksum();
             }
 
-            foreach (var teamMember in TeamMembers) {
-                hash ^= teamMember.CalculateChecksum();
-            }
-
             foreach (var teamCaptain in TeamCaptains) {
                 hash ^= teamCaptain.CalculateChecksum();
             }

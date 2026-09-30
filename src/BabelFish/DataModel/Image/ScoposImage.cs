@@ -15,10 +15,16 @@ namespace Scopos.BabelFish.DataModel.Image {
     /// </remarks>
     public class ScoposImage : BaseClass {
 
+        /// <summary>
+        /// A list of allowed image file extensions for images uploaded to the Scopos platform. When images are uploaded,
+        /// their file extensions are checked against this list by the lambda PatchModerateImage.
+        /// </summary>
+        public static readonly List<string> ALLOWED_IMAGE_EXTENSIONS = new() { ".jpg", ".jpeg", ".png" };
+
         #region Data Model Properties
         /// <summary>
         /// The unique identifier for the image. This value is assigned by the database when the image is first created.
-        /// A value of 0 indicates that the image has not yet been saved to the database.
+        /// An empty string indicates that the image has not yet been saved to the database.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
@@ -124,6 +130,18 @@ namespace Scopos.BabelFish.DataModel.Image {
         [G_STJ_SER.JsonPropertyOrder( 19 )]
         [G_NS.JsonProperty( Order = 19 )]
         public string ModerationNotes { get; set; } = string.Empty;
+
+        #endregion
+
+        #region Methods
+        public ScoposImageAbbr ToScoposImageAbbr() {
+            return new ScoposImageAbbr {
+                ImageId = this.ImageId,
+                Caption = this.Caption,
+                AltText = this.AltText,
+                UrlPath = this.UrlPath
+            };
+        }
 
         #endregion
     }

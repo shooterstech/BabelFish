@@ -106,10 +106,34 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
 
         /// <summary>
         /// The Bulk group key means the image is one of many photos associated with a Club / Match / User Profile / League.
+        /// <para>There can be multiple bulk images.</para>
         /// </summary>
         [Description( "Bulk" )]
         [EnumMember( Value = "Bulk" )]
-        BULK
+        BULK,
+        /// <summary>
+        /// This image was once a Header image, but has been archived.
+        /// <para>It is expected that there is only one header image per Club / Match / User Profile / League, but there can be multiple archived header images.</para>
+        /// </summary>
+        [Description( "Header Archived" )]
+        [EnumMember( Value = "Header Archived" )]
+        HEADER_ARCHIVED,
+
+        /// <summary>
+        /// This image was once a Profile image, but has been archived.
+        /// <para>It is expected there is only one profile image per Club / Match / User Profile / League, but there can be multiple archived profile images.</para>
+        /// </summary>
+        [Description( "Profile Archived" )]
+        [EnumMember( Value = "Profile Archived" )]
+        PROFILE_ARCHIVED,
+
+        /// <summary>
+        /// This image was once a Bulk image, but has been archived.
+        /// <para>There can be multiple archived bulk images.</para>
+        /// </summary>
+        [Description( "Bulk Archived" )]
+        [EnumMember( Value = "Bulk Archived" )]
+        BULK_ARCHIVED
     }
 
     /// <summary>
