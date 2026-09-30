@@ -1,17 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
-using Amazon.CognitoIdentity.Model.Internal.MarshallTransformations;
-using NLog;
 using Scopos.BabelFish.APIClients;
-using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Helpers;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Requests {
@@ -28,11 +16,11 @@ namespace Scopos.BabelFish.Requests {
         /// </summary>
         /// <param name="operationId"></param>
         /// <exception cref="ArgumentNullException">Thrown if OperationId is null or an empty string</exception>
-        public Request(string operationId) {
+        public Request( string operationId ) {
             if (string.IsNullOrEmpty( operationId )) throw new ArgumentNullException( "OperationId may not be null or an empty string" );
             this.OperationId = operationId;
-			this.SubDomain = APISubDomain.API;
-		}
+            this.SubDomain = APISubDomain.API;
+        }
 
         /// <summary>
         /// 
@@ -41,7 +29,7 @@ namespace Scopos.BabelFish.Requests {
         /// <param name="credentials"></param>
         /// <exception cref="ArgumentNullException">Thrown if UserAuthentication is null or OperationId is null or an empty string</exception>
         public Request( string operationId, UserAuthentication credentials ) {
-            if (string.IsNullOrEmpty( operationId )) 
+            if (string.IsNullOrEmpty( operationId ))
                 throw new ArgumentNullException( "OperationId may not be null or an empty string" );
 
             if (credentials == null)
@@ -49,23 +37,23 @@ namespace Scopos.BabelFish.Requests {
 
             this.OperationId = operationId;
 
-			this.RequiresCredentials = true;
-			this.SubDomain = APISubDomain.AUTHAPI;
-			this.Credentials = credentials;
+            this.RequiresCredentials = true;
+            this.SubDomain = APISubDomain.AUTHAPI;
+            this.Credentials = credentials;
         }
 
         /// <summary>
         /// Creates a new instance of a Request Object, with all the same parameters
         /// </summary>
         /// <returns></returns>
-        public virtual Request Copy() { throw new NotImplementedException("Concrete implementations of Request should implement Copy for their class."); }
+        public virtual Request Copy() { throw new NotImplementedException( "Concrete implementations of Request should implement Copy for their class." ); }
 
-		/// <summary>
-		/// Concrete implementationst that want to cache their requests, must implement
-		/// a unique string to be used as the request key. 
-		/// </summary>
-		/// <returns></returns>
-		protected internal string GetRequestCacheKey() {
+        /// <summary>
+        /// Concrete implementationst that want to cache their requests, must implement
+        /// a unique string to be used as the request key. 
+        /// </summary>
+        /// <returns></returns>
+        protected internal string GetRequestCacheKey() {
             var accessToken = "";
             if (Credentials != null)
                 accessToken = Credentials.AccessToken;
@@ -80,26 +68,26 @@ namespace Scopos.BabelFish.Requests {
                 key.Append( this.QueryString );
             }
             if (!string.IsNullOrEmpty( accessToken )) {
-				key.Append( '/' );
+                key.Append( '/' );
                 key.Append( accessToken );
-			}
+            }
             return key.ToString();
-		}
+        }
 
-		/// <summary>
-		/// Indicates if the local response cache should be ignored and always 
-		/// make the request to the Rest API.
-		/// The default value is false, meaning to use the local cache (if avaliable and permitted by the Rest API client).
-		/// The option to ignore local cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
-		/// </summary>
-		public bool IgnoreInMemoryCache { get; set; } = false;
+        /// <summary>
+        /// Indicates if the local response cache should be ignored and always 
+        /// make the request to the Rest API.
+        /// The default value is false, meaning to use the local cache (if avaliable and permitted by the Rest API client).
+        /// The option to ignore local cache can either be set at the API Client level, or on a per request level. Cached responses are only valid for HttpMethod GET calls.
+        /// </summary>
+        public bool IgnoreInMemoryCache { get; set; } = false;
 
         public bool IgnoreFileSystemCache { get; set; } = false;
 
-		/// <summary>
-		/// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.
-		/// </summary>
-		public bool RequiresCredentials { get; protected set; } = false;
+        /// <summary>
+        /// Indicates if this request requires user credentials. Automatically set to True when the Request constructor using UserAuthentication is used.
+        /// </summary>
+        public bool RequiresCredentials { get; protected set; } = false;
 
         public UserAuthentication Credentials { get; set; }
 
@@ -144,6 +132,7 @@ namespace Scopos.BabelFish.Requests {
         /// Returns a dictionary of name value pairs. Where the keys in the dictionary are the names
         /// And the value is a list of parameter values. The values are unescaped.
         /// </summary>
+        /// <exception cref="APIRequestParameterException">Thrown if the request is not valid. For example, if a required parameter is missing.</exception>
         public virtual Dictionary<string, List<string>> QueryParameters {
             get {
                 return new Dictionary<string, List<string>>();
@@ -153,6 +142,7 @@ namespace Scopos.BabelFish.Requests {
         /// <summary>
         /// Returns a string representing the query string that may be used in the Rest API Call
         /// </summary>
+        /// <exception cref="APIRequestParameterException">Thrown if the request is not valid. For example, if a required parameter is missing.</exception>
         public string QueryString {
             get {
                 //    "Convert the return value of QueryParameters into an escaped string that may be used in a Rest API call.");
@@ -175,20 +165,41 @@ namespace Scopos.BabelFish.Requests {
             }
         }
 
-        
+
         /// <summary>
         /// Only applicable to non httpMethod.GET calls. This is the body of the request.
         /// </summary>
+        /// <exception cref="APIRequestParameterException">Thrown if the request is not valid. For example, if a required parameter is missing.</exception>
         public virtual StringContent PostParameters {
             get {
                 return new StringContent( "" );
             }
         }
 
+        /// <summary>
+        /// Only applicable to non httpMethod.GET calls. This is the HTTP content to send with the request.
+        /// Defaults to PostParameters for existing string based request bodies.
+        /// </summary>
+        /// <exception cref="APIRequestParameterException">Thrown if the request is not valid. For example, if a required parameter is missing.</exception>
+        public virtual HttpContent PostContent {
+            get {
+                return PostParameters;
+            }
+        }
+
+        /// <summary>
+        /// This method will run before the request is made. It can be used to validate the request before it is made, or to perform any other pre-request logic.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="APIRequestParameterException">Thrown if the request is not valid. For example, if a required parameter is missing.</exception>
+        public virtual Task PreRequestMethodAsync() {
+            return Task.CompletedTask;
+        }
+
         public override string ToString() {
             return $"{OperationId} request";
         }
 
-        
+
     }
 }

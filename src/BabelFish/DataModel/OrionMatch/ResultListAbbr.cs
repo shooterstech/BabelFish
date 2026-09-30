@@ -262,6 +262,5 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int GetHashCode( ResultListAbbr obj ) => obj.GetHashCode();
 
         #endregion
-
     }
 }

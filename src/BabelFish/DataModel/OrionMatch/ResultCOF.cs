@@ -23,6 +23,9 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Constructors, Initialization, and Factory Methods
 
+        /// <summary>
+        /// System.Text.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
         public void OnDeserialized() {
             EventScores ??= new Dictionary<string, EventScore>();
             Shots ??= new Dictionary<string, Athena.Shot.Shot>();
@@ -37,6 +40,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 rCof.Value.ParentEventScores = this;
             }
         }
+
+        /// <summary>
+        /// Newtonsoft.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
+        /// <param name="context"></param>
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized( System.Runtime.Serialization.StreamingContext context ) => OnDeserialized();
         #endregion
 
         #region Events

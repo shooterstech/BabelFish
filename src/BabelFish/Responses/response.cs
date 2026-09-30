@@ -177,6 +177,7 @@ namespace Scopos.BabelFish.Responses {
         RestApiServerError,
         DeserializaingError,
         TimeOutError,
+        ParameterError,
         UnknownError //If we get this, we should discover why and update ReqeustStatusCode
     }
 }
