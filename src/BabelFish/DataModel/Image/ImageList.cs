@@ -3,26 +3,23 @@ using System.Text.Json.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
-namespace Scopos.BabelFish.DataModel.Clubs {
-    /// <summary>
-    /// A list of Orion Club accounts. Only abbreviated data about the club is returned.
-    /// </summary>
-    public class ClubList : ITokenItems<ClubAbbr> {
+namespace Scopos.BabelFish.DataModel.Image {
+    public class ImageList : ITokenItems<ScoposImageAbbr> {
 
-        public ClubList() {
-            Items = new List<ClubAbbr>();
+        public ImageList() {
+            Items = new List<ScoposImageAbbr>();
         }
 
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) {
             if (Items == null)
-                Items = new List<ClubAbbr>();
+                Items = new List<ScoposImageAbbr>();
         }
 
         /// <summary>
-        /// A list of ClubAbbr data objects.
+        /// A list of ScoposImageAbbr data objects.
         /// </summary>        
-        public List<ClubAbbr> Items { get; set; }
+        public List<ScoposImageAbbr> Items { get; set; }
 
         /// <inheritdoc />
         [JsonConverter( typeof( NextTokenConverter ) )]
@@ -40,7 +37,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <inheritdoc />
         public override string ToString() {
-            return $"ClubList with {Items.Count} items";
+            return $"BulkImageList with {Items.Count} items";
         }
     }
 }

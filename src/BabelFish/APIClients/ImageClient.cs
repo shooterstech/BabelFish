@@ -52,5 +52,19 @@ namespace Scopos.BabelFish.APIClients {
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
             return response;
         }
+
+        /// <summary>
+        /// Calls the GetImages API request to retrieve images for a Match, League Team, Club, or athlete. This is a public API and does not require authentication.
+        /// </summary>
+        /// <param name="requestParameters"></param>
+        /// <returns></returns>
+        public async Task<GetImagesResponse> GetImagesPublicAsync( GetImagesRequest requestParameters ) {
+
+            GetImagesResponse response = new GetImagesResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
     }
 }

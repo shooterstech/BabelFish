@@ -131,6 +131,15 @@ namespace Scopos.BabelFish.DataModel.Image {
         [G_NS.JsonProperty( Order = 19 )]
         public string ModerationNotes { get; set; } = string.Empty;
 
+        /// <summary>
+        /// The UTC timestamp when the image was uploaded. This value is set to DateTime.MinValue when a new instance of ScoposImage is created.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 20 )]
+        [G_NS.JsonProperty( Order = 20 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        public DateTime CreatedAt { get; set; } = DateTime.MinValue;
+
         #endregion
 
         #region Methods
@@ -139,7 +148,8 @@ namespace Scopos.BabelFish.DataModel.Image {
                 ImageId = this.ImageId,
                 Caption = this.Caption,
                 AltText = this.AltText,
-                UrlPath = this.UrlPath
+                UrlPath = this.UrlPath,
+                CreatedAt = this.CreatedAt
             };
         }
 
