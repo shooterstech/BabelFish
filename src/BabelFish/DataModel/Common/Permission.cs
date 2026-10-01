@@ -94,6 +94,10 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_READ_PRIVATE_SETTINGS = new Permission( "club.read_private_settings", "Ability to read a Club's settings that are marked with Private visibility." );
 
         /// <summary>
+        /// Upload or edit images associated with a match
+        /// </summary>
+        public static readonly Permission MATCH_EDIT_IMAGE = new Permission( "match.edit_image", "Upload or edit images asssociated with a match" );
+        /// <summary>
         /// Accept the invite to join a parent match as a child
         /// </summary>
         public static readonly Permission MATCH_CHILD_ACCEPT_INVITE = new Permission( "match_child.accept_invite", "Accept the invite to join a parent match as a child" );
