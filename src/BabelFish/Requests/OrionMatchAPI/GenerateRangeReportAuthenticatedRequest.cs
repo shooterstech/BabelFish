@@ -19,6 +19,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
         public string ResultListName { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Tournament IDs whose names and descriptions provide context for this match report.
+        /// Each tournament must be public or readable by the calling user.
+        /// </summary>
+        public List<string> TournamentContext { get; set; } = new List<string>();
+
         [Obsolete( "The RangeReporter API ignores milestone-strategy. Use MilestoneCount or ShotMilestoneCounts instead." )]
         public string? MilestoneStrategy { get; set; }
 
@@ -48,6 +54,14 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 Dictionary<string, List<string>> parameterList = BuildGenerationQueryParameters();
                 parameterList.Add( "result-name", new List<string> { ResultListName } );
+
+                if (TournamentContext != null && TournamentContext.Count > 0) {
+                    if (TournamentContext.Any( string.IsNullOrWhiteSpace )) {
+                        throw new ArgumentException( "Tournament context entries must be non-empty tournament ID strings.", nameof( TournamentContext ) );
+                    }
+
+                    parameterList.Add( "tournament-context", TournamentContext );
+                }
 
                 return parameterList;
             }

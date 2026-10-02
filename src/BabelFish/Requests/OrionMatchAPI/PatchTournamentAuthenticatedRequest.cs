@@ -14,10 +14,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             UserAuthentication credentials,
             MatchID tournamentId,
             string? tournamentName = null,
-            VisibilityOption? visibility = null ) : base( "PatchTournament", credentials ) {
+            VisibilityOption? visibility = null,
+            string? description = null ) : base( "PatchTournament", credentials ) {
             HttpMethod = new HttpMethod( "PATCH" );
             TournamentId = tournamentId ?? throw new ArgumentNullException( nameof( tournamentId ) );
             TournamentName = tournamentName;
+            Description = description;
             Visibility = visibility;
             SubDomain = APIClients.APISubDomain.AUTHAPI;
         }
@@ -31,6 +33,11 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// Optional updated user-facing name of the tournament.
         /// </summary>
         public string? TournamentName { get; set; } = null;
+
+        /// <summary>
+        /// Optional updated description. Null leaves it unchanged; an empty string clears it.
+        /// </summary>
+        public string? Description { get; set; } = null;
 
         /// <summary>
         /// Optional updated tournament visibility.
@@ -65,8 +72,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                     parameterList.Add( "visibility", new List<string> { EnumHelper.MemberValue( Visibility.Value ) } );
                 }
 
+                if (Description != null) {
+                    parameterList.Add( "description", new List<string> { Description } );
+                }
+
                 if (parameterList.Count == 0) {
-                    throw new ArgumentException( "At least one of tournament name or visibility must be provided." );
+                    throw new ArgumentException( "At least one of tournament name, description, or visibility must be provided." );
                 }
 
                 return parameterList;

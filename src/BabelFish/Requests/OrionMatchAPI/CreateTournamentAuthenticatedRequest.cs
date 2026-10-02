@@ -17,6 +17,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
             
             HttpMethod = HttpMethod.Post;
             TournamentName = tournament.TournamentName;
+            Description = tournament.Description;
             OwnerId = tournament.OwnerId;
             Visibility = tournament.Visibility;
             ShowOnSearch = tournament.IncludeInSearchResults;
@@ -28,6 +29,11 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// The user-facing name of the tournament.
         /// </summary>
         public string TournamentName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// A description of the tournament.
+        /// </summary>
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// License number of the Orion account that owns this tournament.
@@ -69,6 +75,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
                 };
 
                 parameterList.Add("visibility", new List<string> { EnumHelper.MemberValue(Visibility) });
+                parameterList.Add( "description", new List<string> { Description } );
 
                 parameterList.Add("show-on-search", new List<string> { ShowOnSearch.ToString() });
 

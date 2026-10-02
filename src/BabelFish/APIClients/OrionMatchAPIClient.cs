@@ -1479,8 +1479,9 @@ namespace Scopos.BabelFish.APIClients {
             MatchID tournamentId,
             string? tournamentName,
             VisibilityOption? visibility,
-            UserAuthentication credentials ) {
-            var request = new PatchTournamentAuthenticatedRequest( credentials, tournamentId, tournamentName, visibility );
+            UserAuthentication credentials,
+            string? description = null ) {
+            var request = new PatchTournamentAuthenticatedRequest( credentials, tournamentId, tournamentName, visibility, description );
 
             return await PatchTournamentAuthenticatedAsync( request );
         }

@@ -94,6 +94,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 4 )]
         public string MatchName { get; set; }
 
+        /// <summary>
+        /// A description of the tournament.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 7 )]
+        public string Description { get; set; } = string.Empty;
+
         //EKA Question Oct 2025: Should we have a ShortMatchName. The idea is, if this match is part of a Tournament, this ShortMatchName can be used as the default column header name.
 
         /* Order = 5 reserved for concrete classes */

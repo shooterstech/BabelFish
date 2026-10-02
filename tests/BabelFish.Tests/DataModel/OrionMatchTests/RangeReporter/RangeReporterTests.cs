@@ -34,6 +34,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                 CourseOfFireId = 1,
                 ShotMilestoneCounts = new List<int> { 10, 20, 30 },
                 UserContext = new List<string> { "State championship", "Personal best" },
+                TournamentContext = new List<string> { "tournament-one", "tournament-two" },
                 DryRun = true
             };
 
@@ -50,7 +51,22 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             Assert.IsFalse( queryParameters.ContainsKey( "expected-shots" ) );
             Assert.IsFalse( queryParameters.ContainsKey( "snapshot-order-by" ) );
             CollectionAssert.AreEqual( new List<string> { "State championship", "Personal best" }, queryParameters["user-context"] );
+            CollectionAssert.AreEqual( new List<string> { "tournament-one", "tournament-two" }, queryParameters["tournament-context"] );
             Assert.AreEqual( "True", queryParameters["dry-run"].Single() );
+        }
+
+        [TestMethod]
+        public void GenerateRangeReportTournamentContextDefaultsAndValidation() {
+            var request = new GenerateRangeReportAuthenticatedRequest(
+                new MatchID( "1.2063.2026043009084183.0" ), "Individual - All", CreateAuthentication() );
+            Assert.IsFalse( request.QueryParameters.ContainsKey( "tournament-context" ) );
+            foreach (var invalid in new string[] { "", " ", null! }) {
+                request.TournamentContext = new List<string> { "tournament-one", invalid };
+                Assert.ThrowsExactly<ArgumentException>( () => { var parameters = request.QueryParameters; } );
+            }
+            var report = G_STJ.JsonSerializer.Deserialize<RangeReport>( "{}", SerializerOptions.SystemTextJsonDeserializer );
+            Assert.IsNotNull( report );
+            Assert.AreEqual( 0, report.TournamentContext.Count );
         }
 
         [TestMethod]
@@ -248,6 +264,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                     "UserContext": [
                         "State championship"
                     ],
+                    "TournamentContext": ["tournament-one", "tournament-two"],
                     "S3Uri": "s3://cdn.scopos.tech/matches/1.2063.2026043009084183.0/range_reporter/Individual - Precision/range_reporter_press_release.json",
                     "Creator": "26f32227-d428-41f6-b224-beed7b6e8850",
                     "TokensRemaining": 4,
@@ -272,6 +289,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             Assert.AreEqual( 60, wrapper.RangeReport.ExpectedShots );
             Assert.AreEqual( "D", wrapper.RangeReport.ScoreComponent?.ToString() );
             CollectionAssert.AreEqual( new List<string> { "State championship" }, wrapper.RangeReport.UserContext );
+            CollectionAssert.AreEqual( new List<string> { "tournament-one", "tournament-two" }, wrapper.RangeReport.TournamentContext );
             Assert.AreEqual( 4, wrapper.RangeReport.TokensRemaining );
             Assert.AreEqual( true, wrapper.RangeReport.AiGenerated );
             Assert.AreEqual( "<div><h1>Patched RangeReporter Press Release</h1></div>", wrapper.RangeReport.FormattedHtml );

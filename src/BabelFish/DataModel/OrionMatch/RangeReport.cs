@@ -55,6 +55,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string SnapshotOrderBy { get; set; } = string.Empty;
 
         public List<string> UserContext { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Tournament IDs supplied as context when generating this report.
+        /// </summary>
+        public List<string> TournamentContext { get; set; } = new List<string>();
+
         public string? S3Uri { get; set; }
 
         public string? Creator { get; set; }
