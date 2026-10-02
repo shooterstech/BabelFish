@@ -978,6 +978,29 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Generate a Range Report for a completed league game.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRangeReportAuthenticatedAsync(
+            GenerateLeagueRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate a Range Report for a completed league game.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials ) {
+            var request = new GenerateLeagueRangeReportAuthenticatedRequest( leagueId, matchId, credentials );
+
+            return await GenerateLeagueRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+        /// <summary>
         /// Get Range Report API
         /// </summary>
         /// <param name="requestParameters">GetRangeReportPublicRequest object</param>
@@ -1067,6 +1090,85 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Get a public league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRangeReportPublicAsync(
+            GetLeagueRangeReportPublicRequest requestParameters ) {
+            var response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get a public league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRangeReportPublicAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            string? resultName = null ) {
+            var request = new GetLeagueRangeReportPublicRequest( leagueId, matchId, resultName );
+
+            return await GetLeagueRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get an authenticated league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRangeReportAuthenticatedAsync(
+            GetLeagueRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get an authenticated league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials,
+            string? resultName = null ) {
+            var request = new GetLeagueRangeReportAuthenticatedRequest( leagueId, matchId, credentials, resultName );
+
+            return await GetLeagueRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get a league-game Range Report, selecting the public or authenticated API from credentials.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRangeReportAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication? credentials = null,
+            string? resultName = null ) {
+            if (credentials == null) {
+                return await GetLeagueRangeReportPublicAsync( leagueId, matchId, resultName ).ConfigureAwait( false );
+            } else {
+                return await GetLeagueRangeReportAuthenticatedAsync( leagueId, matchId, credentials, resultName ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Get a league-game Range Report from a public or authenticated request object.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRangeReportAsync(
+            GetLeagueRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetLeagueRangeReportPublicRequest) {
+                return await GetLeagueRangeReportPublicAsync(
+                    (GetLeagueRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            } else if (requestParameters is GetLeagueRangeReportAuthenticatedRequest) {
+                return await GetLeagueRangeReportAuthenticatedAsync(
+                    (GetLeagueRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            } else {
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+            }
+        }
+        /// <summary>
         /// Patch Range Report API
         /// </summary>
         /// <param name="requestParameters">PatchRangeReportAuthenticatedRequest object</param>
@@ -1103,6 +1205,36 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Patch a league-game Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRangeReportAuthenticatedAsync(
+            PatchLeagueRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch a league-game Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials,
+            string? resultName = null ) {
+            var request = new PatchLeagueRangeReportAuthenticatedRequest( leagueId, matchId, credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml,
+                ResultName = resultName
+            };
+
+            return await PatchLeagueRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+        /// <summary>
         /// Send Range Report Email API
         /// </summary>
         /// <param name="requestParameters">SendRangeReportEmailAuthenticatedRequest object</param>
@@ -1135,6 +1267,187 @@ namespace Scopos.BabelFish.APIClients {
             return await SendRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
         }
 
+        /// <summary>
+        /// Send or preview the email for a published, completed league-game Range Report.
+        /// </summary>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendLeagueRangeReportEmailAuthenticatedAsync(
+            SendLeagueRangeReportEmailAuthenticatedRequest requestParameters ) {
+            var response = new SendRangeReportEmailAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Send or preview the email for a published, completed league-game Range Report.
+        /// </summary>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendLeagueRangeReportEmailAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials,
+            bool dryRun = false,
+            string? resultName = null,
+            bool includeRecap = false ) {
+            var request = new SendLeagueRangeReportEmailAuthenticatedRequest( leagueId, matchId, credentials ) {
+                DryRun = dryRun,
+                ResultName = resultName,
+                IncludeRecap = includeRecap
+            };
+
+            return await SendLeagueRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Generate a weekly league recap Range Report.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRecapRangeReportAuthenticatedAsync(
+            GenerateLeagueRecapRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate a weekly league recap Range Report.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRecapRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            UserAuthentication credentials ) {
+            var request = new GenerateLeagueRecapRangeReportAuthenticatedRequest(
+                leagueId,
+                startDate,
+                endDate,
+                credentials );
+
+            return await GenerateLeagueRecapRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get a public weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRecapRangeReportPublicAsync(
+            GetLeagueRecapRangeReportPublicRequest requestParameters ) {
+            var response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get a public weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRecapRangeReportPublicAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate ) {
+            var request = new GetLeagueRecapRangeReportPublicRequest( leagueId, startDate, endDate );
+
+            return await GetLeagueRecapRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get an authenticated weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRecapRangeReportAuthenticatedAsync(
+            GetLeagueRecapRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get an authenticated weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRecapRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            UserAuthentication credentials ) {
+            var request = new GetLeagueRecapRangeReportAuthenticatedRequest(
+                leagueId,
+                startDate,
+                endDate,
+                credentials );
+
+            return await GetLeagueRecapRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get a weekly league recap, selecting the public or authenticated API from credentials.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRecapRangeReportAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetLeagueRecapRangeReportPublicAsync( leagueId, startDate, endDate ).ConfigureAwait( false );
+            } else {
+                return await GetLeagueRecapRangeReportAuthenticatedAsync(
+                    leagueId,
+                    startDate,
+                    endDate,
+                    credentials ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Get a weekly league recap from a public or authenticated request object.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRecapRangeReportAsync(
+            GetLeagueRecapRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetLeagueRecapRangeReportPublicRequest) {
+                return await GetLeagueRecapRangeReportPublicAsync(
+                    (GetLeagueRecapRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            } else if (requestParameters is GetLeagueRecapRangeReportAuthenticatedRequest) {
+                return await GetLeagueRecapRangeReportAuthenticatedAsync(
+                    (GetLeagueRecapRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            } else {
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+            }
+        }
+
+        /// <summary>
+        /// Patch a completed weekly league recap Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRecapRangeReportAuthenticatedAsync(
+            PatchLeagueRecapRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch a completed weekly league recap Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRecapRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials ) {
+            var request = new PatchLeagueRecapRangeReportAuthenticatedRequest(
+                leagueId,
+                startDate,
+                endDate,
+                credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml
+            };
+
+            return await PatchLeagueRecapRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
         #endregion
 
         #region Tournament API Calls
@@ -1191,8 +1504,9 @@ namespace Scopos.BabelFish.APIClients {
             MatchID tournamentId,
             string? tournamentName,
             VisibilityOption? visibility,
-            UserAuthentication credentials ) {
-            var request = new PatchTournamentAuthenticatedRequest( credentials, tournamentId, tournamentName, visibility );
+            UserAuthentication credentials,
+            string? description = null ) {
+            var request = new PatchTournamentAuthenticatedRequest( credentials, tournamentId, tournamentName, visibility, description );
 
             return await PatchTournamentAuthenticatedAsync( request );
         }

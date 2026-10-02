@@ -163,7 +163,7 @@ namespace Scopos.BabelFish.APIClients {
                      * https://stackoverflow.com/questions/3981564/cannot-send-a-content-body-with-this-verb-type
                      */
                     if (request.HttpMethod != HttpMethod.Get)
-                        requestMessage.Content = request.PostParameters;
+                        requestMessage.Content = request.PostContent;
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     _logger.Info( $"Calling {request} on {uri}." );

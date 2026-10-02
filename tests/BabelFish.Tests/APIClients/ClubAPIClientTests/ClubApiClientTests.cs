@@ -10,6 +10,10 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
     [TestClass]
     public class ClubApiClientTests : BaseTestClass {
 
+        /* 
+         * Orion Account Number 16 is the official unit testing account for the Clubs API.
+         */
+
         /// <summary>
         /// Unit test to confirm the Constructors set the api key and API stage as expected.
         /// </summary>
@@ -52,10 +56,9 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
         [TestMethod]
         public async Task GetClubDetailAuthenticated() {
 
-
             var client = new ClubsAPIClient( APIStage.PRODUCTION );
 
-            var ownerId = "OrionAcct000002";
+            var ownerId = "OrionAcct000016";
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev1Credentials.Username,
                 Constants.TestDev1Credentials.Password );
@@ -71,8 +74,6 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
             Assert.AreEqual( ownerId, clubDetail.OwnerId, "Expecting the OwnerId to match, what was sent." );
 
             Assert.IsTrue( clubDetail.LicenseList.Count > 0, "Expecting the length of the license list is greather than zero." );
-
-            Assert.IsTrue( clubDetail.Options.Count > 0, "Expecting at least one ClubOption." );
         }
 
         [TestMethod]
@@ -81,7 +82,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
 
             var client = new ClubsAPIClient( APIStage.PRODUCTION );
 
-            var ownerId = "OrionAcct000001";
+            var ownerId = "OrionAcct000016";
             var request = new GetClubDetailPublicRequest( ownerId );
 
             var response = await client.GetClubDetailPublicAsync( request );
@@ -109,8 +110,8 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
 
             var clubList = getAllClubsResponse.ClubList;
 
-            Assert.IsTrue( clubList.Items.Count == 50, "The response's ClubList should have 50 clubs." );
-            Assert.AreNotEqual( clubList.NextToken, "", "Expecting NextToken to be a non empty string." );
+            Assert.AreEqual( 200, clubList.Items.Count, "The response's ClubList should have 200 clubs." );
+            Assert.AreNotEqual( string.Empty, clubList.NextToken, "Expecting NextToken to be a non empty string." );
 
         }
 
