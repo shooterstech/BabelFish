@@ -8,6 +8,14 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
             this.Request = request;
         }
 
+        public PatchRangeReportAuthenticatedResponse( PatchLeagueRangeReportAuthenticatedRequest request ) : base() {
+            this.Request = request;
+        }
+
+        public PatchRangeReportAuthenticatedResponse( PatchLeagueRecapRangeReportAuthenticatedRequest request ) : base() {
+            this.Request = request;
+        }
+
         /// <summary>
         /// Facade function that returns the same as this.Value.RangeReport.
         /// </summary>

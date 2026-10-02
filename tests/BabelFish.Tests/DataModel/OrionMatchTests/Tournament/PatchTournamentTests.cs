@@ -92,6 +92,44 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         }
 
         [TestMethod]
+        public async Task PatchTournamentWithRequestUpdatesDescriptionOnly() {
+            var client = CreateClient();
+            var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
+
+            MatchID? tournamentId = null;
+            try {
+                var originalName = UniqueName( "Patch Tournament Description" );
+                tournamentId = await CreateTournamentAsync(
+                    client,
+                    authorizedUser,
+                    originalName,
+                    VisibilityOption.PRIVATE );
+
+                var description = "Tournament details: rifle & pistol + finals.\nSecond day: awards.";
+                var request = new PatchTournamentAuthenticatedRequest( authorizedUser ) {
+                    TournamentId = tournamentId,
+                    Description = description
+                };
+
+                var response = await client.PatchTournamentAuthenticatedAsync( request );
+
+                Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode );
+                Assert.AreEqual( tournamentId, response.Tournament.TournamentId );
+                Assert.AreEqual( description, response.Tournament.Description );
+                Assert.AreEqual( originalName, response.Tournament.TournamentName );
+                Assert.AreEqual( VisibilityOption.PRIVATE, response.Tournament.Visibility );
+                Assert.IsTrue( response.Tournament.Abbreviated );
+
+                var getResponse = await client.GetTournamentAuthenticatedAsync( tournamentId, authorizedUser );
+
+                Assert.AreEqual( HttpStatusCode.OK, getResponse.RestApiStatusCode );
+                Assert.AreEqual( description, getResponse.Tournament.Description );
+            } finally {
+                await TryDeleteTournamentAsync( client, tournamentId, authorizedUser );
+            }
+        }
+
+        [TestMethod]
         public async Task PatchTournamentWithConvenienceOverloadUpdatesVisibilityOnly() {
             var client = CreateClient();
             var authorizedUser = await AuthenticateAsync( Constants.TestDev7Credentials );
