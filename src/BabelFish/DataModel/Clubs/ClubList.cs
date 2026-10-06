@@ -38,6 +38,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             }
         }
 
+        /// <inheritdoc />
         public override string ToString() {
             return $"ClubList with {Items.Count} items";
         }

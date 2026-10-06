@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.Requests.OrionMatchAPI;
+using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
@@ -39,7 +39,7 @@ namespace Scopos.BabelFish.Requests.AttributeValueAPI {
         public override Dictionary<string, List<string>> QueryParameters {
             get {
                 if (AttributeNames.Count() == 0)
-                    throw new RequestException( "Must have at least one Attribute Name." );
+                    throw new APIRequestParameterException( "Must have at least one Attribute Name." );
 
                 //Convert the list of SetNames to ask for to a list of strings
                 List<string> attributeNamesAsStrings = new List<string>();

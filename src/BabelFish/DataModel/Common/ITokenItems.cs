@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.Common {
 
     /// <summary>
@@ -20,7 +16,7 @@ namespace Scopos.BabelFish.DataModel.Common {
 
         /// <summary>
         /// When there are more items to return, NextToken contains the next token to pass to the call to the next set of items.
-        /// A value of null or empoty string indicate there are no more items to return.
+        /// A value of null or empty string indicate there are no more items to return.
         /// </summary>
         string NextToken { get; set; }
 

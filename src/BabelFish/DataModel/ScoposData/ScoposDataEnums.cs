@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
     /// ImageCategory helps to categorize images based on their association with different entities within Rezults.
     /// It specifies whether the image is related to a Club, Match, League, or User profile.
     /// </summary>
+    /// <remarks>Additional documentation for ImageCategory can be found at https://docs.google.com/document/d/17M5888Px6ztdQGH6M-5e5W_DfeVK6urVxRG1XVlQ7Oo/edit?usp=sharing</remarks>
     public enum ImageCategory {
         /// <summary>
         /// A Club image is an image associated with a club (aka Orion Account), such as a logo or a photo of the club's facilities.
@@ -42,11 +43,11 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         MATCH,
 
         /// <summary>
-        /// A League image is an image associated with a league, such as a logo or a header image for the League.
+        /// A League Team image is an image associated with a league team, such as the team's logo or team photo.
         /// </summary>
-        [Description( "League" )]
-        [EnumMember( Value = "League" )]
-        LEAGUE,
+        [Description( "League Team" )]
+        [EnumMember( Value = "League Team" )]
+        LEAGUE_TEAM,
 
         /// <summary>
         /// A User image is an image associated with a user profile (aka Scopos Account), such as a profile picture or a cover photo.
@@ -99,10 +100,34 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
 
         /// <summary>
         /// The Bulk group key means the image is one of many photos associated with a Club / Match / User Profile / League.
+        /// <para>There can be multiple bulk images.</para>
         /// </summary>
         [Description( "Bulk" )]
         [EnumMember( Value = "Bulk" )]
-        BULK
+        BULK,
+        /// <summary>
+        /// This image was once a Header image, but has been archived.
+        /// <para>It is expected that there is only one header image per Club / Match / User Profile / League, but there can be multiple archived header images.</para>
+        /// </summary>
+        [Description( "Header Archived" )]
+        [EnumMember( Value = "Header Archived" )]
+        HEADER_ARCHIVED,
+
+        /// <summary>
+        /// This image was once a Profile image, but has been archived.
+        /// <para>It is expected there is only one profile image per Club / Match / User Profile / League, but there can be multiple archived profile images.</para>
+        /// </summary>
+        [Description( "Profile Archived" )]
+        [EnumMember( Value = "Profile Archived" )]
+        PROFILE_ARCHIVED,
+
+        /// <summary>
+        /// This image was once a Bulk image, but has been archived.
+        /// <para>There can be multiple archived bulk images.</para>
+        /// </summary>
+        [Description( "Bulk Archived" )]
+        [EnumMember( Value = "Bulk Archived" )]
+        BULK_ARCHIVED
     }
 
     /// <summary>
@@ -116,6 +141,7 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// </summary>
         [Description( "New" )]
         [EnumMember( Value = "New" )]
+        [Obsolete( "Do we even need this? " )]
         NEW,
 
         /// <summary>

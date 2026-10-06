@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Image;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
@@ -271,6 +272,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// If the club is not authorized to compose Definition files, this list will be empty.
         /// </summary>
         public List<NamespaceDetail> NamespaceList { get; set; } = new List<NamespaceDetail> { };
+
+        /// <summary>
+        /// The club's header photo. This is a user-friendly image that can be displayed in the UI to represent the club.
+        /// </summary>
+        public ScoposImageAbbr HeaderPhoto { get; set; } = new ScoposImageAbbr();
+
+        /// <summary>
+        /// The club's profile photo. This is a user-friendly image that can be displayed in the UI to represent the club.
+        /// </summary>
+        public ScoposImageAbbr ProfilePhoto { get; set; } = new ScoposImageAbbr();
 
         #endregion
 
