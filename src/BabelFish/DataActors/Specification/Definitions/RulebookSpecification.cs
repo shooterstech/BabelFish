@@ -1,0 +1,71 @@
+using Scopos.BabelFish.DataModel.Definitions;
+
+namespace Scopos.BabelFish.DataActors.Specification.Definitions {
+    internal class RulebookSpecification {
+        public class IsRulebookValid : CompositeSpecification<Rulebook> {
+
+            public override async Task<bool> IsSatisfiedByAsync( Rulebook candidate ) {
+
+                var valid = true;
+                Messages.Clear();
+                //Clear the EventComposit cache, which may be holding on to out-dated COF structure.
+                EventComposite.ClearCache();
+
+                //Common fields
+                var hierarchicalName = new IsDefinitionHierarchicalNameValid();
+                var commonName = new IsDefiniitonCommonNameValid();
+                var description = new IsDefiniitonDescriptionValid();
+                var subdiscipline = new IsDefiniitonSubdisciplineValid();
+                var tags = new IsDefiniitonTagsValid();
+                var comment = new IsCommentValid();
+                var owner = new IsDefiniitonOwnerValid();
+                var version = new IsDefiniitonVersionValid();
+
+                if (!await hierarchicalName.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( hierarchicalName.Messages );
+                } else {
+                    if (!await owner.IsSatisfiedByAsync( candidate )) {
+                        valid = false;
+                        Messages.AddRange( owner.Messages );
+                    }
+                }
+
+                if (!await version.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( version.Messages );
+                }
+
+                if (!await commonName.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( commonName.Messages );
+                }
+
+                if (!await description.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( description.Messages );
+                }
+
+                if (!await subdiscipline.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( subdiscipline.Messages );
+                }
+
+                if (!await tags.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( tags.Messages );
+                }
+
+                if (!await comment.IsSatisfiedByAsync( candidate )) {
+                    valid = false;
+                    Messages.AddRange( comment.Messages );
+                }
+
+                //Rulebook specific fields
+                //Not implemented yet
+
+                return valid;
+            }
+        }
+    }
+}

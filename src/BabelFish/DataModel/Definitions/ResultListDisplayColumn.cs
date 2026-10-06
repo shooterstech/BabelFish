@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         internal void OnDeserializedMethod( StreamingContext context ) {
 
             if (ShowWhen == null)
-                ShowWhen = ShowWhenVariable.ALWAYS_SHOW.Clone();
+                ShowWhen = ShowWhenVariable.CreateAlwaysShow();
 
         }
 
@@ -75,7 +75,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>Default is to always show the column.</para>
         /// </summary>
         [JsonProperty( Order = 8 )]
-        public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
+        public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.CreateAlwaysShow();
 
         public bool ShouldSerializeShowWhen() {
 
@@ -131,7 +131,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>Default is to always show the Spanning text.</para>
         /// </summary>
         [JsonProperty( Order = 12 )]
-        public ShowWhenBase ShowSpanningWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
+        public ShowWhenBase ShowSpanningWhen { get; set; } = ShowWhenVariable.CreateAlwaysShow();
 
         /// <summary>
         /// Newtonsoft.json helper method to determine when the property ShowSpanningWhen is serialized.

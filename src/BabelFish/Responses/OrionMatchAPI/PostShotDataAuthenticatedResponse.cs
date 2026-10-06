@@ -1,5 +1,5 @@
-﻿using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.Athena.Shot;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {

@@ -1,7 +1,4 @@
-﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Scopos.BabelFish.Helpers {
 
@@ -12,11 +9,11 @@ namespace Scopos.BabelFish.Helpers {
     /// <remarks>This code was patially written by AI.</remarks>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TValue"></typeparam>
-    public class Cache<TKey, TValue> {
+    public class Cache<TKey, TValue> : IClearCache {
         private readonly TimeSpan _expiration;
         private readonly ConcurrentDictionary<TKey, CacheEntry> _store = new();
 
-        public Cache( ) {
+        public Cache() {
             _expiration = TimeSpan.FromSeconds( 60 );
         }
 
@@ -40,6 +37,19 @@ namespace Scopos.BabelFish.Helpers {
             return false;
         }
 
+        /// <summary>
+        /// Removes the passed in key and its value from the cache.
+        /// </summary>
+        /// <param name="key"></param>
+        public void RemoveValue( TKey key ) {
+            _store.TryRemove( key, out _ );
+        }
+
+        /// <inheritdoc />
+        public void ClearCache() {
+            _store.Clear();
+        }
+
         private class CacheEntry {
             public TValue Value { get; }
             public DateTime Timestamp { get; }
@@ -47,6 +57,12 @@ namespace Scopos.BabelFish.Helpers {
             public CacheEntry( TValue value, DateTime timestamp ) {
                 Value = value;
                 Timestamp = timestamp;
+            }
+        }
+
+        public int Count {
+            get {
+                return _store.Count;
             }
         }
     }

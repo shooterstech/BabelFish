@@ -60,7 +60,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         private ConstructorType constructorType;
         private bool initCalled = false;
         private InitiateSrpAuthRequest authRequest;
-        private string userId = "";
+        private string _userId = "";
 
         /// <summary>
         /// Creates a new instance of UserAuthentication and attempts to authenticate
@@ -147,14 +147,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
             logger.Info( $"About to try and re-authenticate user with email {email}." );
             this.Email = email;
-            this.userId = userId;
-            //this.RefreshToken = refreshToken;
-            //this.AccessToken = accessToken;
-            //this.IdToken = idToken;
-            //this.ExpirationTime = expirationTime;
-            //this.IssuedTime = issuedTime;
-            //this.DeviceKey = deviceKey;
-            //this.DeviceGroupKey = deviceGroupKey;
+            this._userId = userId;
             this.CognitoUser = new CognitoUser( userId, AuthenticationConstants.AWSClientID, cognitoUserPool, cognitoProvider );
 
             this.CognitoUser.SessionTokens = new CognitoUserSession( idToken, accessToken, refreshToken, issuedTime, expirationTime );
@@ -203,13 +196,6 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                         if (authFlowResponse.AuthenticationResult != null) {
                             //If we get here authentication was successful.
-                            //this.RefreshToken = authFlowResponse.AuthenticationResult.RefreshToken;
-                            //this.AccessToken = authFlowResponse.AuthenticationResult.AccessToken;
-                            //this.IdToken = authFlowResponse.AuthenticationResult.IdToken;
-                            //this.DeviceKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceKey;
-                            //this.DeviceGroupKey = authFlowResponse.AuthenticationResult.NewDeviceMetadata.DeviceGroupKey;
-                            //this.ExpirationTime = this.CognitoUser.SessionTokens.ExpirationTime;
-                            //this.IssuedTime = this.CognitoUser.SessionTokens.IssuedTime;
 
                             logger.Info( $"Successfully authenticated user with email {this.Email}." );
                             if (OnUserAuthenticationSuccessful != null)
@@ -228,27 +214,6 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                         //Not sure what would cause us to get here
                         throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
                     }
-
-                    /*
-                    //After authentication, confirm this device (which is assumed to be a new device) and associated it with the cognito user
-                    var confirmDeviceResponse =  await this.CognitoUser.ConfirmDeviceAsync(
-                        this.AccessToken,
-                        this.DeviceKey,
-                        this.DeviceName,
-                        GetDeviceVerifier().PasswordVerifier,
-                        GetDeviceVerifier().Salt );
-
-                    device = new CognitoDevice(
-                        this.DeviceKey,
-                        new Dictionary<string, string>(),
-                        DateTime.Today,
-                        DateTime.Today,
-                        DateTime.Today,
-                        this.CognitoUser );
-
-                    await device.GetDeviceAsync();
-                    this.CognitoUser.Device = device;
-                    */
 
                     break;
 
@@ -313,33 +278,10 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 */
 
                 case ConstructorType.REFRESH_TOKEN:
-                /*
-                try {
-                    device = new CognitoDevice(
-                        this.DeviceKey,
-                        new Dictionary<string, string>(),
-                        DateTime.Today,
-                        DateTime.Today,
-                        DateTime.Today,
-                        this.CognitoUser );
-
-                    await device.GetDeviceAsync();
-                    this.CognitoUser.Device = device;
-                } catch (Amazon.CognitoIdentityProvider.Model.ResourceNotFoundException rnfe) {
-                    //Repackage the error to be mroe friendly to our code
-                    throw new Scopos.BabelFish.Runtime.Authentication.DeviceNotKnownException( rnfe.Message, rnfe, logger );
-                } catch (Amazon.CognitoIdentityProvider.Model.NotAuthorizedException nae) {
-                    //Repackage the error to be mroe friendly to our code
-                    throw new Scopos.BabelFish.Runtime.Authentication.NotAuthorizedException( nae.Message, nae, logger );
-                } catch (Exception e) {
-                    //Not sure what would cause us to get here
-                    throw new Scopos.BabelFish.Runtime.Authentication.AuthenticationException( e.Message, e, logger );
-                }
-
-                break ;
-                */
                 case ConstructorType.COGNITO_USER:
-                    break; // no init needed, fully initialized cognito user was passed in
+                    // no init needed, fully initialized cognito user was passed in
+                    // However, the user should call RefreshTokenAsync().
+                    break;
             }
 
             //Mark that this instance has finished the initalization process
@@ -413,12 +355,12 @@ namespace Scopos.BabelFish.Runtime.Authentication {
         public string Email { get; private set; }
 
         public async Task<string> GetUserIdAsync() {
-            if (string.IsNullOrEmpty( this.userId )) {
+            if (string.IsNullOrEmpty( this._userId )) {
                 var userDetails = await this.CognitoUser.GetUserDetailsAsync();
-                this.userId = userDetails.Username;
+                this._userId = userDetails.Username;
             }
 
-            return this.userId;
+            return this._userId;
         }
 
         //NOTE: Purposefully not even keeping a variable for password
@@ -535,7 +477,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
 
                 var getCredentialsForIdentityResponse = await identityClient.GetCredentialsForIdentityAsync( getCredentialsForIdentityRequest );
 
-                IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration;
+                IamCredentialsExpiration = getCredentialsForIdentityResponse.Credentials.Expiration ?? DateTime.UtcNow;
                 AccessKey = getCredentialsForIdentityResponse.Credentials.AccessKeyId;
                 SecretKey = getCredentialsForIdentityResponse.Credentials.SecretKey;
                 SessionToken = getCredentialsForIdentityResponse.Credentials.SessionToken;
@@ -573,7 +515,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
             int numberOfDays = 45;
 
             foreach (var deviceType in listDevicesResponse.Devices) {
-                if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).Value.TotalDays > numberOfDays) {
                     var device = new CognitoDevice( deviceType, this.CognitoUser );
                     await device.ForgetDeviceAsync();
                     count++;
@@ -584,7 +526,7 @@ namespace Scopos.BabelFish.Runtime.Authentication {
                 listDevicesResponse = await this.CognitoUser.ListDevicesV2Async( 60, listDevicesResponse.PaginationToken );
 
                 foreach (var deviceType in listDevicesResponse.Devices) {
-                    if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).TotalDays > numberOfDays) {
+                    if ((DateTime.Now - deviceType.DeviceLastAuthenticatedDate).Value.TotalDays > numberOfDays) {
                         var device = new CognitoDevice( deviceType, this.CognitoUser );
                         await device.ForgetDeviceAsync();
                         count++;

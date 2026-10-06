@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.Runtime;
-using NLog;
-
 namespace Scopos.BabelFish.APIClients {
 
 
     /// <summary>
     /// Thrown when an API Client could not complete its call successfully.
     /// 
-    /// Excpected to be used as a base class for more specific exceptions.
+    /// <para>Expected to be used as a base class for more specific exceptions.</para>
     /// </summary>
     public class ScoposAPIException : ScoposException {
         public ScoposAPIException()

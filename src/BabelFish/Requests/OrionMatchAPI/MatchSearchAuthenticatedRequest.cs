@@ -1,26 +1,21 @@
 using Scopos.BabelFish.Runtime.Authentication;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Scopos.BabelFish.Requests.OrionMatchAPI
-{
+namespace Scopos.BabelFish.Requests.OrionMatchAPI {
+    [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
     public class MatchSearchAuthenticatedRequest : MatchSearchAbstractRequest {
         /// <summary>
         /// Authenticated constructor. 
         /// User is encouraged (really you need to do this) to set the Request Properties at time of construction.
         /// </summary>
-        public MatchSearchAuthenticatedRequest(UserAuthentication credentials) : base( "MatchSearch", credentials)  { 
+        public MatchSearchAuthenticatedRequest( UserAuthentication credentials ) : base( "MatchSearch", credentials ) {
             this.RequiresCredentials = true;
         }
 
         /// <inheritdoc />
         public override Request Copy() {
-            var newRequest = new MatchSearchAuthenticatedRequest(Credentials);
+            var newRequest = new MatchSearchAuthenticatedRequest( Credentials );
             newRequest.StartDate = StartDate;
-            newRequest.EndDate = EndDate;  
+            newRequest.EndDate = EndDate;
             newRequest.ShootingStyle = ShootingStyle;
             newRequest.Longitude = Longitude;
             newRequest.Latitude = Latitude;
@@ -33,8 +28,7 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI
         }
 
         /// <inheritdoc />
-        public override string RelativePath
-        {
+        public override string RelativePath {
             get { return $"/match/search"; }
         }
     }

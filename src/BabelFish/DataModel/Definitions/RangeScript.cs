@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using Amazon.Util;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -21,15 +17,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public RangeScript() {
             RangeScriptName = "";
 
-            PaperTargetLabels = new List<PaperTargetLabel>();
             SegmentGroups = new List<SegmentGroup>();
             DesignedForEST = false;
             DesignedForPaper = false;
         }
 
         [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context) {
-            foreach( var sg in SegmentGroups) {
+        internal void OnDeserializedMethod( StreamingContext context ) {
+            foreach (var sg in SegmentGroups) {
 
                 if (DefaultSegment == null && DesignedForEST) {
                     DefaultSegment = new SegmentGroupSegment();
@@ -63,6 +58,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>GAME</item>
         /// </list>
         /// </summary>
+        /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
         public RangeScriptType RangeScriptType { get; set; } = RangeScriptType.FORMAL_MATCH;
 
         /// <summary>
@@ -81,12 +77,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        [DefaultValue(null)]
+        [DefaultValue( null )]
         public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
 
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
-        [DefaultValue(null)]
+        [DefaultValue( null )]
         public SegmentGroupSegment DefaultSegment { get; set; } = new SegmentGroupSegment();
 
         /// <summary>
@@ -95,13 +91,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 		[G_STJ_SER.JsonPropertyOrder( 6 )]
         [G_NS.JsonProperty( Order = 6 )]
         public List<SegmentGroup> SegmentGroups { get; set; } = new List<SegmentGroup>();
-
-        /// <summary>
-        /// List of available options for printing barcode labels on paper targets.
-        /// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 7 )]
-        [G_NS.JsonProperty( Order = 7 )]
-        public List<PaperTargetLabel> PaperTargetLabels { get; set; } = new List<PaperTargetLabel>();
 
         /// <summary>
         /// Authors internal comments for documentation

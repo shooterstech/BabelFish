@@ -1,8 +1,6 @@
-﻿using System;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using NLog;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
@@ -16,12 +14,13 @@ namespace Scopos.BabelFish.Converters.Microsoft {
         protected string DateTimeFormatSecondary = null;
         protected DateTime DefaultValue = DateTime.Now;
         protected bool UseDefaultAsLastResort = false;
+        protected bool ConvertTimeToUtc = false;
 
         protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
         /// <inheritdoc />
         public override DateTime Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
-            
+
             string dateString = reader.GetString();
 
             if (!string.IsNullOrEmpty( dateString )) {
@@ -29,23 +28,32 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 DateTime output;
 
                 //Try parsing with the expected format first
-                if (DateTime.TryParseExact( dateString, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out output ))
+                if (DateTime.TryParseExact( dateString, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out output )) {
+                    if (ConvertTimeToUtc)
+                        return output.ToUniversalTime();
                     return output;
+                }
 
                 //Next try parsing with the secondary format, if one was specified
                 if (!string.IsNullOrEmpty( DateTimeFormatSecondary )
-                && DateTime.TryParseExact( dateString, DateTimeFormatSecondary, CultureInfo.InvariantCulture, DateTimeStyles.None, out output ))
+                && DateTime.TryParseExact( dateString, DateTimeFormatSecondary, CultureInfo.InvariantCulture, DateTimeStyles.None, out output )) {
+                    if (ConvertTimeToUtc)
+                        return output.ToUniversalTime();
                     return output;
+                }
 
-                if ( DateTime.TryParse( dateString, out output ) ) 
+                if (DateTime.TryParse( dateString, out output )) {
+                    if (ConvertTimeToUtc)
+                        return output.ToUniversalTime();
                     return output;
-                
+                }
+
                 Logger.Warn( $"Could not parse DateTime string '{dateString}' using a generic parser." );
-                
+
             }
 
             if (UseDefaultAsLastResort) {
-                Logger.Warn( $"Returning a Default DateTime value because the following could not be parsed '{dateString}'.");
+                Logger.Warn( $"Returning a Default DateTime value because the following could not be parsed '{dateString}'." );
                 return DefaultValue;
             }
 
@@ -55,7 +63,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
         /// <inheritdoc />
         public override void Write( Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options ) {
-            writer.WriteStringValue(value.ToString( DateTimeFormat, CultureInfo.InvariantCulture ) );
+            writer.WriteStringValue( value.ToString( DateTimeFormat, CultureInfo.InvariantCulture ) );
         }
     }
 
@@ -71,6 +79,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
             base.DateTimeFormat = Helpers.DateTimeFormats.DATE_FORMAT;
             base.UseDefaultAsLastResort = true;
             base.DefaultValue = DateTime.Today;
+            base.ConvertTimeToUtc = false;
         }
     }
 
@@ -87,6 +96,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
             base.DateTimeFormatSecondary = Helpers.DateTimeFormats.DATETIME_FORMAT_SECONDARY;
             base.UseDefaultAsLastResort = true;
             base.DefaultValue = DateTime.UtcNow;
+            base.ConvertTimeToUtc = true;
         }
     }
 }

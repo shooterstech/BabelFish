@@ -1,31 +1,25 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
-using NLog;
 using Location = Scopos.BabelFish.DataModel.Common.Location;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Abbreviated data about an Orion club account.
     /// </summary>
-    public class ClubAbbr : IComparable<ClubAbbr>
-    {
-        public int CompareTo(ClubAbbr other)
-        {
-            int compare = this.AccountNumber.CompareTo(other.AccountNumber);
+    public class ClubAbbr : IComparable<ClubAbbr> {
+        public int CompareTo( ClubAbbr other ) {
+            int compare = this.AccountNumber.CompareTo( other.AccountNumber );
             if (compare != 0)
                 return compare;
 
-            compare = this.Name.CompareTo(other.Name);
+            compare = this.Name.CompareTo( other.Name );
             if (compare != 0)
                 return compare;
 
-            compare = this.IsCurrentlyShooting.CompareTo(other.IsCurrentlyShooting);
+            compare = this.IsCurrentlyShooting.CompareTo( other.IsCurrentlyShooting );
             if (compare != 0)
                 return compare;
 
-            return this.AccountNumber.CompareTo(other.AccountNumber);
+            return this.AccountNumber.CompareTo( other.AccountNumber );
         }
 
         private Logger logger = LogManager.GetCurrentClassLogger();
@@ -37,14 +31,14 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The orion account number, usually 4 digits.
         /// </summary>
         /// <example>1234</example>
-        [DefaultValue(0)]
+        [DefaultValue( 0 )]
         public int AccountNumber { get; set; } = 0;
 
         /// <summary>
         /// The name of the club or individual who own's this Orion license.
         /// </summary>
         /// <example>Northeast High School</example>
-        [DefaultValue("")]
+        [DefaultValue( "" )]
         public string Name { get; set; } = String.Empty;
 
         /// <summary>
@@ -52,7 +46,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>OrionAcct001234</example>
         [DefaultValue( "" )]
-        public string OwnerId { 
+        public string OwnerId {
             get {
                 return $"OrionAcct{AccountNumber:D6}";
             }
@@ -63,15 +57,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         /// <example>Martin McMartin</example>
         [DefaultValue( "" )]
+        [Obsolete( "No longer used as of BabelFish 2.0, June 2026." )]
         public string Administrator { get; set; } = String.Empty;
-
-
-        //[DefaultValue( new List<ClubAuthorizationRole>() )] // eh? why mad?
-        /// <summary>
-        /// List of roles you as the caller have in this club, only shown on auth call response.
-        /// </summary>
-        [DefaultValue("")]
-        public List<ClubAuthorizationRole> Roles { get; set; } = new List<ClubAuthorizationRole>();
 
         /// <summary>
         /// The email address of the club. May in fact be the email address of the administrator.
@@ -112,11 +99,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// bool set by LastPublicShot, if shot within the last 15 minutes, it is true.
         /// </summary>
         /// <example>false</example>
-        [DefaultValue(false)]
-        public bool IsCurrentlyShooting { get { return LastPublicShot.AddMinutes(15) >= DateTime.UtcNow; }  }
+        [DefaultValue( false )]
+        public bool IsCurrentlyShooting { get { return LastPublicShot.AddMinutes( 15 ) >= DateTime.UtcNow; } }
 
         /// <summary>
-        /// The URL path in www.Scopos.net/clubs/{path} linking to their team page.
+        /// The URL path in rezults.scopos.net/clubs/{path} linking to their club page.
+        /// <para>Value is an empty string if the Club Administrators have disabled this feature or if the club does not have a valid Orion for Clubs license.</para>
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]

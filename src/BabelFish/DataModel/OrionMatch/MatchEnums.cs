@@ -1,29 +1,327 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
+using Scopos.BabelFish.DataActors.ResultListMerger;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
+
+    /*
+     * NOTE: When adding a new enum it is generally wise to add the enum to the 
+     * SerializerOptins.InitSystemTextJsonSerializer() method, so the enum value gets 
+     * serialized and deserialized as a string instead of an int. This makes it easier to 
+     * read and debug when looking at raw json, and also prevents issues with deserializing if the enum values change in the future.
+     */
+
+    /// <summary>
+    /// Concrete class id for a <seealso cref="AttributeFilter"/>. 
+    /// </summary>
+    public enum AttributeFilterOperation {
+        /// <summary>
+        /// AttributeFilter class is of concrete type AttributeFilterAttributeValue
+        /// </summary>
+        ATTRIBUTE_VALUE,
+
+        /// <summary>
+        /// AttributeFilter class is of concrete type AttributeFilterEquation
+        /// </summary>
+        EQUATION,
+
+        /// <summary>
+        /// None type AttributeFilter
+        /// </summary>
+        NONE
+    }
+
+    public enum AttributeFilterRule {
+
+        /// <summary>
+        /// To pass, the Participant must have one of the values listed in
+        /// the AttributeFilterAttributeValue's .Values array.
+        /// </summary>
+        [Description( "HaveOne" )]
+        [EnumMember( Value = "HaveOne" )]
+        HAVE_ONE,
+
+        /// <summary>
+        /// To pass, the Participant must have all of the values listed in
+        /// the AttributeFilterAttributeValue's .Values array, but may have additional values.
+        /// </summary>
+        [Description( "HaveAll" )]
+        [EnumMember( Value = "HaveAll" )]
+        HAVE_ALL,
+
+        /// <summary>
+        /// To pass, the Participant must not have all of the values listed in
+        /// the AttributeFilterAttributeValue's .Values array.
+        /// </summary>
+        [Description( "NotHaveAny" )]
+        [EnumMember( Value = "NotHaveAny" )]
+        NOT_HAVE_ANY
+
+        /*
+         * Need to add comparison operators >, >=, <, <=
+         */
+    }
+
+    public enum CountMergeMethodSortOption {
+        /// <summary>
+        /// Sort participants by their display name A-Z.
+        /// </summary>
+        [Description( "Alphabetical" )]
+        [EnumMember( Value = "Alphabetical" )]
+        ALPHABETICAL,
+
+        /// <summary>
+        /// Sort participants by the number of Result List Members they participated in. Then sorty by their Display Name.
+        /// </summary>
+        [Description( "Count" )]
+        [EnumMember( Value = "Count" )]
+        COUNT
+    }
+
+    /// <summary>
+    /// Tournament member enrollment policy.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum MemberPolicyOption {
+        [Description( "UNKNOWN" )]
+        [EnumMember( Value = "UNKNOWN" )]
+        UNKNOWN,
+
+        /// <summary>
+        /// Users can only join by invitation.
+        /// </summary>
+        [Description( "INVITE" )]
+        [EnumMember( Value = "INVITE" )]
+        INVITE,
+
+        /// <summary>
+        /// Users may request to join.
+        /// </summary>
+        [Description( "REQUEST" )]
+        [EnumMember( Value = "REQUEST" )]
+        REQUEST,
+
+        /// <summary>
+        /// Users can join without approval.
+        /// </summary>
+        [Description( "OPEN" )]
+        [EnumMember( Value = "OPEN" )]
+        OPEN
+    }
+
+    /// <summary>
+    /// Concrete class identifier for both <see cref="MergeConfiguration"/> and <see cref="MergedResultList"/>. Its value determines the type of MergeMethod to use when merging result lists together.
+    /// </summary>
+    public enum MergeMethodType {
+
+        /*
+         * NOTE: When adding a new MergeMethodType, be sure to also add a case for it in the MergeConfigurationConverter class, so that it can be properly deserialized from json.
+         * NOTE: You will also likely have to update the pydantic models in the REST API repository to reflect the new MergeMethodType.
+         */
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="SumMethod"/>
+        /// </summary>
+        [Description( "Sum" )]
+        [EnumMember( Value = "SUM" )]
+        SUM,
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="AverageMethod"/>
+        /// </summary>  
+        [Description( "Average" )]
+        [EnumMember( Value = "Average" )]
+        AVERAGE,
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="ReentryMethod"/>
+        /// </summary>
+        [Description( "Reentry" )]
+        [EnumMember( Value = "Reentry" )]
+        REENTRY,
+
+        /// <summary>
+        /// Concrete class identifier for <see cref="ParticipationCountMethod"/>
+        /// </summary>
+        [Description( "Event Count" )]
+        [EnumMember( Value = "Event Count" )]
+        EVENT_COUNT
+    }
+
+    /// <summary>
+    /// Preset options for authenticated tournament search filters.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum TournamentSearchPresetOption {
+        [Description( "incoming-invites" )]
+        [EnumMember( Value = "incoming-invites" )]
+        INCOMING_INVITES,
+
+        [Description( "outgoing-requests" )]
+        [EnumMember( Value = "outgoing-requests" )]
+        OUTGOING_REQUESTS
+    }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum CompetitionTypeOptions {
+        /// <summary>
+        /// Unknown
+        /// </summary>
+        [Description( "" )]
+        [EnumMember( Value = "" )]
+        UNKNOWN,
+
+        /// <summary>
+        /// Training (this value is usually set by Orion)
+        /// </summary>
+        [Obsolete( "Use Practice instead. Deprecated March 2026" )]
+        [Description( "Training" )]
+        [EnumMember( Value = "Training" )]
+        TRAINING,
+
+        /// <summary>
+        /// Practice (this value is usually set by Athena)
+        /// </summary>
+        [Description( "Practice" )]
+        [EnumMember( Value = "Practice" )]
+        PRACTICE,
+
+        /// <summary>
+        /// Practice Match
+        /// </summary>
+        [Obsolete( "Use Practice instead. Deprecated March 2026" )]
+        [Description( "Practice Match" )]
+        [EnumMember( Value = "Practice Match" )]
+        PRACTICE_MATCH,
+
+        /// <summary>
+        /// Postal Match
+        /// </summary>
+        [Description( "Postal Match" )]
+        [EnumMember( Value = "Postal Match" )]
+        POSTAL_MATCH,
+
+        /// <summary>
+        /// Local Match
+        /// </summary>
+        [Description( "Local Match" )]
+        [EnumMember( Value = "Local Match" )]
+        LOCAL_MATCH,
+
+        /// <summary>
+        /// League Game
+        /// </summary>
+        [Description( "League Game" )]
+        [EnumMember( Value = "League Game" )]
+        LEAGUE_GAME,
+
+        /// <summary>
+        /// League Game
+        /// </summary>
+        [Description( "Virtual Match" )]
+        [EnumMember( Value = "Virtual Match" )]
+        VIRTUAL_MATCH,
+
+        /// <summary>
+        /// League Championship
+        /// </summary>
+        [Description( "League Championship" )]
+        [EnumMember( Value = "League Championship" )]
+        LEAGUE_CHAMPIONSHIP,
+
+        /// <summary>
+        /// Regional Match
+        /// </summary>
+        [Description( "Regional Match" )]
+        [EnumMember( Value = "Regional Match" )]
+        REGIONAL_MATCH,
+
+        /// <summary>
+        /// Regional Championship
+        /// </summary>
+        [Description( "Regional Championship" )]
+        [EnumMember( Value = "Regional Championship" )]
+        REGIONAL_CHAMPIONSHIP,
+
+        /// <summary>
+        /// National Match
+        /// </summary>
+        [Description( "National Match" )]
+        [EnumMember( Value = "National Match" )]
+        NATIONAL_MATCH,
+
+        /// <summary>
+        /// National Championship
+        /// </summary>
+        [Description( "National Championship" )]
+        [EnumMember( Value = "National Championship" )]
+        NATIONAL_CHAMPIONSHIP
+
+    }
 
     /// <summary>
     /// Concrete class identifier for the abstract class CommandAutomation.
     /// </summary>
 	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
-	public enum CommandAutomationSubject {
-		/// <summary>
-		/// No command automation should happen
-		/// </summary>
-		NONE,
+    public enum CommandAutomationSubject {
+        /// <summary>
+        /// No command automation should happen
+        /// </summary>
+        NONE,
 
-		/// <summary>
-		/// Command automation should happen to remarks, whether that is showing (adding) or Hiding
-		/// </summary>
-		REMARK
-	};
+        /// <summary>
+        /// Command automation should happen to remarks, whether that is showing (adding) or Hiding
+        /// </summary>
+        REMARK
+    };
 
-	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    /// <summary>
+    /// Entry status for a Match Participant in a Course of Fire. Basically whether the Participant is entered in the Course of Fire, not entered, or withdrew from the Course of Fire.
+    /// </summary>
+    public enum EntryStatus {
+        /// <summary>
+        /// The Participant is not entered in this Course of Fire.
+        /// </summary>
+        NOT_ENTERED,
+        /// <summary>
+        /// The Participant is entered in this Course of Fire.
+        /// </summary>
+        ENTERED,
+        /// <summary>
+        /// The Participant was entered in this Course of Fire, but has withdrew and will not be competing in this Course of Fire.
+        /// </summary>
+        WITHDREW
+    }
+
+    /// <summary>
+    /// The types of registration entires that a <see cref="CourseOfFireStructure"/> can accept.
+    /// </summary>
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum EntryTypes {
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for both Individuals and Teams. This is the default.
+        /// </summary>
+        [Description( "IndividualAndTeam" )]
+        [EnumMember( Value = "IndividualAndTeam" )]
+        INDIVIDUAL_AND_TEAM,
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for Individuals only.
+        /// </summary>
+        [Description( "IndividualOnly" )]
+        [EnumMember( Value = "IndividualOnly" )]
+        INDIVIDUAL_ONLY,
+
+        /// <summary>
+        /// The <see cref="CourseOfFireStructure"/> accepts entries for Teams only.
+        /// </summary>
+        [Description( "TeamOnly" )]
+        [EnumMember( Value = "TeamOnly" )]
+        TEAM_ONLY
+    }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
     public enum LeagueRankingRuleType {
 
         /// <summary>
@@ -146,7 +444,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         CREATE_INCIDENT_REPORTS,
 
         [Description( "Read Incident Reports" )]
-        [EnumMember( Value = "Read Incident Reports" )] 
+        [EnumMember( Value = "Read Incident Reports" )]
         READ_INCIDENT_REPORTS,
 
         [Description( "Read Personal Incident Reports" )]
@@ -277,101 +575,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     }
 
 
-    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
-    public enum CompetitionTypeOptions {
-        /// <summary>
-        /// Unknown
-        /// </summary>
-        [Description( "" )]
-        [EnumMember( Value = "" )]
-        UNKNOWN,
-
-        /// <summary>
-        /// Training (this value is usually set by Orion)
-        /// </summary>
-        [Description( "Training" )]
-        [EnumMember( Value = "Training" )]
-        TRAINING,
-
-        /// <summary>
-        /// Practice (this value is usually set by Athena)
-        /// </summary>
-        [Description( "Practice" )]
-        [EnumMember( Value = "Practice" )]
-        PRACTICE,
-
-        /// <summary>
-        /// Practice Match
-        /// </summary>
-        [Description( "Practice Match" )]
-        [EnumMember( Value = "Practice Match" )]
-        PRACTICE_MATCH,
-
-        /// <summary>
-        /// Postal Match
-        /// </summary>
-        [Description( "Postal Match" )]
-        [EnumMember( Value = "Postal Match" )]
-        POSTAL_MATCH,
-
-        /// <summary>
-        /// Local Match
-        /// </summary>
-        [Description( "Local Match" )]
-        [EnumMember( Value = "Local Match" )]
-        LOCAL_MATCH,
-
-        /// <summary>
-        /// League Game
-        /// </summary>
-        [Description( "League Game" )]
-        [EnumMember( Value = "League Game" )]
-        LEAGUE_GAME,
-
-        /// <summary>
-        /// League Game
-        /// </summary>
-        [Description( "Virtual Match" )]
-        [EnumMember( Value = "Virtual Match" )]
-        VIRTUAL_MATCH,
-
-        /// <summary>
-        /// League Championship
-        /// </summary>
-        [Description( "League Championship" )]
-        [EnumMember( Value = "League Championship" )]
-        LEAGUE_CHAMPIONSHIP,
-
-        /// <summary>
-        /// Regional Match
-        /// </summary>
-        [Description( "Regional Match" )]
-        [EnumMember( Value = "Regional Match" )]
-        REGIONAL_MATCH,
-
-        /// <summary>
-        /// Regional Championship
-        /// </summary>
-        [Description( "Regional Championship" )]
-        [EnumMember( Value = "Regional Championship" )]
-        REGIONAL_CHAMPIONSHIP,
-
-        /// <summary>
-        /// National Match
-        /// </summary>
-        [Description( "National Match" )]
-        [EnumMember( Value = "National Match" )]
-        NATIONAL_MATCH,
-
-        /// <summary>
-        /// National Championship
-        /// </summary>
-        [Description( "National Championship" )]
-        [EnumMember( Value = "National Championship" )]
-        NATIONAL_CHAMPIONSHIP
-
-    }
-
     /// <summary>
     /// Concreate class identifier for MatchBase abstract class.
     /// </summary>
@@ -387,7 +590,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         [Description( "Tournament" )]
         [EnumMember( Value = "Tournament" )]
-        TOURNAMENT            
+        TOURNAMENT
     }
 
     /// <summary>
@@ -398,29 +601,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The underlying event has not started yet. No scores to report.
         /// </summary>
-        [Description("Future")]
-        [EnumMember(Value = "FUTURE")]
+        [Description( "Future" )]
+        [EnumMember( Value = "FUTURE" )]
         FUTURE,
 
         /// <summary>
         /// The underlying event has started but not yet complete. Only partial scores avalaible to report. The scores reported are the actual scores participants have shot.
         /// </summary>
-        [Description("Intermediate")]
-        [EnumMember(Value = "INTERMEDIATE")] 
+        [Description( "Intermediate" )]
+        [EnumMember( Value = "INTERMEDIATE" )]
         INTERMEDIATE,
 
         /// <summary>
         /// The underlying event has completed. All scores are in but not deemed Final yet. Likely a Challenge Period is still in progress.
         /// </summary>
-        [Description("Unofficial")]
-        [EnumMember(Value = "UNOFFICIAL")]
+        [Description( "Unofficial" )]
+        [EnumMember( Value = "UNOFFICIAL" )]
         UNOFFICIAL,
 
         /// <summary>
         /// The underlying event has completed, and all scores are final.
         /// </summary>
-        [Description("Official")]
-        [EnumMember(Value = "OFFICIAL")]
+        [Description( "Official" )]
+        [EnumMember( Value = "OFFICIAL" )]
         OFFICIAL
     }
 
@@ -482,8 +685,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Three dots (...) show when we don't want to show un-updated information.
         /// </summary>
-        ELLIPSES
+        ELLIPSES,
+
+        /// <summary>
+        /// Out of competition. Used when a Participant is competing for score only.
+        /// </summary>
+        OUT_OF_COMPETITION
     };
+
+    /// <summary>
+    /// The concrete class identifier for <see cref="Participant"/>. Whether the Participant is an Individual or a Team.
+    /// </summary>
+    public enum ParticipantType {
+
+        /// <summary>
+        /// A <see cref="Participant"/> that is a person, formally known as an <see cref="Individual"/>. Individuals have a family name, given name, and middle name.
+        /// </summary>
+        [Description( "Individual" )]
+        [EnumMember( Value = "Individual" )]
+        INDIVIDUAL,
+
+        /// <summary>
+        /// A <see cref="Participant"/> that is a team. Teams have a team name and a list of team members.
+        /// </summary>
+        [Description( "Team" )]
+        [EnumMember( Value = "Team" )]
+        TEAM
+    }
 
     /// <summary>
     /// Specifies the type of action to take on a CommandAutomationRemark.
@@ -506,8 +734,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         DELETE
     };
 
-	[G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
-	public enum SquaddingAssignmentType {
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum SquaddingAssignmentType {
         BANK,
         FIRING_POINT,
         SQUAD
@@ -548,5 +776,67 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// A Mix of scoring systems were used.
         /// </summary>
         MIXED
+    }
+
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum ApprovalStatus {
+        [Description( "UNKNOWN" )]
+        [EnumMember( Value = "UNKNOWN" )]
+        UNKNOWN,
+
+        [Description( "PENDING" )]
+        [EnumMember( Value = "PENDING" )]
+        PENDING,
+
+        [Description( "APPROVED" )]
+        [EnumMember( Value = "APPROVED" )]
+        APPROVED,
+
+        [Description( "REJECTED" )]
+        [EnumMember( Value = "REJECTED" )]
+        REJECTED,
+
+        [Description( "DELETED" )]
+        [EnumMember( Value = "DELETED" )]
+        DELETED
+    }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum RangeReportKind {
+        [Description( "MATCH" )]
+        [EnumMember( Value = "MATCH" )]
+        MATCH,
+
+        [Description( "LEAGUE_GAME" )]
+        [EnumMember( Value = "LEAGUE_GAME" )]
+        LEAGUE_GAME,
+
+        [Description( "LEAGUE_RECAP" )]
+        [EnumMember( Value = "LEAGUE_RECAP" )]
+        LEAGUE_RECAP
+    }
+
+    [G_NS.JsonConverter( typeof( G_NS_CONV.StringEnumConverter ) )]
+    public enum RangeReportStatus {
+        [Description( "UNKNOWN" )]
+        [EnumMember( Value = "UNKNOWN" )]
+        UNKNOWN,
+
+        [Description( "QUEUED" )]
+        [EnumMember( Value = "QUEUED" )]
+        QUEUED,
+
+        [Description( "IN_PROGRESS" )]
+        [EnumMember( Value = "IN_PROGRESS" )]
+        IN_PROGRESS,
+
+        [Description( "COMPLETED" )]
+        [EnumMember( Value = "COMPLETED" )]
+        COMPLETED,
+
+        [Description( "FAILED" )]
+        [EnumMember( Value = "FAILED" )]
+        FAILED
     }
 }

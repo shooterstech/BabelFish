@@ -79,7 +79,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 } );
 
 
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "BabelFish.Reports.Resources.Images.scopos_owl_transparent_orange.png" )) {
+                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_owl_transparent_orange.png" )) {
 
                     row.ConstantItem( 2.5f, Unit.Centimetre )
                    .AspectRatio( 1 )

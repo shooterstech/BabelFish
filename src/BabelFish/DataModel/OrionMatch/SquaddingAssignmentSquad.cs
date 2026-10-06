@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     /// <summary>
@@ -9,7 +5,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Squads are almost exclusively used in shotgun events.
     /// </summary>
     public class SquaddingAssignmentSquad : SquaddingAssignment, IComparable<SquaddingAssignmentSquad> {
-        
+
         /*
          * NOTE: In shotgun, where they use squads, there is no concept of a relay. There is such a concept of order of squads, but the term 'relay' is not used.
          */
@@ -21,27 +17,35 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The name of the squad the Individual is squadded on.
         /// </summary>
-        public string Squad {get; set; }
+        public string Squad { get; set; }
 
-        public int CompareTo(SquaddingAssignmentSquad other) {
-            int compare = this.Range.CompareTo(other.Range);
+        /// <inheritdoc/>
+        public override bool NotYetSquadded {
+            get {
+                // EKA NOTE: March 2026 I could be persuaded on how to calculate NotYetSquaddedd. 
+                return string.IsNullOrWhiteSpace( Squad );
+            }
+        }
+
+        public int CompareTo( SquaddingAssignmentSquad other ) {
+            int compare = this.Range.CompareTo( other.Range );
             if (compare != 0)
                 return compare;
 
-            compare = this.Squad.CompareTo(other.Squad);
+            compare = this.Squad.CompareTo( other.Squad );
             if (compare != 0)
                 return compare;
 
-            return this.FiringOrder.CompareTo(other.FiringOrder);
+            return this.FiringOrder.CompareTo( other.FiringOrder );
 
-		}
+        }
 
-		public override string ToString( bool useAbbreviation ) {
-			if (useAbbreviation) {
-				return $"R{this.Range} S{this.Squad}";
-			} else {
-				return $"Range {this.Range} S {this.Squad}";
-			}
-		}
-	}
+        public override string ToString( bool useAbbreviation ) {
+            if (useAbbreviation) {
+                return $"R{this.Range} S{this.Squad}";
+            } else {
+                return $"Range {this.Range} S {this.Squad}";
+            }
+        }
+    }
 }

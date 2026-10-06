@@ -1,8 +1,10 @@
-﻿namespace Scopos.BabelFish.DataModel.Definitions {
+namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
-    /// A ShowWhenSegmentGroup is a Show-When expression that evalutes to true or false, based on the value of the SegmentGroupName
-    /// stored in teh ResultList's MetaData.
+    /// ShowWhen operations describe logic for when a <seealso cref="ResultListFormat">RESULT LIST FORMAT</seealso>
+    /// <seealso cref="ResultListDisplayColumn"/>, <seealso cref="ClassSet"/>, or SpanningText is included and displayed.
+    /// <para>A ShowWhenSegmentGroup is a Show-When expression that evalutes to true or false, based on the value of the SegmentGroupName
+    /// stored in teh ResultList's MetaData.</para>
     /// </summary>
     public class ShowWhenSegmentGroup : ShowWhenBase {
 
@@ -19,6 +21,7 @@
         /// </summary>
         public string SegmentGroupName { get; set; }
 
+        /// <inheritdoc />
         public override string ToString() {
             return $"{SegmentGroupName}";
         }

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
     public class SetAttributeValueListConverter : JsonConverter<SetAttributeValueList> {
@@ -14,9 +12,9 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
                 SetAttributeValueList setAttrValueList = new SetAttributeValueList();
 
-                foreach ( var av in root.EnumerateObject()) {
+                foreach (var av in root.EnumerateObject()) {
                     SetAttributeValue buildAttribute = new SetAttributeValue();
-                    buildAttribute.AttributeValue = av.Name;
+                    buildAttribute.AttributeValue = SetName.Parse( av.Name, false );
                     var avObject = av.Value;
 
                     buildAttribute.StatusCode = avObject.GetProperty( "statusCode" ).GetInt32().ToString();

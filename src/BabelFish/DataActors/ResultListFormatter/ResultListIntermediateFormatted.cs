@@ -17,6 +17,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
     /// to retreive either the textual value of each cell or a CallValue object that is the text value plus
     /// css class list.
     /// </summary>
+    /// <remarks>
+    /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+    /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+    /// the result list intermediate formatter to format the result list to the console.
+    /// </remarks>
     public class ResultListIntermediateFormatted {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
@@ -320,13 +325,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             get {
                 //The ScoreFormatCollection should be included in the ResultListFormat,
                 //but in case it isn't, ,pass back the default value of Standard Score Formats.
-                SetName setName;
-                try {
-                    setName = SetName.Parse( ResultListFormat.ScoreFormatCollectionDef );
-                } catch {
-                    setName = SetName.Parse( "v1.0:orion:Standard Score Formats" );
-                }
-                return setName;
+                if (!ResultListFormat.ScoreFormatCollectionDef.IsDefault)
+                    return ResultListFormat.ScoreFormatCollectionDef;
+                else
+                    return SetName.Parse( "v1.0:orion:Standard Score Formats" );
             }
         }
 
@@ -711,6 +713,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>The default value is int.MaxValue, which means to show all children.</para>
         /// <para>Values of less than 0, are interpreted as being 0.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public int ShowNumberOfChildRows {
             get {
                 return _showNumberOfChildren;
@@ -755,6 +758,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Gets or sets the set of ResultStatus (e.g. INTERMEDIATE, UNOFFICIAL) to show when .ShownRows is called. 
         /// <para>When setting, if the HashSet is empty, then all ResultStatus will be included.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public HashSet<ResultStatus> ShowStatuses {
             get {
                 HashSet<ResultStatus> copy = new HashSet<ResultStatus>();
@@ -777,6 +781,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
         /// <para>The defautl value is true.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public bool ShowZeroScoresWithOFFICIAL {
             get; set;
         }
@@ -786,6 +791,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// Scores that have a remark of DNS, DSQ, or DNF are still shown regardless of value.
         /// <para>The defautl value is true.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public bool ShowZeroScoresBeforeOFFICIAL {
             get; set;
         }
@@ -798,6 +804,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>This property only effects parent rows, it does not effect child rows.</para>
         /// <para>The default value is 3.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public int ShowRanks {
             get {
                 return _showRanks;
@@ -816,6 +823,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// relay will be shown. 
         /// <para>The default value is an empty string, which means to show all competitors from all relays.</para>
         /// </summary>
+        /// <remarks>Calling <see cref="SetShowValuesToDefault"/> will reset this property to its default value.</remarks>
         public string ShowRelay {
             get {
                 return _showRelay;
@@ -898,10 +906,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             foreach (var metaData in this.ResultList.Metadata.Values) {
                 //Make the request for all the squadding lists in parrallel
                 try {
-                    var matchId = new MatchID( metaData.MatchID );
                     var squaddingListName = metaData.SquaddingListName;
                     if (!string.IsNullOrEmpty( squaddingListName )) {
-                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( matchId, squaddingListName ) );
+                        responses.Add( orionMatchAPIClient.GetSquaddingListPublicAsync( metaData.MatchID, squaddingListName ) );
                     }
                 } catch (Exception ex) {
                     _logger.Error( ex );
@@ -1218,6 +1225,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </remarks>
         public ParticipantAttributeOverload? GetParticipantAttributeRemarkPtr { get; set; } = null;
 
+        /// <summary>
+        /// Overrides the method the ResultListIntermediateFormatted uses to calculate the OutOfCompetition field
+        /// in each row. 
+        /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new 
+        /// method in the field value.
+        /// </remarks>
+        public ParticipantAttributeOverload? GetParticipantAttributeOutOfCompetitionPtr { get; set; } = null;
         /// <summary>
         /// Overrides the method the ResultListIntermediateFormatted uses to calculate the Squadding field
         /// in each row. 

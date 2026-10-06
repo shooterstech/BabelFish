@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Converters.Newtonsoft {
 
@@ -33,15 +29,15 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             var id = jo["Operation"]?.Value<string>();
 
             switch (id) {
-                case "EQUATION" :
+                case "EQUATION":
                     return JsonConvert.DeserializeObject<ShowWhenEquation>( jo.ToString(), SpecifiedSubclassConversion );
-                case "VARIABLE" :
+                case "VARIABLE":
                     return JsonConvert.DeserializeObject<ShowWhenVariable>( jo.ToString(), SpecifiedSubclassConversion );
                 case "SEGMENT_GROUP":
                     return JsonConvert.DeserializeObject<ShowWhenSegmentGroup>( jo.ToString(), SpecifiedSubclassConversion );
                 default:
                     //If we get here, it is probable because of ill-formed json
-                    return ShowWhenVariable.ALWAYS_SHOW.Clone();
+                    return ShowWhenVariable.CreateAlwaysShow();
             }
         }
 
