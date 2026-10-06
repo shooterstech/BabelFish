@@ -7,7 +7,6 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// Instantiate client
         /// </summary>
-        /// <param name="apiKey"></param>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
         public ImageClient() : base() {
 

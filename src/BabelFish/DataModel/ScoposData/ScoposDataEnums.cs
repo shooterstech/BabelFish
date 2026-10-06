@@ -26,6 +26,7 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
     /// ImageCategory helps to categorize images based on their association with different entities within Rezults.
     /// It specifies whether the image is related to a Club, Match, League, or User profile.
     /// </summary>
+    /// <remarks>Additional documentation for ImageCategory can be found at https://docs.google.com/document/d/17M5888Px6ztdQGH6M-5e5W_DfeVK6urVxRG1XVlQ7Oo/edit?usp=sharing</remarks>
     public enum ImageCategory {
         /// <summary>
         /// A Club image is an image associated with a club (aka Orion Account), such as a logo or a photo of the club's facilities.
@@ -47,13 +48,6 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         [Description( "League Team" )]
         [EnumMember( Value = "League Team" )]
         LEAGUE_TEAM,
-
-        /// <summary>
-        /// A League Game image is an image associated with a specific game within a league.
-        /// </summary>
-        [Description( "League Game" )]
-        [EnumMember( Value = "League Game" )]
-        LEAGUE_GAME,
 
         /// <summary>
         /// A User image is an image associated with a user profile (aka Scopos Account), such as a profile picture or a cover photo.

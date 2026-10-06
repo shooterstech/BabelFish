@@ -198,6 +198,7 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
             }
         }
 
+        /// <inheritdoc />
         public override async Task PreRequestMethodAsync() {
 
             // Check that the ImageFile is valid and exists.

@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <summary>
         /// Upload or edit images associated with a match
         /// </summary>
-        public static readonly Permission MATCH_EDIT_IMAGE = new Permission( "match.edit_image", "Upload or edit images asssociated with a match" );
+        public static readonly Permission MATCH_EDIT_IMAGE = new Permission( "match.edit_image", "Upload or edit images associated with a match" );
         /// <summary>
         /// Accept the invite to join a parent match as a child
         /// </summary>

@@ -4,17 +4,34 @@ using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Image {
-    public class ImageList : ITokenItems<ScoposImageAbbr> {
+    /// <summary>
+    /// Defined the DataModel for a <see cref="Scopos.BabelFish.Requests.ImageAPI.GetImagesRequest"/> API call. This is a list of ScoposImageAbbr data objects, with a NextToken for pagination.
+    /// </summary>
+    public class ImageList :
+        ITokenItems<ScoposImageAbbr>,
+        G_STJ_SER.IJsonOnDeserialized {
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageList"/> class.
+        /// </summary>
         public ImageList() {
             Items = new List<ScoposImageAbbr>();
         }
 
-        [OnDeserialized]
-        internal void OnDeserialized( StreamingContext context ) {
+        /// <summary>
+        /// Called when the object is deserialized by System.Text.Json. Ensures that the Items list is initialized to an empty list if it is null.
+        /// </summary>
+        public void OnDeserialized() {
             if (Items == null)
                 Items = new List<ScoposImageAbbr>();
         }
+
+        /// <summary>
+        /// Called when the object is deserialized by Newtonsoft.Json. Ensures that the Items list is initialized to an empty list if it is null.
+        /// </summary>
+        /// <param name="context"></param>
+        [OnDeserialized]
+        internal void OnDeserialized( StreamingContext context ) => OnDeserialized();
 
         /// <summary>
         /// A list of ScoposImageAbbr data objects.
@@ -37,7 +54,7 @@ namespace Scopos.BabelFish.DataModel.Image {
 
         /// <inheritdoc />
         public override string ToString() {
-            return $"BulkImageList with {Items.Count} items";
+            return $"ImageList with {Items.Count} items";
         }
     }
 }

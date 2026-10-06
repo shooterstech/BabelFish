@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Requests {
         /// Initializes a new instance of the <see cref="APIRequestParameterException"/> class with a default error message.
         /// </summary>
         public APIRequestParameterException()
-            : base( "Something bad happened!" ) {
+            : base( "One or more request parameters are invalid." ) {
         }
 
         /// <summary>

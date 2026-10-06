@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 using Scopos.BabelFish.DataModel.Common;
@@ -90,13 +89,23 @@ namespace Scopos.BabelFish.APIClients {
             return client;
         }
 
-
+        /// <summary>
+        /// Calls the API asynchronously with the given request and populates the response.
+        /// </summary>
+        /// <typeparam name="T">The type of the response body.</typeparam>
+        /// <param name="request">The request to send.</param>
+        /// <param name="response">The response to populate.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="AuthenticationException">Thrown if there is an authentication error.</exception>
+        /// <exception cref="APIRequestParameterException">Thrown if the request parameters are invalid.</exception>
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass, new() {
 
             // Perform any pre-call validation or action items on the request object.
+            // Will throw a APIRequestParameterException if the request parameters are invalid.
             await request.PreRequestMethodAsync();
 
-            // Get Uri for call
+            // Construct the URI for the API call based on the request's subdomain, stage, relative path, query string, and fragment.
+            // Will throw a APIRequestParameterException if the request parameters are invalid.
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
             DateTime startTime = DateTime.Now;
@@ -269,7 +278,7 @@ namespace Scopos.BabelFish.APIClients {
                     response.OverallStatusCode = RequestStatusCode.RestApiServerError;
                     response.ExceptionMessage = msg;
 
-                    LogErrorAndAssert( null, msg );
+                    _logger.Error( msg );
                     _logger.Debug( jsonAsString );
                 }
 
@@ -280,7 +289,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
 
-                LogErrorAndAssert( je, $"JsonException: {je.Message}" );
+                _logger.Error( je, $"JsonException: {je.Message}" );
                 _logger.Debug( jsonAsString );
             } catch (TaskCanceledException tce) {
                 //This is a timeout exception. The request took longer than allowed (which is set by _tiemOut, or 15s).
@@ -291,7 +300,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
 
-                LogErrorAndAssert( tce, $"API Call timed out: {tce.Message}" );
+                _logger.Error( tce, $"API Call timed out: {tce.Message}" );
             } catch (APIRequestParameterException re) {
                 // Usually thrown by a concrete Request object, when the parameters are not valid, incomplete, or missing. This is usually a programming error, and should be fixed in the code.
                 response.RestApiStatusCode = HttpStatusCode.InternalServerError;
@@ -300,7 +309,7 @@ namespace Scopos.BabelFish.APIClients {
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
 
-                LogErrorAndAssert( re, $"Request parameters are invalid: {re.Message}" );
+                _logger.Error( re, $"Request parameters are invalid: {re.Message}" );
             } catch (Exception ex) {
 
                 //Keep NotFound exceptions, otherwise replace with internal server error
@@ -309,28 +318,9 @@ namespace Scopos.BabelFish.APIClients {
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
 
-                LogErrorAndAssert( ex, $"API Call failed: {ex.Message}" );
+                _logger.Error( ex, $"API Call failed: {ex.Message}" );
                 _logger.Debug( jsonAsString );
             }
-        }
-
-        private void LogErrorAndAssert( Exception? ex, string msg ) {
-            if (ex == null) {
-                _logger.Fatal( msg );
-            } else {
-                _logger.Fatal( ex, msg );
-            }
-            Debug.Assert( false, msg );
-        }
-
-        private static MessageResponse CloneMessageResponse( MessageResponse? source ) { //currently MessageResponse caching is commented out
-            var clone = new MessageResponse();
-
-            if (source?.Message != null) {
-                clone.Message.AddRange( source.Message );
-            }
-
-            return clone;
         }
 
         private static Dictionary<string, HashSet<Permission>> ClonePermissions( Dictionary<string, HashSet<Permission>>? source ) {

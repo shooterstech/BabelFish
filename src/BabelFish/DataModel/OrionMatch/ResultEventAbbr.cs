@@ -35,6 +35,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
         public string CheckSum { get; set; }
 
         /// <inheritdoc />
