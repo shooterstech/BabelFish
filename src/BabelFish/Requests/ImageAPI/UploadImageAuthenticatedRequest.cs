@@ -99,24 +99,6 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         }
 
         /// <summary>
-        /// Convenience constructor for uploading a League game image. Sets the value of ImageCategory to LEAGUE, GroupKey to Bulk, the Key to the (parameter)
-        /// league ID in string form, and the SubKey to the (parameter) game ID in string form.
-        /// </summary>
-        /// <param name="leagueId">The Match ID of the league.</param>
-        /// <param name="gameId">The Match ID of the game.</param>
-        /// <param name="credentials">The user credentials for authentication.</param>
-        public UploadImageAuthenticatedRequest( MatchID leagueId, MatchID gameId, UserAuthentication credentials ) : base( "PatchModerateImage", credentials ) {
-            HttpMethod = new HttpMethod( "PATCH" );
-            RequiresCredentials = true;
-            SubDomain = APISubDomain.AUTHAPI;
-
-            ImageCategory = ImageCategory.LEAGUE_GAME;
-            PrimaryKey = leagueId.ToString();
-            SubKey = gameId.ToString();
-            GroupKey = ImageGroupKeyType.BULK;
-        }
-
-        /// <summary>
         /// References the image file to upload. The file should be in a supported image format (JPEG or PNG). The file path should be valid and accessible by the application.
         /// </summary>
         public FileInfo? ImageFile { get; set; } = null;

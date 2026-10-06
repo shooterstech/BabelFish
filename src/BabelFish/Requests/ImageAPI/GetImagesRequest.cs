@@ -78,7 +78,7 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         /// <item>User: The key will be the UUID formatted user ID of the user who owns it.</item>
         /// </list>
         /// </summary>
-        public string PrimaryKey { get; set; } = "";
+        public string PrimaryKey { get; set; } = string.Empty;
 
         /// <summary>
         /// Value is dependent on the value of <see cref="ImageCategory"/> and <see cref="GroupKey"/>.
@@ -95,10 +95,10 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
         /// <item>User: Not used, should pass in an empty string.</item>
         /// </list>
         /// </summary>
-        public string SubKey { get; set; } = "";
+        public string SubKey { get; set; } = string.Empty;
 
         /// <inheritdoc />
-        public string Token { get; set; }
+        public string Token { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public int Limit { get; set; } = 0;
