@@ -355,21 +355,23 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #region Methods
         /// <summary>
         /// Returns true if this club's team page should be visible to the public. This is true if the club has set its
-        /// Visibility to PUBLIC and has at least one valid Orion for Clubs license.
+        /// Visibility to PUBLIC and has at least one valid license.
         /// </summary>
         /// <returns></returns>
         public bool IsPublicUrlPageVisible() {
-            return Visibility == VisibilityOption.PUBLIC && LicenseList.Any( l => (l.LicenseType == ClubLicenseType.INDIVIDUAL || l.LicenseType == ClubLicenseType.SITE) && l.ExpirationDate >= DateTime.Today );
+            // EKA NOTE: As of October 2026, no longer considering if this is a home account. Both club and home accounts can have public pages if they have a valid license and have set their visibility to PUBLIC.
+            return Visibility == VisibilityOption.PUBLIC
+                && LicenseList.Any( l => l.ExpirationDate >= DateTime.Today );
         }
 
         /// <summary>
         /// Returns true if Club Members, Admins, and Managers should be able to see the Club page page even if the club has not set its Visibility to PUBLIC.
-        /// This is true if the club has at least one valid Orion for Clubs license.
-        /// <para>Would be false if all of their licenses have expired, or this is a Orion at Home account.</para>
+        /// This is true if the club has at least one valid license.
         /// </summary>
         /// <returns></returns>
         public bool IsProtectedUrlPageVisible() {
-            return LicenseList.Any( l => (l.LicenseType == ClubLicenseType.INDIVIDUAL || l.LicenseType == ClubLicenseType.SITE) && l.ExpirationDate >= DateTime.Today );
+            // EKA NOTE: As of October 2026, no longer considering if this is a home account. Both club and home accounts can have protected pages if they have a valid license.
+            return LicenseList.Any( l => l.ExpirationDate >= DateTime.Today );
         }
 
         /// <inheritdoc />

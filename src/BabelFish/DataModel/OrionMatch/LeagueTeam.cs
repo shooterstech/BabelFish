@@ -104,9 +104,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string LeagueID { get; set; }
 
         /// <summary>
-        /// GUID formatted ClubID
+        /// Full URL to the Club Page that this team represents.
         /// </summary>
-        public string ClubID { get; set; }
+        public string ClubUrlPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The club account number associated with this team.
+        /// </summary>
+        public int ClubAccountNumber { get; set; } = 0;
 
         public POC POC { get; set; }
 
