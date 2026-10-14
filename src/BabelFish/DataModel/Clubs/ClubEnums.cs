@@ -1,46 +1,160 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
 
 
 namespace Scopos.BabelFish.DataModel.Clubs {
 
+    /* 
+     * When adding new enums, it is usually best to update Helpers/SerializationOptions.cs
+     */
+
+    /// <summary>
+    /// Defines the roles that can be assigned to members of a Club (aka Orion Account). The roles are used to
+    /// control access to various features and permissions within the system. This enum defines
+    /// roles for both Orion for Clubs and Orion at Home users. To get a list of roles that are specific to the
+    /// Club use <see cref="ClubDetail.GetApplicableAuthorizationRoles"/>.
+    /// </summary>
     public enum ClubAuthorizationRole {
         /*
-         * These values should align with the enum values defined in the sql table orion_account_authorization, role column.
-         * Use Proper case to be considtent with the Role names for Match Authorization.
+         * These values should align with the values defined in the sql 'role' table.
+         * Prepend each value with 'Club' to avoid confusion with match and global roles in the system.
          */
 
         /// <summary>
         /// Can do everything a Manager can plus assign the Admin role to other Club members.
         /// </summary>
-        [Description( "Admin" )]
-        [EnumMember( Value = "Admin" )]
+        [Description( "Club Admin" )]
+        [EnumMember( Value = "Club Admin" )]
         ADMIN,
 
-        [Description( "Manager" )]
-        [EnumMember( Value = "Manager" )]
+        [Description( "Club Manager" )]
+        [EnumMember( Value = "Club Manager" )]
         MANAGER,
 
-        [Description( "Member" )]
-        [EnumMember( Value = "Member" )]
+        [Description( "Club Member" )]
+        [EnumMember( Value = "Club Member" )]
         MEMBER,
 
-        [Description( "Coach" )]
-        [EnumMember( Value = "Coach" )]
+        [Description( "Club Coach" )]
+        [EnumMember( Value = "Club Coach" )]
         COACH,
 
-        [Description( "Payer" )]
-        [EnumMember( Value = "Payer" )]
-        PAYER
+        [Description( "Club Payer" )]
+        [EnumMember( Value = "Club Payer" )]
+        PAYER,
+
+        [Description( "Club Technical Officer" )]
+        [EnumMember( Value = "Club Technical Officer" )]
+        TECHNICAL_OFFICER,
+
+        /// <summary>
+        /// Specific role for the owner of an Orion at Home account. This role is not used for Orion for Clubs accounts.
+        /// </summary>
+        [Description( "Club Home" )]
+        [EnumMember( Value = "Club Home" )]
+        HOME_USER,
+    }
+
+    /// <summary>
+    /// Defines the types of contact information that can be associated with a Club (aka Orion Account).
+    /// </summary>
+    public enum ClubContactType {
+        /// <summary>
+        /// Primary contact number for the club
+        /// </summary>
+        [Description( "Phone Number" )]
+        [EnumMember( Value = "Phone Number" )]
+        PHONE_NUMBER,
+
+        /// <summary>
+        /// Primary contact email for the club
+        /// </summary>
+        [Description( "Email" )]
+        [EnumMember( Value = "Email" )]
+        EMAIL,
+
+        /// <summary>
+        /// Club's external website link
+        /// </summary>
+        [Description( "Website" )]
+        [EnumMember( Value = "Website" )]
+        WEBSITE,
+
+        /// <summary>
+        /// Club's Facebook page link
+        /// </summary>
+        [Description( "Facebook" )]
+        [EnumMember( Value = "Facebook" )]
+        FACEBOOK,
+
+        /// <summary>
+        /// Club's Instagram profile link
+        /// </summary>
+        [Description( "Instagram" )]
+        [EnumMember( Value = "Instagram" )]
+        INSTAGRAM,
+
+        /// <summary>
+        /// Club's Twitter profile link
+        /// </summary>
+        [Description( "X" )]
+        [EnumMember( Value = "X" )]
+        X,
+
+        /// <summary>
+        /// Club's TikTok profile link
+        /// </summary>
+        [Description( "TikTok" )]
+        [EnumMember( Value = "TikTok" )]
+        TIKTOK,
+
+        /// <summary>
+        /// Club's YouTube channel link
+        /// </summary>
+        [Description( "YouTube" )]
+        [EnumMember( Value = "YouTube" )]
+        YOU_TUBE,
+
+        /// <summary>
+        /// Club's LinkedIn profile link
+        /// </summary>
+        [Description( "LinkedIn" )]
+        [EnumMember( Value = "LinkedIn" )]
+        LINKEDIN,
+
+        /// <summary>
+        /// Club's Snapchat profile link
+        /// </summary>
+        [Description( "Snapchat" )]
+        [EnumMember( Value = "Snapchat" )]
+        SNAPCHAT,
+
+        /// <summary>
+        /// Club's Pinterest profile link
+        /// </summary>
+        [Description( "Pinterest" )]
+        [EnumMember( Value = "Pinterest" )]
+        PINTEREST,
+
+        /// <summary>
+        /// Club's Reddit profile link
+        /// </summary>
+        [Description( "Reddit" )]
+        [EnumMember( Value = "Reddit" )]
+        REDDIT,
+
+        /// <summary>
+        /// Club's WhatsApp contact number
+        /// </summary>
+        [Description( "WhatsApp" )]
+        [EnumMember( Value = "WhatsApp" )]
+        WHATS_APP
     }
 
     /// <summary>
     /// Medea called these LicenseFeature
     /// </summary>
+    [Obsolete( "This feature is no longer in use as of 2026-04. Maintained for backward compatibility with older Orion software." )]
     public enum ClubLicenseCapability {
 
         /// <summary>
@@ -69,38 +183,49 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// </summary>
         [Description( "Privileged" )]
         [EnumMember( Value = "PRIVILEGED" )]
-        PRIVILEGED
+        PRIVILEGED,
+
+        ORION_V1,
+
+        ORION_HOME,
+
+        ORION_VS
     };
 
+    /// <summary>
+    /// Specifies the type of Orion Account (aka Club) license.
+    /// </summary>
+    /// <remarks>Value gets store to the orion_account sql table.</remarks>
     public enum ClubLicenseType {
 
         /// <summary>
         /// Standard Orion for Clubs license.
         /// </summary>
-        [Description( "Individual" )]
-        [EnumMember( Value = "INDIVIDUAL" )] 
+        [Description( "INDIVIDUAL" )]
+        [EnumMember( Value = "INDIVIDUAL" )]
         INDIVIDUAL,
 
         /// <summary>
         /// Limited functionality Orion for Clubs Home license.
         /// </summary>
-        [Description( "Home" )]
-        [EnumMember( Value = "HOME" )] 
+        [Description( "HOME" )]
+        [EnumMember( Value = "HOME" )]
         HOME,
 
         /// <summary>
         /// Site license for Orion for Clubs.
         /// </summary>
-        [Description( "Site" )]
-        [EnumMember( Value = "SITE" )] 
+        [Description( "SITE" )]
+        [EnumMember( Value = "SITE" )]
         SITE,
 
         /// <summary>
         /// Temporary Orion for Clubs license.
         /// </summary>
-        [Description( "Temporary" )]
-        [EnumMember( Value = "TEMPORARY" )] 
-        TEMPORARY 
+        [Obsolete( "This license type is no longer in use as of 2026-04." )]
+        [Description( "TEMPORARY" )]
+        [EnumMember( Value = "TEMPORARY" )]
+        TEMPORARY
     };
 
     public enum ClubOptions {

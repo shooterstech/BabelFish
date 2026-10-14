@@ -1,9 +1,7 @@
 using System.Text.Json.Serialization;
 using HtmlAgilityPack;
 
-#pragma warning disable IDE0130 // Namespace does not match folder structure
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-#pragma warning restore IDE0130 // Namespace does not match folder structure
 
     /// <summary>
     /// Represents a html report that would be associated with a match. Such as the match's

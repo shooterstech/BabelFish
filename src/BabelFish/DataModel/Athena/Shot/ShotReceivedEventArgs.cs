@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace Scopos.BabelFish.DataModel.Athena.Shot {
+    public class ShotReceivedEventArgs : EventArgs {
 
-namespace Scopos.BabelFish.DataModel.Athena.Shot
-{
-    public class ShotReceivedEventArgs : EventArgs
-    {
-
-        public ShotReceivedEventArgs()
-        {
+        public ShotReceivedEventArgs() {
 
         }
 
-        public Scopos.BabelFish.DataModel.Athena.Shot.Shot Shot { get; set; }
+        public Shot Shot { get; set; }
 
         /// <summary>
         /// Original topic received from IOT
@@ -27,7 +20,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot
         /// <summary>
         /// The MatchID received, as interpreted from the topic
         /// </summary>
-        public Scopos.BabelFish.DataModel.OrionMatch.MatchID MatchID { get; set; }
+        public OrionMatch.MatchID MatchID { get; set; }
 
         /// <summary>
         /// Original message received from IOT

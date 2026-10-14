@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.Runtime.Authentication;
+using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 
 
@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.Requests.ScoreHistoryAPI
             get
             {
                 if (ResultCOFID == "")
-                    throw new RequestException("ResultCOFID is required and must not be empty");
+                    throw new APIRequestParameterException("ResultCOFID is required and must not be empty");
 
                 Dictionary<string, List<string>> parameterList = new Dictionary<string, List<string>>();
                 parameterList.Add("result-cof-id", new List<string>() { ResultCOFID });

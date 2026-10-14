@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.Responses;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Clubs;
 using Scopos.BabelFish.Requests.ClubsAPI;
-using Scopos.BabelFish.Responses.ClubsAPI;
-using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Responses.ClubsAPI {
     public class GetClubListPublicResponse : Response<ClubListWrapper>, ITokenResponse<GetClubListPublicRequest> {
 
-        public GetClubListPublicResponse( GetClubListPublicRequest request ) : base(  ) {
+        public GetClubListPublicResponse( GetClubListPublicRequest request ) : base() {
             this.Request = request;
         }
 
@@ -30,17 +25,17 @@ namespace Scopos.BabelFish.Responses.ClubsAPI {
             var nextRequest = (GetClubListPublicRequest)Request.Copy();
             nextRequest.Token = Value.ClubList.NextToken;
             return nextRequest;
-		}
+        }
 
         /// <inheritdoc />
 		public bool HasMoreItems {
-			get {
-				return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.ClubList.NextToken );
-			}
-		}
+            get {
+                return this.HasOkStatusCode && !string.IsNullOrEmpty( Value.ClubList.NextToken );
+            }
+        }
 
-		/// <inheritdoc />
-		protected internal override DateTime GetCacheValueExpiryTime() {
+        /// <inheritdoc />
+        protected internal override DateTime GetCacheValueExpiryTime() {
 
             return DateTime.UtcNow.AddMinutes( 10 );
         }

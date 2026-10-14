@@ -1,10 +1,14 @@
+using Scopos.BabelFish.DataActors.OrionMatch;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.APIClients {
-    public class OrionMatchAPIClient : APIClient<OrionMatchAPIClient> {
+    public class OrionMatchAPIClient :
+        APIClient<OrionMatchAPIClient>,
+        IResultListFetcher {
 
         /// <summary>
         /// Default constructor.
@@ -37,6 +41,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchPublicResponse> GetMatchPublicAsync( GetMatchPublicRequest requestParameters ) {
 
             GetMatchPublicResponse response = new GetMatchPublicResponse( requestParameters );
@@ -51,6 +60,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="matchid"></param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchPublicResponse> GetMatchPublicAsync( MatchID matchid ) {
             var request = new GetMatchPublicRequest( matchid );
 
@@ -62,6 +76,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchRequest object</param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAuthenticatedResponse> GetMatchAuthenticatedAsync( GetMatchAuthenticatedRequest requestParameters ) {
 
             GetMatchAuthenticatedResponse response = new GetMatchAuthenticatedResponse( requestParameters );
@@ -77,6 +96,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="withAuthentication">default false</param>
         /// <returns>Match Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAuthenticatedResponse> GetMatchAuthenticatedAsync( MatchID matchid, UserAuthentication credentials ) {
             var request = new GetMatchAuthenticatedRequest( matchid, credentials );
 
@@ -90,6 +114,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAbstractResponse> GetMatchAsync( MatchID matchid, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetMatchPublicAsync( matchid );
@@ -98,6 +127,11 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetMatchAbstractResponse> GetMatchAsync( GetMatchAbstractRequest requestParameters ) {
             if (requestParameters is GetMatchPublicRequest)
                 return await this.GetMatchPublicAsync( (GetMatchPublicRequest)requestParameters );
@@ -107,6 +141,168 @@ namespace Scopos.BabelFish.APIClients {
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
+
+        /// <summary>
+        /// Post Match Parent API
+        /// </summary>
+        /// <param name="requestParameters">PostMatchParentAuthenticatedRequest object</param>
+        /// <returns>Uploaded parent match data</returns>
+        public async Task<PostMatchParentAuthenticatedResponse> PostMatchParentAuthenticatedAsync( PostMatchParentAuthenticatedRequest requestParameters ) {
+            PostMatchParentAuthenticatedResponse response = new PostMatchParentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Post Match Parent API
+        /// </summary>
+        /// <param name="match"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Uploaded parent match data</returns>
+        public async Task<PostMatchParentAuthenticatedResponse> PostMatchParentAuthenticatedAsync( Match match, UserAuthentication credentials ) {
+            var request = new PostMatchParentAuthenticatedRequest( credentials, match );
+
+            return await PostMatchParentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Create Match Child API
+        /// </summary>
+        /// <param name="requestParameters">CreateMatchChildAuthenticatedRequest object</param>
+        /// <returns>Match Child data</returns>
+        public async Task<CreateMatchChildAuthenticatedResponse> CreateMatchChildAuthenticatedAsync( CreateMatchChildAuthenticatedRequest requestParameters ) {
+            CreateMatchChildAuthenticatedResponse response = new CreateMatchChildAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Create Match Child API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="ownerId"></param>
+        /// <param name="name"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child data</returns>
+        public async Task<CreateMatchChildAuthenticatedResponse> CreateMatchChildAuthenticatedAsync( MatchID parentMatchId, string ownerId, string name, UserAuthentication credentials ) {
+            var request = new CreateMatchChildAuthenticatedRequest( credentials, parentMatchId, ownerId, name );
+
+            return await CreateMatchChildAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenPublicRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenPublicResponse> ListParentMatchChildrenPublicAsync( ListParentMatchChildrenPublicRequest requestParameters ) {
+            ListParentMatchChildrenPublicResponse response = new ListParentMatchChildrenPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenPublicResponse> ListParentMatchChildrenPublicAsync( MatchID parentMatchId ) {
+            var request = new ListParentMatchChildrenPublicRequest( parentMatchId );
+
+            return await ListParentMatchChildrenPublicAsync( request );
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenAuthenticatedRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( ListParentMatchChildrenAuthenticatedRequest requestParameters ) {
+            ListParentMatchChildrenAuthenticatedResponse response = new ListParentMatchChildrenAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// List Parent Match Children API
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAuthenticatedResponse> ListParentMatchChildrenAuthenticatedAsync( MatchID parentMatchId, UserAuthentication credentials ) {
+            var request = new ListParentMatchChildrenAuthenticatedRequest( credentials, parentMatchId );
+
+            return await ListParentMatchChildrenAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="parentMatchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAbstractResponse> ListParentMatchChildrenAsync( MatchID parentMatchId, UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await ListParentMatchChildrenPublicAsync( parentMatchId );
+            } else {
+                return await ListParentMatchChildrenAuthenticatedAsync( parentMatchId, credentials );
+            }
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls.
+        /// </summary>
+        /// <param name="requestParameters">ListParentMatchChildrenAbstractRequest object</param>
+        /// <returns>Match Child List data</returns>
+        public async Task<ListParentMatchChildrenAbstractResponse> ListParentMatchChildrenAsync( ListParentMatchChildrenAbstractRequest requestParameters ) {
+            if (requestParameters is ListParentMatchChildrenPublicRequest)
+                return await this.ListParentMatchChildrenPublicAsync( (ListParentMatchChildrenPublicRequest)requestParameters );
+            else if (requestParameters is ListParentMatchChildrenAuthenticatedRequest)
+                return await this.ListParentMatchChildrenAuthenticatedAsync( (ListParentMatchChildrenAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+        }
+
+        /// <summary>
+        /// Patch Match Child API
+        /// </summary>
+        /// <param name="requestParameters">PatchMatchChildAuthenticatedRequest object</param>
+        /// <returns>Match Child data</returns>
+        public async Task<PatchMatchChildAuthenticatedResponse> PatchMatchChildAuthenticatedAsync( PatchMatchChildAuthenticatedRequest requestParameters ) {
+            PatchMatchChildAuthenticatedResponse response = new PatchMatchChildAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Match Child API
+        /// </summary>
+        /// <param name="matchChild"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Match Child data</returns>
+        public async Task<PatchMatchChildAuthenticatedResponse> PatchMatchChildAuthenticatedAsync( MatchChild matchChild, UserAuthentication credentials ) {
+            var request = new PatchMatchChildAuthenticatedRequest( credentials, matchChild );
+
+            return await PatchMatchChildAuthenticatedAsync( request );
+        }
+
+        public async Task<PatchMatchChildAuthenticatedResponse> ApproveMatchChildAsync( MatchChild matchChild, UserAuthentication credentials ) {
+            matchChild.ApprovalStatus = ApprovalStatus.APPROVED;
+            var request = new PatchMatchChildAuthenticatedRequest( credentials, matchChild );
+
+            return await PatchMatchChildAuthenticatedAsync( request );
+        }
         #endregion
 
         #region Get Result List
@@ -115,6 +311,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultListRequest object</param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListPublicResponse> GetResultListPublicAsync( GetResultListPublicRequest requestParameters ) {
             GetResultListPublicResponse response = new GetResultListPublicResponse( requestParameters );
 
@@ -130,6 +331,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListPublicResponse> GetResultListPublicAsync( MatchID matchid, string listname ) {
             return await GetResultListPublicAsync( new GetResultListPublicRequest( matchid, listname ) ).ConfigureAwait( false );
         }
@@ -139,6 +345,11 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetResultListRequest object</param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( GetResultListAuthenticatedRequest requestParameters ) {
             GetResultListAuthenticatedResponse response = new GetResultListAuthenticatedResponse( requestParameters );
 
@@ -154,6 +365,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="listname"></param>
         /// <returns>ResultList Object</returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAuthenticatedResponse> GetResultListAuthenticatedAsync( MatchID matchid, string listname, UserAuthentication credentials ) {
             return await GetResultListAuthenticatedAsync( new GetResultListAuthenticatedRequest( matchid, listname, credentials ) ).ConfigureAwait( false );
         }
@@ -165,6 +381,11 @@ namespace Scopos.BabelFish.APIClients {
         /// <param name="matchid"></param>
         /// <param name="credentials"></param>
         /// <returns></returns>
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAbstractResponse> GetResultListAsync( MatchID matchid, string listname, UserAuthentication? credentials = null ) {
             if (credentials == null) {
                 return await GetResultListPublicAsync( matchid, listname );
@@ -173,6 +394,11 @@ namespace Scopos.BabelFish.APIClients {
             }
         }
 
+        /// <remarks>
+        /// Visit our <see href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command%20Line%20Examples/Match%20API%20Example/Program.cs">Scopos-labs</see>
+        /// project to see an example of using BabelFish to retreive information about a match, retreiving the primary result lists from that match, and using
+        /// the result list intermediate formatter to format the result list to the console.
+        /// </remarks>
         public async Task<GetResultListAbstractResponse> GetResultListAsync( GetResultListAbstractRequest requestParameters ) {
             if (requestParameters is GetResultListPublicRequest)
                 return await this.GetResultListPublicAsync( (GetResultListPublicRequest)requestParameters );
@@ -181,6 +407,45 @@ namespace Scopos.BabelFish.APIClients {
             else
                 //We shouldn't ever get here
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
+
+        /// <inheritdoc />
+        public async Task<List<ResultList>> GetResultListsAsync( MergedResultList mergedResultList ) {
+            var tasks = new List<Task<ResultList?>>();
+
+            // Retreives each ResultList in parallel, and if there are multiple pages of results for a ResultList, retreive those pages sequentially and add them to the same ResultList object.
+            foreach (var rlm in mergedResultList.ResultListMembers) {
+                tasks.Add( Task.Run( async () => {
+                    var getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
+                    ResultList? resultList = null;
+                    GetResultListPublicResponse getResultListResponse;
+                    do {
+                        getResultListResponse = await this.GetResultListPublicAsync( getResultListRequest );
+                        if (getResultListResponse.HasOkStatusCode) {
+                            if (resultList is null) {
+                                resultList = getResultListResponse.ResultList;
+                            } else {
+                                resultList.Items.AddRange( getResultListResponse.ResultList.Items );
+                            }
+                            if (getResultListResponse.HasMoreItems)
+                                getResultListRequest = (GetResultListPublicRequest)getResultListResponse.GetNextRequest();
+                        } else {
+                            var msg = $"Could not add the Result List {rlm.ResultName} from {rlm.MatchId}. Received error '{getResultListResponse.OverallStatusCode}' and '{getResultListResponse.RestApiStatusCode}' instead.";
+                            _logger.Error( msg );
+                        }
+                    } while (getResultListResponse.HasMoreItems);
+                    return resultList;
+                } ) );
+            }
+
+            var resultLists = await Task.WhenAll( tasks );
+            var resultListsToReturn = new List<ResultList>();
+            foreach (var resultList in resultLists) {
+                if (resultList != null) {
+                    resultListsToReturn.Add( resultList );
+                }
+            }
+            return resultListsToReturn;
         }
         #endregion
 
@@ -364,8 +629,13 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// Get Match Search API
         /// </summary>
-        /// <param name="requestParameters">GetMatchSearchRequest object</param>
-        /// <returns>List<Match> Object</returns>
+        /// <param name="requestParameters"><seealso cref="MatchSearchPublicRequest"/></param>
+        /// <returns><seealso cref="MatchSearchPublicResponse"/></returns>
+        /// <remarks>
+        /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
+        /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
+        /// </remarks>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchPublicResponse> GetMatchSearchPublicAsync( MatchSearchPublicRequest requestParameters ) {
             MatchSearchPublicResponse response = new MatchSearchPublicResponse( requestParameters );
 
@@ -379,6 +649,7 @@ namespace Scopos.BabelFish.APIClients {
         /// </summary>
         /// <param name="requestParameters">GetMatchSearchRequest object</param>
         /// <returns>List<Match> Object</returns>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchAuthenticatedResponse> GetMatchSearchAuthenticatedAsync( MatchSearchAuthenticatedRequest requestParameters ) {
             MatchSearchAuthenticatedResponse response = new MatchSearchAuthenticatedResponse( requestParameters );
 
@@ -387,6 +658,11 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
+        /// <remarks>
+        /// Visit our Scopos-Labs project to see an example of using GetMatchSearch() to retreive a list of ResultListAbbr.
+        /// <seealso href="https://github.com/shooterstech/scopos-labs/blob/master/csharp/Command Line Examples/Match Search API Example/Program.cs" />
+        /// </remarks>
+        [Obsolete( "Use one of the ListMatch() methods instead. Deprecated July 2026 with the BabelFish 2.0 release. This method will be removed in a future release." )]
         public async Task<MatchSearchAbstractResponse> GetMatchSearchAsync( MatchSearchAbstractRequest requestParameters ) {
             if (requestParameters is MatchSearchPublicRequest)
                 return await this.GetMatchSearchPublicAsync( (MatchSearchPublicRequest)requestParameters );
@@ -394,6 +670,69 @@ namespace Scopos.BabelFish.APIClients {
                 return await this.GetMatchSearchAuthenticatedAsync( (MatchSearchAuthenticatedRequest)requestParameters );
             else
                 //We shouldn't ever get here
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
+        #endregion
+
+        #region List Matches
+        /// <summary>
+        /// Lists public parent and child matches.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesPublicRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesPublicResponse> ListMatchesPublicAsync( ListMatchesPublicRequest requestParameters ) {
+            ListMatchesPublicResponse response = new ListMatchesPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Lists public parent and child matches.
+        /// </summary>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesPublicResponse> ListMatchesPublicAsync() {
+            var request = new ListMatchesPublicRequest();
+
+            return await ListMatchesPublicAsync( request );
+        }
+
+        /// <summary>
+        /// Lists parent and child matches visible to the authenticated caller.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesAuthenticatedRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAuthenticatedResponse> ListMatchesAuthenticatedAsync( ListMatchesAuthenticatedRequest requestParameters ) {
+            ListMatchesAuthenticatedResponse response = new ListMatchesAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Lists parent and child matches visible to the authenticated caller.
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAuthenticatedResponse> ListMatchesAuthenticatedAsync( UserAuthentication credentials ) {
+            var request = new ListMatchesAuthenticatedRequest( credentials );
+
+            return await ListMatchesAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Lists matches, selecting public or authenticated behavior based on the request type.
+        /// </summary>
+        /// <param name="requestParameters">ListMatchesAbstractRequest object</param>
+        /// <returns>Match list data</returns>
+        public async Task<ListMatchesAbstractResponse> ListMatchesAsync( ListMatchesAbstractRequest requestParameters ) {
+            if (requestParameters is ListMatchesPublicRequest)
+                return await this.ListMatchesPublicAsync( (ListMatchesPublicRequest)requestParameters );
+            else if (requestParameters is ListMatchesAuthenticatedRequest)
+                return await this.ListMatchesAuthenticatedAsync( (ListMatchesAuthenticatedRequest)requestParameters );
+            else
                 throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
         }
         #endregion
@@ -609,9 +948,805 @@ namespace Scopos.BabelFish.APIClients {
 
         }
 
+        /// <summary>
+        /// Generate Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GenerateRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateRangeReportAuthenticatedAsync( GenerateRangeReportAuthenticatedRequest requestParameters ) {
+            GenerateRangeReportAuthenticatedResponse response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultListName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultListName,
+            UserAuthentication credentials ) {
+            var request = new GenerateRangeReportAuthenticatedRequest( matchId, resultListName, credentials );
+
+            return await GenerateRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Generate a Range Report for a completed league game.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRangeReportAuthenticatedAsync(
+            GenerateLeagueRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate a Range Report for a completed league game.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials ) {
+            var request = new GenerateLeagueRangeReportAuthenticatedRequest( leagueId, matchId, credentials );
+
+            return await GenerateLeagueRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportPublicRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportPublicResponse> GetRangeReportPublicAsync( GetRangeReportPublicRequest requestParameters ) {
+            GetRangeReportPublicResponse response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportPublicResponse> GetRangeReportPublicAsync(
+            MatchID matchId,
+            string resultName ) {
+            var request = new GetRangeReportPublicRequest( matchId, resultName );
+
+            return await GetRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync( GetRangeReportAuthenticatedRequest requestParameters ) {
+            GetRangeReportAuthenticatedResponse response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAuthenticatedResponse> GetRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultName,
+            UserAuthentication credentials ) {
+            var request = new GetRangeReportAuthenticatedRequest( matchId, resultName, credentials );
+
+            return await GetRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls. If credentials is null, then a PublicAPI call is made.
+        /// If credentials if not null, then an Authenticated API call is made.
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAbstractResponse> GetRangeReportAsync(
+            MatchID matchId,
+            string resultName,
+            UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetRangeReportPublicAsync( matchId, resultName ).ConfigureAwait( false );
+            } else {
+                return await GetRangeReportAuthenticatedAsync( matchId, resultName, credentials ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Function that abstracts the Public vs Authenticated calls.
+        /// </summary>
+        /// <param name="requestParameters">GetRangeReportAbstractRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<GetRangeReportAbstractResponse> GetRangeReportAsync( GetRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetRangeReportPublicRequest)
+                return await this.GetRangeReportPublicAsync( (GetRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            else if (requestParameters is GetRangeReportAuthenticatedRequest)
+                return await this.GetRangeReportAuthenticatedAsync( (GetRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+        }
+
+        /// <summary>
+        /// Get a public league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRangeReportPublicAsync(
+            GetLeagueRangeReportPublicRequest requestParameters ) {
+            var response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get a public league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRangeReportPublicAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            string? resultName = null ) {
+            var request = new GetLeagueRangeReportPublicRequest( leagueId, matchId, resultName );
+
+            return await GetLeagueRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get an authenticated league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRangeReportAuthenticatedAsync(
+            GetLeagueRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get an authenticated league-game Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials,
+            string? resultName = null ) {
+            var request = new GetLeagueRangeReportAuthenticatedRequest( leagueId, matchId, credentials, resultName );
+
+            return await GetLeagueRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get a league-game Range Report, selecting the public or authenticated API from credentials.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRangeReportAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication? credentials = null,
+            string? resultName = null ) {
+            if (credentials == null) {
+                return await GetLeagueRangeReportPublicAsync( leagueId, matchId, resultName ).ConfigureAwait( false );
+            } else {
+                return await GetLeagueRangeReportAuthenticatedAsync( leagueId, matchId, credentials, resultName ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Get a league-game Range Report from a public or authenticated request object.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRangeReportAsync(
+            GetLeagueRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetLeagueRangeReportPublicRequest) {
+                return await GetLeagueRangeReportPublicAsync(
+                    (GetLeagueRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            } else if (requestParameters is GetLeagueRangeReportAuthenticatedRequest) {
+                return await GetLeagueRangeReportAuthenticatedAsync(
+                    (GetLeagueRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            } else {
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+            }
+        }
+        /// <summary>
+        /// Patch Range Report API
+        /// </summary>
+        /// <param name="requestParameters">PatchRangeReportAuthenticatedRequest object</param>
+        /// <returns>RangeReport object</returns>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchRangeReportAuthenticatedAsync( PatchRangeReportAuthenticatedRequest requestParameters ) {
+            PatchRangeReportAuthenticatedResponse response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Range Report API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultName"></param>
+        /// <param name="published"></param>
+        /// <param name="formattedHtml"></param>
+        /// <param name="credentials"></param>
+        /// <returns>RangeReport object</returns>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchRangeReportAuthenticatedAsync(
+            MatchID matchId,
+            string resultName,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials ) {
+            var request = new PatchRangeReportAuthenticatedRequest( matchId, resultName, credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml
+            };
+
+            return await PatchRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Patch a league-game Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRangeReportAuthenticatedAsync(
+            PatchLeagueRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch a league-game Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials,
+            string? resultName = null ) {
+            var request = new PatchLeagueRangeReportAuthenticatedRequest( leagueId, matchId, credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml,
+                ResultName = resultName
+            };
+
+            return await PatchLeagueRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+        /// <summary>
+        /// Send Range Report Email API
+        /// </summary>
+        /// <param name="requestParameters">SendRangeReportEmailAuthenticatedRequest object</param>
+        /// <returns>RangeReporter email result</returns>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync( SendRangeReportEmailAuthenticatedRequest requestParameters ) {
+            var response = new SendRangeReportEmailAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Send Range Report Email API
+        /// </summary>
+        /// <param name="matchId"></param>
+        /// <param name="resultNames"></param>
+        /// <param name="credentials"></param>
+        /// <param name="dryRun">If true, build the email without sending it.</param>
+        /// <returns>RangeReporter email result</returns>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync(
+            MatchID matchId,
+            IEnumerable<string> resultNames,
+            UserAuthentication credentials,
+            bool dryRun = false ) {
+            var request = new SendRangeReportEmailAuthenticatedRequest( matchId, resultNames, credentials ) {
+                DryRun = dryRun
+            };
+
+            return await SendRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Send or preview the email for a published, completed league-game Range Report.
+        /// </summary>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendLeagueRangeReportEmailAuthenticatedAsync(
+            SendLeagueRangeReportEmailAuthenticatedRequest requestParameters ) {
+            var response = new SendRangeReportEmailAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Send or preview the email for a published, completed league-game Range Report.
+        /// </summary>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendLeagueRangeReportEmailAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials,
+            bool dryRun = false,
+            string? resultName = null,
+            bool includeRecap = false ) {
+            var request = new SendLeagueRangeReportEmailAuthenticatedRequest( leagueId, matchId, credentials ) {
+                DryRun = dryRun,
+                ResultName = resultName,
+                IncludeRecap = includeRecap
+            };
+
+            return await SendLeagueRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Generate a weekly league recap Range Report.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRecapRangeReportAuthenticatedAsync(
+            GenerateLeagueRecapRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GenerateRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Generate a weekly league recap Range Report.
+        /// </summary>
+        public async Task<GenerateRangeReportAuthenticatedResponse> GenerateLeagueRecapRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            UserAuthentication credentials ) {
+            var request = new GenerateLeagueRecapRangeReportAuthenticatedRequest(
+                leagueId,
+                startDate,
+                endDate,
+                credentials );
+
+            return await GenerateLeagueRecapRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get a public weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRecapRangeReportPublicAsync(
+            GetLeagueRecapRangeReportPublicRequest requestParameters ) {
+            var response = new GetRangeReportPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get a public weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportPublicResponse> GetLeagueRecapRangeReportPublicAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate ) {
+            var request = new GetLeagueRecapRangeReportPublicRequest( leagueId, startDate, endDate );
+
+            return await GetLeagueRecapRangeReportPublicAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get an authenticated weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRecapRangeReportAuthenticatedAsync(
+            GetLeagueRecapRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new GetRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Get an authenticated weekly league recap Range Report.
+        /// </summary>
+        public async Task<GetRangeReportAuthenticatedResponse> GetLeagueRecapRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            UserAuthentication credentials ) {
+            var request = new GetLeagueRecapRangeReportAuthenticatedRequest(
+                leagueId,
+                startDate,
+                endDate,
+                credentials );
+
+            return await GetLeagueRecapRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
+
+        /// <summary>
+        /// Get a weekly league recap, selecting the public or authenticated API from credentials.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRecapRangeReportAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            UserAuthentication? credentials = null ) {
+            if (credentials == null) {
+                return await GetLeagueRecapRangeReportPublicAsync( leagueId, startDate, endDate ).ConfigureAwait( false );
+            } else {
+                return await GetLeagueRecapRangeReportAuthenticatedAsync(
+                    leagueId,
+                    startDate,
+                    endDate,
+                    credentials ).ConfigureAwait( false );
+            }
+        }
+
+        /// <summary>
+        /// Get a weekly league recap from a public or authenticated request object.
+        /// </summary>
+        public async Task<GetRangeReportAbstractResponse> GetLeagueRecapRangeReportAsync(
+            GetLeagueRecapRangeReportAbstractRequest requestParameters ) {
+            if (requestParameters is GetLeagueRecapRangeReportPublicRequest) {
+                return await GetLeagueRecapRangeReportPublicAsync(
+                    (GetLeagueRecapRangeReportPublicRequest)requestParameters ).ConfigureAwait( false );
+            } else if (requestParameters is GetLeagueRecapRangeReportAuthenticatedRequest) {
+                return await GetLeagueRecapRangeReportAuthenticatedAsync(
+                    (GetLeagueRecapRangeReportAuthenticatedRequest)requestParameters ).ConfigureAwait( false );
+            } else {
+                throw new ArgumentException( $"requestParameters is of unexpected type {requestParameters.GetType()}." );
+            }
+        }
+
+        /// <summary>
+        /// Patch a completed weekly league recap Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRecapRangeReportAuthenticatedAsync(
+            PatchLeagueRecapRangeReportAuthenticatedRequest requestParameters ) {
+            var response = new PatchRangeReportAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch a completed weekly league recap Range Report.
+        /// </summary>
+        public async Task<PatchRangeReportAuthenticatedResponse> PatchLeagueRecapRangeReportAuthenticatedAsync(
+            MatchID leagueId,
+            DateTime startDate,
+            DateTime endDate,
+            bool? published,
+            string? formattedHtml,
+            UserAuthentication credentials ) {
+            var request = new PatchLeagueRecapRangeReportAuthenticatedRequest(
+                leagueId,
+                startDate,
+                endDate,
+                credentials ) {
+                Published = published,
+                FormattedHtml = formattedHtml
+            };
+
+            return await PatchLeagueRecapRangeReportAuthenticatedAsync( request ).ConfigureAwait( false );
+        }
         #endregion
 
         #region Tournament API Calls
+
+        /// <summary>
+        /// Create Tournament API
+        /// </summary>
+        /// <param name="requestParameters">CreateTournamentAuthenticatedRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<CreateTournamentAuthenticatedResponse> CreateTournamentAuthenticatedAsync( CreateTournamentAuthenticatedRequest requestParameters ) {
+            CreateTournamentAuthenticatedResponse response = new CreateTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+
+
+        /// <summary>
+        /// Create Tournament API
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Object</returns>
+        public async Task<CreateTournamentAuthenticatedResponse> CreateTournamentAuthenticatedAsync( Tournament tournament, UserAuthentication credentials ) {
+            var request = new CreateTournamentAuthenticatedRequest( credentials, tournament );
+
+            return await CreateTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Patch Tournament API
+        /// </summary>
+        /// <param name="requestParameters">PatchTournamentAuthenticatedRequest object</param>
+        /// <returns>Tournament Object</returns>
+        public async Task<PatchTournamentAuthenticatedResponse> PatchTournamentAuthenticatedAsync( PatchTournamentAuthenticatedRequest requestParameters ) {
+            PatchTournamentAuthenticatedResponse response = new PatchTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Patch Tournament API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="tournamentName"></param>
+        /// <param name="visibility"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Object</returns>
+        public async Task<PatchTournamentAuthenticatedResponse> PatchTournamentAuthenticatedAsync(
+            MatchID tournamentId,
+            string? tournamentName,
+            VisibilityOption? visibility,
+            UserAuthentication credentials,
+            string? description = null ) {
+            var request = new PatchTournamentAuthenticatedRequest( credentials, tournamentId, tournamentName, visibility, description );
+
+            return await PatchTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Delete Tournament API
+        /// </summary>
+        /// <param name="requestParameters">DeleteTournamentAuthenticatedRequest object</param>
+        /// <returns>Delete Tournament Response data</returns>
+        public async Task<DeleteTournamentAuthenticatedResponse> DeleteTournamentAuthenticatedAsync( DeleteTournamentAuthenticatedRequest requestParameters ) {
+            DeleteTournamentAuthenticatedResponse response = new DeleteTournamentAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Tournament API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Delete Tournament Response data</returns>
+        public async Task<DeleteTournamentAuthenticatedResponse> DeleteTournamentAuthenticatedAsync( MatchID tournamentId, UserAuthentication credentials ) {
+            var request = new DeleteTournamentAuthenticatedRequest( credentials, tournamentId );
+
+            return await DeleteTournamentAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Create Merged Result List API
+        /// </summary>
+        /// <param name="requestParameters">CreateMergedResultListAuthenticatedRequest object</param>
+        /// <returns>Merged Result List data</returns>
+        public async Task<CreateMergedResultListAuthenticatedResponse> CreateMergedResultListAuthenticatedAsync( CreateMergedResultListAuthenticatedRequest requestParameters ) {
+            CreateMergedResultListAuthenticatedResponse response = new CreateMergedResultListAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Create Merged Result List API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedResultList"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Merged Result List data</returns>
+        public async Task<CreateMergedResultListAuthenticatedResponse> CreateMergedResultListAuthenticatedAsync( MatchID tournamentId, MergedResultList mergedResultList, UserAuthentication credentials ) {
+            var request = new CreateMergedResultListAuthenticatedRequest( credentials, tournamentId, mergedResultList );
+
+            return await CreateMergedResultListAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Delete Merged Result List API
+        /// </summary>
+        /// <param name="requestParameters">DeleteMergedResultListAuthenticatedRequest object</param>
+        /// <returns>Delete Merged Result List response data</returns>
+        public async Task<DeleteMergedResultListAuthenticatedResponse> DeleteMergedResultListAuthenticatedAsync( DeleteMergedResultListAuthenticatedRequest requestParameters ) {
+            DeleteMergedResultListAuthenticatedResponse response = new DeleteMergedResultListAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Merged Result List API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Delete Merged Result List response data</returns>
+        public async Task<DeleteMergedResultListAuthenticatedResponse> DeleteMergedResultListAuthenticatedAsync( MatchID tournamentId, string mergedId, UserAuthentication credentials ) {
+            var request = new DeleteMergedResultListAuthenticatedRequest( credentials, tournamentId, mergedId );
+
+            return await DeleteMergedResultListAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Add Merged Result List Member API
+        /// </summary>
+        /// <param name="requestParameters">AddMergedResultListMemberAuthenticatedRequest object</param>
+        /// <returns>Result List Member data</returns>
+        public async Task<AddMergedResultListMemberAuthenticatedResponse> AddMergedResultListMemberAuthenticatedAsync( AddMergedResultListMemberAuthenticatedRequest requestParameters ) {
+            AddMergedResultListMemberAuthenticatedResponse response = new AddMergedResultListMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Add Merged Result List Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedId"></param>
+        /// <param name="resultListMember"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Result List Member data</returns>
+        public async Task<AddMergedResultListMemberAuthenticatedResponse> AddMergedResultListMemberAuthenticatedAsync( MatchID tournamentId, string mergedId, ResultListMember resultListMember, UserAuthentication credentials ) {
+            var request = new AddMergedResultListMemberAuthenticatedRequest( credentials, tournamentId, mergedId, resultListMember );
+
+            return await AddMergedResultListMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Remove Merged Result List Member API
+        /// </summary>
+        /// <param name="requestParameters">RemoveMergedResultListMemberAuthenticatedRequest object</param>
+        /// <returns>Result List Member data</returns>
+        public async Task<RemoveMergedResultListMemberAuthenticatedResponse> RemoveMergedResultListMemberAuthenticatedAsync( RemoveMergedResultListMemberAuthenticatedRequest requestParameters ) {
+            RemoveMergedResultListMemberAuthenticatedResponse response = new RemoveMergedResultListMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Remove Merged Result List Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="mergedId"></param>
+        /// <param name="resultListMember"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Result List Member data</returns>
+        public async Task<RemoveMergedResultListMemberAuthenticatedResponse> RemoveMergedResultListMemberAuthenticatedAsync( MatchID tournamentId, string mergedId, ResultListMember resultListMember, UserAuthentication credentials ) {
+            var request = new RemoveMergedResultListMemberAuthenticatedRequest( credentials, tournamentId, mergedId, resultListMember );
+
+            return await RemoveMergedResultListMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Add Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">AddTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<AddTournamentMemberAuthenticatedResponse> AddTournamentMemberAuthenticatedAsync( AddTournamentMemberAuthenticatedRequest requestParameters ) {
+            AddTournamentMemberAuthenticatedResponse response = new AddTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Add Tournament Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="matchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<AddTournamentMemberAuthenticatedResponse> AddTournamentMemberAuthenticatedAsync( MatchID tournamentId, MatchID matchId, UserAuthentication credentials ) {
+            var request = new AddTournamentMemberAuthenticatedRequest( credentials, tournamentId, matchId );
+
+            return await AddTournamentMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Patch Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">PatchTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<PatchTournamentMemberAuthenticatedResponse> PatchTournamentMemberAuthenticatedAsync( PatchTournamentMemberAuthenticatedRequest requestParameters ) {
+            PatchTournamentMemberAuthenticatedResponse response = new PatchTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+
+        /// <summary>
+        /// Delete Tournament Member API
+        /// </summary>
+        /// <param name="requestParameters">DeleteTournamentMemberAuthenticatedRequest object</param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<DeleteTournamentMemberAuthenticatedResponse> DeleteTournamentMemberAuthenticatedAsync( DeleteTournamentMemberAuthenticatedRequest requestParameters ) {
+            DeleteTournamentMemberAuthenticatedResponse response = new DeleteTournamentMemberAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Delete Tournament Member API
+        /// </summary>
+        /// <param name="tournamentId"></param>
+        /// <param name="matchId"></param>
+        /// <param name="credentials"></param>
+        /// <returns>Tournament Member data</returns>
+        public async Task<DeleteTournamentMemberAuthenticatedResponse> DeleteTournamentMemberAuthenticatedAsync( MatchID tournamentId, MatchID matchId, UserAuthentication credentials ) {
+            var request = new DeleteTournamentMemberAuthenticatedRequest( credentials, tournamentId, matchId );
+
+            return await DeleteTournamentMemberAuthenticatedAsync( request );
+        }
+
+        /// <summary>
+        /// Tournament Search API
+        /// </summary>
+        /// <param name="requestParameters">TournamentSearchPublicRequest object</param>
+        /// <returns>Tournament search list data</returns>
+        public async Task<TournamentSearchPublicResponse> TournamentSearchPublicAsync( TournamentSearchPublicRequest requestParameters ) {
+            TournamentSearchPublicResponse response = new TournamentSearchPublicResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Tournament Search API
+        /// </summary>
+        /// <param name="requestParameters">TournamentSearchAuthenticatedRequest object</param>
+        /// <returns>Tournament search list data</returns>
+        public async Task<TournamentSearchAuthenticatedResponse> TournamentSearchAuthenticatedAsync( TournamentSearchAuthenticatedRequest requestParameters ) {
+            TournamentSearchAuthenticatedResponse response = new TournamentSearchAuthenticatedResponse( requestParameters );
+
+            await this.CallAPIAsync( requestParameters, response );
+
+            return response;
+        }
+
+        /// <summary>
+        /// Tournament Search API
+        /// </summary>
+        /// <param name="requestParameters">TournamentSearchAbstractRequest object</param>
+        /// <returns>Tournament search list data</returns>
+        public async Task<TournamentSearchAbstractResponse> TournamentSearchAsync( TournamentSearchAbstractRequest requestParameters ) {
+            if (requestParameters is TournamentSearchPublicRequest)
+                return await this.TournamentSearchPublicAsync( (TournamentSearchPublicRequest)requestParameters );
+            else if (requestParameters is TournamentSearchAuthenticatedRequest)
+                return await this.TournamentSearchAuthenticatedAsync( (TournamentSearchAuthenticatedRequest)requestParameters );
+            else
+                throw new ArgumentException( $"requestParameters is of unexpected type ${requestParameters.GetType()}." );
+        }
 
         /// <summary>
         /// Get Tournament Detail API

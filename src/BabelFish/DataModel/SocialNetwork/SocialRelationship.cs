@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using Scopos.BabelFish.Converters;
+using Scopos.BabelFish.DataModel.Common;
 namespace Scopos.BabelFish.DataModel.SocialNetwork {
     public class SocialRelationship : BaseClass{
         

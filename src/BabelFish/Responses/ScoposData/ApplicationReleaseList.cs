@@ -1,5 +1,5 @@
-﻿using Scopos.BabelFish.Converters.Microsoft;
-using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.ScoposData;
 using System;
 using System.Collections.Generic;

@@ -1,12 +1,9 @@
-﻿using Scopos.BabelFish.Converters;
-using Scopos.BabelFish.Converters.Microsoft;
-using Scopos.BabelFish.DataModel.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Image;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -48,9 +45,15 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [DefaultValue( "" )]
         public string ClubName { get; set; }
 
+        /// <summary>
+        /// The team's photo. This is a user-friendly image that can be displayed in the UI to represent the team.
+        /// </summary>
+        public ScoposImageAbbr TeamPhoto { get; set; } = new ScoposImageAbbr();
 
-        [DefaultValue( "" )]
-        public string PhotoURL { get; set; }
+        /// <summary>
+        /// The team's logo. This is a user-friendly image that can be displayed in the UI to represent the team.
+        /// </summary>
+        public ScoposImageAbbr TeamLogo { get; set; } = new ScoposImageAbbr();
 
 
         [DefaultValue( "" )]
@@ -62,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public Contact Coach { get; set; }
 
-        public List<LeagueGame> Schedule {get; set; }
+        public List<LeagueGame> Schedule { get; set; }
 
         /// <summary>
         /// J is the Integer score average.
@@ -101,9 +104,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string LeagueID { get; set; }
 
         /// <summary>
-        /// GUID formatted ClubID
+        /// Full URL to the Club Page that this team represents.
         /// </summary>
-        public string ClubID { get; set; }
+        public string ClubUrlPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The club account number associated with this team.
+        /// </summary>
+        public int ClubAccountNumber { get; set; } = 0;
 
         public POC POC { get; set; }
 
