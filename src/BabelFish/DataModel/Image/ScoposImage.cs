@@ -55,6 +55,14 @@ namespace Scopos.BabelFish.DataModel.Image {
         public string UrlPath { get; set; } = string.Empty;
 
         /// <summary>
+        /// Alias for UrlPath. Accepts the Url field returned by the image APIs.
+        /// </summary>
+        public string Url {
+            get => UrlPath;
+            set => UrlPath = value;
+        }
+
+        /// <summary>
         /// ENUM: Club, Match, League, or User.
         /// This value is used to determine the context in which the image is being used and to apply any relevant business rules or logic.
         /// </summary>

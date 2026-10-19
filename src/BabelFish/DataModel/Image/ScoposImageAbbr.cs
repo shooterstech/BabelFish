@@ -44,6 +44,14 @@ namespace Scopos.BabelFish.DataModel.Image {
         public string UrlPath { get; set; } = string.Empty;
 
         /// <summary>
+        /// Alias for UrlPath. Accepts the Url field returned by the image APIs.
+        /// </summary>
+        public string Url {
+            get => UrlPath;
+            set => UrlPath = value;
+        }
+
+        /// <summary>
         /// The UTC timestamp when the image was uploaded. This value is set to DateTime.MinValue when a new instance of ScoposImage is created.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 20 )]
