@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 using Scopos.BabelFish.Converters.Microsoft;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Image;
@@ -35,11 +36,15 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public ClubDetail() {
         }
 
+        /// <summary>
+        /// Gets called by System.Text.Json when an instance is deserialized.
+        /// </summary>
         public void OnDeserialized() {
             AddressList ??= new List<ClubAddress>();
             AdministratorList ??= new List<Contact>();
             Options ??= new List<ClubOptions>();
             NamespaceList ??= new List<NamespaceDetail>();
+            TeamList ??= new List<ClubTeam>();
 
             // Set the backwards pointer for each Address List
             foreach (var address in AddressList) {
@@ -47,18 +52,31 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                 address.Club = this;
             }
 
-            // Set the backwards pointer for each Contact List
+            // Set the backwards pointer for each Contact
             foreach (var contact in ContactList) {
                 if (contact == null) continue;
                 contact.Club = this;
             }
 
-            // Set the backwards pointer for each License List
+            // Set the backwards pointer for each License
             foreach (var license in LicenseList) {
                 if (license == null) continue;
                 license.Club = this;
             }
+
+            // Set the backwards pointer for each Club Team
+            foreach (var team in TeamList) {
+                if (team == null) continue;
+                team.Club = this;
+            }
         }
+
+        /// <summary>
+        /// Gets called by NewtonSoft.Json's deserializer.
+        /// </summary>
+        /// <param name="context"></param>
+        [OnDeserialized]
+        internal void OnDeserialized( StreamingContext context ) => OnDeserialized();
         #endregion
 
         #region Data Property Members
@@ -125,6 +143,12 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <para>Unless you are a deserializer, the expected way to add a new ClubContact is use <see cref="ClubContact.CreateAsync(ClubDetail, ClubContactType)"/></para>  
         /// </summary>
         public List<ClubContact> ContactList { get; set; } = new List<ClubContact>();
+
+        /// <summary>
+        /// The list of Club Teams that this Club has defined.
+        /// <para>Unless you are a deserializer, the expected way to add a new ClubTeam is use <see cref="ClubTeam.CreateAsync(ClubDetail)"/></para>  
+        /// </summary>
+        public List<ClubTeam> TeamList { get; set; } = new List<ClubTeam>();
 
         /// <summary>
         /// Tries to get a contact from the ContactList by its ClubContactType (e.g., phone number, email, etc.). Returns true if found, false otherwise.
@@ -195,13 +219,25 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public DateTime MemberSince { get; set; }
 
         /// <summary>
-        /// The URL path in www.Scopos.net/clubs/{path} linking to their team page.
+        /// The relative URL path in rezults.scopos.tech/clubs/{path}/ linking to their team page.
+        /// <para>The full URL can be obtained from the <see cref="Url"/> property.</para>
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]
         [Required]
         [StringLength( 45, ErrorMessage = "URLPath cannot be longer than 45 characters." )]
         public string URLPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The full URL to the club's team page on Rezults. This is constructed from the base URL and the club's URLPath.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string Url {
+            get {
+                return $"https://rezults.scopos.tech/clubs/{URLPath}/";
+            }
+        }
 
 
         /// <summary>
