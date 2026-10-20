@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
     /// </summary>
     public class UploadImageAuthenticatedRequest : Request {
 
-        private static ImageClient _imageClient = new ImageClient();
+        internal APIStage ApiStage { get; set; } = APIStage.PRODUCTION;
         private static HttpClient _httpClient = new HttpClient();
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
             }
 
             var presignedUrlRequest = new GetPresignedUrlRequest( ImageFile, this.Credentials );
-            var presignedUrlResponse = await _imageClient.GetPresignedUrlAsync( presignedUrlRequest );
+            var presignedUrlResponse = await new ImageClient( ApiStage ).GetPresignedUrlAsync( presignedUrlRequest );
             if (!presignedUrlResponse.HasOkStatusCode) {
                 throw new APIRequestParameterException( $"Failed to get a presigned URL for the image upload. Status code: {presignedUrlResponse.OverallStatusCode}, Message: {presignedUrlResponse.ExceptionMessage}" );
             }

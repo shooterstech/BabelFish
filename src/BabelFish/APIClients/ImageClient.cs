@@ -39,6 +39,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <returns></returns>
         public async Task<UploadImageAuthenticatedResponse> UploadImageAuthenticatedAsync( UploadImageAuthenticatedRequest requestParameters ) {
 
+            requestParameters.ApiStage = this.ApiStage;
+
             UploadImageAuthenticatedResponse response = new UploadImageAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
