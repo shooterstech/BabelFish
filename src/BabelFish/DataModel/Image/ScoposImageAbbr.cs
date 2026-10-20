@@ -41,7 +41,7 @@ namespace Scopos.BabelFish.DataModel.Image {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        public string UrlPath { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
 
         /// <summary>
         /// The UTC timestamp when the image was uploaded. This value is set to DateTime.MinValue when a new instance of ScoposImage is created.
@@ -61,13 +61,13 @@ namespace Scopos.BabelFish.DataModel.Image {
         public bool IsValid {
             get {
                 return !string.IsNullOrWhiteSpace( ImageId ) &&
-                       !string.IsNullOrWhiteSpace( UrlPath ) &&
+                       !string.IsNullOrWhiteSpace( Url ) &&
                        CreatedAt != DateTime.MinValue;
             }
         }
 
         public override string ToString() {
-            return $"ScoposImageAbbr: {UrlPath}";
+            return $"ScoposImageAbbr: {Url}";
         }
         #endregion
     }

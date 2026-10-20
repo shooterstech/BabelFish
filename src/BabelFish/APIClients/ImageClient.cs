@@ -53,6 +53,18 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>
+        /// Deletes an image and permanently removes its stored file.
+        /// The server checks uploader or match/account editing permissions.
+        /// </summary>
+        /// <param name="requestParameters">The authenticated image deletion request.</param>
+        /// <returns>The deletion confirmation or API error response.</returns>
+        public async Task<DeleteImageAuthenticatedResponse> DeleteImageAuthenticatedAsync( DeleteImageAuthenticatedRequest requestParameters ) {
+            var response = new DeleteImageAuthenticatedResponse( requestParameters );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            return response;
+        }
+
+        /// <summary>
         /// Calls the GetImages API request to retrieve images for a Match, League Team, Club, or athlete. This is a public API and does not require authentication.
         /// </summary>
         /// <param name="requestParameters"></param>
