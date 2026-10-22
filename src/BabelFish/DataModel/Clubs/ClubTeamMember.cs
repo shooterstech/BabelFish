@@ -89,7 +89,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <inheritdoc />
         public ulong CalculateChecksum() {
             // Combine relevant properties into a single string for hashing
-            string combined = $"{DisplayName}|{AccountUrl}|{Email}|{Phone}|{IsCaptain.ToString()}|{IsCoach.ToString()}";
+            string combined = $"{UserId}|{DisplayName}|{AccountUrlPath}|{Email}|{Phone}|{IsCaptain.ToString()}|{IsCoach.ToString()}";
 
             var hash = Helpers.Common.Md5ToUlong( combined );
             return hash;

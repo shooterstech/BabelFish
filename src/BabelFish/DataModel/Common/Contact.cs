@@ -24,11 +24,26 @@ namespace Scopos.BabelFish.DataModel.Common {
         public string DisplayName { get; set; } = string.Empty;
 
         /// <summary>
-        /// The full URL Path to their public page on Rezults. For example https://rezults.com/z/erik/
+        /// Gets or sets the relative URL path for the account resource.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
-        public string AccountUrl { get; set; } = string.Empty;
+        public string AccountUrlPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The full URL to their public page on Rezults. For example https://rezults.com/z/erik/
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public string AccountUrl {
+            get {
+                if (string.IsNullOrWhiteSpace( this.AccountUrlPath )) {
+                    return string.Empty;
+                } else {
+                    return $"https://rezults.com/z/{this.AccountUrlPath}/";
+                }
+            }
+        }
 
         /// <summary>
         /// The primary email address for this person.
@@ -45,6 +60,14 @@ namespace Scopos.BabelFish.DataModel.Common {
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         public string Phone { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The UUID formatted Scopos Account user id for this contact.
+        /// </summary>
+        [DefaultValue( "" )]
+        [G_STJ_SER.JsonPropertyOrder( 50 )]
+        [G_NS.JsonProperty( Order = 50 )]
+        public string UserId { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public override string ToString() {
