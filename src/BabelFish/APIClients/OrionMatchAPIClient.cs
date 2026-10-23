@@ -416,7 +416,9 @@ namespace Scopos.BabelFish.APIClients {
             // Retreives each ResultList in parallel, and if there are multiple pages of results for a ResultList, retreive those pages sequentially and add them to the same ResultList object.
             foreach (var rlm in mergedResultList.ResultListMembers) {
                 tasks.Add( Task.Run( async () => {
-                    var getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName );
+                    var getResultListRequest = new GetResultListPublicRequest( rlm.MatchId, rlm.ResultName ) {
+                        CourseOfFireId = rlm.CourseOfFireId
+                    };
                     ResultList? resultList = null;
                     GetResultListPublicResponse getResultListResponse;
                     do {

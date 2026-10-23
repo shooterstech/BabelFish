@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -37,6 +38,24 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         public MatchID MatchID { get; set; }
 
         public string ResultListName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The course of fire containing this result list. Defaults to the legacy course, 1.
+        /// </summary>
+        public int CourseOfFireId { get; set; } = 1;
+
+        /// <inheritdoc />
+        public override Dictionary<string, List<string>> QueryParameters {
+            get {
+                if (CourseOfFireId <= 0) {
+                    throw new ArgumentOutOfRangeException( nameof( CourseOfFireId ), "The course of fire id must be a positive integer." );
+                }
+
+                return new Dictionary<string, List<string>> {
+                    { "course-of-fire-id", new List<string> { CourseOfFireId.ToString( CultureInfo.InvariantCulture ) } }
+                };
+            }
+        }
 
         /// <inheritdoc />
         public string Token { get; set; } = string.Empty;
