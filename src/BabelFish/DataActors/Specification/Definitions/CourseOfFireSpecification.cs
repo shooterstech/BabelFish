@@ -79,7 +79,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var targetCollectionIndexes = new IsTargetCollectionIndexValid();
             var requiredAttrValue = new IsCourseOfFireRequiredAttributeValueValid();
             var paperTargetLabels = new IsCourseOfFirePaperTargetLabelValid();
-
+            var stageLabelReference = new IsCourseOfFireStageLabelReferencesValid();
 
             if (!await tc.IsSatisfiedByAsync( candidate )) {
                 valid = false;
@@ -159,6 +159,11 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             if (!await paperTargetLabels.IsSatisfiedByAsync( candidate )) {
                 valid = false;
                 Messages.AddRange( paperTargetLabels.Messages );
+            }
+
+            if (!await stageLabelReference.IsSatisfiedByAsync( candidate )) {
+                valid = false;
+                Messages.AddRange( stageLabelReference.Messages );
             }
 
             return valid;
@@ -700,6 +705,12 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     singularCount += singular.GetSingularEventList().Count;
                 }
 
+                // At least one singular is required.
+                if (singularCount == 0) {
+                    valid = false;
+                    Messages.Add( $"At least one Singular is required, currently none are defined." );
+                }
+
                 //Which should match the number of Singulars in the EventTree
                 if (singularCount != eventTree.GetAllSingulars().Count) {
                     valid = false;
@@ -996,6 +1007,92 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 }
 
                 index++;
+            }
+
+            return valid;
+        }
+    }
+
+    /// <summary>
+    /// Checks all Segments (and Default Segments) to make sure both the StageLabel and Show.StageLabel references valud values as defined by the Singulars.
+    /// </summary>
+    public class IsCourseOfFireStageLabelReferencesValid : CompositeSpecification<CourseOfFire> {
+        /// <inheritdoc/>
+        public override async Task<bool> IsSatisfiedByAsync( CourseOfFire candidate ) {
+            Messages.Clear();
+            bool valid = true;
+
+            // NOTE: IsCourseOfFireSingularStageLabelsValid checks that the Singulars have unique StageLabel values. So we don't need to check for duplicates here.
+            // NOTE: IsCourseOfFirePaperTargetLabelValid checks that the PaperTargetLabels have valid StageLabel values. So we don't need to check for those here.
+
+            var listOfKnownStageLabels = new HashSet<string>();
+            foreach (var singular in candidate.Singulars) {
+                if (!string.IsNullOrWhiteSpace( singular.StageLabel )) {
+                    listOfKnownStageLabels.Add( singular.StageLabel );
+                }
+            }
+
+            string stageLabelNameUnderTest = string.Empty;
+            ShowInSegment? showInSegmentUnderTest = null;
+            string validValues = string.Join( ", ", listOfKnownStageLabels.Select( s => $"'{s}'" ) );
+
+            // Need to check that all StageLabels defined in Singulars are actually used in Segments StageLabel referrences, for RangeScripts defined for ESTs.
+            // Choosing not to do the same check for Show.StageLabel references, as those are optional and may be empty.
+            HashSet<string> foundStageLabels = new HashSet<string>();
+
+            // Loop through all RangeScripts, SegmentGroups, and Segments to check StageLabel references
+            for (int rangeScriptIndex = 0; rangeScriptIndex < candidate.RangeScripts.Count; rangeScriptIndex++) {
+                var rangeScript = candidate.RangeScripts[rangeScriptIndex];
+                foundStageLabels.Clear();
+
+                for (int segmentGroupIndex = 0; segmentGroupIndex < rangeScript.SegmentGroups.Count; segmentGroupIndex++) {
+                    var segmentGroup = rangeScript.SegmentGroups[segmentGroupIndex];
+
+                    for (int segmentIndex = 0; segmentIndex < segmentGroup.Segments.Count; segmentIndex++) {
+                        var segment = segmentGroup.Segments[segmentIndex];
+
+                        try {
+                            // Check StageLabel reference.
+                            // Value may not be an empty string, and must be found in a Singular.
+                            stageLabelNameUnderTest = segment.GetStageLabel(); // Ensure the StageLabel is computed based on defaults if not explicitly set
+                            if (string.IsNullOrWhiteSpace( stageLabelNameUnderTest )) {
+                                valid = false;
+                                Messages.Add( $"RangeScript[{rangeScriptIndex}].SegmentGroup[{segmentGroupIndex}].Segment[{segmentIndex}] has a StageLabel that is an empty string. It instead must be one of: {validValues}." );
+                            } else if (!listOfKnownStageLabels.Contains( stageLabelNameUnderTest )) {
+                                valid = false;
+                                Messages.Add( $"RangeScript[{rangeScriptIndex}].SegmentGroup[{segmentGroupIndex}].Segment[{segmentIndex}] has a StageLabel '{stageLabelNameUnderTest}' that is not found in any Singular. The defined stage label values are: {validValues}." );
+                            } else {
+                                foundStageLabels.Add( stageLabelNameUnderTest );
+                            }
+
+                            // Check Show.StageLabel reference.
+                            // Value may be an empty list, but if not empty, must be found in a Singular.
+                            showInSegmentUnderTest = segment.GetShow();
+                            for (int showIndex = 0; showIndex < showInSegmentUnderTest?.StageLabel?.Count; showIndex++) {
+                                stageLabelNameUnderTest = showInSegmentUnderTest.StageLabel[showIndex];
+                                if (string.IsNullOrWhiteSpace( stageLabelNameUnderTest )) {
+                                    valid = false;
+                                    Messages.Add( $"RangeScript[{rangeScriptIndex}].SegmentGroup[{segmentGroupIndex}].Segment[{segmentIndex}].Show.StageLabel[{showIndex}] has a StageLabel that is an empty string. It instead must be one of: {validValues}." );
+                                } else if (!listOfKnownStageLabels.Contains( stageLabelNameUnderTest )) {
+                                    valid = false;
+                                    Messages.Add( $"RangeScript[{rangeScriptIndex}].SegmentGroup[{segmentGroupIndex}].Segment[{segmentIndex}].Show.StageLabel[{showIndex}] has a StageLabel '{stageLabelNameUnderTest}' that is not found in any Singular. The defined stage label values are: {validValues}." );
+                                }
+                            }
+                        } catch (NullReferenceException ex) {
+                            valid = false;
+                            Messages.Add( $"RangeScript[{rangeScriptIndex}].SegmentGroup[{segmentGroupIndex}].Segment[{segmentIndex}] encountered an error while validating StageLabel references: {ex.Message}" );
+                        }
+                    }
+                }
+
+                if (rangeScript.DesignedForEST) {
+                    // If the foundStageLabels set does not contain all the known stage labels, then some are defined in Singulars but not used in any Segments.
+                    var unusedStageLabels = listOfKnownStageLabels.Except( foundStageLabels ).ToList();
+                    if (unusedStageLabels.Count > 0) {
+                        valid = false;
+                        Messages.Add( $"RangeScript[{rangeScriptIndex}]: The following StageLabels are defined in Singulars but not used in any Segments.StageLabel property: {string.Join( ", ", unusedStageLabels )}." );
+                    }
+                }
             }
 
             return valid;
