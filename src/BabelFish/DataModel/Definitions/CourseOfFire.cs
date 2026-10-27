@@ -51,7 +51,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<Singular> Singulars { get; set; } = new List<Singular>();
 
         /// <summary>
-        /// Range command script with Paper Targets or EST Configuration. 
+        /// Range command script with Paper Targets or EST Configuration.
+        /// <para>Unless you are a deserializer, the preferred method for creating a new RangeScript is to use <see cref="CourseOfFire.AddRangeScript"/></para>
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 22 )]
         [G_NS.JsonProperty( Order = 22 )]
@@ -247,6 +248,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Preferred method (unless you happen to be a deserializer) for adding a new RangeScript within this CourseOfFire.
+        /// </summary>
+        /// <param name="rangeScriptName"></param>
+        /// <returns></returns>
+        public RangeScript AddRangeScript( string rangeScriptName ) {
+            var rs = new RangeScript() {
+                RangeScriptName = rangeScriptName
+            };
+            RangeScripts.Add( rs );
+            return rs;
         }
 
         /// <inheritdoc />

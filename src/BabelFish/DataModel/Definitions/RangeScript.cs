@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -8,12 +9,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// and the labeling for paper targets. There can be multiple RangeScripts per COURSE OF FIRE. 
     /// Each one can be designed for ESTs, paper targets, or both (although in practice it is usually one or the other).
     /// </summary>
-    public class RangeScript : IReconfigurableRulebookObject {
+    public class RangeScript : IReconfigurableRulebookObject, IJsonOnDeserialized {
 
         private List<string> validationErrorList = new List<string>();
         private bool defaultCommandMissing = false;
         private bool defaultSegmentMissing = false;
 
+        /// <summary>
+        /// RangeScript constructor.
+        /// <para>Unless you are a deserializer, the preferred method for creating a new RangeScript is to use <see cref="CourseOfFire.AddRangeScript"/></para>
+        /// </summary>
         public RangeScript() {
             RangeScriptName = "";
 
@@ -23,7 +28,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         }
 
         [OnDeserialized]
-        internal void OnDeserializedMethod( StreamingContext context ) {
+        internal void OnDeserializedMethod( StreamingContext context ) => OnDeserialized();
+
+        /// <inheritdoc />
+        public void OnDeserialized() {
             foreach (var sg in SegmentGroups) {
 
                 if (DefaultSegment == null && DesignedForEST) {
@@ -75,11 +83,17 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 3 )]
         public bool DesignedForPaper { get; set; }
 
+        /// <summary>
+        /// Default values for each SegmentGroupCommand in the SegmentGroup.Commands list, if a field value is not listed.
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
         [DefaultValue( null )]
         public SegmentGroupCommand DefaultCommand { get; set; } = new SegmentGroupCommand();
 
+        /// <summary>
+        /// Default value for each SegmentGroupSegment in the SegmentGroup.Segments list, if a field value is not listed.
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
         [DefaultValue( null )]
@@ -87,6 +101,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <summary>
         /// List of SegmentGroups used to help run the match.
+        /// <para>Unless you are a deserializer, the preferred method for creating a new SegmentGroup is to use <see cref="AddSegmentGroup"/></para>
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 6 )]
         [G_NS.JsonProperty( Order = 6 )]
@@ -100,9 +115,25 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
+        #region Methods
+        /// <summary>
+        /// Prefered method for creating a new <see cref="SegmentGroup"/> within this RangeScript. As this method will
+        /// ensure that the DefaultCommand and DefaultSegment are properly set for the new SegmentGroup.
+        /// </summary>
+        /// <param name="segmentGroupName"></param>
+        /// <returns></returns>
+        public SegmentGroup AddSegmentGroup( string segmentGroupName ) {
+            var sg = new SegmentGroup();
+            sg.SegmentGroupName = segmentGroupName;
+            SegmentGroups.Add( sg );
+            sg.DefaultCommand.Parent = DefaultCommand;
+            sg.DefaultSegment.Parent = DefaultSegment;
+            return sg;
+        }
         /// <inheritdoc />
         public override string ToString() {
             return RangeScriptName;
         }
+        #endregion
     }
 }
