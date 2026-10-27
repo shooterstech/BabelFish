@@ -144,5 +144,47 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
 
         }
+
+        [TestMethod]
+        public async Task StageLabelReferenceTests() {
+            var validation = new IsCourseOfFireStageLabelReferencesValid();
+            var candidate = new CourseOfFire();
+
+            // Define a largely empty RangeScript with a single SegmentGroup and a single Segment. This will be used to test StageLabel references.
+
+            var firstRangeScript = candidate.AddRangeScript( "Test RangeScript" );
+            var firstSegmentGroup = firstRangeScript.AddSegmentGroup( "Test SegmentGroup" );
+            var firstSegment = firstSegmentGroup.AddSegment();
+
+            // A default CourseOfFire should not be valid, b/c we have yet to define any Singulars.
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
+
+            // Make a Singular with a StageLabel of "S". 
+            candidate.RangeScripts[0].SegmentGroups[0].Segments[0].StageLabel = "S";
+
+            // Should still be invalid, as we have no Singulars defined.
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
+
+            // Now add a Singular with a StageLabel of "S". This should make the CourseOfFire valid.
+            candidate.Singulars.Add( new Singular() { StageLabel = "S" } );
+
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+
+            // Add a new Segment with a StageLabel of "X". This should make the CourseOfFire invalid, as there is no Singular with a StageLabel of "X".
+            var secondSegment = firstSegmentGroup.AddSegment();
+            secondSegment.StageLabel = "X";
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
+
+            // Add a new Singular with a StageLabel of "X". This should make the CourseOfFire valid again.
+            candidate.Singulars.Add( new Singular() { StageLabel = "X" } );
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+
+            // Add a third Segment, but keep the StageLabel empty.
+            var thirdSegment = firstSegmentGroup.AddSegment();
+
+            // Now define the default segment to have a StageLabel of "S". This should make the CourseOfFire valid again, as the third segment will inherit the default segment's StageLabel.
+            firstSegmentGroup.DefaultSegment.StageLabel = "S";
+            Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+        }
     }
 }
