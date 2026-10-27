@@ -39,6 +39,8 @@ namespace Scopos.BabelFish.APIClients {
         /// <returns></returns>
         public async Task<UploadImageAuthenticatedResponse> UploadImageAuthenticatedAsync( UploadImageAuthenticatedRequest requestParameters ) {
 
+            requestParameters.ApiStage = this.ApiStage;
+
             UploadImageAuthenticatedResponse response = new UploadImageAuthenticatedResponse( requestParameters );
 
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
@@ -48,6 +50,18 @@ namespace Scopos.BabelFish.APIClients {
 
         internal async Task<GetPresignedUrlResponse> GetPresignedUrlAsync( GetPresignedUrlRequest requestParameters ) {
             GetPresignedUrlResponse response = new GetPresignedUrlResponse( requestParameters );
+            await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
+            return response;
+        }
+
+        /// <summary>
+        /// Deletes an image and permanently removes its stored file.
+        /// The server checks uploader or match/account editing permissions.
+        /// </summary>
+        /// <param name="requestParameters">The authenticated image deletion request.</param>
+        /// <returns>The deletion confirmation or API error response.</returns>
+        public async Task<DeleteImageAuthenticatedResponse> DeleteImageAuthenticatedAsync( DeleteImageAuthenticatedRequest requestParameters ) {
+            var response = new DeleteImageAuthenticatedResponse( requestParameters );
             await this.CallAPIAsync( requestParameters, response ).ConfigureAwait( false );
             return response;
         }
