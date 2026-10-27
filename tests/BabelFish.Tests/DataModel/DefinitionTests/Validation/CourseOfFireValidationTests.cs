@@ -185,6 +185,10 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             // Now define the default segment to have a StageLabel of "S". This should make the CourseOfFire valid again, as the third segment will inherit the default segment's StageLabel.
             firstSegmentGroup.DefaultSegment.StageLabel = "S";
             Assert.IsTrue( await validation.IsSatisfiedByAsync( candidate ), string.Join( " : ", validation.Messages ) );
+
+            // Now add a new Singular with a StageLabel of "Y". This should fail validation, as there is no Segment currently using a StageLabel of "Y".
+            candidate.Singulars.Add( new Singular() { StageLabel = "Y" } );
+            Assert.IsFalse( await validation.IsSatisfiedByAsync( candidate ) );
         }
     }
 }
