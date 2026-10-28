@@ -57,12 +57,20 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #region Data Property Members
 
         /// <summary>
+        /// Boolean, indicating if this team member is also an Athlete for the Club Team.
+        /// <para>A Team Member should be at least one of an Athlete, Captain, or Coach. May be all three.</para>
+        /// </summary>
+        public bool IsAthlete { get; set; } = true;
+
+        /// <summary>
         /// Boolean, indicating if this team member is also a Captain for the Club Team.
+        /// <para>A Team Member should be at least one of an Athlete, Captain, or Coach. May be all three.</para>
         /// </summary>
         public bool IsCaptain { get; set; } = false;
 
         /// <summary>
         /// Boolean, indicating if this team member is also a Coach for the Club Team.
+        /// <para>A Team Member should be at least one of an Athlete, Captain, or Coach. May be all three.</para>
         /// </summary>
         public bool IsCoach { get; set; } = false;
 
