@@ -17,9 +17,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ICheckSum {
 
         /// <summary>
-        /// The expected maximum length of the DisplayNameShort property. This is not a hard limit, but by convention DisplayNameShorts should be 20 characters or less. DisplayName may be any length.
+        /// The expected maximum length of the DisplayNameShort property. This is not a hard limit,
+        /// but by convention DisplayNameShorts should be 24 characters or less. DisplayName may be any length.
+        /// <para>24 characters was experimentally choosen.</para>
         /// </summary>
-        public const int DISPLAY_NAME_SHORT_MAX_LENGTH = 20;
+        public const int DISPLAY_NAME_SHORT_MAX_LENGTH = 24;
 
         #region Private and Protected Fields
         protected string _displayName = string.Empty;
@@ -288,16 +290,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Calculates a shorter version of the <see cref="DisplayName"/> property. Intended to be used on screens of reduced width.
         /// <para>Concrete classes may override the <see cref="GetDisplayNameShort"/> method to provide a custom implementation.</para>
-        /// <para>By convention, the shortened display name should be no longer than <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (20) characters.</para>
         /// </summary>
-        /// <returns></returns>
-        public virtual string GetDisplayNameShort() {
-            if (this.DisplayName.Length <= DISPLAY_NAME_SHORT_MAX_LENGTH) {
+        /// <param name="maxLength">The maximum length of the returned shortened display name. If the DisplayName is regularly longer
+        /// than this value, it will be truncated. By convention, the shortened display name should be no longer than
+        /// <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (24) characters.</param>
+        /// <returns>The shortened display name.</returns>
+        public virtual string GetDisplayNameShort( int maxLength = DISPLAY_NAME_SHORT_MAX_LENGTH ) {
+            if (this.DisplayName.Length <= maxLength) {
                 return this.DisplayName;
-            } else {
-                return StringFormatting.GetTruncatedString( this.DisplayName, DISPLAY_NAME_SHORT_MAX_LENGTH );
             }
+
+            return StringFormatting.GetTruncatedString( this.DisplayName, maxLength );
         }
+
         /// <summary>
         /// Gets the AttributeValue for a specific SetName and CourseOfFireId. 
         /// <para>To get global AttributeValues that apply to the whole match, use a CourseOfFireId of 0.</para>

@@ -663,6 +663,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <para>The default value is int.MaxValue, which basically means a screen width of infinite width.</para>
         /// <para>Values of less than 0, are interpreted as being 0.</para>
         /// </summary>
+        /// <remarks>
+        /// After updating, be sure to call RefreshAllRowsParticipantAttributeFields to use the new field values.
+        /// </remarks>
         public int ResolutionWidth { get; set; } = int.MaxValue;
 
         /// <summary>

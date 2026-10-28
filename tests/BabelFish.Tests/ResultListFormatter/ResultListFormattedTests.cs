@@ -501,7 +501,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             }
         }
 
-        [Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
+        //[Ignore] //This is more of a playground for me to test out ideas, than an actual unit test. Need to comment out [Ignore] to run it. 
         [TestMethod]
         public async Task EriksResultListPlayground2() {
 
@@ -519,7 +519,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
             RLIF = new ResultListIntermediateFormatted( resultList, resultListFormatDefinition, null );
             //RLIF.GetCompletionPercentageStringPtr = ResultList.CompletionPercentageFormatting;
             await RLIF.InitializeAsync();
-            RLIF.ResolutionWidth = 1570; // int.MaxValue;
+            RLIF.ResolutionWidth = 378; // int.MaxValue;
             RLIF.ShowNumberOfChildRows = 0;
             RLIF.ShowNumberOfBodyRows = int.MaxValue;
             RLIF.ShowSupplementalInformation = true;
