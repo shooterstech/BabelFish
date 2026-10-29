@@ -318,6 +318,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 99 )]
         [G_NS.JsonProperty( Order = 99 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
 
         #region Deprecated Properties for Backwards Compatibility with Older Versions of the API
