@@ -10,16 +10,50 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public class ResultEvent :
         IEventScoreProjection,
         IRLIFItem,
-        ICheckSum {
+        ICheckSum,
+        G_STJ_SER.IJsonOnDeserialized {
 
+        #region Private Fields
         //Key is the Singular Event Name, Value is the Shot
-        private Dictionary<string, Athena.Shot.Shot> shotsByEventName = null;
+        private Dictionary<string, Athena.Shot.Shot> _shotsByEventName = null;
 
+        //Cached copy of the name of the top level event.
+        private string _topLevelEventName = "";
+        #endregion
+
+        #region Constructors, Factory Methods, and Initialization
         public ResultEvent() {
             //Purposefully set TeamMemebers to null so if it is an individual the attribute doesn't get added into the JSON
             TeamMembers = null;
         }
 
+        /// <summary>
+        /// System.Text.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
+        public void OnDeserialized() {
+            EventScores ??= new Dictionary<string, EventScore>();
+            Shots ??= new Dictionary<string, Athena.Shot.Shot>();
+            ResultCofScores ??= new Dictionary<string, EventScore>();
+
+            // Populate the backward pointers for EventScores and ResultCofScores
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+
+            foreach (var rCof in ResultCofScores) {
+                rCof.Value.ParentEventScores = this;
+            }
+        }
+
+        /// <summary>
+        /// Newtonsoft.Json OnDeserialized callback to ensure that the EventScores and ResultCofScores dictionaries are initialized after deserialization.
+        /// </summary>
+        /// <param name="context"></param>
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void OnDeserialized( System.Runtime.Serialization.StreamingContext context ) => OnDeserialized();
+        #endregion
+
+        #region Data Model Properties
         /// <summary>
         /// Data on the person or team who shot this score.
         /// </summary>
@@ -33,7 +67,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 2 )]
         [G_NS.JsonProperty( Order = 2 )]
-        public string MatchID { get; set; }
+        public MatchID MatchID { get; set; } = MatchID.DEFAULT;
 
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
@@ -100,6 +134,61 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonProperty( Order = 9 )]
         public DateTime LocalDate { get; set; } = DateTime.Today;
 
+        [G_STJ_SER.JsonPropertyOrder( 11 )]
+        [G_NS.JsonProperty( Order = 11 )]
+        public Dictionary<string, EventScore> EventScores { get; set; }
+
+
+        [G_STJ_SER.JsonPropertyOrder( 12 )]
+        [G_NS.JsonProperty( Order = 12 )]
+        public Dictionary<string, EventScore> ResultCofScores { get; set; }
+
+        /// <summary>
+        /// Scores for each Singular Event (usually a Shot).
+        /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
+        /// To get a dictionary of Shots by their EventName, use GetShotsByEventName()
+        /// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
+        /// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        [DefaultValue( null )]
+        public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
+
+        /// <inheritdoc />
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        public Athena.Shot.Shot? LastShot { get; set; } = null;
+
+        /// <inheritdoc />
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
+        [G_NS.JsonProperty( Order = 15 )]
+        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
+        // EKA NOTE Nov 2025: Choosing to use .MinValue. The idea is, if LastUpdated is not a part of the REST API
+        // returned json (as would be the case for Orion 2.23 or before), then we really don't know when the last update was.
+        public DateTime LastUpdated { get; set; } = DateTime.MinValue;
+
+        /// <summary>
+        /// If this is a team score, the TeamMembers will be the scores of the team members. If this is an Individual value will be null.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 21 )]
+        [G_NS.JsonProperty( Order = 21 )]
+        public List<ResultEvent>? TeamMembers { get; set; }
+
+
+        /// <summary>
+        /// The list of <see cref="RemarkAction"/> this Participant has for this Course of Fire. This can include things like DNS, DSQ, or in a Final AT RISK.
+        /// </summary>
+        /// <remarks>The value of the RemarkList is copied from the <see cref="CourseOfFireEntry.RemarkList"/>.</remarks>
+        [G_STJ_SER.JsonPropertyOrder( 25 )]
+        [G_NS.JsonProperty( Order = 25 )]
+        public RemarkList RemarkList { get; set; } = new RemarkList();
+
+        #endregion
+
+        #region Helper Properties
+
         /// <inheritdoc />
         /// <remarks>Squadding Assignmetn is not a part of the REST API response for GetResultList. It is included here to allow the Result
         /// List Formatter access to squadding information, so it may display it on a formatted result list.</remarks>
@@ -107,9 +196,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_STJ_SER.JsonIgnore]
         public SquaddingAssignment SquaddingAssignment { get; set; }
 
+        /// <summary>
+        /// Helper property to easily check if this participant is shooting out of competition (for score only). This is determined by checking if the RemarkList contains a ParticipantRemark of OUT_OF_COMPETITION.
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public bool OutOfCompetition {
+            get {
+                return RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION );
+            }
+        }
 
         /// <inheritdoc />
-		public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+        #endregion
+
+        #region Methods
+
+        /// <inheritdoc />
+        public List<IEventScoreProjection> GetTeamMembersAsIEventScoreProjection() {
             if (TeamMembers == null) {
                 return new List<IEventScoreProjection>();
             }
@@ -134,15 +243,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public void ProjectScores( ProjectorOfScores ps ) {
             ps.ProjectEventScores( this );
         }
-
-        [G_STJ_SER.JsonPropertyOrder( 11 )]
-        [G_NS.JsonProperty( Order = 11 )]
-        public Dictionary<string, EventScore> EventScores { get; set; }
-
-
-        [G_STJ_SER.JsonPropertyOrder( 12 )]
-        [G_NS.JsonProperty( Order = 12 )]
-        public Dictionary<string, EventScore> ResultCofScores { get; set; }
 
         public bool ShouldSerializeResultCOFScores() {
             return (ResultCofScores != null && ResultCofScores.Count > 0);
@@ -170,43 +270,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return $"{matchId}: {eventName}";
         }
 
-        /// <summary>
-        /// Scores for each Singular Event (usually a Shot).
-        /// The Key is the sequence number, which is represented here as a string, but is really a float. The Value is the Shot object.
-        /// To get a dictionary of Shots by their EventName, use GetShotsByEventName()
-        /// In the Result Event object, which is part of a Resuslt List, the Shots dictionary is purposefully not included
-        /// to conserve length of data. It is included in ResultEvents because of the IEventScoreProjection interface.
-        /// </summary>
-        [G_STJ_SER.JsonIgnore]
-        [G_NS.JsonIgnore]
-        [DefaultValue( null )]
-        public Dictionary<string, Athena.Shot.Shot> Shots { get; set; } = new Dictionary<string, Athena.Shot.Shot>();
-
-        /// <inheritdoc />
-        [G_STJ_SER.JsonPropertyOrder( 15 )]
-        [G_NS.JsonProperty( Order = 15 )]
-        public Athena.Shot.Shot? LastShot { get; set; } = null;
-
-        /// <inheritdoc />
-        [G_STJ_SER.JsonPropertyOrder( 15 )]
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateTimeConverter ) )]
-        [G_NS.JsonProperty( Order = 15 )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
-        //EKA NOTE Nov 2025: Choosing to use .UtcNow instead of .MinValue. The idea is, if LastUpdated is not a part of the REST API
-        //returned json (as would be the case for Orion 2.23 or before)
-        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
-
-        //Cached copy of the name of the top level event.
-        private string _topLevelEventName = "";
-
         /// <inheritdoc />
 		public ResultStatus GetStatus() {
             if (string.IsNullOrEmpty( _topLevelEventName )) {
                 if (this.EventScores is not null) {
                     foreach (var es in this.EventScores.Values) {
-                        if (es.EventType == "EVENT") {
+                        if (es.EventType == Definitions.EventtType.EVENT) {
                             _topLevelEventName = es.EventName;
-                            return es.Status;
+                            return CalculateStatusBasedOnTimeout( es.Status );
                         }
                     }
                 }
@@ -214,18 +285,29 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
                 //EKA NOTE: Should we check .EventScores.ResultCofScores ? 
 
             } else if (this.EventScores.TryGetValue( _topLevelEventName, out EventScore es )) {
-                return es.Status;
+                return CalculateStatusBasedOnTimeout( es.Status );
             }
 
             return ResultStatus.OFFICIAL;
         }
 
-        /// <summary>
-        /// If this is a team score, the TeamMembers will be the scores of the team members.If this is an Individual value will be null.
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 21 )]
-        [G_NS.JsonProperty( Order = 21 )]
-        public List<ResultEvent> TeamMembers { get; set; } = new List<ResultEvent>();
+        private ResultStatus CalculateStatusBasedOnTimeout( ResultStatus status ) {
+            if (status == ResultStatus.INTERMEDIATE && (DateTime.UtcNow - LastUpdated) > ResultStatusCalculator.INTERMEDIATE_STATUS_TIMEOUT)
+                return ResultStatus.UNOFFICIAL;
+            return status;
+        }
+
+        /// <inheritdoc />
+        public void PopulateEventScoreBackwardPointers() {
+            foreach (var es in EventScores) {
+                es.Value.ParentEventScores = this;
+            }
+            if (ResultCofScores is not null) {
+                foreach (var rCof in ResultCofScores) {
+                    rCof.Value.ParentEventScores = this;
+                }
+            }
+        }
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize TeamMembers when the list has something in it.
@@ -236,18 +318,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return (TeamMembers != null && TeamMembers.Count > 0);
         }
 
+        /// <summary>
+        /// Newtonsoft Conditional Property to only serialize RemarkList when the list has something in it.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeRemarkList() {
+            return (RemarkList != null && RemarkList.Count > 0);
+        }
+
         /// <inheritdoc />
         public Dictionary<string, Athena.Shot.Shot> GetShotsByEventName() {
-            if (shotsByEventName != null)
-                return shotsByEventName;
+            if (_shotsByEventName != null)
+                return _shotsByEventName;
 
-            shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
+            _shotsByEventName = new Dictionary<string, Athena.Shot.Shot>();
 
             foreach (var t in Shots.Values)
                 if (!string.IsNullOrEmpty( t.EventName ))
-                    shotsByEventName.Add( t.EventName, t );
+                    _shotsByEventName.Add( t.EventName, t );
 
-            return shotsByEventName;
+            return _shotsByEventName;
         }
 
         /// <inheritdoc />
@@ -263,12 +353,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
             return lastShot;
         }
-
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
 
         /// <inheritdoc />
         public bool CurrentlyCompetingOrRecentlyDone() {
@@ -320,5 +404,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return hash;
         }
+
+        #endregion
     }
 }

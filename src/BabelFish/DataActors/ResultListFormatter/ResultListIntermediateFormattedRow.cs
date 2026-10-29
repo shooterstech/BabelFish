@@ -54,6 +54,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             "Status",
             "LastShot",         //Only avaliable on individual result lists
             "Remark",
+            "OutOfCompetition",
             "RankOrSquadding",  //Avaliable only with Squadding information
             "Squadding",        //Avaliable only with Squadding information
             "Relay",            //Avaliable only with Squadding information
@@ -272,7 +273,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                             return dna;
 
                         //if that's too long, try the display name short, if it exists
-                        dna = _item.Participant.DisplayNameShort;
+                        //NOTE DisplayNameShort by convention is to be 20 characters or less.
+                        dna = _item.Participant.GetDisplayNameShort();
                         if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
                             return dna;
 
@@ -293,7 +295,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     if (_resultListFormatted.GetParticipantAttributeDisplayNameShortPtr != null)
                         return _resultListFormatted.GetParticipantAttributeDisplayNameShortPtr( this._item, this._resultListFormatted );
 
-                    var dns = _item.Participant.DisplayNameShort;
+                    var dns = _item.Participant.GetDisplayNameShort();
                     if (!string.IsNullOrEmpty( dns ))
                         return dns;
 
@@ -406,7 +408,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return string.Empty;
 
                     //This is the local match id, which likely different from the Parent ID in a virtual match
-                    return _resultEvent.MatchID;
+                    return _resultEvent.MatchID.ToString();
 
                 case "MatchLocation":
                 case "MatchLocationAbbreviation": //Deprecated
@@ -494,6 +496,15 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                         return _resultListFormatted.GetParticipantAttributeRemarkPtr( this._item, this._resultListFormatted );
 
                     return GetRemarks( this.LessThanLarge );
+
+                case "OutOfCompetition":
+                    if (_resultListFormatted.GetParticipantAttributeOutOfCompetitionPtr != null)
+                        return _resultListFormatted.GetParticipantAttributeOutOfCompetitionPtr( this._item, this._resultListFormatted );
+
+                    if (_resultEvent is null)
+                        return string.Empty;
+
+                    return _resultEvent.RemarkList.IsShowingParticipantRemark( ParticipantRemark.OUT_OF_COMPETITION ) ? "OOC" : string.Empty;
 
                 case "Squadding":
                     if (_resultListFormatted.GetParticipantAttributeSquaddingPtr != null)
@@ -610,12 +621,11 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             }
         }
 
-        private bool TryGetResultListMetadata( string matchID, out ResultListMetadata metadata ) {
+        private bool TryGetResultListMetadata( MatchID matchID, out ResultListMetadata metadata ) {
             metadata = null;
 
             if (_resultListFormatted.ResultList == null
-                || _resultListFormatted.ResultList.Metadata == null
-                || string.IsNullOrEmpty( matchID ))
+                || _resultListFormatted.ResultList.Metadata == null)
                 return false;
 
             return _resultListFormatted.ResultList.Metadata.TryGetValue( matchID, out metadata );
@@ -646,7 +656,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
              */
 
             foreach (var av in _item.Participant.AttributeValues) {
-                if (av.AttributeDef == source.Name) {
+                if (av.AttributeDef.Equals( source.Name )) {
                     try {
                         return av.AttributeValue.GetFieldName();
                     } catch (Exception ex) {
@@ -670,13 +680,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 }
              */
 
+            var eventName = (string)source.Name;
+
+
+            // Check for the special use case where the user is asking for  the ScoreFormatted value of the EventScore.
+            if (source.ScoreConfigName == FieldSource.SCORE_CONFIG_NAME_SCORE_FORMATTED) {
+                var eventScore = GetEventScore( eventName );
+                if (!string.IsNullOrEmpty( eventScore.ScoreFormatted )) {
+                    return eventScore.ScoreFormatted;
+                }
+
+                // If the value of ScoreFormatted is null or empty (which I think should not happen), we will fall back to calculating the formatted score ourselves using the Score and the ScoreFormat.
+            }
+
             //Dont' allow returning the projected score, if the ResultList status is UNOFFICIAL or OFFICIAL
             if (tryAndUseProjected &&
                 _resultListFormatted.ResultList is not null
                 && (_resultListFormatted.ResultList.Status == ResultStatus.UNOFFICIAL || _resultListFormatted.ResultList.Status == ResultStatus.OFFICIAL))
                 tryAndUseProjected = false;
 
-            var eventName = (string)source.Name;
+
             Score score = GetScore( eventName, tryAndUseProjected );
             string scoreFormat = string.Empty;
             if (string.IsNullOrEmpty( source.ScoreConfigName ))
@@ -693,12 +716,26 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
             if (tryAndUseProjected
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )
                 && scoreToReturn.Projected != null
+                && !scoreToReturn.Projected.IsZero
                 && scoreToReturn.Status == ResultStatus.INTERMEDIATE
                 && _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE) {
                 formattedScore += " ◎";
             }
 
             return formattedScore;
+        }
+
+        private EventScore GetEventScore( string eventName ) {
+            if (_resultEvent is not null) {
+                if (_resultEvent.EventScores != null && _resultEvent.EventScores.TryGetValue( eventName, out EventScore scoreToReturn )) {
+                    return scoreToReturn;
+                }
+                if (_resultEvent.ResultCofScores != null && _resultEvent.ResultCofScores.TryGetValue( eventName, out EventScore cofScoreToReturn )) {
+                    return cofScoreToReturn;
+                }
+            }
+
+            return new EventScore();
         }
 
         public Score GetScore( string eventName, bool tryAndUseProjected = false ) {
@@ -721,6 +758,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     //Checking _resultEvent.GetStatus() checks the status of the top level event, whcih may get updated to UNOFFICIAL if the last update time is more than an hour old.
                     if (tryAndUseProjected
                         && scoreToReturn.Projected != null
+                        && !scoreToReturn.Projected.IsZero
                         && (scoreToReturn.Status == ResultStatus.FUTURE || scoreToReturn.Status == ResultStatus.INTERMEDIATE)
                         && (_resultEvent.GetStatus() == ResultStatus.FUTURE || _resultEvent.GetStatus() == ResultStatus.INTERMEDIATE)) {
                         //If the Projected Score is known, try and return it
@@ -784,7 +822,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
         private string GetGap( FieldSource source ) {
             if (IsChildRow
-                || this._item.Participant.RemarkList.HasNonCompletionRemark) {
+                || (_resultEvent?.RemarkList.HasNonCompletionRemark ?? false)) {
                 return "";
             }
 
@@ -865,7 +903,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             if (_resultEvent.EventScores is not null
                 && _resultEvent.EventScores.TryGetValue( eventName, out EventScore eventScore )) {
-                switch (eventScore.Status) {
+                switch (eventScore.GetStatus()) {
                     case ResultStatus.FUTURE:
                         return 0;
                     case ResultStatus.UNOFFICIAL:
@@ -1098,7 +1136,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// </summary>
         /// <returns></returns>
         public string GetRemarks( bool useAbbreviation ) {
-            return this._item.Participant.RemarkList.GetSummary( useAbbreviation );
+            return _resultEvent?.RemarkList?.GetSummary( useAbbreviation ) ?? string.Empty;
         }
 
         public void SetSquaddingAssignment( SquaddingAssignment squadding ) {
@@ -1198,7 +1236,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                 return true;
 
             //Check if the score is zero
-            if (this.GetScore( this._resultListFormatted.ResultList.EventName, false ).IsZero) {
+            var score = this.GetScore( this._resultListFormatted.ResultList.EventName, false );
+            if (score.IsZero) {
                 //If we get here, the score is zero.
 
                 if (this._resultListFormatted.ShowZeroScoresWithOFFICIAL
@@ -1212,9 +1251,9 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return true;
 
                 //We do show this row if the score is zero due to DNS, DNF, or DSQ
-                if (GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS )
-                    || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF )
-                    || GetParticipant().RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ )) {
+                if ((_resultEvent?.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNS ) ?? false)
+                    || (_resultEvent?.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DNF ) ?? false)
+                    || (_resultEvent?.RemarkList.IsShowingParticipantRemark( ParticipantRemark.DSQ ) ?? false)) {
                     return true;
                 }
 

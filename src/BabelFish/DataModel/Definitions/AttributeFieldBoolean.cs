@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             if (value.ValueKind == JsonValueKind.True || value.ValueKind == JsonValueKind.False) {
                 return value.GetBoolean();
             } else {
-                Logger.Error( $"Got passed an unexpected JsonElement of type ${value.ValueKind}." );
+                _logger.Error( $"Got passed an unexpected JsonElement of type {value.ValueKind}." );
                 return DefaultValue;
             }
         }

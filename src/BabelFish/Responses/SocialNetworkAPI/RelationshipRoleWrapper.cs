@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.SocialNetwork;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.Responses.SocialNetworkAPI
 {

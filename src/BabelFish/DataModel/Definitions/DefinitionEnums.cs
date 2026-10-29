@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using Scopos.BabelFish.DataActors.OrionMatch;
 
 /*
  * This is a single file that contains multiple definitions for enums, all used within the Scopos.BabelFish.DataModel.Definitions namespace
@@ -102,6 +103,21 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         HIDDEN
     }
 
+    public enum AttributeValueType {
+
+        [Description( "Match" )]
+        [EnumMember( Value = "Match" )]
+        MATCH,
+
+        [Description( "API" )]
+        [EnumMember( Value = "API" )]
+        API_RESPONSE,
+
+        [Description( "Config" )]
+        [EnumMember( Value = "Config" )]
+        CONFIGURATION
+    }
+
     /// <summary>
     /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product.
     /// </summary>
@@ -124,7 +140,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         SCORE //Score Component, e.g. I, D, X
     }
 
-    [Obsolete( "Use RangeScriptType instead." )]
+
+    /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
     public enum COFTypeOptions {
         COMPETITION,
         FORMALPRACTICE,
@@ -191,6 +208,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// RESULT Definition
         /// </summary>
         [Description( "RESULT LIST FORMAT" )][EnumMember( Value = "RESULT LIST FORMAT" )] RESULTLISTFORMAT,
+
+        /// <summary>
+        /// RESULT Definition
+        /// </summary>
+        [Description( "RULEBOOK" )][EnumMember( Value = "RULEBOOK" )] RULEBOOK,
 
         /// <summary>
         /// SCORE FORMAT COLLECTION Definition
@@ -310,14 +332,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the 10 in the CalculationMeta field
         /// </summary>
+        /// <remarks>This method is deprecated and not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "AVG(10)" )]
         [EnumMember( Value = "AVG(10)" )]
         [Obsolete( "Use AVERAGE with CalculationVariables instead." )]
         AVG_TEN,
 
         /// <summary>
-        /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
+        /// Deprecated, and kept only for backwards capatibility. Future iterations should specify the i, d in the CalculationMeta field
         /// </summary>
+        /// <remarks>This method is deprecated and not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "SUM(i, d)" )]
         [EnumMember( Value = "SUM(i, d)" )]
         [Obsolete( "Use SUM with CalculationVariables instead." )]
@@ -326,6 +350,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Deprecated, and kept only for backwards capatibility. Future iterations should specigy the i, d in the CalculationMeta field
         /// </summary>
+        /// <remarks>This method is deprecated and not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "SUM(i,d)" )]
         [EnumMember( Value = "SUM(i,d)" )]
         [Obsolete( "Use SUM with CalculationVariables instead." )]
@@ -334,6 +359,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Reserved for Singularities that don't have children.
         /// </summary>
+        /// <remarks>As this method is reserved for singularities, it is not supported by BabelFish's <see cref="ShotMapper"/>.</remarks>
         [Description( "NONE" )]
         [EnumMember( Value = "NONE" )]
         NONE
@@ -511,6 +537,8 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         USER_DEFINED_FIELD_3
     }
 
+
+    /// <remarks>EKA Note Apr 2026. RangeScriptType and CourseOfFireType need to be refactored. Not really in use currently.</remarks>
     public enum RangeScriptType {
         /// <summary>
         /// Range Script is designed to be ran by a Range Officer. Usually with multiple 
@@ -884,12 +912,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <summary>
         /// Evaluates to true when the Participant is a team (and not an individual).
         /// </summary>
-        PARTICIPANT_IS_TEAM
+        PARTICIPANT_IS_TEAM,
+
+        /// <summary>
+        /// Evaluates to true when the Participant is competing for score only (aka out of competition).
+        /// </summary>
+        OUT_OF_COMPETITION
 
     }
 
     /// <summary>
-    /// Concrete class id for a ShowWhenBase. Indicates if the ShowWhenBase abstract class is of concrete class ShowWhenVariable or ShowWhenEquation.
+    /// Concrete class id for a <seealso cref="ShowWhenBase"/>. Indicates if the ShowWhenBase abstract class is of concrete class
+    /// <seealso cref="ShowWhenVariable"/>, <seealso cref="ShowWhenEquation"/>, or <seealso cref="ShowWhenSegmentGroup"/>.
     /// </summary>
     public enum ShowWhenOperation {
         /// <summary>
@@ -964,7 +998,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         MiddleName,
         CompetitorNumber,
         DisplayName,
-        DisplayNameShort,
         HomeTown,
         Country,
         Club

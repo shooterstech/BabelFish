@@ -1,9 +1,6 @@
-﻿using System.Net;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.DataModel.Definitions;
-using System.Text.Json;
-using NLog;
+using Scopos.BabelFish.Requests.AttributeValueAPI;
 
 namespace Scopos.BabelFish.Responses.AttributeValueAPI {
     public class GetAttributeValueAuthenticatedResponse : Response<AttributeValuesWrapper> {
@@ -17,7 +14,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
         /// <summary>
         /// Facade function that returns the same as this.Value
         /// </summary>
-        public Dictionary<string, AttributeValueDataPacketAPIResponse> AttributeValues {
+        public Dictionary<SetName, AttributeValueDataPacketAPIResponse> AttributeValues {
             get { return Value.AttributeValues; }
         }
 
@@ -32,7 +29,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
         /// </summary>
         /// <returns></returns>
         protected internal async Task PostResponseProcessingAsync() {
-            foreach ( var attributeValue in AttributeValues.Values ) {
+            foreach (var attributeValue in AttributeValues.Values) {
                 if (attributeValue.AttributeValueTask != null) {
                     await attributeValue.FinishInitializationAsync();
                 }
@@ -48,11 +45,11 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
         /// <param name="attributeDefinitionSetName"></param>
         /// <param name="attributeValue"></param>
         /// <returns></returns>
-        public bool TryGetAttributeValue( string attributeDefinitionSetName, out AttributeValue attributeValue ) {
+        public bool TryGetAttributeValue( SetName attributeDefinitionSetName, out AttributeValue attributeValue ) {
             attributeValue = null;
             AttributeValueDataPacketAPIResponse avw;
-            if (Value.AttributeValues.TryGetValue( attributeDefinitionSetName, out avw)) {
-                if ( avw.StatusCode == System.Net.HttpStatusCode.OK ) {
+            if (Value.AttributeValues.TryGetValue( attributeDefinitionSetName, out avw )) {
+                if (avw.StatusCode == System.Net.HttpStatusCode.OK) {
                     attributeValue = avw.AttributeValue;
                     return true;
                 }
@@ -60,7 +57,7 @@ namespace Scopos.BabelFish.Responses.AttributeValueAPI {
             return false;
         }
 
-        public bool TryGetAttributeValueWrapper( string attributeDefinitionSetName, out AttributeValueDataPacketAPIResponse attributeValueWrapper ) {
+        public bool TryGetAttributeValueWrapper( SetName attributeDefinitionSetName, out AttributeValueDataPacketAPIResponse attributeValueWrapper ) {
             if (Value.AttributeValues.TryGetValue( attributeDefinitionSetName, out attributeValueWrapper )) {
                 return true;
             }

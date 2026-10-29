@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
@@ -21,11 +16,11 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         }
 
-        public HierarchicalName(string name) {
+        public HierarchicalName( string name ) {
             FullName = name;
         }
 
-        public HierarchicalName(string nameSpace, string name) {
+        public HierarchicalName( string nameSpace, string name ) {
             ProperName = name;
             Namespace = nameSpace;
         }
@@ -52,7 +47,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public string FullName {
             get { return ToString(); }
             set {
-                var n = Decode(value);
+                var n = Decode( value );
                 Namespace = n.Item1;
                 ProperName = n.Item2;
             }
@@ -66,19 +61,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
 
         }
-        
+
         public override string ToString() {
             if (nameSpace == "")
                 return properName;
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(nameSpace);
-            sb.Append(':');
-            sb.Append(properName);
+            sb.Append( nameSpace );
+            sb.Append( ':' );
+            sb.Append( properName );
             return sb.ToString();
         }
 
-        public static bool TryParse(string nameWithNamespace, out HierarchicalName hn) {
+        public static bool TryParse( string nameWithNamespace, out HierarchicalName hn ) {
             try {
                 hn = new HierarchicalName();
                 hn.FullName = nameWithNamespace;
@@ -89,29 +84,29 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             }
         }
 
-        private Tuple<string, string> Decode(string nameWithNamespace) {
+        private Tuple<string, string> Decode( string nameWithNamespace ) {
             string[] words = { "" };
             char[] delimiterChars = { ':' };
-            words = nameWithNamespace.Split(delimiterChars);
+            words = nameWithNamespace.Split( delimiterChars );
             if (words.Length == 2)
-                return new Tuple<string, string>(words[0], words[1]);
+                return new Tuple<string, string>( words[0], words[1] );
             else if (words.Length == 1)
-                return new Tuple<string, string>("", words[0]);
+                return new Tuple<string, string>( "", words[0] );
             else
-                throw new FormatException("Unexpected HierarchialName format for " + nameWithNamespace);
+                throw new FormatException( "Unexpected HierarchialName format for " + nameWithNamespace );
         }
 
         #region IComparable<HierarchicalName> Members
 
-        public int CompareTo(HierarchicalName other) {
-            return this.ToString().CompareTo(other.ToString());
+        public int CompareTo( HierarchicalName other ) {
+            return this.ToString().CompareTo( other.ToString() );
         }
 
         #endregion
 
         #region IEquatable<HierarchicalName> Members
 
-        public bool Equals(HierarchicalName other) {
+        public bool Equals( HierarchicalName other ) {
             return this.ToString() == other.ToString();
         }
 

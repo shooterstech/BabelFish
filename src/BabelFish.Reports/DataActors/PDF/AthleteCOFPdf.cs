@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
         }
 
         public async Task InitializeAsync() {
-            CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( SetName.Parse( this.ResultCOF.CourseOfFireDef ) );
+            CourseOfFire = await DefinitionCache.GetCourseOfFireDefinitionAsync( this.ResultCOF.CourseOfFireDef );
             TopLevelEvent = EventComposite.GrowEventTree( this.CourseOfFire );
 
             //Target Analysis is an asynchronous operation, and we want to do them all at once, so we will kick them all off and then await them all at the end.

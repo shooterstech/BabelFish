@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -23,37 +17,36 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// A unique value that is used in the mapping process of shots to events. StageLabels are defined in Singular objects.
         /// StageLabel values are traditionally a single character.
         /// </summary>
+        [G_NS.JsonProperty( Order = 1 )]
         public string StageLabel { get; set; } = string.Empty;
 
         /// <summary>
-        /// The series numbers to print on the barcode labels. Must be formated as a ValueSeries
+        /// The series numbers to print on the barcode labels. Must be formated as a ValueSeries.
+        /// <para>A value > 0 means the bar code label is specific to a series (this is the normal case).
+        /// A value of 0 means the bar code label is generic and can be used for any series.</para>
         /// </summary>
         [DefaultValue( "1" )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ValueSeriesConverter ) )]
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ValueSeriesConverter ) )]
+        [G_NS.JsonProperty( Order = 2 )]
         public ValueSeries Series { get; set; } = new ValueSeries( "1" );
 
         /// <summary>
-        /// The formal name of the paper target to use with this BarcodeLabel option.
+        /// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product. Value must be one of the following:
+        /// OL385(for Small barcode labels)
+        /// OL161(for Large barcode labels).
         /// </summary>
-        public string TargetName { get; set; } = string.Empty;
-
-		/// <summary>
-		/// The size of barcode labels that should be used for printing. To avoid future name colision, the original product name is used, not the Orion 'small' or 'large' barcode label as used in the product. Value must be one of the following:
-		/// OL385(for Small barcode labels)
-		/// OL161(for Large barcode labels).
-		/// </summary>
-		[G_NS.JsonProperty( DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
-		public BarcodeLabelSize LabelSize { get; set; } = BarcodeLabelSize.OL385;
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public BarcodeLabelSize LabelSize { get; set; } = BarcodeLabelSize.OL385;
 
         /// <inheritdoc/>
-        [JsonPropertyOrder(99)]
+        [G_NS.JsonProperty( Order = 100 )]
         [DefaultValue( "" )]
         public string Comment { get; set; } = string.Empty;
 
         /// <inheritdoc/>
         public override string ToString() {
-            return $"{StageLabel} {TargetName}";
+            return $"{StageLabel}{Series}";
         }
     }
 }

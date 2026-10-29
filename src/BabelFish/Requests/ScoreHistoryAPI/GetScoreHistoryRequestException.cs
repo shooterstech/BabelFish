@@ -1,6 +1,6 @@
-﻿
+
 namespace Scopos.BabelFish.Requests.ScoreHistoryAPI {
-    public class GetScoreHistoryRequestException : RequestException {
+    public class GetScoreHistoryRequestException : APIRequestParameterException {
         public GetScoreHistoryRequestException()
             : base( "Something bad happened!" ) {
         }

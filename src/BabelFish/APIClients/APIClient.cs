@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json;
-using Scopos.BabelFish.DataModel;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -34,7 +34,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <remarks>Newtonsoft.json used NullValueHandling = NullValueHandling.Ignore </remarks>
         public static G_STJ.JsonSerializerOptions DeserializerOptions = new();
 
-        private static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Key is the timeout in seconds.
@@ -89,9 +89,23 @@ namespace Scopos.BabelFish.APIClients {
             return client;
         }
 
-
+        /// <summary>
+        /// Calls the API asynchronously with the given request and populates the response.
+        /// </summary>
+        /// <typeparam name="T">The type of the response body.</typeparam>
+        /// <param name="request">The request to send.</param>
+        /// <param name="response">The response to populate.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <exception cref="AuthenticationException">Thrown if there is an authentication error.</exception>
+        /// <exception cref="APIRequestParameterException">Thrown if the request parameters are invalid.</exception>
         protected async Task CallAPIAsync<T>( Request request, Response<T> response ) where T : BaseClass, new() {
-            // Get Uri for call
+
+            // Perform any pre-call validation or action items on the request object.
+            // Will throw a APIRequestParameterException if the request parameters are invalid.
+            await request.PreRequestMethodAsync();
+
+            // Construct the URI for the API call based on the request's subdomain, stage, relative path, query string, and fragment.
+            // Will throw a APIRequestParameterException if the request parameters are invalid.
             string uri = $"https://{request.SubDomain.SubDomainNameWithStage()}.scopos.tech/{ApiStage.Description()}{request.RelativePath}?{request.QueryString}#{request.Fragment}".Replace( "?#", "" );
 
             DateTime startTime = DateTime.Now;
@@ -103,13 +117,11 @@ namespace Scopos.BabelFish.APIClients {
                 //We'll assume everythning will go A-OK ;) 
                 response.RestApiStatusCode = HttpStatusCode.OK;
                 response.OverallStatusCode = RequestStatusCode.OK;
-
-                //response.MessageResponse = cachedResponse.MessageResponse.Copy();
-                //response.MessageResponse.Message.Add( "In memory cached response" );
-                //var stopWatch = Stopwatch.StartNew();
+                // response.MessageResponse = CloneMessageResponse( cachedResponse.MessageResponse );
                 response.Body = cachedResponse.Body;
+                response.Permissions = ClonePermissions( cachedResponse.Permissions );
+                response.MetaData = CloneMetaData( cachedResponse.MetaData );
                 response.TimeToRun = DateTime.Now - startTime;
-                //stopWatch.Stop();
                 response.InMemoryCachedResponse = true;
 
                 _logger.Info( $"Returning a in-memory cached Response for {request}." );
@@ -124,8 +136,10 @@ namespace Scopos.BabelFish.APIClients {
                 if (fileSystemReadResponse.Item1) {
                     response.RestApiStatusCode = HttpStatusCode.OK;
                     response.OverallStatusCode = RequestStatusCode.OK;
-                    //response.MessageResponse.Message.Add( "Read from file system response" );
+                    // response.MessageResponse = CloneMessageResponse( fileSystemReadResponse.Item2.MessageResponse );
                     response.Body = fileSystemReadResponse.Item2.Body;
+                    response.Permissions = ClonePermissions( fileSystemReadResponse.Item2.Permissions );
+                    response.MetaData = CloneMetaData( fileSystemReadResponse.Item2.MetaData );
                     response.TimeToRun = DateTime.Now - startTime;
                     response.FileSystemCachedResponse = true;
 
@@ -163,7 +177,7 @@ namespace Scopos.BabelFish.APIClients {
                      * https://stackoverflow.com/questions/3981564/cannot-send-a-content-body-with-this-verb-type
                      */
                     if (request.HttpMethod != HttpMethod.Get)
-                        requestMessage.Content = request.PostParameters;
+                        requestMessage.Content = request.PostContent;
 
                     //DAMN THE TORPEDOES FULL SPEED AHEAD (aka make the rest api call)
                     _logger.Info( $"Calling {request} on {uri}." );
@@ -193,7 +207,7 @@ namespace Scopos.BabelFish.APIClients {
                 using (StreamReader sr = new StreamReader( s )) {
                     /*
                      * EKA Note Jan 2025: There are faster ways of parsing the stream into an object. However, by capturing the json (which slows things down)
-                     * it makes troubleshooting much easier. Any by saving the JsonDocument in .Body, makes reusing response in a cache easier.
+                     * it makes troubleshooting much easier. And by saving the JsonDocument in .Body, makes reusing response in a cache easier.
                      */
                     jsonAsString = sr.ReadToEnd();
                     //var stopWatch = Stopwatch.StartNew();
@@ -208,6 +222,34 @@ namespace Scopos.BabelFish.APIClients {
                             response.MessageResponse.Message.Add( message.GetString() );
                         }
                     }
+
+                    G_STJ.JsonElement permissionsObject;
+                    if (response.Body.RootElement.TryGetProperty( "Permissions", out permissionsObject ) && permissionsObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        foreach (var resourcePermissions in permissionsObject.EnumerateObject()) {
+                            if (resourcePermissions.Value.ValueKind != G_STJ.JsonValueKind.Array) {
+                                continue;
+                            }
+
+                            var parsedPermissions = new HashSet<Permission>();
+                            foreach (var permission in resourcePermissions.Value.EnumerateArray()) {
+                                if (permission.ValueKind != G_STJ.JsonValueKind.String) {
+                                    continue;
+                                }
+
+                                parsedPermissions.Add( Permission.Parse( permission.GetString(), false ) );
+                            }
+
+                            response.Permissions[resourcePermissions.Name] = parsedPermissions;
+                        }
+                    }
+
+                    G_STJ.JsonElement metaDataObject;
+                    if (response.Body.RootElement.TryGetProperty( "MetaData", out metaDataObject ) && metaDataObject.ValueKind == G_STJ.JsonValueKind.Object) {
+                        var metaData = G_STJ.JsonSerializer.Deserialize<MetaDataResponse>( metaDataObject, SerializerOptions.SystemTextJsonDeserializer );
+                        if (metaData != null) {
+                            response.MetaData = metaData;
+                        }
+                    }
                 }
 
                 if (responseMessage.IsSuccessStatusCode) {
@@ -220,9 +262,11 @@ namespace Scopos.BabelFish.APIClients {
                         cachedResponse = new ResponseIntermediateObject() {
                             RestApiStatusCode = response.RestApiStatusCode,
                             OverallStatusCode = RequestStatusCode.OK,
-                            //MessageResponse = response.MessageResponse.Copy(),
+                            // MessageResponse = CloneMessageResponse( response.MessageResponse ),
                             Request = request,
                             Body = response.Body,
+                            Permissions = ClonePermissions( response.Permissions ),
+                            MetaData = CloneMetaData( response.MetaData ),
                             ValidUntil = response.GetCacheValueExpiryTime()
                         };
 
@@ -230,11 +274,12 @@ namespace Scopos.BabelFish.APIClients {
                     }
                 } else {
                     var msg = $"API error with: {responseMessage.ReasonPhrase}";
-                    _logger.Error( msg );
-                    _logger.Debug( jsonAsString );
                     response.RestApiStatusCode = responseMessage.StatusCode;
                     response.OverallStatusCode = RequestStatusCode.RestApiServerError;
                     response.ExceptionMessage = msg;
+
+                    _logger.Error( msg );
+                    _logger.Debug( jsonAsString );
                 }
 
             } catch (JsonException je) {
@@ -243,9 +288,9 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = je.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                _logger.Fatal( je, $"JsonException: {je.Message}" );
-                _logger.Debug( jsonAsString );
 
+                _logger.Error( je, $"JsonException: {je.Message}" );
+                _logger.Debug( jsonAsString );
             } catch (TaskCanceledException tce) {
                 //This is a timeout exception. The request took longer than allowed (which is set by _tiemOut, or 15s).
                 //Likely a network issue of some sort. Up to including firewall blocking request, or Internet is down.
@@ -254,9 +299,17 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = tce.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                _logger.Fatal( tce, "API Call timed out: {failmsg}", tce.Message );
 
+                _logger.Error( tce, $"API Call timed out: {tce.Message}" );
+            } catch (APIRequestParameterException re) {
+                // Usually thrown by a concrete Request object, when the parameters are not valid, incomplete, or missing. This is usually a programming error, and should be fixed in the code.
+                response.RestApiStatusCode = HttpStatusCode.InternalServerError;
+                response.OverallStatusCode = RequestStatusCode.ParameterError;
+                response.ExceptionMessage = re.Message;
+                response.Json = jsonAsString;
+                response.TimeToRun = DateTime.Now - startTime;
+
+                _logger.Error( re, $"Request parameters are invalid: {re.Message}" );
             } catch (Exception ex) {
 
                 //Keep NotFound exceptions, otherwise replace with internal server error
@@ -264,13 +317,42 @@ namespace Scopos.BabelFish.APIClients {
                 response.ExceptionMessage = ex.Message;
                 response.Json = jsonAsString;
                 response.TimeToRun = DateTime.Now - startTime;
-                //response.MessageResponse.Message.Add( $"API Call failed: {ex.Message}" );
-                _logger.Fatal( ex, $"API Call failed: {ex.Message}" );
+
+                _logger.Error( ex, $"API Call failed: {ex.Message}" );
                 _logger.Debug( jsonAsString );
             }
         }
 
-        private static DirectoryInfo? _localStorageDirectory = null;
+        private static Dictionary<string, HashSet<Permission>> ClonePermissions( Dictionary<string, HashSet<Permission>>? source ) {
+            var clone = new Dictionary<string, HashSet<Permission>>();
+
+            if (source == null) {
+                return clone;
+            }
+
+            foreach (var entry in source) {
+                clone[entry.Key] = entry.Value == null
+                    ? new HashSet<Permission>()
+                    : new HashSet<Permission>( entry.Value );
+            }
+
+            return clone;
+        }
+
+        /// <summary>
+        /// Clones the MetaDataResponse. If the source is null or of type MetaDataResponseUnknown, it returns a new instance of MetaDataResponseUnknown. Otherwise, it calls the Clone() method on the source.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private static MetaDataResponse CloneMetaData( MetaDataResponse? source ) {
+            if (source == null || source is MetaDataResponseUnknown) {
+                return new MetaDataResponseUnknown();
+            }
+
+            return source.Clone();
+        }
+
+        private static DirectoryInfo? _localStorageDirectory { get; set; }
 
         /// <summary>
         /// The directory that BabelFish may use to read and store cached responses. 

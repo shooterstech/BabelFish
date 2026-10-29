@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -16,10 +16,9 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //RowClass = new List<string>();
         }
 
-        public ResultListDisplayPartition( string rowClassDefault )
-        {
-            if (!string.IsNullOrEmpty(rowClassDefault))
-                ClassSet.Add(new ClassSet(rowClassDefault, ShowWhenVariable.ALWAYS_SHOW.Clone() ));
+        public ResultListDisplayPartition( string rowClassDefault ) {
+            if (!string.IsNullOrEmpty( rowClassDefault ))
+                ClassSet.Add( new ClassSet( rowClassDefault, ShowWhenVariable.CreateAlwaysShow() ) );
             /*
             if (!string.IsNullOrEmpty( rowClassDefault ))
                 RowClass.Add( rowClassDefault );
@@ -52,7 +51,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <item>rlf-row-footer</item>
         /// </list>"
         /// </remarks>
-        [Obsolete("Use .ClassSet instead.")]
+        [Obsolete( "Use .ClassSet instead." )]
         public List<string> ClassList { get; set; } = new List<string>();
 
         /// <summary>

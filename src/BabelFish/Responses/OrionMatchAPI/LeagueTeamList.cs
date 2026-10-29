@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Scopos.BabelFish.DataModel;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using System.Text.Json;
 using Scopos.BabelFish.Converters.Microsoft;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.DataModel.Common;
 
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
