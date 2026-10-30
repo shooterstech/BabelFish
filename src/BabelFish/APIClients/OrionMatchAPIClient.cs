@@ -1260,8 +1260,20 @@ namespace Scopos.BabelFish.APIClients {
             IEnumerable<string> resultNames,
             UserAuthentication credentials,
             bool dryRun = false ) {
+            return await SendRangeReportEmailAuthenticatedAsync(
+                matchId, resultNames, credentials, Array.Empty<string>(), dryRun ).ConfigureAwait( false );
+        }
+
+        /// <summary>Send a Range Report email with additional recipients.</summary>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendRangeReportEmailAuthenticatedAsync(
+            MatchID matchId,
+            IEnumerable<string> resultNames,
+            UserAuthentication credentials,
+            IEnumerable<string> additionalEmailAddresses,
+            bool dryRun = false ) {
             var request = new SendRangeReportEmailAuthenticatedRequest( matchId, resultNames, credentials ) {
-                DryRun = dryRun
+                DryRun = dryRun,
+                AdditionalEmailAddresses = additionalEmailAddresses?.ToList() ?? new List<string>()
             };
 
             return await SendRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );
@@ -1289,10 +1301,24 @@ namespace Scopos.BabelFish.APIClients {
             bool dryRun = false,
             string? resultName = null,
             bool includeRecap = false ) {
+            return await SendLeagueRangeReportEmailAuthenticatedAsync(
+                leagueId, matchId, credentials, Array.Empty<string>(), dryRun, resultName, includeRecap ).ConfigureAwait( false );
+        }
+
+        /// <summary>Send a league-game Range Report email with additional recipients.</summary>
+        public async Task<SendRangeReportEmailAuthenticatedResponse> SendLeagueRangeReportEmailAuthenticatedAsync(
+            MatchID leagueId,
+            MatchID matchId,
+            UserAuthentication credentials,
+            IEnumerable<string> additionalEmailAddresses,
+            bool dryRun = false,
+            string? resultName = null,
+            bool includeRecap = false ) {
             var request = new SendLeagueRangeReportEmailAuthenticatedRequest( leagueId, matchId, credentials ) {
                 DryRun = dryRun,
                 ResultName = resultName,
-                IncludeRecap = includeRecap
+                IncludeRecap = includeRecap,
+                AdditionalEmailAddresses = additionalEmailAddresses?.ToList() ?? new List<string>()
             };
 
             return await SendLeagueRangeReportEmailAuthenticatedAsync( request ).ConfigureAwait( false );

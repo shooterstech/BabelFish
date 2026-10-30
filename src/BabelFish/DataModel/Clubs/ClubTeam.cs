@@ -130,6 +130,24 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
+        /// The team's preferred display name on small width screens (typically bootstrap's medium screens or smaller).
+        /// <para>Value may be an empty string. Maximum length is 24 characters.</para>
+        /// </summary>
+        [StringLength( 24, ErrorMessage = "NameShort cannot be longer than 24 characters." )]
+        [G_STJ_SER.JsonPropertyOrder( 3 )]
+        [G_NS.JsonProperty( Order = 3 )]
+        public string NameShort { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The team's preferred display name on extra small width screens (typically smaller than bootstrap's small screens).
+        /// <para>Value may be an empty string. Maximum length is 12 characters.</para>
+        /// </summary>
+        [StringLength( 12, ErrorMessage = "NameExtraShort cannot be longer than 12 characters." )]
+        [G_STJ_SER.JsonPropertyOrder( 4 )]
+        [G_NS.JsonProperty( Order = 4 )]
+        public string NameExtraShort { get; set; } = string.Empty;
+
+        /// <summary>
         /// Gets or sets the mascot name.
         /// <para>Value is not required, may be an empty string.</para>
         /// </summary>
@@ -147,6 +165,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// The list of <see cref="EventStyle"/> that this team participates in. A team can compete in many different event styles.
         /// <para>While not enforced, a Club Team should have at least one <see cref="ClubTeamEventStyle"/>.</para>
+        /// <para>The preferred method for adding a <see cref="ClubTeamEventStyle"/> is to use the <see cref="ClubTeamEventStyle.CreateAsync(ClubTeam)"/> method.</para>
         /// </summary>
         public List<ClubTeamEventStyle> EventStyles { get; set; } = new List<ClubTeamEventStyle>();
 
@@ -168,6 +187,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #endregion
 
         #region Helper Properties
+
         /// <summary>
         /// Backwards pointer to the owning ClubDetail. This is not serialized in the API response, but is provided for ease of use in client applications.
         /// </summary>

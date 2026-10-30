@@ -86,7 +86,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
                     if (scoreAverageResponse.RestApiStatusCode == System.Net.HttpStatusCode.OK) {
                         foreach (ScoreAverageStageStyleEntry scoreAvg in scoreAverageResponse.ScoreAverageList.Items) {
-                            AddOrUpdateScoreAvgEntry( scoreAvg.UserId, scoreAvg.StageStyleDef, scoreAvg );
+                            AddOrUpdateScoreAvgEntry( scoreAvg.UserID, scoreAvg.StageStyleDef, scoreAvg );
                         }
 
                     } else {

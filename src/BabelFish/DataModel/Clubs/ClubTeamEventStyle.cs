@@ -1,8 +1,11 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
-    public class ClubTeamEventStyle : ICheckSum {
+    public class ClubTeamEventStyle : ICheckSum, IGetEventStyleDefinition {
 
         #region Private and Protected Fields
         private static Logger _logger = LogManager.GetCurrentClassLogger();
@@ -23,22 +26,38 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// This method ensures that the new EventStyle is properly linked to the club's team list.
         /// </summary>
         /// <param name="clubTeam">The club team to associate with the new EventStyle.</param>
+        /// <param name="eventStyleDef">The event style definition to associate with the new ClubTeamEventStyle.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created <see cref="ClubTeamEventStyle"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="clubTeam"/> is null.</exception>
-        public static Task<ClubTeamEventStyle> CreateAsync( ClubTeam clubTeam ) {
-            // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
-            // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
-            // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
-
+        /// <exception cref="ArgumentException">Thrown when the provided <paramref name="eventStyleDef"/> is the default SetName.</exception>
+        /// <exception cref="DefinitionNotFoundException">Thrown when the provided <paramref name="eventStyleDef"/> cannot be found.</exception>
+        public static async Task<ClubTeamEventStyle> CreateAsync( SetName eventStyleDef, ClubTeam clubTeam ) {
             if (clubTeam is null)
                 throw new ArgumentNullException( nameof( clubTeam ), "ClubTeam cannot be null when creating a ClubTeamEventStyle." );
+            if (eventStyleDef is null)
+                throw new ArgumentNullException( nameof( eventStyleDef ), "EventStyleDef cannot be null when creating a ClubTeamEventStyle." );
+            if (eventStyleDef.IsDefault)
+                throw new ArgumentException( "EventStyleDef cannot be default when creating a ClubTeamEventStyle.", nameof( eventStyleDef ) );
 
+            // Load the Event Style definition to ensure it exists and is valid. This will throw an exception if the DefinitionNotFound exception if it cannot be found.
+            var eventStyleDefinition = await DefinitionCache.GetEventStyleDefinitionAsync( eventStyleDef );
+
+            // Make sure the ClubTeam's EventStyles list is initialized
+            clubTeam.EventStyles ??= new List<ClubTeamEventStyle>();
+
+            // Make sure the ClubTeam doesn't already have this EventStyleDef. If it does, we can return the existing instance instead of creating a duplicate.
+            var existingEventStyle = clubTeam.EventStyles.FirstOrDefault( es => es.EventStyleDef == eventStyleDef );
+            if (existingEventStyle != null)
+                return existingEventStyle;
+
+            // OK, OK, now we can create a new ClubTeamEventStyle and add it to the ClubTeam's EventStyles list.
             ClubTeamEventStyle clubTeamEventStyle = new ClubTeamEventStyle();
+            clubTeamEventStyle.EventStyleDef = eventStyleDef;
             clubTeamEventStyle.ClubTeam = clubTeam;
-            clubTeamEventStyle.ClubTeam.EventStyles ??= new List<ClubTeamEventStyle>();
+            clubTeamEventStyle.HeaderName = StringFormatting.GetTruncatedString( eventStyleDefinition.CommonName, 24 ); ;
             clubTeam.EventStyles.Add( clubTeamEventStyle );
 
-            return Task.FromResult( clubTeamEventStyle );
+            return clubTeamEventStyle;
         }
 
         /// <summary>
@@ -59,6 +78,15 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// The <see cref="EventStyle"/>that this <see cref="ClubTeam"/> participates in.
         /// </summary>
         public SetName EventStyleDef { get; set; } = new SetName();
+
+        /// <summary>
+        /// When scores for this Event Style are displayed, the header name is how the Club wishes to label the scores.
+        /// <para>For example "Three-Posiiton Air Rifle" or "Smallbore".</para>
+        /// </summary>
+        [Required]
+        [StringLength( 24, MinimumLength = 4, ErrorMessage = "HeaderName, must be at least 4 characters and no longer than 24 characters." )]
+        [DefaultValue( "" )]
+        public string HeaderName { get; set; } = string.Empty;
         #endregion
 
         #region Helper Properties
@@ -77,6 +105,24 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #endregion
 
         #region Methods
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentException">Thrown if the value of .EventStyleDef could not be parsed. Which shouldn't happen.</exception>
+        public async Task<EventStyle> GetEventStyleDefinitionAsync() {
+
+            return await DefinitionCache.GetEventStyleDefinitionAsync( EventStyleDef );
+
+        }
+
+        /// <summary>
+        /// Non-async method to try and return the <see cref="EventStyle"/> definition for <see cref="EventStyleDef"/>.
+        /// <para>A returned value of false, may mean that the <see cref="EventStyle"/> could not be found in the <see cref="DefinitionCache"/>,
+        /// and it may be found later once the cache is populated.</para>
+        /// </summary>
+        /// <param name="eventStyle">The output parameter that will contain the <see cref="EventStyle"/> if found.</param>
+        /// <returns>True if the <see cref="EventStyle"/> was found; otherwise, false.</returns>
+        public bool TryGetEventStyleDefinition( out EventStyle eventStyle ) {
+            return DefinitionCache.TryGetEventStyleDefinition( EventStyleDef, out eventStyle );
+        }
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {

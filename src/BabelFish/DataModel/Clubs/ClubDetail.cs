@@ -235,7 +235,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_STJ_SER.JsonIgnore]
         public string Url {
             get {
-                return $"https://rezults.scopos.tech/clubs/{URLPath}/";
+                return $"https://rezults.scopos.tech/club/{URLPath}/";
             }
         }
 

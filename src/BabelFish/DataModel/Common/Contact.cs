@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Scopos.BabelFish.DataModel.Image;
 
 namespace Scopos.BabelFish.DataModel.Common {
     /// <summary>
@@ -24,14 +25,15 @@ namespace Scopos.BabelFish.DataModel.Common {
         public string DisplayName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the relative URL path for the account resource.
+        /// Gets or sets the relative URL path for the account resource. For the full path, use the <see cref="AccountUrl"/> property.
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 5 )]
         [G_NS.JsonProperty( Order = 5 )]
         public string AccountUrlPath { get; set; } = string.Empty;
 
         /// <summary>
-        /// The full URL to their public page on Rezults. For example https://rezults.com/z/erik/
+        /// The full URL to their public page on Rezults. For example https://rezults.scopos.tech/z/erik/.
+        /// <para>An empty string is returned if the AccountUrlPath is not set or not public.</para>
         /// </summary>
         [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
@@ -40,7 +42,7 @@ namespace Scopos.BabelFish.DataModel.Common {
                 if (string.IsNullOrWhiteSpace( this.AccountUrlPath )) {
                     return string.Empty;
                 } else {
-                    return $"https://rezults.com/z/{this.AccountUrlPath}/";
+                    return $"https://rezults.scopos.tech/z/{this.AccountUrlPath}/";
                 }
             }
         }
@@ -60,6 +62,13 @@ namespace Scopos.BabelFish.DataModel.Common {
         [G_STJ_SER.JsonPropertyOrder( 11 )]
         [G_NS.JsonProperty( Order = 11 )]
         public string Phone { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The public profile image for this contact. Value may be null if the user has not uploaded a profile image.
+        /// </summary>
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
+        public ScoposImageAbbr? ProfileImage { get; set; } = null;
 
         /// <summary>
         /// The UUID formatted Scopos Account user id for this contact.
