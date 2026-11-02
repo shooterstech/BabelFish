@@ -41,6 +41,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
             // Load the Event Style definition to ensure it exists and is valid. This will throw an exception if the DefinitionNotFound exception if it cannot be found.
             var eventStyleDefinition = await DefinitionCache.GetEventStyleDefinitionAsync( eventStyleDef );
+            var scoreFormatCollectionDefinition = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( eventStyleDefinition.ScoreFormatCollectionDefForAverages );
 
             // Make sure the ClubTeam's EventStyles list is initialized
             clubTeam.EventStyles ??= new List<ClubTeamEventStyle>();
@@ -54,7 +55,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             ClubTeamEventStyle clubTeamEventStyle = new ClubTeamEventStyle();
             clubTeamEventStyle.EventStyleDef = eventStyleDef;
             clubTeamEventStyle.ClubTeam = clubTeam;
-            clubTeamEventStyle.HeaderName = StringFormatting.GetTruncatedString( eventStyleDefinition.CommonName, 24 ); ;
+            clubTeamEventStyle.HeaderName = StringFormatting.GetTruncatedString( eventStyleDefinition.CommonName, 24 );
+            clubTeamEventStyle.ScoreConfigName = scoreFormatCollectionDefinition.GetDefaultScoreConfigName();
+            clubTeamEventStyle.CourseOfFireDef = eventStyleDefinition.SimpleCOFs.FirstOrDefault()?.CourseOfFireDef ?? new SetName();
             clubTeam.EventStyles.Add( clubTeamEventStyle );
 
             return clubTeamEventStyle;
@@ -87,6 +90,23 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [StringLength( 24, MinimumLength = 4, ErrorMessage = "HeaderName, must be at least 4 characters and no longer than 24 characters." )]
         [DefaultValue( "" )]
         public string HeaderName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// To display scores for the Club Team, the <see cref="EventStyle"/> defines a <see cref="ScoreFormatCollection">SCORE FORMAT COLLECTION</see> to use while displaying scores.
+        /// The ScoreConfigName is the value, within that SCORE FORMAT COLLECTION the Club wants to use. Will commonly be values
+        /// such as Integer or Decimal.
+        /// </summary>
+        /// <remarks>The <see cref="CourseOfFireDef"/>also plays a role in how scores are displayed for the Club Team.</remarks>
+        public string ScoreConfigName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// To display scores for the Club Team, the <see cref="EventStyle"/> defines a series of <see cref="SimpleCOF"/> options to use while displaying scores.
+        /// The <see cref="SimpleCOF"/> is a simplified version of the <see cref="CourseOfFire"/> definition, and is used to define the stages and shot counts for the Event Style.
+        /// the CourseOfFireDef property is the unique value within the list of <see cref="SimpleCOF"/> the Club wants to use to display scores.
+        /// <para>If a CourseOfFireDef is not specified, the first SimpleCOF in the list will be used.</para>
+        /// </summary>
+        /// <remarks>The <see cref="ScoreConfigName"/>also plays a role in how scores are displayed for the Club Team.</remarks>
+        public SetName CourseOfFireDef { get; set; } = new SetName();
         #endregion
 
         #region Helper Properties
@@ -102,6 +122,37 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
         public string CheckSum { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Attempts to return the <see cref="SimpleCOF"/> that matches the <see cref="CourseOfFireDef"/>, that should be defined
+        /// within <see cref="EventStyle"/>.
+        /// </summary>
+        /// <remarks>Uses the first available <see cref="SimpleCOF"/> as a fallback if the <see cref="CourseOfFireDef"/> is not found.</remarks>
+        /// <param name="simpleCof">When this method returns <see langword="true" />, contains the simple course of fire that matches
+        /// <c>CourseOfFireDef</c> when available; otherwise contains the first defined simple course of fire. When this
+        /// method returns <see langword="false" />, contains a new <see cref="SimpleCOF" /> instance.</param>
+        /// <returns><see langword="true" /> if the event style definition is found and includes at least one simple course of
+        /// fire; otherwise, <see langword="false" />.</returns>
+        public bool TryGetSimpleCOF( out SimpleCOF simpleCof ) {
+            simpleCof = new SimpleCOF();
+            if (DefinitionCache.TryGetEventStyleDefinition( EventStyleDef, out EventStyle eventStyle )) {
+
+                // EventStyles must have at least one SimpleCOF, so we can safely return the first one if no CourseOfFireDef is specified or the value is not found in the list.
+                if (eventStyle.SimpleCOFs.Count > 0) {
+                    simpleCof = eventStyle.SimpleCOFs[0];
+
+                    var matchingSimpleCof = eventStyle.SimpleCOFs.FirstOrDefault( sc => sc.CourseOfFireDef.Equals( CourseOfFireDef ) );
+                    if (matchingSimpleCof != null) {
+                        simpleCof = matchingSimpleCof;
+                    }
+
+                    return true;
+                }
+            }
+
+            // Would get here if the EventStyleDef is not found in the DefinitionCache, or if the EventStyle has no SimpleCOFs defined.
+            return false;
+        }
         #endregion
 
         #region Methods

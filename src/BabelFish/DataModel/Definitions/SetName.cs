@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -14,6 +15,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+    [TypeConverter( typeof( G_TYPE_CONV.SetNameConverter ) )]
     public class SetName : IEquatable<SetName>, IEquatable<HierarchicalName> {
 
 
