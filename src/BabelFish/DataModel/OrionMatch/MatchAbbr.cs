@@ -70,6 +70,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string MatchName { get; set; } = string.Empty;
 
         /// <summary>
+        /// Whether live activity was observed when this summary was read.
+        /// Null means the producer did not evaluate live activity; this is not a continuously updated status.
+        /// </summary>
+        public bool? IsLive { get; set; }
+
+        /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>

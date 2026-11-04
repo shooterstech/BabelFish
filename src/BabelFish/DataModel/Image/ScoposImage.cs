@@ -52,17 +52,6 @@ namespace Scopos.BabelFish.DataModel.Image {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        [Obsolete( "UrlPath is deprecated. Use Url instead.", false )]
-        public string UrlPath { get => Url; set => Url = value; }
-
-        /// <summary>
-        /// The full URL path to the image. This is the path that can be used to access the image directly via HTTP.
-        /// <para>The value is assigned by the PatchImageModeration API call.</para>
-        /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 4 )]
-        [G_NS.JsonProperty( Order = 4 )]
         public string Url { get; set; } = string.Empty;
 
         /// <summary>
