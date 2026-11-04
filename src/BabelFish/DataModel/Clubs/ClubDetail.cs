@@ -221,6 +221,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <summary>
         /// The relative URL path in rezults.scopos.tech/clubs/{path}/ linking to their team page.
         /// <para>The full URL can be obtained from the <see cref="Url"/> property.</para>
+        /// <para>Warning, not all Club Pages are publicly accessible.</para>
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]
@@ -230,6 +231,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// The full URL to the club's team page on Rezults. This is constructed from the base URL and the club's URLPath.
+        /// <para>Warning, not all Club Pages are publicly accessible.</para>
         /// </summary>
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
