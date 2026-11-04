@@ -63,11 +63,6 @@ namespace Scopos.BabelFish.DataModel.Common {
         public static readonly Permission CLUB_READ_LICENSE = new Permission( "club.read_license", "Read a club license" );
 
         /// <summary>
-        /// May view Club Teams.
-        /// </summary>
-        public static readonly Permission CLUB_READ_TEAMS = new Permission( "club.read_teams", "May view Club Teams." );
-
-        /// <summary>
         /// Ability to manage club settings including a Club's contact information.
         /// </summary>
         public static readonly Permission CLUB_MANAGE_SETTINGS = new Permission( "club.manage_settings", "Ability to manage club settings including a Club's contact information." );

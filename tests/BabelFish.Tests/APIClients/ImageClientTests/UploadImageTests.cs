@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ImageClientTests {
             Assert.AreEqual( HttpStatusCode.OK, response.RestApiStatusCode, $"Expecting an OK status code, instead received {response.RestApiStatusCode} with overall status {response.OverallStatusCode}, and message {response.ExceptionMessage}." );
             Assert.IsTrue( response.HasOkStatusCode );
             Assert.IsNotNull( response.Image );
-            Assert.IsNotEmpty( response.Image.UrlPath );
+            Assert.IsNotEmpty( response.Image.Url );
             Assert.AreEqual( request.Caption, response.Image.Caption );
             Assert.AreEqual( request.AltText, response.Image.AltText );
             Assert.AreEqual( request.PrimaryKey, response.Image.PrimaryKey );
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ImageClientTests {
             Assert.AreEqual( request.GroupKey, response.Image.GroupKey );
             Assert.AreEqual( Constants.TestDev7UserId, response.Image.UserId );
 
-            Console.WriteLine( $"Image uploaded successfully. URL: {response.Image.UrlPath}, Status: {response.Image.SafeToShowStatus}" );
+            Console.WriteLine( $"Image uploaded successfully. URL: {response.Image.Url}, Status: {response.Image.SafeToShowStatus}" );
         }
     }
 }

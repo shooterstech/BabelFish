@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
         /// <summary>
         /// GUID formatted User ID of the athlete who shot this score.
         /// </summary>
-        public string UserId { get; set; } = string.Empty;
+        public string UserID { get; set; } = string.Empty;
 
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]

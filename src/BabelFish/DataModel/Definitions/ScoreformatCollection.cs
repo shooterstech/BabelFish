@@ -56,6 +56,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 12 )]
         public List<ScoreConfig> ScoreConfigs { get; set; } = new List<ScoreConfig>();
 
+        /// <summary>
+        /// Gets the name of the default score configuration, which is the first item in the <see cref="ScoreConfigs"/> list.
+        /// </summary>
+        /// <returns>The default value ScoreConfigName from the list of <see cref="ScoreConfigs"/>.</returns>
         public string GetDefaultScoreConfigName() {
             if (ScoreConfigs.Count > 0)
                 return ScoreConfigs[0].ScoreConfigName;

@@ -13,6 +13,31 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [Obsolete( "Deprecated March 2026. Use Type instead." )]
         public const int CONCRETE_CLASS_ID = 2;
 
+
+
+        private static List<Tuple<string, string>> _replacementStringsFirstRound = new List<Tuple<string, string>>() {
+            Tuple.Create( "High School", string.Empty ),
+            Tuple.Create( "American Legion Post", "Post" ),
+            Tuple.Create( "Gun Club", string.Empty ),
+            Tuple.Create( "Academy", string.Empty ),
+            Tuple.Create( "Shooting Sports", string.Empty )
+        };
+
+        private static List<Tuple<string, string>> _replacementStringsSecondRound = new List<Tuple<string, string>>() {
+            Tuple.Create( "ARJTOC", string.Empty ),
+            Tuple.Create( "NJROTC", string.Empty ),
+            Tuple.Create( "MCJROTC", string.Empty ),
+            Tuple.Create( "CGJROTC", string.Empty ),
+            Tuple.Create( "SFJROTC", string.Empty ),
+            Tuple.Create( "AFJROTC", string.Empty ),
+            Tuple.Create( "JROTC", string.Empty ),
+            Tuple.Create( "WEST", "W" ),
+            Tuple.Create( "EAST", "E" ),
+            Tuple.Create( "NORTH", "N" ),
+            Tuple.Create( "SOUTH", "S" ),
+            Tuple.Create( "County", string.Empty )
+        };
+
         #region Private and Protected Fields
         private bool _ignoreEvents = false;
         private string _teamName = string.Empty;
@@ -79,6 +104,58 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #endregion
 
         #region Methods
+        /// <inheritdoc />
+        public override string GetDisplayNameShort( int maxLength = DISPLAY_NAME_SHORT_MAX_LENGTH ) {
+            if (maxLength < DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH)
+                maxLength = DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH;
+
+            // First check the length of the DisplayName. If it is shorter than the max length, return it.
+            if (this.DisplayName.Length <= maxLength) {
+                return this.DisplayName;
+            }
+
+            // Next check the length of the DisplayNameShort. If it is shorter than the max length, return it.
+            if (!string.IsNullOrWhiteSpace( this.DisplayNameShort ) && this.DisplayNameShort.Length <= maxLength) {
+                return this.DisplayNameShort;
+            }
+
+            // Next check the length of the DisplayNameExtraShort. If it is shorter than the max length, return it.
+            if (!string.IsNullOrWhiteSpace( this.DisplayNameExtraShort ) && this.DisplayNameExtraShort.Length <= maxLength) {
+                return this.DisplayNameExtraShort;
+            }
+
+            // Using the values in _replacementStringsFirstRound, replace any matching strings, using case insensitive search, in the DisplayName with the replacement string.
+            string displayNameShort = this.DisplayName;
+            foreach (var replacement in _replacementStringsFirstRound) {
+                displayNameShort = System.Text.RegularExpressions.Regex.Replace(
+                    displayNameShort,
+                    System.Text.RegularExpressions.Regex.Escape( replacement.Item1 ),
+                    replacement.Item2,
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+
+            if (displayNameShort.Length <= maxLength) {
+                return displayNameShort;
+            }
+
+            // Using the values in _replacementStringsSecondRound, replace any matching strings, using case insensitive search, in the DisplayName with the replacement string.
+            foreach (var replacement in _replacementStringsSecondRound) {
+                displayNameShort = System.Text.RegularExpressions.Regex.Replace(
+                    displayNameShort,
+                    System.Text.RegularExpressions.Regex.Escape( replacement.Item1 ),
+                    replacement.Item2,
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                );
+            }
+
+            if (displayNameShort.Length <= maxLength) {
+                return displayNameShort;
+            }
+
+            // If it is still too long, truncate the string to the max lngth and return it.
+            return StringFormatting.GetTruncatedString( displayNameShort, maxLength );
+        }
 
         /// <inheritdoc />
         public override void SetDefaultDisplayName() {

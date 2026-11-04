@@ -52,15 +52,7 @@ namespace Scopos.BabelFish.DataModel.Image {
         /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 4 )]
         [G_NS.JsonProperty( Order = 4 )]
-        public string UrlPath { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Alias for UrlPath. Accepts the Url field returned by the image APIs.
-        /// </summary>
-        public string Url {
-            get => UrlPath;
-            set => UrlPath = value;
-        }
+        public string Url { get; set; } = string.Empty;
 
         /// <summary>
         /// ENUM: Club, Match, League, or User.
@@ -156,7 +148,7 @@ namespace Scopos.BabelFish.DataModel.Image {
                 ImageId = this.ImageId,
                 Caption = this.Caption,
                 AltText = this.AltText,
-                UrlPath = this.UrlPath,
+                Url = this.Url,
                 CreatedAt = this.CreatedAt
             };
         }

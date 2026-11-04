@@ -94,7 +94,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public int SeasonID { get; set; }
 
         /// <summary>
-        /// Human readabel name of the League
+        /// Human readable name of the League
         /// </summary>
         public string LeagueName { get; set; }
 
@@ -104,9 +104,21 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public string LeagueID { get; set; }
 
         /// <summary>
-        /// Full URL to the Club Page that this team represents.
+        /// Relative URL to the Club Page that this team represents.
+        /// <para>The full URL can be obtained from the <see cref="ClubUrl"/> property.</para>
         /// </summary>
         public string ClubUrlPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The full URL to the Club Page that this team represents.
+        /// </summary>
+        public string ClubUrl {
+            get {
+                if (string.IsNullOrWhiteSpace( ClubUrlPath ))
+                    return string.Empty;
+                return $"https://www.rezults.com/clubs/{ClubUrlPath}/";
+            }
+        }
 
         /// <summary>
         /// The club account number associated with this team.

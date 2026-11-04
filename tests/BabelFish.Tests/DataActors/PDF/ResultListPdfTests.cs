@@ -175,7 +175,7 @@ namespace Scopos.BabelFish.Tests.DataActors.PDF {
                 System.IO.File.Delete( _filePath );
 
             var client = new ClubsAPIClient();
-            var getClubResonse = await client.GetClubDetailPublicAsync( "OrionAcct002022" );
+            var getClubResonse = await client.GetClubDetailPublicAsync( "OrionAcct000002" );
 
             var clubDetail = getClubResonse.ClubDetail;
 
@@ -210,14 +210,14 @@ namespace Scopos.BabelFish.Tests.DataActors.PDF {
         public async Task TestTournamentQRCodePDF() {
 
             var client = new OrionMatchAPIClient();
-            var TournamentId = new MatchID("1.1.2026063017471611.2");
-            var getTournamentResponse = await client.GetTournamentPublicAsync(TournamentId);
+            var TournamentId = new MatchID( "1.1.2026063017471611.2" );
+            var getTournamentResponse = await client.GetTournamentPublicAsync( TournamentId );
 
             var tournamentDetail = getTournamentResponse.Tournament;
 
-            var pdf = new TournamentQRCodePDF(tournamentDetail);
+            var pdf = new TournamentQRCodePDF( tournamentDetail );
             await pdf.InitializeAsync();
-            pdf.GeneratePdf(PageSizes.Letter, "c:\\temp\\hello.pdf");
+            pdf.GeneratePdf( PageSizes.Letter, "c:\\temp\\hello.pdf" );
         }
     }
 }

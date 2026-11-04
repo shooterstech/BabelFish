@@ -26,6 +26,12 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
         /// </summary>
         public bool DryRun { get; set; }
 
+        /// <summary>
+        /// Additional recipients, sent as repeated additional-email-address query parameters.
+        /// The service merges these with existing recipients and applies opt-out checks.
+        /// </summary>
+        public List<string> AdditionalEmailAddresses { get; set; } = new List<string>();
+
         /// <inheritdoc />
         public override string RelativePath {
             get {
@@ -54,6 +60,10 @@ namespace Scopos.BabelFish.Requests.OrionMatchAPI {
 
                 if (DryRun) {
                     parameterList.Add( "dry-run", new List<string> { DryRun.ToString() } );
+                }
+
+                if (AdditionalEmailAddresses?.Count > 0) {
+                    parameterList.Add( "additional-email-address", AdditionalEmailAddresses );
                 }
 
                 return parameterList;

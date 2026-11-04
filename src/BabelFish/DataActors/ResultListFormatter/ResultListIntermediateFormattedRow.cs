@@ -158,11 +158,22 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         }
 
         /// <summary>
-        /// Helper method that basically indicates if the standard fields should be truncated because the screen resolution is shorten. 
+        /// Helper method that basically indicates if the standard fields should be truncated because the screen resolution is shorten.
+        /// <para>Uses Bootstrap's large breakpoint (992px)</para>
         /// </summary>
         private bool LessThanLarge {
             get {
                 return this._resultListFormatted.ResolutionWidth < 992;
+            }
+        }
+
+        /// <summary>
+        /// Helper method that basically indicates if the standard fields should be truncated because the screen resolution is shorten.
+        /// <para>Uses Bootstrap's small breakpoint (576px)</para>
+        /// </summary>
+        private bool LessThanSmall {
+            get {
+                return this._resultListFormatted.ResolutionWidth < 576;
             }
         }
 
@@ -260,44 +271,52 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
                     return string.Empty;
 
                 case "DisplayName":
-                case "DisplayNameAbbreviated": //Deprecated
+                    // DisplayName should always return the un-edited DisplayName, even if the screen resolution is small.
+                    // The DisplayNameShort field should be used for a truncated version of the DisplayName.
 
                     if (_resultListFormatted.GetParticipantAttributeDisplayNamePtr != null)
                         return _resultListFormatted.GetParticipantAttributeDisplayNamePtr( this._item, this._resultListFormatted );
 
-                    if (this.LessThanLarge) {
-
-                        //First try the regular display name
-                        var dna = _item.Participant.DisplayName;
-                        if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
-                            return dna;
-
-                        //if that's too long, try the display name short, if it exists
-                        //NOTE DisplayNameShort by convention is to be 20 characters or less.
-                        dna = _item.Participant.GetDisplayNameShort();
-                        if (!string.IsNullOrEmpty( dna ) && dna.Length <= 20)
-                            return dna;
-
-                        //If that's too long, go back to the regular display name and truncate it
-                        dna = _item.Participant.DisplayName;
-                        if (!string.IsNullOrEmpty( dna ))
-                            return StringFormatting.GetTruncatedString( dna );
-
-                    } else {
-                        var dn = _item.Participant.DisplayName;
-                        if (!string.IsNullOrEmpty( dn ))
-                            return dn;
-                    }
+                    var dn = _item.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dn ))
+                        return dn;
 
                     return "Unknown";
 
                 case "DisplayNameShort":
+                case "DisplayNameAbbreviated": //Deprecated
+                    // DisplayName should always return the un-edited DisplayName, even if the screen resolution is small.
+                    // The DisplayNameShort field should be used for a truncated version of the DisplayName.
+
                     if (_resultListFormatted.GetParticipantAttributeDisplayNameShortPtr != null)
                         return _resultListFormatted.GetParticipantAttributeDisplayNameShortPtr( this._item, this._resultListFormatted );
 
-                    var dns = _item.Participant.GetDisplayNameShort();
-                    if (!string.IsNullOrEmpty( dns ))
-                        return dns;
+                    // For larger screen resolutions, we will allow a longer (usually unaltered) DisplayNameShort.
+                    int maxCharacters = 40;
+
+                    // For smaller screen resolutions, we will truncate the DisplayNameShort to a smaller length.
+                    // Will truncate even further if the result list is in an intermediate state (e.g. the match is still in progress).
+                    // Which is when there would normally be more columns on the screen, so we need to make the DisplayNameShort smaller to fit in the available space.
+
+                    if (this.LessThanSmall && this._resultListFormatted?.ResultList?.Status == ResultStatus.INTERMEDIATE)
+                        maxCharacters = 12;
+                    else if (this.LessThanLarge)
+                        maxCharacters = Individual.DISPLAY_NAME_SHORT_MAX_LENGTH;
+
+                    //First try the regular display name
+                    var dna = _item.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= maxCharacters)
+                        return dna;
+
+                    //if that's too long, calculate the display name short, if it exists
+                    dna = _item.Participant.GetDisplayNameShort( maxCharacters );
+                    if (!string.IsNullOrEmpty( dna ) && dna.Length <= maxCharacters)
+                        return dna;
+
+                    //If that's too long, go back to the regular display name and truncate it
+                    dna = _item.Participant.DisplayName;
+                    if (!string.IsNullOrEmpty( dna ))
+                        return StringFormatting.GetTruncatedString( dna, maxCharacters );
 
                     return "Unknown";
 

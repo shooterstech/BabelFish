@@ -127,7 +127,15 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// </summary>
         [Description( "Bulk Archived" )]
         [EnumMember( Value = "Bulk Archived" )]
-        BULK_ARCHIVED
+        BULK_ARCHIVED,
+
+        /// <summary>
+        /// This image was deleted by the owner, and should not be shown. It is kept in the database for historical purposes, but should not be displayed in the UI.
+        /// <para>There can be multiple deleted images.</para>
+        /// </summary>
+        [Description( "Deleted" )]
+        [EnumMember( Value = "Deleted" )]
+        DELETED
     }
 
     /// <summary>
