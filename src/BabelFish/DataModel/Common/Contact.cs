@@ -1,11 +1,12 @@
 using System.ComponentModel;
 using Scopos.BabelFish.DataModel.Image;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Common {
     /// <summary>
     /// Abbreviated information about a person
     /// </summary>
-    public class Contact {
+    public class Contact : ICheckSum {
         /*
          * DEVELOPERS NOTE: EKA 2023-03-04
          * Previously named Person. Changed to Contact to highlight it is meant to be abbreviated. And to provid clarity vs Match objects Individual and Participant.
@@ -79,8 +80,28 @@ namespace Scopos.BabelFish.DataModel.Common {
         public string UserId { get; set; } = string.Empty;
 
         /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
+        #region Methods
+        /// <inheritdoc />
         public override string ToString() {
             return DisplayName;
         }
+
+        /// <inheritdoc />
+        public virtual ulong CalculateChecksum() {
+            // Combine relevant properties into a single string for hashing
+            string combined = $"{UserId}|{DisplayName}|{AccountUrlPath}|{Email}|{Phone}";
+
+            var hash = Helpers.Common.Md5ToUlong( combined );
+            hash ^= ProfileImage?.CalculateChecksum() ?? 0;
+
+            return hash;
+        }
+
+        #endregion
     }
 }

@@ -30,6 +30,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
             }
         }
 
+        /// <inheritdoc />
         public override string ToString() {
             return $"ScoreAverage with {Items.Count} items";
         }

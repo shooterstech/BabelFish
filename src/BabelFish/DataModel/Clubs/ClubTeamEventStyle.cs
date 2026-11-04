@@ -5,7 +5,7 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
-    public class ClubTeamEventStyle : ICheckSum, IGetEventStyleDefinition {
+    public class ClubTeamEventStyle : ICheckSum, IGetEventStyleDefinition, IOnCloned {
 
         #region Private and Protected Fields
         private static Logger _logger = LogManager.GetCurrentClassLogger();
@@ -47,7 +47,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             clubTeam.EventStyles ??= new List<ClubTeamEventStyle>();
 
             // Make sure the ClubTeam doesn't already have this EventStyleDef. If it does, we can return the existing instance instead of creating a duplicate.
-            var existingEventStyle = clubTeam.EventStyles.FirstOrDefault( es => es.EventStyleDef == eventStyleDef );
+            var existingEventStyle = clubTeam.EventStyles.FirstOrDefault( es => es.EventStyleDef.Equals( eventStyleDef ) );
             if (existingEventStyle != null)
                 return existingEventStyle;
 
@@ -178,7 +178,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <inheritdoc />
         public ulong CalculateChecksum() {
             // Combine relevant properties into a single string for hashing
-            string combined = $"{EventStyleDef.ToString()}";
+            string combined = $"{EventStyleDef}|{HeaderName}|{ScoreConfigName}|{CourseOfFireDef}";
 
             var hash = Helpers.Common.Md5ToUlong( combined );
             return hash;

@@ -180,8 +180,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             set {
                 if (!VisibilityOptions.Contains( value ))
                     _visibility = VisibilityOptions[0];
-
-                _visibility = value;
+                else
+                    _visibility = value;
             }
         }
         #endregion
@@ -208,7 +208,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <inheritdoc />
         public ulong CalculateChecksum() {
             // Combine relevant properties into a single string for hashing
-            string combined = $"{Club?.AccountNumber}|{TeamId}|{Name}|{Mascot}|{Visibility.Description()}";
+            string combined = $"{Club?.AccountNumber}|{TeamId}|{Name}|{NameShort}|{NameExtraShort}|{Mascot}|{Visibility.Description()}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             foreach (var member in TeamMembers) {

@@ -1,3 +1,5 @@
+using Scopos.BabelFish.DataModel.OrionMatch;
+
 namespace Scopos.BabelFish.DataModel.Image {
 
     /// <summary>
@@ -5,7 +7,7 @@ namespace Scopos.BabelFish.DataModel.Image {
     /// and is associated with a specific club, match, league, or user profile.
     /// <para>Values are expected to be read only. Changing them will not affect the underlying data in the database.</para>
     /// </summary>
-    public class ScoposImageAbbr {
+    public class ScoposImageAbbr : ICheckSum {
 
         #region Data Model Properties
         /// <summary>
@@ -62,6 +64,12 @@ namespace Scopos.BabelFish.DataModel.Image {
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime CreatedAt { get; set; } = DateTime.MinValue;
 
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
+
         #endregion
 
         #region Methods
@@ -78,6 +86,14 @@ namespace Scopos.BabelFish.DataModel.Image {
 
         public override string ToString() {
             return $"ScoposImageAbbr: {Url}";
+        }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            // Combine relevant properties into a single string for hashing
+            string combined = $"{ImageId}|{AltText}|{Url}|{StringFormatting.SingleDateTime( CreatedAt )}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+            return hash;
         }
         #endregion
     }

@@ -190,7 +190,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public override ulong CalculateChecksum() {
-            var combined = $"{DisplayName}|{GivenName}|{MiddleName}|{FamilyName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
+            var combined = $"{DisplayName}|{DisplayNameShort}|{DisplayNameExtraShort}|{GivenName}|{MiddleName}|{FamilyName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             foreach (var attributeValue in AttributeValues) {

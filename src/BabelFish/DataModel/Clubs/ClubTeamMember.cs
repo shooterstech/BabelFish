@@ -2,6 +2,13 @@ using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Clubs {
+
+    /// <summary>
+    /// Represents a contact assigned to a club team, including role flags for athlete, captain, and coach.
+    /// </summary>
+    /// <remarks>Use <see cref="CreateAsync"/> to create and attach an instance to a <see cref="ClubTeam"/>. A
+    /// team member is expected to be at least one of athlete, captain, or coach, and can be any combination of the
+    /// three.</remarks>
     public class ClubTeamMember : Contact, ICheckSum, IOnCloned {
 
         #region Private and Protected Fields
@@ -60,6 +67,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// Boolean, indicating if this team member is also an Athlete for the Club Team.
         /// <para>A Team Member should be at least one of an Athlete, Captain, or Coach. May be all three.</para>
         /// </summary>
+        [G_STJ_SER.JsonIgnore( Condition = G_STJ_SER.JsonIgnoreCondition.Never )]
+        [G_NS.JsonProperty( DefaultValueHandling = G_NS.DefaultValueHandling.Include )]
         public bool IsAthlete { get; set; } = true;
 
         /// <summary>
@@ -95,11 +104,13 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #region Methods
 
         /// <inheritdoc />
-        public ulong CalculateChecksum() {
+        public override ulong CalculateChecksum() {
             // Combine relevant properties into a single string for hashing
-            string combined = $"{UserId}|{DisplayName}|{AccountUrlPath}|{Email}|{Phone}|{IsCaptain.ToString()}|{IsCoach.ToString()}";
+            string combined = $"{IsCaptain.ToString()}|{IsCoach.ToString()}|{IsAthlete.ToString()}";
 
             var hash = Helpers.Common.Md5ToUlong( combined );
+            hash ^= base.CalculateChecksum();
+
             return hash;
         }
 

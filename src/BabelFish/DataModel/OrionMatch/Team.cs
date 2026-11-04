@@ -129,7 +129,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foreach (var replacement in _replacementStringsFirstRound) {
                 displayNameShort = System.Text.RegularExpressions.Regex.Replace(
                     displayNameShort,
-                    System.Text.RegularExpressions.Regex.Escape( replacement.Item1 ),
+                    $@"\b{System.Text.RegularExpressions.Regex.Escape( replacement.Item1 )}\b",
                     replacement.Item2,
                     System.Text.RegularExpressions.RegexOptions.IgnoreCase
                 );
@@ -143,7 +143,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             foreach (var replacement in _replacementStringsSecondRound) {
                 displayNameShort = System.Text.RegularExpressions.Regex.Replace(
                     displayNameShort,
-                    System.Text.RegularExpressions.Regex.Escape( replacement.Item1 ),
+                    $@"\b{System.Text.RegularExpressions.Regex.Escape( replacement.Item1 )}\b",
                     replacement.Item2,
                     System.Text.RegularExpressions.RegexOptions.IgnoreCase
                 );
@@ -174,7 +174,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public override ulong CalculateChecksum() {
-            var combined = $"{DisplayName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
+            var combined = $"{DisplayName}|{DisplayNameShort}|{DisplayNameExtraShort}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             foreach (var attributeValue in AttributeValues) {

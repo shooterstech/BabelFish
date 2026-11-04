@@ -116,7 +116,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             get {
                 if (string.IsNullOrWhiteSpace( ClubUrlPath ))
                     return string.Empty;
-                return $"https://www.rezults.com/clubs/{ClubUrlPath}/";
+                return $"https://www.rezults.com/club/{ClubUrlPath}/";
             }
         }
 
