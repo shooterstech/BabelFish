@@ -80,7 +80,8 @@ namespace Scopos.BabelFish.DataActors.PDF {
                 if (contact.ContactType != ClubContactType.EMAIL
                     && contact.ContactType != ClubContactType.WEBSITE
                     && contact.ContactType != ClubContactType.PHONE_NUMBER
-                    && contact.Visibility == DataModel.Common.VisibilityOption.PUBLIC) {
+                    && contact.Visibility == DataModel.Common.VisibilityOption.PUBLIC
+                    && contact.HasValue) {
                     contactList.Add( $"{contact.ContactType}: {contact.DisplayValue}" );
                     contactCount++;
                     if (contactCount >= 3) {
