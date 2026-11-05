@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [2.1] - In Development Now, Expected Summer 2026
+## [2.1] - In Development Now, Expected Fall 2026
 ### Breaking Changes
 ** Contains many breaking changes **
 - SetNames that were previously represented as strings are now represented as SetName objects.
@@ -24,7 +24,8 @@ All notable changes to BabelFish will be documented in this file.
 - The new ResultDocumentGenerator data actor compiles Participant and Shot data into both (individual) ResultCOF and ResultList instances.
 - The new ResultListSlidingWindow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
 #### Club
-- ClubDetail now has a list of ClubAddress and ClubContact instances. Independent VisibilityOptions may be set to each of these.
+- ClubDetail now has a list of ClubAddress, ClubContact, and ClubTeams instances. Independent VisibilityOptions may be set to each of these.
+- ClubDetail now includes ImageAbbr objects to describe a club's header and profile photos.
 #### RULEBOOK Definition
 - Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
 #### Match API Calls
@@ -35,6 +36,8 @@ All notable changes to BabelFish will be documented in this file.
 A Tournament is a group of Matches. Once a Tournament is created "Merged Result Lists" may be added combining scores from accross multiple Result Lists from the member Matches.
 - Added API calls to create, read, and update Tournaments, this includes Merged Result Lists within a Tournament.
 - Added Tournament permissions to allow "Invite Only" (only the creator of a Tournament may add members), "Request to Join" (any Match may ask to join but the creator of the Tournament must approve), and "Open" (anyone may join without approval) policies.
+#### Image API CAlls
+- Add ImageClient to upload images for Clubs, users, and Matches. Also include api calls to retreive image information for Clubs, users, and Matches.
 
 ## [1.12.5] - 2026-05-14
 ### Enhancements
