@@ -153,6 +153,7 @@ namespace Scopos.BabelFish.Tests.DataModel.Definition.Validation {
             // Define a largely empty RangeScript with a single SegmentGroup and a single Segment. This will be used to test StageLabel references.
 
             var firstRangeScript = candidate.AddRangeScript( "Test RangeScript" );
+            firstRangeScript.DesignedForEST = true;
             var firstSegmentGroup = firstRangeScript.AddSegmentGroup( "Test SegmentGroup" );
             var firstSegment = firstSegmentGroup.AddSegment();
 

@@ -133,28 +133,46 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
 
         /// <inheritdoc />
-        public override string GetDisplayNameShort() {
+        public override string GetDisplayNameShort( int maxLength = DISPLAY_NAME_SHORT_MAX_LENGTH ) {
+            if (maxLength < DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH)
+                maxLength = DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH;
 
-            //The rule of thumb is the DisplayNameShort should be 20 characters or less if possible.
-            if (this._displayName.Length <= Individual.DISPLAY_NAME_SHORT_MAX_LENGTH) {
-                return this._displayName;
-            } else {
-
-                if (!string.IsNullOrEmpty( GivenName ) && !string.IsNullOrEmpty( FamilyName )) {
-                    if (FamilyName.Length <= (Individual.DISPLAY_NAME_SHORT_MAX_LENGTH - 2)) {
-                        return $"{FamilyName} {GivenName.Substring( 0, 1 )}";
-                    } else {
-                        return $"{StringFormatting.GetTruncatedString( FamilyName, Individual.DISPLAY_NAME_SHORT_MAX_LENGTH - 2 )} {GivenName.Substring( 0, 1 )}";
-                    }
-
-                } else if (!string.IsNullOrEmpty( GivenName )) {
-                    return StringFormatting.GetTruncatedString( GivenName, Individual.DISPLAY_NAME_SHORT_MAX_LENGTH );
-                } else if (!string.IsNullOrEmpty( FamilyName )) {
-                    return StringFormatting.GetTruncatedString( FamilyName, Individual.DISPLAY_NAME_SHORT_MAX_LENGTH );
-                }
+            // First check the length of the DisplayName. If it is shorter than the max length, return it.
+            if (this.DisplayName.Length <= maxLength) {
+                return this.DisplayName;
             }
 
-            return string.Empty;
+            // Next check the length of the DisplayNameShort. If it is shorter than the max length, return it.
+            if (!string.IsNullOrWhiteSpace( this.DisplayNameShort ) && this.DisplayNameShort.Length <= maxLength) {
+                return this.DisplayNameShort;
+            }
+
+            // Next check the length of the DisplayNameExtraShort. If it is shorter than the max length, return it.
+            if (!string.IsNullOrWhiteSpace( this.DisplayNameExtraShort ) && this.DisplayNameExtraShort.Length <= maxLength) {
+                return this.DisplayNameExtraShort;
+            }
+
+            // Attempt to generate a short display name using the FamilyName and GivenName. If it is shorter than the max length, return it.
+            if (!string.IsNullOrEmpty( GivenName ) && !string.IsNullOrEmpty( FamilyName )) {
+                string shortDisplayNameOpt1 = $"{FamilyName} {GivenName.Substring( 0, 1 )}";
+                string shortDisplayNameOpt2 = $"{FamilyName}";
+                if (shortDisplayNameOpt1.Length <= maxLength) {
+                    return shortDisplayNameOpt1;
+                } else if (shortDisplayNameOpt2.Length <= maxLength) {
+                    return shortDisplayNameOpt2;
+                }
+
+            }
+
+            if (!string.IsNullOrEmpty( FamilyName )) {
+                return StringFormatting.GetTruncatedString( FamilyName, maxLength );
+            }
+
+            if (!string.IsNullOrEmpty( GivenName )) {
+                return StringFormatting.GetTruncatedString( GivenName, maxLength );
+            }
+
+            return "Unknown";
         }
         #endregion
 
@@ -172,7 +190,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         public override ulong CalculateChecksum() {
-            var combined = $"{DisplayName}|{GivenName}|{MiddleName}|{FamilyName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
+            var combined = $"{DisplayName}|{DisplayNameShort}|{DisplayNameExtraShort}|{GivenName}|{MiddleName}|{FamilyName}|{CompetitorNumber}|{Country}|{HomeTown}|{Club}|{TeamName}";
             var hash = Helpers.Common.Md5ToUlong( combined );
 
             foreach (var attributeValue in AttributeValues) {

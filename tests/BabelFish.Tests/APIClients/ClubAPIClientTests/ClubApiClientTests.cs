@@ -82,7 +82,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
 
             var client = new ClubsAPIClient( APIStage.PRODUCTION );
 
-            var ownerId = "OrionAcct000016";
+            var ownerId = "OrionAcct000008";
             var request = new GetClubDetailPublicRequest( ownerId );
 
             var response = await client.GetClubDetailPublicAsync( request );
@@ -92,6 +92,8 @@ namespace Scopos.BabelFish.Tests.APIClients.ClubAPIClientTests {
             var clubDetail = response.ClubDetail;
 
             Assert.AreEqual( ownerId, clubDetail.OwnerId, "Expecting the OwnerId to match, what was sent." );
+
+            var clone = clubDetail.Clone();
         }
 
         [TestMethod]

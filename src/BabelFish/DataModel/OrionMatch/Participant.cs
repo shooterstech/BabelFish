@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
@@ -17,9 +18,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         ICheckSum {
 
         /// <summary>
-        /// The expected maximum length of the DisplayNameShort property. This is not a hard limit, but by convention DisplayNameShorts should be 20 characters or less. DisplayName may be any length.
+        /// The expected maximum length of the DisplayNameShort property. This is not a hard limit,
+        /// but by convention DisplayNameShorts should be 24 characters or less. DisplayName may be any length.
+        /// <para>24 characters was experimentally choosen.</para>
         /// </summary>
-        public const int DISPLAY_NAME_SHORT_MAX_LENGTH = 20;
+        public const int DISPLAY_NAME_SHORT_MAX_LENGTH = 24;
+        public const int DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH = 12;
 
         #region Private and Protected Fields
         protected string _displayName = string.Empty;
@@ -126,10 +130,32 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         }
 
         /// <summary>
+        /// The preferred display name to use on screens of reduced resolution (usually bootstrap small and medium screens).
+        /// <para>Value is not required. <see cref="GetDisplayNameShort(int)"/> will attempt to use this value if it is set, else it
+        /// will try and calculated a shorter display name based on the <see cref="DisplayName"/> properties of the Participant.</para>
+        /// <para>The maximum length is defined by <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (24 characters).</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.IgnoreAndPopulate )]
+        [DefaultValue( "" )]
+        [StringLength( 24 )]
+        public string DisplayNameShort { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The preferred display name to use on screens of really reduced resolution (usually bootstrap extra small screens).
+        /// <para>Value is not required. <see cref="GetDisplayNameShort(int)"/> will attempt to use this value if it is set, else it
+        /// will try and calculated a shorter display name based on the <see cref="DisplayName"/> properties of the Participant.</para>
+        /// <para>The maximum length is defined by <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (12 characters).</para>
+        /// </summary>
+        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = G_NS.DefaultValueHandling.IgnoreAndPopulate )]
+        [DefaultValue( "" )]
+        [StringLength( 12 )]
+        public string DisplayNameExtraShort { get; set; } = string.Empty;
+
+        /// <summary>
         /// Specifies if the DisplayName is the default value. Would be true if the user hasn't modified the DisplayName. Would be false if the user has set the DisplayName.
         /// <para>It is generally not recommended to manually set this property. It is managed automatically based on whether the DisplayName has been modified by the user.</para>
         /// </summary>
-        [G_NS.JsonProperty( Order = 2, DefaultValueHandling = G_NS.DefaultValueHandling.IgnoreAndPopulate )]
+        [G_NS.JsonProperty( Order = 4, DefaultValueHandling = G_NS.DefaultValueHandling.IgnoreAndPopulate )]
         [DefaultValue( true )]
         public bool DefaultDisplayName { get; set; } = true;
 
@@ -147,7 +173,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Concrete classes, the JSON should include a ConcreteClassId that specifies
         /// the Concrete class.
         /// </summary>
-        [G_NS.JsonProperty( Order = 3 )]
+        [G_NS.JsonProperty( Order = 6 )]
         [Obsolete( "Use ParticipantType. Deprecated March 2026" )]
         public int ConcreteClassId { get; set; }
 
@@ -155,7 +181,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// Concrete class identifying the type of Participant.
         /// This is used during deserialization to determine which concrete class to deserialize to, either a <see cref="Individual"/> or a <see cref="Team"/>.
         /// </summary>
-        [G_NS.JsonProperty( Order = 3, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [G_NS.JsonProperty( Order = 5, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         public ParticipantType ParticipantType { get; set; } = ParticipantType.INDIVIDUAL;
 
         /*
@@ -286,18 +312,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public abstract void SetDefaultDisplayName();
 
         /// <summary>
-        /// Calculates a shorter version of the <see cref="DisplayName"/> property. Intended to be used on screens of reduced width.
-        /// <para>Concrete classes may override the <see cref="GetDisplayNameShort"/> method to provide a custom implementation.</para>
-        /// <para>By convention, the shortened display name should be no longer than <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (20) characters.</para>
+        /// Returns a shorter version of the <see cref="DisplayName"/> property, if the current value is longer than the specified maximum length.
+        /// Intended to be used on screens of reduced width. This method will first check the <see cref="DisplayNameShort"/> property, and if it is set
+        /// and shorter than the specified maximum length, it will return that value. Then check the length of the <see cref="DisplayNameExtraShort"/> property,
+        /// and if it is set and shorter than the specified maximum length, it will return that value. Worst case, it will return a truncated value of the <see cref="DisplayName"/> property.
+        /// <para>Concrete classes may (and probably should) override the <see cref="GetDisplayNameShort"/> method to provide a custom implementation.</para>
         /// </summary>
-        /// <returns></returns>
-        public virtual string GetDisplayNameShort() {
-            if (this.DisplayName.Length <= DISPLAY_NAME_SHORT_MAX_LENGTH) {
+        /// <param name="maxLength">The maximum length of the returned shortened display name. Value must be greater than or equal to <see cref="DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH"/> (12) characters. 
+        /// <see cref="DISPLAY_NAME_SHORT_MAX_LENGTH"/> (24) characters.</param>
+        /// <returns>The shortened display name.</returns>
+        public virtual string GetDisplayNameShort( int maxLength = DISPLAY_NAME_SHORT_MAX_LENGTH ) {
+            if (maxLength < DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH)
+                maxLength = DISPLAY_NAME_EXTRA_SHORT_MAX_LENGTH;
+
+            // First check the length of the DisplayName. If it is shorter than the max length, return it.
+            if (this.DisplayName.Length <= maxLength) {
                 return this.DisplayName;
-            } else {
-                return StringFormatting.GetTruncatedString( this.DisplayName, DISPLAY_NAME_SHORT_MAX_LENGTH );
             }
+
+            // Next check the length of the DisplayNameShort. If it is shorter than the max length, return it.
+            if (!string.IsNullOrWhiteSpace( this.DisplayNameShort ) && this.DisplayNameShort.Length <= maxLength) {
+                return this.DisplayNameShort;
+            }
+
+            // Next check the length of the DisplayNameExtraShort. If it is shorter than the max length, return it.
+            if (!string.IsNullOrWhiteSpace( this.DisplayNameExtraShort ) && this.DisplayNameExtraShort.Length <= maxLength) {
+                return this.DisplayNameExtraShort;
+            }
+
+            return StringFormatting.GetTruncatedString( this.DisplayName, maxLength );
         }
+
         /// <summary>
         /// Gets the AttributeValue for a specific SetName and CourseOfFireId. 
         /// <para>To get global AttributeValues that apply to the whole match, use a CourseOfFireId of 0.</para>

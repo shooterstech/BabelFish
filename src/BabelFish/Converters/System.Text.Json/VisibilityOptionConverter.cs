@@ -7,11 +7,12 @@ namespace Scopos.BabelFish.Converters.Microsoft {
 
         public override VisibilityOption Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
             var value = reader.GetString();
-            return value switch {
-                "Public" => VisibilityOption.PUBLIC,
-                "Internal" => VisibilityOption.INTERNAL,
-                "Protected" => VisibilityOption.PROTECTED,
-                "Private" => VisibilityOption.PRIVATE,
+            // League metadata uses uppercase values; other API payloads use title case.
+            return value?.ToUpperInvariant() switch {
+                "PUBLIC" => VisibilityOption.PUBLIC,
+                "INTERNAL" => VisibilityOption.INTERNAL,
+                "PROTECTED" => VisibilityOption.PROTECTED,
+                "PRIVATE" => VisibilityOption.PRIVATE,
                 _ => VisibilityOption.PRIVATE
             };
         }

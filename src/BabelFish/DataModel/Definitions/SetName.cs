@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.ComponentModel;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -14,6 +15,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.SetNameConverter ) )]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.SetNameConverter ) )]
+    [TypeConverter( typeof( G_TYPE_CONV.SetNameConverter ) )]
     public class SetName : IEquatable<SetName>, IEquatable<HierarchicalName> {
 
 
@@ -63,7 +65,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Parses the passed in setName string, and returns a SetName object.
         /// </summary>
         /// <param name="setName"></param>
-        /// <param name="throwExceptionOnError">Determines what do if matchId could not be parsed. If true, throw an ArgumentException, if false, return the default SetName (v1.0:orion:default).</param>
+        /// <param name="throwExceptionOnError">Determines what do if set name could not be parsed. If true, throw an ArgumentException, if false, return the default SetName (v1.0:orion:default).</param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Thrown if the passed in version string could not be parsed, the setName string is empty or otherwise invalid, and throwExceptionOnError is true.</exception>
         /// <exception cref="ArgumentNullException">Thrown if the passed in setName string is null and throwExceptionOnError is true.</exception>
@@ -343,10 +345,24 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Determines whether the current instance and another SetName represent the same value by comparing their
+        /// string representations.
+        /// </summary>
+        /// <remarks>Comparison is based on the values returned by ToString().</remarks>
+        /// <param name="other">The SetName to compare with the current instance.</param>
+        /// <returns>true if the string representations are equal; otherwise, false.</returns>
         public bool Equals( SetName other ) {
             return this.ToString().Equals( other.ToString() );
         }
 
+        /// <summary>
+        /// Determines whether the specified object is equal to the current instance.
+        /// </summary>
+        /// <param name="obj">An object to compare with the current instance. Supports comparison with a <see cref="SetName"/> instance or
+        /// a string representation.</param>
+        /// <returns><see langword="true"/> when <paramref name="obj"/> is a <see cref="SetName"/> equal to the current instance,
+        /// or a string equal to the current string representation; otherwise, <see langword="false"/>.</returns>
         public override bool Equals( object obj ) {
             if (obj == null || !(obj is SetName)) {
                 if (obj is string) {
@@ -381,7 +397,33 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return "v1.0:orion:Default";
             else
                 return sn.ToString();
+        }
 
+        /// <summary>
+        /// Determines whether two <see cref="SetName"/> instances are equal. Equality is determined by comparing the string representations of the instances.
+        /// </summary>
+        /// <param name="left">The first <see cref="SetName"/> instance to compare.</param>
+        /// <param name="right">The second <see cref="SetName"/> instance to compare.</param>
+        /// <returns><see langword="true"/> if both operands are <see langword="null"/>, reference the same instance, or are
+        /// equal by value; otherwise, <see langword="false"/>.</returns>
+        public static bool operator ==( SetName? left, SetName? right ) {
+            if (ReferenceEquals( left, right ))
+                return true;
+
+            if (left is null || right is null)
+                return false;
+
+            return left.Equals( right );
+        }
+
+        /// <summary>
+        /// Determines whether two <see cref="SetName"/> values are not equal. Inequality is determined by comparing the string representations of the instances.
+        /// </summary>
+        /// <param name="left">The first value to compare.</param>
+        /// <param name="right">The second value to compare.</param>
+        /// <returns><see langword="true"/> if the values are not equal; otherwise, <see langword="false"/>.</returns>
+        public static bool operator !=( SetName? left, SetName? right ) {
+            return !(left == right);
         }
     }
 }

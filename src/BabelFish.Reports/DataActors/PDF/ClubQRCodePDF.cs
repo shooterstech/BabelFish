@@ -13,6 +13,8 @@ namespace Scopos.BabelFish.DataActors.PDF {
     public class ClubQRCodePDF : PdfGenerator {
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
+        private byte[]? _profilePhotoBytes;
+
         public ClubDetail? ClubDetail { get; private set; } = null;
 
         public ClubQRCodePDF( ClubDetail clubDetail ) {
@@ -22,7 +24,15 @@ namespace Scopos.BabelFish.DataActors.PDF {
         }
 
         public async Task InitializeAsync() {
-            ;
+            if (ClubDetail?.ProfilePhoto?.IsValid != true)
+                return;
+
+            try {
+                using var http = new HttpClient();
+                _profilePhotoBytes = await http.GetByteArrayAsync( ClubDetail.ProfilePhoto.Url );
+            } catch {
+                _profilePhotoBytes = null; // fallback path
+            }
         }
 
         protected override string Title {
@@ -62,7 +72,23 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         protected override void ReportTitle( IContainer container ) {
 
-            var uri = $"https://rezults.scopos.tech/club/{ClubDetail.URLPath}/";
+            var uri = ClubDetail.Url;
+            var contactList = new List<string>();
+
+            var contactCount = 0;
+            foreach (var contact in ClubDetail.ContactList) {
+                if (contact.ContactType != ClubContactType.EMAIL
+                    && contact.ContactType != ClubContactType.WEBSITE
+                    && contact.ContactType != ClubContactType.PHONE_NUMBER
+                    && contact.Visibility == DataModel.Common.VisibilityOption.PUBLIC
+                    && contact.HasValue) {
+                    contactList.Add( $"{contact.ContactType}: {contact.DisplayValue}" );
+                    contactCount++;
+                    if (contactCount >= 3) {
+                        break;
+                    }
+                }
+            }
 
             container.Border( 2 )
             .BorderLinearGradient( 45, this.DefaultHeaderBorderColors )
@@ -73,19 +99,26 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
                 row.RelativeItem().Column( column => {
                     column.Item().Text( ClubDetail.Name ).SemiBold().FontSize( 14 ).FontColor( this.DefaultHeaderTextColor );
-                    column.Item().Text( $"Rezult Homepage" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( $"Homepage on Rezults" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                     column.Item().Text( $"{ClubDetail.Hometown}" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                     column.Item().Text( $"{uri}" ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
+                    column.Item().Text( string.Join( ", ", contactList ) ).SemiBold().FontSize( 11 ).FontColor( this.DefaultHeaderTextColor );
                 } );
 
-
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_owl_transparent_orange.png" )) {
+                // Use the Club's Profile Photo if it exists, otherwise use the default Scopos Owl image.
+                if (_profilePhotoBytes is not null && _profilePhotoBytes.Length > 0) {
+                    row.ConstantItem( 2.5f, Unit.Centimetre )
+                       .AspectRatio( 1 )
+                       .Padding( 1 )
+                       .Image( _profilePhotoBytes );
+                } else {
+                    using var stream = Assembly.GetExecutingAssembly()
+                        .GetManifestResourceStream( "Scopos.BabelFish.Resources.Images.scopos_owl_transparent_orange.png" );
 
                     row.ConstantItem( 2.5f, Unit.Centimetre )
-                   .AspectRatio( 1 )
-                   .Padding( 1 )
-                   .Image( stream );
-
+                       .AspectRatio( 1 )
+                       .Padding( 1 )
+                       .Image( stream );
                 }
 
             } );
@@ -94,7 +127,7 @@ namespace Scopos.BabelFish.DataActors.PDF {
 
         protected void ClubQRCode( IContainer container ) {
 
-            var uri = $"https://rezults.scopos.tech/club/{ClubDetail.URLPath}/?src=club-qr-code";
+            var uri = $"{ClubDetail.Url}?src=club-qr-code";
 
             container.Column( column => {
                 column.Spacing( 4 );
@@ -109,9 +142,9 @@ namespace Scopos.BabelFish.DataActors.PDF {
                     } );
 
                 column.Item().AlignCenter()
-                    .Text( "Scan to watch our live competition results." ).SemiBold().FontSize( 16 ).FontColor( ScoposColors.DARK_GREY );
+                    .Text( $"Scan to stay updated of all {ClubDetail.Name}'s news and events." ).SemiBold().FontSize( 14 ).FontColor( ScoposColors.DARK_GREY );
                 column.Item().AlignCenter()
-                    .Text( "Links on this page will appear when we are shooting a public match." ).FontSize( 12 ).FontColor( ScoposColors.DARK_GREY );
+                    .Text( "Live competition results will appear at the top of the news feed when our club is shooting." ).FontSize( 12 ).FontColor( ScoposColors.DARK_GREY );
             } );
         }
     }

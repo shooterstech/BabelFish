@@ -104,11 +104,23 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// The URL path in rezults.scopos.net/clubs/{path} linking to their club page.
-        /// <para>Value is an empty string if the Club Administrators have disabled this feature or if the club does not have a valid Orion for Clubs license.</para>
+        /// <para>Warning, not all Club Pages are publicly accessible.</para>
         /// </summary>
         /// <example>northeast</example>
         [DefaultValue( "" )]
         public string URLPath { get; set; } = String.Empty;
+
+        /// <summary>
+        /// The full URL to the club's team page on Rezults. This is constructed from the base URL and the club's URLPath.
+        /// <para>Warning, not all Club Pages are publicly accessible.</para>
+        /// </summary>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string Url {
+            get {
+                return $"https://rezults.scopos.tech/club/{URLPath}/";
+            }
+        }
 
         public Location Location { get; set; }
 

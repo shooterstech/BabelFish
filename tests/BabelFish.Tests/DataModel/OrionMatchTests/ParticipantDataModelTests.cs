@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
 
             //Displayname and DisplayNameShort are the same since onlyh the first name was given and its under 12 chracters.
             Assert.AreEqual( "Johnathanwellingtoneliziah", individual.DisplayName );
-            Assert.AreEqual( "Johnathanwellingt...", individual.GetDisplayNameShort() );
+            Assert.AreEqual( "Johnathanwellingtonel...", individual.GetDisplayNameShort() );
             Assert.IsTrue( individual.DefaultDisplayName );
 
             individual = new Individual {
@@ -56,12 +56,12 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.IsTrue( individual.DefaultDisplayName );
 
             individual = new Individual {
-                FamilyName = "Smithwellingtoneliziah"
+                FamilyName = "SmithwellingtoneliziahBugger"
             };
 
             //Displayname and DisplayNameShort are the same since onlyh the last name was given and its under 12 chracters.
-            Assert.AreEqual( "Smithwellingtoneliziah", individual.DisplayName );
-            Assert.AreEqual( "Smithwellingtonel...", individual.GetDisplayNameShort() );
+            Assert.AreEqual( "SmithwellingtoneliziahBugger", individual.DisplayName );
+            Assert.AreEqual( "Smithwellingtonelizia...", individual.GetDisplayNameShort() );
             Assert.IsTrue( individual.DefaultDisplayName );
         }
 
@@ -87,19 +87,19 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             Assert.IsTrue( team.DefaultDisplayName );
 
             team = new Team {
-                TeamName = "Team Alpha Bravo Charlie"
+                TeamName = "Team Alpha Bravo Charlie Echo"
             };
 
             //Displayname and DisplayNameShort are the same since its under 20 chracters.
-            Assert.AreEqual( "Team Alpha Bravo Charlie", team.DisplayName );
-            Assert.AreEqual( "Team Alpha Bravo Charlie", team.TeamName );
-            Assert.AreEqual( "Team Alpha Bravo...", team.GetDisplayNameShort() );
+            Assert.AreEqual( "Team Alpha Bravo Charlie Echo", team.DisplayName );
+            Assert.AreEqual( "Team Alpha Bravo Charlie Echo", team.TeamName );
+            Assert.AreEqual( "Team Alpha Bravo Char...", team.GetDisplayNameShort() );
             Assert.IsTrue( team.DefaultDisplayName );
 
             //Changing the DisplayName should not change the TeamName, but should change the DisplayName and DisplayNameShort and set DefaultDisplayName to false.
             team.DisplayName = "Team ABC";
             Assert.AreEqual( "Team ABC", team.DisplayName );
-            Assert.AreEqual( "Team Alpha Bravo Charlie", team.TeamName );
+            Assert.AreEqual( "Team Alpha Bravo Charlie Echo", team.TeamName );
             Assert.AreEqual( "Team ABC", team.GetDisplayNameShort() );
             Assert.IsFalse( team.DefaultDisplayName );
         }

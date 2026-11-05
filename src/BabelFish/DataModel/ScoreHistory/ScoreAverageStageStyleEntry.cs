@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
             foo.Append( "StageStyle: " );
             foo.Append( base.StartDate.ToString( "MM/dd/yyyy" ) );
             foo.Append( " - " );
-            foo.Append( base.UserId );
+            foo.Append( base.UserID );
             foo.Append( " - " );
             foo.Append( StageStyleDef );
             return foo.ToString();

@@ -1036,13 +1036,14 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             ShowInSegment? showInSegmentUnderTest = null;
             string validValues = string.Join( ", ", listOfKnownStageLabels.Select( s => $"'{s}'" ) );
 
-            // Need to check that all StageLabels defined in Singulars are actually used in Segments StageLabel referrences.
+            // Need to check that all StageLabels defined in Singulars are actually used in Segments StageLabel referrences, for RangeScripts defined for ESTs.
             // Choosing not to do the same check for Show.StageLabel references, as those are optional and may be empty.
             HashSet<string> foundStageLabels = new HashSet<string>();
 
             // Loop through all RangeScripts, SegmentGroups, and Segments to check StageLabel references
             for (int rangeScriptIndex = 0; rangeScriptIndex < candidate.RangeScripts.Count; rangeScriptIndex++) {
                 var rangeScript = candidate.RangeScripts[rangeScriptIndex];
+                foundStageLabels.Clear();
 
                 for (int segmentGroupIndex = 0; segmentGroupIndex < rangeScript.SegmentGroups.Count; segmentGroupIndex++) {
                     var segmentGroup = rangeScript.SegmentGroups[segmentGroupIndex];
@@ -1083,13 +1084,15 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                         }
                     }
                 }
-            }
 
-            // If the foundStageLabels set does not contain all the known stage labels, then some are defined in Singulars but not used in any Segments.
-            var unusedStageLabels = listOfKnownStageLabels.Except( foundStageLabels ).ToList();
-            if (unusedStageLabels.Count > 0) {
-                valid = false;
-                Messages.Add( $"The following StageLabels are defined in Singulars but not used in any Segments.StageLabel property: {string.Join( ", ", unusedStageLabels )}." );
+                if (rangeScript.DesignedForEST) {
+                    // If the foundStageLabels set does not contain all the known stage labels, then some are defined in Singulars but not used in any Segments.
+                    var unusedStageLabels = listOfKnownStageLabels.Except( foundStageLabels ).ToList();
+                    if (unusedStageLabels.Count > 0) {
+                        valid = false;
+                        Messages.Add( $"RangeScript[{rangeScriptIndex}]: The following StageLabels are defined in Singulars but not used in any Segments.StageLabel property: {string.Join( ", ", unusedStageLabels )}." );
+                    }
+                }
             }
 
             return valid;

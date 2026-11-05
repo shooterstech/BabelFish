@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to BabelFish will be documented in this file.
 
-## [2.1] - In Development Now, Expected Summer 2026
+## [2.1] - In Development Now, Expected Fall 2026
 ### Breaking Changes
 ** Contains many breaking changes **
 - SetNames that were previously represented as strings are now represented as SetName objects.
@@ -9,7 +9,10 @@ All notable changes to BabelFish will be documented in this file.
 - Datas and Times that were previously represented as strings are now represented as DateTime objects.
 - The Tournament class is renamed to the ResultListMerger class.
 ### Enhancements
+#### Serialization
+- VisibilityOption JSON reads accept case variants such as the league API's PUBLIC; writes retain title case and unknown values remain private.
 #### Match
+- MatchAbbr now exposes nullable IsLive activity metadata; null means activity was not evaluated.
 - Matches may now have multiple Courses of Fire (1.x version allowed only one), each of which is defined in a new class CourseOFFireStructure.
 - Multiple properties within the Match class are now deprecated, as they previously existed when only one Course of Fire was allowed. These deprecated properties will remain for backwards compatibility for at least 1 year after release. They will however point to the first (and default) CourseOfFireStructure.
 - ResultListWizard data actor class is added to generated suggested ResultListAbbr (configuration data for a ResultList) based on a CourseOfFireStructure.
@@ -21,7 +24,8 @@ All notable changes to BabelFish will be documented in this file.
 - The new ResultDocumentGenerator data actor compiles Participant and Shot data into both (individual) ResultCOF and ResultList instances.
 - The new ResultListSlidingWindow data actor tracks recent versions of ResultList instances to use as comparisons in RankDelta calculations.
 #### Club
-- ClubDetail now has a list of ClubAddress and ClubContact instances. Independent VisibilityOptions may be set to each of these.
+- ClubDetail now has a list of ClubAddress, ClubContact, and ClubTeams instances. Independent VisibilityOptions may be set to each of these.
+- ClubDetail now includes ImageAbbr objects to describe a club's header and profile photos.
 #### RULEBOOK Definition
 - Added the top level RULEBOOK definition. RULEBOOKs contains lists of options for Match Structures, Courses of Fire, and Attributes that a user can use to construct their own Match Structure and Match. 
 #### Match API Calls
@@ -32,6 +36,8 @@ All notable changes to BabelFish will be documented in this file.
 A Tournament is a group of Matches. Once a Tournament is created "Merged Result Lists" may be added combining scores from accross multiple Result Lists from the member Matches.
 - Added API calls to create, read, and update Tournaments, this includes Merged Result Lists within a Tournament.
 - Added Tournament permissions to allow "Invite Only" (only the creator of a Tournament may add members), "Request to Join" (any Match may ask to join but the creator of the Tournament must approve), and "Open" (anyone may join without approval) policies.
+#### Image API CAlls
+- Add ImageClient to upload images for Clubs, users, and Matches. Also include api calls to retreive image information for Clubs, users, and Matches.
 
 ## [1.12.5] - 2026-05-14
 ### Enhancements

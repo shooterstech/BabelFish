@@ -50,7 +50,7 @@ namespace Scopos.BabelFish.APIClients {
 
             Settings.CheckXApiKey();
 
-            this.ApiStage = APIStage.PRODUCTION;
+            this.ApiStage = Settings.DefaultApiStage;
 
             _logger.Info( $"BablFish {GetType()} API instantiated for {ApiStage}." );
         }
