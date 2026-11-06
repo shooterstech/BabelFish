@@ -6,6 +6,7 @@ namespace Scopos.BabelFish.DataModel.Greengrass
 {
 	public class AthenaCoreDeployment
 	{
+		public string PreviousAthenaCoreDeploymentGroup { get; set; }
 		public string AthenaCoreDeploymentName { get; set; }
 
 		public string DeploymentId { get; set; }
@@ -14,6 +15,8 @@ namespace Scopos.BabelFish.DataModel.Greengrass
 		/// Gets or sets whether another update is required after this deployment succeeds.
 		/// </summary>
 		public bool FurtherUpdatesRequired { get; set; } = false;
+
+
 
 	}
 }
