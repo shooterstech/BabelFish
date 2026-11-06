@@ -10,5 +10,10 @@ namespace Scopos.BabelFish.DataModel.Greengrass
 
 		public string DeploymentId { get; set; }
 
+		/// <summary>
+		/// Gets or sets whether another update is required after this deployment succeeds.
+		/// </summary>
+		public bool FurtherUpdatesRequired { get; set; } = false;
+
 	}
 }
