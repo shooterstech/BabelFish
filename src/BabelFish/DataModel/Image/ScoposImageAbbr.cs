@@ -18,6 +18,8 @@ namespace Scopos.BabelFish.DataModel.Image {
         [G_NS.JsonProperty( Order = 1 )]
         public string ImageId { get; set; } = string.Empty;
 
+        public string PrimaryKey { get; set; } = string.Empty;
+
         /// <summary>
         /// The caption for the image. This is a user-friendly description of the image that can be displayed in the UI.
         /// Value is written by the person who uploaded the image.

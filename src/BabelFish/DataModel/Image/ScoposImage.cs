@@ -146,6 +146,7 @@ namespace Scopos.BabelFish.DataModel.Image {
         public ScoposImageAbbr ToScoposImageAbbr() {
             return new ScoposImageAbbr {
                 ImageId = this.ImageId,
+                PrimaryKey = this.PrimaryKey,
                 Caption = this.Caption,
                 AltText = this.AltText,
                 Url = this.Url,
