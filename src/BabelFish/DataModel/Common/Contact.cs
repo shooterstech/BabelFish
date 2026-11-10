@@ -99,7 +99,8 @@ namespace Scopos.BabelFish.DataModel.Common {
                     openParenIndex = normalizedName.IndexOf( '(' );
                 }
 
-                var parts = normalizedName.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
+                // Split the name into parts using whitespace as the delimiter, removing any empty entries
+                var parts = normalizedName.Split( (char[])null, StringSplitOptions.RemoveEmptyEntries );
 
                 string firstPart = null;
                 string lastPart = null;
@@ -111,7 +112,8 @@ namespace Scopos.BabelFish.DataModel.Common {
                         continue;
                     }
 
-                    if (Array.Exists( ignoredParts, x => string.Equals( x, token, StringComparison.OrdinalIgnoreCase ) )) {
+                    var normalizedToken = token.Replace( ".", "" );
+                    if (Array.Exists( ignoredParts, x => string.Equals( x, normalizedToken, StringComparison.OrdinalIgnoreCase ) )) {
                         continue;
                     }
 
