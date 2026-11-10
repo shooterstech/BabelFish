@@ -72,6 +72,73 @@ namespace Scopos.BabelFish.DataModel.Common {
         public ScoposImageAbbr? ProfileImage { get; set; } = null;
 
         /// <summary>
+        /// Gets the contact's initials derived from their DisplayName.
+        /// </summary>
+        /// <remarks>Removes parenthetical text and ignores common titles and suffixes when determining
+        /// name parts.</remarks>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public string Initials {
+            get {
+                if (string.IsNullOrWhiteSpace( DisplayName )) {
+                    return "NA";
+                }
+
+                var ignoredParts = new[] { "mr", "mrs", "ms", "mx", "miss", "dr", "prof", "sir", "the", "jr", "sr", "ii", "iii", "iv", "v", "phd", "md", "dds", "dmd", "esq" };
+
+                var normalizedName = DisplayName;
+                int openParenIndex = normalizedName.IndexOf( '(' );
+                while (openParenIndex >= 0) {
+                    int closeParenIndex = normalizedName.IndexOf( ')', openParenIndex + 1 );
+                    if (closeParenIndex < 0) {
+                        normalizedName = normalizedName.Substring( 0, openParenIndex );
+                        break;
+                    }
+
+                    normalizedName = normalizedName.Remove( openParenIndex, closeParenIndex - openParenIndex + 1 );
+                    openParenIndex = normalizedName.IndexOf( '(' );
+                }
+
+                var parts = normalizedName.Split( new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries );
+
+                string firstPart = null;
+                string lastPart = null;
+                int validPartCount = 0;
+
+                foreach (var part in parts) {
+                    var token = part.Trim().Trim( '.', ',', ';', ':' );
+                    if (string.IsNullOrWhiteSpace( token )) {
+                        continue;
+                    }
+
+                    if (Array.Exists( ignoredParts, x => string.Equals( x, token, StringComparison.OrdinalIgnoreCase ) )) {
+                        continue;
+                    }
+
+                    if (firstPart == null) {
+                        firstPart = token;
+                    }
+
+                    lastPart = token;
+                    validPartCount++;
+                }
+
+                if (validPartCount == 0) {
+                    return "NA";
+                }
+
+                if (validPartCount == 1) {
+                    return char.ToUpperInvariant( firstPart[0] ).ToString();
+                }
+
+                return string.Concat(
+                    char.ToUpperInvariant( firstPart[0] ),
+                    char.ToUpperInvariant( lastPart[0] )
+                );
+            }
+        }
+
+        /// <summary>
         /// The UUID formatted Scopos Account user id for this contact.
         /// </summary>
         [DefaultValue( "" )]
