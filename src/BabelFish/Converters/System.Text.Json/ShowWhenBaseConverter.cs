@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Scopos.BabelFish.DataModel.Definitions;
-using Scopos.BabelFish.Helpers;
 
 namespace Scopos.BabelFish.Converters.Microsoft {
 
@@ -22,7 +18,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                 JsonElement jsonElementValue;
                 if (root.TryGetProperty( "Operation", out jsonElementValue ))
                     operation = jsonElementValue.GetString();
-                else 
+                else
                     operation = string.Empty;
 
                 switch (operation) {
@@ -34,7 +30,7 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                         return JsonSerializer.Deserialize<ShowWhenSegmentGroup>( root.GetRawText(), options );
                     default:
                         //If we get here, it is probable because of ill-formed json
-                        return ShowWhenVariable.ALWAYS_SHOW.Clone();
+                        return ShowWhenVariable.CreateAlwaysShow();
                 }
             }
         }

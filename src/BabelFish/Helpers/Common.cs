@@ -7,6 +7,8 @@ namespace Scopos.BabelFish.Helpers {
     /// </summary>
     public static class Common {
 
+        public static readonly string DATA_MODEL_VERSION = "2.1.0";
+
         /// <summary>
         /// Returns the Levenshtein Distance between two strings.
         /// </summary>
@@ -824,6 +826,32 @@ namespace Scopos.BabelFish.Helpers {
         }
 
         /// <summary>
+        /// Generates a unique ID string of a specified byte length (default is 8 bytes, which is 64 bits).
+        /// The generated ID is a Base64 string that has been modified to be URL-safe by replacing certain characters and trimming padding.
+        /// his method uses a cryptographically secure random number generator to ensure uniqueness and randomness of the generated ID.
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        /// <remarks>Used in places where we don't need UUIDs but need uniqueness.</remarks>
+        public static string GenerateUniqueId( int bytes = 8 ) // 8 bytes = 64 bits
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var buffer = new byte[bytes];
+#if NETSTANDARD2_1
+            RandomNumberGenerator.Fill( buffer );
+#else
+            using (var rng = RandomNumberGenerator.Create()) {
+                rng.GetBytes( buffer );
+            }
+#endif
+            var result = new char[bytes];
+            for (int i = 0; i < bytes; i++) {
+                result[i] = chars[buffer[i] % chars.Length];
+            }
+            return new string( result );
+        }
+
+        /// <summary>
         /// Uses MD5 to hash the input string and then converts the first 8 bytes of the hash to a ulong. This can be used to create a unique
         /// identifier for a string, such as a username or email address, without storing the original string in plaintext.
         /// </summary>
@@ -837,7 +865,5 @@ namespace Scopos.BabelFish.Helpers {
             // Take the first 8 bytes and convert to ulong
             return BitConverter.ToUInt64( hash, 0 );
         }
-
-
     }
 }

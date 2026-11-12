@@ -1,25 +1,26 @@
-﻿using System.Net;
+using System.Net;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Requests;
 using Scopos.BabelFish.Responses;
 
 namespace Scopos.BabelFish.APIClients {
-    public class ResponseCache : IClearCache{
-		private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    public class ResponseCache : IClearCache {
+        private readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private int requestCount = 0;
 
-		/// <summary>
-		/// This is where previously called response/request objects
-		/// will be stored in memory. The key is specific to the request. The value is the 
-		/// Response object (which contains the Request object).
-		/// </summary>
-		private Dictionary< string, ResponseIntermediateObject> cachedRequests = new Dictionary< string, ResponseIntermediateObject>();
+        /// <summary>
+        /// This is where previously called response/request objects
+        /// will be stored in memory. The key is specific to the request. The value is the 
+        /// Response object (which contains the Request object).
+        /// </summary>
+        private Dictionary<string, ResponseIntermediateObject> cachedRequests = new Dictionary<string, ResponseIntermediateObject>();
 
         private object mutex = new object();
 
-        public static ResponseCache CACHE= new ResponseCache();
+        public static ResponseCache CACHE = new ResponseCache();
 
-		private ResponseCache() {
+        private ResponseCache() {
 
         }
 
@@ -57,7 +58,7 @@ namespace Scopos.BabelFish.APIClients {
         /// 
         /// </summary>
         /// <param name="definition"></param>
-        public void SaveResponse(  ResponseIntermediateObject response ) {
+        public void SaveResponse( ResponseIntermediateObject response ) {
 
             var request = response.Request;
             if (response.ValidUntil > DateTime.UtcNow) {
@@ -86,13 +87,13 @@ namespace Scopos.BabelFish.APIClients {
         public void CleanUp() {
             List<string> keysToRemove = new List<string>();
             lock (mutex) {
-                foreach( var item in cachedRequests ) {
-                    if( item.Value.ValidUntil < DateTime.UtcNow ) {
+                foreach (var item in cachedRequests) {
+                    if (item.Value.ValidUntil < DateTime.UtcNow) {
                         keysToRemove.Add( item.Key );
                     }
                 }
 
-                foreach( var key in keysToRemove ) {
+                foreach (var key in keysToRemove) {
                     cachedRequests.Remove( key );
                 }
             }
@@ -104,7 +105,7 @@ namespace Scopos.BabelFish.APIClients {
 
         /// <inheritdoc />
         public void ClearCache() {
-            lock(mutex) {
+            lock (mutex) {
                 cachedRequests.Clear();
             }
         }
@@ -119,9 +120,13 @@ namespace Scopos.BabelFish.APIClients {
 
         public RequestStatusCode OverallStatusCode { get; set; }
 
-        public MessageResponse MessageResponse { get; set; }
+        public MessageResponse MessageResponse { get; set; } = new MessageResponse();
 
         public G_STJ.JsonDocument Body { get; set; }
+
+        public Dictionary<string, HashSet<Permission>> Permissions { get; set; } = new Dictionary<string, HashSet<Permission>>();
+
+        public MetaDataResponse MetaData { get; set; } = new MetaDataResponseUnknown();
 
         public DateTime ValidUntil { get; set; }
     }

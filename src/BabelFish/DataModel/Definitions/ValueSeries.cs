@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
@@ -20,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         public const string APPLY_TO_ALL_FORMAT = "*";
 
-        private string ? _format = "";
+        private string? _format = "";
 
         /// <summary>
         /// Constructor.
@@ -35,7 +29,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </list>
         /// where n is start value, m is end value, s is step
         /// </param>
-        public ValueSeries(string ? format) {
+        public ValueSeries( string? format ) {
             this._format = format;
             Parse();
         }
@@ -46,7 +40,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <remarks>
         /// Value series have a starting index value of 1, not 0 (we do apologize emphatically for this). 
         /// </remarks>
-        public int StartValue { get; private set;}
+        public int StartValue { get; private set; }
 
 
         /// <summary>
@@ -88,7 +82,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <param name="eventName"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">Thrown if the passed in eventName does not contain the place holder '{}'.</exception>
-        public List<string> GetAsList(string eventName) {
+        public List<string> GetAsList( string eventName ) {
             if (!eventName.Contains( "{}" ))
                 throw new ArgumentException( $"The passed in eventName '{eventName}' string must contain '{{}}' for its values to be replaced." );
 
@@ -107,7 +101,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         private void Parse() {
 
             //Check for the special case of "*"
-            if ( string.IsNullOrEmpty( _format) ) {
+            if (string.IsNullOrEmpty( _format )) {
                 StartValue = 1;
                 EndValue = 1;
                 Step = 1;
@@ -121,14 +115,14 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return;
             }
 
-            var intStrings = _format.Split(new string[] { "..", "," }, StringSplitOptions.RemoveEmptyEntries);
+            var intStrings = _format.Split( new string[] { "..", "," }, StringSplitOptions.RemoveEmptyEntries );
 
             List<int> list = new List<int>();
 
             foreach (var intStr in intStrings) {
                 int a;
-                if (int.TryParse(intStr, out a))
-                    list.Add(a);
+                if (int.TryParse( intStr, out a ))
+                    list.Add( a );
             }
 
             switch (list.Count) {
@@ -163,15 +157,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <inheritdoc/>
         /// <remarks>Returns this ValueSeries in the fomat "n..m,s"</remarks>
         public override string ToString() {
-            if ( Step == 1 
-                && StartValue == EndValue )
+            if (Step == 1
+                && StartValue == EndValue)
                 return StartValue.ToString();
 
             if (Step == 1)
                 return $"{StartValue}..{EndValue}";
 
-            if (Step == 1 
-                && StartValue == 1 
+            if (Step == 1
+                && StartValue == 1
                 && EndValue == int.MaxValue)
                 return APPLY_TO_ALL_FORMAT;
 

@@ -1,84 +1,94 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Common {
     /// <summary>
     /// Represents a string of a Scopos Version number.
-    /// Is in the form of x.y.z.b.
-    /// x is the Major Version
-    /// y is the Minor Version
-    /// z is the Patch Version
-    /// p is the Build version. Defaults to 0 if not included in the string.
+    /// <list type="bullet">Is in the form of x.y.z.b.
+    /// <item>x is the Major Version</item>
+    /// <item>y is the Minor Version</item>
+    /// <item>z is the Patch Version</item>
+    /// <item>p is the Build version. Defaults to 0 if not included in the string.</item>
+    /// </list>
+    /// <para>Use <see cref="Parse(string)"/> or <see cref="TryParse(string, out Version)"/> to create instances of this class.</para>
     /// </summary>
+    /// <remarks>
+    /// NOTE: this is NOT the same version found within a <see cref="SetName"/>.</remarks>
+    [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VersionConverter ) )]
+    [G_NS.JsonConverter( typeof( G_BF_NS_CONV.VersionConverter ) )]
     public class Version : IComparable<Version>, IEquatable<Version> {
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public static readonly Version DEFAULT = Version.Parse( "1.1.1.1" );
+
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
         private bool buildVersionIncluded = false;
 
-        public Version() { }
-
         /// <summary>
-        /// Constructor that takes in a version string (e.g. 1.2.3b4) and parses
-        /// it for the Major, Minor, Patch, and Build Version
+        /// Private constructor. Use <see cref="Parse(string)"/> or <see cref="TryParse(string, out Version)"/> to create instances of this class."/>
         /// </summary>
-        /// <param name="versionString"></param>
-        /// <exception cref="ArgumentException">Thrown when the input versionString is not in the expected format.</exception>
-        public Version( string versionString ) {
-            this.Parse( versionString );
+        private Version() {
         }
 
         public static bool TryParse( string versionString, out Version version ) {
-            version = new Version();
+            version = Version.DEFAULT;
 
             //versionString might be false, if it got passed in from the RangeControl tab, before the state got updated.
             if (versionString == "UNKNOWN") {
-                version.MajorVersion = 0;
-                version.MinorVersion = 0;
-                version.PatchVersion = 0;
-                version.BuildVersion = 0;
                 return false;
             }
 
             try {
-                version.Parse( versionString );
+                version = Version.Parse( versionString, true );
                 return true;
 
             } catch (Exception ex) {
-                version.MajorVersion = 0;
-                version.MinorVersion = 0;
-                version.PatchVersion = 0;
-                version.BuildVersion = 0;
-                logger.Error( $"Unable to parse AthenaVersion string {versionString}. Received error {ex.Message}." );
+                _logger.Error( $"Unable to parse AthenaVersion string {versionString}. Received error {ex.Message}." );
                 return false;
             }
         }
 
         /// <summary>
-        /// 
+        /// Parses the passed  and returns a Version object.
+        /// <para>
+        /// If the passed in versionString can not be parsed, either a ArgumentException is thrown, or the Default Version is returned (1.1.1.1), depending on the value of throwExceptionOnError.</para>
         /// </summary>
         /// <param name="versionString"></param>
+        /// <param name="throwExceptionOnError">Determines what do if versionString could not be parsed. If true, throw an ArgumentException, if false, return the default Version (1.1.1.1).</param>
         /// <exception cref="ArgumentException">Thrown when the input versionString is not in the expected format.</exception>
-        private void Parse(string versionString) {
+        public static Version Parse( string versionString, bool throwExceptionOnError = false ) {
 
             //Break the string down into it's components and assign it to the appropriate value.
             var components = versionString.Split( new[] { '.', 'b' } );
 
             if (components.Length < 3 || components.Length > 4) {
                 var msg = $"The version string {versionString} is not supported. Expecting a string in the format of x.y.z or x.y.z.b.";
-                logger.Error( msg );
-                throw new ArgumentException( msg );
+                _logger.Error( msg );
+                if (throwExceptionOnError)
+                    throw new ArgumentException( msg );
+                else
+                    return DEFAULT;
             }
 
-            MajorVersion = int.Parse( components[0] );
-            MinorVersion = int.Parse( components[1] );
-            PatchVersion = int.Parse( components[2] );
-            if (components.Length == 4) {
-                BuildVersion = int.Parse( components[3] );
-                buildVersionIncluded = true;
-            } else {
-                BuildVersion = 0;
-                buildVersionIncluded = false;
+            try {
+                Version v = new Version();
+                v.MajorVersion = int.Parse( components[0] );
+                v.MinorVersion = int.Parse( components[1] );
+                v.PatchVersion = int.Parse( components[2] );
+                if (components.Length == 4) {
+                    v.BuildVersion = int.Parse( components[3] );
+                    v.buildVersionIncluded = true;
+                } else {
+                    v.BuildVersion = 0;
+                    v.buildVersionIncluded = false;
+                }
+
+                return v;
+            } catch (Exception ex) {
+                var msg = $"The version string {versionString} is not supported. Expecting a string in the format of x.y.z or x.y.z.b. Received error {ex.Message}.";
+                _logger.Error( msg );
+                if (throwExceptionOnError)
+                    throw new ArgumentException( msg, ex );
+                else
+                    return DEFAULT;
             }
         }
 
@@ -90,7 +100,7 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <param name="other"></param>
         /// <returns></returns>
         public int CompareTo( Version other ) {
-            if ( other is null )
+            if (other is null)
                 return 1;
 
             //Compare Major Versions
@@ -203,25 +213,25 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// Major Version number.
         /// Representing significant changes to the code.
         /// </summary>
-        public int MajorVersion { get; private set; } = 0;
+        public int MajorVersion { get; private set; } = 1;
 
         /// <summary>
         /// Minor Version number.
         /// Representing new features to the code.
         /// </summary>
-        public int MinorVersion { get; private set; } = 0;
+        public int MinorVersion { get; private set; } = 1;
 
         /// <summary>
         /// Patch Version number.
         /// Representing bug fixes.
         /// </summary>
-        public int PatchVersion { get; private set; } = 0;
+        public int PatchVersion { get; private set; } = 1;
 
         /// <summary>
         /// Build Version number.
         /// Representing internal builds, not for customer release.
         /// </summary>
-        public int BuildVersion { get; private set; } = 0;
+        public int BuildVersion { get; private set; } = 1;
 
         /// <summary>
         /// Returns a string in the form x.y.z.b
@@ -242,6 +252,30 @@ namespace Scopos.BabelFish.DataModel.Common {
         /// <returns></returns>
         public override int GetHashCode() {
             return ToString().GetHashCode();
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if this Version is the default Version value of 1.1.1.1.
+        /// </summary>
+        public bool IsDefault {
+            get {
+                return this.MajorVersion == 1 && this.MinorVersion == 1 && this.PatchVersion == 1 && this.BuildVersion == 1;
+            }
+        }
+
+        /// <summary>
+        /// Implicitly converts a Version instance to its string representation.
+        /// <para>This conversion returns the default string representation of Version if the provided
+        /// instance is null.</para>
+        /// </summary>
+        /// <remarks>It is safe to mark this as an implicit operator since Version has a well known string representation.</remarks>
+        /// <param name="sn">The Version instance to convert. If null, the default string representation is returned.</param>
+        public static implicit operator string( Version sn ) {
+            if (sn is null)
+                return Version.DEFAULT.ToString();
+            else
+                return sn.ToString();
+
         }
     }
 }

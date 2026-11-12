@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
             var hierarchicalName = new IsDefinitionHierarchicalNameValid();
             var commonName = new IsDefiniitonCommonNameValid();
             var description = new IsDefiniitonDescriptionValid();
-            var subdiscipline = new IsDefiniitonSubdisciplineValid();
+            var subdiscipline = new IsDefiniitonSubdisciplineValid() { SubdisciplineIsRequired = true };
             var tags = new IsDefiniitonTagsValid();
             var comment = new IsCommentValid();
             var owner = new IsDefiniitonOwnerValid();
@@ -113,12 +113,12 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
 
                 if (candidate.EventStyles == null) {
                     //Just set to an empty list.
-                    candidate.EventStyles = new List<string>();
+                    candidate.EventStyles = new List<SetName>();
                 }
 
                 if (candidate.StageStyles == null) {
                     //Just set to an empty list.
-                    candidate.StageStyles = new List<string>();
+                    candidate.StageStyles = new List<SetName>();
                 }
 
                 if (candidate.EventStyles.Count == 0 && candidate.StageStyles.Count == 0) {
@@ -157,7 +157,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     }
                 } else {
                     //If the current valud is null, set it to an empty list.
-                    candidate.EventStyles = new List<string>();
+                    candidate.EventStyles = new List<SetName>();
                 }
 
                 return valid;
@@ -185,7 +185,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     }
                 } else {
                     //If the current valud is null, set it to an empty list.
-                    candidate.RelatedEventStyles = new List<string>();
+                    candidate.RelatedEventStyles = new List<SetName>();
                 }
 
                 return valid;
@@ -213,7 +213,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     }
                 } else {
                     //If the current valud is null, set it to an empty list.
-                    candidate.StageStyles = new List<string>();
+                    candidate.StageStyles = new List<SetName>();
                 }
 
                 return valid;
@@ -238,7 +238,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                     valid = false;
                     Messages.Add( $"The SimpleCOFs list may not be null and must contain at least one SimpleCOF object." );
                 } else {
-                    var listOfSeenCOFDefs = new List<string>();
+                    var listOfSeenCOFDefs = new HashSet<SetName>();
 
                     //foreach SimpleCOF object
                     foreach (var simpleCof in candidate.SimpleCOFs) {
@@ -276,7 +276,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                                 }
 
                                 //StageStyleDef must be listed in the candidate's .StageStyles list
-                                if (!candidate.StageStyles.Contains( component.StageStyleDef.ToString() )) {
+                                if (!candidate.StageStyles.Contains( component.StageStyleDef )) {
                                     valid = false;
                                     Messages.Add( $"The SimpleCOF identified with CourseOfFireDef '{simpleCof.CourseOfFireDef}' has a SimpleCOFCompoenent identified with StageStyleDef '{component.StageStyleDef}' that is not listed in the EventStyle's list of StageStyles." );
                                 }
@@ -313,8 +313,7 @@ namespace Scopos.BabelFish.DataActors.Specification.Definitions {
                 }
 
                 //Test that the ScoreConfigName value is a name listed in each SimpleCOFComponent is valid
-                var setName = SetName.Parse( candidate.ScoreFormatCollectionDef );
-                var scoreConfigDefinition = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( setName );
+                var scoreConfigDefinition = await DefinitionCache.GetScoreFormatCollectionDefinitionAsync( candidate.ScoreFormatCollectionDef );
 
                 int i = 0;
                 foreach (var simpleCof in candidate.SimpleCOFs) {

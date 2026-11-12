@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-
 namespace Scopos.BabelFish.DataModel.ScoreHistory {
 
     /// <summary>
@@ -8,7 +5,7 @@ namespace Scopos.BabelFish.DataModel.ScoreHistory {
     /// </summary>
     [Serializable]
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.ScoreHistoryBaseConverter ) )]
-    public abstract class ScoreHistoryBase : IDeserializableAbstractClass {
+    public abstract class ScoreHistoryBase {
 
         /*
          * A description of how to describe Inherited / Abstract classes in OpenAPI 3.0 is at https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/

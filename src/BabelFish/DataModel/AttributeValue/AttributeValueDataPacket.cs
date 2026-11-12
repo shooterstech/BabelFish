@@ -2,6 +2,7 @@ using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Responses.AttributeValueAPI;
 
 namespace Scopos.BabelFish.DataModel.AttributeValue {
 
@@ -11,23 +12,22 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
     /// </summary>
     [G_NS.JsonConverter( typeof( G_BF_NS_CONV.AttributeValueDataPacketConverter ) )]
     public abstract class AttributeValueDataPacket :
-        IDeserializableAbstractClass,
         IGetAttributeDefinition,
+        IFinishInitializationAsync,
         ICheckSum {
-
-        public const int CONCRETE_CLASS_ID = 1;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         public AttributeValueDataPacket() {
-            this.ConcreteClassId = CONCRETE_CLASS_ID;
+            this.ConcreteClassId = AttributeValueDataPacketAPIResponse.CONCRETE_CLASS_ID;
+            this.Type = AttributeValueType.API_RESPONSE;
         }
 
         /// <summary>
         /// the SetName, formatted as a string, of the Attribute definition.
         /// </summary>
-        public string AttributeDef { get; set; }
+        public SetName AttributeDef { get; set; } = new SetName();
 
         /// <summary>
         /// Property that contains the value.
@@ -50,8 +50,9 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// is then handled in an async call sepeartly.
         /// </summary>
         /// <returns></returns>
-        protected internal async Task FinishInitializationAsync() {
-            AttributeValue = await AttributeValueTask;
+        public virtual async Task FinishInitializationAsync() {
+            if (AttributeValueTask != null)
+                AttributeValue = await AttributeValueTask;
         }
 
 
@@ -64,18 +65,27 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// <exception cref="DefinitionNotFoundException" />
         /// <exception cref="ScoposAPIException" />
         public async Task<Definitions.Attribute> GetAttributeDefinitionAsync() {
-
-            if (string.IsNullOrEmpty( AttributeDef ))
-                throw new ArgumentNullException( $"The value for .DefaultSttributeDef is empty. Which is allowed." );
-
-            var setName = Definitions.SetName.Parse( AttributeDef );
-            return await DefinitionCache.GetAttributeDefinitionAsync( setName );
+            return await DefinitionCache.GetAttributeDefinitionAsync( AttributeDef );
         }
+
+        private VisibilityOption _visibility = VisibilityOption.PRIVATE;
 
         /// <summary>
         /// Property storing how broadly this AttributeValue may be shared.
+        /// <para>Checks against the maximum visibility allowed by the Attribute definition. If the passed in value is greater than the max visibility, the max visibility is stored instead.</para>
         /// </summary>
-        public VisibilityOption Visibility { get; set; }
+        public VisibilityOption Visibility {
+            get { return _visibility; }
+            set {
+                if (this.AttributeValue is not null
+                    && this.AttributeValue.Definition is not null
+                    && value > this.AttributeValue.Definition.MaxVisibility) {
+                    _visibility = this.AttributeValue.Definition.MaxVisibility;
+                } else {
+                    _visibility = value;
+                }
+            }
+        }
 
         /// <summary>
         /// Implementation of the IDeserializableAbstractClass interface.
@@ -83,7 +93,14 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
         /// Concrete classes, the JSON should include a ConcreteClassId that specifies
         /// the Concrete class.
         /// </summary>
-        public int ConcreteClassId { get; set; }
+        [Obsolete( "Use Type instead of ConcreteClassId to determine the concrete class of the AttributeValueDataPacket." )]
+        public int ConcreteClassId { get; protected set; }
+
+        /// <summary>
+        /// The concrete class identifier of this AttributeValueDataPacket. This is used to determine the
+        /// concrete class of this AttributeValueDataPacket, and is set by the overridden ReadJson() method of AttributeValueDataPacketConverter class during deserialization.
+        /// </summary>
+        public AttributeValueType Type { get; protected set; }
 
 
         /// <inheritdoc />

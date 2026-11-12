@@ -4,7 +4,8 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// Describes an Event in a Match that has one or more Result Lists associated with it.
     /// </summary>
     [Serializable]
-    public class ResultEventAbbr : ICheckSum {
+    [Obsolete( "ResultEventAbbr is deprecated as of BabelFish 2.0. CourseOfFireSturctures now use a list of ResultListAbbr" )]
+    public class ResultEventAbbr {
 
         /// <summary>
         /// Default public constructor
@@ -34,6 +35,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         /// <inheritdoc />
         [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
         public string CheckSum { get; set; }
 
         /// <inheritdoc />

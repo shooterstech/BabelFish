@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -30,7 +26,18 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             JsonSerializer serializer ) {
             JObject jo = JObject.Load( reader );
 
-            //first try using the ConcreteClassId, if it is a property of the json, as this will be a faster method.
+            //first try ParticipantType, which is a property of the json that is set by BabelFish, and is not deprecated. This is the preferred method for determining the concrete class to deserialize to.
+            var participantType = jo["ParticipantType"]?.Value<ParticipantType>();
+            switch (participantType) {
+                case ParticipantType.INDIVIDUAL:
+                    return JsonConvert.DeserializeObject<Individual>( jo.ToString(), SpecifiedSubclassConversion );
+                case ParticipantType.TEAM:
+                    return JsonConvert.DeserializeObject<Team>( jo.ToString(), SpecifiedSubclassConversion );
+                default:
+                    break;
+            }
+
+            //second try using the deprecated (as of March 2026) ConcreteClassId, if it is a property of the json, as this will be a faster method.
             var id = jo["ConcreteClassId"]?.Value<int>();
 
             switch (id) {
@@ -55,7 +62,7 @@ namespace Scopos.BabelFish.Converters.Newtonsoft {
             throw new NotImplementedException( $"Unable to convert type '{type}' to an Abstract class Participant." );
         }
 
-        public override bool CanWrite {  get { return false; } }
+        public override bool CanWrite { get { return false; } }
 
         public override void WriteJson( JsonWriter writer, object value, JsonSerializer serializer ) {
             //When CanWrite is false, which it is, the standard converter is used and not this custom converter

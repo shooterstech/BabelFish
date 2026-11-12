@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Scopos.BabelFish.Runtime.Authentication;
 using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.Requests.ClubsAPI {
@@ -9,7 +5,7 @@ namespace Scopos.BabelFish.Requests.ClubsAPI {
     public class GetClubDetailPublicRequest : Request {
 
 
-        public GetClubDetailPublicRequest( string ownerId) : base( "GetClubDetail" ) {
+        public GetClubDetailPublicRequest( string ownerId ) : base( "GetClubDetail" ) {
             this.SubDomain = APISubDomain.API;
 
             if (string.IsNullOrEmpty( ownerId ))

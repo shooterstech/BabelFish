@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Scopos.BabelFish.Runtime;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 
@@ -19,19 +18,21 @@ namespace Scopos.BabelFish.Tests.Miscellaneous {
         }
 
         [TestMethod]
-        [ExpectedException(typeof(XApiKeyNotSetException))]
         public void XApiKeyNotSet() {
 
-            //Without Settings.XApiKey set, this should throw an exceptino. 
-            var client = new OrionMatchAPIClient();
+            Assert.Throws<XApiKeyNotSetException>( () => {
+                //Without Settings.XApiKey set, this should throw an exceptino. 
+                var client = new OrionMatchAPIClient();
+            } );
         }
 
         [TestMethod]
-        [ExpectedException( typeof( XApiKeyNotSetException ) )]
         public async Task DefinitionFetcherThrowsException() {
+            await Assert.ThrowsAsync<XApiKeyNotSetException>( async () => {
 
-            //Without Settings.XApiKey set, this should throw an exceptino. 
-            var fetcher = await DefinitionCache.GetTargetDefinitionAsync( SetName.Parse( "v1.0:issf:Air Rifle" ) );
+                //Without Settings.XApiKey set, this should throw an exceptino. 
+                var fetcher = await DefinitionCache.GetTargetDefinitionAsync( SetName.Parse( "v1.0:issf:Air Rifle" ) );
+            } );
         }
     }
 }

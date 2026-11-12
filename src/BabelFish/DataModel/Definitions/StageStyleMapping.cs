@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
-using Scopos.BabelFish.APIClients;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.APIClients;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
@@ -21,7 +14,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// The default STAGE STYLE to use, if no mapping could be found. 
         /// </summary>
         [JsonPropertyOrder( 1 )]
-        public string DefaultDef { get; set; } = "v1.0:orion:Default";
+        public SetName DefaultDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Default" );
 
         /// <summary>
         /// The Stage's appellation (name) to use when looking up the mapping. Event appellations are usually common across (printed) rulebooks that have different courses of fire.
@@ -39,9 +32,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <exception cref="ArgumentException">Thrown if the value of .DefaultDef could not be parsed. Which shouldn't happen.</exception>
         public async Task<StageStyle> GetStageStyleDefinitionAsync() {
 
-            SetName stageStyleSetName = SetName.Parse( DefaultDef );
-
-            return await DefinitionCache.GetStageStyleDefinitionAsync( stageStyleSetName );
+            return await DefinitionCache.GetStageStyleDefinitionAsync( DefaultDef );
 
         }
     }

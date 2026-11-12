@@ -3,7 +3,19 @@ using System.ComponentModel;
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
-    /// An AttributeField describes one field of an Attribute
+    /// Each ATTRIBUTE defines a set of fields (formally called an AttributeField). A field can be defined to be one of
+    /// many times, for example <see cref="AttributeFieldString">strings</see>, <see cref="AttributeFieldInteger">integers</see>, or
+    /// <see cref="AttributeFieldDateTime">dates</see>. It may also be defined to be (for example) a
+    /// <see cref="AttributeFieldStringList">list of strings</see>, a <see cref="AttributeFieldIntegerList">list of
+    /// integers</see>, or a <see cref="AttributeFieldDateTimeList">list of dates</see>.
+    /// <para>Each field must have a unique <see cref="AttributeFieldBase.FieldName"/> within this ATTRIBUTE. Usually, but not always
+    /// the FieldName is the same as the <see cref="AttributeFieldBase.DisplayName"/>.</para>
+    /// <para>Fields may be defined with a default value, may have validation logic, and may be constrained to a set of values.
+    /// For example, you  could define a field to describe the type of rifle a marksment competes with, and specify the only two
+    /// values may be Sporter or Precision.</para>
+    /// <para>A <see cref="SimpleAttribute">"Simple Attribute"</see> is a special tyep of ATTRIBUTE 
+    /// This is when <see cref="MultipleValues" /> is False, has only one <see cref="Fields">field defined</see>,
+    /// and that field also has its <see cref="AttributeFieldBase.MultipleValues"/> set to False.</para>
     /// </summary>
     [Serializable]
     public abstract class AttributeField<T> : AttributeFieldBase {
@@ -48,7 +60,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
     /// </summary>
     public abstract class AttributeFieldBase : IReconfigurableRulebookObject {
 
-        protected Logger Logger = LogManager.GetCurrentClassLogger();
+        protected Logger _logger = LogManager.GetCurrentClassLogger();
 
         public AttributeFieldBase() {
             Required = false;
@@ -129,6 +141,16 @@ namespace Scopos.BabelFish.DataModel.Definitions {
                 return $"'{FieldName}' of type {ValueType} KEY VALUE";
             else
                 return $"'{FieldName}' of type {ValueType}";
+        }
+
+        /// <summary>
+        /// When a AttributeValue is being serialized to be sent to the API, this function is called on each field value to allow for any necessary transformations before serialization.
+        /// For example, if the field is a date, this function could be used to convert the date into a string format that the API expects.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public virtual dynamic ValueForSerialization( dynamic value ) {
+            return value;
         }
 
         internal abstract dynamic DeserializeFromJsonElement( G_STJ.JsonElement value );

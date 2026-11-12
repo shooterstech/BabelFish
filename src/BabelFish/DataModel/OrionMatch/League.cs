@@ -1,24 +1,21 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json.Serialization;
-using Scopos.BabelFish.DataModel.Common;
-using NLog;
 using Scopos.BabelFish.Converters.Microsoft;
+using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.Responses.OrionMatchAPI;
 
-namespace Scopos.BabelFish.DataModel.OrionMatch
-{
+namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     [Serializable]
-    public class League: LeagueBase {
+    public class League : LeagueBase {
 
         private string parentId = "";
         private Logger logger = LogManager.GetCurrentClassLogger();
 
         public League() { }
 
-        
+
         /// <summary>
         /// After an object is deserialized form JSON,
         /// adds defaults to empty properties
@@ -37,7 +34,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// <summary>
         /// The list of Events in the Match that have Result Lists associated with them.
         /// </summary>
-        [JsonPropertyOrder ( 3 )]
+        [JsonPropertyOrder( 3 )]
         public List<ResultEventAbbr> ResultEvents { get; set; } = new List<ResultEventAbbr>();
 
         /// <summary>
@@ -47,24 +44,33 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         /// Club : Same as participant, but also includes all club members of the sponsoring club
         /// Public : Everyone may view
         /// </summary>
-        [JsonPropertyOrder ( 8 )]
-        
+        [JsonPropertyOrder( 8 )]
+
         public VisibilityOption Visibility { get; set; } = VisibilityOption.PRIVATE;
 
         /// <summary>
         /// The orion account or at home account who owns this match.
         /// </summary>
         /// <example>OrionAcct000001 or AtHomeAcct123456</example>
-        [JsonPropertyOrder ( 9 )]
+        [JsonPropertyOrder( 9 )]
         public string OwnerId { get; set; } = string.Empty;
 
 
         public string MatchType { get { return "League"; } }
 
-		/// <summary>
-		/// Contact information for the match, i.e. person's name, phone, email.
-		/// </summary>
-		public Contact LeagueAdministrator { get; set; } = new Contact();
+        /// <summary>
+        /// Contact information for the match, i.e. person's name, phone, email.
+        /// </summary>
+        [Obsolete( "Use MatchContacts instead. This property will be removed in a future version." )]
+        public Contact LeagueAdministrator { get; set; } = new Contact();
+
+        /// <summary>
+        /// Contact information for the match administrators.
+        /// </summary>
+        /// <remarks>"MatchContacts" is the same property name as used by <see cref="Match"/></remarks>
+        [G_STJ_SER.JsonPropertyOrder( 21 )]
+        [G_NS.JsonProperty( Order = 21 )]
+        public List<Contact> MatchContacts { get; set; } = new List<Contact>();
 
         [G_STJ_SER.JsonConverter( typeof( ScoposDateOnlyConverter ) )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateConverter ) )]
@@ -115,7 +121,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch
         }
 
         private List<LeagueWeek> _weekList = new List<LeagueWeek>();
-        public List<LeagueWeek> WeekList { 
+        public List<LeagueWeek> WeekList {
             get {
                 if (_weekList is null || _weekList.Count == 0) {
                     return this.DefaultValueForWeekList();
