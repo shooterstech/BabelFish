@@ -53,7 +53,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <param name="club">The club to associate with the new team.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the newly created <see cref="ClubTeam"/>.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the provided <paramref name="club"/> is null.</exception>
-        public static Task<ClubTeam> CreateAsync( ClubDetail club ) {
+        public static async Task<ClubTeam> CreateAsync( ClubDetail club ) {
             // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
             // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
             // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
@@ -61,12 +61,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             if (club is null)
                 throw new ArgumentNullException( nameof( club ), "ClubDetail cannot be null when creating a ClubTeam." );
 
-            ClubTeam clubTeam = new ClubTeam();
-            clubTeam.Club = club;
-            clubTeam.Club.TeamList ??= new List<ClubTeam>();
-            clubTeam.Club.TeamList.Add( clubTeam );
-
-            return Task.FromResult( clubTeam );
+            return await club.AddClubTeamAsync();
         }
 
         /// <summary>

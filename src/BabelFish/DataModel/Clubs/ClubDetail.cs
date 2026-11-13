@@ -9,10 +9,13 @@ namespace Scopos.BabelFish.DataModel.Clubs {
     /// <summary>
     /// Complete data about an Orion club account.
     /// </summary>
-    public class ClubDetail : G_STJ_SER.IJsonOnDeserialized {
+    public class ClubDetail :
+        G_STJ_SER.IJsonOnDeserialized,
+        G_STJ_SER.IJsonOnDeserializing {
 
         #region Private and Protected Fields
         private static Logger _logger = LogManager.GetCurrentClassLogger();
+        protected bool _ignoreEvents = false;
         private DateTime _memberSince = DateTime.Today;
         private VisibilityOption _visibility = VisibilityOption.PUBLIC;
 
@@ -69,6 +72,8 @@ namespace Scopos.BabelFish.DataModel.Clubs {
                 if (team == null) continue;
                 team.Club = this;
             }
+
+            _ignoreEvents = false;
         }
 
         /// <summary>
@@ -77,6 +82,17 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <param name="context"></param>
         [OnDeserialized]
         internal void OnDeserialized( StreamingContext context ) => OnDeserialized();
+
+        [OnDeserializing]
+        internal void OnDeserializing( StreamingContext context ) => OnDeserializing();
+
+        /// <summary>
+        /// Gets called before System.Text.Json deserializes an instance of this class.
+        /// Sets _ignoreEvents to true to prevent events from firing during deserialization.
+        /// </summary>
+        public void OnDeserializing() {
+            _ignoreEvents = true;
+        }
         #endregion
 
         #region Data Property Members
@@ -134,7 +150,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// Street addresses associated with this club. This may include the club's physical location, mailing address, or the address of the club's administrator.
-        /// <para>Unless you are a deserializer, the expected way to add a new ClubAddress is use <see cref="ClubAddress.CreateAsync(ClubDetail)"/></para>
+        /// <para>Unless you are a deserializer, the expected way to add a new ClubAddress is use <see cref="AddClubAddressAsync()"/> or
+        /// <see cref="ClubAddress.CreateAsync(ClubDetail)"/></para>
+        /// <para>The expected way to remove a ClubAddress is use <see cref="RemoveClubAddress(ClubAddress)"/></para>
         /// </summary>
         public List<ClubAddress> AddressList { get; set; } = new List<ClubAddress>();
 
@@ -146,7 +164,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         /// <summary>
         /// The list of Club Teams that this Club has defined.
-        /// <para>Unless you are a deserializer, the expected way to add a new ClubTeam is use <see cref="ClubTeam.CreateAsync(ClubDetail)"/></para>  
+        /// <para>Unless you are a deserializer, the expected way to add a new ClubTeam is use <see cref="AddClubTeamAsync()"/> or
+        /// <see cref="ClubTeam.CreateAsync(ClubDetail)"/></para>
+        /// <para>The expected way to remove a ClubTeam is use <see cref="RemoveClubTeam(ClubTeam)"/></para>
         /// </summary>
         public List<ClubTeam> TeamList { get; set; } = new List<ClubTeam>();
 
@@ -323,6 +343,22 @@ namespace Scopos.BabelFish.DataModel.Clubs {
 
         #endregion
 
+        #region Events
+
+        [G_NS.JsonIgnore]
+        EventHandler<EventArgs<ClubAddress>> OnClubAddressAdded;
+
+        [G_NS.JsonIgnore]
+        EventHandler<EventArgs<ClubAddress>> OnClubAddressRemoved;
+
+        [G_NS.JsonIgnore]
+        EventHandler<EventArgs<ClubTeam>> OnClubTeamAdded;
+
+        [G_NS.JsonIgnore]
+        EventHandler<EventArgs<ClubTeam>> OnClubTeamRemoved;
+
+        #endregion 
+
         #region Helper Properties
 
         /// <summary>
@@ -391,6 +427,106 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Creates and adds a new <see cref="ClubAddress"/> for the current club.
+        /// <para>This method is the same as <see cref="ClubAddress.CreateAsync(ClubDetail)"/>.</para>
+        /// </summary>
+        /// <returns>The ClubAddress that was created.</returns>
+        public async Task<ClubAddress> AddClubAddressAsync() {
+            // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
+            // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
+            // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
+
+            ClubAddress clubAddress = new ClubAddress();
+            clubAddress.Club = this;
+            clubAddress.Club.AddressList ??= new List<ClubAddress>();
+            clubAddress.Club.AddressList.Add( clubAddress );
+
+            if (!_ignoreEvents) {
+                OnClubAddressAdded?.Invoke( this, new EventArgs<ClubAddress>( clubAddress ) );
+            }
+
+            return clubAddress;
+        }
+
+        /// <summary>
+        /// Removes the specified club address from the address list.
+        /// </summary>
+        /// <remarks>Raises <c>OnClubAddressRemoved</c> with the removed address when removal succeeds and
+        /// event dispatching is enabled.</remarks>
+        /// <param name="clubAddress">The club address to remove.</param>
+        /// <returns><see langword="true"/> if the address was removed; otherwise, <see langword="false"/> when <paramref
+        /// name="clubAddress"/> is <see langword="null"/> or not found in the address list.</returns>
+        public bool RemoveClubAddress( ClubAddress clubAddress ) {
+            if (clubAddress is null) {
+                _logger.Warn( "RemoveClubAddress() called with null clubAddress." );
+                return false;
+            }
+
+            if (this.AddressList is null || !this.AddressList.Contains( clubAddress )) {
+                _logger.Warn( $"RemoveClubAddress() called for club {this.OwnerId} with clubAddress {clubAddress}. Address not found in AddressList." );
+                return false;
+            }
+
+            this.AddressList.Remove( clubAddress );
+
+            if (!_ignoreEvents) {
+                OnClubAddressRemoved?.Invoke( this, new EventArgs<ClubAddress>( clubAddress ) );
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates and adds a new <see cref="ClubTeam"/> for the current club.
+        /// <para>This method is the same as <see cref="ClubTeam.CreateAsync(ClubDetail)"/>.</para>
+        /// </summary>
+        /// <returns>The ClubTeam that was created.</returns>
+        public async Task<ClubTeam> AddClubTeamAsync() {
+            // Although this method is currently synchronous in its implementation, it is defined as CreateAsync() to allow for future enhancements
+            // that may involve asynchronous operations (e.g., database calls, API requests) during the creation process.
+            // By giving this Async name now, we can avoid breaking changes in the future if such enhancements are needed.
+
+            ClubTeam clubTeam = new ClubTeam();
+            clubTeam.Club = this;
+            clubTeam.Club.TeamList ??= new List<ClubTeam>();
+            clubTeam.Club.TeamList.Add( clubTeam );
+
+            if (!_ignoreEvents) {
+                OnClubTeamAdded?.Invoke( this, new EventArgs<ClubTeam>( clubTeam ) );
+            }
+
+            return clubTeam;
+        }
+
+        /// <summary>
+        /// Removes the specified club team from the team list.
+        /// </summary>
+        /// <remarks>Raises <c>OnClubTeamRemoved</c> after a successful removal when event notifications
+        /// are enabled.</remarks>
+        /// <param name="clubTeam">The club team to remove.</param>
+        /// <returns><see langword="true"/> if the team was removed; otherwise, <see langword="false"/> when <paramref
+        /// name="clubTeam"/> is <see langword="null"/>, the team list is unavailable, or the team is not in the list.</returns>
+        public bool RemoveClubTeam( ClubTeam clubTeam ) {
+            if (clubTeam is null) {
+                _logger.Warn( "RemoveClubTeam() called with null clubTeam." );
+                return false;
+            }
+
+            if (this.TeamList is null || !this.TeamList.Contains( clubTeam )) {
+                _logger.Warn( $"RemoveClubTeam() called for club {this.OwnerId} with clubTeam {clubTeam}. Team not found in TeamList." );
+                return false;
+            }
+
+            this.TeamList.Remove( clubTeam );
+
+            if (!_ignoreEvents) {
+                OnClubTeamRemoved?.Invoke( this, new EventArgs<ClubTeam>( clubTeam ) );
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// Returns true if this club's team page should be visible to the public. This is true if the club has set its
         /// Visibility to PUBLIC and has at least one valid license.

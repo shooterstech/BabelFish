@@ -55,12 +55,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             if (club is null)
                 throw new ArgumentNullException( nameof( club ), "ClubDetail cannot be null when creating a ClubAddress." );
 
-            ClubAddress clubAddress = new ClubAddress();
-            clubAddress.Club = club;
-            clubAddress.Club.AddressList ??= new List<ClubAddress>();
-            clubAddress.Club.AddressList.Add( clubAddress );
-
-            return Task.FromResult( clubAddress );
+            return club.AddClubAddressAsync();
         }
 
         /// <summary>
