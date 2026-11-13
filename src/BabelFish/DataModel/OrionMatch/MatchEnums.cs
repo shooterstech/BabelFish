@@ -690,7 +690,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// Out of competition. Used when a Participant is competing for score only.
         /// </summary>
-        OUT_OF_COMPETITION
+        OUT_OF_COMPETITION,
+
+        /// <summary>
+        /// This is an error condition value. To be used if, when deserializing, the real value could not be read.
+        /// Not expected to be used in an actual ParticipantRemark.
+        /// </summary>
+        UNKNOWN
     };
 
     /// <summary>
