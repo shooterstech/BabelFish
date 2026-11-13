@@ -1,8 +1,5 @@
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic.FileIO;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Newsfeed;
 using Scopos.BabelFish.Requests.NewsfeedAPI;
@@ -13,22 +10,12 @@ namespace Scopos.BabelFish.Tests.APIClients.NewsfeedClientTests {
     [TestClass]
     [TestCategory( "LiveBeta" )]
     [DoNotParallelize]
-    public class NewsfeedPostBetaTests {
+    public class NewsfeedPostBetaTests : BaseTestClass {
         public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
         public async Task PersonalPostCreateDeleteAndRetryThroughBetaClient() {
-            // Explicit opt-in prevents an ordinary test run from creating remote fixtures.
-            if (Environment.GetEnvironmentVariable( "SCOPOS_NEWSFEED_LIVE_BETA" ) != "1")
-                Assert.Inconclusive( "Set SCOPOS_NEWSFEED_LIVE_BETA=1 to authorize this Beta create/soft-delete round trip." );
-            var csvPath = Environment.GetEnvironmentVariable( "SCOPOS_TEST_USERS_CSV" );
-            var apiKey = Environment.GetEnvironmentVariable( "ScoposXApiKey" );
-            if (string.IsNullOrEmpty( apiKey ) || string.IsNullOrEmpty( csvPath ) || !File.Exists( csvPath ))
-                Assert.Inconclusive( "ScoposXApiKey and SCOPOS_TEST_USERS_CSV must identify configured local test inputs." );
-            var alias = Environment.GetEnvironmentVariable( "SCOPOS_NEWSFEED_TEST_ALIAS" ) ?? "test_dev_7";
-            var account = ReadAccount( csvPath!, alias );
-            Initializer.Initialize( apiKey!, false );
-            var credentials = new UserAuthentication( account.Username, account.Password );
+            var credentials = new UserAuthentication( Constants.TestDev7Credentials.Username, Constants.TestDev7Credentials.Password );
             try {
                 await credentials.InitializeAsync();
             } catch (Exception ex) {
@@ -58,9 +45,9 @@ namespace Scopos.BabelFish.Tests.APIClients.NewsfeedClientTests {
                 created = create.Post;
                 Assert.IsNotNull( created );
                 Assert.IsFalse( string.IsNullOrEmpty( postId ) );
-                TestContext.WriteLine( $"Beta POST HTTP 200; fixture {postId}; account alias {alias}." );
+                TestContext.WriteLine( $"Beta POST HTTP 200; fixture {postId}; account alias test_dev_7." );
                 Assert.AreEqual( text, created.BodyText );
-                Assert.AreEqual( account.UserId, created.UserId );
+                Assert.AreEqual( Constants.TestDev7UserId, created.UserId );
                 Assert.IsNull( created.LicenseNumber );
                 Assert.IsNull( created.DeletedAt );
                 Assert.IsNull( created.DeletedByUserId );
@@ -70,13 +57,13 @@ namespace Scopos.BabelFish.Tests.APIClients.NewsfeedClientTests {
                 var delete = await client.DeleteNewsfeedPostAuthenticatedAsync( new DeleteNewsfeedPostAuthenticatedRequest( postId!, credentials ) );
                 AssertResponse( delete );
                 firstDeletion = delete.DeletedPost;
-                AssertDeletion( created, firstDeletion, account.UserId );
+                AssertDeletion( created, firstDeletion, Constants.TestDev7UserId );
                 cleanupComplete = true;
                 TestContext.WriteLine( "Beta DELETE HTTP 200; complete post and deletion audit verified." );
 
                 var retry = await client.DeleteNewsfeedPostAuthenticatedAsync( postId!, credentials );
                 AssertResponse( retry );
-                AssertDeletion( created, retry.DeletedPost, account.UserId );
+                AssertDeletion( created, retry.DeletedPost, Constants.TestDev7UserId );
                 Assert.AreEqual( firstDeletion!.DeletedAt, retry.DeletedPost!.DeletedAt );
                 Assert.AreEqual( firstDeletion.DeletedByUserId, retry.DeletedPost.DeletedByUserId );
                 TestContext.WriteLine( "Beta repeated DELETE HTTP 200; first deletion audit preserved." );
@@ -112,23 +99,5 @@ namespace Scopos.BabelFish.Tests.APIClients.NewsfeedClientTests {
             Assert.AreEqual( userId, deleted.DeletedByUserId );
         }
 
-        private static (string Username, string Password, string UserId) ReadAccount( string path, string alias ) {
-            // The supplied CSV has introductory notes and duplicate username columns. Use the first login column.
-            using var parser = new TextFieldParser( path, Encoding.UTF8 );
-            parser.SetDelimiters( "," );
-            parser.HasFieldsEnclosedInQuotes = true;
-            string[]? header = null;
-            while (!parser.EndOfData) {
-                var row = parser.ReadFields()!;
-                if (header == null) {
-                    if (row.Length > 0 && row[0] == "Alias Accounts" && row.Contains( "User Name" ) && row.Contains( "Password" ) && row.Contains( "User ID" ))
-                        header = row;
-                } else if (row.Length >= header.Length && row[0] == alias) {
-                    return (row[Array.IndexOf( header, "User Name" )], row[Array.IndexOf( header, "Password" )], row[Array.IndexOf( header, "User ID" )]);
-                }
-            }
-            Assert.Inconclusive( "Configured test alias was not found in the supplied account table." );
-            return default;
-        }
     }
 }
