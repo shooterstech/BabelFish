@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json;
@@ -61,20 +60,10 @@ namespace Scopos.BabelFish.Converters.Microsoft {
                     }
                 }
             } else {
-                try {
-                    description = reader.TokenType switch {
-                        JsonTokenType.Number => reader.HasValueSequence
-                            ? System.Text.Encoding.UTF8.GetString( reader.ValueSequence.ToArray() )
-                            : System.Text.Encoding.UTF8.GetString( reader.ValueSpan.ToArray() ),
-                        JsonTokenType.True => "true",
-                        JsonTokenType.False => "false",
-                        JsonTokenType.Null => string.Empty,
-                        _ => "unable to parse"
-                    };
-                } catch (Exception ex) {
-                    description = "unable to parse";
-                    Logger.Error( ex, $"Error reading enum value of type {typeToConvert.Name}" );
-                }
+                reader.Skip();
+                description = "unable to parse";
+                Logger.Error( $"Error reading enum value of type {typeToConvert.Name}" );
+
             }
 
             // If we get here, we didn't find a matching description or name, or the type was not a string.
