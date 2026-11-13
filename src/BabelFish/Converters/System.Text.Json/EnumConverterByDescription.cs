@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json;
@@ -16,26 +17,73 @@ namespace Scopos.BabelFish.Converters.Microsoft {
     /// <typeparam name="T"></typeparam>
     public class EnumConverterByDescription<T> : JsonConverter<T> where T : Enum {
 
-
+        private bool _throwErrorOnUnknownDescription = true;
+        protected T DefaultValue = default;
         protected static Logger Logger = LogManager.GetCurrentClassLogger();
+
+        public EnumConverterByDescription( bool throwErrorOnUnknownDescription, T defaultValue ) {
+            _throwErrorOnUnknownDescription = throwErrorOnUnknownDescription;
+
+            if (defaultValue == null)
+                throw new ArgumentNullException( nameof( defaultValue ), "Default value cannot be null." );
+
+            var values = Enum.GetValues( typeof( T ) );
+            if (!values.Cast<T>().Contains( defaultValue ))
+                throw new ArgumentOutOfRangeException( nameof( defaultValue ), defaultValue, $"The value '{defaultValue}' is not defined for enum type '{typeof( T ).Name}'." );
+
+            DefaultValue = defaultValue;
+        }
+
+        public EnumConverterByDescription() {
+            _throwErrorOnUnknownDescription = true;
+
+            var values = Enum.GetValues( typeof( T ) );
+            if (values.Length == 0)
+                throw new InvalidOperationException( $"Enum type '{typeof( T ).FullName}' must define at least one value." );
+
+            DefaultValue = (T)values.GetValue( 0 );
+        }
 
         /// <inheritdoc />
         public override T Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options ) {
-            string description = reader.GetString();
-            foreach (var field in typeToConvert.GetFields()) {
-                //Try using the description first
-                if (field.GetCustomAttribute<DescriptionAttribute>()?.Description == description) {
-                    return (T)field.GetValue( null );
+            string description = string.Empty;
+
+            if (reader.TokenType == JsonTokenType.String) {
+                description = reader.GetString();
+                foreach (var field in typeToConvert.GetFields()) {
+                    //Try using the description first
+                    if (field.GetCustomAttribute<DescriptionAttribute>()?.Description == description) {
+                        return (T)field.GetValue( null );
+                    }
+                    //Second attempt using the name
+                    if (field.Name == description) {
+                        return (T)field.GetValue( null );
+                    }
                 }
-                //Second attempt using the name
-                if (field.Name == description) {
-                    return (T)field.GetValue( null );
+            } else {
+                try {
+                    description = reader.TokenType switch {
+                        JsonTokenType.Number => reader.HasValueSequence
+                            ? System.Text.Encoding.UTF8.GetString( reader.ValueSequence.ToArray() )
+                            : System.Text.Encoding.UTF8.GetString( reader.ValueSpan.ToArray() ),
+                        JsonTokenType.True => "true",
+                        JsonTokenType.False => "false",
+                        JsonTokenType.Null => string.Empty,
+                        _ => "unable to parse"
+                    };
+                } catch (Exception ex) {
+                    description = "unable to parse";
+                    Logger.Error( ex, $"Error reading enum value of type {typeToConvert.Name}" );
                 }
             }
 
-            //Open ended question, should I return a default value.
+            // If we get here, we didn't find a matching description or name, or the type was not a string.
+            // Return a default value if that's what the user wants, otherwise throw an exception.
+            if (!_throwErrorOnUnknownDescription) {
+                return DefaultValue;
+            }
 
-            throw new ScoposAPIException( $"Unknown description '{description}'", Logger );
+            throw new ScoposAPIException( $"Unknown description '{description}' for enum of type {typeToConvert.Name}", Logger );
         }
 
 
