@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
 
@@ -20,7 +21,19 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// </summary>
 		[G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 1 )]
-        public string CourseOfFireDef { get; set; } = string.Empty;
+        public SetName CourseOfFireDef { get; set; } = new SetName();
+
+        /// <summary>
+        /// This property is needed for  a Telerick binding to work, but it is not intended to be used directly. It is just a string representation of the CourseOfFireDef property.
+        /// Maybe I can make this an exstension property in the future to avoid confusion ? 
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public string CourseOfFireDefAsString {
+            get {
+                return (string)CourseOfFireDef;
+            }
+        }
 
         /// <summary>
         /// Components, roughly, describe the stages of this SimpleCOF.
@@ -47,8 +60,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonProperty( Order = 10 )]
         public string Name {
             get {
-                if (SetName.TryParse( CourseOfFireDef, out SetName sn ) &&
-                    DefinitionCache.TryGetCourseOfFireDefinition( sn, out CourseOfFire cof )) {
+                if (DefinitionCache.TryGetCourseOfFireDefinition( this.CourseOfFireDef, out CourseOfFire cof )) {
                     return cof.CommonName;
                 }
 
@@ -63,9 +75,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
 
         /// <inheritdoc/>
         public async Task<CourseOfFire> GetCourseOfFireDefinitionAsync() {
-
-            SetName cofSetName = SetName.Parse( CourseOfFireDef );
-            return await DefinitionCache.GetCourseOfFireDefinitionAsync( cofSetName );
+            return await DefinitionCache.GetCourseOfFireDefinitionAsync( CourseOfFireDef );
         }
 
         /// <inheritdoc/>
@@ -73,12 +83,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonIgnore]
         public string TextField {
             get {
-                SetName setName;
-                if (SetName.TryParse( CourseOfFireDef, out setName )) {
-                    return setName.ProperName;
-                } else {
-                    return "Unknown";
-                }
+                return CourseOfFireDef.ProperName;
             }
         }
 
@@ -87,12 +92,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         [G_NS.JsonIgnore]
         public string ValueField {
             get {
-                SetName setName;
-                if (SetName.TryParse( CourseOfFireDef, out setName )) {
-                    return setName.ToString();
-                } else {
-                    return "Unknown";
-                }
+                return CourseOfFireDef.ToString();
             }
         }
 

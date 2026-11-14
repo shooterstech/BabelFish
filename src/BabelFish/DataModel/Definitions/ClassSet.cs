@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <para>Defaults to always including the css .Name.</para>
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.ALWAYS_SHOW.Clone();
+        public ShowWhenBase ShowWhen { get; set; } = ShowWhenVariable.CreateAlwaysShow();
 
         /// <summary>
         /// Newtonsoft helper method to determine with ShowWhen should be serialized.

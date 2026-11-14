@@ -1,28 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Scopos.BabelFish.DataActors.Specification.Definitions;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
+
+    /// <summary>
+    /// A RANKING RULE precisely defines how a list of participants competing in an event should be sorted to create a result list.
+    /// </summary>
+    /// <remarks>
+    /// RANKING RULE is one of the top level Reconfigurable Rulebook definitions.</remarks>
     [Serializable]
-    public class RankingRule : Definition    {
+    public class RankingRule : Definition {
 
         public RankingRule() : base() {
             Type = DefinitionType.RANKINGRULES;
         }
 
         [OnDeserialized]
-        internal new void OnDeserializedMethod(StreamingContext context) {
-            base.OnDeserializedMethod(context);
+        internal new void OnDeserializedMethod( StreamingContext context ) {
+            base.OnDeserializedMethod( context );
         }
 
+        /// <summary>
+        /// An ordered list of RankingDirectives to follow to sort the participants in a Result List.
+        /// <para>When the Result List status is FUTURE or INTERMEDIATE only the first RankingDirective
+        /// is used.When the status if UNOFFICIAL or OFFICIAL all RankingDirectives are used to sort a result list.</para>
+        /// <para>Typically there will only be one RankingDirective in the list.</para>
+        /// <para>This attribute is required.There must be one or more RankingDirective listed.</para>
+        /// </summary>
         [G_STJ_SER.JsonPropertyOrder( 1 )]
         [G_NS.JsonProperty( Order = 20 )]
-        [DefaultValue(null)]
+        [DefaultValue( null )]
         public List<RankingDirective> RankingRules { get; set; } = new List<RankingDirective>();
 
         /// <summary>
@@ -39,15 +47,15 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             return rankingRule;
         }
 
-		/// <inheritdoc />
-		public override async Task<bool> GetMeetsSpecificationAsync() {
+        /// <inheritdoc />
+        public override async Task<bool> GetMeetsSpecificationAsync() {
             var validation = new IsRankingRulesValid();
 
-			var meetsSpecification = await validation.IsSatisfiedByAsync( this );
-			SpecificationMessages = validation.Messages;
+            var meetsSpecification = await validation.IsSatisfiedByAsync( this );
+            SpecificationMessages = validation.Messages;
 
-			return meetsSpecification;
-		}
+            return meetsSpecification;
+        }
 
         /// <inheritdoc />
         public override bool SetDefaultValues() {

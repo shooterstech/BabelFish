@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.Definitions {
 
 
@@ -28,6 +24,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Key is the set name, value is the definition.
         /// </summary>
         /// <returns></returns>
-        Task<Dictionary<string, RankingRule>> GetRankingRuleDefinitionListAsync();
+        Task<Dictionary<SetName, RankingRule>> GetRankingRuleDefinitionListAsync();
     }
 }

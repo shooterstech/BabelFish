@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
     /// <summary>
@@ -24,29 +20,37 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string Relay { get; set; }
 
-        public int CompareTo(SquaddingAssignmentBank other) {
-            int compare = this.Range.CompareTo(other.Range);
+        /// <inheritdoc/>
+        public override bool NotYetSquadded {
+            get {
+                // EKA NOTE: March 2026 I could be persuaded on how to calculate NotYetSquaddedd. Right now my thinking is, unless there is both a Relay and a Bank, the Participant is not yet completly squadded.
+                return string.IsNullOrWhiteSpace( Relay ) && string.IsNullOrWhiteSpace( Bank );
+            }
+        }
+
+        public int CompareTo( SquaddingAssignmentBank other ) {
+            int compare = this.Range.CompareTo( other.Range );
             if (compare != 0)
                 return compare;
 
-            compare = this.Relay.CompareTo(other.Relay);
+            compare = this.Relay.CompareTo( other.Relay );
             if (compare != 0)
                 return compare;
 
-            compare = this.Bank.CompareTo(other.Bank);
+            compare = this.Bank.CompareTo( other.Bank );
             if (compare != 0)
                 return compare;
 
-            return this.FiringOrder.CompareTo(other.FiringOrder);
+            return this.FiringOrder.CompareTo( other.FiringOrder );
 
         }
 
-		public override string ToString( bool useAbbreviation ) {
-			if (useAbbreviation) {
-				return $"R{this.Relay} B{this.Bank}";
-			} else {
-				return $"Relay {this.Relay} Bank {this.Bank}";
-			}
-		}
-	}
+        public override string ToString( bool useAbbreviation ) {
+            if (useAbbreviation) {
+                return $"R{this.Relay} B{this.Bank}";
+            } else {
+                return $"Relay {this.Relay} Bank {this.Bank}";
+            }
+        }
+    }
 }

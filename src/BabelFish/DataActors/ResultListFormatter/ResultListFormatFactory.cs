@@ -1,7 +1,5 @@
-﻿using Scopos.BabelFish.DataModel.Definitions;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
-using NLog;
-using DocumentFormat.OpenXml.Bibliography;
 
 namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
@@ -24,47 +22,43 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         /// <param name="courseOfFireDef"></param>
         /// <param name="eventName"></param>
         /// <returns></returns>
-        public async Task<SetName> GetResultListFormatSetNameAsync( IRLIFList itemList) {
+        public async Task<SetName> GetResultListFormatSetNameAsync( IRLIFList itemList ) {
 
-            if (itemList == null )
+            if (itemList == null)
                 return GetDefaultByEventName( "Qualification" );
 
             SetName resultListFormatSetName;
 
             //First priority, check if the ResultList includes a Result List Format definition to use. If it does, return it.
-            if (!string.IsNullOrEmpty( itemList.ResultListFormatDef)) {
-                if (SetName.TryParse( itemList.ResultListFormatDef, out resultListFormatSetName ) ) {
-                    return resultListFormatSetName;
-                }
+            if (!itemList.ResultListFormatDef.IsDefault) {
+                return itemList.ResultListFormatDef;
             }
 
             //If we get here the Result List does not have a Ranking List Format definition.
             //Which brings us to our second attempt by reading the COF definition and and matching the event name
 
             //Well, unless this is a SquaddingList, in which case return a default
-            if ( itemList is SquaddingList ) {
+            if (itemList is SquaddingList) {
                 return SetName.Parse( "v1.0:orion:Generic Squadding for Firing Points" );
             }
 
             if (itemList is ResultList resultList) {
-                string courseOfFireDef = resultList.CourseOfFireDef;
                 string eventName = resultList.EventName;
 
                 CourseOfFire cof;
                 try {
                     cof = await resultList.GetCourseOfFireDefinitionAsync().ConfigureAwait( false );
-                } catch (Exception ex ) {
+                } catch (Exception ex) {
                     //Few reasons why we would get here. 1. Old version of Orion. 2. networking issue. 3. other. None of which are really recoverable from here.
                     _logger.Error( ex );
                     cof = null;
-                    courseOfFireDef = "v1.0:orion:Not a real Course of Fire";
                 }
 
                 if (cof != null) {
                     foreach (var e in cof.Events) {
                         if (e.EventName == eventName) {
-                            if (!string.IsNullOrEmpty( e.ResultListFormatDef ) && SetName.TryParse( e.ResultListFormatDef, out resultListFormatSetName )) {
-                                return resultListFormatSetName;
+                            if (!e.ResultListFormatDef.IsDefault) {
+                                return e.ResultListFormatDef;
                             }
                             break;
                         }
@@ -73,7 +67,7 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                 //Third attempt, and we have to try and find one that will match it magically
 
-                switch (courseOfFireDef) {
+                switch (resultList.CourseOfFireDef.ToString()) {
                     //P-S-K Format
                     case "v1.0:ntparc:Three-Position Air Rifle 3x10":
                     case "v1.0:ntparc:Three-Position Air Rifle 3x20":
@@ -189,12 +183,12 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
             }
 
-				return SetName.Parse( $"v1.0:orion:Default Qualification" );
-			
+            return SetName.Parse( $"v1.0:orion:Default Qualification" );
+
         }
 
         private SetName GetDefaultByEventName( string eventName ) {
-            switch( eventName ) {
+            switch (eventName) {
                 case "Qualification":
                     return SetName.Parse( $"v1.0:orion:Default Qualification" );
                 case "Individual":

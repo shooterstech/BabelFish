@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.Definitions {
 
     /// <summary>
@@ -27,6 +23,6 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// Key is the set name, value is the definition.
         /// </summary>
         /// <returns></returns>
-        Task<Dictionary<string, StageStyle>> GetStageStyleDefinitionListAsync();
+        Task<Dictionary<SetName, StageStyle>> GetStageStyleDefinitionListAsync();
     }
 }

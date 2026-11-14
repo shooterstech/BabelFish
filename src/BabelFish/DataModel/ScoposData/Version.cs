@@ -1,5 +1,6 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.ScoposData {
     public class VersionsList : BaseClass {

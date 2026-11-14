@@ -1,11 +1,17 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Definitions {
     /// <summary>
     /// Within a ResultListField the Method property describes the type of data, and the Source property describes where the data is coming from.
     /// </summary>
     public class FieldSource : IReconfigurableRulebookObject {
+
+        /// <summary>
+        /// Special use case value of ScoreConfigName that indicates the <see cref="EventScore.ScoreFormatted"/> value should be used instead of the ScoreFormat string defined in the ScoreConfig.
+        /// </summary>
+        public const string SCORE_CONFIG_NAME_SCORE_FORMATTED = "ScoreFormatted";
 
         /// <summary>
         /// When the ResultField.Method == Score, Name is the name 
@@ -25,6 +31,10 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// When the ResultField.Method == Score and ScoreConfigName is not empty (the default),
         /// it overrides the ScoreConfigName to use. The default ScoreConfigName is specififed
         /// by the ScoreConfigDefault property in the RESULT LIST FORMAT definition.
+        /// <para>The value <see cref="SCORE_CONFIG_NAME_SCORE_FORMATTED"/> (ScoreFormatted) is
+        /// a special value that indicates the <see cref="EventScore.ScoreFormatted"/> value
+        /// of the <see cref="EventScore"/> should instead be used. This remains true regardless
+        /// of the value of ScoreFormat.</para>
         /// </summary>
         public string ScoreConfigName { get; set; } = string.Empty;
 

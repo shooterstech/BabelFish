@@ -3,6 +3,7 @@ using System.Dynamic;
 using System.Runtime.Serialization;
 using Scopos.BabelFish.DataModel.Athena.Interfaces;
 using Scopos.BabelFish.DataModel.Common;
+using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Athena.Shot {
@@ -27,8 +28,13 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
         public const string SHOT_ATTRIBUTE_EMPTY = "EMPTY";
         /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
         public const string SHOT_ATTRIBUTE_UNKNOWN_COORDINATES = "UNKNOWN COORDINATES";
-        /// <summary>Shot Attribute to indicate the shot's precise cooredinates are not known.</summary>
+        /// <summary>Shot Attribute to indicate the shot's location (and thus score) was changed by a human.</summary>
         public const string MANUALLY_MODIFIED = "MANUALLY MODIFIED";
+        /// <summary>
+        /// Shot attribute to indicate that the shot was scored by an external system, the most common being Orion's VIS system.
+        /// It also indicates that the shot is being persisted outside of ShotMapper and the Match Project.
+        /// </summary>
+        public const string EXTERNALLY_SCORED = "EXTERNALLY SCORED";
 
         /// <summary>
         /// Public constructor
@@ -145,7 +151,20 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
         /// </summary>
         public string FiringPoint { get; set; }
 
+        /// <summary>
+        /// The list of Attributes associated with the shot. Attributes are just strings that can be used to indicate something about the shot.
+        /// <para>The preferred method for adding an Attribute is the <see cref="AddAttribute(string)"/></para>
+        /// </summary>
         public List<string> Attributes { get; set; }
+
+        /// <summary>
+        /// Adds the passed in string as an Attribute to this Shot. Checks for duplicates before adding.
+        /// </summary>
+        /// <param name="attribute"></param>
+        public void AddAttribute( string attribute ) {
+            if (!Attributes.Contains( attribute ))
+                Attributes.Add( attribute );
+        }
 
         /// <summary>
         /// A Newtonsoft Conditional Property to only serialize Attributes when the list has something in it.
@@ -376,7 +395,7 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
             var sighter = IsASighter ? " SS" : "";
             var deleted = IsADeletedShot ? " DEL" : "";
             var updated = Update > 0 ? " UP" : "";
-            return $"{Score.D.ToString( "F1" )} {ResultCOFID.Substring( 0, 4 )}: {StageLabel}-{Sequence}{sighter}{deleted}{updated}";
+            return $"{StageLabel}-{Sequence}{sighter}{deleted}{updated}: {Score.D.ToString( "F1" )}";
         }
 
         /// <inheritdoc/>
@@ -461,6 +480,49 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
             }
 
             return hash;
+        }
+
+        public static async Task<Shot> SimulateAsync( CourseOfFireStructure cofStructure, CourseOfFireEntryIndividual participant, string eventStageName, int sequence ) {
+            var matchId = cofStructure.MatchStructure.MatchId;
+            var matchObj = cofStructure.MatchStructure.Match;
+            var cofDefinition = await cofStructure.GetCourseOfFireDefinitionAsync();
+            var scoreFormatDefinition = await cofDefinition.GetScoreFormatCollectionDefinitionAsync();
+            var randomNumber = new RandomGaussianNumberGenerator();
+            var topLevelEvent = EventComposite.GrowEventTree( cofDefinition );
+            var stage = topLevelEvent.GetEvents( EventtType.STAGE ).FirstOrDefault( e => e.EventName == eventStageName );
+            var singular = stage.GetAllSingulars().FirstOrDefault();
+
+            var targetDefinition = await stage.GetTargetAsync( cofDefinition, cofStructure.TargetCollectionName );
+            var tenRingDiameter = targetDefinition.ScoringRings[1].Dimension;
+
+            var x = (float)randomNumber.NextGaussian( 0, tenRingDiameter );
+            var y = (float)randomNumber.NextGaussian( 0, tenRingDiameter );
+            var score = targetDefinition.Score( x, y, cofDefinition.DefaultScoringDiameter );
+
+            var shot = new Shot() {
+                Score = score,
+                TargetName = "BabelFishSimulator",
+                TargetSetName = targetDefinition.SetName,
+                TimeScored = DateTime.UtcNow,
+                BulletDiameter = cofDefinition.DefaultExpectedDiameter,
+                ScoringDiameter = cofDefinition.DefaultScoringDiameter,
+                Location = new Location() {
+                    X = x,
+                    Y = y
+                },
+                Sequence = sequence++,
+                ResultCOFID = participant.ResultCofId,
+                MatchID = matchId,
+                StageLabel = singular.StageLabel,
+                RangeTime = "0:00:00",
+                FiringPoint = "1",
+                Privacy = matchObj.Visibility,
+                ScoreFormatted = StringFormatting.FormatScore( scoreFormatDefinition, cofStructure.ScoreConfigName, singular.ScoreFormat, score )
+            };
+            shot.Meta = new System.Dynamic.ExpandoObject();
+            ((dynamic)shot.Meta).ESTSystem = "BabelFish";
+
+            return shot;
         }
     }
 }

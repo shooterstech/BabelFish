@@ -3,14 +3,55 @@ using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.DataModel.Athena {
-    [Serializable]
+
+    /// <summary>
+    /// Represents the score a <see cref="Participant"/> has earned for an <see cref="Event"/>.
+    /// <para>The Score class has a number of different properties to representing different ways to track the same scores (e.g. X, D, I, S, J, K, L).
+    /// Which property is used to display the score for a given Event is determined by a <see cref="ScoreFormatCollection"/> ScoreFormatDefinition associated with the Event's EventType.
+    /// </para>
+    /// </summary>
     public class Score : ICheckSum {
 
+        #region Private Variables
         private float s = float.NaN;
+
+        #endregion
+
+        #region Constructors, factory methods, and initialization methods
+        /// <summary>
+        /// Constructor for Score class. Initializes all properties to 0.
+        /// </summary>
         public Score() {
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Score class by copying the values from an existing Score instance.
+        /// </summary>
+        /// <remarks>Use this constructor to create a deep copy of an existing Score object. All
+        /// properties are copied from the specified instance.</remarks>
+        /// <param name="other">The Score instance to copy values from. Cannot be null.</param>
+        public Score( Score? other ) {
+            if (other is null) {
+                // If the other Score is null, we will just initialize this Score with default values (which are all 0).
+                return;
+            }
+
+            // Perform a deep copy of the properties from the other Score instance to this new instance.
+            s = other.s;
+            X = other.X;
+            D = other.D;
+            I = other.I;
+            S = other.S;
+            J = other.J;
+            K = other.K;
+            L = other.L;
+            NumShotsFired = other.NumShotsFired;
+        }
+
+        #endregion
+
+        #region Data Model Properties
         /// <summary>
         /// Number of inner tens.
         /// </summary>
@@ -68,18 +109,9 @@ namespace Scopos.BabelFish.DataModel.Athena {
         [DefaultValue( 0 )]
         public float L { get; set; } = 0;
 
-        public bool ShouldSerializeJ() {
-            return !(Math.Abs( J ) < .00001f || float.IsNaN( J ) || float.IsInfinity( J ));
-        }
+        #endregion
 
-        public bool ShouldSerializeK() {
-            return !(Math.Abs( K ) < .00001f || float.IsNaN( K ) || float.IsInfinity( K ));
-        }
-
-        public bool ShouldSerializeL() {
-            return !(Math.Abs( L ) < .00001f || float.IsNaN( L ) || float.IsInfinity( L ));
-        }
-
+        #region Helper Properties
         /// <summary>
         /// Returns a boolean indicating if this Score is 0 (all values are zero). 
         /// </summary>
@@ -98,6 +130,45 @@ namespace Scopos.BabelFish.DataModel.Athena {
         [G_NS.JsonIgnore]
         public int NumShotsFired { get; set; } = 0;
 
+        /// <inheritdoc />
+        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public string CheckSum { get; set; }
+        #endregion
+
+        #region Methods
+        /// <summary>
+        /// Newtonsoft.Json helper method to determine whether the J property should be serialized. We want to avoid serializing J
+        /// if it's value is close to zero, NaN, or Infinity, as in those cases J is not being used to hold a meaningful score.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeJ() {
+            return !(Math.Abs( J ) < .00001f || float.IsNaN( J ) || float.IsInfinity( J ));
+        }
+
+        /// <summary>
+        /// Newtonsoft.json helper method to determine whether the K property should be serialized. We want to avoid serializing K
+        /// if it's value is close to zero, NaN, or Infinity, as in those cases K is not being used to hold a meaningful score.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeK() {
+            return !(Math.Abs( K ) < .00001f || float.IsNaN( K ) || float.IsInfinity( K ));
+        }
+
+        /// <summary>
+        /// Newtonsoft.json helper method to determine whether the L property should be serialized. We want to avoid serializing L
+        /// if it's value is close to zero, NaN, or Infinity, as in those cases L is not being used to hold a meaningful score.
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeL() {
+            return !(Math.Abs( L ) < .00001f || float.IsNaN( L ) || float.IsInfinity( L ));
+        }
+
+        /// <summary>
+        /// Returns a variation of the Score class where the X, D, and I properties have been averaged by the number of shots fired (NumShotsFired). 
+        /// </summary>
+        /// <returns></returns>
         public AveragedScore GetAvgShotFired() {
             if (NumShotsFired == 0) return new AveragedScore();
             return new AveragedScore {
@@ -107,76 +178,44 @@ namespace Scopos.BabelFish.DataModel.Athena {
             };
         }
 
-        public static Score operator +( Score left, Score right ) {
-            return new Score {
-                X = left.X + right.X,
-                D = left.D + right.D,
-                I = left.I + right.I,
-                S = left.S + right.S,
-                J = left.J + right.J,
-                K = left.K + right.K,
-                L = left.L + right.L,
-                NumShotsFired = left.NumShotsFired + right.NumShotsFired,
-            };
+        /// <summary>
+        /// Method to turn a score to 0. Most often used in cases where the participant received a DSQ, and thus there score is 0. 
+        /// </summary>
+        public void MakeScoreZero() {
+            X = 0;
+            D = 0;
+            I = 0;
+            S = 0;
+            J = 0;
+            K = 0;
+            L = 0;
         }
 
-        public static Score operator /( Score left, int right ) {
-            //EKA QUESTION: Oct 2025: Should the devide operator return a Score or an AveragedScore ? 
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
 
-            if (left is null || left.IsZero || right == 0)
-                return new Score();
+            ulong hash = (ulong)(16 * this.D);
+            hash = hash << 8 | (uint)this.I;
+            hash = hash << 4 | (uint)this.X;
+            hash = ((ulong)hash << 8) | (uint)(16 * this.S);
 
-            return new Score {
-                X = left.X / right,
-                D = left.D / right,
-                I = left.I / right,
-                S = left.S / right,
-                J = left.J / right,
-                K = left.K / right,
-                L = left.L / right,
-                NumShotsFired = left.NumShotsFired, //Its debatable how .NumberShotsFired should be calculated.
-            };
+            var hash2 = (ulong)(256 * this.J);
+            hash2 = hash2 << 8 | (ulong)(256 * this.K);
+            hash2 = hash2 << 8 | (ulong)(256 * this.L);
+            return hash ^ hash2;
         }
 
-        public void Add( Score right, ScoreComponent s ) {
-            this.X += right.X;
-            this.D += right.D;
-            this.I += right.I;
-            this.J += right.J;
-            this.K += right.K;
-            this.L += right.L;
-            this.NumShotsFired += right.NumShotsFired;
-
-            //The S is for speical sum
-            switch (s) {
-                case ScoreComponent.I:
-                    this.S += right.I;
-                    break;
-                case ScoreComponent.X:
-                    this.S += right.X;
-                    break;
-                case ScoreComponent.D:
-                    this.S += right.D;
-                    break;
-                case ScoreComponent.S:
-                    this.S += right.S;
-                    break;
-                case ScoreComponent.J:
-                    this.S += right.J;
-                    break;
-                case ScoreComponent.K:
-                    this.S += right.K;
-                    break;
-                case ScoreComponent.L:
-                    this.S += right.L;
-                    break;
-            }
-        }
-
+        /// <summary>
+        /// Returns a string representation of the current object using the decimal score component format.
+        /// </summary>
         public override string ToString() {
             return ToString( ScoreComponent.D );
         }
 
+        /// <summary>
+        /// Returns a string representation of the current object using the specified score component format. 
+        /// </summary>
+        /// <param name="scoreComponent">The score component to use for formatting.</param>
         public string ToString( ScoreComponent scoreComponent ) {
 
             switch (scoreComponent) {
@@ -198,6 +237,14 @@ namespace Scopos.BabelFish.DataModel.Athena {
             }
         }
 
+        /// <summary>
+        /// Returns a string representing of this Score using the score format specified by the passed in ScoreFormatCollection and scoreConfigName.
+        /// The method looks up the ScoreConfig in the ScoreFormatCollection with a ScoreConfigName matching the passed in scoreConfigName,
+        /// then uses the ScoreComponent specified in that ScoreConfig to determine how to format the Score for the string representation.
+        /// </summary>
+        /// <param name="scoreFormatDefinition"></param>
+        /// <param name="scoreConfigName"></param>
+        /// <returns></returns>
         public string ToString( ScoreFormatCollection scoreFormatDefinition, string scoreConfigName ) {
             foreach (var scoreConfig in scoreFormatDefinition.ScoreConfigs) {
                 if (scoreConfig.ScoreConfigName == scoreConfigName) {
@@ -209,6 +256,11 @@ namespace Scopos.BabelFish.DataModel.Athena {
             return this.ToString( ScoreComponent.D );
         }
 
+        /// <summary>
+        /// Returns just the score component specified by the passed in ScoreComponent enum. E.g. if ScoreComponent.I is passed in, this method returns just the I property of this Score object.
+        /// </summary>
+        /// <param name="scoreComponent"></param>
+        /// <returns></returns>
         public float GetScoreComponentScore( ScoreComponent scoreComponent ) {
 
             switch (scoreComponent) {
@@ -228,28 +280,111 @@ namespace Scopos.BabelFish.DataModel.Athena {
                 case ScoreComponent.L:
                     return this.L;
             }
-
         }
 
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
+        #endregion
 
+        #region Operator Overloads
 
-        /// <inheritdoc />
-        public ulong CalculateChecksum() {
+        /// <summary>
+        /// Operator overload for adding two scores together.
+        /// <para>Each score component is added individually.</para>
+        /// <para>To have control over how the S component is calculated, use the Add() method with a specific ScoreComponent.</para>
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Score operator +( Score left, Score right ) {
+            if (left is null)
+                left = new Score();
+            if (right is null)
+                right = new Score();
 
-            ulong hash = (ulong)(16 * this.D);
-            hash = hash << 8 | (uint)this.I;
-            hash = hash << 4 | (uint)this.X;
-            hash = ((ulong)hash << 8) | (uint)(16 * this.S);
-
-            var hash2 = (ulong)(256 * this.J);
-            hash2 = hash2 << 8 | (ulong)(256 * this.K);
-            hash2 = hash2 << 8 | (ulong)(256 * this.L);
-            return hash ^ hash2;
+            return new Score {
+                X = left.X + right.X,
+                I = left.I + right.I,
+                D = (float)Math.Round( left.D + right.D, 1 ),
+                S = (float)Math.Round( left.S + right.S, 2 ),
+                J = (float)Math.Round( left.J + right.J, 5 ),
+                K = (float)Math.Round( left.K + right.K, 5 ),
+                L = (float)Math.Round( left.L + right.L, 5 ),
+                NumShotsFired = left.NumShotsFired + right.NumShotsFired,
+            };
         }
+
+        /// <summary>
+        /// Divide operator.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static Score operator /( Score left, int right ) {
+            //EKA QUESTION: Oct 2025: Should the devide operator return a Score or an AveragedScore ? 
+
+            if (left is null || left.IsZero || right == 0)
+                return new Score();
+
+            return new Score {
+                X = left.X / right,
+                D = left.D / right,
+                I = left.I / right,
+                S = left.S / right,
+                J = left.J / right,
+                K = left.K / right,
+                L = left.L / right,
+                NumShotsFired = left.NumShotsFired, //Its debatable how .NumberShotsFired should be calculated.
+            };
+        }
+
+        /// <summary>
+        /// Add method that uses the specified ScoreComponent to determine how to calculate the S property of this Score when adding the right Score to this Score.
+        /// </summary>
+        /// <param name="right"></param>
+        /// <param name="s"></param>
+        public void Add( Score right, ScoreComponent s ) {
+            if (right is null)
+                right = new Score();
+
+            this.I += right.I;
+            this.X += right.X;
+            this.D = (float)Math.Round( this.D + right.D, 1 );
+            // J, K, and L are all special use case score components that are only used in certain cases, and are not always used to hold meaningful scores. Thus, when adding them together we want to round the result to 5 decimal places.
+            this.J = (float)Math.Round( this.J + right.J, 5 );
+            this.K = (float)Math.Round( this.K + right.K, 5 );
+            this.L = (float)Math.Round( this.L + right.L, 5 );
+            this.NumShotsFired += right.NumShotsFired;
+
+            // If S is NaN, that means it hasn't been set yet. Since we are about to assign it, we need to make sure to set it to 0 before we add to it
+            // Otherwise .S will return the .D value when we go to add to it, which will throw off the score calculation.
+            if (float.IsNaN( this.s ))
+                this.s = 0;
+
+            //The S is for speical sum
+            switch (s) {
+                case ScoreComponent.I:
+                    this.S = (float)Math.Round( this.S + right.I, 2 );
+                    break;
+                case ScoreComponent.X:
+                    this.S = (float)Math.Round( this.S + right.X, 2 );
+                    break;
+                case ScoreComponent.D:
+                    this.S = (float)Math.Round( this.S + right.D, 2 );
+                    break;
+                case ScoreComponent.S:
+                    this.S = (float)Math.Round( this.S + right.S, 2 );
+                    break;
+                case ScoreComponent.J:
+                    this.S = (float)Math.Round( this.S + right.J, 2 );
+                    break;
+                case ScoreComponent.K:
+                    this.S = (float)Math.Round( this.S + right.K, 2 );
+                    break;
+                case ScoreComponent.L:
+                    this.S = (float)Math.Round( this.S + right.L, 2 );
+                    break;
+            }
+        }
+
+        #endregion
     }
 }

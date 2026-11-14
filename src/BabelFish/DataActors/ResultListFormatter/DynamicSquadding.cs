@@ -13,8 +13,8 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
         public override async Task<ResultListFormat> GenerateAsync( SquaddingList squaddingList ) {
 
             ResultListFormat rlf = new ResultListFormat();
-            rlf.SetName = "v1.0:dynamic:Squadding";
-            rlf.ScoreFormatCollectionDef = "v1.0:orion:Standard Score Formats";
+            rlf.SetName = SetName.Parse( "v1.0:dynamic:Squadding" );
+            rlf.ScoreFormatCollectionDef = SetName.Parse( "v1.0:orion:Standard Score Formats" );
             rlf.HierarchicalName = "dynamic:Squadding";
             rlf.Version = "1.0";
             var scoreFormatCollection = await rlf.GetScoreFormatCollectionDefinitionAsync();
@@ -101,10 +101,10 @@ namespace Scopos.BabelFish.DataActors.ResultListFormatter {
 
                     // Define the ResultListField with the ATTRIBUTE method.
                     var field = new ResultListField();
-                    field.FieldName = attributeValue.AttributeDef;
+                    field.FieldName = attributeValue.AttributeDef.ToString();
                     field.Method = ResultFieldMethod.ATTRIBUTE;
                     field.Source = new FieldSource() {
-                        Name = attributeValue.AttributeDef
+                        Name = attributeValue.AttributeDef.ToString()
                     };
                     rlf.Fields.Add( field );
 

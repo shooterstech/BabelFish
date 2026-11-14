@@ -1,22 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Scopos.BabelFish.DataModel.OrionMatch {
-    public class TournamentMember {
 
-        /// <summary>
-        /// The Unique Match ID that is a Member of the Tournament.
-        /// </summary>
-        [G_NS.JsonProperty( Order = 1 )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.MatchIdConverter ) )]
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.MatchIdConverter ) )]
-        public MatchID MatchId { get; set; }
 
+    public class TournamentMember : MatchAbbr {
+
+        #region Private Variables
+
+        #endregion
+
+        #region Constructors, Factory Methods, and Initialization Methods
+
+        #endregion
+
+        #region Event Handlers
+
+        #endregion
+
+        #region Data Model Properties
+        [G_NS.JsonProperty( Order = 50 )]
+        public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.UNKNOWN;
+
+        #endregion
+
+        #region Helper Properties
         /// <summary>
-        /// The name of the Match that is a Member of the Tournament.
+        /// Tournament that this Match is a member of. Backpointer populated on deserialization.
         /// </summary>
-        [G_NS.JsonProperty( Order = 2 )]
-        public string MatchName { get; set; }
+        [G_NS.JsonIgnore]
+        public Tournament Tournament { get; set; }
+
+
+        [G_NS.JsonIgnore]
+        public MatchID? TournamentId => Tournament?.TournamentId;
+
+        #endregion
+
+        #region Methods
+
+        #endregion
+
     }
 }

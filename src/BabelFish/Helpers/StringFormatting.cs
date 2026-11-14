@@ -18,16 +18,31 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="startDate"></param>
         /// <param name="endDate"></param>
         /// <returns></returns>
-        public static string SpanOfDates( DateTime startDate, DateTime endDate ) {
-            if (startDate == endDate)
-                return startDate.ToString( "ddd, dd MMM yyyy" );
-            else if (startDate.Year == endDate.Year
-                && startDate.Month == endDate.Month)
-                return $"{startDate.ToString( "dd" )} - {endDate.ToString( "dd MMM yyyy" )}";
-            else if (startDate.Year == endDate.Year)
-                return $"{startDate.ToString( "dd MMM" )} - {endDate.ToString( "dd MMM yy" )}";
+        public static string SpanOfDates( DateTime? startDate, DateTime? endDate ) {
+            // Check if the user passed in any null value. Do our best to deal with it if they did.
+            if (startDate is null || endDate is null) {
+                if (startDate is not null)
+                    return SingleDate( startDate );
+                else if (endDate is not null)
+                    return SingleDate( endDate );
+                else
+                    return "Unknown";
+            }
+
+            // Convert to non-nullable DateTime for easier comparison
+            var startDateNotNull = (DateTime)startDate;
+            var endDateNotNull = (DateTime)endDate;
+
+            // Now we can safely format.
+            if (startDateNotNull == endDateNotNull)
+                return SingleDate( startDate );
+            else if (startDateNotNull.Year == endDateNotNull.Year
+                && startDateNotNull.Month == endDateNotNull.Month)
+                return $"{startDateNotNull.ToString( "dd" )} - {endDateNotNull.ToString( "dd MMM yyyy" )}";
+            else if (startDateNotNull.Year == endDateNotNull.Year)
+                return $"{startDateNotNull.ToString( "dd MMM" )} - {endDateNotNull.ToString( "dd MMM yyyy" )}";
             else
-                return $"{startDate.ToString( "MM/dd/yy" )} - {endDate.ToString( "MM/dd/yy" )}";
+                return $"{startDateNotNull.ToString( "MM/dd/yy" )} - {endDateNotNull.ToString( "MM/dd/yy" )}";
 
         }
 
@@ -60,12 +75,16 @@ namespace Scopos.BabelFish.Helpers {
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public static string SingleDate( DateTime date ) {
-            return date.ToString( "ddd, dd MMM yyyy" );
+        public static string SingleDate( DateTime? date ) {
+            if (date is null)
+                return "Unknown";
+            return date.Value.ToString( "ddd, dd MMM yyyy" );
         }
 
-        public static string SingleDateTime( DateTime date ) {
-            return date.ToString( "dd MMM yyyy HH:mm" );
+        public static string SingleDateTime( DateTime? date ) {
+            if (date is null)
+                return "Unknown";
+            return date.Value.ToString( "dd MMM yyyy HH:mm" );
         }
 
         /// Formats the passed in DateTime string into a standard method of displaying dates.
@@ -346,13 +365,13 @@ namespace Scopos.BabelFish.Helpers {
             } else {
                 if (!string.IsNullOrWhiteSpace( region )) {
                     if (!string.IsNullOrWhiteSpace( city )) {
-                        return "{city}, {country}";
+                        return $"{city}, {country}";
                     } else {
-                        return "{state}, {country}";
+                        return $"{region}, {country}";
                     }
                 } else {
                     if (!string.IsNullOrWhiteSpace( city )) {
-                        return "{city}, {country}";
+                        return $"{city}, {country}";
                     } else {
                         return country;
                     }
@@ -392,14 +411,33 @@ namespace Scopos.BabelFish.Helpers {
         /// <param name="untruncatedValue"></param>
         /// <returns></returns>
         public static string GetTruncatedString( string untruncatedValue, int numberOfCharacters = 24 ) {
+            if (untruncatedValue is null)
+                return string.Empty;
+
+            var trimmedValue = untruncatedValue.Trim();
+
+
             if (numberOfCharacters <= 4) {
                 //We can't truncate less than 4 characters
-                return untruncatedValue;
-            } else if (untruncatedValue.Length >= numberOfCharacters) {
-                return $"{untruncatedValue.Substring( 0, numberOfCharacters - 4 )}...";
+                numberOfCharacters = 4;
+            }
+
+            if (trimmedValue.Length > numberOfCharacters) {
+                return $"{trimmedValue.Substring( 0, numberOfCharacters - 3 ).Trim()}...";
             } else {
-                return untruncatedValue;
+                return trimmedValue;
             }
         }
+
+        /// <summary>
+        /// Converts a string to a safe file name by replacing invalid characters with underscores.
+        /// </summary>
+        /// <param name="input">The input string to be converted.</param>
+        /// <returns>A string that is safe to use as a file name.</returns>
+        public static string MakeSafeFileName( string input ) {
+            var invalid = Path.GetInvalidFileNameChars();
+            return string.Concat( input.Select( c => invalid.Contains( c ) ? '_' : c ) );
+        }
+
     }
 }

@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Version = Scopos.BabelFish.DataModel.Common.Version;
 
 namespace Scopos.BabelFish.DataModel.ScoposData {
     public class ReleaseInfo {
 
         /// <summary>
-        /// Version number. in the form of a.b.c.d
-        /// a = major version
-        /// b = minor version
-        /// c = bug fix version
-        /// d = internal build
+        /// Version number
+        /// <list type="bullet">Is in the form of x.y.z.b.
+        /// <item>x is the Major Version</item>
+        /// <item>y is the Minor Version</item>
+        /// <item>z is the Patch Version</item>
+        /// <item>p is the Build version. Defaults to 0 if not included in the string.</item>
+        /// </list>
         /// </summary>
         [G_NS.JsonProperty( Order = 1 )]
-        [G_NS.JsonConverter( typeof( G_BF_NS_CONV.VersionConverter ) )]
-        [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VersionConverter ) )]
-        public Version Version { get; set; } = new Version( "1.0.0.0" );
+        public Version Version { get; set; } = Version.DEFAULT;
 
 
         [G_NS.JsonProperty( Order = 2 )]
@@ -37,7 +34,7 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         /// <summary>
         /// The URL of the EULA's PDF.
         /// </summary>
-        [G_NS.JsonProperty(Order = 5)]
+        [G_NS.JsonProperty( Order = 5 )]
         public string EULAUrl { get; set; } = "";
 
         /// <summary>
@@ -86,6 +83,6 @@ namespace Scopos.BabelFish.DataModel.ScoposData {
         [G_NS.JsonProperty( Order = 2 )]
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.VersionConverter ) )]
         [G_STJ_SER.JsonConverter( typeof( G_BF_STJ_CONV.VersionConverter ) )]
-        public Version Version { get; set; } = new Version( "1.0.0.0" );
+        public Version Version { get; set; } = Version.DEFAULT;
     }
 }

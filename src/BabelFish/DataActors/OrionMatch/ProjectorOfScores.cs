@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NLog.Filters;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
@@ -90,7 +86,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (projection.Participant is Team) {
                 //Project the scores of each team member. Note that this is a recursive call.
                 var teamMembers = projection.GetTeamMembersAsIEventScoreProjection();
-                foreach (var tm in teamMembers ) {
+                foreach (var tm in teamMembers) {
                     tm.ProjectScores( this );
                 }
 
@@ -117,22 +113,16 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             //If someone want's a different implementation, they should write their own concrete ProjectorOfScore and override this method :P
             EventScore teamEventScore, teamMemberEventScore;
             int teamMemberCount = 0;
-            if ( teamToProject.EventScores.TryGetValue( eventToProject.EventName, out teamEventScore ) ) {
+            if (teamToProject.EventScores.TryGetValue( eventToProject.EventName, out teamEventScore )) {
                 teamEventScore.Projected = new DataModel.Athena.Score();
 
-                foreach( var tm in teamToProject.GetTeamMembersAsIEventScoreProjection() ) {
+                foreach (var tm in teamToProject.GetTeamMembersAsIEventScoreProjection()) {
 
-                    if (teamMemberCount < NumberOfTeamMembers && tm.EventScores.TryGetValue( eventToProject.EventName, out teamMemberEventScore) ) {
+                    if (teamMemberCount < NumberOfTeamMembers && tm.EventScores.TryGetValue( eventToProject.EventName, out teamMemberEventScore )) {
                         if (teamMemberEventScore.Status == ResultStatus.FUTURE || teamMemberEventScore.Status == ResultStatus.INTERMEDIATE) {
-                            teamEventScore.Projected.I += teamMemberEventScore.Projected.I;
-                            teamEventScore.Projected.X += teamMemberEventScore.Projected.X;
-                            teamEventScore.Projected.D += teamMemberEventScore.Projected.D;
-                            teamEventScore.Projected.S += teamMemberEventScore.Projected.S;
+                            teamEventScore.Projected += teamMemberEventScore.Projected;
                         } else {
-                            teamEventScore.Projected.I += teamMemberEventScore.Score.I;
-                            teamEventScore.Projected.X += teamMemberEventScore.Score.X;
-                            teamEventScore.Projected.D += teamMemberEventScore.Score.D;
-                            teamEventScore.Projected.S += teamMemberEventScore.Score.S;
+                            teamEventScore.Projected += teamMemberEventScore.Score;
                         }
                     }
 
@@ -144,7 +134,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             if (eventToProject.EventType == EventtType.STAGE || recusionDepth > 2)
                 return;
 
-            foreach( var childEvent in eventToProject.Children ) {
+            foreach (var childEvent in eventToProject.Children) {
                 ProjectTeamScores( teamToProject, childEvent, recusionDepth + 1 );
             }
         }

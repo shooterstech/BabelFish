@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Scopos.BabelFish.DataModel.OrionMatch;
 
 namespace Scopos.BabelFish.Responses.OrionMatchAPI {
@@ -11,7 +11,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
      */
 
     /// <summary>
-    /// LeagueBase contains common properties that many Get League xyz calls have in common.
+    /// LeagueBase contains common properties that many Get League xyz calls have in common, such as GetLeaugeDetail(), GetLeagueList(), GetLeagueTeamList(), etc.
     /// </summary>
     public abstract class LeagueBase {
 
@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Responses.OrionMatchAPI {
         /// Unique LeagueID for this League. Takes the form of a MatchID
         /// </summary>
         [G_NS.JsonProperty( Order = 1 )]
-        public MatchID ? LeagueID { get; set; }
+        public MatchID? LeagueID { get; set; }
 
         /// <summary>
         /// Human readable name of the league.
