@@ -346,16 +346,16 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         #region Events
 
         [G_NS.JsonIgnore]
-        EventHandler<EventArgs<ClubAddress>> OnClubAddressAdded;
+        public EventHandler<EventArgs<ClubAddress>> OnClubAddressAdded;
 
         [G_NS.JsonIgnore]
-        EventHandler<EventArgs<ClubAddress>> OnClubAddressRemoved;
+        public EventHandler<EventArgs<ClubAddress>> OnClubAddressRemoved;
 
         [G_NS.JsonIgnore]
-        EventHandler<EventArgs<ClubTeam>> OnClubTeamAdded;
+        public EventHandler<EventArgs<ClubTeam>> OnClubTeamAdded;
 
         [G_NS.JsonIgnore]
-        EventHandler<EventArgs<ClubTeam>> OnClubTeamRemoved;
+        public EventHandler<EventArgs<ClubTeam>> OnClubTeamRemoved;
 
         #endregion 
 
@@ -469,6 +469,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             }
 
             this.AddressList.Remove( clubAddress );
+            if (ReferenceEquals( clubAddress.Club, this )) {
+                clubAddress.Club = null;
+            }
 
             if (!_ignoreEvents) {
                 OnClubAddressRemoved?.Invoke( this, new EventArgs<ClubAddress>( clubAddress ) );
@@ -519,6 +522,9 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             }
 
             this.TeamList.Remove( clubTeam );
+            if (ReferenceEquals( clubTeam.Club, this )) {
+                clubTeam.Club = null;
+            }
 
             if (!_ignoreEvents) {
                 OnClubTeamRemoved?.Invoke( this, new EventArgs<ClubTeam>( clubTeam ) );
