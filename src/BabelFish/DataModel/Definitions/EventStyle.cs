@@ -56,6 +56,18 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         public List<SetName> RelatedEventStyles { get; set; } = new List<SetName>();
 
         /// <summary>
+        /// A list (order is inconsequential) of other ATTRIBUTEs that have a connection to this EVENT STYLE.
+        /// <para>For example the EVENT STYLE v1.0:ntparc:Three-Position Precision Air Rifle has a connection to the ATTRIBUTE
+        /// v1.0:ntparc:Three-Position Air Rifle Type, as the Ari Rifle Type is often used in the EVENT STYLE MAPPING to map
+        /// this the Precision Air Rifle EVENT STYLE.</para>
+        /// <para>Another wayh of looking at this relationship, is if an athlete or team subscribes to this EVENT STYLE
+        /// what ATTRIBUTES should they store valeus for related to this EVENT STYLE.</para>
+        /// </summary>
+		[G_STJ_SER.JsonPropertyOrder( 14 )]
+        [G_NS.JsonProperty( Order = 14 )]
+        public List<SetName> RelatedAttributeDefs { get; set; } = new List<SetName>();
+
+        /// <summary>
         /// The SCORE FORMAT COLLECTION to use when displaying scores for this EVENT STYLE.
         /// Each SimpleCOFComponent specifies the Score Config Name.
         /// <para>The default value is "v1.0:orion:Standard Score Formats"
@@ -64,31 +76,31 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <remarks>
         /// There is an argument to be made that we should also include a SCORE FORMAT COLLECTION to use
         /// when displaying average scores over time.</remarks>
-        [G_STJ_SER.JsonPropertyOrder( 14 )]
-        [G_NS.JsonProperty( Order = 14 )]
+        [G_STJ_SER.JsonPropertyOrder( 15 )]
+        [G_NS.JsonProperty( Order = 15 )]
         public SetName ScoreFormatCollectionDef { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Standard Score Formats" );
 
         /// <summary>
         /// Identifies the score format collection definition used for displaying calculated averaged scores.
         /// <para>The default value is "v1.0:orion:Standard Averaged Score Formats".</para>
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 15 )]
-        [G_NS.JsonProperty( Order = 15 )]
+        [G_STJ_SER.JsonPropertyOrder( 16 )]
+        [G_NS.JsonProperty( Order = 16 )]
         public SetName ScoreFormatCollectionDefForAverages { get; set; } = Definitions.SetName.Parse( "v1.0:orion:Standard Averaged Score Formats" );
 
         /// <summary>
         /// The first day of this month, is considered with the annual season for this Event Style starts.
         /// </summary>
-        [G_STJ_SER.JsonPropertyOrder( 16 )]
-        [G_NS.JsonProperty( Order = 16, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        [G_STJ_SER.JsonPropertyOrder( 17 )]
+        [G_NS.JsonProperty( Order = 17, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
         [DefaultValue( Months.January )]
         public Months SeasonStarts { get; set; } = Months.January;
 
         /// <summary>
         /// A list of SimpleCOF. This lists the common ways to displaying scores from this EVENT STYLE.
         /// </summary>
-		[G_STJ_SER.JsonPropertyOrder( 17 )]
-        [G_NS.JsonProperty( Order = 17 )]
+		[G_STJ_SER.JsonPropertyOrder( 18 )]
+        [G_NS.JsonProperty( Order = 18 )]
         public List<SimpleCOF> SimpleCOFs { get; set; } = new List<SimpleCOF>();
 
         /// <inheritdoc />
@@ -117,6 +129,26 @@ namespace Scopos.BabelFish.DataModel.Definitions {
         /// <returns></returns>
         public bool ShouldSerializeStageStyles() {
             return (StageStyles != null && StageStyles.Count > 0);
+        }
+
+        /// <summary>
+        /// Determines whether `RelatedEventStyles` is included during serialization.
+        /// </summary>
+        /// <remarks>Used by serializers that honor the `ShouldSerialize<PropertyName>` pattern to skip
+        /// empty or null collections.</remarks>
+        /// <returns>`true` when `RelatedEventStyles` is not `null` and contains at least one item; otherwise, `false`.</returns>
+        public bool ShouldSerializeRelatedEventStyles() {
+            return (RelatedEventStyles != null && RelatedEventStyles.Count > 0);
+        }
+
+        /// <summary>
+        /// Determines whether the RelatedAttributeDefs collection should be serialized.
+        /// </summary>
+        /// <remarks>Used by serializers that honor the ShouldSerialize pattern to omit empty or null
+        /// collections.</remarks>
+        /// <returns>true when RelatedAttributeDefs is not null and contains at least one item; otherwise, false.</returns>
+        public bool ShouldSerializeRelatedAttributeDefs() {
+            return (RelatedAttributeDefs != null && RelatedAttributeDefs.Count > 0);
         }
 
         /// <inheritdoc />
