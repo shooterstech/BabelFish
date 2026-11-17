@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
             ClubTeamEventStyle clubTeamEventStyle = new ClubTeamEventStyle();
             clubTeamEventStyle.EventStyleDef = eventStyleDef;
             clubTeamEventStyle.ClubTeam = clubTeam;
-            clubTeamEventStyle.HeaderName = StringFormatting.GetTruncatedString( eventStyleDefinition.CommonName, 24 );
+            clubTeamEventStyle.HeaderName = StringFormatting.GetTruncatedString( eventStyleDefinition.CommonName, 64 );
             clubTeamEventStyle.ScoreConfigName = scoreFormatCollectionDefinition.GetDefaultScoreConfigName();
             clubTeamEventStyle.CourseOfFireDef = eventStyleDefinition.SimpleCOFs.FirstOrDefault()?.CourseOfFireDef ?? new SetName();
             clubTeam.EventStyles.Add( clubTeamEventStyle );
@@ -87,7 +87,7 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         /// <para>For example "Three-Posiiton Air Rifle" or "Smallbore".</para>
         /// </summary>
         [Required]
-        [StringLength( 24, MinimumLength = 4, ErrorMessage = "HeaderName, must be at least 4 characters and no longer than 24 characters." )]
+        [StringLength( 64, MinimumLength = 4, ErrorMessage = "HeaderName, must be at least 4 characters and no longer than 64 characters." )]
         [DefaultValue( "" )]
         public string HeaderName { get; set; } = string.Empty;
 
