@@ -12,6 +12,7 @@ All notable changes to BabelFish will be documented in this file.
 #### Serialization
 - VisibilityOption JSON reads accept case variants such as the league API's PUBLIC; writes retain title case and unknown values remain private.
 #### Match
+- RangeReport exposes `EmailSent` and a nullable `EmailSentStatus` for callers that need to distinguish a hidden email status from an unsent report.
 - MatchAbbr now exposes nullable IsLive activity metadata; null means activity was not evaluated.
 - Matches may now have multiple Courses of Fire (1.x version allowed only one), each of which is defined in a new class CourseOFFireStructure.
 - Multiple properties within the Match class are now deprecated, as they previously existed when only one Course of Fire was allowed. These deprecated properties will remain for backwards compatibility for at least 1 year after release. They will however point to the first (and default) CourseOfFireStructure.
