@@ -32,6 +32,19 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         public bool Published { get; set; } = false;
 
+        /// <summary>
+        /// For callers with email permission, indicates that the match report was sent
+        /// or the recap was included in an email. Defaults to false when omitted by the API.
+        /// </summary>
+        public bool EmailSent {
+            get => EmailSentStatus ?? false;
+            set => EmailSentStatus = value;
+        }
+
+        /// <summary>The email status supplied by the API, when visible to this caller.</summary>
+        [G_STJ_SER.JsonIgnore, G_NS.JsonIgnore]
+        public bool? EmailSentStatus { get; private set; }
+
         public string MatchId { get; set; } = string.Empty;
 
         public int LicenseNumber { get; set; } = 0;

@@ -253,6 +253,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                         "Updated by PatchRangeReport local test."
                     ],
                     "Published": true,
+                    "EmailSent": true,
                     "MatchId": "1.2063.2026043009084183.0",
                     "LicenseNumber": 2063,
                     "ResultListName": "Individual - Precision",
@@ -280,6 +281,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
             Assert.AreEqual( RangeReportKind.MATCH, wrapper.RangeReport.ReportKind );
             Assert.AreEqual( "Patched RangeReporter Press Release", wrapper.RangeReport.Headline );
             Assert.IsTrue( wrapper.RangeReport.Published );
+            Assert.IsTrue( wrapper.RangeReport.EmailSent );
             Assert.AreEqual( "1.2063.2026043009084183.0", wrapper.RangeReport.MatchId );
             Assert.AreEqual( 2063, wrapper.RangeReport.LicenseNumber );
             Assert.AreEqual( "Individual - Precision", wrapper.RangeReport.ResultListName );
