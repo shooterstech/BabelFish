@@ -5,7 +5,7 @@ namespace Scopos.BabelFish.Tests.APIClients {
     [TestClass]
     [DoNotParallelize]
     public class DefaultApiStageTests {
-        private APIStage _originalStage;
+        private APIClientEnums _originalStage;
         private string _originalApiKey = string.Empty;
 
         [TestInitialize]
@@ -22,14 +22,14 @@ namespace Scopos.BabelFish.Tests.APIClients {
         }
 
         [TestMethod]
-        [DataRow(APIStage.PRODUCTION)]
-        [DataRow(APIStage.PRODTEST)]
-        [DataRow(APIStage.ALPHA)]
-        [DataRow(APIStage.BETA)]
-        public void ParameterlessClientsUseConfiguredDefault(APIStage stage) {
+        [DataRow(APIClientEnums.PRODUCTION)]
+        [DataRow(APIClientEnums.PRODTEST)]
+        [DataRow(APIClientEnums.ALPHA)]
+        [DataRow(APIClientEnums.BETA)]
+        public void ParameterlessClientsUseConfiguredDefault(APIClientEnums stage) {
             Settings.DefaultApiStage = stage;
 
-            APIStage[] stages = {
+            APIClientEnums[] stages = {
                 new AthenaAPIClient().ApiStage,
                 new AttributeValueAPIClient().ApiStage,
                 new ClubsAPIClient().ApiStage,
@@ -48,34 +48,34 @@ namespace Scopos.BabelFish.Tests.APIClients {
 
         [TestMethod]
         public void ExplicitStagesOverrideConfiguredDefault() {
-            Settings.DefaultApiStage = APIStage.PRODTEST;
+            Settings.DefaultApiStage = APIClientEnums.PRODTEST;
 
-            APIStage[] stages = {
-                new AthenaAPIClient(APIStage.PRODUCTION).ApiStage,
-                new AttributeValueAPIClient(APIStage.PRODUCTION).ApiStage,
-                new ClubsAPIClient(APIStage.PRODUCTION).ApiStage,
-                new DefinitionAPIClient(APIStage.PRODUCTION).ApiStage,
-                new ImageClient(APIStage.PRODUCTION).ApiStage,
-                new OrionMatchAPIClient(APIStage.PRODUCTION).ApiStage,
-                new ScoposDataClient(APIStage.PRODUCTION).ApiStage,
-                new ScoreHistoryAPIClient(APIStage.PRODUCTION).ApiStage,
-                new SocialNetworkAPIClient(APIStage.PRODUCTION).ApiStage
+            APIClientEnums[] stages = {
+                new AthenaAPIClient(APIClientEnums.PRODUCTION).ApiStage,
+                new AttributeValueAPIClient(APIClientEnums.PRODUCTION).ApiStage,
+                new ClubsAPIClient(APIClientEnums.PRODUCTION).ApiStage,
+                new DefinitionAPIClient(APIClientEnums.PRODUCTION).ApiStage,
+                new ImageClient(APIClientEnums.PRODUCTION).ApiStage,
+                new OrionMatchAPIClient(APIClientEnums.PRODUCTION).ApiStage,
+                new ScoposDataClient(APIClientEnums.PRODUCTION).ApiStage,
+                new ScoreHistoryAPIClient(APIClientEnums.PRODUCTION).ApiStage,
+                new SocialNetworkAPIClient(APIClientEnums.PRODUCTION).ApiStage
             };
 
             foreach (var actual in stages) {
-                Assert.AreEqual(APIStage.PRODUCTION, actual);
+                Assert.AreEqual(APIClientEnums.PRODUCTION, actual);
             }
         }
 
         [TestMethod]
         public void ChangingDefaultOnlyAffectsNewClients() {
-            Settings.DefaultApiStage = APIStage.PRODUCTION;
+            Settings.DefaultApiStage = APIClientEnums.PRODUCTION;
             var existing = new ClubsAPIClient();
 
-            Settings.DefaultApiStage = APIStage.PRODTEST;
+            Settings.DefaultApiStage = APIClientEnums.PRODTEST;
 
-            Assert.AreEqual(APIStage.PRODUCTION, existing.ApiStage);
-            Assert.AreEqual(APIStage.PRODTEST, new ClubsAPIClient().ApiStage);
+            Assert.AreEqual(APIClientEnums.PRODUCTION, existing.ApiStage);
+            Assert.AreEqual(APIClientEnums.PRODTEST, new ClubsAPIClient().ApiStage);
         }
     }
 }

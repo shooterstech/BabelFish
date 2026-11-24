@@ -55,7 +55,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// The API Stage to use when making Scopos REST API calls.
         /// Default value is Production.
         /// </summary>
-        public APIStage APIStage { get; set; } = APIStage.PRODUCTION;
+        public APIClientEnums APIStage { get; set; } = APIClientEnums.PRODUCTION;
 
         /// <summary>
         /// The comparer instance to use when ranking team members within a team, which will decide which team members's 

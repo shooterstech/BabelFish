@@ -32,7 +32,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         private static readonly MatchID KnownPublicMatchOwner1BothSides = new MatchID( "1.1.2021020310584218.1" );
         private static readonly MatchID KnownPublicMatchOwner1003 = new MatchID( "1.1003.637477891.1" );
 
-        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.PRODUCTION );
+        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
         private static string UniqueName( string prefix ) {
             return $"{prefix} {DateTime.UtcNow:yyyyMMddHHmmssfff}";

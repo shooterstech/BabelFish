@@ -15,11 +15,11 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         public void BasicConstructorTests() {
 
             var defaultConstructorClient = new AttributeValueAPIClient();
-            var apiStageConstructorClient = new AttributeValueAPIClient( APIStage.BETA );
+            var apiStageConstructorClient = new AttributeValueAPIClient( APIClientEnums.BETA );
 
-            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.BETA, apiStageConstructorClient.ApiStage );
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_SingleValue() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -66,7 +66,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_MultipleValue() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -127,7 +127,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_MultipleValueRepeated() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -181,7 +181,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_DoesNotExist() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,

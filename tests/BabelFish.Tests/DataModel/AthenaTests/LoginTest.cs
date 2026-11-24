@@ -15,17 +15,17 @@ namespace Scopos.BabelFish.Tests.DataModel.AthenaTests {
         public void BasicConstructorTests() {
 
             var defaultConstructorClient = new AthenaAPIClient();
-            var apiStageConstructorClient = new AthenaAPIClient( APIStage.BETA );
+            var apiStageConstructorClient = new AthenaAPIClient( APIClientEnums.BETA );
 
-            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public async Task LoginToTargetHappyPath() {
 
-            var client = new AthenaAPIClient( APIStage.BETA );
+            var client = new AthenaAPIClient( APIClientEnums.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -52,7 +52,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AthenaTests {
         [TestMethod]
         public async Task LoginToTargetSadPath() {
 
-            var client = new AthenaAPIClient( APIStage.BETA );
+            var client = new AthenaAPIClient( APIClientEnums.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -74,7 +74,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AthenaTests {
         [TestMethod]
         public async Task ActiveLoginSessions() {
 
-            var client = new AthenaAPIClient( APIStage.BETA );
+            var client = new AthenaAPIClient( APIClientEnums.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(
@@ -94,7 +94,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AthenaTests {
         [TestMethod]
         public async Task LogoutSessions() {
 
-            var client = new AthenaAPIClient( APIStage.BETA );
+            var client = new AthenaAPIClient( APIClientEnums.BETA );
 
             //Test Dev 3 is associated with something ...
             var userAuthentication = new UserAuthentication(

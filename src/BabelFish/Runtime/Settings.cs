@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Scopos.BabelFish.APIClients;
@@ -15,7 +15,7 @@ namespace Scopos.BabelFish.Runtime {
         /// Set before initialization, which may create clients while preloading definitions.
         /// Changing this value does not change existing clients.
         /// </summary>
-        public static APIStage DefaultApiStage { get; set; } = APIStage.PRODUCTION;
+        public static APIClientEnums DefaultApiStage { get; set; } = APIClientEnums.PRODUCTION;
 
         /// <summary>
         /// The X-API-Key to use when making all Scopos REST API calls.

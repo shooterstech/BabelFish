@@ -49,7 +49,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [Timeout( 60000 )]
         public async Task GenerateLeagueRangeReportDryRunCreatesReport() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var request = new GenerateLeagueRangeReportAuthenticatedRequest(
                 PostseasonLeagueId,
                 PostseasonGameId,
@@ -92,7 +92,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [TestCategory( "Integration" )]
         public async Task GetLeagueRangeReportReturnsReport() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var response = await client.GetLeagueRangeReportAuthenticatedAsync(
                 PostseasonLeagueId,
@@ -113,7 +113,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [TestCategory( "Integration" )]
         public async Task GenerateLeagueRangeReportReturnsBadRequestForWrongResultName() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var request = new GenerateLeagueRangeReportAuthenticatedRequest(
                 PostseasonLeagueId,
                 PostseasonGameId,
@@ -131,7 +131,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [TestCategory( "Integration" )]
         public async Task GenerateLeagueRangeReportReturnsNotFoundForGameFromDifferentLeague() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var request = new GenerateLeagueRangeReportAuthenticatedRequest(
                 PostseasonLeagueId,
                 RegularSeasonGameId,
@@ -148,7 +148,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [TestCategory( "Integration" )]
         public async Task GetLeagueRangeReportReturnsBadRequestForWrongResultName() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var request = new GetLeagueRangeReportAuthenticatedRequest(
                 PostseasonLeagueId,
                 PostseasonGameId,
@@ -164,7 +164,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [TestCategory( "Integration" )]
         public async Task GetLeagueRangeReportReturnsNotFoundForGameFromDifferentLeague() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var response = await client.GetLeagueRangeReportAuthenticatedAsync(
                 PostseasonLeagueId,

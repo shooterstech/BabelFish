@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
             await Credentials.InitializeAsync();
-            Client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            Client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new GenerateLeagueRecapRangeReportAuthenticatedRequest(
                 LeagueId,

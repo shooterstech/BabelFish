@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <summary>Uses the specified API stage.</summary>
-        public NewsfeedAPIClient( APIStage apiStage ) : base( apiStage ) {
+        public NewsfeedAPIClient( APIClientEnums apiStage ) : base( apiStage ) {
             LocalStoreDirectory = null;
             IgnoreFileSystemCache = true;
             IgnoreInMemoryCache = true;

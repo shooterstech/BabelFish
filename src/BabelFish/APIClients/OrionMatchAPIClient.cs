@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public OrionMatchAPIClient( APIStage apiStage ) : base( apiStage ) {
+        public OrionMatchAPIClient( APIClientEnums apiStage ) : base( apiStage ) {
             //enable in memory cache
             IgnoreInMemoryCache = false;
 

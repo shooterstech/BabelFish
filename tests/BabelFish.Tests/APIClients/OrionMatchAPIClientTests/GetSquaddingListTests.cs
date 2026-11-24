@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public void GetSquaddingListBasicPublicTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );
@@ -35,7 +35,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task GetSquaddingListBasicAuthenticatedTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -63,7 +63,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public void GetSquaddingListLimitToRelay() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );
@@ -93,7 +93,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public void GetSquaddingListTokenizedCalls() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023022315342668.0" );

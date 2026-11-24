@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.DataModel.AttributeValue;
+using Scopos.BabelFish.DataModel.AttributeValue;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.Requests.AttributeValueAPI;
 using Scopos.BabelFish.Responses.AttributeValueAPI;
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public AttributeValueAPIClient( APIStage apiStage ) : base( apiStage ) {
+        public AttributeValueAPIClient( APIClientEnums apiStage ) : base( apiStage ) {
 
             //AttributeValueAPIClient does not support file system cache
             LocalStoreDirectory = null;

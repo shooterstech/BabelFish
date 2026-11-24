@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         private const string TournamentOwnerId = "OrionAcct000002";
 
-        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.PRODUCTION );
+        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
         private static string UniqueName( string prefix ) {
             return $"{prefix} {DateTime.UtcNow:yyyyMMddHHmmssfff}";

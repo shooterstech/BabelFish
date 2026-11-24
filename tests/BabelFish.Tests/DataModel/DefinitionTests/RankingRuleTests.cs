@@ -280,7 +280,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            OrionMatchAPIClient matchClient = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             DefinitionAPIClient definitionClient = new DefinitionAPIClient();
 
             var resultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.1.2025050718205488.0" ), "Individual - Sporter" ); //

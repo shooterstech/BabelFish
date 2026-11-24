@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.ResultListFormatter {
         public async Task EriksPlayground() {
             var rlf = ResultListFormatFactory.FACTORY;
 
-            var matchClient = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var matchClient = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var getResultListResponse = await matchClient.GetResultListPublicAsync( new MatchID( "1.3313.2024060212062194.0" ), "Individual - All" );
             var resultList= getResultListResponse.ResultList;

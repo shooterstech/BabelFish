@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetScoreAverageUsingEventStyle() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 04, 1 );
@@ -56,7 +56,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetScoreAverageUsingStageStyle() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 04, 1 );
@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetScoreAverageUsingEventStyleWithTokens() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.PRODUCTION );
 
             GetScoreHistoryAbstractRequest scoreAverageRequest = new GetScoreAveragePublicRequest();
             scoreAverageRequest.StartDate = new DateTime( 2023, 05, 1 );
@@ -134,7 +134,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
         [TestMethod]
         public async Task Getsomething() {
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.PRODUCTION );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 25 );

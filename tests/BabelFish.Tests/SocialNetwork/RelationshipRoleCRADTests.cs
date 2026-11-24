@@ -1,4 +1,4 @@
-﻿using Scopos.BabelFish.APIClients;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
@@ -15,8 +15,8 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
         public override void InitializeTest() {
             base.InitializeTest();
 
-            socialNetworkClient = new SocialNetworkAPIClient( APIStage.PRODTEST );
-            clubsClient = new ClubsAPIClient( APIStage.PRODTEST );
+            socialNetworkClient = new SocialNetworkAPIClient( APIClientEnums.PRODTEST );
+            clubsClient = new ClubsAPIClient( APIClientEnums.PRODTEST );
         }
 
         [TestMethod]

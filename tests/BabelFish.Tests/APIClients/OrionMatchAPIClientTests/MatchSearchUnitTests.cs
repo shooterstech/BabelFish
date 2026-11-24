@@ -16,7 +16,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         public async Task BasicTestSearchPublic() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new MatchSearchPublicRequest();
 
@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         public async Task BasicTestSearchAuthenticated() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -58,7 +58,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         public async Task MatchSearchInputMatchesOutput() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var distance = 325;
             var startDate = new DateTime( 2022, 01, 01 );
@@ -113,7 +113,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         public void NextTokenTest() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var distance = 500;
             var startDate = new DateTime( 2022, 01, 01 );
@@ -156,7 +156,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         public async Task MatchSearchByOwnerID() {
 
             //Conducting test in production since the development database doesn't always have entries in it.
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             int? distance = null;
             DateTime? startDate = new DateTime( DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day ).AddDays( -365 );

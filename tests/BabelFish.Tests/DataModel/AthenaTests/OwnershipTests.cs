@@ -8,7 +8,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AthenaTests {
 
         [TestMethod]
         public async Task TestRemoveOwnership() {
-            var ownershipClient = new AthenaAPIClient( APIStage.PRODUCTION );
+            var ownershipClient = new AthenaAPIClient( APIClientEnums.PRODUCTION );
             RemoveThingOwnershipRequest request = new RemoveThingOwnershipRequest();
             request.OwnerId = "AtHomeAcct000046"; //test_dev_9
             request.SharedKey = "";

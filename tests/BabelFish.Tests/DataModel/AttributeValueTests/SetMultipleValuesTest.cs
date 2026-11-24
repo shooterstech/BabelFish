@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
              */
 
 
-            var client = new AttributeValueAPIClient( APIStage.PRODTEST );
+            var client = new AttributeValueAPIClient( APIClientEnums.PRODTEST );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -96,7 +96,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
 
             var setNameSocialMedia = SetName.Parse( "v1.0:orion:Social Media Accounts" );
 
-            var client = new AttributeValueAPIClient( APIStage.PRODTEST );
+            var client = new AttributeValueAPIClient( APIClientEnums.PRODTEST );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,

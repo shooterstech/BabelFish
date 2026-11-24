@@ -16,7 +16,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
         [TestMethod]
         public async Task BasicHappyPathGetTournamentTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var mId = new MatchID( "1.1.2025100211025190.2" );
 
             var request = new GetTournamentPublicRequest( mId );
@@ -39,7 +39,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task GetTournamentAuthenticatedCacheRetainsPermissions() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -80,7 +80,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathCreateTournamentWithRequestTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -107,7 +107,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathCreateTournamentWithTournamentObjectTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -134,7 +134,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathDeleteTournamentWithRequestTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -162,7 +162,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathDeleteTournamentWithTournamentIdTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -189,7 +189,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathAddTournamentMemberWithRequestTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -225,7 +225,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathAddTournamentMemberWithIdsTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -258,7 +258,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathPatchTournamentMemberWithRequestTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -300,7 +300,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathDeleteTournamentMemberWithRequestTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -341,7 +341,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathTournamentSearchAuthenticatedWithRequestTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );
@@ -390,7 +390,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.Tournament {
 
         [TestMethod]
         public async Task BasicHappyPathTournamentSearchAuthenticatedNextTokenTest() {
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );

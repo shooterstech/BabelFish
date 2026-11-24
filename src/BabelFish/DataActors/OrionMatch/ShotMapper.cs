@@ -44,7 +44,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// The name of the relative directory, under <see cref="MatchProject.ProjectDirectory"/>, to store shot data.
         /// </summary>
         /// <remarks>Defaults to <c>Shots</c>.</remarks>
-        private string _relativeDirectory = "Shots";
+        private static string _relativeDirectory = "Shots";
 
         /*
          * These next two dictionaries _allShots and _shotDictionary will nearly contain the same data.

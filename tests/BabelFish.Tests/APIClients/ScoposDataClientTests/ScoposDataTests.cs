@@ -17,16 +17,16 @@ namespace Scopos.BabelFish.Tests.APIClients.ScoposDataClientTests {
         public void BasicConstructorTests() {
 
             var defaultConstructorClient = new ScoposDataClient();
-            var apiStageConstructorClient = new ScoposDataClient( APIStage.BETA );
+            var apiStageConstructorClient = new ScoposDataClient( APIClientEnums.BETA );
 
-            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public async Task GetReleaseTests() {
-            var client = new ScoposDataClient( APIStage.BETA );
+            var client = new ScoposDataClient( APIClientEnums.BETA );
 
             ReleasePhase level = ReleasePhase.PRODUCTION;
             var appList = new List<string>() { "orion", "athena", "greengrassv2Deployment" };
@@ -93,7 +93,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ScoposDataClientTests {
 
         [TestMethod]
         public void GetCupsOfCoffeeConsumedWithRequestObject() {
-            var client = new ScoposDataClient( APIStage.BETA );
+            var client = new ScoposDataClient( APIClientEnums.BETA );
 
             GetCupsOfCoffeePublicRequest request = new GetCupsOfCoffeePublicRequest();
 
@@ -110,7 +110,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ScoposDataClientTests {
 
         [TestMethod]
         public void GetCupsOfCoffeeConsumedWithoutRequestObject() {
-            var client = new ScoposDataClient( APIStage.BETA );
+            var client = new ScoposDataClient( APIClientEnums.BETA );
 
             var response = client.GetCuposOfCoffeePublicAsync();
             var result = response.Result;

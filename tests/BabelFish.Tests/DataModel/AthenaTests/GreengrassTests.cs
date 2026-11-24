@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AthenaTests {
     public class GreengrassTests : BaseTestClass {
         [TestMethod]
         public async Task MoveGGv2CoreToAthenaDeploymentGroupTest() {
-            var client = new AthenaAPIClient( APIStage.ALPHA );
+            var client = new AthenaAPIClient( APIClientEnums.ALPHA );
             var request = new MoveGGv2CoreToAthenaDeploymentGroupPublicRequest();
             request.OwnerID = "OrionAcct000007";
             request.CoreName = "core-01"; //test core in us-east-2, may not exist in the future
