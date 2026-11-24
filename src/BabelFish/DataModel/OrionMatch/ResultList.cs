@@ -24,6 +24,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #region Private Variables
         private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;
 
+        /// <summary>
+        /// Relative directory name, under <see cref="MatchProject.ProjectDirectory"/>, used for result list storage.
+        /// </summary>
+        private static string _relativeDirectory = "ResultLists";
+
         private Logger _logger = LogManager.GetCurrentClassLogger();
         #endregion
 
@@ -572,17 +577,25 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region ISaveToFile Implementation
         /// <inheritdoc />
+        /// <remarks>A ResultList should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "ResultLists/{Cof Id}/ </remarks>
         public string GetFileName() {
-            return $"{ResultName} ({CourseOfFireId}).json";
+
+            return $"{ResultName}.json";
         }
 
-        /// <inheritdoc />
-        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+        /// <summary>
+        /// Saves the current object as JSON to a file under the specified base match directory, creating any missing parent
+        /// directories.
+        /// </summary>
+        /// <param name="matchDirectory">The base match directory used to build the output file path.</param>
+        /// <returns>The full path of the file written to disk.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="matchDirectory"/> is <see langword="null"/>.</exception>
+        public string SaveToFile( DirectoryInfo matchDirectory ) {
 
-            if (relativeDirectory == null)
-                throw new ArgumentNullException( nameof( relativeDirectory ) );
+            if (matchDirectory == null)
+                throw new ArgumentNullException( nameof( matchDirectory ) );
 
-            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+            string filePath = Path.Combine( matchDirectory.FullName, GetRelativePath() );
 
             var directoryPath = Path.GetDirectoryName( filePath );
 
@@ -597,7 +610,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return filePath;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Serializes the current instance to JSON and writes it to the specified file.
+        /// </summary>
+        /// <remarks>If the target file already exists, its contents are overwritten.</remarks>
+        /// <param name="fileInfo">The file to write the JSON content to.</param>
+        /// <returns>The full path of the file that was written.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="fileInfo"/> is <see langword="null"/>.</exception>
         public string SaveToFile( FileInfo fileInfo ) {
 
             if (fileInfo == null)
@@ -610,9 +629,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return fileInfo.FullName;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Return the relative path, from the base match directory, where this ResultList should be saved.
+        /// A ResultList should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "ResultLists/{CourseOfFireId}/
+        /// </summary>
+        /// <remarks>Equivalent to <see cref="GetFileName"/>.</remarks>
+        /// <returns>The file name that represents the relative path.</returns>
         public string GetRelativePath() {
-            return this.GetFileName();
+            return $"{_relativeDirectory}/{CourseOfFireId}/{this.GetFileName()}";
         }
 
         /// <inheritdoc />

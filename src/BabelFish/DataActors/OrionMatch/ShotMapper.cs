@@ -37,9 +37,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
 
         private static Logger _logger = LogManager.GetCurrentClassLogger();
         private bool _initializing = false;
-        private FileInfo _shotLogFile;
         private volatile bool _threadsShouldDie = false;
         private DateTime _clearLastShotBeforeThisUTCTime = DateTime.MinValue;
+
+        /// <summary>
+        /// The name of the relative directory, under <see cref="MatchProject.ProjectDirectory"/>, to store shot data.
+        /// </summary>
+        /// <remarks>Defaults to <c>Shots</c>.</remarks>
+        private string _relativeDirectory = "Shots";
 
         /*
          * These next two dictionaries _allShots and _shotDictionary will nearly contain the same data.
@@ -59,6 +64,7 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         private ConcurrentDictionary<string, List<Shot>> _shotDictionary = new ConcurrentDictionary<string, List<Shot>>();
         //Key is a result cof id, value is an object used as a mutex for locking when updating List<Shot> for that result cof in the _shotDictionary
         private ConcurrentDictionary<string, object> _shotListMutexes = new ConcurrentDictionary<string, object>();
+        private DirectoryInfo _shotsDirectory;
 
         //Instrumentation for loading shots.
         Helpers.Stopwatch _loadShotStopWatch = new Helpers.Stopwatch( "LoadShot()" );
@@ -83,7 +89,12 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <param name="project">The MatchProject that this ShotMapper will track shots for.</param>
         internal ShotMapper( MatchProject project ) {
             this.MatchProject = project;
-            this._shotLogFile = new FileInfo( Path.Combine( project.ProjectDirectory.FullName, "athenaShots.json" ) );
+
+            // Test to see if the Shots directory exists. If it does not, then we will create it. This is to handle the case where a MatchProject is created and no shots have been fired yet.
+            _shotsDirectory = new DirectoryInfo( Path.Combine( this.MatchProject.ProjectDirectory.FullName, _relativeDirectory ) );
+            if (!_shotsDirectory.Exists) {
+                _shotsDirectory.Create();
+            }
 
             // Start the log writing thread
             var logThread = new Thread( WriteToLogThread ) {
@@ -98,23 +109,33 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
         /// <para>Expected to be called by the MatchProject during it's load from file.</para>
         /// </summary>
         public void LoadFromFile() {
-            var filePath = Path.Combine( MatchProject.ProjectDirectory.FullName, "athenaShots.json" );
-            if (!File.Exists( filePath ))
-                return;
 
             // Turn off writing to the athenaShots log file while we are loading in shots from the athenaShots log file to avoid us writing redundant shot updates
             _initializing = true;
 
-            // Read the athenaShots log file line by line, and for each line, deserialize it into a Shot object and load it into the ShotMapper using the LoadShot method.
-            foreach (var line in File.ReadLines( filePath )) {
-                if (string.IsNullOrWhiteSpace( line ))
-                    continue;
+            // Test to see if the Shots directory exists. If it does not, then we will create it. This is to handle the case where a MatchProject is created and no shots have been fired yet.
+            if (!_shotsDirectory.Exists) {
+                _shotsDirectory.Create();
+            }
+
+            // For each .jsonl file in the Shots directory, read the file line by line, and for each line, deserialize it into a Shot object and load it into the ShotMapper using the LoadShot method.
+            foreach (var file in _shotsDirectory.GetFiles( "*.jsonl" )) {
+
                 try {
-                    var shot = System.Text.Json.JsonSerializer.Deserialize<Shot>( line, SerializerOptions.SystemTextJsonDeserializer );
-                    if (shot != null)
-                        LoadShot( shot );
+                    // Read the athenaShots log file line by line, and for each line, deserialize it into a Shot object and load it into the ShotMapper using the LoadShot method.
+                    foreach (var line in File.ReadLines( file.FullName )) {
+                        if (string.IsNullOrWhiteSpace( line ))
+                            continue;
+                        try {
+                            var shot = System.Text.Json.JsonSerializer.Deserialize<Shot>( line, SerializerOptions.SystemTextJsonDeserializer );
+                            if (shot != null)
+                                LoadShot( shot );
+                        } catch (Exception ex) {
+                            _logger.Error( ex, $"Failed to deserialize shot from line: {line}" );
+                        }
+                    }
                 } catch (Exception ex) {
-                    _logger.Error( ex, $"Failed to deserialize shot from line: {line}" );
+                    _logger.Error( ex, $"Failed to read shots from file: {file.FullName}" );
                 }
             }
 
@@ -784,6 +805,14 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             writeToLogQueue.Enqueue( shot );
         }
 
+        /// <summary>
+        /// Returns a boolean indicating if there are any shots queued for logging. 
+        /// </summary>
+        /// <returns><see langword="true"/> if one or more shots are queued for logging; otherwise, <see langword="false"/>.</returns>
+        public bool HasShotsToLog() {
+            return !writeToLogQueue.IsEmpty;
+        }
+
         private void WriteToLogThread() {
 
             /*
@@ -798,15 +827,27 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
             do {
                 while (writeToLogQueue.TryDequeue( out var shot )) {
                     try {
-                        using (StreamWriter file = File.AppendText( _shotLogFile.FullName )) {
-                            var shotSerialized = JsonConvert.SerializeObject( shot, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializerOneLine );
+                        using (StreamWriter file = File.AppendText( GetShotLog( shot ).FullName )) {
+                            var shotSerialized = JsonConvert.SerializeObject( shot, SerializerOptions.NewtonsoftJsonSerializerOneLine );
                             file.WriteLine( shotSerialized );
                         }
+                    } catch (DirectoryNotFoundException dnfe) {
+                        // As the _shotsDirectory is created in the constructor, likely only get here if the user deletes the directory.
+                        // So, lets try and re-create it, and then re-queue the shot to try again.
+                        if (!_shotsDirectory.Exists) {
+                            try {
+                                _shotsDirectory.Create();
+                                writeToLogQueue.Enqueue( shot );
+                            } catch (Exception ex) {
+                                _logger.Error( $"Could not create the directory {_shotsDirectory.FullName}. Will retry." );
+                                _logger.Error( ex );
+                            }
+                        }
+                        _logger.Error( dnfe, $"Could not write Shot value to log, as the directory {_shotsDirectory.FullName} does not seem to exist." );
+                        _logger.Error( JsonConvert.SerializeObject( shot, SerializerOptions.NewtonsoftJsonSerializerOneLine ) );
                     } catch (Exception ex) {
-                        writeToLogQueue.Enqueue( shot );
-                        _logger.Error( "Could not write Shot value to log. Will retry." );
-                        _logger.Error( JsonConvert.SerializeObject( shot, Scopos.BabelFish.Helpers.SerializerOptions.NewtonsoftJsonSerializerOneLine ) );
-                        _logger.Error( ex );
+                        _logger.Error( ex, "Could not write Shot value to log." );
+                        _logger.Error( JsonConvert.SerializeObject( shot, SerializerOptions.NewtonsoftJsonSerializerOneLine ) );
                     }
                 }
 
@@ -898,6 +939,10 @@ namespace Scopos.BabelFish.DataActors.OrionMatch {
                     }
                 }
             }
+        }
+
+        private FileInfo GetShotLog( Shot shot ) {
+            return new FileInfo( Path.Combine( _shotsDirectory.FullName, $"{shot.ResultCOFID}.jsonl" ) );
         }
 
         /// <summary>

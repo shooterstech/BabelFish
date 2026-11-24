@@ -196,12 +196,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public ResultListSlidingWindow ResultListSlidingWindow { get; private set; }
 
-        [G_NS.JsonIgnore]
-        public DirectoryInfo MatchObjectDirectory {
-            get {
-                return new DirectoryInfo( Path.Combine( ProjectDirectory.FullName, "MatchObjects" ) );
-            }
-        }
         #endregion
 
         #region Methods

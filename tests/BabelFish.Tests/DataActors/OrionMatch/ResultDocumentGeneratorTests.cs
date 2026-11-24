@@ -72,7 +72,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.AreEqual( 30, resultCof.Shots.Count );
                 Assert.AreEqual( "Precision", resultCof.Participant.AttributeValues[0].AttributeValue.GetFieldValue() );
 
-                resultCof.SaveToFile( project.MatchObjectDirectory );
+                resultCof.SaveToFile( project.ProjectDirectory );
             }
         }
 
@@ -148,7 +148,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             var invAllResultList = await project.ResultGenerator.GenerateResultListAsync( invAllAbbr, string.Empty );
             Assert.AreEqual( 6, invAllResultList.Items.Count );
-            invAllResultList.SaveToFile( project.MatchObjectDirectory );
+            invAllResultList.SaveToFile( project.ProjectDirectory );
             // Test that the ranking was done correctly
             Assert.IsTrue( invAllResultList.Items[0].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D );
             Assert.IsTrue( invAllResultList.Items[1].EventScores[invAllResultList.EventName].Score.D >= invAllResultList.Items[2].EventScores[invAllResultList.EventName].Score.D );
@@ -161,14 +161,14 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
             var invSporterResultList = await project.ResultGenerator.GenerateResultListAsync( invSporterAbbr, string.Empty );
             Assert.AreEqual( 3, invSporterResultList.Items.Count );
-            invSporterResultList.SaveToFile( project.MatchObjectDirectory );
+            invSporterResultList.SaveToFile( project.ProjectDirectory );
 
             var invPrecisionAbbr = resultLists.Find( rl => rl.ResultName == "Individual - Precision" );
             Assert.IsNotNull( invPrecisionAbbr );
 
             var invPrecisionResultList = await project.ResultGenerator.GenerateResultListAsync( invPrecisionAbbr, string.Empty );
             Assert.AreEqual( 3, invPrecisionResultList.Items.Count );
-            invPrecisionResultList.SaveToFile( project.MatchObjectDirectory );
+            invPrecisionResultList.SaveToFile( project.ProjectDirectory );
 
             /**** Team Result List Testing ****/
             var teamA = await project.CreateMatchParticipantAsync( "A Team" );
@@ -185,7 +185,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             Assert.IsNotNull( teamAll );
             var teamAllResultList = await project.ResultGenerator.GenerateResultListAsync( teamAll, string.Empty );
             Assert.AreEqual( 2, teamAllResultList.Items.Count );
-            teamAllResultList.SaveToFile( project.MatchObjectDirectory );
+            teamAllResultList.SaveToFile( project.ProjectDirectory );
             project.SaveToFile( project.ProjectDirectory );
 
             Assert.IsTrue( teamAllResultList.Items[0].EventScores[teamAllResultList.EventName].Projected.D >= teamAllResultList.Items[1].EventScores[teamAllResultList.EventName].Projected.D );
