@@ -110,7 +110,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
             var matchName = "GetAttributeValueTests";
 
             //Create the MatchProject so we have a directory to save to. Then remove the directory to ensure a clean slate for the test.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             ClearDirectory( project.ProjectDirectory.FullName );
             var match = project.Match;
 

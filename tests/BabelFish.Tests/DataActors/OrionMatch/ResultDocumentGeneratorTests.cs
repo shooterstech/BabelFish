@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
+using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataActors.ResultListFormatter;
 using Scopos.BabelFish.DataModel.Athena.Shot;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
+using Scopos.BabelFish.Runtime.Authentication;
 
 namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
 
@@ -20,9 +22,10 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
         public async Task GenerateBasicResultCOF() {
 
             var matchName = "GenerateBasicResultCOF";
+            var matchClient = new OrionMatchAPIClient();
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
@@ -73,6 +76,15 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
                 Assert.AreEqual( "Precision", resultCof.Participant.AttributeValues[0].AttributeValue.GetFieldValue() );
 
                 resultCof.SaveToFile( project.ProjectDirectory );
+                /*
+                 * DELETE THESE LINES BELOW WHEN DONE TESTING
+                 */
+                // Wait .1 seconds to ensure that the file is written before we attempt to upload it.
+                await Task.Delay( 100 );
+                var _credentials = new UserAuthentication( Constants.TestDev7Credentials.Username, Constants.TestDev7Credentials.Password );
+                await _credentials.InitializeAsync();
+                var uploadResponse = await matchClient.UploadMatchFileAuthenticatedAsync( project.ProjectDirectory, resultCof, _credentials );
+                Assert.IsTrue( uploadResponse.HasOkStatusCode, $"UploadMatchFileAuthenticatedAsync failed with status code: {uploadResponse.OverallStatusCode}, message: {uploadResponse.ExceptionMessage}" );
             }
         }
 
@@ -82,7 +94,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var matchName = "GenerateBasicResultList";
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );

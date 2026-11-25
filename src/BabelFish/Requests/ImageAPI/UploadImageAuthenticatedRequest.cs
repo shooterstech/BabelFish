@@ -223,8 +223,6 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
             if (!response.IsSuccessStatusCode) {
                 throw new APIRequestParameterException( $"Failed to upload the image. Status code: {response.StatusCode}, Message: {response.ReasonPhrase}" );
             }
-
-            return;
         }
     }
 }

@@ -1862,5 +1862,18 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         #endregion
+
+        #region Upload Match File API Calls
+        public async Task<UploadMatchFileAuthenticatedResponse> UploadMatchFileAuthenticatedAsync( DirectoryInfo projectDirectory, IMatchObjectFile matchObjectFile, UserAuthentication credentials ) {
+            var request = new UploadMatchFileAuthenticatedRequest( credentials, matchObjectFile, projectDirectory );
+            return await this.UploadMatchFileAuthenticatedAsync( request );
+        }
+
+        public async Task<UploadMatchFileAuthenticatedResponse> UploadMatchFileAuthenticatedAsync( UploadMatchFileAuthenticatedRequest requestParameters ) {
+            UploadMatchFileAuthenticatedResponse response = new UploadMatchFileAuthenticatedResponse( requestParameters );
+            await this.CallAPIAsync( requestParameters, response );
+            return response;
+        }
+        #endregion
     }
 }

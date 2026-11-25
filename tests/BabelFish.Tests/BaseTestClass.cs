@@ -12,9 +12,20 @@ namespace Scopos.BabelFish.Tests {
         public static DirectoryInfo RelativeDirectoryForDefinitions { get; set; } = new System.IO.DirectoryInfo( @"C:\temp" );
         public static DirectoryInfo RelativeDirectoryForTesting { get; set; } = new System.IO.DirectoryInfo( @"C:\temp\UnitTests" );
 
-        public static ClubAbbr TestClubAbbr { get; set; } = new ClubAbbr() {
-            AccountNumber = 0,
-            Name = "Unit Test Fake Club"
+        /// <summary>
+        /// Orion for Clubs account number 15 is a special account that is used for unit testing. Its visibility is set to Protected.
+        /// </summary>
+        public static ClubAbbr TestClubProtectedAbbr { get; set; } = new ClubAbbr() {
+            AccountNumber = 15,
+            Name = "Unit Test - Protected Club"
+        };
+
+        /// <summary>
+        /// Orion for Clubs account number 16 is a special account that is used for unit testing. Its visibility is set to Public.
+        /// </summary>
+        public static ClubAbbr TestClubPublicAbbr { get; set; } = new ClubAbbr() {
+            AccountNumber = 16,
+            Name = "Unit Test - Public Club"
         };
 
         [TestInitialize]
