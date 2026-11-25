@@ -18,13 +18,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IGetCourseOfFireDefinition,
         G_STJ_SER.IJsonOnDeserializing,
         G_STJ_SER.IJsonOnDeserialized,
-        ICheckSum {
+        IMatchObjectFile {
 
         #region Private and Protected Fields
         protected bool _ignoreEvents = false;
         private bool _official = false;
         private int _numberOfTeamMembers = 4;
         private int _maxNumberOfTeamMembers = 100;
+        private const string _relativeDirectory = "CourseOfFireStructures";
         #endregion
 
         #region Constructors, Facory Methods, and Initialization Methods
@@ -132,7 +133,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <para>The value of 0 is reserved and may not be used. </para>
         /// </summary>
         [G_NS.JsonProperty( Order = 2 )]
-        public int CourseOfFireId { get; set; } = 1;
+        public int CourseOfFireId { get; internal set; } = 1;
 
         /// <summary>
         /// The SetName of the <see cref="CourseOfFire"/> definition that this CourseOfFireStructure is based on.
@@ -308,7 +309,20 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         public bool DisableScoreProjection { get; internal set; } = false;
 
         /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
+        [G_NS.JsonIgnore]
+        [G_STJ_SER.JsonIgnore]
+        public MatchID MatchID {
+            get {
+                if (MatchStructure is not null) {
+                    return MatchStructure.MatchId;
+                }
+
+                return MatchID.DEFAULT.Clone();
+            }
+        }
+
+
+        /// <inheritdoc />
         [G_NS.JsonIgnore]
         [G_STJ_SER.JsonIgnore]
         public string CheckSum { get; set; }
@@ -435,6 +449,64 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             // Finally return the default NONE, as this COF likely is designed for ESTs, and therefore would not have a PaperTargetLabel value.
             return PaperTargetLabel.CreateNoneLabel();
         }
+
+        #region ISaveToFile Methods
+        /// <inheritdoc />
+        /// <remarks>A CourseOfFireStructure should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "CourseOfFireStructures/{CourseOfFireId}/ </remarks>
+        public string GetFileName() {
+            return $"{CourseOfFireId}.json";
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+
+            if (relativeDirectory == null)
+                throw new ArgumentNullException( nameof( relativeDirectory ) );
+
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+
+            var directoryPath = Path.GetDirectoryName( filePath );
+
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( filePath, json );
+
+            return filePath;
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
+        /// <summary>
+        /// Gets the relative path, from the base match directory, where this CourseOfFireStructure should be saved.
+        /// CourseOfFireStructure should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "CourseOfFireStructures/{CourseOfFireId}/
+        /// </summary>
+        /// <returns>The relative path.</returns>
+        public string GetRelativePath() {
+            return $"{_relativeDirectory}/{this.GetFileName()}";
+        }
+
+        /// <inheritdoc />
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
+        }
+        #endregion
 
         /// <inheritdoc />
         public override string ToString() {

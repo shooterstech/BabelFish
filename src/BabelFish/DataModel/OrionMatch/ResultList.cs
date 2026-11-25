@@ -18,8 +18,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         IGetCourseOfFireDefinition,
         IGetRankingRuleDefinition,
         IPublishTransactions,
-        ISaveToFile,
-        ICheckSum {
+        IMatchObjectFile {
 
         #region Private Variables
         private ResultStatus _localStatus = ResultStatus.UNOFFICIAL;

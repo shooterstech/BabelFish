@@ -1,11 +1,11 @@
 using System.Net;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.Common;
 using Scopos.BabelFish.DataModel.Definitions;
 using Scopos.BabelFish.DataModel.OrionMatch;
 using Scopos.BabelFish.Requests.OrionMatchAPI;
 using Scopos.BabelFish.Runtime.Authentication;
-using System.Threading.Tasks;
 
 namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
 
@@ -48,16 +48,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
                 LastUpdated = DateTime.UtcNow
             };
 
-            match.MatchStructure.CoursesOfFire.Add( new CourseOfFireStructure {
-                CourseOfFireId = 1,
-                CourseOfFireName = "3x10 Air Rifle",
-                CourseOfFireDef = SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ),
-                StartDate = today,
-                EndDate = today,
-                ScoreConfigName = "Integer",
-                TargetCollectionName = "10m Air Rifle",
-                TypesOfEntries = EntryTypes.INDIVIDUAL_AND_TEAM
-            } );
+            var cofCourseOfFireStructure = CourseOfFireStructure.CreateAsync( match.MatchStructure, SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
 
             return match;
         }

@@ -9,14 +9,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     public interface ICheckSum {
 
         /// <summary>
-        /// A hashed value that is unique to this instance. The value is calculated by the CalculateChecksum() method.
-        /// </summary>
-        /// <remarks>To maintain backward compatibility, CheckSum is a string representation of the hash value (and not an ulong) and
-        /// spelled with a capital S in CheckSum.</remarks>
-        /// <remarks>Class instances that are not, by them selves, stored on the server may mark this property as JsonIgnore.</remarks>
-        public string CheckSum { get; set; }
-
-        /// <summary>
         /// Calculates a checksum value that represents the current state of the instance's properties, excluding the
         /// LastUpdated and CheckSum properties. Assuming the underlying data did not change, the value of this method should be the same
         /// across multiple serializations and deserializations of the same instance.
@@ -28,5 +20,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         /// <returns>A ulong containing the calculated checksum value for the instance.</returns>
         public ulong CalculateChecksum();
+
+        /*
+         * NOTE: The CheckSum property is defined in the ISaveToFile interface, which is implemented by classes that also implement ICheckSum.
+         * This design choice allows for a clear separation of concerns, where ICheckSum focuses on the calculation of the checksum value,
+         * while ISaveToFile handles the storage and retrieval of that value. This approach ensures that classes implementing both interfaces
+         * can maintain a consistent and reliable checksum mechanism without conflating the responsibilities of each interface.
+         */
     }
 }

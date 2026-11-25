@@ -6,7 +6,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <para>To avoid corrupting the data, use Apply(), AddShowRemark(), HideRemark(), or RemoveRemark()</para>
     /// <para>Generally the best way to test if a RemarkList includes a specific <see cref="RemarkAction"/> is to use the IsShowingParticipantRemark() method.</para>
     /// </summary>
-    [Serializable]
     public class RemarkList : List<RemarkAction>, ICheckSum {
         //public List<Remark> remarks = new List<Remark>();
 
@@ -284,12 +283,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return "";
         }
-
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
 
 
         /// <inheritdoc />

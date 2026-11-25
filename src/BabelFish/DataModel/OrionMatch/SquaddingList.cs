@@ -6,15 +6,18 @@ using Scopos.BabelFish.DataModel.Definitions;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// <summary>
-    /// Response object for a request of Squadding Assignments for a specified match and squadding event name.
+    /// Compiled list of Squadding Assignments for a specified match and  course of fire id.
     /// </summary>
     public class SquaddingList :
         ITokenItems<Squadding>,
         IRLIFList,
         IPublishTransactions,
-        ICheckSum {
+        IMatchObjectFile {
 
-        private Logger logger = LogManager.GetCurrentClassLogger();
+        #region Private Variables
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private const string _relativeDirectory = "SquaddingLists";
+        #endregion
 
         public SquaddingList() {
             Items = new List<Squadding>();
@@ -66,6 +69,12 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         [G_NS.JsonProperty( Order = 7 )]
         public MatchID MatchID { get; set; }
+
+        /// <summary>
+        /// Every match can have multiple courses of fire. This property is the CourseOfFireId that this squadding list is for.
+        /// </summary>
+        [G_NS.JsonProperty( Order = 8, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Include )]
+        public int CourseOfFireId { get; set; } = 0;
 
         /// <inheritdoc/>
         [G_NS.JsonIgnore]
@@ -299,5 +308,63 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
             return hash;
         }
+
+        #region ISaveToFile Methods
+        /// <inheritdoc />
+        /// <remarks>A CourseOfFireStructure should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "CourseOfFireStructures/{CourseOfFireId}/ </remarks>
+        public string GetFileName() {
+            return $"{CourseOfFireId}.json";
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( DirectoryInfo relativeDirectory ) {
+
+            if (relativeDirectory == null)
+                throw new ArgumentNullException( nameof( relativeDirectory ) );
+
+            string filePath = Path.Combine( relativeDirectory.FullName, GetRelativePath() );
+
+            var directoryPath = Path.GetDirectoryName( filePath );
+
+            if (!Directory.Exists( directoryPath )) {
+                Directory.CreateDirectory( directoryPath );
+            }
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( filePath, json );
+
+            return filePath;
+        }
+
+        /// <inheritdoc />
+        public string SaveToFile( FileInfo fileInfo ) {
+
+            if (fileInfo == null)
+                throw new ArgumentNullException( nameof( fileInfo ) );
+
+            string json = SerializeToJson();
+
+            File.WriteAllText( fileInfo.FullName, json );
+
+            return fileInfo.FullName;
+        }
+
+        /// <summary>
+        /// Gets the relative path, from the base match directory, where this CourseOfFireStructure should be saved.
+        /// CourseOfFireStructure should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "CourseOfFireStructures/{CourseOfFireId}/
+        /// </summary>
+        /// <returns>The relative path.</returns>
+        public string GetRelativePath() {
+            return $"{_relativeDirectory}/{this.GetFileName()}";
+        }
+
+        /// <inheritdoc />
+        public string SerializeToJson() {
+            string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
+
+            return json;
+        }
+        #endregion
     }
 }

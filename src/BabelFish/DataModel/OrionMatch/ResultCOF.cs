@@ -11,8 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultCOF :
         IEventScoreProjection,
-        ISaveToFile,
-        ICheckSum,
+        IMatchObjectFile,
         G_STJ_SER.IJsonOnDeserialized {
 
         #region Private Variables
@@ -22,7 +21,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <summary>
         /// The relative directory name, under <see cref="MatchProject.ProjectDirectory"/>, used for ResultCOFs storage.
         /// </summary>
-        private static string _relativeDirectory = "ResultCOFs";
+        private const string _relativeDirectory = "ResultCOFs";
 
         #endregion
 

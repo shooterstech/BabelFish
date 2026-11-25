@@ -303,5 +303,12 @@ namespace Scopos.BabelFish.DataModel.Definitions {
             //Default implementation is to do nothing.
             return false;
         }
+
+        /// <summary>
+        /// Implemented as part of the ISaveToFile interface, but value is never used.
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public string CheckSum { get; set; } = string.Empty;
     }
 }
