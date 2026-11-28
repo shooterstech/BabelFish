@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         #region Constructors, Facory Methods, and Initialization Methods
         /// <summary>
         /// Public constructor. Unless you are a deserializer, it is generally best to construct a new instance using the
-        /// <see cref="CreateAsync(SetName)"/> method, which sets default values for properties based on the CourseOfFire definition.
+        /// <see cref="CreateAsync(MatchStructure, SetName)"/> method, which sets default values for properties based on the CourseOfFire definition.
         /// </summary>
         public CourseOfFireStructure() { }
 
