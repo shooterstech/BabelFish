@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.ClubsAPI;
 using Scopos.BabelFish.Runtime.Authentication;
@@ -14,7 +14,7 @@ namespace Scopos.BabelFish.Tests.Clubs {
         public override void InitializeTest() {
             base.InitializeTest();
 
-            clubsClient = new ClubsAPIClient( APIStage.PRODUCTION );
+            clubsClient = new ClubsAPIClient( APIClientEnums.PRODUCTION );
         }
 
         [TestMethod]

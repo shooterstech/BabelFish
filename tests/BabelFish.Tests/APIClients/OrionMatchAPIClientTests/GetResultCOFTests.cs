@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task GetResultCOFPublicTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
 
             string resultCofId = "4608b306-8b6d-40c2-b608-e5375d05bd12";
 
@@ -28,7 +28,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task GetResultCOFAuthenticatedTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );

@@ -23,7 +23,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public DefinitionAPIClient( APIStage apiStage ) : base( apiStage ) {
+        public DefinitionAPIClient( APIClientEnums apiStage ) : base( apiStage ) {
             IgnoreInMemoryCache = false;
             IgnoreFileSystemCache = false;
         }

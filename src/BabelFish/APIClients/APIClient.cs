@@ -59,7 +59,7 @@ namespace Scopos.BabelFish.APIClients {
         /// 
         /// </summary>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        protected APIClient( APIStage apiStage ) {
+        protected APIClient( APIClientEnums apiStage ) {
             Settings.CheckXApiKey();
 
             this.ApiStage = apiStage;
@@ -72,7 +72,7 @@ namespace Scopos.BabelFish.APIClients {
         /// <summary>
         /// ApiStage may be used to test in different development stages, e.g. production, beta, alpha.
         /// </summary>
-        public APIStage ApiStage { get; protected set; }
+        public APIClientEnums ApiStage { get; protected set; }
 
         #endregion properties
 

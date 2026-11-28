@@ -1,10 +1,12 @@
+using Scopos.BabelFish.DataModel.OrionMatch;
+
 namespace Scopos.BabelFish.DataModel.Common {
 
     /// <summary>
     /// Interface defining a standard set of methods to implemnt to save a class instance
     /// to a file.
     /// </summary>
-    interface ISaveToFile {
+    public interface ISaveToFile {
 
         /// <summary>
         /// Returns the standard file name used for this class instance. This should be 
@@ -45,5 +47,12 @@ namespace Scopos.BabelFish.DataModel.Common {
         /*
          * NOTE Can not add LoadFromFile() type methods to this interface because the method needs to be static, and C# does not allow static methods in interfaces.
          */
+
+        /// <summary>
+        /// A hashed value that is unique to this instance. The value is calculated by the <see cref="ICheckSum.CalculateChecksum()"/> method.
+        /// </summary>
+        /// <remarks>To maintain backward compatibility, CheckSum is a string representation of the hash value (and not an ulong) and
+        /// spelled with a capital S in CheckSum.</remarks>
+        public string CheckSum { get; set; }
     }
 }

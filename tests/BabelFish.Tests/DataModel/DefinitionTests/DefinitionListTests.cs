@@ -57,7 +57,7 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         public async Task SearchTermTest() {
 
 
-            var client = new DefinitionAPIClient( APIStage.PRODTEST );
+            var client = new DefinitionAPIClient( APIClientEnums.PRODTEST );
 
             var getDefinitionListResponse = await client.GetDefinitionListPublicAsync( DefinitionType.ATTRIBUTE, "Air Rifle Category" );
 

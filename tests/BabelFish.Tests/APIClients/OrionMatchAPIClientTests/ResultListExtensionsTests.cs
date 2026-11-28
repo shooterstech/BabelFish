@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task GetResultListBasicPublicTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
 
             //This match id has three relays of 20 athletes
             var matchId = new MatchID( "1.1.2023011915575119.0" );

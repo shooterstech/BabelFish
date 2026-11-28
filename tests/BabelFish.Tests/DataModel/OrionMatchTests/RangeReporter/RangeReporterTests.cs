@@ -216,7 +216,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests.RangeReporter {
         [Ignore( "Calls the live production API. The offline request tests cover email safety." )]
         public async Task SendRangeReportEmailDryRunCanBeRepeated() {
             var credentials = await AuthenticateAsync( Constants.TestDev7Credentials );
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var request = new SendRangeReportEmailAuthenticatedRequest(
                 new MatchID( "1.1.2026063010495573.1" ),
                 new List<string> {

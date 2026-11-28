@@ -176,12 +176,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
         }
 
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as this is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
-
         #endregion
 
         #region Methods 

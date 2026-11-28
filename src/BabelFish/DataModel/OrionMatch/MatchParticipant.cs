@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using Scopos.BabelFish.DataModel.AttributeValue;
-using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -10,11 +9,10 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class MatchParticipant :
         IParticipant,
-        ISaveToFile,
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserializing,
         G_STJ_SER.IJsonOnDeserialized,
-        ICheckSum {
+        IMatchObjectFile {
 
         /// <summary>
         /// The Folder name, with respect to the MatchProject's root directory, that MatchParticipant instances are stored in.
@@ -46,7 +44,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             }
 
             Participant.MatchParticipant = this;
-            this.Participant.OnDisplayNameChanged += RenameFile;
         }
 
         /// <summary>
@@ -280,7 +277,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <inheritdoc/>
         /// <param name="composite">Expected to be a <see cref="MatchProject"/> instance.</param>
         public string GetFileName() {
-            return $"{StringFormatting.MakeSafeFileName( Participant.DisplayName )} {this.ParticipantID}.json";
+            return $"{this.ParticipantID}.json";
         }
 
         /// <summary>Gets the relative path, with respect to the MatchProject's path, for the file associated with this MatchParticipant.</summary>
@@ -338,29 +335,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             string json = G_NS.JsonConvert.SerializeObject( this, Helpers.SerializerOptions.NewtonsoftJsonSerializer );
 
             return json;
-        }
-
-        private void RenameFile( object sender, EventArgs<Participant> e ) {
-            /*
-             * If the Participant's Display Name changes, we need to rename the file to match the new display name. 
-             * This is because the file name is based on the Display Name, and we want to keep it consistent.
-             * However, since Display Name is not guaranteed to be unique, we are currently using ParticipantID for the file name instead, so this method is not needed. 
-             * If we switch back to using Display Name for the file name in the future, we will need to implement this method.
-             */
-
-            if (!string.IsNullOrEmpty( Participant.PreviousDisplayName )) {
-                var previousFileName = $"{StringFormatting.MakeSafeFileName( Participant.PreviousDisplayName )} {this.ParticipantID}.json";
-                var newFileName = this.GetFileName();
-
-                string oldPath = Path.Combine( Project.ProjectDirectory.FullName, FOLDER_NAME, previousFileName );
-                string newPath = Path.Combine( Project.ProjectDirectory.FullName, FOLDER_NAME, newFileName );
-
-                if (File.Exists( oldPath )) {
-                    File.Move( oldPath, newPath );
-                }
-
-                this.SaveToFile();
-            }
         }
         #endregion
 

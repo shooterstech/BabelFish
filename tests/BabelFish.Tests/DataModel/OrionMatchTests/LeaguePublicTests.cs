@@ -17,7 +17,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task GetLeagueDetailPublicTests() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             //Pass in a fake match id
             var leagueDetailResponse = await client.GetLeagueDetailPublicAsync( new MatchID( "1.1.2023091512010588.3" ) );
@@ -43,7 +43,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task GetByeWeeksForLeagueTeam() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
             var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
@@ -83,7 +83,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         public async Task GetLeagueGamesFilterByConference() {
 
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
             var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
@@ -117,7 +117,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         public async Task GetLeagueGamesFilterByDivision() {
 
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             //Given these parameters, there whould only be one bye week returned.
             var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
@@ -152,7 +152,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         public async Task GetLeagueGamesTokenization() {
 
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512052862.3" ) ); // 1.1.2023091512010588.3" );
 
@@ -194,7 +194,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task GetLeagueTeamsBasicTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new GetLeagueTeamsPublicRequest( new MatchID( "1.1.2023091512010588.3" ) );
 
@@ -226,7 +226,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         public async Task GetLeagueTeamsTokenization() {
 
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new GetLeagueTeamsPublicRequest( new MatchID( "1.1.2023091512010588.3" ) ) {
                 Limit = 10 //Set a small limit so there will be a token on the first call.
@@ -270,7 +270,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task GetLeagueTeamDetailBasicTest() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new GetLeagueTeamDetailPublicRequest( new MatchID( "1.1.2023091512010588.3" ), 2213 );
 
@@ -301,7 +301,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task GetLeagueConfAndDivLists() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var requestTeamDetail = new GetLeagueTeamDetailPublicRequest( new MatchID( "1.1.2023091512010588.3" ), 2213 );
             var requestGames = new GetLeagueGamesPublicRequest( new MatchID( "1.1.2023091512010588.3" ) );
@@ -347,7 +347,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         public async Task GenerateLeagueWeeksTest() {
 
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             //2024 National Air Pistol League
             var response = await client.GetLeagueDetailPublicAsync( new MatchID( "1.1.2023122017132108.3" ) );
             var league = response.League;
@@ -368,7 +368,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         public async Task DefaultValuesForListOfLeagueWeeksTest() {
 
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             //2024 National Air Pistol League
             var response = await client.GetLeagueDetailPublicAsync( new MatchID( "1.1.2023122017132108.3" ) );
             var league = response.League;
@@ -435,7 +435,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatchTests {
         [TestMethod]
         public async Task EriksPlayground() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
 
             var request = new GetLeagueTeamDetailPublicRequest( new MatchID( "1.1.2024072509092300.3" ), 2502 );
 

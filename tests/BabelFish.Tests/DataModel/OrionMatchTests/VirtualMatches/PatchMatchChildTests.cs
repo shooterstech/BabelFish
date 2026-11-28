@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         private static readonly MatchID ParentMatchId_Invite_ParentOwnedByOrionAcct000002 = new MatchID( "1.900.2026041417335582.1" );
         private const string OwnerId = "OrionAcct000007";
 
-        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIStage.PRODUCTION ) {
+        private static OrionMatchAPIClient CreateClient() => new OrionMatchAPIClient( APIClientEnums.PRODUCTION ) {
             IgnoreInMemoryCache = true
         };
 

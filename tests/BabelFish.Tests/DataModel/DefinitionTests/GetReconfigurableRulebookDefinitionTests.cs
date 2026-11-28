@@ -17,11 +17,11 @@ namespace Scopos.BabelFish.Tests.DataModel.DefinitionTests {
         public void BasicConstructorTests() {
 
             var defaultConstructorClient = new DefinitionAPIClient();
-            var apiStageConstructorClient = new DefinitionAPIClient( APIStage.BETA );
+            var apiStageConstructorClient = new DefinitionAPIClient( APIClientEnums.BETA );
 
-            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]

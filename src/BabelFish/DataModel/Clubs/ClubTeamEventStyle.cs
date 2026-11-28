@@ -117,12 +117,6 @@ namespace Scopos.BabelFish.DataModel.Clubs {
         [G_STJ_SER.JsonIgnore]
         public ClubTeam? ClubTeam { get; set; }
 
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
-
         /// <summary>
         /// Attempts to return the <see cref="SimpleCOF"/> that matches the <see cref="CourseOfFireDef"/>, that should be defined
         /// within <see cref="EventStyle"/>.

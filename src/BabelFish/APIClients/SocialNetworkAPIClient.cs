@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +24,7 @@ namespace Scopos.BabelFish.APIClients
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public SocialNetworkAPIClient( APIStage apiStage ) : base( apiStage )
+        public SocialNetworkAPIClient( APIClientEnums apiStage ) : base( apiStage )
         {
 
             //SocialNetworkAPIClient does not support file system cache

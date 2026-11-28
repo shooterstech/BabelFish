@@ -14,12 +14,11 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// </summary>
     [Serializable]
     public class Match :
-        ISaveToFile,
         IFinishInitializationAsync,
         G_STJ_SER.IJsonOnDeserialized,
         G_STJ_SER.IJsonOnDeserializing,
         G_STJ_SER.IJsonOnSerializing,
-        ICheckSum,
+        IMatchObjectFile,
         IEquatable<Match> {
 
         #region Private and Protected Fields

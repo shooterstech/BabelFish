@@ -485,12 +485,6 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         [G_NS.JsonIgnore]
         public abstract int UniqueMergeId { get; }
 
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; }
-
 
         /// <inheritdoc />
         public abstract ulong CalculateChecksum();

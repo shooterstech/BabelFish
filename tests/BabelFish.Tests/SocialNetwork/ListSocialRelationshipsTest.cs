@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.DataModel.SocialNetwork;
 using Scopos.BabelFish.Requests.SocialNetworkAPI;
@@ -20,7 +20,7 @@ namespace Scopos.BabelFish.Tests.SocialNetwork {
         public override void InitializeTest() {
             base.InitializeTest();
 
-            socialNetworkClient = new SocialNetworkAPIClient( APIStage.PRODUCTION );
+            socialNetworkClient = new SocialNetworkAPIClient( APIClientEnums.PRODUCTION );
         }
 
         [TestMethod]

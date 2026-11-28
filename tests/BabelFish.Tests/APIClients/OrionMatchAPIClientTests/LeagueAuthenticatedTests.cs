@@ -12,7 +12,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task TestPressReleaseGeneration() {
 
-            var client = new OrionMatchAPIClient( APIStage.PRODTEST );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODTEST );
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
                 Constants.TestDev7Credentials.Password );

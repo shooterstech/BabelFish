@@ -21,7 +21,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_SingleValue() {
 
-            var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
+            var client = new AttributeValueAPIClient( APIClientEnums.PRODUCTION );
 
             //We're first going to make an authenticated call to set the values we expect to later read.
             var userAuthentication = new UserAuthentication(
@@ -77,7 +77,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_PRIVATE_Visibility() {
 
-            var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
+            var client = new AttributeValueAPIClient( APIClientEnums.PRODUCTION );
 
             //We're first going to make an authenticated call to set the values we expect to later read.
             var userAuthentication = new UserAuthentication(
@@ -128,7 +128,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task GetAttributeValue_DoesNotExist() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             var setNameNotARealAttribute = SetName.Parse( "v1.0:orion:Not a Real Attribute" );
             List<SetName> myAttributes = new List<SetName>()
@@ -157,7 +157,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
 		[TestMethod]
         public async Task GetAttributeValue_MultipleValueAttributeValue() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             //We're first going to make an authenticated call to set the values we expect to later read.
             var userAuthentication = new UserAuthentication(

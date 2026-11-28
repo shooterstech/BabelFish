@@ -594,11 +594,5 @@ namespace Scopos.BabelFish.DataModel.AttributeValue {
 
             return Helpers.Common.Md5ToUlong( combined.ToString() );
         }
-
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level object.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
     }
 }

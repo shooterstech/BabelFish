@@ -13,7 +13,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         [TestMethod]
         public async Task SetAttributeValue_SingleAttribute() {
 
-            var client = new AttributeValueAPIClient( APIStage.BETA );
+            var client = new AttributeValueAPIClient( APIClientEnums.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -104,7 +104,7 @@ namespace Scopos.BabelFish.Tests.DataModel.AttributeValueTests {
         public async Task EriksPlayground() {
 
 
-            var client = new AttributeValueAPIClient( APIStage.PRODUCTION );
+            var client = new AttributeValueAPIClient( APIClientEnums.PRODUCTION );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,

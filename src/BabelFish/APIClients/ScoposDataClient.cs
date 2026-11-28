@@ -25,7 +25,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public ScoposDataClient( APIStage apiStage ) : base( apiStage ) {
+        public ScoposDataClient( APIClientEnums apiStage ) : base( apiStage ) {
 
             //ScoposDataClient does not support file system cache
             LocalStoreDirectory = null;

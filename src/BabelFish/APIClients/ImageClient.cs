@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.APIClients {
         /// Constructor for the ImageClient class, that allows specifying the API stage (production, staging, etc.) to use.
         /// </summary>
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public ImageClient( APIStage apiStage ) : base( apiStage ) {
+        public ImageClient( APIClientEnums apiStage ) : base( apiStage ) {
 
             //ScoposDataClient does not support file system cache
             LocalStoreDirectory = null;

@@ -1,4 +1,4 @@
-﻿using Amazon.DynamoDBv2.Model;
+using Amazon.DynamoDBv2.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Scopos.BabelFish.APIClients;
 using Scopos.BabelFish.Requests.ClubsAPI;
@@ -22,7 +22,7 @@ namespace Scopos.BabelFish.Tests.Clubs
         public override void InitializeTest() {
             base.InitializeTest();
 
-            clubsClient = new ClubsAPIClient(APIStage.PRODUCTION);
+            clubsClient = new ClubsAPIClient(APIClientEnums.PRODUCTION);
         }
 
         public async Task DeleteAllCoachAssignments(int licenseNumber, UserAuthentication userAuthentication)

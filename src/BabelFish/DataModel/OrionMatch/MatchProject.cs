@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using Scopos.BabelFish.DataActors.OrionMatch;
 using Scopos.BabelFish.DataModel.Clubs;
-using Scopos.BabelFish.DataModel.Common;
 
 namespace Scopos.BabelFish.DataModel.OrionMatch {
 
@@ -12,7 +11,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     /// and <see cref="ResultListSlidingWindow"/>.
     /// </summary>
     public class MatchProject :
-        ISaveToFile,
+        IMatchObjectFile,
         IResultListFetcher,
         G_STJ_SER.IJsonOnDeserialized,
         G_STJ_SER.IJsonOnDeserializing {
@@ -161,14 +160,30 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// </summary>
         public string MatchFileName { get; set; }
 
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public Match Match { get; private set; }
 
         /*
          * EKA March 2026: Isn't this the same as a MatchParticipantList? Do we need both? Maybe we can just use a MatchParticipantList here instead of a List<MatchParticipant>?
          */
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public List<MatchParticipant> Participants { get; set; } = new List<MatchParticipant>();
+
+        /// <summary>
+        /// Gets the unique identifier of the match.
+        /// </summary>
+        [G_STJ_SER.JsonIgnore]
+        [G_NS.JsonIgnore]
+        public MatchID MatchID {
+            get {
+                return Match.MatchID;
+            }
+        }
+
+        /// <inheritdoc />
+        public string CheckSum { get; set; }
 
         /// <summary>
         /// A string represenging the name of the software and version number of that software that created and maintains this MatchProject.
@@ -181,27 +196,26 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region Helper Properteis
 
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public string PreviousProjectName { get; private set; }
 
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public DirectoryInfo ProjectDirectory { get; set; }
 
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public ShotMapper ShotMapper { get; private set; }
 
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public ResultDocumentGenerator ResultGenerator { get; private set; }
 
+        [G_STJ_SER.JsonIgnore]
         [G_NS.JsonIgnore]
         public ResultListSlidingWindow ResultListSlidingWindow { get; private set; }
 
-        [G_NS.JsonIgnore]
-        public DirectoryInfo MatchObjectDirectory {
-            get {
-                return new DirectoryInfo( Path.Combine( ProjectDirectory.FullName, "MatchObjects" ) );
-            }
-        }
         #endregion
 
         #region Methods
@@ -362,6 +376,14 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
         /// <param name="scoringSystemType"></param>
         public void SetScoringTechnology( int courseOfFireId, ScoringSystem scoringSystemType ) {
             this.SetScoringTechnology( courseOfFireId, scoringSystemType, "Unknown" );
+        }
+
+        /// <inheritdoc />
+        public ulong CalculateChecksum() {
+            var combined = $"{ProjectName}|{MatchFileName}|{Creator}";
+            var hash = Helpers.Common.Md5ToUlong( combined );
+
+            return hash;
         }
         #endregion
 

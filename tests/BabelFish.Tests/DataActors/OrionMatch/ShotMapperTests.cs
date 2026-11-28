@@ -18,10 +18,11 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
         [TestMethod]
         public async Task ShotListTestsAsync() {
             var matchName = "ShotListTests";
+            var expectedProjectDirectory = Path.Combine( RelativeDirectoryForTesting.FullName, matchName );
+            this.ClearDirectory( expectedProjectDirectory );
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
-            this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
 
@@ -86,6 +87,11 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             // Serialize then deserialize the MatchProject, and then verify that the shots are still there and correct after deserialization.
             project.SaveToFile();
 
+            // Wait for the shotMapper to finishing writing the shots to disk before we try to load the project from file.This is a bit of a hack, but it works for now.
+            while (shotMapper.HasShotsToLog()) {
+                await Task.Delay( 100 );
+            }
+
             var deserializedProject = await MatchProject.LoadFromFileAsync( Path.Combine( project.ProjectDirectory.ToString(), project.GetFileName() ) );
             var deserializedShotMapper = deserializedProject.ShotMapper;
             var deserializedInvEntry = (CourseOfFireEntryIndividual)deserializedProject.Participants[0].Entries[0];
@@ -131,7 +137,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var matchName = "EventScoreCalculationTests";
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v3.0:ntparc:Three-Position Air Rifle 3x10" ) );
@@ -262,7 +268,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var matchName = "AccumulativeFinalCalculationTests";
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v2.0:ntparc:40 Shot Standing plus Final" ) );
@@ -338,7 +344,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var matchName = "ResultStatusCalculationTests";
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v1.0:ntparc:40 Shot Standing" ) );
@@ -478,7 +484,7 @@ namespace Scopos.BabelFish.Tests.DataActors.OrionMatch {
             var matchName = "SightersInShotMapperTest";
 
             //Create the MatchProject which will generate a ShotMapper.
-            MatchProject project = await MatchProject.CreateAsync( TestClubAbbr, matchName, RelativeDirectoryForTesting );
+            MatchProject project = await MatchProject.CreateAsync( TestClubProtectedAbbr, matchName, RelativeDirectoryForTesting );
             this.ClearDirectory( project.ProjectDirectory.FullName ); //Don't really need to call Clear Directory, as we are really not writing any files in this test, but just to be safe.
 
             var cofStructure = await project.Match.MatchStructure.AddCourseOfFireAsync( SetName.Parse( "v1.0:ntparc:40 Shot Standing" ) );

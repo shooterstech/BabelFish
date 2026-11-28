@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.APIClients {
 
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public AthenaAPIClient( APIStage apiStage ) : base( apiStage ) {
+        public AthenaAPIClient( APIClientEnums apiStage ) : base( apiStage ) {
 
             //AthenaLoginAPIClient does not support file system cache
             LocalStoreDirectory = null;

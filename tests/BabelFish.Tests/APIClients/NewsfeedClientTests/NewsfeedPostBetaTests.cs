@@ -27,7 +27,7 @@ namespace Scopos.BabelFish.Tests.APIClients.NewsfeedClientTests {
             }
 
             // Application calls are pinned to Beta; never fall back to another stage.
-            var client = new NewsfeedAPIClient( APIStage.BETA );
+            var client = new NewsfeedAPIClient( APIClientEnums.BETA );
             var text = $"  BabelFish Beta newsfeed test {Guid.NewGuid():N}\r\nVerbatim é😀 <text> & + % \"quotes\"  ";
             string? postId = null;
             Post? created = null;

@@ -10,7 +10,7 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
     /// </summary>
     public class UploadImageAuthenticatedRequest : Request {
 
-        internal APIStage ApiStage { get; set; } = APIStage.PRODUCTION;
+        internal APIClientEnums ApiStage { get; set; } = APIClientEnums.PRODUCTION;
         private static HttpClient _httpClient = new HttpClient();
 
         /// <summary>
@@ -223,8 +223,6 @@ namespace Scopos.BabelFish.Requests.ImageAPI {
             if (!response.IsSuccessStatusCode) {
                 throw new APIRequestParameterException( $"Failed to upload the image. Status code: {response.StatusCode}, Message: {response.ReasonPhrase}" );
             }
-
-            return;
         }
     }
 }

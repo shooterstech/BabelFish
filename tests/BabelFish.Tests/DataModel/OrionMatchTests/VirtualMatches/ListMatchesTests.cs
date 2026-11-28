@@ -19,7 +19,7 @@ namespace Scopos.BabelFish.Tests.DataModel.OrionMatch.VirtualMatches {
         private const string OwnerId = "OrionAcct000007";
 
         private static OrionMatchAPIClient CreateClient() {
-            return new OrionMatchAPIClient( APIStage.PRODUCTION ) {
+            return new OrionMatchAPIClient( APIClientEnums.PRODUCTION ) {
                 IgnoreInMemoryCache = true
             };
         }

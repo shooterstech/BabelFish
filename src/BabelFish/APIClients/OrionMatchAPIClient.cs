@@ -26,7 +26,7 @@ namespace Scopos.BabelFish.APIClients {
         }
 
         /// <exception cref="XApiKeyNotSetException">Thrown if the Settings.XApiKey value has not been set.</exception>
-        public OrionMatchAPIClient( APIStage apiStage ) : base( apiStage ) {
+        public OrionMatchAPIClient( APIClientEnums apiStage ) : base( apiStage ) {
             //enable in memory cache
             IgnoreInMemoryCache = false;
 
@@ -1861,6 +1861,19 @@ namespace Scopos.BabelFish.APIClients {
             return response;
         }
 
+        #endregion
+
+        #region Upload Match File API Calls
+        public async Task<UploadMatchFileAuthenticatedResponse> UploadMatchFileAuthenticatedAsync( DirectoryInfo projectDirectory, IMatchObjectFile matchObjectFile, UserAuthentication credentials ) {
+            var request = new UploadMatchFileAuthenticatedRequest( credentials, matchObjectFile, projectDirectory );
+            return await this.UploadMatchFileAuthenticatedAsync( request );
+        }
+
+        public async Task<UploadMatchFileAuthenticatedResponse> UploadMatchFileAuthenticatedAsync( UploadMatchFileAuthenticatedRequest requestParameters ) {
+            UploadMatchFileAuthenticatedResponse response = new UploadMatchFileAuthenticatedResponse( requestParameters );
+            await this.CallAPIAsync( requestParameters, response );
+            return response;
+        }
         #endregion
     }
 }

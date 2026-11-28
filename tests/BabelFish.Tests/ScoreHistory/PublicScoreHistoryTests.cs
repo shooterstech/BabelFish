@@ -17,17 +17,17 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         public void BasicConstructorTests() {
 
             var defaultConstructorClient = new ScoreHistoryAPIClient();
-            var apiStageConstructorClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var apiStageConstructorClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
-            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.BETA, apiStageConstructorClient.ApiStage );
         }
 
         [TestMethod]
         public async Task GetEventStyleScoreHistory() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 15 );
@@ -56,7 +56,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetSingleStageStyleScoreHistory() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 15 );
@@ -86,7 +86,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetMultipleStageStyleScoreHistory() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 05, 15 );
@@ -131,7 +131,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetEventStyleTimespanScoreHistory() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 1 );
@@ -162,7 +162,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetMultipleStageStyleTimespanScoreHistory() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var scoreHistoryRequest = new GetScoreHistoryPublicRequest();
             scoreHistoryRequest.StartDate = new DateTime( 2023, 04, 1 );

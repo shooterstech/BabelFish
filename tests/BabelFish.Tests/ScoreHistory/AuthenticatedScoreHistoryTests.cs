@@ -18,7 +18,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
         [TestMethod]
         public async Task PostScoreHistoryHappyPath() {
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.PRODUCTION );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -72,7 +72,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
         [TestMethod]
         public async Task PatchScoreHistoryHappyPath() {
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.PRODUCTION );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -138,7 +138,7 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
         [TestMethod]
         public async Task GetEventStyleScoreHistory() {
 
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.BETA );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.BETA );
 
             var userAuthentication = new UserAuthentication(
                 Constants.TestDev7Credentials.Username,
@@ -172,9 +172,9 @@ namespace Scopos.BabelFish.Tests.ScoreHistory {
 
         [TestMethod]
         public async Task CoachAccessAthleteProtectedData() {
-            var scoreHistoryClient = new ScoreHistoryAPIClient( APIStage.PRODUCTION );
-            var clubsClient = new ClubsAPIClient( APIStage.PRODUCTION );
-            var socialNetworkClient = new SocialNetworkAPIClient( APIStage.PRODUCTION );
+            var scoreHistoryClient = new ScoreHistoryAPIClient( APIClientEnums.PRODUCTION );
+            var clubsClient = new ClubsAPIClient( APIClientEnums.PRODUCTION );
+            var socialNetworkClient = new SocialNetworkAPIClient( APIClientEnums.PRODUCTION );
 
             //TestDev1 is a POC for licence 7
             var userAuthentication = new UserAuthentication(

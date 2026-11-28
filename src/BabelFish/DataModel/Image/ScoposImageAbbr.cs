@@ -56,12 +56,6 @@ namespace Scopos.BabelFish.DataModel.Image {
         [G_NS.JsonConverter( typeof( G_BF_NS_CONV.DateTimeConverter ) )]
         public DateTime CreatedAt { get; set; } = DateTime.MinValue;
 
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
-
         #endregion
 
         #region Methods

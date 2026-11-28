@@ -20,11 +20,11 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         public void BasicConstructorTests() {
 
             var defaultConstructorClient = new OrionMatchAPIClient();
-            var apiStageConstructorClient = new OrionMatchAPIClient( APIStage.BETA );
+            var apiStageConstructorClient = new OrionMatchAPIClient( APIClientEnums.BETA );
 
-            Assert.AreEqual( APIStage.PRODUCTION, defaultConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.PRODUCTION, defaultConstructorClient.ApiStage );
 
-            Assert.AreEqual( APIStage.BETA, apiStageConstructorClient.ApiStage );
+            Assert.AreEqual( APIClientEnums.BETA, apiStageConstructorClient.ApiStage );
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public void OrionMatchExpectedFailuresUnitTests() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             //Pass in a fake match id
             var taskNotFound = client.GetMatchPublicAsync( new MatchID( "1.2345.6789012345678901.0" ) );
 
@@ -54,7 +54,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         [TestMethod]
         public async Task OrionMatchAPI_GetAMatch() {
 
-            var client = new OrionMatchAPIClient( APIStage.BETA );
+            var client = new OrionMatchAPIClient( APIClientEnums.BETA );
             var matchId = new MatchID( "1.1.2023011915575119.0" );
             var response = await client.GetMatchPublicAsync( matchId );
 
@@ -81,7 +81,7 @@ namespace Scopos.BabelFish.Tests.APIClients.OrionMatchAPIClientTests {
         /// <returns></returns>
         [TestMethod]
         public async Task MatchMetaDataTests() {
-            var client = new OrionMatchAPIClient( APIStage.PRODUCTION );
+            var client = new OrionMatchAPIClient( APIClientEnums.PRODUCTION );
             var matchId = new MatchID( "1.1.2026040108475723.1" );
             var origResponse = await client.GetMatchPublicAsync( matchId );
             Assert.IsTrue( origResponse.HasOkStatusCode );

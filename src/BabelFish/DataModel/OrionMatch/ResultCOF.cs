@@ -11,13 +11,17 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
     [Serializable]
     public class ResultCOF :
         IEventScoreProjection,
-        ISaveToFile,
-        ICheckSum,
+        IMatchObjectFile,
         G_STJ_SER.IJsonOnDeserialized {
 
         #region Private Variables
         //Key is the Singular Event Name, Value is the Shot
         private Dictionary<string, Athena.Shot.Shot> _shotsByEventName = null;
+
+        /// <summary>
+        /// The relative directory name, under <see cref="MatchProject.ProjectDirectory"/>, used for ResultCOFs storage.
+        /// </summary>
+        private const string _relativeDirectory = "ResultCOFs";
 
         #endregion
 
@@ -463,6 +467,7 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
 
         #region ISaveToFile Methods
         /// <inheritdoc />
+        /// <remarks>A ResultCOF should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "ResultCOFs/{ResultCOFID}/ </remarks>
         public string GetFileName() {
             return $"{ResultCOFID}.json";
         }
@@ -501,9 +506,13 @@ namespace Scopos.BabelFish.DataModel.OrionMatch {
             return fileInfo.FullName;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Gets the relative path, from the base match directory, where this ResultCOF should be saved.
+        /// ResultCOF should be saved, relative to the base MatchProject's <see cref="MatchProject.ProjectDirectory"/>, in the directory "ResultCOFs/{ResultCOFID}/
+        /// </summary>
+        /// <returns>The relative path.</returns>
         public string GetRelativePath() {
-            return this.GetFileName();
+            return $"{_relativeDirectory}/{this.GetFileName()}";
         }
 
         /// <inheritdoc />

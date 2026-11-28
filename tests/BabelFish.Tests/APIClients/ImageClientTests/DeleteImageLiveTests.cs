@@ -30,7 +30,7 @@ namespace Scopos.BabelFish.Tests.APIClients.ImageClientTests {
             _credentials = new UserAuthentication( Constants.TestDev7Credentials.Username, Constants.TestDev7Credentials.Password );
             await _credentials.InitializeAsync();
             Assert.AreEqual( Constants.TestDev7UserId, await _credentials.GetUserIdAsync() );
-            _client = new ImageClient( APIStage.BETA ) { IgnoreInMemoryCache = true, IgnoreFileSystemCache = true };
+            _client = new ImageClient( APIClientEnums.BETA ) { IgnoreInMemoryCache = true, IgnoreFileSystemCache = true };
         }
 
         [TestMethod]

@@ -99,12 +99,6 @@ namespace Scopos.BabelFish.DataModel.Athena.Shot {
             return $"({GetXToString()}, {GetYToString()})";
         }
 
-        /// <inheritdoc />
-        /// <remarks>Choosing not to include CheckSum in the serialized value, as it is not a top level document.</remarks>
-        [G_NS.JsonIgnore]
-        [G_STJ_SER.JsonIgnore]
-        public string CheckSum { get; set; } = string.Empty;
-
 
         /// <inheritdoc />
         public ulong CalculateChecksum() {
